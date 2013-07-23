@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="12.0">
+  <zoom_level>10</zoom_level>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>290</x>
+      <y>0</y>
+      <w>190</w>
+      <h>940</h>
+    </coordinates>
+    <panel_attributes>faasupdate
+--
+objid
+state
+txnno
+txndate
+faasid
+prevtitletype
+prevtitleno
+prevtitledate
+prevtaxpayerid
+prevtaxpayername
+prevtaxpayeraddress
+prevownername
+prevowneraddress
+prevadministratorid
+prevadministratorname
+prevadministratoraddress
+prevbeneficiaryid
+prevbeneficiary
+prevbeneficiaryaddress
+prevrestrictionid
+prevmemoranda
+prevsurveyno
+prevcadastrallotno
+prevblockno
+prevstreet
+prevnorth
+preveast
+prevsouth
+prevwest
+--
+faas_titletype
+faas_titleno
+faas_titledate
+faas_taxpayerid
+faas_taxpayername
+faas_taxpayeraddress
+faas_ownername
+faas_owneraddress
+faas_administratorid
+faas_administratorname
+faas_administratoraddress
+faas_beneficiaryid
+faas_beneficiary
+faas_beneficiaryaddress
+faas_restrictionid
+faas_memoranda
+rp_surveyno
+rp_cadastrallotno
+rp_blockno
+rp_purok
+rp_street
+rp_north
+rp_east
+rp_south
+rp_west</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>110</x>
+      <y>60</y>
+      <w>100</w>
+      <h>30</h>
+    </coordinates>
+    <panel_attributes>faas</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>180</x>
+      <y>50</y>
+      <w>130</w>
+      <h>50</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>30;30;110;30</additional_attributes>
+  </element>
+</diagram>

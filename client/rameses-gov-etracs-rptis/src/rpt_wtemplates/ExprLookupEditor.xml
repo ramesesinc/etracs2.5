@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workunit>
+    <invokers>
+        <invoker type="exprlookupeditor:lookup" caption="List of Values" target="popup" />
+    </invokers>
+    
+    <pages>
+        <page template="com.rameses.gov.etracs.rpt.common.ExprLookupEditorPage" />
+        <page name="info" template="com.rameses.gov.etracs.rpt.common.VariableInfoPage" />
+    </pages>
+</workunit>

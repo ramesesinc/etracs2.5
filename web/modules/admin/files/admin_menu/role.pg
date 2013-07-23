@@ -1,0 +1,6 @@
+{
+	href:		'/entity/role/list',
+	sortorder:	2,
+	secured:	true,
+	fragment:	true
+}

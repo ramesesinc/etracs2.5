@@ -1,0 +1,15 @@
+import com.rameses.annotations.*
+import com.rameses.eserver.*;
+import com.rameses.common.*;
+
+class ConsolidationInterceptor
+{
+	@Service('ConsolidationService')
+	def svc 
+
+	@Before(pattern="FAASService.deleteFaas", eval="#{args[0].rpu.rputype != 'land'}") 
+	public void deleteAffectedRpu( evt ) {
+		svc.deleteAffectedRpuByPrevFaasId(evt.args[0].objid)
+	}
+}
+

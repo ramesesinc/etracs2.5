@@ -1,0 +1,127 @@
+import com.rameses.common.*
+import com.rameses.annotations.*
+import com.rameses.util.*
+
+class RIVMasterService
+{
+	@PersistenceContext('main')
+	def em
+	
+	@Service("DateService")
+	def dateSvc;
+	
+	@Service("SequenceService")
+	def seqSvc;
+	
+	def SCHEMA_NAME = 'riv'
+	def STATE_DRAFT = 'DRAFT'
+	def STATE_OPEN = 'OPEN'
+	def STATE_CLOSED = 'CLOSED'
+	
+	@ProxyMethod
+	public def init() {}
+	
+	@ProxyMethod
+	public def create( riv ) {
+		riv.remove('items');
+		EntityUtil.mapToField(riv);
+		validate( riv );
+		em.create( SCHEMA_NAME, riv );
+		EntityUtil.fieldToMap(riv);
+		if( riv._add ) {
+			riv._add.each{ rivitem ->
+				EntityUtil.mapToField(rivitem);
+				em.validate("riv:rivitem", rivitem);
+				em.create("riv:rivitem", rivitem);
+				EntityUtil.fieldToMap(rivitem);
+			}
+			riv.remove('_add');
+		}
+		return riv;
+	}
+	
+	private void validate( riv ) {
+		def oldriv = em.read( SCHEMA_NAME, riv);
+		//util.validateLastUpdate( riv, oldriv );
+		if( oldriv && oldriv.state != STATE_DRAFT ) throw new Exception("RIV is already $oldriv.state.");
+		em.validate( SCHEMA_NAME, riv );
+	}
+	
+	@ProxyMethod
+	public def update( riv ) {
+		def old = open(riv)
+		
+		if( old.state == STATE_OPEN) throw new Exception('RIV has already been opened.')
+		
+		def rivitems = riv.items;
+		riv.remove('items');
+		EntityUtil.mapToField(riv);
+		validate( riv );
+		em.update( SCHEMA_NAME, riv );
+		EntityUtil.fieldToMap(riv);
+		if( riv._remove ) {
+			riv._remove.each{ rivitem ->
+				em.delete("riv:rivitem", rivitem);
+			}
+			riv.remove('_remove');
+		}
+		rivitems.each{ rivitem ->
+			if( !riv._add?.find{ it.objid == rivitem.objid } ) {
+				EntityUtil.mapToField(rivitem);
+				em.validate("riv:rivitem", rivitem);
+				em.update("riv:rivitem", rivitem);
+				EntityUtil.fieldToMap(rivitem);
+			}
+		}
+		if( riv._add ) {
+			riv._add.each{ rivitem ->
+				EntityUtil.mapToField(rivitem);
+				em.validate("riv:rivitem", rivitem);
+				em.create("riv:rivitem", rivitem);
+				EntityUtil.fieldToMap(rivitem);
+			}
+			riv.remove('_add');
+		}
+		riv.items = rivitems;
+		return riv;
+	}
+	
+	@ProxyMethod
+	public def open( riv ) {
+		riv = em.read(SCHEMA_NAME, riv);
+		if( !riv ) throw new Exception('RIV does not exist or has already been deleted.')
+		
+		EntityUtil.fieldToMap(riv);
+		riv.items = em.sqlContext.createNamedQuery("riv:getItemsByRivid").setParameter("rivid", riv.objid).resultList;
+		riv.items.each{ rivitem ->
+			EntityUtil.fieldToMap(rivitem);
+		}
+		return riv
+	}
+	
+	@ProxyMethod
+	public def approve( riv ) {
+		def old = open(riv)
+		
+		if( old.state != STATE_DRAFT ) throw new Exception("RIV is already $old.state.");
+		
+		//getting next series
+		def year = dateSvc.parseDate( dateSvc.serverDate, null ).year;
+		def sequenceKey = "RIV-" + year;
+		riv.txnno = (year + "") + seqSvc.getNextFormattedSeriesA( sequenceKey, 6);
+		
+		riv.txndate = dateSvc.format( "yyyy-MM-dd", new Date());
+		riv.state = STATE_OPEN;
+		return update(riv);
+	}
+	
+	@ProxyMethod
+	public void delete( riv ) {
+		def data = em.sqlContext.createNamedQuery('riv:checkReferencedId').setParameter("riv_objid", riv.objid).singleResult;
+		if( data.count > 0 ) throw new Exception("Delete not allowed. RIV has already been referenced.");
+		em.sqlContext.createNamedExecutor("riv:deleteItemsByRivid")
+						.setParameter("rivid",riv.objid)
+						.execute();
+		em.delete(SCHEMA_NAME, riv);
+	}
+}

@@ -1,0 +1,225 @@
+import com.rameses.annotations.*
+import com.rameses.common.*;
+import com.rameses.util.*;
+
+class FAASUpdateService
+{
+	@PersistenceContext('rpt')
+	def em
+    
+	@Env
+	def env
+	
+	@Service('TxnRefService')
+    def txnRef
+
+    @Service('WorkflowStateService')
+    def workflowRef
+    
+    @Service('DateService')
+    def dateSvc
+
+    @Service('SequenceService')
+    def seqSvc
+
+    @Service('RPTUtil')
+    def util 
+    
+    @Service('FAASService')
+    def faasSvc 
+
+    @Service('RealPropertyService')
+    def rpSvc
+
+
+    def STATE_DRAFT 		= 'DRAFT'
+    def STATE_FORAPPROVAL 	= 'FORAPPROVAL'
+    def STATE_APPROVED 		= 'APPROVED'
+    
+	def SCHEMA_NAME = 'faasupdate'
+    
+
+	@ProxyMethod
+    public def getList( params ) {
+    	params.searchtext = (params.searchtext ? params.searchtext : '') + '%'
+        def filters = [
+            'WHERE f.tdno LIKE $P{searchtext}',
+            'WHERE f.ownername LIKE $P{searchtext}',
+            'WHERE fu.txnno LIKE $P{searchtext}',
+            'WHERE r.fullpin LIKE $P{searchtext}',
+        ]
+        return util.getListFromQuery( 'faasupdate:getList' , filters, params, 'cf.objid' )
+    }
+
+
+    @ProxyMethod
+    public def createFaasUpdate(entity){
+        txnRef.checkReference(entity.faasid)
+        entity.txnno = seqSvc.getNextFormattedSeries('FAASUpdate')
+        entity.txndate = dateSvc.serverDate
+        validateFaas(entity)
+        txnRef.insertRef( entity.faasid, entity.objid, 'FAAS is currently referenced by FAAS Update No. ' + entity.txnno + '.')
+
+        entity.state = STATE_DRAFT
+        workflowRef.insert(entity)
+
+        def xentity = EntityUtil.mapToField(entity)
+        em.validate(SCHEMA_NAME, xentity)
+        em.create(SCHEMA_NAME, xentity)
+        return entity
+    }
+
+
+    @ProxyMethod
+    public def updateFaasUpdate( entity) {
+        def old = openFaasUpdate(entity.objid)
+        if (old.state == STATE_APPROVED ) 
+            throw new Exception('Document has already been approved.')
+
+        def xentity = EntityUtil.mapToField(entity)
+        em.validate(SCHEMA_NAME, xentity)
+        em.update(SCHEMA_NAME, xentity)
+        return entity 
+    }
+
+
+    @ProxyMethod
+    public void deleteFaasUpdate( entity ) {
+        txnRef.delete(entity.objid)
+        workflowRef.deleteAll(entity.objid)    
+        em.delete(SCHEMA_NAME, entity)
+    }
+
+
+    @ProxyMethod
+    public def openFaasUpdate( objid ) {
+        def entity = em.sqlContext.createNamedQuery('faasupdate:open')
+                        .setParameter('objid', objid).singleResult    
+        if (!entity)
+            throw new Exception('Record does not exist or has already been deleted.')
+        return entity 
+    }
+
+
+    @ProxyMethod
+    public def submitForApproval(entity){
+        entity.state = STATE_FORAPPROVAL
+        workflowRef.insert(entity)
+        updateFaasUpdate(entity)
+        return entity 
+    }
+
+
+    @ProxyMethod
+    public def disapproveFaasUpdate( entity ) {
+        workflowRef.delete(entity)    
+        entity.state = STATE_DRAFT
+        updateFaasUpdate(entity)
+        return entity 
+    }
+
+
+    @ProxyMethod
+    public def approveFaasUpdate( entity ) {
+        entity.state = STATE_APPROVED
+        workflowRef.insert(entity)   
+        updateFaasUpdate(entity)
+        updateInfo(entity)
+        txnRef.delete(entity.objid)
+        return entity 
+    }
+
+
+
+    @ProxyMethod
+    public def initPrevInfo(entity){
+        def faas = null
+        try {
+            faas = faasSvc.openFaas(entity.faasid)
+        }
+        catch(e){
+            //ignore
+        }
+
+        entity.prevtitletype = faas?.titletype
+        entity.prevtitleno = faas?.titleno
+        entity.prevtitledate = faas?.titledate
+        entity.prevtaxpayerid = faas?.taxpayerid
+        entity.prevtaxpayername = faas?.taxpayername
+        entity.prevtaxpayeraddress = faas?.taxpayeraddress
+        entity.prevownername = faas?.ownername
+        entity.prevowneraddress = faas?.owneraddress
+        entity.prevadministratorid = faas?.administratorid
+        entity.prevadministratorname = faas?.administratorname
+        entity.prevadministratoraddress = faas?.administratoraddress
+        entity.prevbeneficiaryid = faas?.beneficiaryid
+        entity.prevbeneficiary = faas?.beneficiary
+        entity.prevbeneficiaryaddress = faas?.beneficiaryaddress
+        entity.prevrestrictionid = faas?.restrictionid
+        entity.prevmemoranda = faas?.memoranda
+        entity.prevsurveyno = faas?.rpu?.rp?.surveyno
+        entity.prevcadastrallotno = faas?.rpu?.rp?.cadastrallotno
+        entity.prevblockno = faas?.rpu?.rp?.blockno
+        entity.prevstreet = faas?.rpu?.rp?.street
+        entity.prevpurok = faas?.rpu?.rp?.purok
+        entity.prevnorth = faas?.rpu?.rp?.north
+        entity.preveast = faas?.rpu?.rp?.east
+        entity.prevsouth = faas?.rpu?.rp?.south
+        entity.prevwest = faas?.rpu?.rp?.west
+
+        initEntityInfoFromFaas(entity, faas)
+
+        return entity
+    }
+
+    void initEntityInfoFromFaas(entity, faas){
+        if ( ! faas ) return
+        entity.faas.titletype = faas.titletype
+        entity.faas.titleno = faas.titleno
+        entity.faas.titledate = faas.titledate
+        entity.faas.taxpayerid = faas.taxpayerid
+        entity.faas.taxpayername = faas.taxpayername
+        entity.faas.taxpayeraddress = faas.taxpayeraddress
+        entity.faas.ownername = faas.ownername
+        entity.faas.owneraddress = faas.owneraddress
+        entity.faas.administratorid = faas.administratorid
+        entity.faas.administratorname = faas.administratorname
+        entity.faas.administratoraddress = faas.administratoraddress
+        entity.faas.beneficiaryid = faas.beneficiaryid
+        entity.faas.beneficiary = faas.beneficiary
+        entity.faas.beneficiaryaddress = faas.beneficiaryaddress
+        entity.faas.restrictionid = faas.restrictionid
+        entity.faas.memoranda = faas.memoranda
+
+
+        entity.rp.surveyno = faas.rpu.rp.surveyno
+        entity.rp.cadastrallotno = faas.rpu.rp.cadastrallotno
+        entity.rp.blockno = faas.rpu.rp.blockno
+        entity.rp.purok = faas.rpu.rp.purok
+        entity.rp.street = faas.rpu.rp.street
+        entity.rp.north = faas.rpu.rp.north
+        entity.rp.east = faas.rpu.rp.east
+        entity.rp.south = faas.rpu.rp.south
+        entity.rp.west = faas.rpu.rp.west
+    }
+
+
+    void updateInfo(entity){
+        def faas = faasSvc.openFaas(entity.faasid)
+        faas.putAll(entity.faas)
+        faasSvc.updateFaasOnly(faas)
+
+        def rp = faas.rpu.rp 
+        rp.putAll(entity.rp)
+        rpSvc.updateRealProperty(rp)
+    }
+
+    void validateFaas(entity){
+        //validate state 
+        def state = faasSvc.getState(entity.faasid)
+        if ( state == 'CANCELLED') throw new Exception('FAAS has already been cancelled.')
+        if ( state != 'CURRENT') throw new Exception('FAAS is not yet approved. Only current record is allowed.')
+    }
+}
+
+

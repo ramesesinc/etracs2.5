@@ -1,0 +1,64 @@
+<schema>
+    <element name="rptledger" tablename="rptledger">
+        <field name="objid" primary="true" />
+        <field name="state" required="true" />
+        <field name="faasid" required="true" />
+        <field name="basic" required="true" type="decimal" />
+        <field name="basicint" required="true" type="decimal" />
+        <field name="basicdisc" required="true" type="decimal" />
+        <field name="basiccredit" required="true" type="decimal" />
+        <field name="sef" required="true" type="decimal" />
+        <field name="sefint" required="true" type="decimal" />
+        <field name="sefdisc" required="true" type="decimal" />
+        <field name="sefcredit" required="true" type="decimal" />
+        <field name="nextbilldate" />
+        <field name="lastyearpaid" required="true" type="integer" />
+        <field name="lastqtrpaid" required="true" type="integer" />
+        <field name="firstqtrpaidontime" required="true" type="boolean" />
+        <field name="qtrlypaymentavailed" required="true" type="boolean" />
+        <field name="qtrlypaymentpaidontime" required="true" type="boolean" />
+        <field name="posteditemyear" required="true" type="integer"/>
+    </element>
+
+    <element name="faas" tablename="rptledgerfaas">
+        <field name="objid" primary="true" />
+        <field name="state" required="true" />
+        <field name="rptledgerid" required="true" />
+        <field name="faasid" />
+        <field name="tdno" required="true" />
+        <field name="txntype_objid" required="true" />
+        <field name="classification_objid" required="true" />
+        <field name="actualuse_objid"  />
+        <field name="taxable" required="true" type="boolean" />
+        <field name="backtax" required="true" type="boolean" />
+        <field name="fromyear" required="true" type="integer" />
+        <field name="fromqtr" required="true" type="integer" />
+        <field name="toyear" required="true" type="integer" />
+        <field name="toqtr" required="true" type="integer" />
+        <field name="assessedvalue" required="true" type="decimal" />
+        <field name="systemcreated" required="true" type="boolean" />
+    </element>
+
+    <element name="item" tablename="rptledgeritem">
+        <field name="objid" primary="true" />
+        <field name="state" required="true" />
+        <field name="rptledgerid" required="true" />
+        <field name="rptledgerfaasid" required="true" />
+        <field name="year" required="true" type="integer" />
+        <field name="qtr" required="true" type="integer" />
+        <field name="assessedvalue" required="true" type="decimal" />
+        <field name="qtrlyav" required="true" type="decimal" />
+        <field name="basic" required="true" type="decimal" />
+        <field name="basicint" required="true" type="decimal" />
+        <field name="basicdisc" required="true" type="decimal" />
+        <field name="basiccredit" required="true" type="decimal" />
+        <field name="basicpaid" required="true" type="decimal" />
+        <field name="basicintpartial" required="true" type="decimal" />
+        <field name="sef" required="true" type="decimal" />
+        <field name="sefint" required="true" type="decimal" />
+        <field name="sefdisc" required="true" type="decimal" />
+        <field name="sefcredit" required="true" type="decimal" />
+        <field name="sefpaid" required="true" type="decimal" />
+        <field name="sefintpartial" required="true" type="decimal" />
+    </element>
+</schema>

@@ -1,0 +1,45 @@
+"rpu.*|classification|exemption|selectedStructure|bldgtype|bldgkindbucc|dtcompleted|dtoccupied|depreciation|percentcompleted|basevalue"  [allowEdit == true] {
+    enabled:true;
+}
+
+
+"basevalue" [rpu.bldgkindbucc?.basevaluetype == 'fix'] {
+    enabled:false;
+}
+
+"basevalue" [rpu.bldgkindbucc?.basevaluetype != 'fix'] {
+    enabled:true;
+}
+
+"rpu.swornamount|rpu.useswornamount" [ rpu.hasswornstatement == true ] {
+    enabled:true;
+}
+
+"rpu.swornamount|rpu.useswornamount" [ rpu.hasswornstatement != true ] {
+    enabled:false;
+}
+
+
+"exemption" [ rpu.taxable == true ] {
+    enabled:false;
+}
+
+"exemption" [ rpu.taxable == false ] {
+    enabled:true;
+}
+
+"depreciation" [ autoDepreciate == false ] {
+    enabled:true;
+}
+
+"depreciation" [ autoDepreciate == true ] {
+    enabled:false;
+}
+
+"rpu.*|classification|exemption|selectedStructure|bldgtype|bldgkindbucc|dtcompleted|dtoccupied|bldgage|depreciation|percentcompleted|basevalue"  [allowEdit == false] {
+    enabled:false;
+}
+
+"rpu.depreciationvalue|rpu.floorcount" [true == true]{
+    enabled:false;
+}

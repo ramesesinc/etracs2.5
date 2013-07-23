@@ -1,0 +1,27 @@
+import com.rameses.annotations.*;
+import com.rameses.eserver.*;
+import com.rameses.common.*;
+import java.rmi.server.UID;
+
+class ExemptionTypeLookupService
+{
+	@PersistenceContext('main')
+	def em
+
+	@Service('LookupUtilService')
+	def lookupSvc 
+	
+	
+	@ProxyMethod
+	public def lookupExemptionTypes( params ) {
+		return lookupSvc.lookup( 'exemptiontype:lookupExemptionTypes', params )
+	}
+
+
+	@ProxyMethod
+	public def lookupById( objid ) {
+		return em.sqlContext.createNamedQuery('exemptiontype:lookupById')
+				.setParameter('objid', objid).singleResult
+	}
+	
+}

@@ -1,0 +1,329 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="12.0">
+  <zoom_level>9</zoom_level>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>450</x>
+      <y>423</y>
+      <w>84</w>
+      <h>116</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;
+m1=1
+m2=*
+buccs</panel_attributes>
+    <additional_attributes>45;27;45;99</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>279</x>
+      <y>162</y>
+      <w>170</w>
+      <h>179</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;
+m1=1
+m2=*
+assesslevels</panel_attributes>
+    <additional_attributes>27;162;153;27</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>432</x>
+      <y>45</y>
+      <w>135</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>propertyclassification</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>63</x>
+      <y>252</y>
+      <w>243</w>
+      <h>180</h>
+    </coordinates>
+    <panel_attributes>bldgrysetting
+--
+objid
+state
+ry
+predominant
+depreciatecoreanditemseparately
+computedepreciationbasedonschedule
+straightdepreciation
+calcbldgagebasedondtoccupied
+appliedto
+previd</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>513</x>
+      <y>423</y>
+      <w>224</w>
+      <h>98</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;
+m1=1
+m2=*
+depreciations</panel_attributes>
+    <additional_attributes>27;27;207;81</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>432</x>
+      <y>36</y>
+      <w>120</w>
+      <h>125</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;
+m1=1
+m2=*
+classification</panel_attributes>
+    <additional_attributes>63;27;63;108</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>432</x>
+      <y>522</y>
+      <w>135</w>
+      <h>234</h>
+    </coordinates>
+    <panel_attributes>bldgkindbucc
+--
+objid
+bldgtypeid
+bldgrysettingid
+bldgkind_objid
+basevaluetype
+basevalue
+minbasevalue
+maxbasevalue
+gapvalue
+minarea
+maxarea
+bldgclass
+previd</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>279</x>
+      <y>306</y>
+      <w>170</w>
+      <h>62</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;
+m1=1
+m2=*
+bldgtypes</panel_attributes>
+    <additional_attributes>27;45;153;36</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>648</x>
+      <y>504</y>
+      <w>144</w>
+      <h>126</h>
+    </coordinates>
+    <panel_attributes>bldgtype_depreciation
+--
+objid
+bldgtypeid
+bldgrysettingid
+agefrom
+ageto
+rate</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>279</x>
+      <y>351</y>
+      <w>170</w>
+      <h>242</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;
+m1=1
+m2=*
+</panel_attributes>
+    <additional_attributes>27;27;153;225</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>432</x>
+      <y>144</y>
+      <w>135</w>
+      <h>153</h>
+    </coordinates>
+    <panel_attributes>bldgassesslevel
+--
+objid
+bldgrysettingid
+classification_objid
+code
+name
+fixrate
+rate
+previd</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>540</x>
+      <y>333</y>
+      <w>188</w>
+      <h>63</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;
+m1=1
+m2=*
+storeyadjustments</panel_attributes>
+    <additional_attributes>27;45;171;45</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>540</x>
+      <y>153</y>
+      <w>125</w>
+      <h>63</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;
+m1=1
+m2=*
+ranges</panel_attributes>
+    <additional_attributes>27;45;108;45</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>171</x>
+      <y>171</y>
+      <w>44</w>
+      <h>98</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;
+m1=1
+m2=*</panel_attributes>
+    <additional_attributes>27;81;27;27</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>711</x>
+      <y>333</y>
+      <w>171</w>
+      <h>135</h>
+    </coordinates>
+    <panel_attributes>bldgtype_storeyadjustment
+--
+objid
+bldgtypeid
+bldgrysettingid
+floorno
+rate
+previd</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>180</x>
+      <y>405</y>
+      <w>44</w>
+      <h>107</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;
+m1=1
+m2=*</panel_attributes>
+    <additional_attributes>27;27;27;90</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>135</x>
+      <y>495</y>
+      <w>144</w>
+      <h>153</h>
+    </coordinates>
+    <panel_attributes>bldgadditionalitem
+--
+objid
+bldgrysettingid
+code
+name
+unit
+expr
+previd</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>144</x>
+      <y>99</y>
+      <w>117</w>
+      <h>99</h>
+    </coordinates>
+    <panel_attributes>rysetting_lgu
+--
+rysettingid
+lguid
+lguname
+settingtype</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>648</x>
+      <y>144</y>
+      <w>162</w>
+      <h>144</h>
+    </coordinates>
+    <panel_attributes>bldgassesslevelrange
+--
+objid
+bldgassesslevelid
+bldgrysettingid
+mvfrom
+mvto
+rate
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>432</x>
+      <y>315</y>
+      <w>135</w>
+      <h>135</h>
+    </coordinates>
+    <panel_attributes>bldgtype
+--
+objid
+bldgrysettingid
+code
+name
+residualrate
+basevaluetype
+previd</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>

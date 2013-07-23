@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workunit>
+    <invokers>
+        <invoker type="card:create" caption="ID Card Information (New)" target="popup" />
+        <invoker type="card:edit" action="edit" caption="ID Card Information" target="popup" />
+    </invokers>
+    <code>
+        <![CDATA[
+            import com.rameses.rcp.common.*
+            import com.rameses.rcp.annotations.*
+            import com.rameses.osiris2.client.*
+            import com.rameses.osiris2.common.*
+            
+            class CardCreateController
+            {
+                def addHandler       //handler
+                def onupdate    //handler
+                def card = [:] 
+                def mode = 'create' 
+
+                void edit(){ mode = 'edit' }
+                                
+                def cancel() { return '_close' }
+                
+                def save() {
+                    if( mode == 'create' && addHandler ) addHandler( card )
+                    else if( mode == 'edit' && onupdate ) onupdate( card )
+                    return '_close' 
+                }
+                
+                def idTypes = LOV.CARD_TYPES
+            }
+        ]]>
+    </code>
+    <pages>
+        <page template="com.rameses.enterprise.entity.ui.EntityCardPage"/>
+    </pages>
+</workunit>

@@ -1,0 +1,17 @@
+import com.rameses.annotations.*;
+import com.rameses.common.*;
+
+class MachineListService
+{
+	@PersistenceContext('main')
+	def em
+	
+	@Service('ListUtilService')
+	def utilSvc 
+	
+	@ProxyMethod
+	public List getList( Map params ) {
+		return utilSvc.getList( 'machine:getList', params )
+	}
+
+}

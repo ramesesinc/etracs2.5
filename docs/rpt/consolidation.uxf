@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="12.0">
+  <zoom_level>10</zoom_level>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>610</x>
+      <y>50</y>
+      <w>140</w>
+      <h>120</h>
+    </coordinates>
+    <panel_attributes>consolidatedland
+--
+objid
+consolidationid
+landfaasid
+rpuid
+rpid
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>260</x>
+      <y>30</y>
+      <w>190</w>
+      <h>730</h>
+    </coordinates>
+    <panel_attributes>consolidation
+--
+objid
+state
+txnno
+txndate
+ry
+txntype_objid
+autonumber
+effectivityyear
+effectivityqtr
+newtdno
+newutdno
+newtitletype
+newtitleno
+newtitledate
+memoranda
+lguid
+--
+newrpuid
+newrpid
+newfaasid
+--
+administrator_objid
+administrator_name
+administrator_address
+taxpayer_objid
+taxpayer_name
+taxpayer_address
+owner_name
+owner_address
+--
+appraiser_objid
+appraiser_name
+appraiser_title
+appraiser_dtsigned
+recommender_objid
+recommender_name
+recommender_title
+recommender_dtsigned
+taxmapper_objid
+taxmapper_name
+taxmapper_title
+taxmapper_dtsigned
+approver_objid
+approver_name
+approver_title
+approver_dtsigned</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>600</x>
+      <y>200</y>
+      <w>170</w>
+      <h>250</h>
+    </coordinates>
+    <panel_attributes>consolidatedaffectedrpu
+--
+objid
+consolidationid
+landfaasid
+prevfaasid
+newrpid
+newrpuid
+newfaasid
+newtdno
+newutdno
+newsuffix
+memoranda
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>90</x>
+      <y>500</y>
+      <w>190</w>
+      <h>70</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;-
+taxmapper</panel_attributes>
+    <additional_attributes>170;50;30;50</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>90</x>
+      <y>480</y>
+      <w>190</w>
+      <h>70</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;-
+recommender</panel_attributes>
+    <additional_attributes>170;50;30;50</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>0</x>
+      <y>480</y>
+      <w>120</w>
+      <h>140</h>
+    </coordinates>
+    <panel_attributes>signatory
+--
+objid
+personnelid
+name
+title
+dtsigned
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>90</x>
+      <y>460</y>
+      <w>190</w>
+      <h>70</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;-
+appraiser</panel_attributes>
+    <additional_attributes>170;50;30;50</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>420</x>
+      <y>210</y>
+      <w>200</w>
+      <h>70</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-
+affectedrpus</panel_attributes>
+    <additional_attributes>30;50;180;50</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>420</x>
+      <y>40</y>
+      <w>210</w>
+      <h>70</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-
+consolidatedlands</panel_attributes>
+    <additional_attributes>30;50;190;50</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>90</x>
+      <y>520</y>
+      <w>190</w>
+      <h>70</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;-
+approver</panel_attributes>
+    <additional_attributes>170;50;30;50</additional_attributes>
+  </element>
+</diagram>

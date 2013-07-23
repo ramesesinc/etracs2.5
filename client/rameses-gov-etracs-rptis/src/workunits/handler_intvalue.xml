@@ -1,0 +1,45 @@
+<workunit>
+    <invokers>
+        <invoker type="handler:intvalue" caption="Integer Value Handler" />
+    </invokers>
+    
+    <code>
+        
+<![CDATA[ 
+
+
+    import com.rameses.rcp.common.*
+    import com.rameses.rcp.annotations.*
+
+    class IntegerValueHandlerController
+    {
+        def param;
+        
+        def value;
+        
+        void setValue(value){
+            this.value = value;
+            if (value != null) {
+                checkRange()
+            }
+            param.intvalue = value 
+        }
+        
+        void checkRange(){
+            if (param.type.toLowerCase().startsWith('range')){
+                if (value < param.minvalue || value > param.maxvalue){
+                    throw new Exception('Value must be between ' + param.minvalue + ' and ' + param.maxvalue + '.')
+                }
+            }
+        }
+    }  
+
+    
+]]>
+
+    </code>
+    
+    <pages>
+        <page template="com.rameses.gov.etracs.rpt.common.IntegerValuePage" />
+    </pages>
+</workunit>

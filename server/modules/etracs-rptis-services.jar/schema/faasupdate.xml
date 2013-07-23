@@ -1,0 +1,54 @@
+<schema>
+	<element name="faasupdate" tablename="faasupdate">
+		<field name="objid" primary="true" />
+		<field name="state" required="true"/>
+		<field name="txnno" required="true" />
+		<field name="txndate" required="true" />
+		<field name="faasid" required="true" />
+		<field name="prevtitletype" />
+		<field name="prevtitleno" />
+		<field name="prevtitledate" />
+		<field name="prevtaxpayerid" required="true" />
+		<field name="prevtaxpayername" required="true" />
+		<field name="prevtaxpayeraddress" required="true" />
+		<field name="prevownername" required="true" />
+		<field name="prevowneraddress" required="true" />
+		<field name="prevadministratorid"  />
+		<field name="prevadministratorname"  />
+		<field name="prevadministratoraddress"  />
+		<field name="prevrestrictionid"  />
+		<field name="prevmemoranda" required="true" />
+		<field name="prevsurveyno"  />
+		<field name="prevcadastrallotno" required="true" />
+		<field name="prevblockno"  />
+		<field name="prevpurok"  />
+		<field name="prevstreet"  />
+		<field name="prevnorth" required="true" />
+		<field name="preveast" required="true" />
+		<field name="prevsouth" required="true" />
+		<field name="prevwest" required="true" />
+
+		<field name="faas_titletype"  />
+		<field name="faas_titleno"  />
+		<field name="faas_titledate"  />
+		<field name="faas_taxpayerid" required="true" />
+		<field name="faas_taxpayername" required="true" />
+		<field name="faas_taxpayeraddress" required="true" />
+		<field name="faas_ownername" required="true" />
+		<field name="faas_owneraddress" required="true" />
+		<field name="faas_administratorid" />
+		<field name="faas_administratorname" />
+		<field name="faas_administratoraddress" />
+		<field name="faas_restrictionid" />
+		<field name="faas_memoranda" required="true" />
+		
+		<field name="rp_surveyno" />
+		<field name="rp_cadastrallotno" required="true" />
+		<field name="rp_blockno" />
+		<field name="rp_street" />
+		<field name="rp_north" required="true" />
+		<field name="rp_east" required="true" />
+		<field name="rp_south" required="true" />
+		<field name="rp_west" required="true" />
+	</element>
+</schema>

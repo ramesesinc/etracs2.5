@@ -1,0 +1,51 @@
+"faas.*|appraiser|recommender|approver|taxpayer|administrator" [allowEdit == true] {
+    enabled:true;
+}
+
+
+"taxpayer|faas.owner.*|faas.taxpayer.*|faas.administrator.*"[ allowEditOwner == false ] {
+    enabled:false;
+}
+
+
+"faas.rpu.rp.*" [ allowEditPinInfo == false  ] {
+    enabled:false;
+}
+
+
+"faas.prev.*" [ allowEditPrevInfo == false  ] {
+    enabled:false;
+}
+
+"faas.tdno" [ faas.autonumber == true] {
+    enabled:false;
+}
+
+"faas.titleno|faas.titledate" [ faas.titletype == null] {
+    enabled:false;
+}
+
+"faas.titletype" [faas.txntype == 'TR' && faas.datacapture == false ] {
+    enabled:false;
+}
+
+"faas.tdno" [ enableTdno == true ] {
+    enabled:true;
+}
+
+"faas.tdno" [ enableTdno == false ] {
+    enabled:false;
+}
+
+"faas.*|appraiser|recommender|approver|taxpayer|administrator" [allowEdit == false] {
+    enabled:false;
+}
+
+"faas.cancelnote" [faas.datacapture == true ] {
+    enabled:false;
+}
+
+
+"faas.backtaxyrs|faas.rpu.totalmv|faas.rpu.totalav" [  true == true ] {
+    enabled:false;
+}

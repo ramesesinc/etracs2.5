@@ -1,0 +1,12 @@
+"entity.*" [ allowEdit == true ] {
+    enabled:true;
+}
+
+
+"entity.docstate|entity.faas.*|entity.rp.*" [entity.tdno == null] {
+    enabled:false;
+}
+
+"entity.tdno|entity.docstate|entity.faas.*|entity.rp.*" [allowEdit == false] {
+    enabled:false;
+}

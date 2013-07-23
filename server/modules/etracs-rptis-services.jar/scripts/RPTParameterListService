@@ -1,0 +1,34 @@
+import com.rameses.annotations.*;
+import com.rameses.common.*;
+
+class RPTParameterListService
+{
+	@PersistenceContext('main')
+	def em
+
+	@Service('ListUtilService')
+	def listSvc 
+	
+	@ProxyMethod
+	public List getList( Map params ) {
+		return listSvc.getList( 'rptparameter:getList', params )
+	}
+
+	@ProxyMethod
+    public List getFieldList() {
+        return [
+            [objid:'SYS_BASE_MARKET_VALUE', param_name:'SYS_BASE_MARKET_VALUE', param_caption:'BASE MARKET VALUE'],
+            [objid:'SYS_MARKET_VALUE', param_name:'SYS_MARKET_VALUE', param_caption:'MARKET VALUE'],
+            [objid:'SYS_BASE_VALUE', param_name:'SYS_BASE_VALUE', param_caption:'BASE VALUE'],
+            [objid:'SYS_UNIT_VALUE', param_name:'SYS_UNIT_VALUE', param_caption:'UNIT VALUE'],
+            [objid:'SYS_AREA', param_name:'SYS_AREA', param_caption:'AREA'],
+            [objid:'SYS_ASSESSED_VALUE', param_name:'SYS_ASSESSED_VALUE', param_caption:'ASSESSED VALUE'],
+        ]
+    }
+
+    @ProxyMethod
+    public List getVariableList() {
+        return getFieldList() + getList(null)
+    }
+	
+}

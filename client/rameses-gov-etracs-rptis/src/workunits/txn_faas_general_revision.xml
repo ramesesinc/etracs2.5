@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workunit extends="rpt_wtemplates/FaasController.xml">
+    <invokers>
+        <invoker type="faas_GR:open" action="open" />
+        
+        <invoker folderid="/explorer/txn/rpt/faas" action="initGeneralRevision"  caption="General Revision" index="13"
+            txntypeid="GR" txntype="General Revision" newledger="true" newrpu="true" newrealproperty="true"/>
+
+         <invoker type="quick_launcher" code="GR01" action="initGeneralRevision"  caption="General Revision" index="13"
+            txntypeid="GR" txntype="General Revision" newledger="true" newrpu="true" newrealproperty="true"/>            
+    </invokers>
+        
+<code class="com.rameses.gov.etracs.rpt.faas.controller.GeneralRevisionFaasController">
+
+    
+</code>
+
+<pages>
+    <page name="grinit" template="com.rameses.gov.etracs.rpt.faas.ui.FAASGRInitPage"/>
+</pages>
+</workunit>
+
+

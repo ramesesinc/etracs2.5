@@ -1,0 +1,37 @@
+<workunit extends="wtemplates/ListController.xml">
+    <invokers>
+        <invoker folderid="/explorer/txnmgmt/rpt" caption="Updated Faases"  target="window" index="113" />
+        <invoker type="quick_launcher" code="UF000" caption="Updated Faases" />
+    </invokers>
+    <code>
+        import com.rameses.rcp.common.*
+        import com.rameses.rcp.annotations.*
+        import com.rameses.osiris2.client.*
+        import com.rameses.osiris2.common.*
+        import com.rameses.gov.etracs.rpt.common.RPTUtil;
+        
+        class UpdatedFaasListController extends ListController
+        {
+            String serviceName = 'FAASUpdateService'
+            
+            String formTarget = 'window'
+            
+            public String getEntityName(){ 
+                return 'faasupdate' 
+            }
+            
+            int getRows() { return 50 }
+            
+            Column[] getColumns(){
+                return [
+                    new Column(name:"state", caption:"State", width:100),
+                    new Column(name:"txnno", caption:"TXn No.", width:80),
+                    new Column(name:"tdno", caption:"TD No.", width:120),
+                    new Column(name:"fullpin", caption:"PIN", width:150),
+                    new Column(name:"classification.code", caption:"Class", width:50),
+                    new Column(name:"ownername", caption:"Owner Name", width:200),
+                ]
+            }
+        }
+    </code>
+</workunit>

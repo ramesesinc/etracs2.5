@@ -1,0 +1,10 @@
+<schema>
+    <element name="signatory" tablename="signatory">
+        <field name="objid" required="true" />
+        <field name="personnelid" />
+        <field name="name" required="true" />
+        <field name="title" required="true" />
+        <field name="dtsigned" required="true" />
+    </element>
+</schema>
+

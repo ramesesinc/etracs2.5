@@ -1,0 +1,31 @@
+<workunit extends="mtop_wtemplates/application.xml">
+    <invokers>
+        <invoker folderid="/explorer/txn/mtop" action="init" caption="New Application" />
+    </invokers>
+    
+    <code>
+    <![CDATA[
+        import com.rameses.rcp.annotations.*
+        import com.rameses.rcp.common.*
+        import com.rameses.osiris2.client.*
+        import com.rameses.osiris2.common.*
+        import com.rameses.gov.etracs.mtop.application.*
+        
+        class NewMTOPApplicationController extends ApplicationPageFlowController
+        {   
+            Map initializeApplication() {
+                return [
+                    state   : 'DRAFT',
+                    txndate :  new Date(),
+                    txntype : 'NEW',
+                    txnmode : 'ONLINE'
+                ]
+            }
+        }
+    ]]>
+    </code>
+    
+    <pages>
+        <page name="initpage" template="com.rameses.gov.etracs.mtop.application.ApplicationInitPageA" />
+    </pages>
+</workunit>

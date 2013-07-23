@@ -1,0 +1,26 @@
+<workunit extends="wtemplates/ListController.xml">
+    <invokers>
+        <invoker folderid="/explorer/master/rpt" caption="Kind of Buildings"  target="window" index="4" />
+        <invoker type="quick_launcher" code="KB00" caption="Kind of Buildings" role="MASTER_ENCODER" permission="bldgkind.view"/>
+    </invokers>
+    <code>
+        import com.rameses.rcp.common.*
+        import com.rameses.rcp.annotations.*
+        import com.rameses.osiris2.client.*
+        import com.rameses.osiris2.common.*
+        
+        class BldgKindListController extends ListController
+        {
+            String serviceName = 'BldgKindListService'
+            String entityName  = 'bldgkind'
+            
+            Column[] getColumns(){
+                return [
+                    new Column(name:"code", caption:"Code", width:80),
+                    new Column(name:"name", caption:"Title", width:250),
+                    new Column(name:"state", caption:"State", width:100),
+                ]
+            }
+        }
+    </code>
+</workunit>

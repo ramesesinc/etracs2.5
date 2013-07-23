@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workunit extends="wtemplates/ListController.xml">
+    <invokers>
+        <invoker folderid="/explorer/txnmgmt/treasury" caption="AF Controls" index="1" />
+        
+        <invoker type="formActions" action="close" caption="Close" mnemonic="c" immediate="true"/>
+        <!--
+        <invoker type="formActions" action="createSerial" caption="New Serial" mnemonic="n" />
+        <invoker type="formActions" action="createNonSerial" caption="New Non-Serial" mnemonic="r" />
+        -->
+        <invoker type="formActions" action="open" caption="Open" mnemonic="o" visibleWhen="#{selectedEntity != null and selectedEntity.state == 'PENDING' }" immediate="true"/>
+        <!--
+        <invoker type="formActions" action="remove" caption="Delete" mnemonic="d" visibleWhen="#{selectedEntity != null}"/>
+        <invoker type="formActions" action="changeMode" caption="Change Mode" mnemonic="m" visibleWhen="#{selectedEntity != null and selectedEntity.state != 'PENDING'}"/>
+        <invoker type="formActions" action="transfer" caption="Transfer" mnemonic="t" visibleWhen="#{selectedEntity != null and selectedEntity.state == 'APPROVED'}"/>
+        <invoker type="formActions" action="adjustQty" caption="Adjust Quantity" mnemonic="j" visibleWhen="#{selectedEntity != null and selectedEntity.state == 'APPROVED' and selectedEntity.aftype == 'nonserial'}"/>
+        -->
+    </invokers>
+    <code>
+        <![CDATA[
+            import com.rameses.rcp.common.*
+            import com.rameses.rcp.annotations.*
+            import com.rameses.osiris2.client.*
+            import com.rameses.osiris2.common.*
+
+            class AFControlTxnMgmtController extends BasicListController
+            {
+                @Binding
+                def binding
+
+                @Service('AFControlListService')
+                def svc
+                
+                @Service('UserListService')
+                def userSvc
+
+                def collector
+                def af
+                def list
+                def afcontrol
+                def queryForm = new Opener(outcome:'query')
+                def aflist = InvokerUtil.lookupOpeners('collection:form', [:])
+                def title = 'AF Controls'
+                /*
+                def createSerial() {
+                    return InvokerUtil.lookupOpener('afcontrolserial:create', [oncreate:{ search() }] )
+                }
+
+                def createNonSerial() {
+                    return InvokerUtil.lookupOpener('afcontrolnonserial:create', [oncreate:{ search() }] )
+                }
+                /*
+                def transfer() {
+                    return InvokerUtil.lookupOpener('afcontroltransfer.create', [
+                        afcontrol  : selectedItem, 
+                        ontransfer : { afcontrol ->
+                            selectedItem.putAll( afcontrol )
+                            binding.refresh( 'selectedItem' )
+                        }
+                    ])
+                }
+                
+                def open() {
+                    return InvokerUtil.lookupOpener("afcontrol${selectedEntity.aftype}:open", [
+                        afcontrol:selectedEntity, 
+                        aftype:selectedEntity.aftype,
+                        aflist:aflist,
+                        collectorlist:collectorlist
+                    ])
+                }
+
+                /*void remove() {
+                    if( MsgBox.confirm('Delete selected control?') ) {
+                        //svc.deleteAFControl( selectedItem )
+                        list.remove( selectedItem )
+                        listHandler.load()
+                    }
+                }*/
+
+                /*def changeMode() {
+                    return InvokerUtil.lookupOpener( 'changemode', [
+                        oldmode  : selectedItem.mode,
+                        onselect : { newmode ->
+                            //svc.changeMode( selectedItem.objid, newmode )
+                            selectedItem.mode   = newmode
+                            selectedItem.active = 0
+                            binding.refresh( 'selectedItem' )
+                        }
+                    ])
+                }*/
+
+                /*def adjustQty() {
+                    return InvokerUtil.lookupOpener('afcontroladjust.create', [
+                        afcontrol : selectedItem,
+                        onupdate  : { afcontrol ->  
+                            selectedItem.putAll( afcontrol )
+                            binding.refresh()
+                        }
+                    ])
+                }*/
+                
+                Column[] getColumns() {
+                    return [
+                        new Column(name:'afid', caption:'AF No.', maxWidth:80),
+                        new Column(name:'aftype', caption:'Type', maxWidth:80),
+                        new Column(name:'state', caption:'State', maxWidth:150),
+                        new Column(name:'stubno', caption:'Stub No.', maxWidth:120),
+                        new Column(name:'startseries', caption:'Start Series', format:'0000000'),
+                        new Column(name:'endseries', caption:'End Series', format:'0000000'),
+                        new Column(name:'currentseries', caption:'Current Series', format:'0000000'),
+                        new Column(name:'qtyreceived', caption:'Qty. Received', type:'integer'),
+                        new Column(name:'balance', caption:'Balance', type:'integer'),
+                        new Column(name:'mode', caption:'Mode'),
+                        new Column(name:'assignedto_name', caption:'Assigned To'),
+                    ]
+                }
+                
+                void setCollector( collector ) {
+                    this.collector = collector
+                    search()
+                }
+                
+                void setAf( af ) {
+                    this.af = af
+                    search()
+                }
+                
+                def close() { return "_close" }
+                
+                List fetchList(Map params) {
+                    if( collector ) {
+                        params.collector = collector
+                        params.afid = (af? af.properties.afid:'')
+                        return svc.getOpenAFControlList( params )
+                    }
+                    return []
+                }
+
+                List getCollectorlist() {
+                    return userSvc.getCollectorList()
+                }
+                
+            }
+        ]]>
+    </code>
+    <pages>
+        <page name="query" template="com.rameses.gov.etracs.treasury.collection.af.AFControlQueryFormPage"/>
+    </pages>
+</workunit>

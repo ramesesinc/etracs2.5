@@ -1,0 +1,30 @@
+import com.rameses.annotations.*
+import com.rameses.eserver.*;
+import com.rameses.common.*;
+
+class RPTCertificationNoPropertyService 
+{
+    @PersistenceContext('main')
+    def em;
+
+    @Service('RPTCertificationService')
+    def certSvc 
+
+    
+	@ProxyMethod
+	public def createCertification( cert ) {
+		def prop = em.sqlContext.createNamedQuery('rptcertification:getProperties')
+						.setParameter('taxpayerid', cert.taxpayerid).singleResult
+		if (prop)
+			throw new Exception('Requester ' + cert.requestedby + ' has existing properties.')
+		return certSvc.createCertification(cert)
+	}
+
+	@ProxyMethod
+	public def openCertification(objid) {
+		def cert = certSvc.openCertification(objid)
+		if (! cert ) 
+			throw new Exception('Certification does not exist or has already been deleted.')
+		return cert 
+	}
+}

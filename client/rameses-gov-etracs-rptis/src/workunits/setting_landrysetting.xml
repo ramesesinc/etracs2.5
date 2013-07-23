@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workunit extends="rpt_wtemplates/rysetting.xml">
+    <invokers>
+        <invoker type="landrysetting:create" action="create" caption="Land Revision Setting" target="window"/>
+        <invoker type="landrysetting:open" action="open" caption="Edit Land Revision Setting" target="window"/>
+        <invoker type="landrysetting:copy" action="copy" caption="Edit Land Revision Setting" target="window"/>
+    </invokers>
+    
+    <code class="com.rameses.gov.etracs.rpt.rysetting.landrysetting.ui.LandRySettingController" />
+    
+    <pages>
+        <page template="com.rameses.gov.etracs.rpt.rysetting.landrysetting.ui.LandRYSettingPage"/>
+    </pages>
+</workunit>

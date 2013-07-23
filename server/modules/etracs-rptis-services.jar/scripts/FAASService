@@ -1,0 +1,660 @@
+import com.rameses.annotations.*
+import com.rameses.common.*
+import com.rameses.util.*
+
+
+class FAASService
+{
+
+	@PersistenceContext('rpt')	
+	def em 
+
+	@Service('Var')
+	def var 
+
+	@Service('DateService')
+	def dtSvc 
+
+	@Service('RPUService')
+	def rpuSvc
+
+	@Service('SequenceService')
+	def seqSvc
+
+	@Service('RPTTaxpayerLookupService')
+	def tpaySvc
+
+	@Service('RPTUtil')
+	def utilSvc
+
+	@Service('BarangayLookupService')
+	def brgySvc
+
+	@Service('TxnRefService')
+	def txnRef
+
+	@Service('WorkflowStateService')
+    def wsSvc 
+
+	
+
+	def SCHEMA_FAAS				= 'faas'
+	def SCHEMA_PREVIOUSFAAS		= 'faas:previousfaas'
+	def SCHEMA_BACKTAX			= 'faas:backtax'
+	
+	def STATE_INTERIM 			= 'INTERIM'
+	def STATE_FORAPPROVAL 		= 'FORAPPROVAL'
+	def STATE_FORPROVSUBMISSION = 'FORPROVSUBMISSION'
+	def STATE_FORPROVAPPROVAL 	= 'FORPROVAPPROVAL'
+	def STATE_CURRENT 			= 'CURRENT'
+	def STATE_CANCELLED  		= 'CANCELLED'
+
+	def UTDNO_KEY 				= 'UNIQUE_TDNO'
+
+	@ProxyMethod
+	public def initDataCaptureFaas( info ) {
+		def faas 			= initFaas(info)
+		faas.datacapture 	= true
+		faas.rpu    		= rpuSvc.initRpu(info)
+		faas.previousfaases = []
+		faas.backtaxes 		= []
+		return faas
+	}
+
+
+	@ProxyMethod
+	public def initNewDiscoveryFaas(info) {
+		def faas = initDataCaptureFaas(info)
+		faas.datacapture = false
+		return faas
+	}
+
+	@ProxyMethod
+	public def initMultipleClaimFaas(info) {
+		def newfaas = initFaasTransaction(info)
+		clearOwnerInfo(newfaas)
+		newfaas.rpu.rp.claimno  = info.claimno
+		return newfaas
+	}
+
+	@ProxyMethod
+	public def initFaasTransaction( info ) {
+		def faas = openFaas( info.faas.objid )
+		validateFaasForTransaction(faas)
+
+		initNewFaasInfo(info, faas)
+		if (faas.txntype.newrpu){
+			faas.rpu.previd = faas.rpu.objid 
+			rpuSvc.generateNewIds(faas.rpu)
+			faas.rpuid 		= faas.rpu.objid 
+			faas.rpu.state 	= STATE_INTERIM
+		}
+		return faas
+	}
+
+
+	/*------------------------------------------------
+	*
+	* DOCUMENT ACTIONS
+	*
+	-------------------------------------------------*/
+
+	@ProxyMethod
+	public def openFaas( faasid ) {
+		def faas = em.read(SCHEMA_FAAS, [objid:faasid])
+		if (!faas) 
+			throw new Exception('FAAS ' + info.faas.tdno + ' does not exsits or has already been deleted. Please verify.')
+
+		faas.txntype = getTxnType( faas.txntype_objid )
+		faas.rpu = rpuSvc.openRpu( faas.rpuid )
+		faas.previousfaases = getPreviousFaases(faasid)
+		faas.backtaxes      = getBackTaxes(faasid)
+		return faas
+	}
+
+
+	@ProxyMethod
+	public def openFaasInfo(objid){
+		def faas = em.read(SCHEMA_FAAS, [objid:objid])
+		if ( faas ){
+			faas.txntype = getTxnType( faas.txntype_objid )
+		}
+		return faas 
+	}
+
+
+	@ProxyMethod
+	public def createDataCaptureFaas( faas ) {
+		faas.txntype.newrealproperty = true 
+		rpuSvc.createRpu( faas.rpu, faas.txntype )
+		faas.state = STATE_INTERIM
+		faas.utdno = generateUniqueTdNo(faas)
+		faas.rpuid = faas.rpu.objid 
+		faas.txntimestamp = dtSvc.buildCustomTimeStamp(faas.approver.dtsigned)
+		def xfaas  = EntityUtil.mapToField(faas)
+		em.validate(SCHEMA_FAAS, xfaas)
+		em.create(SCHEMA_FAAS, xfaas)
+		wsSvc.insert(xfaas)
+		postBackTaxes(faas)
+		return faas;	
+	}
+
+
+	@ProxyMethod
+	public def createFaas( faas ) {
+		checkTxnReference(faas)
+		rpuSvc.createRpu( faas.rpu, faas.txntype)
+		faas.state = STATE_INTERIM;
+		faas.utdno = generateUniqueTdNo(faas)
+		faas.rpuid = faas.rpu.objid 
+		faas.txntimestamp = dtSvc.buildCustomTimeStamp(faas.approver.dtsigned)
+		def xfaas = EntityUtil.mapToField(faas)
+		em.validate(SCHEMA_FAAS, xfaas)
+		em.create(SCHEMA_FAAS, xfaas)
+		
+		faas.previousfaases.each{
+			em.create(SCHEMA_PREVIOUSFAAS, it)
+		}
+		postBackTaxes(faas)
+		insertTxnReference(faas)
+		return faas;	
+	}
+
+	@ProxyMethod
+	public def createFaasOnly( faas ) {
+		faas.utdno = generateUniqueTdNo(faas)
+		faas.rpuid = faas.rpu.objid 
+		faas.txntimestamp = dtSvc.buildCustomTimeStamp(faas.approver.dtsigned)
+		def xfaas = EntityUtil.mapToField(faas)
+		em.validate(SCHEMA_FAAS, xfaas)
+		em.create(SCHEMA_FAAS, xfaas)
+		faas.previousfaases.each{
+			em.create(SCHEMA_PREVIOUSFAAS, it)
+		}
+		postBackTaxes(faas)
+		return faas;	
+	}
+
+
+	@ProxyMethod
+	public def updateFaas( faas ) {
+		faas.txntimestamp = dtSvc.buildCustomTimeStamp(faas.approver.dtsigned)
+		rpuSvc.updateRpu( faas.rpu )
+		faas = EntityUtil.mapToField(faas)
+		em.validate(SCHEMA_FAAS, faas)
+		em.update(SCHEMA_FAAS, faas)
+		faas = EntityUtil.fieldToMap(faas)
+		postBackTaxes(faas)
+		return faas;	
+	}
+
+
+	@ProxyMethod
+	public def updateFaasOnly( faas ) {
+		faas.txntimestamp = dtSvc.buildCustomTimeStamp(faas.approver.dtsigned)
+		faas = EntityUtil.mapToField(faas)
+		em.validate(SCHEMA_FAAS, faas)
+		em.update(SCHEMA_FAAS, faas)
+		return faas;	
+	}
+
+
+	@ProxyMethod
+	public void deleteFaas( faas ) {
+		def currentstate = getState(faas.objid)
+		if (currentstate == STATE_FORPROVAPPROVAL)  throw new Exception('FAAS has already been submitted to province.')
+		if (currentstate == STATE_CURRENT)  throw new Exception('FAAS is already current.')
+		if (currentstate == STATE_CANCELLED)  throw new Exception('FAAS has already been cancelled.')
+
+		txnRef.delete(faas.objid)
+
+		getPreviousFaases(faas.objid).each{
+			em.delete(SCHEMA_PREVIOUSFAAS, it)
+		}
+
+		em.delete(SCHEMA_FAAS, faas)
+		if (faas.txntype.newrpu){
+			rpuSvc.deleteRpu( faas.rpu )
+		}
+
+		wsSvc.deleteAll(faas.objid)
+	}
+
+	@ProxyMethod
+	public def deleteFaasOnly( faas ) {
+		getPreviousFaases(faas.objid).each{
+			em.delete(SCHEMA_PREVIOUSFAAS, it)
+		}
+		em.delete(SCHEMA_FAAS, faas)
+	}
+
+	
+	@ProxyMethod
+	public void deleteFaasById( faasid ) {
+		if (faasid) {
+			deleteFaas(openFaas(faasid))
+		}
+	}
+
+
+
+	/*------------------------------------------------
+	*
+	* WORKFLOW ACTIONS
+	*
+	-------------------------------------------------*/
+
+	@ProxyMethod
+	public def submitFaasForApproval( faas ) {
+		if (faas.txntype.newrpu) {
+			faas.rpu.state = faas.state 
+			faas.rpu.rp.state  = faas.state 
+			rpuSvc.submitRpuForApproval( faas.rpu )
+		}
+		wsSvc.insert(faas)
+		return updateFaas(faas)
+	}
+
+
+	@ProxyMethod
+	public def approveFaas( faas ) {
+		faas.state = STATE_CURRENT
+		wsSvc.insert(faas)
+		if (faas.txntype.newrpu){
+			rpuSvc.approveRpu( faas.rpu )
+		}
+		cancelPreviousFaases(faas)
+		txnRef.delete(faas.objid)
+		return updateFaas(faas)
+	}
+
+
+	@ProxyMethod
+	public def disapproveFaas( faas ) {
+		validateState( faas.state, faas.objid )
+		wsSvc.delete(faas)
+		faas.state = STATE_INTERIM
+		if (faas.txntype.newrpu) {
+			rpuSvc.disapproveRpu( faas.rpu )
+		}
+		return updateFaas(faas)
+	}
+
+
+	@ProxyMethod
+	public def submitFaasToProvince( faas ) {
+		faas.state = STATE_FORPROVAPPROVAL
+		wsSvc.insert(faas)
+		if (faas.txntype.newrpu) {
+			rpuSvc.submitRpuToProvince( faas.rpu )
+		}
+		return updateFaas(faas)
+	}
+
+
+	@ProxyMethod
+	public def approveFaasSubmissionToProvince( faas ) {
+		faas.state = STATE_CURRENT
+		wsSvc.insert(faas)
+		if (faas.txntype.newrpu) {
+			rpuSvc.approveRpuSubmissionToProvince( faas.rpu )
+		}
+		cancelPreviousFaases(faas)
+		txnRef.delete(faas.objid)
+		return updateFaas(faas)
+	}
+
+
+	@ProxyMethod
+	public def disapproveFaasSubmissionToProvince( faas ) {
+		validateState( faas.state, faas.objid )
+		wsSvc.delete(faas)
+		faas.state = STATE_INTERIM
+		if (faas.txntype.newrpu) {
+			rpuSvc.disapproveRpuSubmissionToProvince( faas.rpu )
+		}
+		return updateFaas(faas)
+	}
+
+
+	@ProxyMethod
+	public def approveFaasByProvince( faas ) {
+		faas.state = STATE_CURRENT
+		wsSvc.insert(faas)
+		validateState( faas.state, faas.objid )
+		if (faas.txntype.newrpu) {
+			rpuSvc.approveRpuByProvince( faas.rpu )
+		}
+		cancelPreviousFaases(faas)
+		txnRef.delete(faas.objid)
+		return updateFaas(faas)
+	}
+
+
+	@ProxyMethod
+	public def disapproveFaasByProvince( faas ) {
+		validateState( faas.state, faas.objid )
+		wsSvc.delete(faas)
+		faas.state = STATE_FORPROVSUBMISSION
+		if (faas.txntype.newrpu) {
+			rpuSvc.disapproveRpuByProvince( faas.rpu )
+		}
+		return updateFaas(faas)
+	}
+
+
+
+
+	/*------------------------------------------------------------------------
+	**
+	** SUPPORT METHODS
+	**
+	------------------------------------------------------------------------*/
+	@ProxyMethod
+	public def openRpu( rpuid ) {
+		return rpuSvc.openRpu(rpuid)	
+	}
+
+	@ProxyMethod
+	public def getRpuTypes(  ) {
+		return rpuSvc.getRpuTypes()
+	}
+
+	@ProxyMethod
+	public def getLgus(){
+		return rpuSvc.getLgus( var.lgu_type )
+	}
+
+
+	@ProxyMethod
+	public def getCurrentRy(  ) {
+		return var.current_ry 	
+	}
+
+
+	@ProxyMethod
+	public def getBarangays(params) {
+		return brgySvc.lookupBarangays(params)
+	}
+
+
+	@ProxyMethod 
+	public def getMaximumBackTaxYearsPolicy(){
+		return 10 
+	}
+
+
+	@ProxyMethod
+	public void checkDuplicateTdNo( faasid, tdno ) {
+		def faas = getFaasByTdNo(tdno)	
+		if (faas && faas.objid != faasid)
+			throw new Exception('TD No. ' + tdno + ' already exist.')
+	}
+
+	@ProxyMethod
+	public boolean isDuplicateTdNo( faasid, tdno ) {
+		try{
+			checkDuplicateTdNo(faasid, tdno )
+			return false
+		}
+		catch(e){
+			return true 
+		}
+	}
+
+
+	@ProxyMethod
+	public def getFaasByTdNo(tdno){
+		return em.sqlContext.createNamedQuery('faas:getFaasByTdNo')
+				.setParameter('tdno', tdno).singleResult
+	}
+
+
+	void initNewFaasInfo(info, newfaas){
+		def pdate 	= dtSvc.parseCurrentDate()
+
+		def oldid  			 	= newfaas.objid 
+		def newid 			 	= utilSvc.generateId('F')
+		newfaas.objid 			= newid 
+		newfaas.previousfaases  = [[faasid:newid, prevfaasid:oldid]]
+		newfaas.state 			= STATE_INTERIM
+		newfaas.txntype 		= getTxnType( info.txntype.objid )
+		newfaas.datacapture 	= false
+		newfaas.autonumber 	    = false 
+		newfaas.backtaxyrs   	= 0
+		newfaas.backtaxes 		= []
+		newfaas.effectivityyear = pdate.year + 1
+		newfaas.effectivityqtr  = 1
+		
+		newfaas.prevtdno		= newfaas.tdno
+		newfaas.prevpin		 	= newfaas.rpu.fullpin
+		newfaas.prevowner		= newfaas.ownername
+		newfaas.prevav			= newfaas.rpu.totalav
+		newfaas.prevmv			= newfaas.rpu.totalmv
+		
+		//clear not applicable info 
+		newfaas.tdno 			= null
+		newfaas.utdno 			= null
+		newfaas.titletype		= null
+		newfaas.titleno			= null
+		newfaas.titledate		= null
+		newfaas.memoranda		= null
+
+		newfaas.appraisedby     	 = null
+		newfaas.appraisedbytitle     = null
+		newfaas.dtappraised     	 = null
+		newfaas.recommendedby   	 = null
+		newfaas.recommendedbytitle   = null
+		newfaas.dtrecommended   	 = null
+		newfaas.taxmappedby     	 = null
+		newfaas.taxmappedbytitle     = null
+		newfaas.dttaxmapped     	 = null
+		newfaas.approvedby      	 = null
+		newfaas.approvedbytitle      = null
+		newfaas.dtapproved      	 = null
+	}
+
+	void clearOwnerInfo(faas){
+		faas.taxpayerid 			= null
+		faas.taxpayername 			= null
+		faas.taxpayeraddress		= null
+		faas.ownername 				= null
+		faas.owneraddress 			= null
+		faas.administratorid 		= null
+		faas.administratorname 		= null
+		faas.administratoraddress	= null
+		faas.beneficiaryid 			= null
+		faas.beneficiary 			= null
+		faas.beneficiaryaddress 	= null
+	}
+
+
+	def getPreviousFaases(faasid) {
+		return em.sqlContext.createNamedQuery('faas:getPreviousFaases')
+						.setParameter('faasid', faasid)
+						.resultList
+	}
+
+	def getBackTaxes(faasid){
+		return em.sqlContext.createNamedQuery('faas:getBackTaxes')
+				.setParameter('faasid', faasid).resultList
+	}
+
+
+	void postBackTaxes(faas){
+		faas._backtaxes?.each{
+			em.delete(SCHEMA_BACKTAX, it)
+		}
+		faas.backtaxes?.each{
+			it.faasid = faas.objid 
+			em.save(SCHEMA_BACKTAX, it)
+		}
+	}
+
+	void cancelPreviousFaases(faas){
+		getPreviousFaases(faas.objid).each{
+			def params = [
+				objid  			: it.prevfaasid,
+				cancelreason	: faas.txntype.objid,
+				canceldate		: (faas.approver ? faas.approver.dtsigned : faas.approver_dtsigned),
+				cancelledbytdnos: faas.tdno,
+				cancelledtimestamp : dtSvc.buildCustomTimeStamp((faas.approver ? faas.approver.dtsigned : faas.approver_dtsigned)),
+			]
+			em.sqlContext.createNamedExecutor('faas:cancelFaas').setParameters(params).execute()
+			if (faas.txntype.newrpu){
+				em.sqlContext.createNamedExecutor('faas:cancelRpu').setParameter('objid', it.prevrpuid).execute()
+			}
+		}
+	}
+
+
+	@ProxyMethod
+	public def getTxnType( objid ){
+		def txntype = getTxnTypes().find{it.objid == objid}
+		if (!txntype)
+			throw new Exception('Invalid Txn Type ' + objid + '.')
+		return txntype
+	}
+	
+
+	@ProxyMethod
+    public List getTxnTypes() {
+    	//TODO: register types from invokers
+		return [
+            [objid:'TR', 	name:'Transfer of Ownership', 		newledger:false, 	newrpu:false],
+            [objid:'TRE', 	name:'Transfer with Reassessment', 	newledger:false, 	newrpu:true],
+            [objid:'TRC', 	name:'Transfer with Correction', 	newledger:false, 	newrpu:true],
+            [objid:'CE', 	name:'Correction', 					newledger:false, 	newrpu:true],
+            [objid:'CC', 	name:'Change Classification', 		newledger:false, 	newrpu:true],
+            [objid:'CT', 	name:'Change Taxability', 			newledger:false, 	newrpu:true],
+            [objid:'CD', 	name:'Change Depreciation', 		newledger:false, 	newrpu:true],
+            [objid:'RE', 	name:'Reassessment', 				newledger:false, 	newrpu:true],
+
+            [objid:'GR', 	name:'General Revision', 			newledger:false, 	newrpu:true, newrealproperty:true],
+            [objid:'ND', 	name:'New Discovery', 				newledger:true, 	newrpu:true, newrealproperty:true],
+            [objid:'SD', 	name:'Subdivision', 				newledger:true, 	newrpu:true, newrealproperty:true],
+            [objid:'CS', 	name:'Consolidation', 				newledger:true, 	newrpu:true, newrealproperty:true],
+            [objid:'CTD', 	name:'Cancellation', 				newledger:false, 	newrpu:false],
+            [objid:'MC', 	name:'Multiple Claim', 				newledger:true, 	newrpu:true, newrealproperty:true],
+
+            [objid:'DC', 	name:'Data Capture', 				newledger:true, 	newrpu:true],
+        ]
+    }
+
+
+    
+	/*------------------------------------------------------------------------
+	**
+	** HELPER METHODS
+	**
+	------------------------------------------------------------------------*/
+	def initFaas(info){
+		return [
+			objid 		  	: 'F' + new java.rmi.server.UID(),
+			state 		  	: STATE_INTERIM,
+			autonumber   	: 0,
+			prevav		  	: 0.0,
+			prevmv		  	: 0.0,
+			effectivityqtr  : 1,
+			backtaxyrs		: 0,
+			iscondo 		: info.iscondo,
+			barangay		: info.barangay,
+			datacapture     : 0,
+			txntype 		: info.txntype,
+			lguid			: var.lgu_objid,
+		]
+	}
+
+	@ProxyMethod
+	public def generateUniqueTdNo(faas){
+		if (faas.tdno ) {
+			return faas.tdno
+		}
+		else {
+			return seqSvc.getNextFormattedSeries(UTDNO_KEY)
+		}
+	}
+
+	void validateFaasForTransaction(faas){
+		if (faas.state != STATE_CURRENT)
+			throw new Exception('FAAS ' + faas.tdno + ' is not current.')
+
+		txnRef.checkReference(faas.objid)
+	}
+
+	
+	@ProxyMethod
+	public def getState(faasid){
+		def faas = em.sqlContext.createNamedQuery('faas:getState').setParameter('objid', faasid).singleResult
+		if (!faas) throw new Exception('FAAS does not exist or has already been deleted.')
+		return faas.state 
+	}
+
+
+	void checkTxnReference(faas){
+		if (faas.previousfaases){
+			def prevfaasid = faas.previousfaases[0].prevfaasid
+			txnRef.checkReference(prevfaasid)
+		}
+	}
+
+
+	void insertTxnReference(faas){
+		if (faas.previousfaases){
+			def prevfaasid = faas.previousfaases[0].prevfaasid
+			txnRef.insert([objid:prevfaasid, refid:faas.objid, msg:'FAAS is currently referenced by TD No. ' + faas.tdno])
+		}
+	}
+
+	void validateState( newstate, faasid ){
+		def currentstate = getState( faasid )
+
+		def errmsg_still_interim = 'FAAS is still interim.'
+		def errmsg_still_forprovsubmission = 'FAAS is not yet submitted to province.'
+		def errmsg_still_forapproval = 'FAAS is not yet submitted for approval.'
+
+		def errmsg_forapproval = 'FAAS has already been submitted for approval.'
+		def errmsg_forprovsubmission = 'FAAS has already been submitted for approval.'
+		def errmsg_forprovapproval = 'FAAS has already been submitted for province approval.'
+		def errmsg_current = 'FAAS is already current.'
+		def errmsg_cancelled = 'FAAS has already been cancelled.'
+
+		if (newstate == STATE_INTERIM) {
+			if (currentstate == STATE_FORAPPROVAL) throw new Exception( errmsg_forapproval )
+			if (currentstate == STATE_FORPROVSUBMISSION) throw new Exception(errmsg_forprovsubmission)	
+			if (currentstate == STATE_FORPROVAPPROVAL) throw new Exception(errmsg_forprovapproval)	
+			if (currentstate == STATE_CURRENT) throw new Exception(errmsg_current)	
+			if (currentstate == STATE_CANCELLED) throw new Exception(errmsg_cancelled)	
+		}
+		else if (newstate == STATE_FORAPPROVAL) {
+			if (currentstate == STATE_INTERIM) throw new Exception(errmsg_still_interim)	
+
+			if (currentstate == STATE_CURRENT) throw new Exception(errmsg_current)	
+			if (currentstate == STATE_CANCELLED) throw new Exception(errmsg_cancelled)	
+		}
+		else if (newstate == STATE_FORPROVSUBMISSION) {
+			if (currentstate == STATE_INTERIM) throw new Exception(errmsg_still_interim)	
+
+			if (currentstate == STATE_FORPROVAPPROVAL) throw new Exception(errmsg_forprovapproval)	
+			if (currentstate == STATE_CURRENT) throw new Exception(errmsg_current)	
+			if (currentstate == STATE_CANCELLED) throw new Exception(errmsg_cancelled)	
+		}
+		else if (newstate == STATE_FORPROVAPPROVAL) {
+			if (currentstate == STATE_INTERIM) throw new Exception(errmsg_still_interim)	
+			
+			if (currentstate == STATE_CURRENT) throw new Exception(errmsg_current)	
+			if (currentstate == STATE_CANCELLED) throw new Exception(errmsg_cancelled)	
+		}
+		else if (newstate == STATE_CURRENT) {
+			if (currentstate == STATE_INTERIM) throw new Exception(errmsg_still_interim)	
+			if (currentstate == STATE_FORPROVSUBMISSION) throw new Exception(errmsg_still_forprovsubmission)	
+
+			if (currentstate == STATE_CANCELLED) throw new Exception(errmsg_cancelled)	
+		}
+		else {
+			throw new Exception('State ' + state + ' is invalid.')
+		}
+	}
+
+}
+

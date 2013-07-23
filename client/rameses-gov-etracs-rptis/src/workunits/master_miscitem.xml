@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workunit>
+    <invokers>
+        <invoker type="quick_launcher" code="MISC01" action="init" caption="Miscellaneous Item" role="MASTER_ENCODER" permission="miscitem.create"/>
+        <invoker type="miscitem:create" action="init" caption="Miscellaneous Item" />
+        <invoker type="miscitem:open" action="open" caption="Miscellaneous Item" />
+    </invokers>
+        
+    <code lang="groovy">
+        
+        import com.rameses.rcp.common.*;
+        import com.rameses.rcp.annotations.*;
+        import com.rameses.osiris2.client.*;
+        import com.rameses.osiris2.common.*;
+        
+        public class MiscellaneousItemController  extends CRUDController 
+        {
+            String serviceName = "MiscItemMasterService"
+            String entityName  = 'miscitem'
+            String prefixId    = 'MISC'
+        }
+        
+        
+    </code>
+    
+    <pages>
+        <page template="com.rameses.gov.etracs.rpt.master.ui.MiscItemPage" />
+    </pages>
+</workunit>

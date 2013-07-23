@@ -1,0 +1,27 @@
+<workunit extends="wtemplates/ListController.xml">
+    <invokers>
+        <invoker folderid="/explorer/master/rpt" caption="Property Classifications" target="window" index="1" />
+        <invoker type="quick_launcher" code="PC00" caption="Property Classifications" role="MASTER_ENCODER" permission="propertyclassification.view"/>
+    </invokers>
+    <code>
+        import com.rameses.rcp.common.*
+        import com.rameses.rcp.annotations.*
+        import com.rameses.osiris2.client.*
+        import com.rameses.osiris2.common.*
+        
+        class PropertyClassificationListController extends ListController
+        {
+            String serviceName = 'PropertyClassificationListService'
+            String entityName = 'propertyclassification'
+            
+            Column[] getColumns(){
+                return [
+                    new Column(name:"code", caption:"Code", width:40),
+                    new Column(name:"name", caption:"Classification", width:250),
+                    new Column(name:"orderno", caption:"Order No.", width:100),
+                    new Column(name:"state", caption:"State", width:100),
+                ]
+            }
+        }
+    </code>
+</workunit>

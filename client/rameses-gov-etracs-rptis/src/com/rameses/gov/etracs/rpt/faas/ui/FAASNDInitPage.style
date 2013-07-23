@@ -1,0 +1,40 @@
+".*" [ true == true ] {
+    readonly:false;
+}
+
+"initinfo.suffix" [ rputype == 'land'] {
+    readonly:true;
+}
+
+"initinfo.suffix" [ rputype != 'land'] {
+    readonly:false;
+}
+
+
+
+"initinfo.iscondo|initinfo.subsuffix" [ initinfo.suffix >= 1001 && initinfo.suffix <= 1999 ] {
+    readonly:false;
+}
+
+"initinfo.iscondo|initinfo.subsuffix" [ initinfo.suffix < 1001 || initinfo.suffix > 1999 ] {
+    readonly:true;
+}
+
+"initinfo.subsuffix" [ initinfo.iscondo == true ] {
+    readonly:false;
+}
+
+"initinfo.subsuffix" [ initinfo.iscondo == false] {
+    readonly:true;
+}
+
+"initinfo.info.txn" [ initinfo.info.datacapture == false] {
+    readonly:true;
+}
+
+
+
+"initinfo.info.claimno" [ initinfo.info.txntype != 'MC'] {
+    enabled:false;
+}
+

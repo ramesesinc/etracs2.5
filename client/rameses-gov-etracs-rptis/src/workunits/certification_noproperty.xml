@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workunit extends="rpt_wtemplates/CertificationController.xml">
+    <invokers>
+        <invoker folderid="/explorer/txn/rpt/cert" action="init" caption="No Property" 
+            opener="noproperty" index="8" />    
+            
+        <invoker type="quick_launcher" action="init" code="RC08" caption="No Property" 
+            opener="noproperty" index="8" />
+            
+        <invoker type="noproperty:open" action="open" caption="No Property" /> 
+    </invokers>
+    
+    <code class="com.rameses.gov.etracs.rpt.report.certification.NoPropertyController" >
+    </code>
+    
+</workunit>

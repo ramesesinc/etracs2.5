@@ -1,0 +1,391 @@
+import com.rameses.common.*
+import com.rameses.annotations.*
+import com.rameses.util.*
+import java.rmi.server.UID
+
+class AFIssueMasterService
+{
+	@PersistenceContext('main')
+	def em;
+	
+	@Service('DateService')
+	def dateSvc;
+	
+	def SCHEMA_NAME = 'afissue';
+	def STATE_PENDING = 'PENDING';
+	def STATE_APPROVED = 'APPROVED';
+	def STATE_CLOSE = 'CLOSED';
+	def CALENDAR = Calendar.getInstance();
+		
+	@ProxyMethod
+	public def init() {}
+	
+	@ProxyMethod
+	public def create( afissue ) {
+		afissue.state = STATE_PENDING;
+		afissue.active = 0;
+		
+		def dtissued = dateSvc.parse('yyyy-MM-dd', afissue.dtissued );
+		if( dtissued > dateSvc.serverDate ) 
+			throw new Exception('Date Issued must be less than or equal current date.');
+			
+		if( afissue.af.type == 'serial' ) {
+			afissue.beginqty	= afissue.endseries - afissue.startseries + 1;
+			afissue.issuedqty	= afissue.currentseries - afissue.startseries;
+			afissue.endqty		= afissue.beginqty - afissue.currentseries + 1;
+			
+			//validation
+			if( !af.startseries.toString().endsWith('1') )
+				throw new Exception('Start Series must end with 1.')
+			if( afissue.startseries >= 10 && afissue.startseries % 50 > 1 ) 
+				throw new Exception('Start Series must be divisible by 50.')
+			if( afissue.currentseries < afissue.startseries || afissue.currentseries > afissue.endseries )
+				throw new Exception('Current Series must be between ' + afissue.startseries +  ' and ' + afissue.endseries + '.' )
+				
+			//check overlapping series 
+			EntityUtil.mapToField(afissue);
+			def overlap = em.sqlContext.createNamedQuery('afissue:checkOverlapSeries').setParameters( afissue ).singleResult 
+			if( overlap ) throw new Exception('Series overlaps with Stub No. ' + overlap.stubno + '.') 
+			EntityUtil.fieldToMap(afissue);
+		}
+		else {			
+			//validation
+			if( afissue.issuedqty > afissue.receivedqty )
+				throw new Exception('Issued Qty. must not exceed quantity received.')
+		}
+		afissue.txndate = new Date()
+		afissue.assignedto = afissue.collector
+		
+		EntityUtil.mapToField(afissue)		
+		em.create( SCHEMA_NAME, afissue )
+		EntityUtil.fieldToMap(afissue)
+		return afissue 
+	}
+	
+	@ProxyMethod
+	public def open( afissue ) {
+		afissue = em.read( SCHEMA_NAME, afissue )
+		EntityUtil.fieldToMap(afissue)
+		return afissue
+	}
+	
+	@ProxyMethod 
+	public def approve( afissue ) {
+		def old = em.read( SCHEMA_NAME, afissue)
+		if( !old ) throw new Exception('AF Control doest not exists.')
+		if( old.state != STATE_PENDING ) throw new Exception('AF Control is already ' + old.state +'.')
+		afissue.state = 'APPROVED' 
+		em.update( SCHEMA_NAME, afissue )
+		//postToAFInventory( afissue )
+		
+		def prefix = (afissue.prefix? afissue.prefix+"-" : "");
+		def suffix = (afissue.suffix? "-"+afissue.suffix : "");
+		
+		//Post to AF Inventory
+		def afinventory = [
+			objid		: "MAFI"+new UID(),
+			state		: "CLOSED",
+			iraf		: [ objid: "-", type: "PURCHASE", txnno: afissue.af.objid+"-"+afissue.stubno ],
+			af			: afissue.af,
+			dtposted	: afissue.txndate,
+			currentstub	: (afissue.stubno instanceof String? 1 : afissue.stubno),
+			stubfrom	: (afissue.stubno instanceof String? 1 : afissue.stubno),
+			stubto		: (afissue.stubno instanceof String? 1 : afissue.stubno),
+			prefix		: afissue.prefix,
+			suffix		: afissue.suffix,
+			startseries	: afissue.startseries,
+			endseries	: afissue.endseries,
+			beginqty	: afissue.receivedqty,
+			issuedqty	: afissue.issuedqty,
+			endqty		: afissue.balance,
+			iyear		: CALENDAR.get( Calendar.YEAR ),
+			imonth		: CALENDAR.get( Calendar.MONTH )+1
+		];
+		if( afinventory.imonth >= 1 && afinventory.imonth <= 3 ) afinventory.iqtr = 1;
+		else if( afinventory.imonth >= 4 && afinventory.imonth <= 6 ) afinventory.iqtr = 2;
+		else if( afinventory.imonth >= 7 && afinventory.imonth <= 9 ) afinventory.iqtr = 3;
+		else if( afinventory.imonth >= 10 && afinventory.imonth <= 12 ) afinventory.iqtr = 4;
+		
+		if( afissue.af.type == "serial" ) {
+			afinventory.issuedqty = afissue.receivedqty;
+			afinventory.endqty = 0;
+		}
+		EntityUtil.mapToField(afinventory);
+		em.create("afinventory", afinventory);
+		EntityUtil.fieldToMap(afinventory);
+		
+		def issuedqty = afissue.issuedqty
+		def endqty 
+		if( afissue.af.type == 'serial' ) {
+			issuedqty = afissue.qtyreceived - afissue.balance 
+		}
+		//Post to AF Inventory Credit
+		def afinventorycredit = [
+			objid			: "MAFIC"+new UID(),
+			state			: "OPEN",
+			afinventoryid	: afinventory.objid,
+			iraf			: afinventory.iraf,
+			af				: afinventory.af,
+			stubno			: afissue.stubno,
+			prefix			: afinventory.prefix,
+			suffix			: afinventory.suffix,
+			startseries		: afinventory.startseries,
+			endseries		: afinventory.endseries,
+			beginqty		: afinventory.beginqty,
+			issuedqty		: afinventory.issuedqty,
+			endqty			: afinventory.endqty
+		];
+		afissue.afinventorycreditid = afinventorycredit.objid;
+		if( afissue.af.type == "serial" ) {
+			afinventorycredit.issuedqty = afissue.currentseries - afissue.startseries;
+			afinventorycredit.endqty = afissue.endseries - afissue.currentseries + 1;
+		}
+		EntityUtil.mapToField(afinventorycredit);
+		em.create("afinventorycredit", afinventorycredit);
+		EntityUtil.fieldToMap(afinventorycredit);
+		
+		def parsedate = dateSvc.parseDate(afinventory.dtposted, null);
+		//Post to CRAAF
+		def craaf = [
+			objid			: "MC"+new UID(),
+			afinventoryid	: afinventory.objid,
+			craafyear		: parsedate.year,
+			craafmonth		: parsedate.month,
+			afid			: afissue.af.objid,
+			beginqty		: afinventory.beginqty,
+			beginfrom		: prefix + afissue.startseries + suffix,
+			beginto			: prefix + afissue.endseries + suffix,
+			issueqty		: afinventory.issuedqty,
+			issuedfrom		: prefix + afissue.startseries + suffix,
+			issuedto		: prefix + afissue.endseries + suffix,
+			endqty			: afinventory.endqty
+		];
+		EntityUtil.mapToField(craaf);
+		em.create("craaf", craaf);
+		EntityUtil.fieldToMap(craaf);
+		
+		/*def craafcredit = [
+			objid				: "CC"+new UID(),
+			afinventorycreditid	: afinventorycredit.objid,
+			craafyear			: parsedate.year,
+			craafmonth			: parsedate.month,
+			collector			: afissue.collector,
+			afid				: afissue.af.objid,
+			receivedqty			: craaf.beginqty,
+			receivedfrom		: craaf.beginfrom,
+			receivedto			: craaf.beginto,
+			issuedqty			: afinventorycredit.issuedqty,
+			issuedfrom			: prefix + afissue.startseries + suffix,
+			issuedto			: prefix + (afissue.currentseries-1) + suffix,
+			endqty				: afinventorycredit.endqty,
+			endfrom				: prefix + afissue.currentseries + suffix,
+			endto				: prefix + afissue.endseries + suffix
+		];*/
+		
+		/*def issuedqty  = afcontrol.qtyissued 
+		def issuedfrom = null
+		def issuedto   = null 
+		if( afcontrol.aftype == 'serial' ) {
+			issuedqty 	= ( afcontrol.currentseries > afcontrol.startseries ? afcontrol.currentseries - afcontrol.startseries : null )
+			issuedfrom 	= ( afcontrol.currentseries > afcontrol.startseries ? afcontrol.startseries: null )
+			issuedto	= ( afcontrol.currentseries > afcontrol.startseries ? afcontrol.currentseries - 1 : null )
+			issuedfrom  = formatSeries( issuedfrom, afcontrol.prefix, afcontrol.suffix, afcontrol.serieslength )
+			issuedto    = formatSeries( issuedto, afcontrol.prefix, afcontrol.suffix, afcontrol.serieslength )
+		}*/
+		def craafcredit = [
+			objid 				: 'CC' + new UID(),
+			afinventoryid		: null,
+			afinventorycreditid : credit.objid, 
+			craafyear			: parsedate.year,
+			craafmonth			: parsedate.month,
+			/*collectorid			: afcontrol.collectorid,
+			collectorname		: afcontrol.collectorname,
+			collectortitle		: afcontrol.collectortitle,*/
+			collector			: afcontrol.collector,
+			afid				: afcontrol.afid,
+			beginqty			: null,
+			beginfrom			: null,
+			beginto				: null,
+			receivedqty			: afcontrol.qtyreceived,
+			receivedfrom		: formatSeries( afcontrol.startseries, afcontrol.prefix, afcontrol.suffix, afcontrol.serieslength ),
+			receivedto			: formatSeries( afcontrol.endseries, afcontrol.prefix, afcontrol.suffix, afcontrol.serieslength ),
+			issuedqty			: issuedqty,
+			issuedfrom			: issuedfrom,
+			issuedto			: issuedto,
+			canceledqty			: null,
+			canceledfrom		: null,
+			canceledto			: null,
+			cancelreason		: null,
+			endingqty			: afcontrol.balance ,
+			endingfrom			: formatSeries( afcontrol.currentseries, afcontrol.prefix, afcontrol.suffix, afcontrol.serieslength ),
+			endingto			: formatSeries( afcontrol.endseries, afcontrol.prefix, afcontrol.suffix, afcontrol.serieslength ),
+		]
+		EntityUtil.mapToField(craafcredit)
+		em.create( craaf.schemaname, craafcredit )
+		
+		//post craaf credit  automatically 
+		em.create( 'craafcredit', [
+			objid			: 'CC' + new UID(),
+			craafid			: craaf.objid,
+			reftype			: 'AFCONTROL',
+			refno			: afcontrol.stubno ,
+			refdate			: afcontrol.dtissued,
+			qty				: (afcontrol.aftype == 'serial'  ? 1 : afcontrol.qtyissued ),
+		])
+		
+		postToCraaf( afissue, inventory, credit )
+		
+		afissue.afinventorycreditid = credit.objid
+		em.update( afissue.schemaname, afissue )
+		return afissue 
+	}
+	
+	void postToAFInventory( afissue ) {
+		//since this is a manually issued receipt
+		//post a corresponding entry into the inventory and credit 
+		def inventory =  [
+			objid  			: 'AI'+new UID(),
+			state			: 'CLOSED',
+			iraf			: [ objid:'-', type:'PURCHASE', txnno:afissue.af.objid + '-' + afissue.stubno ],
+			afid 			: afissue.afid ,
+			aftype			: afissue.aftype,
+			afunit			: 'stub',
+			aflength		: afissue.serieslength,
+			stubfrom		: (afissue.stubno instanceof String ? 1 : afissue.stubno),
+			stubto			: (afissue.stubno instanceof String ? 1 : afissue.stubno),
+			currentstub		: (afissue.stubno instanceof String ? 1 : afissue.stubno),
+			stubprefix		: afissue.prefix,
+			qtyonhand		: 1,
+			qtyissued		: 1,
+			prefix			: afissue.prefix ,
+			suffix			: afissue.suffix,
+			startserialno	: afissue.startseries ,
+			startseries		: afissue.startseries,
+			endseries		: afissue.endseries, 
+			issuedfrom		: afissue.startseries,
+			issuedto		: afissue.endseries,
+			dtposted		: afissue.txndate,
+		]
+		EntityUtil.mapToField(inventory)
+		em.create( 'afinventory', inventory )
+		
+		def qtyissued = afissue.qtyissued 
+		if( afissue.aftype == 'serial' ) {
+			qtyissued = afissue.qtyreceived - afissue.balance 
+		}
+		
+		EntityUtil.fieldToMap(inventory);
+		inventory.iraf.type = 'COLLECTOR'
+		def credit = [
+			objid			: 'AC' + new UID(),
+			state			: 'OPEN',
+			afinventoryid 	: inventory.objid,
+			iraf			: inventory.iraf,
+			/*irafid			: inventory.irafid,
+			irafno			: inventory.irafno,
+			iraftype		: 'COLLECTOR',*/
+			afid			: afissue.afid ,
+			aftype			: afissue.aftype,
+			afunit			: inventory.afunit,
+			aflength		: inventory.aflength,
+			prefix			: inventory.prefix,
+			suffix			: inventory.suffix,
+			startseries		: inventory.startseries,
+			endseries		: inventory.endseries,
+			stubno			: afissue.stubno ,
+			qtyissued		: qtyissued,
+			balance			: afissue.balance ,
+			stubno			: afissue.stubno, 
+		]
+		em.create('afinventorycredit', credit )
+		
+		postToCraaf( afissue, inventory, credit )
+		
+		afissue.afinventorycreditid = credit.objid
+		em.update( afissue.schemaname, afissue )
+	}
+	
+	void postToCraaf( afissue, inventory, credit  ) {
+		def parsedate = dateSvc.parseDate( inventory.dtposted, null )
+		def craaf = [
+			objid 				: 'C' + new UID(),
+			afinventoryid		: inventory.objid, 
+			afinventorycreditid : null,
+			craafyear			: parsedate.year,
+			craafmonth			: parsedate.month,
+			collectorid			: null,
+			collectorname		: null,
+			collectortitle		: null,
+			afid				: afcontrol.afid,
+			beginqty			: null,
+			beginfrom			: null,
+			beginto				: null,
+			receivedqty			: afcontrol.qtyreceived,
+			receivedfrom		: formatSeries( afcontrol.startseries, afcontrol.prefix, afcontrol.suffix, afcontrol.serieslength ),
+			receivedto			: formatSeries( afcontrol.endseries, afcontrol.prefix, afcontrol.suffix, afcontrol.serieslength ),
+			issuedqty			: afcontrol.qtyreceived,
+			issuedfrom			: formatSeries( afcontrol.startseries, afcontrol.prefix, afcontrol.suffix, afcontrol.serieslength ),
+			issuedto			: formatSeries( afcontrol.endseries, afcontrol.prefix, afcontrol.suffix, afcontrol.serieslength ),
+			canceledqty			: null,
+			canceledfrom		: null,
+			canceledto			: null,
+			cancelreason		: null,
+			endingqty			: 0,
+			endingfrom			: 0,
+			endingto			: 0,
+		]
+		em.create( craaf.schemaname, craaf )
+		
+		def issuedqty  = afcontrol.qtyissued 
+		def issuedfrom = null
+		def issuedto   = null 
+		if( afcontrol.aftype == 'serial' ) {
+			issuedqty 	= ( afcontrol.currentseries > afcontrol.startseries ? afcontrol.currentseries - afcontrol.startseries : null )
+			issuedfrom 	= ( afcontrol.currentseries > afcontrol.startseries ? afcontrol.startseries: null )
+			issuedto	= ( afcontrol.currentseries > afcontrol.startseries ? afcontrol.currentseries - 1 : null )
+			issuedfrom  = formatSeries( issuedfrom, afcontrol.prefix, afcontrol.suffix, afcontrol.serieslength )
+			issuedto    = formatSeries( issuedto, afcontrol.prefix, afcontrol.suffix, afcontrol.serieslength )
+		}
+		
+		def craafcredit = [
+			objid 				: 'CC' + new UID(),
+			afinventoryid		: null,
+			afinventorycreditid : credit.objid, 
+			craafyear			: parsedate.year,
+			craafmonth			: parsedate.month,
+			/*collectorid			: afcontrol.collectorid,
+			collectorname		: afcontrol.collectorname,
+			collectortitle		: afcontrol.collectortitle,*/
+			collector			: afcontrol.collector,
+			afid				: afcontrol.afid,
+			beginqty			: null,
+			beginfrom			: null,
+			beginto				: null,
+			receivedqty			: afcontrol.qtyreceived,
+			receivedfrom		: formatSeries( afcontrol.startseries, afcontrol.prefix, afcontrol.suffix, afcontrol.serieslength ),
+			receivedto			: formatSeries( afcontrol.endseries, afcontrol.prefix, afcontrol.suffix, afcontrol.serieslength ),
+			issuedqty			: issuedqty,
+			issuedfrom			: issuedfrom,
+			issuedto			: issuedto,
+			canceledqty			: null,
+			canceledfrom		: null,
+			canceledto			: null,
+			cancelreason		: null,
+			endingqty			: afcontrol.balance ,
+			endingfrom			: formatSeries( afcontrol.currentseries, afcontrol.prefix, afcontrol.suffix, afcontrol.serieslength ),
+			endingto			: formatSeries( afcontrol.endseries, afcontrol.prefix, afcontrol.suffix, afcontrol.serieslength ),
+		]
+		EntityUtil.mapToField(craafcredit)
+		em.create( craaf.schemaname, craafcredit )
+		
+		//post craaf credit  automatically 
+		em.create( 'craafcredit', [
+			objid			: 'CC' + new UID(),
+			craafid			: craaf.objid,
+			reftype			: 'AFCONTROL',
+			refno			: afcontrol.stubno ,
+			refdate			: afcontrol.dtissued,
+			qty				: (afcontrol.aftype == 'serial'  ? 1 : afcontrol.qtyissued ),
+		])
+	}
+}

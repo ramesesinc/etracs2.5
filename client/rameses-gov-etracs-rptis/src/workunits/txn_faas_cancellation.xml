@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workunit>
+    <invokers>
+        <invoker type="cancelledfaas:create" action="init" caption="FAAS Cancellation (New)" target="window"  />
+        <invoker type="cancelledfaas:open" action="open" caption="Cancelled FAAS" target="window"  />
+        
+         <invoker folderid="/explorer/txn/rpt/faas" action="init"  caption="Cancel FAAS" index="22" />
+         <invoker type="quick_launcher" code="CF01" action="init"  caption="Cancel FAAS" index="22" />
+        
+   </invokers>
+   <code class="com.rameses.gov.etracs.rpt.cancelledfaas.ui.CancelledFAASController">       
+   </code>
+
+    <pageflow>
+        <start>
+            <transition name="init" to="init"/>
+            <transition name="open" to="open"/>
+        </start>
+        
+        <process name="open">
+            <transition to="default" cond="#{entity.state == 'DRAFT'}"/>
+            <transition to="forapproval" cond="#{entity.state == 'FORAPPROVAL'}"/>
+            <transition to="approved" cond="#{entity.state == 'APPROVED'}"/>
+        </process>
+        
+        <page name="init" title="FAAS Cancellation (Draft)">
+            <transition caption="Cancel"  to="end"  mnemonic="c" icon="images/toolbars/cancel.png" />
+            <transition caption="Save"   to="default" action="save" name="save" mnemonic="s" shortcut="ctrl S" icon="images/toolbars/save.png"  visibleWhen="#{mode != 'read'}" />
+        </page>
+        
+        <page name="default" title="FAAS Cancellation (Draft)">
+            <transition caption="Close"  to="end"      mnemonic="c" icon="images/toolbars/cancel.png" visibleWhen="#{mode == 'read'}"/>
+            <transition caption="Edit"   to="back-to-default" action="edit"  name="edit" mnemonic="e" shortcut="ctrl E" icon="images/toolbars/edit.png"  visibleWhen="#{mode == 'read'}" />
+            <transition caption="Cancel" to="back-to-default" action="cancelEdit" name="cancel" mnemonic="c" icon="images/toolbars/cancel.png" visibleWhen="#{mode != 'read'}"/>
+            <transition caption="Save"   to="back-to-default" action="save" name="save" mnemonic="s" shortcut="ctrl S" icon="images/toolbars/save.png"  visibleWhen="#{mode != 'read'}" />
+            <transition caption="Delete" to="delete"  action="delete" confirm="Delete record?"    mnemonic="d" icon="images/toolbars/trash.png"  visibleWhen="#{mode == 'read'}" />
+            <transition caption="Submit" to="forapproval" action="submitForApproval"  mnemonic="m"  visibleWhen="#{mode == 'read'}" confirm="Submit Annotation for approval?"/>
+        </page>
+        
+        <process name="back-to-default">
+            <transition to="default" />
+        </process>
+        
+        <process name="delete">
+            <transition to="end"/>
+        </process>
+        
+        
+        <page name="forapproval" title="FAAS Cancellation (For Approval)">
+            <transition caption="Close" to="end" mnemonic="c" icon="images/toolbars/cancel.png" visibleWhen="#{mode == 'read'}" />
+            <transition caption="Edit"   to="back-to-forapproval" action="edit" name="edit" mnemonic="e" shortcut="ctrl E" icon="images/toolbars/edit.png"  visibleWhen="#{mode == 'read'}" />
+            <transition caption="Cancel" to="back-to-forapproval" action="cancelEdit" name="cancel"  mnemonic="c" icon="images/toolbars/cancel.png" visibleWhen="#{mode != 'read'}"/>
+            <transition caption="Save"   to="back-to-forapproval" action="save" name="save" mnemonic="s" shortcut="ctrl S" icon="images/toolbars/save.png"  visibleWhen="#{mode != 'read'}" />
+            <transition caption="Disapprove" to="default" action="disapproveFaasCancellation" mnemonic="d" visibleWhen="#{mode == 'read'}" confirm="Disapprove Subdivision?"/>
+            <transition caption="Approve" to="approved" action="approveFaasCancellation" mnemonic="v" icon="images/toolbars/approve.png" visibleWhen="#{mode == 'read'}" confirm="Approve Subdivision?"/>
+        </page>
+        
+        <process name="back-to-forapproval">
+            <transition to="forapproval"/>
+        </process>
+        
+        <page name="approved" title="Cancelled FAAS">
+            <transition caption="Close" to="end" mnemonic="c" icon="images/toolbars/cancel.png"/>
+        </page>
+        
+        <end />
+        
+    </pageflow>
+    
+    <pages> 
+        <page name="init" template="com.rameses.gov.etracs.rpt.cancelledfaas.ui.CancelledFAASPage"/>
+        <page name="default" template="com.rameses.gov.etracs.rpt.cancelledfaas.ui.CancelledFAASPage"/>
+        <page name="forapproval" template="com.rameses.gov.etracs.rpt.cancelledfaas.ui.CancelledFAASPage"/>
+        <page name="approved" template="com.rameses.gov.etracs.rpt.cancelledfaas.ui.CancelledFAASPage"/>
+    </pages>
+</workunit>
+
+

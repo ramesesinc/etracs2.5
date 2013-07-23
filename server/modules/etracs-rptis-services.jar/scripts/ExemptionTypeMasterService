@@ -1,0 +1,45 @@
+import com.rameses.annotations.*;
+import com.rameses.eserver.*;
+import com.rameses.common.*;
+
+class ExemptionTypeMasterService
+{
+	@PersistenceContext('main')
+	def em
+	
+	@Service('CrudMasterService')
+	def crudSvc 
+
+	def SCHEMA_NAME = 'exemptiontype'
+	
+	@ProxyMethod
+	public def init( ) {
+		return [:] 
+	}
+
+	@ProxyMethod
+	public def create( entity ) {
+		return crudSvc.create(SCHEMA_NAME, entity)
+	}
+
+	@ProxyMethod
+	public def update( entity ) {
+		return crudSvc.update(SCHEMA_NAME, entity)
+	}
+
+	@ProxyMethod
+	public def open( entity ) {
+		return crudSvc.open(SCHEMA_NAME, entity)
+	}
+
+	@ProxyMethod
+	public void delete( entity ) {
+		crudSvc.delete(SCHEMA_NAME, entity)
+	}
+
+	@ProxyMethod
+	public def approve( entity ) {
+		return crudSvc.approve(SCHEMA_NAME, entity)
+	}
+
+}

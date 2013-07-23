@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workunit extends="rpt_wtemplates/CertificationController.xml">
+    <invokers>
+        <invoker folderid="/explorer/txn/rpt/cert" action="init" caption="Land Holding with Improvement" 
+            opener="landholdingwithimprov" index="2" />
+            
+        <invoker type="quick_launcher" action="init" code="RC02" caption="Land Holding with Improvement" 
+            opener="landholdingwithimprov" index="2" />
+            
+        <invoker type="landholdingwithimprov:open" action="open" caption="Land Holding with Improvement" /> 
+    </invokers>
+    
+    <code class="com.rameses.gov.etracs.rpt.report.certification.LandHoldingWithImprovementController" >
+    </code>
+</workunit>

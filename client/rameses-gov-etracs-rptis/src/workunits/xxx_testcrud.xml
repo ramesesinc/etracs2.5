@@ -1,0 +1,32 @@
+<workunit>
+    <invokers>
+        <invoker folderid="/menu/test" caption="Sample CRUD" action="init"/>
+        <invoker type="formActions" caption="Action 3"/> 
+        <invoker type="var:create" caption="New Variable" action="init"/> 
+        <invoker type="var:open" caption="Variable" action="open"/> 
+    </invokers>
+    
+    <code>
+    import com.rameses.rcp.common.*;
+    import com.rameses.rcp.annotations.*;
+    import com.rameses.osiris2.client.*;
+    import com.rameses.osiris2.common.*;
+
+    class SampleCRUDController extends CRUDController 
+    {
+        String entityName = "var";
+        String serviceName = "MasterVarService";
+        String editFocusComponent = "entity.value";
+        def test;
+        
+        def getDoLookup(){
+            return InvokerUtil.lookupOpener("miscitemvalue:lookup", [lguid:'052-14', ry:2009]);
+        }
+    }
+    </code>
+    
+    <pages>
+        <page template="test.SampleCRUDPage"/> 
+    </pages>
+
+</workunit>

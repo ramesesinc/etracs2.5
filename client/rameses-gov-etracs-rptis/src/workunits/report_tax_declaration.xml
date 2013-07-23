@@ -1,0 +1,12 @@
+<workunit>
+    <invokers>
+        <invoker type="tdreport:view" action="initPreview" caption="Tax Declaration Report" target="window"/>
+        <invoker type="navActions" action="_close" caption="Close" mnemonic="c" immediate="true" icon="images/toolbars/cancel.png"/>
+    </invokers>
+    <code class="com.rameses.gov.etracs.rpt.report.td.TDReportController">
+    </code>
+    
+<page>
+    <page name="preview" template="com.rameses.gov.etracs.rpt.report.PreviewPage" />
+</page>    
+</workunit>

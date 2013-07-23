@@ -1,0 +1,30 @@
+<schema>
+	<element tablename="craaf" >
+		<field name="objid" primary="true"/>
+		<field name="afinventoryid" />
+		<field name="afinventorycreditid" />
+		<field name="craafyear" required="true" type="integer"/>
+		<field name="craafmonth" required="true" type='integer'/>
+		<field name="collector_objid" />
+		<field name="collector_name" />
+		<field name="collector_title" />
+		<field name="afid" required="true"/>
+		<field name="beginqty" type="integer"/>
+		<field name="beginfrom" />
+		<field name="beginto" />
+		<field name="receivedqty" type="integer"/>
+		<field name="receivedfrom" />
+		<field name="receivedto" />
+		<field name="issuedqty" type="integer"/>
+		<field name="issuedfrom" />
+		<field name="issuedto" />
+		<field name="cancelledqty" type="integer"/>
+		<field name="cancelledfrom" />
+		<field name="cancelledto" />
+		<field name="cancelreason" />
+		<field name="endqty" type="integer"/>
+		<field name="endfrom" />
+		<field name="endto" />
+		<field name="stubno"/>
+	</element>
+</schema>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workunit>
+    <invokers>
+        <invoker type="formActions" action="_close" shortcut="ctrl W" mnemonic="c" immediate="true" caption="Close" xicon="images/cancel.png" visibleWhen="#{mode=='view' and showClose}"/>
+        <invoker type="formActions" action="init" shortcut="ctrl N" visibleWhen="#{mode == 'view'}" immediate="true" caption="New" mnemonic="n" xicon="images/doc-new.png" target="popup" xrole="ENTITY_ENCODER" xpermission="juridical.create" />
+        <invoker type="formActions" action="edit" shortcut="ctrl E" visibleWhen="#{mode == 'view' and entity.objid != null}" immediate="true" caption="Edit" mnemonic="e" xicon="images/doc-edit.png" xrole="ENTITY_ENCODER" xpermission="juridical.edit" />
+        <invoker type="formActions" action="save" shortcut="ctrl S" visibleWhen="#{mode != 'view'}" caption="Save" mnemonic="s" xicon="images/doc-save.png"/>
+        <invoker type="formActions" action="cancel" visibleWhen="#{mode != 'view'}"  immediate="true" caption="Cancel" mnemonic="c" xicon="images/doc-cancel.png"/>
+        <invoker type="formActions" action="delete" shortcut="ctrl D" visibleWhen="#{mode == 'view' and entity.objid != null}" immediate="true" caption="Delete" mnemonic="d" xicon="images/doc-delete.png" xrole="ENTITY_ENCODER" xpermission="juridical.delete" />
+        <invoker type="formActions" action="showMapping" shortcut="ctrl M" visibleWhen="#{mode == 'view' and entity.objid != null and allowMapping}" immediate="true" caption="Mapping" mnemonic="m" xrole="ENTITY_ENCODER" xpermission="entity.mapping" />
+        
+        <invoker type="mappingActions" action="_default" caption="Back" mnemonic="b" xicon="images/back.png" immediate="true" />
+        <invoker type="mappingActions" action="broadcastRequest" caption="Broadcast Mapping Request" immediate="true" />
+    </invokers>
+    <pages>
+        <page name="mapping" template="com.rameses.enterprise.entity.ui.EntityMappingPage"/>
+    </pages>
+</workunit>

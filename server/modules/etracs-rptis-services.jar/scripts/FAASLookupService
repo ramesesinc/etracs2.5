@@ -1,0 +1,35 @@
+import com.rameses.annotations.*
+import com.rameses.common.*;
+
+class FAASLookupService
+{
+	@PersistenceContext('rpt')
+	def em 
+
+	
+	@Service('RPTUtil')
+	def utilSvc
+	
+
+	@ProxyMethod
+	public def lookupFaas( params ) {
+		params.tdno 		= params.searchtext
+		params.blockno 		= params.searchtext 
+		params.searchtext 	= (params.searchtext ? params.searchtext : '') + '%';
+		
+		def filters = [
+			' WHERE f.tdno = $P{tdno}',
+			' WHERE f.ownername LIKE $P{searchtext}',
+			' WHERE r.fullpin LIKE $P{searchtext}',
+			' WHERE rp.cadastrallotno LIKE $P{searchtext}',
+			' WHERE rp.blockno = $P{blockno}',
+			' WHERE rp.surveyno LIKE $P{searchtext}',
+		]
+
+		return utilSvc.getListFromQuery('faas:lookupFaas', filters, params, 'f.objid');
+	}
+
+
+
+}
+

@@ -1,0 +1,38 @@
+import com.rameses.annotations.*
+import com.rameses.eserver.*;
+import com.rameses.common.*;
+
+class ProvinceInfoInterceptor
+{
+	@Service('MunicipalityLookupService')
+	def muniSvc 
+
+
+	def STATE_FORPROVAPPROVAL = 'FORPROVAPPROVAL'
+	
+	@Before(pattern="FAASService.submitFaasForApproval", eval="#{args[0].rpu.rp.lgutype == 'province' && args[0].state == 'INTERIM'}") 
+	public void submitFaasForApproval( evt ) {
+		def faas = evt.args[0]
+		faas.state = STATE_FORPROVAPPROVAL
+	}
+
+
+	@Before(pattern="SubdivisionService.submitForApproval", eval="#{args[0].motherfaas.lgutype == 'province' && args[0].state == 'DRAFT'}") 
+	public void submitSubdivisionForApproval( evt ) {
+		def subdivision = evt.args[0]
+		subdivision.state = STATE_FORPROVAPPROVAL
+	}
+
+	@Before(pattern="ConsolidationService.submitForApproval", eval="#{args[0].lgutype == 'province' && args[0].state == 'DRAFT'}") 
+	public void submitConsolidationForApproval( evt ) {
+		def consolidation = evt.args[0]
+		consolidation.state = STATE_FORPROVAPPROVAL
+	}
+
+
+	@After(pattern="RPUService.getLgus", eval="#{'province'.equals(args[0])}")
+	public void getLgus(evt){
+		def list = evt.result 
+		list += muniSvc.lookupMunicipalities([:])
+	}
+}

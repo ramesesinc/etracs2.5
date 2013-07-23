@@ -1,0 +1,59 @@
+<workunit>
+    <pageflow>
+        <start>
+            <transition name="init" to="initpage" />
+            <transition name="draft" to="mainpage" />
+            <transition name="for_assessment" to="assessmentpage" />
+            <transition name="for_approval" to="assessmentpage" />
+            <transition name="approved" to="assessmentpage" />
+        </start>
+        <page name="initpage" title="MTOP Application">
+            <transition to="end" caption="Close" />
+            <transition to="mainpage" caption="Next" action="next" />
+        </page>
+        <page name="mainpage" title="MTOP Application">
+            <transition to="end" caption="Close" visibleWhen="#{mode != 'edit'}" icon="images/cancel.png" />
+            <transition to="cancel" action="cancel" caption="Cancel" visibleWhen="#{mode == 'edit'}" icon="images/cancel.png" />
+            <transition to="save" action="save" caption="Save" visibleWhen="#{mode != 'view'}" icon="images/save.png" />
+            <transition to="edit" action="edit" caption="Edit" visibleWhen="#{mode == 'view' and application.txntype != 'RETIRE'}" icon="images/edit.png" />
+            <transition to="initpage" action="delete" caption="Delete" confirm="Are you sure you want to delete the document?" visibleWhen="#{application.txnno != null}" icon="images/doc-delete.png" />
+            <transition to="assessmentpage" action="submitForAssessment" caption="Submit" confirm="Submit for assessment?" visibleWhen="#{mode == 'view'}" icon="images/doc-submit.png" />
+        </page>
+        
+        <process name="cancel">
+            <transition to="mainpage" />
+        </process>
+        
+        <process name="save">
+            <transition to="mainpage" />
+        </process>
+        
+        <process name="edit">
+            <transition to="mainpage" />
+        </process>
+        
+        <page name="assessmentpage" title="Assessment Information">
+            <transition to="end" caption="Close" />
+            <transition to="mainpage" action="cancelAssessment" caption="Cancel" visibleWhen="#{application.state == 'FOR_ASSESSMENT'}" icon="images/cancel.png" />
+            <transition to="submit" action="submitForApproval" caption="Submit For Approval" confirm="Submit for approval?" visibleWhen="#{application.state == 'FOR_ASSESSMENT'}" icon="images/doc-submit.png" />
+            <transition to="approve" action="approve" caption="Approve" confirm="Approve?" visibleWhen="#{application.state == 'FOR_APPROVAL'}" icon="images/doc-approve.png" />
+            <!--<transition to="previewreport" action="previewApplication" caption="View Application" icon="images/doc-view.png" />
+            <transition to="previewreport" action="viewAssessment" caption="View Assessment" icon="images/doc-view.png" />-->
+        </page>
+        
+        <process name="submit">
+            <transition to="assessmentpage" />
+        </process>
+        
+        <process name="approve">
+            <transition to="assessmentpage" />
+        </process>
+        
+        <end/>
+    </pageflow>
+    
+    <pages>
+        <page name="mainpage" template="com.rameses.gov.etracs.mtop.application.ApplicationMainPage" />
+        <page name="assessmentpage" template="com.rameses.gov.etracs.mtop.application.AssessmentPage" />
+    </pages>
+</workunit>

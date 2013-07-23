@@ -1,0 +1,40 @@
+<workunit extends="mtop_wtemplates/application.xml">
+    <invokers>
+        <invoker folderid="/explorer/txn/mtop" action="init" caption="Renew Application" />
+    </invokers>
+    
+    <code>
+    <![CDATA[
+        import com.rameses.rcp.annotations.*
+        import com.rameses.rcp.common.*
+        import com.rameses.osiris2.client.*
+        import com.rameses.osiris2.common.*
+        import com.rameses.gov.etracs.mtop.application.*
+        
+        class RenewMTOPApplicationController extends ApplicationPageFlowController
+        {
+            Map initializeApplication() {
+                return [
+                    state   : 'DRAFT',
+                    txndate :  new Date(),
+                    txntype : 'RENEW',
+                    txnmode : 'ONLINE'
+                ]
+            }
+            
+            def onselectApplication = {
+                application.putAll( it )
+                binding.refresh('application.*')
+            }
+            
+            def getLookupApplication() {
+                return InvokerUtil.lookupOpener('expiredapplication:lookup', [onselect:onselectApplication])
+            }
+        }
+    ]]>
+    </code>    
+    
+    <pages>
+        <page name="initpage" template="com.rameses.gov.etracs.mtop.application.ApplicationInitPageB" />
+    </pages>
+</workunit>

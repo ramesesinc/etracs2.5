@@ -1,0 +1,27 @@
+import com.rameses.annotations.*;
+import com.rameses.eserver.*;
+import com.rameses.common.*;
+
+class StructureLookupService
+{
+	@PersistenceContext('main')
+	def em
+
+	@Service('LookupUtilService')
+	def lookupSvc 
+	
+	@ProxyMethod
+	public def lookupStructures( params ) {
+		return lookupSvc.lookup( 'structure:lookupStructures', params )
+	}
+	
+	@ProxyMethod
+	public def lookupStructureMaterials( params ) {
+		println 'lookupStructureMaterials -> ' + params 
+		if (!params.searchtext) params.searchtext = ''
+		params.searchtext += '%'
+		return em.sqlContext.createNamedQuery('structure:lookupStructureMaterials')
+					.setParameters(params)
+					.resultList 
+	}
+}

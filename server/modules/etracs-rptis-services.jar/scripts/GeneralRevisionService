@@ -1,0 +1,88 @@
+import com.rameses.annotations.*
+import com.rameses.common.*;
+import com.rameses.util.*;
+
+class GeneralRevisionService
+{
+	
+	@PersistenceContext('rpt')
+	def em
+    
+	@Env
+	def env
+
+	@Service('FAASService')
+	def faasSvc 
+
+
+	@Service('RPUService')
+	def rpuSvc
+
+	@Service('RealPropertyService')
+	def rpSvc 
+
+
+    @Service('Var')
+	def var
+
+	
+	@Service('RPTUtil')	
+	def utilSvc
+
+
+
+	@ProxyMethod
+	public def initGeneralRevision( info ) {
+		utilSvc.required('Property to process', info.faas)
+		utilSvc.required('New Revision Year', info.newrysetting)
+		def faas = faasSvc.initFaasTransaction(info)
+		
+		if (faas.rpu.rputype == 'land'){
+			faas.rpu.rp.previd = faas.rpu.rp.objid 
+			faas.rpu.rp.objid 	= utilSvc.generateId('RP')
+			faas.rpu.realpropertyid = faas.rpu.rp.objid
+		}
+		else {
+			def landrpu = getRevisedLandRpu(faas.rpu, info.newrysetting.ry)
+			if (!landrpu) throw new Exception('Land RPU is not yet revised for Revision Year ' + info.newrysetting.ry + '.')
+			faas.rpu.rp = rpSvc.openRealProperty(landrpu.realpropertyid)
+			faas.rpu.realpropertyid = faas.rpu.rp.objid 
+			faas.rpu.landrpuid = landrpu.objid 
+		}
+		faas.rpu.rysettingid 	= info.newrysetting.objid 
+		faas.rpu.ry 			= info.newrysetting.ry
+		faas.rpu.rp.ry 			= info.newrysetting.ry 
+
+		rpuSvc.reviseRpu(faas.rpu)
+		return faas 
+	}
+
+
+	/*--------------------------------------------------------
+	*
+	* Support Methods
+	*
+	* --------------------------------------------------------*/
+
+	/* returns the list of revision settings which is greater than the specified ry*/
+	@ProxyMethod
+	public def getRyList(lguid, ry, rputype ) {
+		return em.sqlContext.createNamedQuery('generalrevision:getRyList' + rputype.toUpperCase())
+				.setParameters([lguid:lguid, ry:ry]).resultList 
+	}
+
+
+	/*--------------------------------------------------------
+	*
+	* Helper Methods
+	*
+	* --------------------------------------------------------*/
+	def getRevisedLandRpu(rpu, ry){
+		return em.sqlContext.createNamedQuery('generalrevision:getRevisedLandRpu')
+				.setParameter('previd', rpu.landrpuid )
+				.setParameter('ry', ry)
+				.singleResult
+	}
+
+}
+

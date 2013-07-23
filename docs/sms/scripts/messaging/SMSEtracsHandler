@@ -1,0 +1,32 @@
+
+import com.rameses.annotations.*;
+import java.util.concurrent.*;
+
+class SMSEtracsHandler
+{
+	@Service("TestSMSService")
+	def smsSvc;
+	
+	@Cache
+	def cache;
+	
+	@OnMessage("etracssms")
+	public void handle(def params) 
+	{
+		println "SMS06304Handler.handle: params=$params";
+		
+		def queue = new LinkedBlockingQueue(); 
+		def id = new java.rmi.server.UID().toString();
+		cache.put(id, queue); 
+		smsSvc.listen(id);
+	
+		def httpc = new com.rameses.httpclient.HttpClient("192.168.254.29:8080/misocc");
+        def result = httpc.post("DateService/getServerDate.json", new HashMap());
+		println "result-> " + result;
+		params.msg = result;
+		params.to = params.from;
+		params.acctname = "etracssms";
+		params.apikey = "etracssms1234";
+		queue.add(params); 
+	} 
+}

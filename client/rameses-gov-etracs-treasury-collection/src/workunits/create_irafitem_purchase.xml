@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workunit>
+    <invokers>
+        <invoker type="irafpurchase:create" action="init" caption="Add IRAF Item" target="popup"/>
+        
+        <invoker type="formActions" action="saveAndNew" caption="Save and New" mnemonic="n"/>
+        <invoker type="formActions" action="save" caption="Save" mnemonic="s"/>
+    </invokers>
+    <code>
+        <![CDATA[
+            import com.rameses.rcp.common.*;
+            import com.rameses.rcp.annotations.*;
+            import com.rameses.osiris2.client.*;
+            
+            class IRAFPurchaseCreateController
+            {
+                @Binding
+                def binding;
+
+                def title = 'IRAF Item';
+                
+                def iraf;
+                def item;
+                def requestedItem;
+                def addItemHandler;
+                
+                void init() {
+                    item = [ prefix:'', suffix:'', remainingqty:0, receivedqty:0, startseries:0 ]
+                }
+                
+                def getAfList(){
+                    return iraf.requesteditems.findAll{ it.requestedqty > it.issuedqty };
+                }
+
+                def addAndNew(){
+                    addItem();
+                    init();
+                }
+
+                def save() {
+                    item.remove('remainingqty');
+                    if( item.receivedqty <= 0 ) throw new Exception("Received Qty. must be greater than zero.");
+                    def reqitem = iraf.requesteditems.find{ it.af.objid == item.af.objid };
+                    item.stubfrom = reqitem.stubfrom;
+                    def totalQty = reqitem.receivedqty + item.receivedqty + reqitem.issuedqty;
+                    if( totalQty  > reqitem.requestedqty ) throw new Exception("Received Qty. exceeds quantity requested.");
+                    item.endseries = 0;
+                    if( item.af.type == "serial" ) {
+                        if( item.startseries <= 0 ) throw new Exception("Start series must be greater than zero.");
+                        if( (item.startseries % item.af.pcsperunit) != 1 ) throw new Exception("Invalid start series.");
+                        item.endseries = item.startseries + ( item.receivedqty * item.af.pcsperunit ) - 1;
+                    }
+                    if( addItemHandler ) addItemHandler(item);
+                    return '_close';
+                }
+
+                void setRequestedItem( requestedItem ) {
+                    this.requestedItem = requestedItem;
+                    if( requestedItem ){
+                        item.af = requestedItem.af;
+                        if( requestedItem.af.type == 'serial' ){
+                            item.prefix = '';
+                            item.suffix = '';
+                            item.startseries = 0;
+                            item.remainingqty = requestedItem.requestedqty - requestedItem.issuedqty - requestedItem.receivedqty;
+                        }
+                        else {
+                            item.prefix = 'N/A';
+                            item.suffix = 'N/A';
+                            item.startseries = 0;
+                        }
+                    }
+                    else init();
+                }
+            }
+        ]]>
+    </code>
+    <pages>
+        <page template="com.rameses.gov.etracs.treasury.collection.af.IRAFAddItemPage"/>
+    </pages>
+</workunit>

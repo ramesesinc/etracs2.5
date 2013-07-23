@@ -1,0 +1,42 @@
+<workunit extends="rpt_wtemplates/ReportController.xml" >
+    <invokers>
+        <invoker folderid="/explorer/report/rpt" action="init" caption="Tax Mapping Control Roll" target="window" index="4" />
+    </invokers>
+    <code>
+
+<![CDATA[
+
+import com.rameses.rcp.common.*;
+import com.rameses.rcp.annotations.*;
+import com.rameses.osiris2.client.*;
+import com.rameses.osiris2.reports.*;
+
+
+class TMCRController extends com.rameses.gov.etracs.rpt.report.ReportController
+{
+    @Service('RPTReportService') 
+    def svc 
+    
+    String title = 'Tax Mapping Control Roll Report'
+    
+    String reportName = 'com/rameses/gov/etracs/rpt/report/tmcr.jasper';
+    
+    def getReportData(){
+        return svc.generateTMCR(entity);
+    }
+    
+    def formControl = [
+        getFormControls: {
+            return [
+                new FormControl( "combo", [caption:'Barangay', name:'entity.barangay', required:true, items:'barangays', expression:'#{item.name}']),
+                new FormControl( "integer", [caption:'Section', name:'entity.section', preferredSize:'50,19']),
+            ]    
+        },
+   ] as FormPanelModel;
+   
+}
+
+]]>        
+        
+    </code>
+</workunit>

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workunit>
+    <invokers>
+        <invoker type="faasupdate:create" action="init" caption="FAAS Information Update (New)" target="window"  />
+        <invoker type="faasupdate:open" action="open" caption="FAAS Information Update" target="window"  />
+        
+         <invoker folderid="/explorer/txn/rpt/faas" action="init"  caption="Update FAAS Information" index="23" />
+         <invoker type="quick_launcher" code="UFI01" action="init"  caption="Update FAAS Information" index="23" />
+        
+   </invokers>
+   <code class="com.rameses.gov.etracs.rpt.faasupdate.ui.FAASUpdateController">       
+   </code>
+
+    <pageflow>
+        <start>
+            <transition name="init" to="init"/>
+            <transition name="open" to="open"/>
+        </start>
+        
+        <process name="open">
+            <transition to="default" cond="#{entity.state == 'DRAFT'}"/>
+            <transition to="forapproval" cond="#{entity.state == 'FORAPPROVAL'}"/>
+            <transition to="approved" cond="#{entity.state == 'APPROVED'}"/>
+        </process>
+        
+        <page name="init" title="Update FAAS Information (Draft)">
+            <transition caption="Cancel"  to="end"  mnemonic="c" icon="images/toolbars/cancel.png" />
+            <transition caption="Save"   to="default" action="save" name="save" mnemonic="s" shortcut="ctrl S" icon="images/toolbars/save.png"  visibleWhen="#{mode != 'read'}" />
+        </page>
+        
+        <page name="default" title="Update FAAS Information (Draft)">
+            <transition caption="Close"  to="end"      mnemonic="c" icon="images/toolbars/cancel.png" visibleWhen="#{mode == 'read'}"/>
+            <transition caption="Edit"   to="back-to-default" action="edit"  name="edit" mnemonic="e" shortcut="ctrl E" icon="images/toolbars/edit.png"  visibleWhen="#{mode == 'read'}" />
+            <transition caption="Cancel" to="back-to-default" action="cancelEdit" name="cancel" mnemonic="c" icon="images/toolbars/cancel.png" visibleWhen="#{mode != 'read'}"/>
+            <transition caption="Save"   to="back-to-default" action="save" name="save" mnemonic="s" shortcut="ctrl S" icon="images/toolbars/save.png"  visibleWhen="#{mode != 'read'}" />
+            <transition caption="Delete" to="delete"  action="delete" confirm="Delete record?"    mnemonic="d" icon="images/toolbars/trash.png"  visibleWhen="#{mode == 'read'}" />
+            <transition caption="Submit" to="forapproval" action="submitForApproval"  mnemonic="m"  visibleWhen="#{mode == 'read'}" confirm="Submit Annotation for approval?"/>
+        </page>
+        
+        <process name="back-to-default">
+            <transition to="default" />
+        </process>
+        
+        <process name="delete">
+            <transition to="end"/>
+        </process>
+        
+        
+        <page name="forapproval" title="Update FAAS Information (For Approval)">
+            <transition caption="Close" to="end" mnemonic="c" icon="images/toolbars/cancel.png" visibleWhen="#{mode == 'read'}" />
+            <transition caption="Edit"   to="back-to-forapproval" action="edit" name="edit" mnemonic="e" shortcut="ctrl E" icon="images/toolbars/edit.png"  visibleWhen="#{mode == 'read'}" />
+            <transition caption="Cancel" to="back-to-forapproval" action="cancelEdit" name="cancel"  mnemonic="c" icon="images/toolbars/cancel.png" visibleWhen="#{mode != 'read'}"/>
+            <transition caption="Save"   to="back-to-forapproval" action="save" name="save" mnemonic="s" shortcut="ctrl S" icon="images/toolbars/save.png"  visibleWhen="#{mode != 'read'}" />
+            <transition caption="Disapprove" to="default" action="disapproveFaasUpdate" mnemonic="d" visibleWhen="#{mode == 'read'}" confirm="Disapprove Subdivision?"/>
+            <transition caption="Approve" to="approved" action="approveFaasUpdate" mnemonic="v" icon="images/toolbars/approve.png" visibleWhen="#{mode == 'read'}" confirm="Approve Subdivision?"/>
+        </page>
+        
+        <process name="back-to-forapproval">
+            <transition to="forapproval"/>
+        </process>
+        
+        <page name="approved" title="Updated FAAS Information">
+            <transition caption="Close" to="end" mnemonic="c" icon="images/toolbars/cancel.png"/>
+        </page>
+        
+        <end />
+        
+    </pageflow>
+    
+    <pages> 
+        <page name="init" template="com.rameses.gov.etracs.rpt.faasupdate.ui.FAASUpdatePage"/>
+        <page name="default" template="com.rameses.gov.etracs.rpt.faasupdate.ui.FAASUpdatePage"/>
+        <page name="forapproval" template="com.rameses.gov.etracs.rpt.faasupdate.ui.FAASUpdatePage"/>
+        <page name="approved" template="com.rameses.gov.etracs.rpt.faasupdate.ui.FAASUpdatePage"/>
+    </pages>
+</workunit>
+
+

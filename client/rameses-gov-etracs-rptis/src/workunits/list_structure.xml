@@ -1,0 +1,27 @@
+<workunit extends="wtemplates/ListController.xml">
+    <invokers>
+        <invoker folderid="/explorer/master/rpt" caption="Structures" xrole="MASTER_ENCODER" xpermission="structure.view" target="window" index="6" />
+        <invoker type="quick_launcher" code="ST00" caption="Structures" role="MASTER_ENCODER" permission="structure.view"/>
+    </invokers>
+    <code>
+        import com.rameses.rcp.common.*
+        import com.rameses.rcp.annotations.*
+        import com.rameses.osiris2.client.*
+        import com.rameses.osiris2.common.*
+        
+        class StructureMgmtController extends ListController
+        {
+            String serviceName = 'StructureListService'
+            String entityName  = 'structure'
+            
+            Column[] getColumns(){
+                return [
+                    new Column(name:"code", caption:"Code", width:80),
+                    new Column(name:"name", caption:"Structure", width:250),
+                    new Column(name:"indexno", caption:"Index No.", width:80),
+                    new Column(name:"state", caption:"State", width:100),
+                ]
+            }
+        }
+    </code>
+</workunit>

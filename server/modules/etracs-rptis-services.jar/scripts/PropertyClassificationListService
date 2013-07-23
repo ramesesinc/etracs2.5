@@ -1,0 +1,16 @@
+import com.rameses.annotations.*;
+import com.rameses.common.*;
+
+class PropertyClassificationListService
+{
+	@PersistenceContext('main')
+	def em
+
+	@Service('ListUtilService')
+	def listSvc 
+	
+	@ProxyMethod
+	public List getList( Map params ) {
+		return listSvc.getList( 'propertyclassification:getList', params )
+	}
+}

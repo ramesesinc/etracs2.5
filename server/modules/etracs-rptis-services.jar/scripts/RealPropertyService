@@ -1,0 +1,282 @@
+import com.rameses.annotations.*
+import com.rameses.common.*
+import java.rmi.server.UID
+
+class RealPropertyService
+{
+	@PersistenceContext('rpt')
+	def em
+
+	@Service('PinService')
+	def pinSvc 
+
+
+	@Service('LGUService')
+	def lguSvc
+
+	@Service('Var')
+	def var 
+
+	@Service('RPTUtil')
+	def util 
+	
+
+	def SCHEMA_REALPROPERTY	= 'realproperty'
+	
+	def STATE_INTERIM       = 'INTERIM'
+    def STATE_FORAPPROVAL   = 'FORAPPROVAL'
+    def STATE_FORPROVSUBMISSION = 'FORPROVSUBMISSION'
+    def STATE_FORPROVAPPROVAL   = 'FORPROVAPPROVAL'
+    def STATE_CURRENT       = 'CURRENT'
+    def STATE_CANCELLED     = 'CANCELLED'
+
+	def SECTION_NEW_MAX  	= 3
+	def PARCEL_NEW_MAX  	= 2
+
+	def SECTION_OLD_MAX  	= 2
+	def PARCEL_OLD_MAX  	= 3
+
+
+	@ProxyMethod
+	public def initRealProperty( info, rputype ) {
+		if (!info.barangay) 
+		throw new Exception('Barangay is required.')
+
+		def rp 			= [ry:info.ry, claimno:info.claimno]
+		rp.barangay 	= info.barangay 
+		rp.barangayid	= info.barangay.objid
+		rp.barangay_pin = info.barangay.pin
+		buildPin(rp, info)
+
+		if (rputype == 'land') {
+			//create new realproperty
+			rp.pininfo 		= pinSvc.initPin( info.barangay )
+			rp.pinid		= rp.pininfo.objid
+			rp.objid 		= 'RP' + new UID()
+			rp.state 		= STATE_INTERIM
+			rp.autonumber	= 0
+			rp.lgutype		= var.lgu_type	
+		}
+		else {
+			rp = getLandRealProperty(rp.pin, rp.ry)
+		}
+		
+		return rp
+	}
+
+
+	@ProxyMethod
+	public def createRealProperty( rp) {
+		if (!exists(rp)) {
+			if (!rp.previd) {
+				def pininfo = rp.pininfo
+				if (!pininfo) pininfo = [objid:rp.objid, state:rp.state, barangayid:rp.barangayid]
+				pinSvc.createPin( pininfo )
+			}
+			rp.state = STATE_INTERIM
+			em.validate(SCHEMA_REALPROPERTY, rp)
+			em.create(SCHEMA_REALPROPERTY,rp)	
+		}
+		return rp 
+	}
+
+
+	@ProxyMethod
+	public def updateRealProperty( rp ) {
+		em.validate(SCHEMA_REALPROPERTY, rp)
+		em.update(SCHEMA_REALPROPERTY,rp)
+		return rp 
+	}
+
+
+	@ProxyMethod
+	public def openRealProperty( objid  ) {
+		def rp = em.read(SCHEMA_REALPROPERTY, [objid:objid])
+		rp?.barangay = lguSvc.lookupBarangayById(rp?.barangayid)
+		return rp 
+	}
+
+
+	@ProxyMethod
+	public def deleteRealProperty( rp ) {
+		def currentstate = getState(rp.objid)
+        if (currentstate == STATE_FORPROVAPPROVAL || currentstate == STATE_CURRENT || currentstate == STATE_CANCELLED) {
+        	return
+        }
+
+		rp = openRealProperty(rp.objid)
+		em.delete(SCHEMA_REALPROPERTY, rp)	
+		pinSvc.deletePin( [objid:rp.pinid] )
+	}
+
+
+
+	/*------------------------------------------------
+    *
+    * WORKFLOW ACTIONS
+    *
+    -------------------------------------------------*/
+    
+    @ProxyMethod
+    public def submitRealPropertyForApproval( rp ) {
+    	updateState(rp, rp.state)
+    	return rp 
+    }
+
+
+    @ProxyMethod
+    public def approveRealProperty( rp ) {
+    	updateState(rp, STATE_CURRENT)
+    	cancelPrevRealPropertyById(rp.previd)
+    	return rp 
+    }
+
+
+    @ProxyMethod
+    public def disapproveRealProperty( rp ) {
+    	updateState(rp, STATE_INTERIM)
+    	return rp 
+    }
+
+
+    @ProxyMethod
+    public def submitRealPropertyToProvince( rp ) {
+    	updateState(rp, STATE_FORPROVAPPROVAL)
+    	return rp 
+    }
+
+
+    @ProxyMethod
+    public def approveRealPropertySubmissionToProvince( rp ) {
+    	updateState(rp, STATE_CURRENT)
+    	return rp 
+    }
+
+
+    @ProxyMethod
+    public def disapproveRealPropertySubmissionToProvince( rp ) {
+    	updateState(rp, STATE_INTERIM)
+    	return rp 
+    }
+
+
+    @ProxyMethod
+    public def approveRealPropertyByProvince( rp ) {
+    	updateState(rp, STATE_CURRENT)
+    	cancelPrevRealPropertyById(rp.previd)
+    	return rp 
+    }
+
+
+    @ProxyMethod
+    public def disapproveRealPropertyByProvince( rp ) {
+    	updateState(rp, STATE_FORPROVSUBMISSION)
+    	return rp 
+    }
+
+
+    @ProxyMethod
+    public def checkDuplicatePin(params) {
+    	def rp = em.sqlContext.createNamedQuery('realproperty:checkDuplicatePin')
+					.setParameter('objid', params.objid)
+					.setParameter('pin', params.pin)
+					.setParameter('ry', params.ry)
+					.singleResult 
+    }
+
+	@ProxyMethod
+	public def buildPin( rp, info ) {
+		if (! info.pintype ) {
+			info.pintype = var.pin_type 
+		}
+		util.required('Pin Type', info.pintype)
+		util.required('Barangay PIN', info.barangay.pin)
+		util.required('Section', info.section)
+		util.required('Parcel', info.parcel)
+		
+		def maxsectionlen = null
+		def maxparcellen = null
+		
+		if (info.pintype.toLowerCase() == 'new'){
+			maxsectionlen = SECTION_NEW_MAX
+			maxparcellen  = PARCEL_NEW_MAX
+		}
+		else {
+			maxsectionlen = SECTION_OLD_MAX
+			maxparcellen  = PARCEL_OLD_MAX
+		}
+		
+		validateLength('Section', info.section.toString().length(), maxsectionlen)
+		validateLength('Parcel', info.parcel.toString().length(), maxparcellen)
+
+		def section = info.section.toString().padLeft(maxsectionlen,'0')
+		def parcel  = info.parcel.toString().padLeft(maxparcellen,'0')
+		def pin = info.barangay.pin + '-' + section + '-' + parcel 
+
+		if (info.claimno) {
+			pin += '-' + info.claimno
+		}
+
+		rp.pintype = info.pintype 
+		rp.section = section 
+		rp.parcel  = parcel 
+		rp.pin     = pin 
+		return rp 
+	}
+
+
+
+	/*=========================================================
+	** SUPPORT METHODS
+	=========================================================*/
+	def getLandRealProperty(pin, ry){
+		def rp = em.sqlContext.createNamedQuery('realproperty:getRealPropertyByPinRy')
+					.setParameter('pin', pin)
+					.setParameter('ry', ry)
+					.singleResult 
+			
+		if ( ! rp ) 
+		throw new Exception('Land Real Property does not exist or has already been deleted.')
+		
+		if ( rp.state == STATE_CANCELLED ) 
+		throw new Exception('Land Real Property for Revision Year ' + ry + ' has already been cancelled. Use another revision year instead.')
+
+		return rp
+
+	}
+
+
+	void validateLength(type, value, maxvalue ){
+		if (value > maxvalue)
+			throw new Exception(type + ' must not exceed ' + maxvalue + '.')
+
+		if (value < 0)
+		throw new Exception(type + ' must not be zero.')
+	}
+
+    def getState(rpid){
+        def rp = em.sqlContext.createNamedQuery('realproperty:getState').setParameter('objid', rpid).singleResult
+        if (!rp) throw new Exception('Real Property does not exist or has already been deleted.')
+        return rp.state 
+    }
+
+    void updateState( rp, newstate){
+        def currentstate = getState( rp.objid )
+        if (currentstate != STATE_CURRENT && currentstate != STATE_CANCELLED){
+            rp.state = newstate 
+            if (!rp.previd){
+            	pinSvc.updateState( rp )
+            }
+            updateRealProperty( rp )
+        }
+    }
+
+    boolean exists(rp){
+    	return openRealProperty(rp.objid) != null 
+
+    }
+
+    void cancelPrevRealPropertyById(objid){
+    	em.sqlContext.createNamedExecutor('realproperty:cancelPrevRealPropertyById').setParameter('objid', objid).execute()
+    }
+}

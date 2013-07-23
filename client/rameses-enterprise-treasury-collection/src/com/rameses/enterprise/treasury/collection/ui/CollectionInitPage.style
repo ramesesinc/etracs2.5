@@ -1,0 +1,17 @@
+"collector" [ txnmode == CAPTURE_MODE ] {
+    showCaption:true;
+    visible:true;
+}
+
+"collector" [ txnmode != CAPTURE_MODE ] {
+    showCaption:false;
+    visible:false;
+}
+
+"collectionhandler" [ collector == null && txnmode == CAPTURE_MODE ] {
+    enabled:false;
+}
+
+"collectionhandler" [ collector != null && txnmode == CAPTURE_MODE ] {
+    enabled:true;
+}

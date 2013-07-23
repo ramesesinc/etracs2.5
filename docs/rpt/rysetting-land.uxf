@@ -1,0 +1,316 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="12.0">
+  <zoom_level>10</zoom_level>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>360</x>
+      <y>290</y>
+      <w>50</w>
+      <h>170</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;
+m1=1
+m2=*</panel_attributes>
+    <additional_attributes>30;30;30;150</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>140</x>
+      <y>170</y>
+      <w>200</w>
+      <h>50</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;
+m1=1
+m2=*</panel_attributes>
+    <additional_attributes>180;30;30;30</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>320</x>
+      <y>140</y>
+      <w>130</w>
+      <h>180</h>
+    </coordinates>
+    <panel_attributes>landrysetting
+bg=green
+--
+objid
+state
+ry
+previd
+appliedto</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>160</x>
+      <y>440</y>
+      <w>140</w>
+      <h>160</h>
+    </coordinates>
+    <panel_attributes>bg=green
+landadjustmenttype
+--
+objid
+landrysettingid
+code
+name
+expression
+previd
+appliedto</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>420</x>
+      <y>250</y>
+      <w>180</w>
+      <h>270</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;
+m1=1
+m2=*</panel_attributes>
+    <additional_attributes>30;30;160;250</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>580</x>
+      <y>30</y>
+      <w>150</w>
+      <h>170</h>
+    </coordinates>
+    <panel_attributes>bg=green
+landassesslevel
+--
+objid
+landrysettingid
+classification_objid
+code
+name
+fixrate
+rate
+previd</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>40</x>
+      <y>140</y>
+      <w>130</w>
+      <h>110</h>
+    </coordinates>
+    <panel_attributes>rysetting_lgu
+bg=green
+--
+rysettingid
+lguid
+lguname
+settingtype</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>580</x>
+      <y>220</y>
+      <w>150</w>
+      <h>170</h>
+    </coordinates>
+    <panel_attributes>lcuvspecificclass
+bg=green
+--
+objid
+landrysettingid
+classification_objid
+code
+name
+areatype
+previd</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>420</x>
+      <y>220</y>
+      <w>180</w>
+      <h>50</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;
+m1=1
+m2=*</panel_attributes>
+    <additional_attributes>30;30;160;30</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>820</x>
+      <y>30</y>
+      <w>150</w>
+      <h>170</h>
+    </coordinates>
+    <panel_attributes>bg=green
+landassesslevelrange
+--
+objid
+landassesslevelid
+landrysettingid
+mvfrom
+mvto
+rate</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>700</x>
+      <y>50</y>
+      <w>140</w>
+      <h>50</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;
+m1=1
+m2=*</panel_attributes>
+    <additional_attributes>30;30;120;30</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>320</x>
+      <y>440</y>
+      <w>140</w>
+      <h>160</h>
+    </coordinates>
+    <panel_attributes>bg=green
+lcuvstripping
+--
+objid
+landrysettingid
+classification_objid
+striplevel
+rate
+previd</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Note</type>
+    <coordinates>
+      <x>50</x>
+      <y>0</y>
+      <w>140</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes>UPDATED:
+bg=yellow</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>0</x>
+      <y>300</y>
+      <w>230</w>
+      <h>90</h>
+    </coordinates>
+    <panel_attributes>landadjustmenttype_classification
+bg=green
+--
+landadjustmentid
+classification_objid
+landrysettingid</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>420</x>
+      <y>50</y>
+      <w>180</w>
+      <h>190</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;
+m1=1
+m2=*</panel_attributes>
+    <additional_attributes>30;170;160;30</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>190</x>
+      <y>290</y>
+      <w>170</w>
+      <h>170</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;
+m1=1
+m2=*</panel_attributes>
+    <additional_attributes>150;30;30;150</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>620</x>
+      <y>360</y>
+      <w>50</w>
+      <h>100</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;
+m1=1
+m2=*</panel_attributes>
+    <additional_attributes>30;30;30;80</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>70</x>
+      <y>230</y>
+      <w>270</w>
+      <h>90</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;
+m1=1
+m2=*</panel_attributes>
+    <additional_attributes>250;30;30;30;30;70</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>70</x>
+      <y>360</y>
+      <w>110</w>
+      <h>180</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;
+m1=1
+m2=*</panel_attributes>
+    <additional_attributes>90;160;30;160;30;30</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>580</x>
+      <y>440</y>
+      <w>150</w>
+      <h>150</h>
+    </coordinates>
+    <panel_attributes>bg=green
+lcuvsubclass
+--
+objid
+specificclass_objid
+landrysettingid
+code
+name
+unitvalue
+previd</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>

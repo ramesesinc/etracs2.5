@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workunit>
+    <invokers>
+        <invoker type="collection:form" caption="52" objid="52" aftype="serial" serieslength="7" requireactivate="true" class="ct" />
+    </invokers>
+    <code>
+        import com.rameses.rcp.annotations.*
+        import com.rameses.rcp.common.*
+        import com.rameses.osiris2.client.*
+        import com.rameses.osiris2.reports.*
+        import com.rameses.enterprise.treasury.collection.controllers.*;
+
+        class AF52ReportController extends CollectionReportModel 
+        {
+            public String getReportName() {
+                return "com/rameses/gov/etracs/treasury/collection/reports/af52.jasper";
+            }
+        }
+    </code>
+</workunit>

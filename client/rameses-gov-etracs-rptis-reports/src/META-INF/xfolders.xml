@@ -1,0 +1,12 @@
+<folders>
+    <folder id="menu">
+        <folder id="test" caption="Test"/>
+    </folder>
+    <folder id="explorer">
+        <folder id="report" caption="Reports" index="4">
+            <folder id="assessor" caption="Assessor" index="1" />
+            <folder id="landtax" caption="Land Tax" index="2" />
+        </folder>
+    </folder>
+</folders>
+

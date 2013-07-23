@@ -1,0 +1,31 @@
+"application.*" [mode != 'view'] {
+    enabled:true;
+}
+
+"application.*" [mode == 'view' || application.txntype != 'NEW'] {
+    enabled:false;
+}
+
+"application.*" [mode != 'view' && application.txnmode == 'CAPTURE'] {
+    enabled:true;
+}
+
+"application.txndate|application.txnno" [application.txnmode == 'ONLINE'] {
+    enabled:false;
+}
+
+"application.ctcno" [mode != 'view' && application.txntype == 'RENEW'] {enabled:true;}
+"application.ctcdateissued" [mode != 'view' && application.txntype == 'RENEW'] {enabled:true;}
+"application.ctcplaceissued" [mode != 'view' && application.txntype == 'RENEW'] {enabled:true;}
+
+"unitType|make|model|route" [mode != 'view'] {
+    enabled:true;
+}
+
+"unitType|make|model|route" [mode == 'view' || application.txntype != 'NEW'] {
+    enabled:false;
+}
+
+"unitType|make|model|route" [mode != 'view' && application.txnmode == 'CAPTURE'] {
+    enabled:true;
+}

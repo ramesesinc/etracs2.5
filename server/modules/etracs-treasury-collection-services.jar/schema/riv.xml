@@ -1,0 +1,26 @@
+<schema>
+	<element tablename="riv">
+		<field name="objid" primary="true" />
+		<field name="state"  required="true"/> <!-- DRAFT, OPEN, CLOSED -->
+		<field name="type" required="true"/> <!-- riv:main, riv:collector -->
+		<field name="txnno"  />
+		<field name="txndate" />
+		<field name="requestedby_objid" required="true"/>
+		<field name="requestedby_name" required="true"/>
+		<field name="requestedby_title" required="true"/>
+		<complex name="info" serializer="default" merge="true" required="false"/>
+	</element>
+	
+	<element name="rivitem" tablename="rivitem">
+		<field name="objid" primary="true"/>
+		<field name="requestedqty" type="integer" required="true"/>
+		<field name="issuedqty" type="integer" required="true"/>
+		<field name="rivid" required="true"/>
+		<field name="af_objid" required="true"/>
+		<field name="af_type" />
+		<field name="af_description" />
+		<field name="af_pcsperunit" />
+		<field name="af_denomination" />
+	</element>
+</schema>
+

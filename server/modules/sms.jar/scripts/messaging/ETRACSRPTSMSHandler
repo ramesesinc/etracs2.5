@@ -1,0 +1,173 @@
+
+import com.rameses.annotations.*;
+import java.util.concurrent.*;
+import com.rameses.osiris3.server.JsonUtil;
+
+class ETRACSRPTSMSHandler
+{
+	@Service("SMSSendService")
+	def smsSvc;
+
+	@Context
+   def AppContext 
+	
+	def commands = ['RPTHELP', 'RPTENROLL', 'RPTINFO', 'RPTBAL', 'RPTSTOP',]
+
+	@OnMessage(value="sms", eval="data.message.toUpperCase().startsWith('RPT')")
+	public void checkKeyword(def params) {
+		def validCmd = false
+		def info = parseInfo(params)
+		
+		if (info.cmd) {
+			for(int i = 0; i < commands.size(); i++){
+				if (info.cmd.equalsIgnoreCase(commands[i])){
+					validCmd = true
+					break
+				}
+			}
+		}
+
+		if (!validCmd){
+			println 'Invalid command -> '+ params.message
+			def reply = createReply(params)
+			reply.message = 'Invalid request format.\n'
+			reply.message += getHelpInfo()
+			smsSvc.send(reply)
+		}
+	}
+	
+
+	@OnMessage(value="sms", eval="data.message.toUpperCase().startsWith('RPTHELP')")
+	public void handleHelp(def params) 
+	{
+		def reply = createReply(params)
+		reply.message = getHelpInfo()
+		smsSvc.send(reply)
+	} 
+
+
+	@OnMessage(value="sms", eval="data.message.toUpperCase().startsWith('RPTENROLL')")
+	public void handleEnroll(def params) 
+	{
+		def reply = createReply(params)
+		def info = parseInfo(params)
+
+		if (!info.tdno) {
+			setError(reply, 'TD No. must be specified. Please text RPTENROLL <tdno>.')
+		}
+		else {
+			try{
+				reply += invoke('enroll', info)
+			}
+			catch(e){
+				setError(reply, e.message)
+			}
+		}
+		smsSvc.send(reply)
+	} 
+
+	
+	@OnMessage(value="sms", eval="data.message.toUpperCase().startsWith('RPTINFO')")
+	public void handleInfo(def params) 
+	{
+		def reply = createReply(params)
+		def info = parseInfo(params)
+		try{
+			reply += invoke('getInfo', info)
+		}
+		catch(e){
+			setError(reply, e.message)
+		}
+		smsSvc.send(reply)
+	} 
+
+
+	@OnMessage(value="sms", eval="data.message.toUpperCase().startsWith('RPTBAL')")
+	public void handleBalanceInquiry(def params) 
+	{
+		def reply = createReply(params)
+		def info = parseInfo(params)
+
+		if (!info.tdno) {
+			setError(reply, 'TD No. must be specified. Please text RPTBAL <tdno>.')
+		}
+		else {
+			try{
+				reply += invoke('generateBillByTdNo', info)
+			}
+			catch(e){
+				setError(reply, e.message)
+			}
+		}
+		smsSvc.send(reply)
+	} 
+
+
+	@OnMessage(value="sms", eval="data.message.toUpperCase().startsWith('RPTSTOP')")
+	public void handleStop(def params) 
+	{
+		def reply = createReply(params)
+		def info = parseInfo(params)
+		try{
+			if (info.tdno)
+				reply += invoke('deleteByTdNo', info)
+			else 
+				reply += invoke('deleteAll', info)
+		}
+		catch(e){
+			setError(reply, e.message)
+		}
+		smsSvc.send(reply)
+	} 
+
+
+
+	def invoke(method, params){
+		def etracs22_host = AppContext.getProperty('etracs22_host')
+		def etracs22_context = AppContext.getProperty('etracs22_context')
+		def httpc = new com.rameses.httpclient.HttpClient("$etracs22_host/$etracs22_context")
+		def result = httpc.post('RPTSmsSupportService/' + method + '.json', params)
+		return JsonUtil.toMap(result)
+	}
+
+
+	def createReply(params){
+		def p = [:]
+		p.putAll(params)
+		p.retcode  = 'OK'
+		p.acctname = AppContext.getProperty('sms_acctname')
+		p.apikey	= AppContext.getProperty('sms_apikey')
+		return p 
+	}
+
+
+	def parseInfo(params){ 
+		if (!params.message) params.message = ''
+		def tokens = params.message.tokenize(' ')
+		return [
+			cmd 		: tokens.size() == 0 ? null : tokens[0],
+			mobileno 	: params.phoneno,
+			tdno		: (tokens.size() == 2 ? tokens[1] : null ),
+		]
+	}
+
+
+	void setError(reply, msg){
+		reply.retcode = 'ERROR'
+		reply.message = msg 
+	}
+
+
+	def getHelpInfo(){
+		def help = 'RPT SMS Services: \n'
+		help += '(a) RPTENROLL <tdno> - enrolls the specified tdno to avail SMS services\n'
+		help += '(b) RPTINFO - receive info for each enrolled properties\n'
+		help += '(c) RPTINFO <tdno> - receive info of the specified tdno\n'
+		help += '(d) RPTBAL - inquire current balance for each enrolled properties\n'
+		help += '(e) RPTBAL <tdno> - inquire current balance of the specified tdno.\n'
+		help += '(f) RPTSTOP - unregister all properties\n'
+		help += '(g) RPTSTOP <tdno> - unregister specified tdno.\n'
+		return help 
+	}
+	
+}

@@ -1,0 +1,27 @@
+import com.rameses.annotations.*
+import com.rameses.common.*;
+
+
+class FAASListService
+{
+	@PersistenceContext('main')
+	def em
+
+
+    @ProxyMethod
+    public def getList( params ) {
+        if (! params) params = [:]
+        params.searchtext = (params.searchtext ? params.searchtext : '') + '%'
+
+        def qry = em.sqlContext.createNamedQuery('faas:getList')
+        
+        if (params._start != null){
+            qry.setFirstResult( params._start )
+            qry.setMaxResults(params._limit)
+        }
+        
+        return qry.setParameters(params).resultList 
+    }
+	
+}
+

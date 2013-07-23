@@ -1,0 +1,26 @@
+"addFaas|editFaas|removeFaas" [ ledger.state == 'PENDING'] {
+    enabled:true;
+}
+
+"selectedItem" [ ledger.state == 'PENDING'] {
+    readonly:false;
+}
+
+"editFaas|removeFaas" [ selectedItem == null ]{
+    enabled:false;
+}
+
+
+"addFaas|editFaas|removeFaas" [ ledger.state != 'PENDING' || mode == 'read'] {
+    enabled:false;
+}
+
+"editFaas|removeFaas" [selectedItem.systemcreated == true] {
+    enabled:false;
+}
+
+
+"selectedItem" [ ledger.state != 'PENDING' || mode == 'read'] {
+    readonly:true;
+}
+

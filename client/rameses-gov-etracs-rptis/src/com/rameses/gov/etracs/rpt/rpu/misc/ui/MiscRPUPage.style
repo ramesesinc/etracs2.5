@@ -1,0 +1,28 @@
+"rpu.*|classification|actualuse" [allowEdit == true]{
+    enabled:true;
+}
+
+"selectedItem" [allowEdit == true]{
+    readonly:false;
+}
+
+
+"rpu.exemptiontype" [ rpu.taxable == 1  || rpu.taxable == true] {
+    enabled:false;
+}
+
+"rpu.exemptiontype" [ rpu.taxable == 0 || rpu.taxable == false] {
+    enabled:true;
+}
+
+
+
+
+
+"rpu.*|classification|actualuse" [allowEdit != true]{
+    enabled:false;
+}
+
+"selectedItem" [allowEdit != true]{
+    readonly:true;
+}

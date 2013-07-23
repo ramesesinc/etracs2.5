@@ -1,0 +1,73 @@
+<schema>
+    <element name="consolidation" tablename="consolidation">
+        <field name="objid" primary="true" />
+        <field name="state" required="true" />
+        <field name="ry" required="true" type="integer" />
+        <field name="txnno" required="true" />
+        <field name="txndate" required="true" />
+        <field name="txntype_objid" required="true" />
+        <field name="autonumber" required="true" type="boolean" />
+        <field name="effectivityyear" required="true" type="integer"/>
+        <field name="effectivityqtr" required="true" type="integer"/>
+        <field name="newtdno" />
+        <field name="newutdno" required="true" />
+        <field name="newtitletype"  />
+        <field name="newtitleno"  />
+        <field name="newtitledate" />
+        <field name="memoranda" required="true" />
+        <field name="lguid" required="true" />
+        <field name="lgutype" required="true" />
+        
+        <field name="newrpid" required="true" />
+        <field name="newrpuid" required="true" />
+        <field name="newfaasid" />
+
+        <field name="administrator_objid" />
+        <field name="administrator_name" />
+        <field name="administrator_address" />
+        <field name="taxpayer_objid" required="true" />
+        <field name="taxpayer_name" required="true" />
+        <field name="taxpayer_address" required="true" />
+        <field name="owner_name" required="true" />
+        <field name="owner_address" required="true" />
+
+        <field name="appraiser_objid"  />
+        <field name="appraiser_name"  />
+        <field name="appraiser_title"  />
+        <field name="appraiser_dtsigned"  />
+        <field name="recommender_objid" />
+        <field name="recommender_name" />
+        <field name="recommender_title" />
+        <field name="recommender_dtsigned" />
+        <field name="taxmapper_objid" />
+        <field name="taxmapper_name" />
+        <field name="taxmapper_title" />
+        <field name="taxmapper_dtsigned" />
+        <field name="approver_objid"  />
+        <field name="approver_name"  />
+        <field name="approver_title"  />
+        <field name="approver_dtsigned"  />
+    </element>
+
+    <element name="consolidatedland" tablename="consolidatedland">
+        <field name="objid" primary="true" />
+        <field name="consolidationid" required="true" />
+        <field name="landfaasid" required="true" />
+        <field name="rpuid" required="true" />
+        <field name="rpid" required="true" />
+    </element>
+
+    <element name="affectedrpu" tablename="consolidationaffectedrpu">
+        <field name="objid" primary="true" />
+        <field name="consolidationid" required="true" />
+        <field name="landfaasid" required="true" />
+        <field name="prevfaasid" required="true" />
+        <field name="newrpid" required="true" />
+        <field name="newrpuid" required="true" />
+        <field name="newfaasid" />
+        <field name="newtdno" />
+        <field name="newutdno" required="true" />
+        <field name="newsuffix" required="true" type="integer" />
+        <field name="memoranda" />
+    </element>
+</schema>

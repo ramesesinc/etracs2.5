@@ -1,0 +1,83 @@
+import com.rameses.annotations.*;
+import com.rameses.common.*;
+import com.rameses.util.*
+
+class StructureMasterService
+{
+	@PersistenceContext('main')
+	def em
+	
+	@Service('CrudMasterService')
+	def crudSvc 
+
+	def SCHEMA_NAME 	= 'structure'
+	def STATE_DRAFT 	= 'DRAFT' 
+	def STATE_APPROVED 	= 'APPROVED'
+
+	
+	@ProxyMethod
+	public def init( ) {
+		return [:] 
+	}
+
+	@ProxyMethod
+	public def create( entity ) {
+		entity = crudSvc.create(SCHEMA_NAME, entity)
+		saveStructureMaterial( entity )
+		return entity
+	}
+
+	@ProxyMethod
+	public def update( entity ) {
+		entity = crudSvc.update(SCHEMA_NAME, entity)
+		saveStructureMaterial( entity )
+		return entity
+	}
+
+	@ProxyMethod
+	public def open( entity ) {
+		entity = crudSvc.open(SCHEMA_NAME, entity)
+		entity.materials = getStructureMaterials( entity.objid )
+		return entity 
+	}
+
+	@ProxyMethod
+	public void delete( entity ) {
+		deleteStructureMaterials(entity)
+		em.delete(SCHEMA_NAME, entity)
+	}
+
+	@ProxyMethod
+	public def approve( entity ) {
+		return crudSvc.approve(SCHEMA_NAME, entity)
+	}
+
+
+	def getStructureMaterials( structure_objid ){
+		return em.sqlContext.createNamedQuery('structure:getStructureMaterials')
+					.setParameter('structure_objid', structure_objid )
+					.resultList 
+	}
+
+	void saveStructureMaterial( entity ){
+		def oldMaterials 		= getStructureMaterials( entity.objid )
+		def deletedMaterials 	= oldMaterials - entity.materials 
+		def newMaterials 		= entity.materials - oldMaterials
+
+		deletedMaterials.each{
+			def xmat = EntityUtil.mapToField(it)
+			em.sqlContext.createNamedExecutor('structure:deleteStructureMaterial').setParameters(xmat).execute()
+		}
+
+		newMaterials.each{
+			def xmat = EntityUtil.mapToField(it)
+			em.sqlContext.createNamedExecutor('structure:insertStructureMaterial').setParameters(xmat).execute()
+		}
+	}
+
+	void deleteStructureMaterials(entity){
+		em.sqlContext.createNamedExecutor('structure:deleteStructureMaterials')
+				.setParameter('structure_objid', entity.objid )
+				.execute()
+	}
+}

@@ -1,0 +1,51 @@
+<schema>
+	<element tablename="iraf" >
+		<field name="objid" primary="true"/>
+		<field name="state" required="true"/>
+		<field name="txnno" required="true"/>
+		<field name="txndate" required="true"/>
+		<field name="preparedby_name" required="true"/>
+		<field name="preparedby_title" required="true"/>
+		<field name="riv_objid" required="true"/>
+		<field name="riv_txnno" required="true"/>
+		<field name="riv_requestedby_name" required="true"/>
+		<field name="riv_requestedby_title" required="true"/>
+		<complex name="info" serializer="default" merge="true" required="false"/>
+	</element>
+	
+	<element name="requesteditem" tablename="irafrequesteditem">
+		<field name="objid" primary="true"/>
+		<field name="irafid" required="true"/>
+		<field name="requestedqty" type="integer"  required="true"/>
+		<field name="receivedqty" type="integer" required="true"/>
+		<field name="issuedqty" type="integer" required="true"/>
+		<field name="af_objid" required="true"/>
+		<field name="af_type"/>
+		<field name="af_pcsperunit"/>
+		<field name="af_denomination"/>
+	</element>
+	
+	<element name="issueditem" tablename="irafissueditem">
+		<field name="objid" primary="true"/>
+		<field name="irafid" required="true"/>
+		<field name="afinventoryid" />
+		<field name="receivedqty" type="integer" required="true"/>
+		<field name="cancelledqty" type="integer"/>
+		<field name="prefix"/>
+		<field name="startseries" type="integer"/>
+		<field name="endseries" type="integer"/>
+		<field name="suffix" />
+		<complex name="info" ref="issuediteminfo" serializer="default" merge="true" required="false"/>
+		<complex name="cancelledseries" ref="cancelledseries" type="list" serializer="default" required="false"/>
+	</element>
+	
+	<element name="issuediteminfo">
+		<field name="af_objid" required="true"/>
+	</element>
+	
+	<element name="cancelledseries">
+		<field name="fromseries" type="integer" required="true"/>
+		<field name="toseries" type="integer" required="true"/>
+		<field name="remarks" required="true"/>
+	</element>
+</schema>

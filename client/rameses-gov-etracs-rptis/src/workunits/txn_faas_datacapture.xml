@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workunit extends="rpt_wtemplates/FaasController.xml">
+    <invokers>
+        <invoker type="faas_DC:open" action="open" />
+        
+         <invoker folderid="/explorer/txn/rpt/faas" action="initCapture"  caption="Data Capture" index="500" newrpu="true" newrealproperty="true" />
+         <invoker type="quick_launcher" code="DC01" action="initCapture"  caption="Data Capture" index="500" newrpu="true" newrealproperty="true"/>
+    </invokers>
+        
+<code class="com.rameses.gov.etracs.rpt.faas.controller.DataCaptureFaasController">
+  
+</code>
+
+<pages>
+</pages>
+</workunit>
+
+

@@ -1,0 +1,371 @@
+import com.rameses.annotations.*
+import com.rameses.util.*
+
+class MachRPUService
+{
+    @PersistenceContext('rpt')
+    def em
+
+    @Env
+    def env
+    
+    @Service('RPTUtil')
+    def util
+
+    @Service('DateService')
+    def dateSvc
+
+    @Service('NumberService')
+    def numberSvc
+    
+    @Service('LandRPUService')
+    def rpuSvc
+
+    @Service('MachRYSettingLookupService')
+    def machSettingSvc 
+
+    @Service('MachineLookupService')
+    def machSvc 
+
+    
+    def SCHEMA_RPU          = 'machrpu'
+    def SCHEMA_MACHUSE      = 'machrpu:machuse'
+    def SCHEMA_MACHDETAIL   = 'machrpu:machdetail'
+    
+
+    @ProxyMethod
+    public def initMachRpu(rpu) {
+        def landrpu = rpuSvc.getLandRpuByRealPropertyId(rpu.realpropertyid)
+        if (!landrpu) throw new Exception('Land RPU Reference does not exists.')
+
+        rpu.landrpuid   = landrpu.objid 
+        rpu.machuses    = []
+        return rpu 
+    }
+
+    @ProxyMethod
+    public def createMachRpu( rpu ) {
+        def xrpu = EntityUtil.mapToField(rpu)
+        em.validate(SCHEMA_RPU, xrpu)
+        em.create(SCHEMA_RPU, xrpu)
+        saveMachUses(rpu.machuses)
+        return rpu
+    }
+
+
+    @ProxyMethod
+    public def updateMachRpu(rpu) { 
+        def xrpu = EntityUtil.mapToField(rpu)
+        em.validate(SCHEMA_RPU, xrpu)
+        em.update(SCHEMA_RPU, xrpu)
+        saveMachUses(rpu.machuses)
+        removeDeletedItems(rpu)
+        return rpu
+    }
+
+
+    @ProxyMethod
+    public def openMachRpu( objid ) {
+        def rpu = em.read(SCHEMA_RPU, [objid:objid])
+        if (!rpu) {
+            throw new Exception('Machine RPU does not exists or has been deleted.')
+        }
+        rpu.machuses  = getMachUses(rpu)
+        return rpu 
+    }
+
+
+    @ProxyMethod
+    public def deleteMachRpu(rpu){
+        em.sqlContext.createNamedExecutor('machrpu:deleteAllMachDetails').setParameters(rpu).execute()
+        em.sqlContext.createNamedExecutor('machrpu:deleteAllMachUses').setParameters(rpu).execute()
+        em.delete(SCHEMA_RPU, rpu)
+    }
+
+
+    @ProxyMethod
+    public void generateNewIds( rpu) {
+        rpu.machuses.each{ mu ->
+            mu.objid     = util.generateId('MU')
+            mu.machrpuid = rpu.objid 
+            
+            mu.machines.each{ m ->
+                m.objid = util.generateId('MD')
+                m.machuseid = mu.objid 
+                m.machrpuid = rpu.objid 
+            }
+        }
+    }
+
+    @ProxyMethod
+    public def getClassifications(  ) {
+        return rpuSvc.getClassifications()
+    }
+
+
+    @ProxyMethod
+    public def getExemptionTypes(){
+        return rpuSvc.getExemptionTypes()
+    }
+
+
+    @ProxyMethod
+    public def getMachRySetting(objid){
+        return machSettingSvc.lookupMacyRySettingById(objid)
+    }
+
+
+
+    /*-------------------------------------------------------------------
+    *
+    * COMPUTATION METHODS
+    *
+    -------------------------------------------------------------------*/
+    @ProxyMethod
+    public def calculateAssessment( rpu ) {
+        rpu.machuses.each{ mu -> 
+            mu.basemarketvalue  = 0.0
+            mu.marketvalue      = 0.0
+            mu.assesslevel      = 0.0
+            mu.assessedvalue    = 0.0
+
+            mu.machines.each { machine ->
+                assessMachine(rpu, mu, machine )
+            }
+
+            mu.basemarketvalue  = util.sum(mu.machines, 'basemarketvalue')
+            mu.marketvalue      = util.sum(mu.machines, 'marketvalue')
+            mu.assesslevel      = (mu.machines ? mu.machines.first().assesslevel : 0.0)
+            mu.assessedvalue    = util.sum(mu.machines, 'assessedvalue')
+
+            zeroOutAVWhenExempt(rpu)
+        }
+
+        rpu.totalbmv = util.sum(rpu.machuses, 'basemarketvalue')
+        rpu.totalmv  = util.sum(rpu.machuses, 'marketvalue')
+        rpu.totalav  = util.sum(rpu.machuses, 'assessedvalue')
+
+        return rpu
+    }
+
+    @ProxyMethod
+    public def assessMachine(rpu, machuse, machine ){
+        calcYearsUsed( rpu, machuse, machine )
+        calcEstimatedLife( machine)
+        updateForexInfo( machine, rpu.ry) 
+        calculateRCNLD( machine )
+        calculateDepreciation( machine )
+        calculateDetailAssessment( machuse, machine )
+        return machine
+    }
+
+
+    void calculateDetailAssessment( machuse, machine ) {
+        def rptsetting = getRPTSetting()
+        machine.basemarketvalue  = machine.replacementcost
+        machine.marketvalue      = machine.basemarketvalue - machine.depreciationvalue
+        if( rptsetting && util.isTrue(rptsetting.roundadjmarketvalue ) ) {
+            machine.marketvalue = numberSvc.roundToTen( machine.marketvalue )
+        }
+        machine.assesslevel      = getAssessLevel( machuse, machine.marketvalue )
+        machine.assessedvalue   = numberSvc.roundToTen( machine.marketvalue * machine.assesslevel / 100.0)
+    }
+
+    def getAssessLevel( machuse, mv ) {
+        if( util.isTrue(machuse.actualuse.fixrate)) {
+            return machuse.actualuse.rate 
+        }
+        else {
+            def range = machSettingSvc.lookupAssessLevelByRange(machuse.actualuse.objid, mv)
+            if( range ) {
+                return range.rate 
+            }
+            throw new Exception('Machine Assess Level Range not defined for Market Value ' + mv + '.')
+        }
+    }
+
+
+    void calculateDepreciation( machine ) {
+        if( util.isTrue(machine.autodepreciate) && machine.estimatedlife > 0) {
+            def dep = machine.remaininglife / machine.estimatedlife
+            dep = (1 - dep) * 100;
+            machine.depreciation = numberSvc.roundA( dep, 0 )
+            machine.depreciationvalue =  numberSvc.round( machine.replacementcost *  machine.depreciation / 100.0 )
+        }
+        else {
+            machine.depreciationvalue =  numberSvc.round( machine.replacementcost *  machine.depreciation / 100.0 )
+        }
+    }
+
+
+    void calculateRCNLD( machine ) {
+        def cost = machine.originalcost 
+        if( util.isTrue(machine.newlyinstalled)) {
+            machine.acquisitioncost = machine.originalcost + machine.freightcost + 
+                                         machine.insurancecost + machine.installationcost + 
+                                         machine.brokeragecost + machine.arrastrecost + 
+                                         machine.othercost 
+            cost = machine.acquisitioncost
+        }
+        else {
+            machine.acquisitioncost  = 0.0
+            machine.freightcost      = 0.0
+            machine.insurancecost    = 0.0
+            machine.installationcost = 0.0
+            machine.brokeragecost    = 0.0
+            machine.arrastrecost     = 0.0
+            machine.othercost        = 0.0
+            machine.replacementcost  = 0.0
+        }
+        
+        if( util.isTrue(machine.imported) && machine.ferac > 0.0) {
+            cost = numberSvc.round( cost * machine.forex / machine.ferac ) 
+            machine.conversionfactor = 1.0
+        }
+        else if( machine.conversionfactor > 0.0) {
+            cost = numberSvc.round( cost * machine.conversionfactor )
+        }
+              
+        machine.replacementcost = cost
+        
+        if( machine.remaininglife == 0 && 
+            util.isFalse(machine.newlyinstalled) && 
+            util.isTrue(machine.autodepreciate) && 
+            machine.residualrate > 0) {
+                machine.replacementcost = numberSvc.round( machine.originalcost * machine.residualrate / 100.0 )
+        }
+    }
+
+
+    void updateForexInfo( machine, ry) {
+        machine.forexid  = null
+        machine.forex    = 0.0
+        machine.feracid  = null
+        machine.ferac    = 0.0
+        
+        if (util.isTrue(machine.imported)) {
+            def currdate  = dateSvc.parseCurrentDate()
+            //forex 
+            def forex = machSettingSvc.lookupForex([ry:ry, year:currdate.year])
+            if(forex ) {
+                machine.forexid  = forex.objid 
+                machine.forex    = forex.forex 
+            }
+            
+            //ferac info 
+            def ferac = machSettingSvc.lookupForex([ry:ry, year:machine.yearacquired])
+            if(ferac) {
+                machine.feracid  = ferac.objid 
+                machine.ferac    = ferac.forex 
+            }
+        }
+    }
+
+
+    void calcEstimatedLife( machine ) {
+        if( machine.estimatedlife  == null ) {
+            machine.estimatedlife = 0
+        }
+        if( machine.yearsused == null ) {
+            machine.yearsused = 0
+        }
+        int remaininglife =  machine.estimatedlife - machine.yearsused
+        machine.remaininglife =  (remaininglife > 0 ? remaininglife : 0)
+    }
+
+
+    void calcYearsUsed( rpu, mu, machine  ) {
+        if( machine.yearacquired == null ) {
+            return 
+        }
+        int fromyear = machine.yearacquired
+        if( machine.yearinstalled && machine.yearinstalled > fromyear ) {
+            fromyear = machine.yearinstalled
+        }
+        if( machine.operationyear && machine.operationyear > fromyear ) {
+            fromyear  = machine.operationyear
+        }
+
+        if ( rpu.dtappraised) {
+            def pdate = dateSvc.parseDate( rpu.dtappraised, null )
+            machine.yearsused =  pdate.year - fromyear + 1    
+        }
+    }
+
+
+    /*-------------------------------------------------------------------
+    *
+    * SUPPORT METHODS
+    *
+    -------------------------------------------------------------------*/
+    void saveMachUses(machuses){
+        machuses.each{ mu ->
+            def xmu = EntityUtil.mapToField(mu)
+            em.validate(SCHEMA_MACHUSE, xmu)
+            em.save(SCHEMA_MACHUSE, xmu)
+            saveMachines(mu.machines)
+        }
+    }
+
+    void saveMachines(machines){
+        machines.each{ m ->
+            def xm = EntityUtil.mapToField(m)
+            em.validate(SCHEMA_MACHDETAIL, xm)
+            em.save(SCHEMA_MACHDETAIL, xm)
+        }
+    }
+
+
+    void removeDeletedItems(rpu){
+        rpu._machines?.each{m ->
+            em.delete(SCHEMA_MACHDETAIL, m)
+        }
+
+        rpu._machuses?.each{ mu ->
+            mu.machines.each{ m -> 
+                em.delete(SCHEMA_MACHDETAIL, m)
+            }
+            em.delete(SCHEMA_MACHUSE, mu)
+        }
+    }
+   
+    def getMachUses(rpu){
+        rpu.machuses = em.sqlContext.createNamedQuery('machrpu:getMachUses')
+                            .setParameter('machrpuid', rpu.objid).resultList 
+        
+        rpu.machuses.each{ mu ->
+            mu.machines = em.sqlContext.createNamedQuery('machrpu:getMachDetails')
+                            .setParameter('machuseid', mu.objid)
+                            .resultList.each{
+                                it.useswornamount = util.toBoolean(it.useswornamount, false)   
+                                it.imported = util.toBoolean(it.imported, false)   
+                                it.newlyinstalled = util.toBoolean(it.newlyinstalled, false)   
+                                it.autodepreciate = util.toBoolean(it.autodepreciate, true)   
+                            }
+        }
+         
+    }
+
+    //TODO:
+    def getRPTSetting(){
+        return [roundadjmarketvalue:0]
+    }
+
+
+    void zeroOutAVWhenExempt(rpu){
+        if( util.toBoolean(rpu.taxable, true) == false && util.isTrue(var.rpt_zero_av_for_exempt_property) ){
+            rpu.machuse.each { mu ->
+                mu.assesslevel      = 0.0
+                mu.assessedvalue    = 0.0
+
+                mu.machines.each{ m ->
+                    m.assesslevel = 0.0
+                    m.assessedvalue = 0.0
+                }
+            }
+            rpu.totalav = 0.0
+        }
+    }
+
+}
+ 

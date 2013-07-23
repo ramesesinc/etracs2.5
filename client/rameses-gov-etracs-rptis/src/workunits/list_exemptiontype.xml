@@ -1,0 +1,27 @@
+<workunit extends="wtemplates/ListController.xml">
+    <invokers>
+        <invoker folderid="/explorer/master/rpt" caption="Exemption Types" target="window" index="2" />
+        <invoker type="quick_launcher" code="ET00" caption="Exemption Types" role="MASTER_ENCODER" permission="exemptiontype.view"/>
+    </invokers>
+    <code>
+        import com.rameses.rcp.common.*
+        import com.rameses.rcp.annotations.*
+        import com.rameses.osiris2.client.*
+        import com.rameses.osiris2.common.*
+        
+        class ExemptionTypeListController extends ListController
+        {
+            String serviceName = 'ExemptionTypeListService'
+            String entityName  = 'exemptiontype'
+            
+            Column[] getColumns(){
+                return [
+                    new Column(name:"code", caption:"Code", width:50),
+                    new Column(name:"name", caption:"Exemption Type", width:250),
+                    new Column(name:"orderno", caption:"Order No.", width:50),
+                    new Column(name:"state", caption:"State", width:100),
+                ]
+            }
+        }
+    </code>
+</workunit>

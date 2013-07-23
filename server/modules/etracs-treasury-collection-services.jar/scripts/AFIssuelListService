@@ -1,0 +1,25 @@
+import com.rameses.common.*
+import com.rameses.annotations.*
+import com.rameses.util.*
+
+class AFIssuelListService
+{
+	@PersistenceContext('main')
+	def em
+	
+	@ProxyMethod
+	public def getOpenAFIssueList( params ) {
+		EntityUtil.mapToField(params)
+		params.af_objid = (params.af_objid? params.af_objid:'%')
+		def qry = em.sqlContext.createNamedQuery('afissue:getOpenAFIssueList')
+		
+		if( params ) qry.setParameters(params)
+		return qry.resultList.each{
+			it.active = it.active == 1
+			if( it.cancelledseries == null ) 
+				it.cancelledseries = []
+			else 
+				it.cancelledseries = em.serializer.read( it.cancelledseries)
+		}
+	}
+}

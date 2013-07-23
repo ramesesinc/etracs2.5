@@ -1,0 +1,36 @@
+<workunit extends="wtemplates/LookupController.xml">
+    <invokers>
+        <invoker type="expiredapplication:lookup" caption="Expired Application Lookup" target="popup" />        
+    </invokers>
+    
+    <code>
+    <![CDATA[
+        import com.rameses.rcp.annotations.*
+        import com.rameses.rcp.common.*
+        import com.rameses.osiris2.client.*
+        import com.rameses.osiris2.common.*
+        
+        class ExpiredApplicationLookupController extends LookupController
+        {
+            @Service('MTOPApplicationLookupService')
+            def svc
+            
+            def searchtext
+            Column[] getColumns() {
+                return [
+                    new Column(name:"franchiseno", caption:"Franchise No."),
+                    new Column(name:"motorno", caption:"Motor No."),
+                    new Column(name:"chassisno", caption:"Chassis No."),
+                    new Column(name:"plateno", caption:"Plate No."),
+                    new Column(name:"owner_name", caption:"Owner")
+                ]
+            }
+            
+            List fetchList( Map params ) {
+                params.searchtext = searchtext
+                return svc.getExpiredList( params )
+            }
+        }
+    ]]>
+    </code>
+</workunit>

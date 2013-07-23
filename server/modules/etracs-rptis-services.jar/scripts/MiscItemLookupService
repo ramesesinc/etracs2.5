@@ -1,0 +1,17 @@
+import com.rameses.annotations.*;
+import com.rameses.eserver.*;
+import com.rameses.common.*;
+
+class MiscItemLookupService
+{
+	@PersistenceContext('main')
+	def em
+
+	@Service('LookupUtilService')
+	def lookupSvc 
+	
+	@ProxyMethod
+	public def lookupMiscItems( params ) {
+		return lookupSvc.lookup( 'miscitem:lookupMiscItems', params )
+	}
+}

@@ -1,0 +1,28 @@
+"addMachine" [ allowEdit == true] {
+    enabled:true;
+}
+
+"addMachine" [ allowEdit != true] {
+    enabled:false;
+}
+
+
+"editMachine" [ selectedItem != null] {
+    enabled:true;
+}
+
+"editMachine" [ selectedItem == null] {
+    enabled:false;
+}
+
+"editMachine" [ allowEdit == false ] {
+    text:'View';
+    mnemonic:'v';
+}
+
+"editMachine" [ allowEdit == true ] {
+    text:'Edit';
+    mnemonic:'e';
+}
+
+

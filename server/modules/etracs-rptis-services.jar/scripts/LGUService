@@ -1,0 +1,68 @@
+import com.rameses.annotations.*
+import java.rmi.server.UID
+
+class LGUService
+{
+	@PersistenceContext('main')
+	def em
+
+	@Service('BarangayLookupService')
+	def brgySvc 
+
+	@Service('MunicipalityLookupService')
+	def muniSvc 
+
+	@Service('CityLookupService')
+	def citySvc 
+
+	@Service('DistrictLookupService')
+	def distSvc
+    
+
+    @ProxyMethod
+    public def lookupBarangays(params) {
+    	return brgySvc.lookupBarangays(params)
+    }
+
+
+    @ProxyMethod
+    public def lookupBarangayById( objid ) {
+    	return brgySvc.lookupBarangayById(objid)
+    }
+
+
+    @ProxyMethod
+    public def lookupMunicipalities(params) {
+    	return muniSvc.lookupMunicipalities(params)
+    }
+
+
+    @ProxyMethod
+    public def lookupMunicipalityById( objid ) {
+    	return muniSvc.lookupMunicipalityById(objid)
+    }
+
+
+    @ProxyMethod
+    public def lookupCities(params) {
+    	return citySvc.lookupCities(params)
+    }
+
+
+    @ProxyMethod
+    public def lookupCityById( objid ) {
+    	return citySvc.lookupCityById(objid)
+    }
+
+
+    @ProxyMethod
+    public def lookupDistricts(params) {
+    	return distSvc.lookupDistricts(params)
+    }
+
+
+    @ProxyMethod
+    public def lookupDistrictById( objid ) {
+    	return distSvc.lookupDistrictById(objid)
+    }
+}

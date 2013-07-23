@@ -1,0 +1,211 @@
+import com.rameses.common.*
+import com.rameses.annotations.*
+
+public class RPTBillingService
+{
+	@PersistenceContext('main')
+	def em 
+
+	@Service('RPTUtil')
+	def util
+
+	@Service('Var')
+	def var 
+
+	@Service('DateService')
+	def dtSvc 
+
+	@Service('NumberService')
+	def numSvc
+
+	@Service('RPTLedgerService')
+	def ledgerSvc 
+
+
+	/*-----------------------------------------------------------
+	* Periodically called By RPTBillingTask 
+	* to recalculate billing 
+	-----------------------------------------------------------*/
+	@ProxyMethod
+	public def recalcBilling(){
+		println 'recalcBilling called...'
+		def bill = initBill()
+		def ledgers = getLedgersForRecalculation(100)
+		while(ledgers.size() > 0){
+			ledgers.each{
+				println 'Recalculating Ledger ' + it.ledgerid 
+				bill.ledgerids = [
+					[ledgerid:it.ledgerid]
+				]
+				recalcBillItems(bill)
+			}
+			ledgers = getLedgersForRecalculation(100)
+		}
+	}
+
+	
+	@ProxyMethod
+	public def generateBillByLedgerId(ledgerid){
+		def bill = initBill()
+		bill.ledgerids = [
+			[ledgerid:ledgerid]
+		]
+		return generateBill(bill)
+	}
+
+
+	@ProxyMethod
+	public def generateBill( bill ) {
+		util.required('Bill Date', bill.billdate)
+		util.required('Bill To Year', bill.billtoyear)
+		util.required('Bill To Qtr', bill.billtoqtr)
+
+		if (! bill.taxpayerid && ! bill.ledgerids)
+			throw new Exception('Either a Taxpayer or Ledger to bill is required.')
+		
+		recalcBillItems(bill)
+		bill.items = getBillItems(bill)
+		return bill
+	}
+
+
+	def getLedgersForRecalculation(count){
+		return em.sqlContext.createNamedQuery('rptbill:getLedgersForRecalculation')
+				.setMaxResults(count)
+				.setParameter('billdate', dtSvc.serverDate)
+				.resultList
+	}
+
+
+	def initBill(){
+		def pdate = dtSvc.parseCurrentDate()
+		return [
+			billdate	: pdate.date,
+			billtoyear 	: pdate.year,
+			billtoqtr	: 4,
+			advancebill	: false,
+		]
+	}
+
+
+	void recalcBillItems(bill){
+		bill.items = getOpenLedgerItems(bill)
+		if ( bill.items) {
+			createFacts(bill)
+			createRuleActions(bill)
+			executeRule(bill)
+			updateLedgerBillingInfo(bill)
+		}
+	}
+
+	void createFacts(bill){
+		println 'TODO: createFacts'
+	}
+
+	void createRuleActions(bill){
+		println 'TODO: createRuleActions'
+	}
+
+	void executeRule(bill){
+		//calculate tax dues, discounts and penalties
+		def rate = 0.01
+		bill.items.each{
+			it.basic = ( it.qtrlyav == 0 ? it.assessedvalue * rate : it.qtrlyav * rate)
+			it.sef = ( it.qtrlyav == 0 ? it.assessedvalue * rate : it.qtrlyav * rate)
+		}
+
+		//calculate expirydate
+		bill.expirydate = dtSvc.parse('yyyy-MM-dd', '2013-07-31')
+	}
+
+	void updateLedgerBillingInfo(bill){
+		// update next bill date 
+		def nextbilldate = dtSvc.add(bill.expirydate, '1d')
+		def ledgerinfo = [
+			nextbilldate : nextbilldate,
+			basic		 : bill.items.basic.sum(),
+			basicint	 : bill.items.basicint.sum(),
+			basicdisc	 : bill.items.basicdisc.sum(),
+			basiccredit	 : bill.items.basiccredit.sum(),
+			sef		 	 : bill.items.sef.sum(),
+			sefint	     : bill.items.sefint.sum(),
+			sefdisc	     : bill.items.sefdisc.sum(),
+			sefcredit	 : bill.items.sefcredit.sum(),
+		]
+		
+		if ( bill.ledgerids && bill.ledgerids.size() > 0) {
+			bill.ledgerids.each{
+				ledgerinfo.ledgerid = it.ledgerid
+				em.sqlContext.createNamedExecutor('rptbill:updateLedgerNextBillDate')
+							.setParameters(ledgerinfo)
+							.execute()
+			}
+		}
+		else {
+			ledgerinfo.taxpayerid = bill.taxpayerid 
+			items += em.sqlContext.createNamedExecutor('rptbill:updateLedgerNextBillDateByTaxpayerId')
+							.setParameters(ledgerifo)
+							.execute()
+			println 'TODO: updateLedgerNextBillDateByPropertyPayer'
+		}
+
+		bill.items.each{
+			ledgerSvc.updateLedgerItem(it)
+		}
+	}
+
+
+
+
+	def getBillItems(bill){
+		def items = []
+
+		def params = [
+			billtoyear	: bill.billtoyear,
+			billtoqtr   : bill.billtoqtr,
+		]
+
+		if ( bill.ledgerids && bill.ledgerids.size() > 0) {
+			bill.ledgerids.each{
+				params.ledgerid = it.ledgerid
+				items += em.sqlContext.createNamedQuery('rptbill:getBillItemByLedgerId')
+							.setParameters(params)
+							.resultList
+			}
+		}
+		else {
+			params.taxpayerid = bill.taxpayerid
+			items += em.sqlContext.createNamedQuery('rptbill:getBillItemByTaxpayerId')
+							.setParameters(params)
+							.resultList
+			println 'TODO:getBillItemByPropertyPayer'
+		}
+		return items 
+	}
+
+
+	def getOpenLedgerItems(bill){
+		def items = []
+		if ( bill.ledgerids && bill.ledgerids.size() > 0) {
+			bill.ledgerids.each{
+				items += em.sqlContext.createNamedQuery('rptbill:getOpenLedgerItemByLedgerId')
+							.setParameter('ledgerid', it.ledgerid).resultList
+			}
+		}
+		else {
+			items += em.sqlContext.createNamedQuery('rptbill:getOpenLedgerItemByTaxpayerId')
+							.setParameter('taxpayerid', bill.taxpayerid).resultList
+			items += getOpenLedgerItemByPropertyPayer(bill)
+		}
+		return items 
+	}
+
+
+	def getOpenLedgerItemByPropertyPayer(bill){
+		println 'TODO: getOpenLedgerItemByPropertyPayer'
+		return []
+	}
+	
+
+}
+	

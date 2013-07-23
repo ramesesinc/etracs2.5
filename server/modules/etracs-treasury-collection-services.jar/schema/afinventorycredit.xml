@@ -1,0 +1,20 @@
+<schema>
+	<element tablename="afinventorycredit">
+		<field name="objid" primary="true"/>
+		<field name="state" required="true"/>
+		<field name="afinventoryid" required="true"/>
+		<field name="iraf_objid" required="true"/>
+		<field name="iraf_txnno" required="true"/>
+		<field name="iraf_riv_type" required="true"/>
+		<field name="af_objid" required="true"/>
+		<field name="af_type" required="true"/>
+		<field name="stubno" type="integer"/>
+		<field name="prefix"/>
+		<field name="suffix"/>
+		<field name="startseries" type="integer"/>
+		<field name="endseries" type="integer"/>
+		<field name="beginqty" type="integer" required="true"/>
+		<field name="issuedqty" type="integer" required="true"/>
+		<field name="endqty" type="integer" required="true"/>
+	</element>
+</schema>

@@ -1,0 +1,35 @@
+import com.rameses.annotations.*
+import com.rameses.common.*;
+
+
+class RPTLedgerListService
+{
+	@PersistenceContext('main')
+	def em
+
+    @Service('RPTUtil')
+    def util 
+
+
+    @ProxyMethod
+    public def getList( params ) {
+        if (! params) params = [:]
+        params.tdno = params.searchtext
+        params.prevtdno = params.searchtext
+        params.searchtext = (params.searchtext ? params.searchtext : '') + '%'
+
+        def filters = [
+            'WHERE f.tdno = $P{tdno}',
+            'WHERE f.ownername LIKE $P{searchtext}',
+            'WHERE rpu.fullpin LIKE $P{searchtext}',
+            'WHERE rp.cadastrallotno LIKE $P{searchtext}',
+            'WHERE rp.surveyno LIKE $P{searchtext}',
+            'WHERE f.prevtdno = $P{prevtdno}',
+            'WHERE f.prevowner LIKE $P{searchtext}',
+        ]
+
+        return util.getListFromQuery('rptledger:getList', filters, params, 'rl.objid')
+    }
+	
+}
+

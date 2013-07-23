@@ -1,0 +1,59 @@
+import com.rameses.annotations.*
+import com.rameses.eserver.*;
+import com.rameses.common.*;
+
+class FaasServiceInterceptor
+{
+	@After(pattern="FAASService.initFaasTransaction", eval="#{result.txntype.objid == 'TR'}") 
+	public void initSimpleTransfer( evt ) {
+		def faas = evt.result 
+		clearInfo(faas)
+		
+	}
+
+	@After(pattern="FAASService.initFaasTransaction", eval="#{result.txntype.objid == 'TRE'}") 
+	public void initTransferWithReassessment( evt ) {
+		def faas = evt.result 
+		clearInfo(faas)
+	}
+
+	@After(pattern="FAASService.initFaasTransaction", eval="#{result.txntype.objid == 'TRC'}") 
+	public void initTransferWithCorrection( evt ) {
+		def faas = evt.result 
+		clearInfo(faas)
+	}
+
+	@After(pattern="FAASService.initFaasTransaction", eval="#{result.txntype.objid == 'CD'}") 
+	public void initChangeDepreciation( evt ) {
+		def faas = evt.result 
+		if (faas.rpu.rputype == 'land') {
+			throw new Exception('Cannot depreciate Land property.')
+		}
+	}
+
+
+	/*---------------------------------------------------
+	*
+	* Clear info related to transfer
+	*
+	*--------------------------------------------------*/	
+	void clearInfo(faas){
+		faas.tdno 					= null
+		faas.titletype				= null
+		faas.titleno				= null
+		faas.titledate				= null
+		faas.taxpayerid 			= null
+		faas.taxpayername 			= null
+		faas.taxpayeraddress		= null
+		faas.ownername 				= null
+		faas.owneraddress 			= null
+		faas.administratorid 		= null
+		faas.administratorname 		= null
+		faas.administratoraddress	= null
+		faas.beneficiaryid 			= null
+		faas.beneficiary 			= null
+		faas.beneficiaryaddress 	= null
+		faas.memoranda				= null
+	}
+}
+
