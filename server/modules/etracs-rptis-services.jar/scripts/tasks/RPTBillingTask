@@ -12,8 +12,11 @@ class RPTBillingTaks {
 	
 	@Schedule(interval=5)
 	public def recalcBilling(task) {
-		println 'recalcBilling task -> ' + task 
-		svc.recalcBilling()
+		def bill = svc.initBill()
+		def ledgers = svc.getLedgersForRecalculation(500)
+		ledgers.each{
+			svc.calculateBillByLedgerIdAsync(it.objid)
+		}
 	}	
 }
 

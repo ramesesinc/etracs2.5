@@ -21,29 +21,6 @@ public class RPTBillingService
 	@Service('RPTLedgerService')
 	def ledgerSvc 
 
-
-	/*-----------------------------------------------------------
-	* Periodically called By RPTBillingTask 
-	* to recalculate billing 
-	-----------------------------------------------------------*/
-	@ProxyMethod
-	public def recalcBilling(){
-		println 'recalcBilling called...'
-		def bill = initBill()
-		def ledgers = getLedgersForRecalculation(100)
-		while(ledgers.size() > 0){
-			ledgers.each{
-				println 'Recalculating Ledger ' + it.ledgerid 
-				bill.ledgerids = [
-					[ledgerid:it.ledgerid]
-				]
-				recalcBillItems(bill)
-			}
-			ledgers = getLedgersForRecalculation(100)
-		}
-	}
-
-	
 	@ProxyMethod
 	public def generateBillByLedgerId(ledgerid){
 		def bill = initBill()
@@ -53,6 +30,18 @@ public class RPTBillingService
 		return generateBill(bill)
 	}
 
+	/*---------------------------------------------------------------
+	* Called by RPTBilling Task to recalculate and update the
+	* taxes and penalties of the specified ledger
+	---------------------------------------------------------------*/
+	@ProxyMethod
+	public void calculateBillByLedgerIdAsync(ledgerid){
+		def bill = initBill()
+		bill.ledgerids = [
+			[ledgerid:ledgerid]
+		]
+		recalcBillItems(bill)
+	}
 
 	@ProxyMethod
 	public def generateBill( bill ) {
@@ -60,35 +49,54 @@ public class RPTBillingService
 		util.required('Bill To Year', bill.billtoyear)
 		util.required('Bill To Qtr', bill.billtoqtr)
 
+		bill.billdate = dtSvc.parse('yyyy-MM-dd', bill.billdate)
+		if (bill.taxpayer) bill.putAll( bill.taxpayer )
+		
 		if (! bill.taxpayerid && ! bill.ledgerids)
 			throw new Exception('Either a Taxpayer or Ledger to bill is required.')
+
+		if (bill.advancebill && bill.billdate <= (parsedate.date - 1 ))
+            throw new Exception('Advance Billing Date must be greater than current date.')
 		
 		recalcBillItems(bill)
-		bill.items = getBillItems(bill)
+		loadBillItems(bill)
+
+		if (!bill.items) 
+			throw new Exception('There are no unpaid ledgers for payment.')
+
+		//calculate expirydate
+		bill.expirydate = dtSvc.parse('yyyy-MM-dd', '2013-07-31')
+		
 		return bill
 	}
 
 
-	def getLedgersForRecalculation(count){
+	@ProxyMethod
+	public def getLedgersForRecalculation(count){
 		return em.sqlContext.createNamedQuery('rptbill:getLedgersForRecalculation')
 				.setMaxResults(count)
 				.setParameter('billdate', dtSvc.serverDate)
 				.resultList
 	}
 
-
-	def initBill(){
+	@ProxyMethod
+	public def initBill(){
 		def pdate = dtSvc.parseCurrentDate()
 		return [
-			billdate	: pdate.date,
-			billtoyear 	: pdate.year,
-			billtoqtr	: 4,
-			advancebill	: false,
+			billdate			: pdate.date,
+			billtoyear 			: pdate.year,
+			billtoqtr			: 4,
+			advancebill			: false,
+			fullpayment    		: true,
+            qtrlypaymentavailed : false, 
+            advancepayment      : false,
+            currentdate 		: pdate.date,
+            ledgerids 			: [],
 		]
 	}
 
-
-	void recalcBillItems(bill){
+	@ProxyMethod
+	public void recalcBillItems(bill){
 		bill.items = getOpenLedgerItems(bill)
 		if ( bill.items) {
 			createFacts(bill)
@@ -96,6 +104,12 @@ public class RPTBillingService
 			executeRule(bill)
 			updateLedgerBillingInfo(bill)
 		}
+	}
+
+	@Async
+	@ProxyMethod
+	public def recalcBillItemsAsync( bill ) {
+		recalcBillItems(bill)	
 	}
 
 	void createFacts(bill){
@@ -112,10 +126,7 @@ public class RPTBillingService
 		bill.items.each{
 			it.basic = ( it.qtrlyav == 0 ? it.assessedvalue * rate : it.qtrlyav * rate)
 			it.sef = ( it.qtrlyav == 0 ? it.assessedvalue * rate : it.qtrlyav * rate)
-		}
-
-		//calculate expirydate
-		bill.expirydate = dtSvc.parse('yyyy-MM-dd', '2013-07-31')
+		}		
 	}
 
 	void updateLedgerBillingInfo(bill){
@@ -157,30 +168,53 @@ public class RPTBillingService
 
 
 
-	def getBillItems(bill){
-		def items = []
-
+	void loadBillItems(bill){
 		def params = [
 			billtoyear	: bill.billtoyear,
 			billtoqtr   : bill.billtoqtr,
+			taxpayerid  : bill.taxpayerid,
 		]
+		bill.items = []
 
-		if ( bill.ledgerids && bill.ledgerids.size() > 0) {
-			bill.ledgerids.each{
-				params.ledgerid = it.ledgerid
-				items += em.sqlContext.createNamedQuery('rptbill:getBillItemByLedgerId')
-							.setParameters(params)
-							.resultList
-			}
-		}
-		else {
-			params.taxpayerid = bill.taxpayerid
-			items += em.sqlContext.createNamedQuery('rptbill:getBillItemByTaxpayerId')
-							.setParameters(params)
-							.resultList
+		bill.items.addAll(bill.ledgerids)
+		if ( ! bill.ledgerids || bill.ledgerids.size() == 0) {
+			bill.items.addAll(
+				em.sqlContext.createNamedQuery('rptbill:getBilledLedgersByTaxpayerId')
+								.setParameters(params)
+								.resultList
+			)
 			println 'TODO:getBillItemByPropertyPayer'
 		}
-		return items 
+		
+		bill.items.each{ item ->
+			params.ledgerid = item.ledgerid 
+			item.putAll(
+				em.sqlContext.createNamedQuery('rptbill:getBilledLedgerInfoByLedgerId')
+							.setParameters(params)
+							.singleResult 
+			)
+			item.details = em.sqlContext.createNamedQuery('rptbill:getBilledItemsByLedgerId')
+							.setParameters(params)
+							.resultList 
+
+			item.basic		= util.sum(item.details, 'basic')
+			item.basicdp	= util.sum(item.details, 'basicdp')
+			item.basicnet	= util.sum(item.details, 'basicnet')
+			item.sef		= util.sum(item.details, 'sef')
+			item.sefdp		= util.sum(item.details, 'sefdp')
+			item.sefnet		= util.sum(item.details, 'sefnet')
+			item.total		= util.sum(item.details, 'total')
+		}
+
+		//summarize totals
+		bill.basic		= util.sum(bill.items, 'basic')
+		bill.basicdp	= util.sum(bill.items, 'basicdp')
+		bill.basicnet	= util.sum(bill.items, 'basicnet')
+		bill.sef		= util.sum(bill.items, 'sef')
+		bill.sefdp		= util.sum(bill.items, 'sefdp')
+		bill.sefnet		= util.sum(bill.items, 'sefnet')
+		bill.total		= util.sum(bill.items, 'total')
+		bill.grandtotal = util.sum(bill.items, 'total')
 	}
 
 

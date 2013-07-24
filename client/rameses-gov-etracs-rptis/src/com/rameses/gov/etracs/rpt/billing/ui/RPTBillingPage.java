@@ -1,18 +1,21 @@
 /*
  * RPTBillingPage.java
  *
- * Created on July 27, 2011, 12:45 PM
+ * Created on July 24, 2013, 11:40 AM
  */
 
-package com.rameses.gov.etracs.rpt.billing;
+package com.rameses.gov.etracs.rpt.billing.ui;
 
+import com.rameses.osiris2.themes.FormPage;
 import com.rameses.rcp.ui.annotations.StyleSheet;
+import com.rameses.rcp.ui.annotations.Template;
 
 /**
  *
- * @author  jzamora
+ * @author  Rameses
  */
-@StyleSheet("etracs2/rpt/billing/RPTBillingPage.style")
+@Template(FormPage.class)
+@StyleSheet()
 public class RPTBillingPage extends javax.swing.JPanel {
     
     /** Creates new form RPTBillingPage */
@@ -27,8 +30,6 @@ public class RPTBillingPage extends javax.swing.JPanel {
      */
     // <editor-fold defaultstate="collapsed" desc=" Generated Code ">//GEN-BEGIN:initComponents
     private void initComponents() {
-        xActionBar1 = new com.rameses.rcp.control.XActionBar();
-        jPanel1 = new javax.swing.JPanel();
         formPanel1 = new com.rameses.rcp.util.FormPanel();
         xLookupField1 = new com.rameses.rcp.control.XLookupField();
         xLabel1 = new com.rameses.rcp.control.XLabel();
@@ -39,21 +40,15 @@ public class RPTBillingPage extends javax.swing.JPanel {
         xCheckBox1 = new com.rameses.rcp.control.XCheckBox();
         xDateField1 = new com.rameses.rcp.control.XDateField();
 
-        setLayout(new java.awt.BorderLayout());
-
-        xActionBar1.setBorder(new com.rameses.rcp.control.border.XUnderlineBorder());
-        xActionBar1.setName("formActions");
-        add(xActionBar1, java.awt.BorderLayout.NORTH);
-
         com.rameses.rcp.control.border.XTitledBorder xTitledBorder1 = new com.rameses.rcp.control.border.XTitledBorder();
         xTitledBorder1.setTitle("Initial Billing Information");
         formPanel1.setBorder(xTitledBorder1);
         xLookupField1.setCaption("Taxpayer");
         xLookupField1.setCaptionWidth(90);
-        xLookupField1.setExpression(" #{entityname}");
+        xLookupField1.setExpression("#{item.taxpayername}");
         xLookupField1.setHandler("lookupTaxpayer");
         xLookupField1.setIndex(-100);
-        xLookupField1.setName("taxpayer");
+        xLookupField1.setName("bill.taxpayer");
         xLookupField1.setPreferredSize(new java.awt.Dimension(0, 19));
         xLookupField1.setRequired(true);
         formPanel1.add(xLookupField1);
@@ -61,20 +56,21 @@ public class RPTBillingPage extends javax.swing.JPanel {
         xLabel1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(153, 153, 153)));
         xLabel1.setCaption("Address");
         xLabel1.setCaptionWidth(90);
-        xLabel1.setName("bill.taxpayeraddress");
+        xLabel1.setDepends(new String[] {"bill.taxpayer"});
+        xLabel1.setExpression("#{bill.taxpayer.taxpayername}");
         xLabel1.setPreferredSize(new java.awt.Dimension(0, 19));
         formPanel1.add(xLabel1);
 
         xSeparator1.setPreferredSize(new java.awt.Dimension(0, 20));
-        org.jdesktop.layout.GroupLayout xSeparator1Layout = new org.jdesktop.layout.GroupLayout(xSeparator1);
+        javax.swing.GroupLayout xSeparator1Layout = new javax.swing.GroupLayout(xSeparator1);
         xSeparator1.setLayout(xSeparator1Layout);
         xSeparator1Layout.setHorizontalGroup(
-            xSeparator1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 401, Short.MAX_VALUE)
+            xSeparator1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 451, Short.MAX_VALUE)
         );
         xSeparator1Layout.setVerticalGroup(
-            xSeparator1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 20, Short.MAX_VALUE)
+            xSeparator1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 20, Short.MAX_VALUE)
         );
         formPanel1.add(xSeparator1);
 
@@ -99,25 +95,25 @@ public class RPTBillingPage extends javax.swing.JPanel {
         formPanel1.add(xComboBox1);
 
         xSeparator2.setPreferredSize(new java.awt.Dimension(0, 20));
-        org.jdesktop.layout.GroupLayout xSeparator2Layout = new org.jdesktop.layout.GroupLayout(xSeparator2);
+        javax.swing.GroupLayout xSeparator2Layout = new javax.swing.GroupLayout(xSeparator2);
         xSeparator2.setLayout(xSeparator2Layout);
         xSeparator2Layout.setHorizontalGroup(
-            xSeparator2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 401, Short.MAX_VALUE)
+            xSeparator2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 451, Short.MAX_VALUE)
         );
         xSeparator2Layout.setVerticalGroup(
-            xSeparator2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 20, Short.MAX_VALUE)
+            xSeparator2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 20, Short.MAX_VALUE)
         );
         formPanel1.add(xSeparator2);
 
         xCheckBox1.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
-        xCheckBox1.setText("Is Advance Billing?");
         xCheckBox1.setCaption("");
         xCheckBox1.setCaptionWidth(90);
         xCheckBox1.setMargin(new java.awt.Insets(0, 0, 0, 0));
-        xCheckBox1.setName("bill.advancepayment");
+        xCheckBox1.setName("bill.advancebill");
         xCheckBox1.setOpaque(false);
+        xCheckBox1.setText("Is Advance Billing?");
         formPanel1.add(xCheckBox1);
 
         xDateField1.setCaption("Advance Billing Date");
@@ -128,31 +124,27 @@ public class RPTBillingPage extends javax.swing.JPanel {
         xDateField1.setPreferredSize(new java.awt.Dimension(100, 19));
         formPanel1.add(xDateField1);
 
-        org.jdesktop.layout.GroupLayout jPanel1Layout = new org.jdesktop.layout.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(jPanel1Layout.createSequentialGroup()
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
+        this.setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .add(formPanel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 415, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(186, Short.MAX_VALUE))
+                .addComponent(formPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 465, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(76, Short.MAX_VALUE))
         );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(jPanel1Layout.createSequentialGroup()
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .add(formPanel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 220, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(229, Short.MAX_VALUE))
+                .addComponent(formPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(104, Short.MAX_VALUE))
         );
-        add(jPanel1, java.awt.BorderLayout.CENTER);
-
     }// </editor-fold>//GEN-END:initComponents
     
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private com.rameses.rcp.util.FormPanel formPanel1;
-    private javax.swing.JPanel jPanel1;
-    private com.rameses.rcp.control.XActionBar xActionBar1;
     private com.rameses.rcp.control.XCheckBox xCheckBox1;
     private com.rameses.rcp.control.XComboBox xComboBox1;
     private com.rameses.rcp.control.XDateField xDateField1;
