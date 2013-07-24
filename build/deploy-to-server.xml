@@ -4,6 +4,7 @@
     <target name="init-etracs-deployer">
         <property name="etracs.server.dir" value="../server"/>
         <property name="etracs.web.dir" value="../web"/>
+        <property name="etracs.datasources.dir" value="../datasources"/>
         <property name="osiris3.server.dir" value="../../../osiris3-server"/>
         <property name="osiris3.server.etracs.apps.dir" value="${osiris3.server.dir}/workspace/services/apps/etracs25"/>
         <property name="osiris3.server.etracs.web.dir" value="${osiris3.server.dir}/workspace/web/etracs25"/>
@@ -50,7 +51,13 @@
         <copy file="${etracs.web.dir}/project.conf" todir="${osiris3.server.etracs.web.dir}"/> 
     </target>
     
-    <target name="deploy-to-server" depends="init-etracs-deployer, copy-etracs-apps, copy-etracs-web">
+    <target name="copy-datasources">
+        <copy todir="${osiris3.server.dir}/workspace/services/datasources">
+            <fileset dir="${etracs.datasources.dir}" />
+        </copy>
+    </target>
+    
+    <target name="deploy-to-server" depends="init-etracs-deployer, copy-etracs-apps, copy-etracs-web, copy-datasources">
         
     </target>
     
