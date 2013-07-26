@@ -1,21 +1,50 @@
 [getOpenLedgerItemByLedgerId]
-SELECT rli.*
+SELECT rli.*,
+	CASE WHEN rli.qtr > 0 THEN rli.qtrlyav ELSE rli.assessedvalue END AS av,
+	rl.lastyearpaid,
+	rl.lastqtrpaid,
+	rl.firstqtrpaidontime,
+	rl.qtrlypaymentpaidontime,
+	rlf.tdno, 
+	rlf.txntype_objid,
+	r.rputype,
+	CASE WHEN lr.objid IS NULL THEN r.classification_objid ELSE lr.classification_objid END AS classification_objid,
+	CASE WHEN lr.objid IS NULL THEN r.classification_objid ELSE lr.classification_objid END AS actualuse_objid
 FROM rptledger rl
+	INNER JOIN faas f ON rl.faasid = f.objid 
+	INNER JOIN rpu r ON f.rpuid = r.objid 
 	INNER JOIN rptledgeritem rli ON rl.objid = rli.rptledgerid
+	INNER JOIN rptledgerfaas rlf ON rli.rptledgerfaasid = rlf.objid 
+	LEFT JOIN faas lf ON rlf.faasid = lf.objid 
+	LEFT JOIN rpu lr ON lf.rpuid = lr.objid 
 WHERE rl.objid = $P{ledgerid}
  AND rl.state = 'APPROVED'
- AND (rl.nextbilldate IS NULL OR rl.nextbilldate <= '2013-0723')
+ AND (rl.nextbilldate IS NULL OR rl.nextbilldate <= NOW())
  AND rli.state = 'OPEN'  
  
  
  [getOpenLedgerItemByTaxpayerId]
-SELECT rli.*
-FROM faas f 
-	INNER JOIN rptledger rl ON f.objid = rl.faasid
+SELECT rli.*,
+	CASE WHEN rli.qtr > 0 THEN rli.qtrlyav ELSE rli.assessedvalue END AS av,
+	rl.lastyearpaid,
+	rl.lastqtrpaid,
+	rl.firstqtrpaidontime,
+	rl.qtrlypaymentpaidontime,
+	rlf.tdno, 
+	rlf.txntype_objid,
+	r.rputype,
+	CASE WHEN lr.objid IS NULL THEN r.classification_objid ELSE lr.classification_objid END AS classification_objid,
+	CASE WHEN lr.objid IS NULL THEN r.classification_objid ELSE lr.classification_objid END AS actualuse_objid
+FROM rptledger rl
+	INNER JOIN faas f ON rl.faasid = f.objid 
+	INNER JOIN rpu r ON f.rpuid = r.objid 
 	INNER JOIN rptledgeritem rli ON rl.objid = rli.rptledgerid
+	INNER JOIN rptledgerfaas rlf ON rli.rptledgerfaasid = rlf.objid 
+	LEFT JOIN faas lf ON rlf.faasid = lf.objid 
+	LEFT JOIN rpu lr ON lf.rpuid = lr.objid 
 WHERE f.taxpayerid = $P{taxpayerid}
  AND rl.state = 'APPROVED'
- AND (rl.nextbilldate IS NULL OR rl.nextbilldate <= '2013-07-23')
+ AND (rl.nextbilldate IS NULL OR rl.nextbilldate <= NOW())
  AND rli.state = 'OPEN'  
  
 
@@ -90,34 +119,18 @@ ORDER BY rli.year, rli.qtr
 
 [updateLedgerNextBillDate]
 UPDATE rptledger SET 
-	nextbilldate = $P{nextbilldate},
-	basic = $P{basic},
-	basicdisc = $P{basicdisc},
-	basicint = $P{basicint},
-	basiccredit = $P{basiccredit},
-	sef = $P{sef},
-	sefdisc = $P{sefdisc},
-	sefint = $P{sefint},
-	sefcredit = $P{sefcredit}
+	nextbilldate = $P{nextbilldate}
 WHERE objid = $P{ledgerid}
 
 
 [updateLedgerNextBillDateByTaxpayerId]
 UPDATE faas f, rptledger rl SET
-	rl.nextbilldate = $P{nextbilldate},
-	rl.basic = $P{basic},
-	rl.basicdisc = $P{basicdisc},
-	rl.basicint = $P{basicint},
-	rl.basiccredit = $P{basiccredit},
-	rl.sef = $P{sef},
-	rl.sefdisc = $P{sefdisc},
-	rl.sefint = $P{sefint},
-	rl.sefcredit = $P{sefcredit}
+	rl.nextbilldate = $P{nextbilldate}
 WHERE f.taxpayerid = $P{taxpayerid}
  AND f.objid = rl.faasid 
  AND rl.state = 'APPROVED'
  
 
 
- [getLedgersForRecalculation]
+ [getLedgersToRecalc]
  SELECT objid FROM rptledger WHERE nextbilldate <= $P{billdate} OR nextbilldate IS NULL

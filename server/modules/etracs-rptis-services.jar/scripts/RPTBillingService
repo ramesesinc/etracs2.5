@@ -1,5 +1,8 @@
-import com.rameses.common.*
-import com.rameses.annotations.*
+import com.rameses.annotations.*;
+import java.rmi.server.*;
+import com.rameses.rules.common.*;
+import com.rameses.util.*;
+
 
 public class RPTBillingService
 {
@@ -20,6 +23,13 @@ public class RPTBillingService
 
 	@Service('RPTLedgerService')
 	def ledgerSvc 
+
+	@Resource("RuleService")
+	def ruleSvc;
+
+	def RULESET = 'rptbilling'
+	def FACT_PACKAGE = 'rptbilling.'
+
 
 	@ProxyMethod
 	public def generateBillByLedgerId(ledgerid){
@@ -72,8 +82,8 @@ public class RPTBillingService
 
 
 	@ProxyMethod
-	public def getLedgersForRecalculation(count){
-		return em.sqlContext.createNamedQuery('rptbill:getLedgersForRecalculation')
+	public def getLedgersToRecalc(count){
+		return em.sqlContext.createNamedQuery('rptbill:getLedgersToRecalc')
 				.setMaxResults(count)
 				.setParameter('billdate', dtSvc.serverDate)
 				.resultList
@@ -99,9 +109,9 @@ public class RPTBillingService
 	public void recalcBillItems(bill){
 		bill.items = getOpenLedgerItems(bill)
 		if ( bill.items) {
-			createFacts(bill)
-			createRuleActions(bill)
-			executeRule(bill)
+			def data = createFacts(bill)
+			ruleSvc.execute( RULESET, data.facts, data.globals );
+			buildResult(bill, data)
 			updateLedgerBillingInfo(bill)
 		}
 	}
@@ -112,36 +122,58 @@ public class RPTBillingService
 		recalcBillItems(bill)	
 	}
 
-	void createFacts(bill){
-		println 'TODO: createFacts'
+	def createFacts(bill){
+		def pdate = dtSvc.parseCurrentDate()
+
+		def map = [facts:[], globals:[:], ledgers:[]]
+		map.facts << new DateBean(dtSvc.serverDate)
+
+		//create rptledgerfact 
+		bill.items.each{ 
+			resetAssessmentValues(it)
+			def ledger = ruleSvc.createFact(RULESET, FACT_PACKAGE+'RPTLedgerFact')
+			populateFactData(ledger, it)
+			ledger.numberofmonthsfromqtr  = calculateNoOfMonthsFromQtr( pdate, ledger.year, ledger.qtr )
+            ledger.numberofmonthsfromjan  = calculateNoOfMonthsFromJan( pdate, ledger.year, ledger.qtr )
+            ledger.firstqtrpaidontime     = determineFirstQtrPaidOnTime( pdate, bill, it )
+            ledger.qtrlypaymentavailed    = determineQtrlyPaymentAvailed( bill, it )
+			ledger.qtrlypaymentpaidontime = util.toBoolean(it.qtrlypaymentpaidontime, false )
+            ledger.fullpayment            = ( bill.billtoqtr == 4 && it.lastqtrpaid == 4 ? true : false )
+            ledger.advancepayment         = bill.advancepayment 
+            ledger.paidyear				  = pdate.year 
+			map.facts << ledger 
+			map.ledgers << ledger
+		}
+		return map 
 	}
 
-	void createRuleActions(bill){
-		println 'TODO: createRuleActions'
+	void resetAssessmentValues(item){
+		item.basic = 0.0
+		item.basicint = 0.0
+		item.basicdisc = 0.0
+		item.basiccredit = 0.0
+		item.sef = 0.0
+		item.sefint = 0.0
+		item.sefdisc = 0.0
+		item.sefcredit = 0.0
 	}
 
-	void executeRule(bill){
-		//calculate tax dues, discounts and penalties
-		def rate = 0.01
-		bill.items.each{
-			it.basic = ( it.qtrlyav == 0 ? it.assessedvalue * rate : it.qtrlyav * rate)
-			it.sef = ( it.qtrlyav == 0 ? it.assessedvalue * rate : it.qtrlyav * rate)
-		}		
+	void populateFactData(target, sourceMap){
+		sourceMap.keySet().each{
+			try{
+				target[it] = sourceMap[it]
+			}
+			catch(e){
+				//ignore
+			}
+		}
 	}
 
 	void updateLedgerBillingInfo(bill){
-		// update next bill date 
+		//TODO: update next bill date 
 		def nextbilldate = dtSvc.add(bill.expirydate, '1d')
 		def ledgerinfo = [
 			nextbilldate : nextbilldate,
-			basic		 : bill.items.basic.sum(),
-			basicint	 : bill.items.basicint.sum(),
-			basicdisc	 : bill.items.basicdisc.sum(),
-			basiccredit	 : bill.items.basiccredit.sum(),
-			sef		 	 : bill.items.sef.sum(),
-			sefint	     : bill.items.sefint.sum(),
-			sefdisc	     : bill.items.sefdisc.sum(),
-			sefcredit	 : bill.items.sefcredit.sum(),
 		]
 		
 		if ( bill.ledgerids && bill.ledgerids.size() > 0) {
@@ -154,8 +186,8 @@ public class RPTBillingService
 		}
 		else {
 			ledgerinfo.taxpayerid = bill.taxpayerid 
-			items += em.sqlContext.createNamedExecutor('rptbill:updateLedgerNextBillDateByTaxpayerId')
-							.setParameters(ledgerifo)
+			em.sqlContext.createNamedExecutor('rptbill:updateLedgerNextBillDateByTaxpayerId')
+							.setParameters(ledgerinfo)
 							.execute()
 			println 'TODO: updateLedgerNextBillDateByPropertyPayer'
 		}
@@ -239,7 +271,58 @@ public class RPTBillingService
 		println 'TODO: getOpenLedgerItemByPropertyPayer'
 		return []
 	}
+
+
+	int calculateNoOfMonthsFromQtr(pdate, year, qtr) {
+		int currYear = pdate.year
+		int currMonth = pdate.month
+		qtr = ( qtr == 0 ? 1 : qtr )
+		if(year < currYear) {
+			return ((currYear - year) * 12 - (3 * (qtr-1))) + currMonth 
+		}
+		else {
+			int nm = currMonth - (3 * (qtr-1))
+			return nm < 0 ? 0 : nm
+		}
+	}
 	
+	int calculateNoOfMonthsFromJan(pdate, year, qtr) {
+		int currYear = pdate.year
+		int currMonth = pdate.month
+		if(year < currYear) {
+			return ( currYear - year ) * 12 + currMonth
+		}
+		else {
+			return currMonth
+		}
+	}
+
+	boolean determineFirstQtrPaidOnTime( pdate, bill, item ) {
+        if( pdate.qtr == 1 && item.lastyearpaid == pdate.year -1 && item.lastqtrpaid == 4 ) return true 
+        if( item.lastyearpaid == pdate.year && item.lastqtrpaid >= 1 && pdate.qtr == 1 ) return true
+        return item.firstqtrpaidontime
+    }
+
+    boolean determineQtrlyPaymentAvailed( bill, item ) {
+        if( bill.billtoqtr != 4 ) return true 
+        if( bill.billtoqtr == 4 && item.lastqtrpaid != 4 ) return true 
+        return false 
+    }
+	
+	void buildResult(bill, data){
+		bill.items.each{item ->
+			def ledger = data.ledgers.find{it.objid == item.objid}
+			if (ledger){
+				item.basic = numSvc.round(ledger.basic)
+				item.basicint = numSvc.round(ledger.basicint)
+				item.basicdisc = numSvc.round(ledger.basicdisc)
+				item.sef = numSvc.round(ledger.sef)
+				item.sefint = numSvc.round(ledger.sefint)
+				item.sefdisc = numSvc.round(ledger.sefdisc)
+				item.paidyear = ledger.paidyear 
+			}
+		}
+	}
 
 }
 	

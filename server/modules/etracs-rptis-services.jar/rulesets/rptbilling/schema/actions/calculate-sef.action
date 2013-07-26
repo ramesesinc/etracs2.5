@@ -1,0 +1,9 @@
+{
+	name: "Calculate SEF",
+	template: "calculate-sef",
+	params: [
+		{ name:"ledger", datatype:'RPTLedgerFact', usevar:true, caption:'Ledger ID', required:true },
+		{ name: "expr", datatype: 'string', caption: 'Computation Formula', expression:true },
+		{ name: "sefacct", datatype: 'lookup', caption: 'Account Title', handler:'incomeaccount:lookup', itemKey:'objid', itemLabel:'title'},
+	]
+}

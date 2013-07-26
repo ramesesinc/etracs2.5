@@ -10,10 +10,10 @@ class RPTBillingTaks {
 	@Service('RPTBillingService')
 	def svc 
 	
-	@Schedule(interval=5)
+	@Schedule(interval=360000)
 	public def recalcBilling(task) {
 		def bill = svc.initBill()
-		def ledgers = svc.getLedgersForRecalculation(500)
+		def ledgers = svc.getLedgersToRecalc(500)
 		ledgers.each{
 			svc.calculateBillByLedgerIdAsync(it.objid)
 		}
