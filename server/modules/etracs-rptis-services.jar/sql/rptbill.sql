@@ -5,7 +5,7 @@ FROM rptledger rl
 	INNER JOIN rptledgeritem rli ON rl.objid = rli.rptledgerid
 WHERE f.taxpayerid = $P{taxpayerid}
  AND rl.state = 'APPROVED'
- AND (rl.nextbilldate IS NULL OR rl.nextbilldate <= NOW())
+ AND (rl.nextbilldate IS NULL OR rl.nextbilldate <= NOW() OR rl.lastitemyear < $P{billtoyear})
  AND rli.state = 'OPEN'  
 
 
@@ -29,7 +29,7 @@ FROM rptledger rl
 	LEFT JOIN rpu lr ON lf.rpuid = lr.objid 
 WHERE rl.objid = $P{ledgerid}
  AND rl.state = 'APPROVED'
- AND (rl.nextbilldate IS NULL OR rl.nextbilldate <= NOW())
+ AND (rl.nextbilldate IS NULL OR rl.nextbilldate <= NOW() OR rl.lastitemyear < $P{billtoyear})
  AND rli.state = 'OPEN'  
 
  
@@ -59,6 +59,8 @@ SELECT
 	rl.lastqtrpaid,
 	rl.firstqtrpaidontime,
 	rl.qtrlypaymentpaidontime,
+	rl.lastitemyear,
+	rl.faasid, 
 	f.tdno,
 	f.ownername,
 	f.administratorname,
@@ -124,9 +126,9 @@ WHERE objid = $P{ledgerid}
 [updateLedgerNextBillDateByTaxpayerId]
 UPDATE faas f, rptledger rl SET
 	rl.nextbilldate = $P{nextbilldate}
-WHERE f.taxpayerid = $P{taxpayerid}
- AND f.objid = rl.faasid 
+WHERE f.objid = rl.faasid 
  AND rl.state = 'APPROVED'
+ AND f.taxpayerid = $P{taxpayerid}
  
 
 

@@ -9,7 +9,7 @@
         <field name="firstqtrpaidontime" required="true" type="boolean" />
         <field name="qtrlypaymentavailed" required="true" type="boolean" />
         <field name="qtrlypaymentpaidontime" required="true" type="boolean" />
-        <field name="posteditemyear" required="true" type="integer"/>
+        <field name="lastitemyear" required="true" type="integer"/>
     </element>
 
     <element name="faas" tablename="rptledgerfaas">

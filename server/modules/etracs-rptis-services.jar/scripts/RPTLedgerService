@@ -160,7 +160,6 @@ class RPTLedgerService
 
 
 
-
     void postLedgerItems(ledgerfaas){
         def pdate = dtSvc.parseCurrentDate()
         ledgerfaas.toyear  = (ledgerfaas.toyear == 0 ? pdate.year : ledgerfaas.toyear)
@@ -186,6 +185,27 @@ class RPTLedgerService
             */
         }
     }
+
+    @ProxyMethod
+    public def insertLedgerItems(ledger, fromyear, toyear){
+        fromyear.upto(toyear){yr -> 
+            def ledgerfaas = em.sqlContext.createNamedQuery('rptledger:getLedgerFaasByFaasId')
+                    .setParameter('rptledgerid', ledger.objid )
+                    .setParameter('faasid', ledger.faasid)
+                    .singleResult
+            if( ledgerfaas ){
+                println 'insertLedgerItems...'
+                ledgerfaas.toqtr = 4;
+                postQuarterlyItems(ledgerfaas, yr)
+                em.sqlContext.createNamedExecutor('rptledger:updateLedgerLastItemYear')
+                        .setParameter('objid', ledger.objid)
+                        .setParameter('lastitemyear', toyear)
+                        .execute()
+            }
+        }
+    }
+
+
 
     void postQuarterlyItems(ledgerfaas, yr){
         def av1to3qtr = numSvc.round( ledgerfaas.assessedvalue / 4 )

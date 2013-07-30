@@ -54,6 +54,19 @@ FROM rptledgerfaas rlf
 WHERE rlf.rptledgerid = $P{rptledgerid} 
 ORDER BY rlf.fromyear DESC 
 
+[getLedgerFaasByFaasId]
+SELECT rlf.*,
+	pc.code AS classification_code,
+	pc.name AS classification_name,
+	pc1.code AS actualuse_code,
+	pc1.name AS actualuse_name
+FROM rptledgerfaas rlf
+	INNER JOIN propertyclassification pc ON rlf.classification_objid = pc.objid 
+	LEFT JOIN propertyclassification pc1 ON rlf.actualuse_objid = pc1.objid 
+WHERE rlf.rptledgerid = $P{rptledgerid} 
+  AND rlf.faasid = $P{faasid}
+ORDER BY rlf.fromyear DESC 
+
 [getLedgerItems]
 SELECT 
 	rli.objid, rli.year, rli.qtr,
@@ -72,3 +85,9 @@ UPDATE rptledgerfaas SET
 	toyear = $P{toyear},
 	toqtr  = $P{toqtr}
 WHERE objid <> $P{objid} AND rptledgerid = $P{rptledgerid}	AND toyear = 0 
+
+
+[updateLedgerLastItemYear]
+UPDATE rptledger SET 
+	lastitemyear = $P{lastitemyear}
+WHERE objid = $P{objid}	

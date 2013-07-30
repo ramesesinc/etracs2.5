@@ -172,12 +172,17 @@ public class RPTBillingService
 	}
 
 
+	def phases = ['TAX', 'PENALTY', 'DISCOUNT']
+
 	@ProxyMethod
 	public void recalcBillItems(bill){
 		bill.ledgers = getOpenLedgers(bill)
 		if ( bill.ledgers) {
 			def data = createFacts(bill)
-			ruleSvc.execute( RULESET, data.facts, data.globals );
+			phases.each{phase ->
+				println 'Executing phase ' + phase 
+				ruleSvc.execute( RULESET, data.facts, data.globals, phase );
+			}
 			buildResult(bill, data)
 			updateLedgerBillingInfo(bill)
 		}
@@ -196,8 +201,8 @@ public class RPTBillingService
 		map.facts << new DateBean(dtSvc.serverDate)
 
 		//create rptledgerfact 
-		bill.ledgers.each{ ld ->
-			ld.items.each{
+		bill.ledgers.each{ rl ->
+			rl.items.each{
 				resetAssessmentValues(it)
 				def ledger = ruleSvc.createFact(RULESET, FACT_PACKAGE+'RPTLedgerFact')
 				populateFactData(ledger, it)
@@ -347,16 +352,19 @@ public class RPTBillingService
 
 		ledgers += em.sqlContext.createNamedQuery('rptbill:getOpenLedgerByTaxpayerId')
 							.setParameter('taxpayerid', bill.taxpayerid)
+							.setParameter('billtoyear', bill.billtoyear)
 							.resultList
 		ledgers += getOpenLedgerItemByPropertyPayer(bill)
-
+		println 'ledgers ' + ledgers 
 		ledgers.each{
 			it.putAll(
 				em.sqlContext.createNamedQuery('rptbill:getBilledLedgerInfoByLedgerId')
 						.setParameter('ledgerid', it.objid)
 						.singleResult
 			)
-
+			if (it.lastitemyear < bill.billtoyear ){
+				ledgerSvc.insertLedgerItems(it, it.lastitemyear + 1, bill.billtoyear)
+			}
 			it.items = em.sqlContext.createNamedQuery('rptbill:getOpenLedgerItemByLedgerId')
 							.setParameter('ledgerid', it.objid)
 							.resultList.each{
