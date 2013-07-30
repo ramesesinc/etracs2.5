@@ -39,7 +39,7 @@
 	<field name="sefdp" class="java.math.BigDecimal"/>
 	<field name="sefnet" class="java.math.BigDecimal"/>
 	<field name="total" class="java.math.BigDecimal"/>
-	<field name="details" class="java.lang.Object"/>
+	<field name="items" class="java.lang.Object"/>
 	<field name="ownername" class="java.lang.String"/>
 	<field name="classcode" class="java.lang.String"/>
 	<field name="administratorname" class="java.lang.String"/>
@@ -247,7 +247,7 @@
 						width="540"
 						height="19"
 						key="subreport-1"/>
-					<dataSourceExpression><![CDATA[$F{details}]]></dataSourceExpression>
+					<dataSourceExpression><![CDATA[$F{items}]]></dataSourceExpression>
 					<subreportExpression  class="net.sf.jasperreports.engine.JasperReport"><![CDATA[$P{RPTBillingLedgerItem}]]></subreportExpression>
 				</subreport>
 				<staticText>

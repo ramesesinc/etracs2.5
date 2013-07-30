@@ -104,20 +104,17 @@ class RPTLedgerService
             throw new Exception('Ledger has already been cancelled.')
 
         def lastfaas = ledger.faases.last()
-
         ledger.state            =  STATE_APPROVED
         ledger.lastyearpaid     = (lastfaas.fromqtr == 1 ? lastfaas.fromyear - 1 : lastfaas.fromyear)
         ledger.lastqtrpaid      = (lastfaas.fromqtr == 1 ?  4 : lastfaas.fromqtr - 1)
         ledger.posteditemyear   = dtSvc.serverYear 
         em.update(SCHEMA_LEDGER, ledger)
-
         //approve ledgerfaases
         ledger.faases.each{
             it.state = ledger.state 
             saveLedgerFaas(it)
             postLedgerItems(it)
         }
-        billingSvc.generateBillByLedgerId(ledger.objid)
     }
 
 
@@ -171,6 +168,9 @@ class RPTLedgerService
         def qtrlyPrevYears = util.toBoolean(var.rptledger_previous_year_computed_as_quarterly, false)
 
         ledgerfaas.fromyear.upto(ledgerfaas.toyear){ yr ->
+            postQuarterlyItems(ledgerfaas, yr)
+
+            /*
             if ( yr < pdate.year && qtrlyPrevYears) {
                 //previous year qtrly
                 postQuarterlyItems(ledgerfaas, yr)
@@ -183,6 +183,7 @@ class RPTLedgerService
                 //current and advance years 
                 postQuarterlyItems(ledgerfaas, yr)
             }
+            */
         }
     }
 

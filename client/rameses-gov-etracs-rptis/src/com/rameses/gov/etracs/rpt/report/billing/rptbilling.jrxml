@@ -51,7 +51,7 @@
 	<field name="totalsefdp" class="java.math.BigDecimal"/>
 	<field name="totalsefnet" class="java.math.BigDecimal"/>
 	<field name="grandtotal" class="java.math.BigDecimal"/>
-	<field name="items" class="java.lang.Object"/>
+	<field name="ledgers" class="java.lang.Object"/>
 	<field name="objid" class="java.lang.String"/>
 	<field name="administratorname" class="java.lang.String"/>
 	<field name="administratoraddress" class="java.lang.String"/>
@@ -402,7 +402,7 @@
 					<subreportParameter  name="RPTBillingLedgerItem">
 						<subreportParameterExpression><![CDATA[$P{RPTBillingLedgerItem}]]></subreportParameterExpression>
 					</subreportParameter>
-					<dataSourceExpression><![CDATA[$F{items}]]></dataSourceExpression>
+					<dataSourceExpression><![CDATA[$F{ledgers}]]></dataSourceExpression>
 					<subreportExpression  class="net.sf.jasperreports.engine.JasperReport"><![CDATA[$P{RPTBillingLedger}]]></subreportExpression>
 				</subreport>
 			</band>

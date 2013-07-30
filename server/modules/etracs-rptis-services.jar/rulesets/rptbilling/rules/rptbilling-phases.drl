@@ -11,7 +11,8 @@ rule "start-phase"
 	salience 100000
 	no-loop
 	then
-		drools.setFocus("TAX");
+    System.out.println("Start RPTBilling Computation...");
+    drools.setFocus("TAX");
 end
 
 rule "end-tax"
@@ -21,6 +22,7 @@ rule "end-tax"
    when
 	  not CancelExecution()
    then
+   System.out.println("Done computing tax...");
     drools.setFocus("PENALTY");
 end
 
@@ -31,6 +33,7 @@ rule "end-penalty"
    when
 	  not CancelExecution()
    then
+    System.out.println("Done computing penalty...");
       drools.setFocus("DISCOUNT");
 end
 
@@ -41,5 +44,6 @@ rule "end-discount"
    when
 	  not CancelExecution()
    then
+    System.out.println("Done computing discount...");
     System.out.println("Done executing RPT Billing rules.");
 end

@@ -1,0 +1,41 @@
+"ledger" [mode == 'create']{
+    visible:true;
+}
+
+"ledger" [payoption != 'byledger']{
+    visible:false;
+}
+
+
+"ledger" [mode != 'create']{
+    visible:false;
+}
+
+
+"fullPayment|partialPayment" [selectedItem != null] {
+    enabled:true;
+}
+
+"fullPayment" [selectedItem.partialled]{
+    enabled:true;
+}
+
+"fullPayment" [ ! selectedItem.partialled ]{
+    enabled:false;
+}
+
+"partialPayment" [!selectedItem.partialled]{
+    enabled:true;
+}
+
+
+"partialPayment" [selectedItem.partialled]{
+    enabled:false;
+}
+
+
+
+"fullPayment|partialPayment" [selectedItem == null] {
+    enabled:false;
+}
+

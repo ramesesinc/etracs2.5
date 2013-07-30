@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <workunit>
     <invokers>
-        <invoker type="rptpartialpayment" action="init" caption="Partial Payment" target="popup" />
+        <invoker type="rptpartialpayment:open" action="init" caption="Partial Payment" target="popup" />
     </invokers>
 <code lang="groovy">
     <![CDATA[
@@ -40,6 +40,6 @@ public class RPTPartialPayment {
 </code>
 
     <pages>
-        <page template="com.rameses.gov.etracs.rpt.collection.RPTPartialPaymentPage"/>
+        <page template="com.rameses.gov.etracs.rpt.collection.ui.RPTPartialPaymentPage"/>
     </pages>
 </workunit>

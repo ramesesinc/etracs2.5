@@ -1,0 +1,35 @@
+import com.rameses.annotations.*
+import java.rmi.server.UID
+
+class XReceiptService
+{
+	@PersistenceContext('main')
+	def em
+
+	@Service('DateService')
+	def dtSvc 
+
+
+	@ProxyMethod
+	public def createReceipt( receipt ) {
+		receipt.txndate = dtSvc.serverDate
+
+		em.sqlContext.createExecutor('''
+			INSERT INTO xreceipt (objid, state, txndate, amount)
+			VALUES($P{objid}, $P{state}, $P{txndate}, $P{amount})
+		''')
+		.setParameters(receipt)
+		.execute()
+
+		receipt.items.each{ item ->
+			item.receiptid = receipt.objid 
+			em.sqlContext.createExecutor('''
+				INSERT INTO xreceiptitem (objid, receiptid, acctid, amount, remarks)
+				VALUES($P{objid}, $P{receiptid}, $P{acctid}, $P{amount}, $P{remarks})
+			''')
+			.setParameters(item)
+			.execute()
+		}
+		return receipt 
+	}
+}

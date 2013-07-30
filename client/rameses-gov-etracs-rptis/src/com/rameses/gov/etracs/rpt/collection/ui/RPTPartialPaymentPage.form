@@ -105,16 +105,16 @@
     <Component class="com.rameses.rcp.control.XButton" name="xButton1">
       <Properties>
         <Property name="mnemonic" type="int" value="99"/>
-        <Property name="text" type="java.lang.String" value="Cancel"/>
         <Property name="name" type="java.lang.String" value="_close"/>
+        <Property name="text" type="java.lang.String" value="Cancel"/>
       </Properties>
     </Component>
     <Component class="com.rameses.rcp.control.XButton" name="xButton2">
       <Properties>
         <Property name="mnemonic" type="int" value="111"/>
-        <Property name="text" type="java.lang.String" value="OK"/>
         <Property name="defaultCommand" type="boolean" value="true"/>
         <Property name="name" type="java.lang.String" value="ok"/>
+        <Property name="text" type="java.lang.String" value="OK"/>
       </Properties>
     </Component>
   </SubComponents>

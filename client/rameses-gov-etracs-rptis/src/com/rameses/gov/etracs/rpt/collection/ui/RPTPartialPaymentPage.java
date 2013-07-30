@@ -4,14 +4,10 @@
  * Created on October 11, 2011, 7:26 PM
  */
 
-package com.rameses.gov.etracs.rpt.collection;
+package com.rameses.gov.etracs.rpt.collection.ui;
 
 import java.math.BigDecimal;
 
-/**
- *
- * @author  jzamora
- */
 public class RPTPartialPaymentPage extends javax.swing.JPanel {
     
     /** Creates new form RPTPartialPaymentPage */
