@@ -122,27 +122,32 @@ public class RPTBillingService
 					def basicpayment 	= numSvc.round(payment * basicpaymentrate)
 					def sefpayment 		= payment - basicpayment 
 
-					def basicdiscrate  	= it.basicdisc / it.basic 
-					def basicrate 		= numSvc.round(it.basic / (it.basic + it.basicint))
-					def basicpaid       = numSvc.round(basicpayment * basicrate)
-					it.basicint 		= basicpayment - basicpaid
-					it.basic 			= basicpaid / (1 - basicdiscrate)
-					if (it.basicdisc > 0.0) {
-						it.basicdisc = numSvc.round(it.basic * basicdiscrate)
+					def basicintrate    = numSvc.round(it.basicint / it.basic)
+					def basic           = numSvc.round(basicpayment / (1 + basicintrate))
+					it.basicint         = basicpayment - basic 
+					if (it.basicdisc == 0.0) {
+						it.basic = basic 
+					}
+					else{
+						it.basicdisc = numSvc.round(basic * basicdiscrate)
+						it.basic     = basic + it.basicdisc 
 					}
 					it.basicdp 			= it.basicint - it.basicdisc 
 					it.basicnet 		= it.basic + it.basicdp
 
-					def sefdiscrate  	= it.sefdisc / it.sef 
-					def sefrate 		= numSvc.round(it.sef / (it.sef + it.sefint))
-					def sefpaid       	= numSvc.round(sefpayment * sefrate)
-					it.sefint 			= sefpayment - sefpaid
-					it.sef 				= sefpaid / (1 - sefdiscrate)
-					if (it.sefdisc > 0.0) {
-						it.sefdisc = numSvc.round(it.sef * sefdiscrate)
+					def sefintrate    = numSvc.round(it.sefint / it.sef)
+					def sef           = numSvc.round(sefpayment / (1 + sefintrate))
+					it.sefint         = sefpayment - sef 
+					if (it.sefdisc == 0.0) {
+						it.sef = sef 
 					}
-					it.sefdp 		= it.sefint - it.sefdisc 
+					else{
+						it.sefdisc = numSvc.round(sef * sefdiscrate)
+						it.sef     = sef + it.sefdisc 
+					}
+					it.sefdp 			= it.sefint - it.sefdisc 
 					it.sefnet 		= it.sef + it.sefdp
+
 					it.total 		= it.basicnet + it.sefnet 
 					it.partialled 	= true
 					payment = 0.0
