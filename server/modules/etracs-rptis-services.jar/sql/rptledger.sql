@@ -89,5 +89,18 @@ WHERE objid <> $P{objid} AND rptledgerid = $P{rptledgerid}	AND toyear = 0
 
 [updateLedgerLastItemYear]
 UPDATE rptledger SET 
-	lastitemyear = $P{lastitemyear}
+	lastitemyear = $P{lastitemyear},
+	nextbilldate = NULL
 WHERE objid = $P{objid}	
+
+
+[clearNextBillDateByLedger]
+UPDATE rptledger SET 
+	nextbilldate = NULL 
+WHERE objid = $P{objid} 
+  AND state = 'APPROVED'
+
+[clearNextBillDate]
+UPDATE rptledger SET 
+	nextbilldate = NULL 
+WHERE state = 'APPROVED'

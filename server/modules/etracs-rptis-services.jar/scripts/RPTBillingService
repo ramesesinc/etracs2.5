@@ -44,7 +44,13 @@ public class RPTBillingService
             advancepayment      : false,
             currentdate 		: pdate.date,
             ledgerids 			: [],
+            ledgers 			: [],
 		]
+	}
+
+	@ProxyMethod
+	public def getOpenLedgerCount(bill){
+		return getOpenLedgerByTaxpayerId(bill).count()
 	}
 
 	@ProxyMethod
@@ -73,8 +79,9 @@ public class RPTBillingService
 		util.required('Bill To Qtr', bill.billtoqtr)
 
 		if (bill.advancepayment){
-			util.required('Bill Date', bill.billdate)
-			bill.billdate = dtSvc.parse('yyyy-MM-dd', bill.billdate)
+			if (bill.billtoyear < dtSvc.serverYear )
+				throw new Exception('Advance Year must be greater than current year.')
+			bill.billdate = (bill.billdate ? dtSvc.parse('yyyy-MM-dd', bill.billdate) : dtSvc.serverDate)
 		}
 		else {
 			bill.billdate = dtSvc.serverDate 
@@ -85,7 +92,7 @@ public class RPTBillingService
 		if (! bill.taxpayerid && ! bill.ledgerids)
 			throw new Exception('Either a Taxpayer or Ledger to bill is required.')
 
-		if (bill.advancebill && bill.billdate <= (parsedate.date - 1 ))
+		if (bill.advancebill && bill.billdate <= (dtSvc.serverDate - 1 ))
             throw new Exception('Advance Billing Date must be greater than current date.')
 		
 		recalcBillItems(bill)
@@ -180,7 +187,6 @@ public class RPTBillingService
 		if ( bill.ledgers) {
 			def data = createFacts(bill)
 			phases.each{phase ->
-				println 'Executing phase ' + phase 
 				ruleSvc.execute( RULESET, data.facts, data.globals, phase );
 			}
 			buildResult(bill, data)
@@ -344,18 +350,24 @@ public class RPTBillingService
 	}
 
 
+	def getOpenLedgerByTaxpayerId(bill){
+		def ledgers = []
+		ledgers +=  em.sqlContext.createNamedQuery('rptbill:getOpenLedgerByTaxpayerId')
+							.setParameter('taxpayerid', bill.taxpayerid)
+							.setParameter('billtoyear', bill.billtoyear)
+							.resultList
+		ledgers += getOpenLedgerItemByPropertyPayer(bill)
+		return ledgers 
+	}
+
 	def getOpenLedgers(bill){
 		def ledgers = []
 		bill.ledgerids.each{
 			ledgers.add([objid:it])
 		}
 
-		ledgers += em.sqlContext.createNamedQuery('rptbill:getOpenLedgerByTaxpayerId')
-							.setParameter('taxpayerid', bill.taxpayerid)
-							.setParameter('billtoyear', bill.billtoyear)
-							.resultList
-		ledgers += getOpenLedgerItemByPropertyPayer(bill)
-		println 'ledgers ' + ledgers 
+		ledgers += getOpenLedgerByTaxpayerId(bill)
+
 		ledgers.each{
 			it.putAll(
 				em.sqlContext.createNamedQuery('rptbill:getBilledLedgerInfoByLedgerId')

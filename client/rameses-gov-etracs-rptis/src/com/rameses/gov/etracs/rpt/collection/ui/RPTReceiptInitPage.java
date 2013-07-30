@@ -33,10 +33,8 @@ public class RPTReceiptInitPage extends javax.swing.JPanel {
         xTextField2 = new com.rameses.rcp.control.XTextField();
         xDateField1 = new com.rameses.rcp.control.XDateField();
         formPanel2 = new com.rameses.rcp.util.FormPanel();
-        xRadio1 = new com.rameses.rcp.control.XRadio();
-        xRadio2 = new com.rameses.rcp.control.XRadio();
         formPanel3 = new com.rameses.rcp.util.FormPanel();
-        xRadio3 = new com.rameses.rcp.control.XRadio();
+        xCheckBox1 = new com.rameses.rcp.control.XCheckBox();
         xIntegerField1 = new com.rameses.rcp.control.XIntegerField();
 
         com.rameses.rcp.control.border.XTitledBorder xTitledBorder1 = new com.rameses.rcp.control.border.XTitledBorder();
@@ -86,44 +84,28 @@ public class RPTReceiptInitPage extends javax.swing.JPanel {
         formPanel2.setBorder(xTitledBorder2);
         formPanel2.setPreferredSize(new java.awt.Dimension(5200, 210));
         formPanel2.setShowCaption(false);
-        xRadio1.setCellPadding(new java.awt.Insets(2, 2, 2, 2));
-        xRadio1.setFont(new java.awt.Font("Arial", 0, 12));
-        xRadio1.setName("payoption");
-        xRadio1.setOpaque(false);
-        xRadio1.setOptionValue("all");
-        xRadio1.setShowCaption(false);
-        xRadio1.setText("Pay all properties");
-        formPanel2.add(xRadio1);
-
-        xRadio2.setCellPadding(new java.awt.Insets(2, 2, 2, 2));
-        xRadio2.setFont(new java.awt.Font("Arial", 0, 12));
-        xRadio2.setName("payoption");
-        xRadio2.setOpaque(false);
-        xRadio2.setOptionValue("byledger");
-        xRadio2.setShowCaption(false);
-        xRadio2.setText("Pay by Ledger");
-        formPanel2.add(xRadio2);
 
         formPanel3.setCaptionBorder(null);
         formPanel3.setCaptionPadding(new java.awt.Insets(0, 0, 0, 0));
-        formPanel3.setCellpadding(new java.awt.Insets(2, 2, 2, 2));
         formPanel3.setOrientation(com.rameses.rcp.constant.UIConstants.HORIZONTAL);
         formPanel3.setPadding(new java.awt.Insets(0, 0, 0, 0));
-        formPanel3.setPreferredSize(new java.awt.Dimension(0, 25));
+        formPanel3.setPreferredSize(new java.awt.Dimension(0, 50));
         formPanel3.setShowCaption(false);
-        xRadio3.setCellPadding(new java.awt.Insets(2, 2, 2, 2));
-        xRadio3.setFont(new java.awt.Font("Arial", 0, 12));
-        xRadio3.setName("payoption");
-        xRadio3.setOpaque(false);
-        xRadio3.setOptionValue("advance");
-        xRadio3.setPreferredSize(new java.awt.Dimension(200, 15));
-        xRadio3.setShowCaption(false);
-        xRadio3.setText("Advance Payment");
-        formPanel3.add(xRadio3);
+        xCheckBox1.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        xCheckBox1.setCellPadding(new java.awt.Insets(10, 5, 0, 0));
+        xCheckBox1.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        xCheckBox1.setName("bill.advancepayment");
+        xCheckBox1.setPreferredSize(new java.awt.Dimension(150, 15));
+        xCheckBox1.setShowCaption(false);
+        xCheckBox1.setText(" Advance Payment ");
+        formPanel3.add(xCheckBox1);
 
         xIntegerField1.setCaption("Year");
         xIntegerField1.setCaptionWidth(40);
-        xIntegerField1.setName("bill.billtoyear");
+        xIntegerField1.setCellPadding(new java.awt.Insets(10, 0, 0, 0));
+        xIntegerField1.setDepends(new String[] {"bill.advancepayment"});
+        xIntegerField1.setEnabled(false);
+        xIntegerField1.setName("advanceyear");
         xIntegerField1.setPreferredSize(new java.awt.Dimension(60, 20));
         formPanel3.add(xIntegerField1);
 
@@ -154,13 +136,11 @@ public class RPTReceiptInitPage extends javax.swing.JPanel {
     private com.rameses.rcp.util.FormPanel formPanel1;
     private com.rameses.rcp.util.FormPanel formPanel2;
     private com.rameses.rcp.util.FormPanel formPanel3;
+    private com.rameses.rcp.control.XCheckBox xCheckBox1;
     private com.rameses.rcp.control.XDateField xDateField1;
     private com.rameses.rcp.control.XIntegerField xIntegerField1;
     private com.rameses.rcp.control.XLabel xLabel1;
     private com.rameses.rcp.control.XLookupField xLookupField1;
-    private com.rameses.rcp.control.XRadio xRadio1;
-    private com.rameses.rcp.control.XRadio xRadio2;
-    private com.rameses.rcp.control.XRadio xRadio3;
     private com.rameses.rcp.control.XTextField xTextField1;
     private com.rameses.rcp.control.XTextField xTextField2;
     // End of variables declaration//GEN-END:variables

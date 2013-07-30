@@ -4,5 +4,4 @@ ae${index}.setParams(binding);
 
 ${action.params.ledger.value}.setBasicint(ae${index}.getDoubleValue());
 ${action.params.ledger.value}.setBasicintacctid("${action.params.basicintacct.value}");
-update(${action.params.ledger.value});
 

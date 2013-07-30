@@ -1,31 +1,8 @@
-"entity.info.txndate" [ entity.info.mode == 'ONLINE'] {
-    enabled:false;
-}
-
-"entity.info.txndate" [ entity.info.mode != 'ONLINE'] {
+"advanceyear" [bill.advancepayment == true]{
     enabled:true;
+    required:true;
 }
 
-"billtoyear" [ true == true]{
+"advanceyear" [bill.advancepayment != true]{
     enabled:false;
-}
-
-"billtoyear" [ payoption == 'advance'] {
-    enabled:true;
-}
-
-"remotedomain" [ true == true]{
-    enabled:false;
-}
-
-"remotedomain" [ payoption == 'remote'] {
-    enabled:true;
-}
-
-"compromise" [ true == true]{
-    enabled:false;
-}
-
-"compromise" [ payoption == 'compromise'] {
-    enabled:true;
 }

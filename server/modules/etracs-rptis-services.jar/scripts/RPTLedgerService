@@ -107,7 +107,8 @@ class RPTLedgerService
         ledger.state            =  STATE_APPROVED
         ledger.lastyearpaid     = (lastfaas.fromqtr == 1 ? lastfaas.fromyear - 1 : lastfaas.fromyear)
         ledger.lastqtrpaid      = (lastfaas.fromqtr == 1 ?  4 : lastfaas.fromqtr - 1)
-        ledger.posteditemyear   = dtSvc.serverYear 
+        ledger.lastitemyear     = dtSvc.serverYear 
+        ledger.nextbilldate     = null
         em.update(SCHEMA_LEDGER, ledger)
         //approve ledgerfaases
         ledger.faases.each{
@@ -115,6 +116,16 @@ class RPTLedgerService
             saveLedgerFaas(it)
             postLedgerItems(it)
         }
+    }
+
+    @ProxyMethod
+    public void clearNextBillDateByLedger( ledgerid ) {
+        em.sqlContext.createNamedExecutor('rptledger:clearNextBillDateByLedger').setParameter('objid', ledgerid).execute() 
+    }
+
+    @ProxyMethod
+    public void clearNextBillDate() {
+        em.sqlContext.createNamedExecutor('rptledger:clearNextBillDate').execute() 
     }
 
 
@@ -194,7 +205,6 @@ class RPTLedgerService
                     .setParameter('faasid', ledger.faasid)
                     .singleResult
             if( ledgerfaas ){
-                println 'insertLedgerItems...'
                 ledgerfaas.toqtr = 4;
                 postQuarterlyItems(ledgerfaas, yr)
                 em.sqlContext.createNamedExecutor('rptledger:updateLedgerLastItemYear')

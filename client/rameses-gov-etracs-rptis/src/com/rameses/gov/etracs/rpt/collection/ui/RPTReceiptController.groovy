@@ -25,12 +25,13 @@ class RPTReceiptController
     
     def PAY_OPTION_ALL = 'all';
     def PAY_OPTION_BYLEDGER = 'byledger';
-    def PAY_OPTION_ADVANCE = 'advance';
     
     def entity;
     def mode;
     def payoption;
     def bill;
+    def advanceyear;
+            
     
     
     def init(){
@@ -68,13 +69,39 @@ class RPTReceiptController
     
     
     def process(){
-        if (payoption == PAY_OPTION_ALL || payoption == PAY_OPTION_ADVANCE){
-            generateBill();
+        if (bill.advancepayment){
+            bill.billtoyear = advanceyear;
         }
+        
+        bill.putAll(bill.taxpayer)
+        def openledgercount = billSvc.getOpenLedgerCount(bill)
+        
+        payoption = PAY_OPTION_BYLEDGER;
+        if (openledgercount <= 5){
+            payoption = PAY_OPTION_ALL;
+            generateBill();
+        }            
+            
         mode = MODE_CREATE;
         return 'main'
     }
     
+    
+    def getLookupLedger(){
+        return InvokerUtil.lookupOpener('rptledger:lookup',[
+
+            onselect : {ledger ->
+                if (ledger.state != 'APPROVED')
+                    throw new Exception('Only approve ledger is allowed.')
+                if (bill.ledgers.find{it.objid == ledger.objid})
+                    throw new Exception('Ledger has already been added.')
+                
+                def xbill = billSvc.generateBillByLedgerId(ledger.objid);
+                bill.ledgers.addAll( xbill.ledgers )
+                listHandler.load();
+            },
+        ])
+    }
     
     def save(){
         if (MsgBox.confirm('Save receipt?')){

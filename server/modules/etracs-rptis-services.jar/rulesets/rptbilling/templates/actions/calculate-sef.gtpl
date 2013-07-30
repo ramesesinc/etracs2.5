@@ -4,5 +4,4 @@ ae${index}.setParams(binding);
 
 ${action.params.ledger.value}.setSef(ae${index}.getDoubleValue());
 ${action.params.ledger.value}.setSefacctid("${action.params.sefacct.value}");
-update(${action.params.ledger.value});
 

@@ -29,7 +29,7 @@ FROM rptledger rl
 	LEFT JOIN rpu lr ON lf.rpuid = lr.objid 
 WHERE rl.objid = $P{ledgerid}
  AND rl.state = 'APPROVED'
- AND (rl.nextbilldate IS NULL OR rl.nextbilldate <= NOW() OR rl.lastitemyear < $P{billtoyear})
+ AND (rl.nextbilldate IS NULL OR rl.nextbilldate <= NOW() )
  AND rli.state = 'OPEN'  
 
  
