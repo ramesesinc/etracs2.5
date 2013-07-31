@@ -44,6 +44,13 @@ WHERE faasid = $P{faasid}
 [getBackTaxes]
 SELECT * FROM faasbacktax WHERE faasid = $P{faasid} ORDER BY effectivityyear DESC 
 
+[getLandReference]
+select
+	r.fullpin, r.totalareasqm, f.ownername, f.tdno, rp.cadastrallotno 
+ from rpu r 
+	inner join faas f on f.rpuid = r.objid 
+	inner join realproperty rp on rp.objid = r.realpropertyid 
+where r.objid=$P{landrpuid} and r.rputype ='land'
 
 [cancelFaas]
 UPDATE faas SET 
@@ -57,6 +64,8 @@ WHERE objid = $P{objid}
 
 [cancelRpu]
 UPDATE rpu SET state = 'CANCELLED' WHERE objid = $P{objid}
+
+
 
 
 

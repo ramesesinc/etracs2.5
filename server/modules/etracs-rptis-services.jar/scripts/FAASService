@@ -103,7 +103,7 @@ class FAASService
 	public def openFaas( faasid ) {
 		def faas = em.read(SCHEMA_FAAS, [objid:faasid])
 		if (!faas) 
-			throw new Exception('FAAS ' + info.faas.tdno + ' does not exsits or has already been deleted. Please verify.')
+			throw new Exception('FAAS does not exist or has already been deleted. Please verify.')
 
 		faas.txntype = getTxnType( faas.txntype_objid )
 		faas.rpu = rpuSvc.openRpu( faas.rpuid )
