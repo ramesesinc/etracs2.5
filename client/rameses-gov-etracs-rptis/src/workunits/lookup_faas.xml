@@ -15,6 +15,9 @@ class FaasLookupController extends LookupController
     @Service("FAASLookupService")
     def svc
     
+    def state;
+    def taxpayerid;
+    
     Column[] getColumns() {
         return [
             new Column(name:"tdno", caption:"TD No.", width:80),
@@ -29,6 +32,8 @@ class FaasLookupController extends LookupController
     }
     
     List fetchList( Map params ) { 
+        params.state = state;
+        params.taxpayerid = taxpayerid;
         return svc.lookupFaas(params)
     }
 }  
