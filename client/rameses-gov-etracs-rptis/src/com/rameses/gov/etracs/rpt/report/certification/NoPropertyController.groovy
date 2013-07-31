@@ -1,4 +1,4 @@
-package rameses.gov.etracs.rptis.reports;
+package com.rameses.gov.etracs.rpt.report.certification;
 
 
 import com.rameses.rcp.annotations.*

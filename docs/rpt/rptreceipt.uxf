@@ -2,9 +2,129 @@
 <diagram program="umlet" version="12.0">
   <zoom_level>10</zoom_level>
   <element>
-    <type>com.umlet.element.Class</type>
+    <type>com.umlet.element.Relation</type>
     <coordinates>
       <x>80</x>
+      <y>200</y>
+      <w>100</w>
+      <h>50</h>
+    </coordinates>
+    <panel_attributes>lt=-</panel_attributes>
+    <additional_attributes>30;30;80;30</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>300</x>
+      <y>20</y>
+      <w>170</w>
+      <h>80</h>
+    </coordinates>
+    <panel_attributes>rptreceipt
+--
+objid
+yearpaid
+type [ONLINE,MANUAL]</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>350</x>
+      <y>70</y>
+      <w>120</w>
+      <h>150</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;
+rptitems</panel_attributes>
+    <additional_attributes>100;130;30;30</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>320</x>
+      <y>200</y>
+      <w>90</w>
+      <h>50</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>70;30;30;30</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>490</x>
+      <y>300</y>
+      <w>140</w>
+      <h>50</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;.</panel_attributes>
+    <additional_attributes>120;30;30;30</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>240</x>
+      <y>70</y>
+      <w>118</w>
+      <h>140</h>
+    </coordinates>
+    <panel_attributes>lt=.
+mappings</panel_attributes>
+    <additional_attributes>90;30;40;120</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>820</x>
+      <y>260</y>
+      <w>190</w>
+      <h>210</h>
+    </coordinates>
+    <panel_attributes>rptledger
+bg=green
+--
+objid
+state
+faasid
+nextbilldate
+lastyearpaid
+lastqtrpaid
+firstqtrpaidontime
+qtrlypaymentavailed
+qtrlypaymentpaidontime
+posteditemyear
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>10</x>
+      <y>90</y>
+      <w>90</w>
+      <h>110</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-
+items</panel_attributes>
+    <additional_attributes>50;30;50;90</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>80</x>
+      <y>20</y>
+      <w>240</w>
+      <h>50</h>
+    </coordinates>
+    <panel_attributes>lt=-</panel_attributes>
+    <additional_attributes>30;30;220;30</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>0</x>
       <y>180</y>
       <w>110</w>
       <h>140</h>
@@ -21,9 +141,53 @@ remarks</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>740</x>
+      <y>300</y>
+      <w>100</w>
+      <h>50</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;.</panel_attributes>
+    <additional_attributes>80;30;30;30</additional_attributes>
+  </element>
+  <element>
     <type>com.umlet.element.Class</type>
     <coordinates>
-      <x>470</x>
+      <x>160</x>
+      <y>190</y>
+      <w>190</w>
+      <h>100</h>
+    </coordinates>
+    <panel_attributes>receiptitem_rptreceiptitem
+--
+receiptitemid
+rptreceiptitemid
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>0</x>
+      <y>10</y>
+      <w>110</w>
+      <h>110</h>
+    </coordinates>
+    <panel_attributes>bg=yellow
+xreceipt
+&lt;&lt;temp&gt;&gt;
+--
+objid
+state
+txndate
+amount</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>390</x>
       <y>200</y>
       <w>130</w>
       <h>370</h>
@@ -52,176 +216,9 @@ partial</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
-    <type>com.umlet.element.Relation</type>
-    <coordinates>
-      <x>160</x>
-      <y>200</y>
-      <w>100</w>
-      <h>50</h>
-    </coordinates>
-    <panel_attributes>lt=-</panel_attributes>
-    <additional_attributes>30;30;80;30</additional_attributes>
-  </element>
-  <element>
-    <type>com.umlet.element.Relation</type>
-    <coordinates>
-      <x>430</x>
-      <y>70</y>
-      <w>120</w>
-      <h>150</h>
-    </coordinates>
-    <panel_attributes>lt=-&gt;
-rptitems</panel_attributes>
-    <additional_attributes>100;130;30;30</additional_attributes>
-  </element>
-  <element>
-    <type>com.umlet.element.Note</type>
-    <coordinates>
-      <x>230</x>
-      <y>340</y>
-      <w>220</w>
-      <h>110</h>
-    </coordinates>
-    <panel_attributes>bg=red
-The receiptitem_rptreceiptitem 
-is used to map-out the items
-from receiptitem to rptreceiptitem
-since one receiptitem is posted
-into several accounts:
-
-</panel_attributes>
-    <additional_attributes/>
-  </element>
-  <element>
-    <type>com.umlet.element.Relation</type>
-    <coordinates>
-      <x>400</x>
-      <y>200</y>
-      <w>90</w>
-      <h>50</h>
-    </coordinates>
-    <panel_attributes>lt=&lt;-</panel_attributes>
-    <additional_attributes>70;30;30;30</additional_attributes>
-  </element>
-  <element>
-    <type>com.umlet.element.Relation</type>
-    <coordinates>
-      <x>160</x>
-      <y>20</y>
-      <w>240</w>
-      <h>50</h>
-    </coordinates>
-    <panel_attributes>lt=-</panel_attributes>
-    <additional_attributes>30;30;220;30</additional_attributes>
-  </element>
-  <element>
-    <type>com.umlet.element.Relation</type>
-    <coordinates>
-      <x>820</x>
-      <y>300</y>
-      <w>100</w>
-      <h>50</h>
-    </coordinates>
-    <panel_attributes>lt=&lt;.</panel_attributes>
-    <additional_attributes>80;30;30;30</additional_attributes>
-  </element>
-  <element>
-    <type>com.umlet.element.Relation</type>
-    <coordinates>
-      <x>90</x>
-      <y>90</y>
-      <w>90</w>
-      <h>110</h>
-    </coordinates>
-    <panel_attributes>lt=&lt;-
-items</panel_attributes>
-    <additional_attributes>50;30;50;90</additional_attributes>
-  </element>
-  <element>
-    <type>com.umlet.element.Relation</type>
-    <coordinates>
-      <x>320</x>
-      <y>70</y>
-      <w>118</w>
-      <h>140</h>
-    </coordinates>
-    <panel_attributes>lt=.
-mappings</panel_attributes>
-    <additional_attributes>90;30;40;120</additional_attributes>
-  </element>
-  <element>
     <type>com.umlet.element.Class</type>
     <coordinates>
-      <x>900</x>
-      <y>260</y>
-      <w>190</w>
-      <h>210</h>
-    </coordinates>
-    <panel_attributes>rptledger
-bg=green
---
-objid
-state
-faasid
-nextbilldate
-lastyearpaid
-lastqtrpaid
-firstqtrpaidontime
-qtrlypaymentavailed
-qtrlypaymentpaidontime
-posteditemyear
-
-</panel_attributes>
-    <additional_attributes/>
-  </element>
-  <element>
-    <type>com.umlet.element.Relation</type>
-    <coordinates>
-      <x>570</x>
-      <y>300</y>
-      <w>140</w>
-      <h>50</h>
-    </coordinates>
-    <panel_attributes>lt=&lt;.</panel_attributes>
-    <additional_attributes>120;30;30;30</additional_attributes>
-  </element>
-  <element>
-    <type>com.umlet.element.Class</type>
-    <coordinates>
-      <x>80</x>
-      <y>10</y>
-      <w>110</w>
-      <h>110</h>
-    </coordinates>
-    <panel_attributes>bg=yellow
-xreceipt
-&lt;&lt;temp&gt;&gt;
---
-objid
-state
-txndate
-amount</panel_attributes>
-    <additional_attributes/>
-  </element>
-  <element>
-    <type>com.umlet.element.Class</type>
-    <coordinates>
-      <x>240</x>
-      <y>190</y>
-      <w>190</w>
-      <h>100</h>
-    </coordinates>
-    <panel_attributes>receiptitem_rptreceiptitem
---
-receiptitemid
-rptreceiptitemid
-</panel_attributes>
-    <additional_attributes/>
-  </element>
-  <element>
-    <type>com.umlet.element.Class</type>
-    <coordinates>
-      <x>690</x>
+      <x>610</x>
       <y>260</y>
       <w>160</w>
       <h>520</h>
@@ -258,18 +255,21 @@ sefintacctid
     <additional_attributes/>
   </element>
   <element>
-    <type>com.umlet.element.Class</type>
+    <type>com.umlet.element.Note</type>
     <coordinates>
-      <x>380</x>
-      <y>20</y>
-      <w>170</w>
-      <h>80</h>
+      <x>150</x>
+      <y>340</y>
+      <w>220</w>
+      <h>110</h>
     </coordinates>
-    <panel_attributes>rptreceipt
---
-objid
-yearpaid
-type [ONLINE,MANUAL]</panel_attributes>
+    <panel_attributes>bg=red
+The receiptitem_rptreceiptitem 
+is used to map-out the items
+from receiptitem to rptreceiptitem
+since one receiptitem is posted
+into several accounts:
+
+</panel_attributes>
     <additional_attributes/>
   </element>
 </diagram>

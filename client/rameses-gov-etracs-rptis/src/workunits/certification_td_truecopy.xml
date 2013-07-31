@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workunit extends="rpt_wtemplates/CertificationController.xml">
+    <invokers>
+        <invoker folderid="/explorer/txn/rpt/cert" action="init" caption="Tax Declaration True Copy" 
+            opener="tdtruecopy" index="100" />
+            
+        <invoker type="quick_launcher" action="init" code="TDC01" caption="Tax Declaration True Copy" 
+            opener="tdtruecopy" index="100" />
+            
+        <invoker type="tdtruecopy:open" action="open" caption="Tax Declaration True Copy" /> 
+    </invokers>
+    
+    <code class="com.rameses.gov.etracs.rpt.report.td.TDTrueCopyController" >
+    </code>
+</workunit>
