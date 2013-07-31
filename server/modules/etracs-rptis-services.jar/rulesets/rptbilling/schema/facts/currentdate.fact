@@ -1,0 +1,15 @@
+
+{
+	name: "CurrentDate",
+	title: "Current Date",
+	package: "rptbilling", 
+	factclass: "DateBean",
+	index:1,
+	agendagroup: ".*",
+	fields: [
+		{name: "year", datatype:"integer", caption:"Year" },
+		{name: "qtr", datatype:"integer", caption:"Qtr" },
+		{name: "month", datatype:"integer", caption:"Month" },
+		{name: "day", datatype:"integer", caption:"Day" },
+	]
+}

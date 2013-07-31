@@ -1,0 +1,7 @@
+package rptbilling;
+
+declare AssessedValueFact
+    rptledgerid   : String
+    year          : Integer
+    assessedvalue : Double
+end

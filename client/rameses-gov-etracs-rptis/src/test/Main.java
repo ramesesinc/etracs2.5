@@ -2,6 +2,7 @@ package test;
 
 import com.rameses.osiris2.test.OsirisTestPlatform;
 import com.rameses.rcp.common.EditorListModel;
+import com.rameses.rcp.common.SubListModel;
 
 
 import java.util.HashMap;
@@ -30,6 +31,7 @@ public class Main
         Map roles = new HashMap();
         roles.put("RPT.MASTER_ENCODER", null);
         roles.put("RPT.LANDTAX", null);
+        roles.put("RULEMGMT.RULE_AUTHOR", null);
         OsirisTestPlatform.runTest(env, roles); 
     }
 

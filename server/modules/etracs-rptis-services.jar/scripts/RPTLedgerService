@@ -104,20 +104,28 @@ class RPTLedgerService
             throw new Exception('Ledger has already been cancelled.')
 
         def lastfaas = ledger.faases.last()
-
         ledger.state            =  STATE_APPROVED
         ledger.lastyearpaid     = (lastfaas.fromqtr == 1 ? lastfaas.fromyear - 1 : lastfaas.fromyear)
         ledger.lastqtrpaid      = (lastfaas.fromqtr == 1 ?  4 : lastfaas.fromqtr - 1)
-        ledger.posteditemyear   = dtSvc.serverYear 
+        ledger.lastitemyear     = dtSvc.serverYear 
+        ledger.nextbilldate     = null
         em.update(SCHEMA_LEDGER, ledger)
-
         //approve ledgerfaases
         ledger.faases.each{
             it.state = ledger.state 
             saveLedgerFaas(it)
             postLedgerItems(it)
         }
-        billingSvc.generateBillByLedgerId(ledger.objid)
+    }
+
+    @ProxyMethod
+    public void clearNextBillDateByLedger( ledgerid ) {
+        em.sqlContext.createNamedExecutor('rptledger:clearNextBillDateByLedger').setParameter('objid', ledgerid).execute() 
+    }
+
+    @ProxyMethod
+    public void clearNextBillDate() {
+        em.sqlContext.createNamedExecutor('rptledger:clearNextBillDate').execute() 
     }
 
 
@@ -163,7 +171,6 @@ class RPTLedgerService
 
 
 
-
     void postLedgerItems(ledgerfaas){
         def pdate = dtSvc.parseCurrentDate()
         ledgerfaas.toyear  = (ledgerfaas.toyear == 0 ? pdate.year : ledgerfaas.toyear)
@@ -171,6 +178,9 @@ class RPTLedgerService
         def qtrlyPrevYears = util.toBoolean(var.rptledger_previous_year_computed_as_quarterly, false)
 
         ledgerfaas.fromyear.upto(ledgerfaas.toyear){ yr ->
+            postQuarterlyItems(ledgerfaas, yr)
+
+            /*
             if ( yr < pdate.year && qtrlyPrevYears) {
                 //previous year qtrly
                 postQuarterlyItems(ledgerfaas, yr)
@@ -183,8 +193,29 @@ class RPTLedgerService
                 //current and advance years 
                 postQuarterlyItems(ledgerfaas, yr)
             }
+            */
         }
     }
+
+    @ProxyMethod
+    public def insertLedgerItems(ledger, fromyear, toyear){
+        fromyear.upto(toyear){yr -> 
+            def ledgerfaas = em.sqlContext.createNamedQuery('rptledger:getLedgerFaasByFaasId')
+                    .setParameter('rptledgerid', ledger.objid )
+                    .setParameter('faasid', ledger.faasid)
+                    .singleResult
+            if( ledgerfaas ){
+                ledgerfaas.toqtr = 4;
+                postQuarterlyItems(ledgerfaas, yr)
+                em.sqlContext.createNamedExecutor('rptledger:updateLedgerLastItemYear')
+                        .setParameter('objid', ledger.objid)
+                        .setParameter('lastitemyear', toyear)
+                        .execute()
+            }
+        }
+    }
+
+
 
     void postQuarterlyItems(ledgerfaas, yr){
         def av1to3qtr = numSvc.round( ledgerfaas.assessedvalue / 4 )

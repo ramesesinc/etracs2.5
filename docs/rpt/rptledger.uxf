@@ -2,51 +2,24 @@
 <diagram program="umlet" version="12.0">
   <zoom_level>9</zoom_level>
   <element>
-    <type>com.umlet.element.Class</type>
+    <type>com.umlet.element.Relation</type>
     <coordinates>
-      <x>585</x>
-      <y>288</y>
-      <w>171</w>
-      <h>270</h>
-    </coordinates>
-    <panel_attributes>rptledgerfaas
---
-objid
-state
-rptledgerid
-faasid
-tdno
-txntype_objid
-classification_objid
-actualuse_objid
-taxable
-backtax
-fromyear
-fromqtr
-toyear
-toqtr
-assessedvalue
-systemcreated</panel_attributes>
-    <additional_attributes/>
-  </element>
-  <element>
-    <type>com.umlet.element.Class</type>
-    <coordinates>
-      <x>99</x>
+      <x>153</x>
       <y>153</y>
-      <w>90</w>
-      <h>27</h>
+      <w>161</w>
+      <h>63</h>
     </coordinates>
-    <panel_attributes>faas
-
-bg=green</panel_attributes>
-    <additional_attributes/>
+    <panel_attributes>lt=&lt;&lt;-
+m1=1
+m2=1
+currentfaas</panel_attributes>
+    <additional_attributes>27;45;144;45</additional_attributes>
   </element>
   <element>
     <type>com.umlet.element.Note</type>
     <coordinates>
-      <x>9</x>
-      <y>252</y>
+      <x>0</x>
+      <y>288</y>
       <w>234</w>
       <h>171</h>
     </coordinates>
@@ -65,64 +38,45 @@ DRAFT, CURRENT, CANCELLED</panel_attributes>
   <element>
     <type>com.umlet.element.Relation</type>
     <coordinates>
-      <x>459</x>
-      <y>297</y>
-      <w>143</w>
+      <x>432</x>
+      <y>234</y>
+      <w>161</w>
       <h>63</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;-
 [faases]</panel_attributes>
-    <additional_attributes>27;45;126;45</additional_attributes>
+    <additional_attributes>27;45;144;45</additional_attributes>
   </element>
   <element>
     <type>com.umlet.element.Class</type>
     <coordinates>
-      <x>315</x>
-      <y>117</y>
-      <w>171</w>
-      <h>306</h>
+      <x>90</x>
+      <y>189</y>
+      <w>90</w>
+      <h>27</h>
     </coordinates>
-    <panel_attributes>rptledger
---
-objid
-state
-faasid
-basic
-basicint
-basicdisc
-basiccredit
-sef
-sefint
-sefdisc
-sefcredit
-nextbilldate
-lastyearpaid
-lastqtrpaid
-firstqtrpaidontime
-qtrlypaymentavailed
-qtrlypaymentpaidontime
-posteditemyear
+    <panel_attributes>faas
 
-</panel_attributes>
+bg=green</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
     <type>com.umlet.element.Relation</type>
     <coordinates>
-      <x>459</x>
-      <y>135</y>
-      <w>332</w>
+      <x>432</x>
+      <y>171</y>
+      <w>350</w>
       <h>63</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;-
 [items]</panel_attributes>
-    <additional_attributes>27;45;315;45</additional_attributes>
+    <additional_attributes>27;45;333;45</additional_attributes>
   </element>
   <element>
     <type>com.umlet.element.Class</type>
     <coordinates>
-      <x>774</x>
-      <y>144</y>
+      <x>765</x>
+      <y>180</y>
       <w>144</w>
       <h>333</h>
     </coordinates>
@@ -152,17 +106,55 @@ sefintpartial
     <additional_attributes/>
   </element>
   <element>
-    <type>com.umlet.element.Relation</type>
+    <type>com.umlet.element.Class</type>
     <coordinates>
-      <x>162</x>
-      <y>117</y>
-      <w>170</w>
-      <h>63</h>
+      <x>297</x>
+      <y>144</y>
+      <w>162</w>
+      <h>189</h>
     </coordinates>
-    <panel_attributes>lt=&lt;&lt;-
-m1=1
-m2=1
-currentfaas</panel_attributes>
-    <additional_attributes>27;45;153;45</additional_attributes>
+    <panel_attributes>rptledger
+--
+objid
+state
+faasid
+nextbilldate
+lastyearpaid
+lastqtrpaid
+firstqtrpaidontime
+qtrlypaymentavailed
+qtrlypaymentpaidontime
+lastitemyear
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>576</x>
+      <y>225</y>
+      <w>171</w>
+      <h>270</h>
+    </coordinates>
+    <panel_attributes>rptledgerfaas
+--
+objid
+state
+rptledgerid
+faasid
+tdno
+txntype_objid
+classification_objid
+actualuse_objid
+taxable
+backtax
+fromyear
+fromqtr
+toyear
+toqtr
+assessedvalue
+systemcreated</panel_attributes>
+    <additional_attributes/>
   </element>
 </diagram>

@@ -1,0 +1,14 @@
+
+{
+	name: "AssessedValue",
+	title: "Assessed Values",
+	package: "rptbilling", 
+	factclass: "AssessedValueFact",
+	index:1,
+	agendagroup: ".*",
+	fields: [
+		{name: "rptledgerid", caption:"LedgerId" },
+		{name: "year", datatype:"integer", caption:"Year" },
+		{name: "assessedvalue", datatype:"decimal", caption:"Assessed Value" },
+	]
+}

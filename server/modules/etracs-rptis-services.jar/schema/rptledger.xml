@@ -3,21 +3,13 @@
         <field name="objid" primary="true" />
         <field name="state" required="true" />
         <field name="faasid" required="true" />
-        <field name="basic" required="true" type="decimal" />
-        <field name="basicint" required="true" type="decimal" />
-        <field name="basicdisc" required="true" type="decimal" />
-        <field name="basiccredit" required="true" type="decimal" />
-        <field name="sef" required="true" type="decimal" />
-        <field name="sefint" required="true" type="decimal" />
-        <field name="sefdisc" required="true" type="decimal" />
-        <field name="sefcredit" required="true" type="decimal" />
         <field name="nextbilldate" />
         <field name="lastyearpaid" required="true" type="integer" />
         <field name="lastqtrpaid" required="true" type="integer" />
         <field name="firstqtrpaidontime" required="true" type="boolean" />
         <field name="qtrlypaymentavailed" required="true" type="boolean" />
         <field name="qtrlypaymentpaidontime" required="true" type="boolean" />
-        <field name="posteditemyear" required="true" type="integer"/>
+        <field name="lastitemyear" required="true" type="integer"/>
     </element>
 
     <element name="faas" tablename="rptledgerfaas">
@@ -60,5 +52,10 @@
         <field name="sefcredit" required="true" type="decimal" />
         <field name="sefpaid" required="true" type="decimal" />
         <field name="sefintpartial" required="true" type="decimal" />
+
+        <field name="basicacctid"/>
+        <field name="basicintacctid" />
+        <field name="sefacctid"/>
+        <field name="sefintacctid" /> 
     </element>
 </schema>

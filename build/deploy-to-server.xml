@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="etracs-deployer" default="all" basedir=".">
+    
+    <target name="init-etracs-deployer">
+        <property name="etracs.server.dir" value="../server"/>
+        <property name="etracs.web.dir" value="../web"/>
+        <property name="etracs.datasources.dir" value="../datasources"/>
+        <property name="osiris3.server.dir" value="../../../osiris3-server"/>
+        <property name="osiris3.server.etracs.apps.dir" value="${osiris3.server.dir}/workspace/services/apps/etracs25"/>
+        <property name="osiris3.server.etracs.web.dir" value="${osiris3.server.dir}/workspace/web/etracs25"/>
+    </target>
+    
+    <target name="copy-etracs-apps">
+        <copy todir="${osiris3.server.etracs.apps.dir}/adapters">
+            <fileset dir="${etracs.server.dir}/adapters" />
+        </copy>
+        <copy todir="${osiris3.server.etracs.apps.dir}/connections">
+            <fileset dir="${etracs.server.dir}/connections" />
+        </copy>
+        <copy todir="${osiris3.server.etracs.apps.dir}/modules">
+            <fileset dir="${etracs.server.dir}/modules" />
+        </copy>
+        <copy file="${etracs.server.dir}/app.conf" todir="${osiris3.server.etracs.apps.dir}"/> 
+    </target>
+    
+    <target name="copy-etracs-web">
+        <copy todir="${osiris3.server.etracs.web.dir}/actions">
+            <fileset dir="${etracs.web.dir}/actions" />
+        </copy>
+        <copy todir="${osiris3.server.etracs.web.dir}/connections">
+            <fileset dir="${etracs.web.dir}/connections" />
+        </copy>
+        <copy todir="${osiris3.server.etracs.web.dir}/content">
+            <fileset dir="${etracs.web.dir}/content" />
+        </copy>
+        <copy todir="${osiris3.server.etracs.web.dir}/files">
+            <fileset dir="${etracs.web.dir}/files" />
+        </copy>
+        <copy todir="${osiris3.server.etracs.web.dir}/images">
+            <fileset dir="${etracs.web.dir}/images" />
+        </copy>
+        <copy todir="${osiris3.server.etracs.web.dir}/modules">
+            <fileset dir="${etracs.web.dir}/modules" />
+        </copy>
+        <copy todir="${osiris3.server.etracs.web.dir}/res">
+            <fileset dir="${etracs.web.dir}/res" />
+        </copy>
+        <copy todir="${osiris3.server.etracs.web.dir}/themes">
+            <fileset dir="${etracs.web.dir}/themes" />
+        </copy>
+        <copy file="${etracs.web.dir}/project.conf" todir="${osiris3.server.etracs.web.dir}"/> 
+    </target>
+    
+    <target name="copy-datasources">
+        <copy todir="${osiris3.server.dir}/workspace/services/datasources">
+            <fileset dir="${etracs.datasources.dir}" />
+        </copy>
+    </target>
+    
+    <target name="deploy-to-server" depends="init-etracs-deployer, copy-etracs-apps, copy-etracs-web, copy-datasources">
+        
+    </target>
+    
+</project>

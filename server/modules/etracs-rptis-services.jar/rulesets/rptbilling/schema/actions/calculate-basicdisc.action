@@ -1,0 +1,8 @@
+{
+	name: "Calculate Basic Discount",
+	template: "calculate-basicdisc",
+	params: [
+		{ name:"ledger", datatype:"RPTLedgerFact", usevar:true, caption:"Ledger ID", required:true },
+		{ name: "expr", datatype: "string", caption: "Computation Formula", expression:true },
+	]
+}

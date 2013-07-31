@@ -1,52 +1,34 @@
 <schema>
-	<element name="rptpaymentmanual" tablename="rptpaymentmanual">
-		<field name="objid" primary="true"/>
-		<field name="schemaname" required="true"/>
-		<field name="schemaversion" required="true"/>
-		<field name="receiptid" required="true"/>
-		<field name="taxpayername" required="true"/>
-		<field name="taxpayeraddress" required="true"/>
-		<field name="tdno" required="true"/>
-		<field name="fullpin" required="true"/>
-		<field name="cadastrallotno" required="true"/>
-		<field name="barangay" required="true"/>
-		<field name="classcode" required="true"/>
-		<field name="rputype" required="true"/>
-		<field name="period" required="true"/>
-		<field name="assessedvalue" required="true" type="decimal" />
-		<field name="fromyear" required="true" type="integer" />
-		<field name="fromqtr" required="true" type="integer" />
-		<field name="toyear" required="true" type="integer" />
-		<field name="toqtr" required="true" type="integer" />
-		<field name="basic" required="true" type="decimal" />
-		<field name="basicadv" required="true" type="decimal" />
-		<field name="basicdisc" required="true" type="decimal" />
-		<field name="basicadvdisc" required="true" type="decimal" />
-		<field name="basicint" required="true" type="decimal" />
-		<field name="basicprev" required="true" type="decimal" />
-		<field name="basicprevint" required="true" type="decimal" />
-		<field name="basicprior" required="true" type="decimal" />
-		<field name="basicpriorint" required="true" type="decimal" />
-		<field name="sef" required="true" type="decimal" />
-		<field name="sefadv" required="true" type="decimal" />
-		<field name="sefdisc" required="true" type="decimal" />
-		<field name="sefadvdisc" required="true" type="decimal" />
-		<field name="sefint" required="true" type="decimal" />
-		<field name="sefprev" required="true" type="decimal" />
-		<field name="sefprevint" required="true" type="decimal" />
-		<field name="sefprior" required="true" type="decimal" />
-		<field name="sefpriorint" required="true" type="decimal" />
-		
-		<field name="basicgross" required="true" type="decimal" />
-		<field name="basicnet" required="true" type="decimal" />
-		<field name="basicdp" required="true" type="decimal" />
-		<field name="sefgross" required="true" type="decimal" />
-		<field name="sefnet" required="true" type="decimal" />
-		<field name="sefdp" required="true" type="decimal" />
-		<field name="amount" required="true" type="decimal" />
-		
-		<complex name="municity" serializer="default" />
-		<field name="municityid" required="true" type="decimal" />
-		<field name="municityname" required="true" type="decimal" />
+	<element name="rptreceipt" tablename="rptreceipt">
+		<field name="objid" primary="true" />
+		<field name="yearpaid" type="integer" required="true" />
+		<field name="type" required="true" />
+	</element>
+
+	<element name="rptreceiptitem" tablename="rptreceiptitem">
+		<field name="objid" primary="true" />
+		<field name="rptreceiptid" required="true" />
+		<field name="rptledgerid"  />
+		<field name="rptledgeritemid"  />
+		<field name="year" type="integer" required="true" />
+		<field name="qtr" type="integer" required="true" />
+		<field name="basic" type="decimal" required="true" />
+		<field name="basicint" type="decimal" required="true" />
+		<field name="basicdisc" type="decimal" required="true" />
+		<field name="basiccredit" type="decimal" required="true" />
+		<field name="basicacctid" required="true" />
+		<field name="basicintacctid" />
+		<field name="sef" type="decimal" required="true" />
+		<field name="sefint" type="decimal" required="true" />
+		<field name="sefdisc" type="decimal" required="true" />
+		<field name="sefcredit" type="decimal" required="true" />
+		<field name="sefacctid" required="true" />
+		<field name="sefintacctid" />
+		<field name="partial" type="boolean" required="true" />
+	</element>
+
+	<element name="mapping" tablename="receiptitem_rptreceiptitem">
+		<field name="receiptitemid" primary="true" />
+		<field name="rptreceiptitemid" primary="true" />
 	</element>
 </schema>
