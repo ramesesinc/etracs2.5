@@ -1,0 +1,26 @@
+<workunit>
+    <invokers>
+        <invoker type="faasannotionlisting:open" caption="Annotations" target="popup"/>
+        <invoker type="navActions" action="_close" caption="Close" mnemonic="c" icon="images/toolbars/cancel.png"/>
+    </invokers>
+    <code>
+        import com.rameses.rcp.common.*
+        import com.rameses.rcp.annotations.*
+        import com.rameses.osiris2.client.*
+        import com.rameses.osiris2.common.*
+        
+        class FAASAnnotationListisingController
+        {
+            def annotations 
+            
+            def title = 'List of Annotations'
+            
+            def listHandler = [
+                fetchList : { return annotations },
+            ] as BasicListModel
+        }
+    </code>
+    <pages>
+        <page template="com.rameses.gov.etracs.rpt.faas.ui.AnnotationListPage"/>
+    </pages>
+</workunit>

@@ -6,6 +6,7 @@
         
         -->
         <invoker type="navActions" action="previewTaxDec" caption="View Tax Declaration" immediate="true" visibleWhen="#{mode=='read'}"/>
+        <invoker type="navActions" action="viewAnnotations" caption="Annotations" immediate="true" visibleWhen="#{mode=='read' &amp;&amp; faas.annotated == true}"/>
     </invokers>
 
     <pageflow>

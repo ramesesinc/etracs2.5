@@ -36,6 +36,9 @@ class FAASService
 	@Service('WorkflowStateService')
     def wsSvc 
 
+    @Service('FAASAnnotationService')
+    def annotationSvc 
+
 	
 
 	def SCHEMA_FAAS				= 'faas'
@@ -109,6 +112,7 @@ class FAASService
 		faas.rpu = rpuSvc.openRpu( faas.rpuid )
 		faas.previousfaases = getPreviousFaases(faasid)
 		faas.backtaxes      = getBackTaxes(faasid)
+		faas.annotated      = getAnnotatedStatus(faasid)
 		return faas
 	}
 
@@ -588,6 +592,17 @@ class FAASService
 		def faas = em.sqlContext.createNamedQuery('faas:getState').setParameter('objid', faasid).singleResult
 		if (!faas) throw new Exception('FAAS does not exist or has already been deleted.')
 		return faas.state 
+	}
+
+	@ProxyMethod
+	public def getAnnotatedStatus(faasid){
+		def annotations = annotationSvc.getAnnotationsByFaasId(faasid)
+		return annotations.size() > 0
+	}
+
+	@ProxyMethod
+	public def getAnnotations( faasid ) {
+		return annotationSvc.getAnnotationsByFaasId(faasid)
 	}
 
 

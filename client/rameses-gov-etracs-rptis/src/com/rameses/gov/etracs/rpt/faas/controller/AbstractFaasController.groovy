@@ -158,6 +158,11 @@ public abstract class AbstractFaasController extends PageFlowController
         return InvokerUtil.lookupOpener('tdreport:view', [faas:faas])
     }
     
+    def viewAnnotations(){
+        def annotations = svc.getAnnotations(faas.objid)
+        return InvokerUtil.lookupOpener('faasannotionlisting:open', [annotations:annotations])
+    }
+    
     /*-----------------------------------------------------
      * 
      * WORKFLOW ACTIONS
