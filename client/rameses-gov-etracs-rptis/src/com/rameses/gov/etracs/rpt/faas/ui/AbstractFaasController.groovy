@@ -1,4 +1,4 @@
-package com.rameses.gov.etracs.rpt.faas.controller;
+package com.rameses.gov.etracs.rpt.faas.ui;
         
 import com.rameses.rcp.annotations.* 
 import com.rameses.rcp.common.* 

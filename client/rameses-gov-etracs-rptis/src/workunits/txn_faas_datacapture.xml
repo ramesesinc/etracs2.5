@@ -7,7 +7,7 @@
          <invoker type="quick_launcher" code="DC01" action="initCapture"  caption="Data Capture" index="500" newrpu="true" newrealproperty="true"/>
     </invokers>
         
-<code class="com.rameses.gov.etracs.rpt.faas.controller.DataCaptureFaasController">
+<code class="com.rameses.gov.etracs.rpt.faas.ui.DataCaptureFaasController">
   
 </code>
 

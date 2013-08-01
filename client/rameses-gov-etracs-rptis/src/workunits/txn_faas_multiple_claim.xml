@@ -10,7 +10,7 @@
             txntypeid="MC" txntype="Multiple Claim" newledger="true" newrpu="true" newrealproperty="true"/>            
     </invokers>
         
-<code class="com.rameses.gov.etracs.rpt.faas.controller.MultipleClaimFaasController">
+<code class="com.rameses.gov.etracs.rpt.faas.ui.MultipleClaimFaasController">
 
     
 </code>

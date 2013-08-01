@@ -10,7 +10,7 @@
             txntypeid="GR" txntype="General Revision" newledger="true" newrpu="true" newrealproperty="true"/>            
     </invokers>
         
-<code class="com.rameses.gov.etracs.rpt.faas.controller.GeneralRevisionFaasController">
+<code class="com.rameses.gov.etracs.rpt.faas.ui.GeneralRevisionFaasController">
 
     
 </code>
