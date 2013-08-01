@@ -11,6 +11,9 @@ class LGUService
 
 	@Service('MunicipalityLookupService')
 	def muniSvc 
+	
+	@Service('ProvinceLookupService')
+	def provSvc 
 
 	@Service('CityLookupService')
 	def citySvc 
@@ -64,5 +67,10 @@ class LGUService
     @ProxyMethod
     public def lookupDistrictById( objid ) {
     	return distSvc.lookupDistrictById(objid)
+    }
+	
+	 @ProxyMethod
+    public def lookupProvinceById( objid ) {
+    	return provSvc.lookupProvinceById(objid)
     }
 }
