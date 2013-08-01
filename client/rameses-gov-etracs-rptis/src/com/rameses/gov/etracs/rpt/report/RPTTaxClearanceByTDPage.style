@@ -1,8 +1,0 @@
-"entity.*|faas" [true == true] {
-    enabled:true;
-}
-
-"entity.*|faas" [mode == 'view'] {
-    enabled:false;
-}
-

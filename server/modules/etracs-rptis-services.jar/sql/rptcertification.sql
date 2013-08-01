@@ -6,7 +6,7 @@ ORDER BY txnno DESC
 
 
 [insertLandHoldingItems]
-INSERT INTO rptcertificationitem (rptcertificationid,faasid)
+INSERT INTO rptcertificationitem (rptcertificationid,refid)
 SELECT 
 	$P{rptcertificationid},
 	f.objid 
@@ -21,7 +21,7 @@ WHERE f.taxpayerid	= $P{taxpayerid}
 
 
 [insertLandHoldingWithImprovementItems]
-INSERT INTO rptcertificationitem (rptcertificationid,faasid)
+INSERT INTO rptcertificationitem (rptcertificationid,refid)
 SELECT 
 	$P{rptcertificationid},
 	f.objid 
@@ -40,7 +40,7 @@ WHERE f.taxpayerid	= $P{taxpayerid}
   			)
 
 [insertLandHoldingWithNoImprovementItems]
-INSERT INTO rptcertificationitem (rptcertificationid,faasid)
+INSERT INTO rptcertificationitem (rptcertificationid,refid)
 SELECT 
 	$P{rptcertificationid},
 	f.objid 
@@ -75,7 +75,7 @@ SELECT
 	r.totalmv, 
 	rp.surveyno
 FROM rptcertificationitem rci 
-	INNER JOIN faas f ON rci.faasid = f.objid 
+	INNER JOIN faas f ON rci.refid = f.objid 
 	INNER JOIN rpu r ON f.rpuid = r.objid 
 	INNER JOIN realproperty rp ON r.realpropertyid = rp.objid 
 	INNER JOIN propertyclassification pc ON r.classification_objid = pc.objid 
@@ -119,7 +119,7 @@ SELECT
 	r.totalmv, 
 	rp.surveyno
 FROM rptcertificationitem rci 
-	INNER JOIN faas f ON rci.faasid = f.objid 
+	INNER JOIN faas f ON rci.refid = f.objid 
 	INNER JOIN rpu r ON f.rpuid = r.objid 
 	INNER JOIN realproperty rp ON r.realpropertyid = rp.objid 
 	INNER JOIN propertyclassification pc ON r.classification_objid = pc.objid 
