@@ -113,7 +113,7 @@ barangayid
       <x>765</x>
       <y>180</y>
       <w>144</w>
-      <h>333</h>
+      <h>351</h>
     </coordinates>
     <panel_attributes>rptledgeritem
 --
@@ -137,7 +137,7 @@ sefdisc
 sefcredit
 sefpaid
 sefintpartial
-</panel_attributes>
+revtype</panel_attributes>
     <additional_attributes/>
   </element>
   <element>

@@ -59,5 +59,6 @@
         <field name="basicintacctid" />
         <field name="sefacctid"/>
         <field name="sefintacctid" /> 
+        <field name="revtype" required="true" /> 
     </element>
 </schema>

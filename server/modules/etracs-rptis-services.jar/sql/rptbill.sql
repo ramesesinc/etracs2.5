@@ -102,7 +102,8 @@ SELECT
 	rli.sef + rli.sefint - rli.sefdisc - rli.sefpaid AS sefnet,
 	rli.basic + rli.basicint - rli.basicdisc - rli.basicpaid + rli.sef + rli.sefint - rli.sefdisc - rli.sefpaid AS total,
 	rli.basicacctid, rli.basicintacctid,
-	rli.sefacctid, rli.sefintacctid
+	rli.sefacctid, rli.sefintacctid,
+	rli.revtype 
 FROM faas f
 	INNER JOIN rpu r ON f.rpuid = r.objid 
 	INNER JOIN realproperty rp ON r.realpropertyid = rp.objid 

@@ -48,6 +48,7 @@ public class RPTBillingService
 		]
 	}
 
+
 	@ProxyMethod
 	public def getOpenLedgerCount(bill){
 		return getOpenLedgerByTaxpayerId(bill).count()
@@ -446,6 +447,7 @@ public class RPTBillingService
 					item.basicintacctid = ledger.basicintacctid
 					item.sefacctid = ledger.sefacctid
 					item.sefintacctid = ledger.sefintacctid
+					item.revtype = ledger.revtype 
 				}
 			}
 		}

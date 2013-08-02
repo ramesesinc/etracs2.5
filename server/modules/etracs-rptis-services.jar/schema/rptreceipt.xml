@@ -25,6 +25,21 @@
 		<field name="sefacctid" required="true" />
 		<field name="sefintacctid" />
 		<field name="partial" type="boolean" required="true" />
+		<field name="revtype" required="true" />
+		<field name="citybasic" type="decimal" required="true"/>
+		<field name="citybasicint" type="decimal" required="true"/>
+		<field name="citysef" type="decimal" required="true"/>
+		<field name="citysefint" type="decimal" required="true"/>
+		<field name="provbasic" type="decimal" required="true"/>
+		<field name="provbasicint" type="decimal" required="true"/>
+		<field name="provsef" type="decimal" required="true"/>
+		<field name="provsefint" type="decimal" required="true"/>
+		<field name="munibasic" type="decimal" required="true"/>
+		<field name="munibasicint" type="decimal" required="true"/>
+		<field name="munisef" type="decimal" required="true"/>
+		<field name="munisefint" type="decimal" required="true"/>
+		<field name="brgybasic" type="decimal" required="true"/>
+		<field name="brgybasicint" type="decimal" required="true"/>
 	</element>
 
 	<element name="mapping" tablename="receiptitem_rptreceiptitem">

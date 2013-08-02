@@ -35,4 +35,5 @@ declare RPTLedgerFact
     sefintacctid          : String 
     expr                  : String 
     paidyear              : Integer
+    revtype             : String
 end

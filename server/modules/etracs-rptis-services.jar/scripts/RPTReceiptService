@@ -12,6 +12,9 @@ class RPTReceiptService
     @Service('DateService')
 	def dateSvc
 
+	@Service('NumberService')
+	def numSvc
+
 	@Service('RPTUtil')
 	def util
 	
@@ -35,6 +38,10 @@ class RPTReceiptService
 
 	@ProxyMethod
 	public def createReceipt(receipt) {
+		if (! var.lgu_type) 
+			throw new Exception('Var lgu_type must be set.')
+		if ('city/province/municipality'.indexOf(var.lgu_type.toString().toLowerCase()) < 0 )
+			throw new Exception('Lgu Type ' + var.lgu_type + ' is invalid.')
 		if (receipt.rptitems.size() == 0)
 			throw new Exception('Items for payment are required.')
 		
@@ -50,6 +57,7 @@ class RPTReceiptService
 		em.create(SCHEMA_RECEIPT, receipt)
 
 		receipt.rptitems.each{
+			calculateItemShares(it)
 			em.validate(SCHEMA_ITEM, it)
 			em.create(SCHEMA_ITEM, it)
 			updateLedgerPaymentInfo(it)
@@ -161,6 +169,51 @@ class RPTReceiptService
 			receiptitemid 	 : receiptitemid,
 			rptreceiptitemid : itemid,
 		]
+	}
+
+	void calculateItemShares(item){
+		item.citybasic 		= 0.0;
+		item.citybasicint 	= 0.0;
+		item.citysef 		= 0.0;
+		item.citysefint 	= 0.0;
+		item.provbasic 		= 0.0;
+		item.provbasicint 	= 0.0;
+		item.provsef 		= 0.0;
+		item.provsefint 	= 0.0;
+		item.munibasic 		= 0.0;
+		item.munibasicint 	= 0.0;
+		item.munisef 		= 0.0;
+		item.munisefint 	= 0.0;
+
+		def basic = item.basic - item.basicdisc 
+		def sef = item.sef - item.sefdisc 
+
+		if (var.lgu_type == 'city') {
+			item.citybasic 		= numSvc.round( basic * util.toDecimal(var.rptc_city_basic_rate))
+			item.citybasicint 	= numSvc.round( item.basicint * util.toDecimal(var.rptc_city_basic_rate))
+			item.citysef 		= item.sef
+			item.citysefint 	= item.sefint
+			item.brgybasic 		= basic - item.citybasic
+			item.brgybasicint 	= item.basicint - item.citybasicint
+			item.brgysef 		= 0.0
+			item.brgysefint 	= 0.0
+		}
+		else {
+			item.provbasic 		= numSvc.round( basic * util.toDecimal(var.rptc_province_basic_rate))
+			item.provbasicint 	= numSvc.round( item.basicint * util.toDecimal(var.rptc_province_basic_rate))
+			item.provsef 		= numSvc.round( sef * util.toDecimal(var.rptc_province_sef_rate))
+			item.provsefint 	= numSvc.round( item.sefint * util.toDecimal(var.rptc_province_sef_rate))
+
+			item.munibasic 		= numSvc.round( basic * util.toDecimal(var.rptc_municipality_basic_rate))
+			item.munibasicint 	= numSvc.round( item.basicint * util.toDecimal(var.rptc_municipality_basic_rate))
+			item.munisef 		= sef - item.provsef
+			item.munisefint 	= item.sefint - item.provsefint
+
+			item.brgybasic 		= item.basic - item.provbasic - item.munibasic 
+			item.brgybasicint 	= item.basicint - item.provbasicint - item.munibasicint 
+			item.brgysef 		= 0.0
+			item.brgysefint 	= 0.0
+		}
 	}
 
 }
