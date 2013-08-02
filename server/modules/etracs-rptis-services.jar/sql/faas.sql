@@ -26,6 +26,16 @@ WHERE f.tdno LIKE $P{searchtext}
    OR rpu.fullpin LIKE $P{searchtext}
 ORDER BY rpu.ry, rpu.fullpin, f.tdno    
 
+[getFaasIds]
+select
+  f.objid, f.tdno
+from faas f  
+  inner join rpu r on r.objid = f.rpuid 
+  inner join realproperty rp on rp.objid = r.realpropertyid 
+where f.state = 'CURRENT' 
+	and r.ry = $P{revisionyear} 
+	and rp.barangayid = $P{barangayid}
+	and rp.section like $P{section} 
 
 [getState]   
 SELECT state FROM faas WHERE objid = $P{objid}

@@ -21,6 +21,12 @@ class FaasReportService
 	@Service('LGUService')
 	def lguSvc 
 	
+	@ProxyMethod 
+	public def getFaasIds(params) {
+		params.section = params.section ? params.section : '%'
+		return em.sqlContext.createNamedQuery('faas:getFaasIds').setParameters( params).resultList;
+	}
+	
 	@ProxyMethod
 	public def getReportData( faasid ) {
 		def faas = faasSvc.openFaas(faasid)

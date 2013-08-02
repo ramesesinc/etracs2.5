@@ -17,19 +17,14 @@
   <Layout>
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Component id="xActionBar1" alignment="1" pref="619" max="32767" attributes="0"/>
-          <Group type="102" alignment="0" attributes="0">
+          <Component id="xActionBar1" alignment="1" pref="603" max="32767" attributes="0"/>
+          <Group type="102" alignment="0" max="-2" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" alignment="0" attributes="0">
-                      <Component id="formPanel1" min="-2" pref="406" max="-2" attributes="1"/>
-                      <EmptySpace max="-2" attributes="0"/>
-                  </Group>
-                  <Group type="102" alignment="0" attributes="0">
-                      <Component id="xLabel1" pref="385" max="32767" attributes="0"/>
-                      <EmptySpace min="224" pref="224" max="224" attributes="0"/>
-                  </Group>
+              <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                  <Component id="formPanel1" alignment="0" min="-2" pref="406" max="-2" attributes="1"/>
+                  <Component id="xLabel1" alignment="0" min="-2" pref="369" max="-2" attributes="0"/>
               </Group>
+              <EmptySpace pref="187" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -41,7 +36,7 @@
               <Component id="formPanel1" min="-2" pref="187" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="xLabel1" min="-2" max="-2" attributes="0"/>
-              <EmptySpace pref="54" max="32767" attributes="0"/>
+              <EmptySpace pref="64" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -71,12 +66,27 @@
         </Property>
       </Properties>
       <SubComponents>
+        <Component class="com.rameses.rcp.control.XNumberField" name="xNumberField2">
+          <Properties>
+            <Property name="caption" type="java.lang.String" value="Revision Year"/>
+            <Property name="fieldType" type="java.lang.Class" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+              <Connection code="Integer.class" type="code"/>
+            </Property>
+            <Property name="index" type="int" value="-100"/>
+            <Property name="name" type="java.lang.String" value="revisionyear"/>
+            <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+              <Dimension value="[120, 19]"/>
+            </Property>
+            <Property name="required" type="boolean" value="true"/>
+          </Properties>
+        </Component>
         <Component class="com.rameses.rcp.control.XComboBox" name="xComboBox5">
           <Properties>
             <Property name="allowNull" type="boolean" value="false"/>
             <Property name="caption" type="java.lang.String" value="Municipality/District"/>
-            <Property name="expression" type="java.lang.String" value="#{lguname}"/>
-            <Property name="index" type="int" value="-100"/>
+            <Property name="dynamic" type="boolean" value="true"/>
+            <Property name="expression" type="java.lang.String" value="#{item.name}"/>
+            <Property name="index" type="int" value="1"/>
             <Property name="items" type="java.lang.String" value="lgus"/>
             <Property name="name" type="java.lang.String" value="lgu"/>
             <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
@@ -94,7 +104,8 @@
               </StringArray>
             </Property>
             <Property name="dynamic" type="boolean" value="true"/>
-            <Property name="expression" type="java.lang.String" value="#{lguname}"/>
+            <Property name="expression" type="java.lang.String" value="#{item.name}"/>
+            <Property name="index" type="int" value="2"/>
             <Property name="items" type="java.lang.String" value="barangays"/>
             <Property name="name" type="java.lang.String" value="barangay"/>
             <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
@@ -109,7 +120,7 @@
             <Property name="fieldType" type="java.lang.Class" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
               <Connection code="Integer.class" type="code"/>
             </Property>
-            <Property name="index" type="int" value="-10"/>
+            <Property name="index" type="int" value="3"/>
             <Property name="name" type="java.lang.String" value="section"/>
             <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
               <Dimension value="[120, 19]"/>
@@ -120,11 +131,11 @@
     </Container>
     <Component class="com.rameses.rcp.control.XLabel" name="xLabel1">
       <Properties>
-        <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-          <Color blue="0" green="0" red="99" type="rgb"/>
-        </Property>
         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
           <Font name="Arial" size="11" style="1"/>
+        </Property>
+        <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+          <Color blue="0" green="0" red="99" type="rgb"/>
         </Property>
         <Property name="name" type="java.lang.String" value="msg"/>
       </Properties>

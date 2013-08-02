@@ -69,7 +69,12 @@ class LGUService
     	return distSvc.lookupDistrictById(objid)
     }
 	
-	 @ProxyMethod
+	@ProxyMethod
+    public def lookupProvinces(params) {
+    	return provSvc.lookupProvinces(params)
+    }
+	
+	@ProxyMethod
     public def lookupProvinceById( objid ) {
     	return provSvc.lookupProvinceById(objid)
     }
