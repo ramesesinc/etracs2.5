@@ -215,7 +215,10 @@ remarks</panel_attributes>
     <panel_attributes>rptreceipt
 --
 objid
-yearpaid
+year
+qtr
+month
+day
 type [ONLINE,MANUAL]</panel_attributes>
     <additional_attributes/>
   </element>

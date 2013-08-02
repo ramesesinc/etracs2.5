@@ -1,0 +1,38 @@
+import com.rameses.annotations.*
+import com.rameses.common.*;
+
+class BrgyShareListService
+{
+	@PersistenceContext('rpt')
+	def em 
+
+	@Service('RPTUtil')
+    def util 
+
+
+	@ProxyMethod
+    public def getList( params ) {
+    	params.searchtext = (params.searchtext ? params.searchtext : '') + '%'
+        def filters = [
+            'WHERE bs.txnno LIKE $P{searchtext}',
+            'WHERE bs.year = $P{searchtext}',
+            'WHERE bs.createdby LIKE $P{searchtext}',
+            'WHERE bs.postedby LIKE $P{searchtext}',
+        ]
+        return util.getListFromQuery( 'brgyshare:getList' , filters, params, 'objid' )
+    }
+
+	@ProxyMethod
+	public def getColumns( params ) {
+		return [ 
+			[name:'state', caption:'State'],
+			[name:'txnno', caption:'Txn No.'],
+			[name:'txndate', caption:'Txn Date'],
+			[name:'year', caption:'Year'],
+			[name:'smonth', caption:'Month'],
+			[name:'createdby', caption:'Created By'],
+			[name:'postedby', caption:'Posted By'],
+		]	
+	}
+}
+

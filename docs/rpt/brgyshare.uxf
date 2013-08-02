@@ -4,10 +4,102 @@
   <element>
     <type>com.umlet.element.Class</type>
     <coordinates>
-      <x>320</x>
+      <x>220</x>
+      <y>40</y>
+      <w>130</w>
+      <h>640</h>
+    </coordinates>
+    <panel_attributes>rptreceiptitem
+--
+objid
+rptreceiptid
+rptledgerid
+rptledgeritemid
+year
+qtr
+basic
+basicint
+basicdisc
+basiccredit
+basicacctid
+basicintacctid
+sef
+sefint
+sefdisc
+sefcredit
+sefacctid
+sefintacctid
+partial
+revtype
+--
+citybasic
+citybasicint
+citysef
+citysefint
+
+provbasic
+provbasicint
+provsef
+provsefint
+
+munibasic
+munibasicint
+munisef
+munisefint
+
+brgybasic
+brgybasicint
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>140</x>
       <y>50</y>
       <w>100</w>
-      <h>270</h>
+      <h>50</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>30;30;80;30</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>30</x>
+      <y>40</y>
+      <w>140</w>
+      <h>140</h>
+    </coordinates>
+    <panel_attributes>rptreceipt
+--
+objid
+year
+qtr
+month
+day
+type [ONLINE,MANUAL]</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>470</x>
+      <y>40</y>
+      <w>150</w>
+      <h>70</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-
+items</panel_attributes>
+    <additional_attributes>30;50;130;50</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>600</x>
+      <y>50</y>
+      <w>100</w>
+      <h>180</h>
     </coordinates>
     <panel_attributes>brgyshareitem
 --
@@ -17,32 +109,36 @@ barangayid
 basic
 basicint
 basicdisc
-sef
-sefint
-sefdisc
-
+--
 basicshare
 basicintshare
-sefshare
-sefintshare
 </panel_attributes>
     <additional_attributes/>
   </element>
   <element>
     <type>com.umlet.element.Class</type>
     <coordinates>
-      <x>170</x>
+      <x>400</x>
       <y>50</y>
       <w>100</w>
-      <h>120</h>
+      <h>290</h>
     </coordinates>
     <panel_attributes>brgyshare
 --
 objid
 state
+txnno
+txndate
 year
-qtr
 month
+basic
+basicint
+createdbyid
+createdby
+createdbytitle
+postedbyid
+postedby
+postedbytitle
 </panel_attributes>
     <additional_attributes/>
   </element>

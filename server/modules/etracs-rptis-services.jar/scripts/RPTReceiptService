@@ -50,7 +50,11 @@ class RPTReceiptService
 		receiptSvc.createReceipt(receipt)
 
 		//create rptreceipt
-		receipt.yearpaid = dateSvc.getYear(receipt.txndate)
+		def pdate = dateSvc.parseDate(receipt.txndate, null)
+		receipt.year = pdate.year
+		receipt.qtr = pdate.qtr
+		receipt.month = pdate.month
+		receipt.day = pdate.day
 		receipt.type = RECEIPT_TYPE_ONLINE
 
 		em.validate(SCHEMA_RECEIPT, receipt)
@@ -209,7 +213,7 @@ class RPTReceiptService
 			item.munisef 		= sef - item.provsef
 			item.munisefint 	= item.sefint - item.provsefint
 
-			item.brgybasic 		= item.basic - item.provbasic - item.munibasic 
+			item.brgybasic 		= basic - item.provbasic - item.munibasic 
 			item.brgybasicint 	= item.basicint - item.provbasicint - item.munibasicint 
 			item.brgysef 		= 0.0
 			item.brgysefint 	= 0.0
