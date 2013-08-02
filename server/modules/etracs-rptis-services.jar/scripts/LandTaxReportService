@@ -31,9 +31,20 @@ class LandTaxReportService
 		util.required('Barangay', params.barangay)
 		return em.sqlContext.createNamedQuery('landtaxreport:generateDelinquencyReport')
 				.setParameter('barangayid', params.barangay.objid)
-				.setParameter('year', dateSvc.serverYear)
+				.setParameter('currentyear', dateSvc.serverYear)
 				.resultList
 	}
+
+	@ProxyMethod
+	public def generateDelinquencyReportOldFormat(params){
+		util.required('Barangay', params.barangay)
+		return em.sqlContext.createNamedQuery('landtaxreport:generateDelinquencyReportOldFormat')
+				.setParameter('barangayid', params.barangay.objid)
+				.setParameter('currentyear', dateSvc.serverYear)
+				.resultList.each{
+					it.yearsdelinquent = util.toInteger(it.yearsdelinquent)
+				}
+	} 
 
 	@ProxyMethod
 	public def getBarangays( params ) {

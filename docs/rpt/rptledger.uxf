@@ -4,6 +4,41 @@
   <element>
     <type>com.umlet.element.Relation</type>
     <coordinates>
+      <x>360</x>
+      <y>306</y>
+      <w>44</w>
+      <h>98</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>27;81;27;27</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>432</x>
+      <y>234</y>
+      <w>161</w>
+      <h>63</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-
+[faases]</panel_attributes>
+    <additional_attributes>27;45;144;45</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>432</x>
+      <y>171</y>
+      <w>350</w>
+      <h>63</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-
+[items]</panel_attributes>
+    <additional_attributes>27;45;333;45</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
       <x>153</x>
       <y>153</y>
       <w>161</w>
@@ -36,41 +71,41 @@ DRAFT, CURRENT, CANCELLED</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
-    <type>com.umlet.element.Relation</type>
-    <coordinates>
-      <x>432</x>
-      <y>234</y>
-      <w>161</w>
-      <h>63</h>
-    </coordinates>
-    <panel_attributes>lt=&lt;&lt;-
-[faases]</panel_attributes>
-    <additional_attributes>27;45;144;45</additional_attributes>
-  </element>
-  <element>
     <type>com.umlet.element.Class</type>
     <coordinates>
-      <x>90</x>
-      <y>189</y>
+      <x>333</x>
+      <y>387</y>
       <w>90</w>
       <h>27</h>
     </coordinates>
-    <panel_attributes>faas
+    <panel_attributes>lgu_barangay
 
 bg=green</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
-    <type>com.umlet.element.Relation</type>
+    <type>com.umlet.element.Class</type>
     <coordinates>
-      <x>432</x>
-      <y>171</y>
-      <w>350</w>
-      <h>63</h>
+      <x>297</x>
+      <y>144</y>
+      <w>162</w>
+      <h>189</h>
     </coordinates>
-    <panel_attributes>lt=&lt;&lt;-
-[items]</panel_attributes>
-    <additional_attributes>27;45;333;45</additional_attributes>
+    <panel_attributes>rptledger
+--
+objid
+state
+faasid
+nextbilldate
+lastyearpaid
+lastqtrpaid
+firstqtrpaidontime
+qtrlypaymentavailed
+qtrlypaymentpaidontime
+lastitemyear
+barangayid
+</panel_attributes>
+    <additional_attributes/>
   </element>
   <element>
     <type>com.umlet.element.Class</type>
@@ -108,30 +143,6 @@ sefintpartial
   <element>
     <type>com.umlet.element.Class</type>
     <coordinates>
-      <x>297</x>
-      <y>144</y>
-      <w>162</w>
-      <h>189</h>
-    </coordinates>
-    <panel_attributes>rptledger
---
-objid
-state
-faasid
-nextbilldate
-lastyearpaid
-lastqtrpaid
-firstqtrpaidontime
-qtrlypaymentavailed
-qtrlypaymentpaidontime
-lastitemyear
-
-</panel_attributes>
-    <additional_attributes/>
-  </element>
-  <element>
-    <type>com.umlet.element.Class</type>
-    <coordinates>
       <x>576</x>
       <y>225</y>
       <w>171</w>
@@ -155,6 +166,19 @@ toyear
 toqtr
 assessedvalue
 systemcreated</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>90</x>
+      <y>189</y>
+      <w>90</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>faas
+
+bg=green</panel_attributes>
     <additional_attributes/>
   </element>
 </diagram>

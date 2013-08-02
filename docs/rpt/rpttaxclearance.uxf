@@ -40,19 +40,19 @@ createbytitle</panel_attributes>
     <type>com.umlet.element.Relation</type>
     <coordinates>
       <x>200</x>
-      <y>60</y>
-      <w>140</w>
+      <y>160</y>
+      <w>130</w>
       <h>70</h>
     </coordinates>
     <panel_attributes>lt=&lt;-
 item</panel_attributes>
-    <additional_attributes>30;50;120;50</additional_attributes>
+    <additional_attributes>30;50;110;50</additional_attributes>
   </element>
   <element>
     <type>com.umlet.element.Class</type>
     <coordinates>
-      <x>320</x>
-      <y>60</y>
+      <x>310</x>
+      <y>160</y>
       <w>150</w>
       <h>90</h>
     </coordinates>
@@ -62,5 +62,31 @@ objid &lt;&lt;autonumber&gt;&gt;
 rptcertificationid
 refid</panel_attributes>
     <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>310</x>
+      <y>30</y>
+      <w>150</w>
+      <h>90</h>
+    </coordinates>
+    <panel_attributes>rpttaxclearance
+--
+objid 
+year
+qtr</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>200</x>
+      <y>40</y>
+      <w>130</w>
+      <h>50</h>
+    </coordinates>
+    <panel_attributes>lt=-</panel_attributes>
+    <additional_attributes>30;30;110;30</additional_attributes>
   </element>
 </diagram>

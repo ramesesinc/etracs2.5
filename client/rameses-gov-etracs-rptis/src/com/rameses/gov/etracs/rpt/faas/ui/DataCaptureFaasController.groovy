@@ -6,7 +6,7 @@ import com.rameses.rcp.common.*
 import com.rameses.osiris2.client.*
 import com.rameses.osiris2.common.*
 
-class DataCaptureController extends com.rameses.gov.etracs.rpt.faas.controller.AbstractFaasController
+class DataCaptureController extends com.rameses.gov.etracs.rpt.faas.ui.AbstractFaasController
 {
     @Service('FAASService')
     def svc;

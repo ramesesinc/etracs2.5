@@ -10,6 +10,8 @@
         <field name="qtrlypaymentavailed" required="true" type="boolean" />
         <field name="qtrlypaymentpaidontime" required="true" type="boolean" />
         <field name="lastitemyear" required="true" type="integer"/>
+        <field name="lastreceiptid"/>
+        <field name="barangayid" required="true" />
     </element>
 
     <element name="faas" tablename="rptledgerfaas">

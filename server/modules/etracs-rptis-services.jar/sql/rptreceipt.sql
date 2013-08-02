@@ -15,7 +15,8 @@ WHERE objid = $P{objid}
 [updateLedgerLastYearQtrPaid]
 UPDATE rptledger SET
 	lastyearpaid = $P{lastyearpaid},
-	lastqtrpaid = $P{lastqtrpaid}
+	lastqtrpaid = $P{lastqtrpaid},
+	lastreceiptid = $P{lastreceiptid}
 WHERE objid = $P{objid}	
 
 

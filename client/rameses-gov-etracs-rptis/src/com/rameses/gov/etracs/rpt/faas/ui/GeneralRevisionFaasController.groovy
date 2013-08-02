@@ -7,7 +7,7 @@ import com.rameses.osiris2.client.*
 import com.rameses.osiris2.common.*
 import com.rameses.gov.etracs.rpt.common.RPTUtil;
 
-class GeneralRevisionFaasController extends com.rameses.gov.etracs.rpt.faas.controller.AbstractFaasController
+class GeneralRevisionFaasController extends com.rameses.gov.etracs.rpt.faas.ui.AbstractFaasController
 {
     @Service('FAASService')
     def svc;

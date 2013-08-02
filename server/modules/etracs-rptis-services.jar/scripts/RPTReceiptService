@@ -108,11 +108,6 @@ class RPTReceiptService
 			basicdisctaken = item.basicdisc 
 			sefintpaid = item.sefint 
 			sefdisctaken = item.sefdisc 
-
-			println basicintpaid
-			println basicdisctaken
-			println sefintpaid
-			println sefdisctaken
 		}
 
 
@@ -130,6 +125,7 @@ class RPTReceiptService
 				.setParameter('objid', item.rptledgerid)
 				.setParameter('lastyearpaid', item.year)
 				.setParameter('lastqtrpaid', (item.qtr == 0 ? 4 : item.qtr))
+				.setParameter('lastreceiptid', item.rptreceiptid)
 				.execute()
 	}
 

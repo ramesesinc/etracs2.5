@@ -27,6 +27,10 @@ WHERE f.tdno LIKE $P{searchtext}
 ORDER BY rpu.ry, rpu.fullpin, f.tdno    
 
 
+[openFaas]
+SELECT * FROM faas WHERE objid = $P{objid}
+
+
 [getState]   
 SELECT state FROM faas WHERE objid = $P{objid}
 

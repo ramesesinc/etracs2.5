@@ -104,11 +104,12 @@ class FAASService
 
 	@ProxyMethod
 	public def openFaas( faasid ) {
-		def faas = em.read(SCHEMA_FAAS, [objid:faasid])
+		def faas = em.sqlContext.createNamedQuery('faas:openFaas')
+					.setParameter('objid', faasid).singleResult
 		if (!faas) 
 			throw new Exception('FAAS ' + info.faas.tdno + ' does not exsits or has already been deleted. Please verify.')
 
-		faas.txntype = getTxnType( faas.txntype_objid )
+		faas.txntype = getTxnType( faas.txntype.objid )
 		faas.rpu = rpuSvc.openRpu( faas.rpuid )
 		faas.previousfaases = getPreviousFaases(faasid)
 		faas.backtaxes      = getBackTaxes(faasid)

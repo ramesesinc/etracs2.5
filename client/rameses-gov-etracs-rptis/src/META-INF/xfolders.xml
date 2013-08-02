@@ -6,7 +6,7 @@
         <folder id="txn" caption="Transactions" index="0">
             <folder id="rpt" caption="Real Property" index="1">
                 <folder id="faas" caption="FAAS" index="1"/>
-                <folder id="cert" caption="Certifications" index="2"/>
+                <folder id="cert" caption="Certifications and Clearances" index="2"/>
             </folder>
             <folder id="landtax" caption="Land Tax" index="2" />
         </folder>
