@@ -792,3 +792,57 @@ WHERE f.txntimestamp <= $P{txntimestamp}
 GROUP BY e.objid, e.name
 ORDER BY e.orderno  
 
+
+
+
+[generateTopNDelinquentProperty]
+SELECT
+	f.ownername,
+	f.tdno,
+	r.totalav,
+	MIN(ri.year) AS minyear, 
+	SUM( ri.basic + ri.basicint - ri.basicdisc - ri.basicpaid + 
+		 ri.sef + ri.sefint - ri.sefdisc - ri.sefpaid 
+	) AS amount
+FROM rptledger rl
+	INNER JOIN rptledgeritem ri ON rl.objid = ri.rptledgerid 
+	INNER JOIN faas f ON rl.faasid = f.objid 
+	INNER JOIN rpu r ON f.rpuid = r.objid 
+WHERE rl.state = 'APPROVED'
+  AND ri.state = 'OPEN' 
+  AND ri.year <= $P{cy}
+GROUP BY f.ownername, f.tdno, r.totalav, ri.rptledgerid
+ORDER BY 
+	SUM( ri.basic + ri.basicint - ri.basicdisc - ri.basicpaid + 
+		 ri.sef + ri.sefint - ri.sefdisc - ri.sefpaid 
+	) DESC 
+LIMIT $P{topn}
+
+
+[generateTopNDelinquentTaxpayer]
+SELECT 
+	tmp.ownername,
+	COUNT(tmp.objid) AS rpucount,
+	SUM(tmp.totalav) AS totalav,
+	SUM(tmp.amount) AS amount
+FROM (
+	SELECT
+		f.ownername,
+		rl.objid, 
+		r.totalav,
+		SUM( ri.basic + ri.basicint - ri.basicdisc - ri.basicpaid + 
+			 ri.sef + ri.sefint - ri.sefdisc - ri.sefpaid 
+		) AS amount
+	FROM rptledger rl
+		INNER JOIN rptledgeritem ri ON rl.objid = ri.rptledgerid 
+		INNER JOIN faas f ON rl.faasid = f.objid 
+		INNER JOIN rpu r ON f.rpuid = r.objid 
+	WHERE rl.state = 'APPROVED' 
+	  AND ri.state = 'OPEN' 
+	  AND ri.year <= $P{cy}
+	GROUP BY f.ownername, rl.objid 
+	ORDER BY amount DESC
+	LIMIT $P{topn}
+) tmp	
+GROUP BY tmp.ownername 
+

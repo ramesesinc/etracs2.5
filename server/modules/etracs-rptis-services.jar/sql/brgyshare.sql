@@ -106,6 +106,7 @@ FROM rptreceipt rc
 	INNER JOIN lgu_barangay b ON rl.barangayid = b.objid 
 WHERE rc.year = $P{year}
   AND rc.month = $P{month}
+  AND rci.revtype <> 'advance'
 GROUP BY b.name, rl.barangayid  
 
 
@@ -138,4 +139,5 @@ FROM rptreceipt r
 		INNER JOIN lgu_barangay b ON rl.barangayid = b.objid 
 WHERE r.year = $P{year}		
   AND r.month = $P{month}
+  AND ri.revtype <> 'advance'
 GROUP BY b.name		
