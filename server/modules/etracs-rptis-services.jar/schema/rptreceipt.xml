@@ -13,6 +13,7 @@
 		<field name="rptreceiptid" required="true" />
 		<field name="rptledgerid"  />
 		<field name="rptledgeritemid"  />
+		<field name="barangayid"  required="true"/>
 		<field name="year" type="integer" required="true" />
 		<field name="qtr" type="integer" required="true" />
 		<field name="basic" type="decimal" required="true" />

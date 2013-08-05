@@ -19,7 +19,8 @@ SELECT
 	rlf.txntype_objid,
 	r.rputype,
 	CASE WHEN lr.objid IS NULL THEN r.classification_objid ELSE lr.classification_objid END AS classification_objid,
-	CASE WHEN lr.objid IS NULL THEN r.classification_objid ELSE lr.classification_objid END AS actualuse_objid
+	CASE WHEN lr.objid IS NULL THEN r.classification_objid ELSE lr.classification_objid END AS actualuse_objid,
+	rl.barangayid
 FROM rptledger rl
 	INNER JOIN faas f ON rl.faasid = f.objid 
 	INNER JOIN rpu r ON f.rpuid = r.objid 
@@ -71,6 +72,7 @@ SELECT
 	r.totalav,
 	b.name AS barangay,
 	rp.cadastrallotno,
+	rp.barangayid,
 	pc.code AS classcode,
 	CASE WHEN rl.lastqtrpaid = 4 THEN rl.lastyearpaid + 1 ELSE rl.lastyearpaid END AS fromyear,
 	CASE WHEN rl.lastqtrpaid = 4 THEN 1 ELSE rl.lastqtrpaid + 1 END AS fromqtr
@@ -103,7 +105,8 @@ SELECT
 	rli.basic + rli.basicint - rli.basicdisc - rli.basicpaid + rli.sef + rli.sefint - rli.sefdisc - rli.sefpaid AS total,
 	rli.basicacctid, rli.basicintacctid,
 	rli.sefacctid, rli.sefintacctid,
-	rli.revtype 
+	rli.revtype ,
+	rl.barangayid
 FROM faas f
 	INNER JOIN rpu r ON f.rpuid = r.objid 
 	INNER JOIN realproperty rp ON r.realpropertyid = rp.objid 

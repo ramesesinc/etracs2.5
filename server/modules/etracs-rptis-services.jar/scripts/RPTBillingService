@@ -369,20 +369,21 @@ public class RPTBillingService
 
 		ledgers += getOpenLedgerByTaxpayerId(bill)
 
-		ledgers.each{
-			it.putAll(
+		ledgers.each{ ledger ->
+			ledger.putAll(
 				em.sqlContext.createNamedQuery('rptbill:getBilledLedgerInfoByLedgerId')
-						.setParameter('ledgerid', it.objid)
+						.setParameter('ledgerid', ledger.objid)
 						.singleResult
 			)
-			if (it.lastitemyear < bill.billtoyear ){
-				ledgerSvc.insertLedgerItems(it, it.lastitemyear + 1, bill.billtoyear)
+			if (ledger.lastitemyear < bill.billtoyear ){
+				ledgerSvc.insertLedgerItems(it, ledger.lastitemyear + 1, bill.billtoyear)
 			}
-			it.items = em.sqlContext.createNamedQuery('rptbill:getOpenLedgerItemByLedgerId')
-							.setParameter('ledgerid', it.objid)
+			ledger.items = em.sqlContext.createNamedQuery('rptbill:getOpenLedgerItemByLedgerId')
+							.setParameter('ledgerid', ledger.objid)
 							.resultList.each{
 								it.basic = it.basic - it.basicpaid
 								it.sef = it.sef - it.sefpaid
+								println 'item.barangayid -> '  + it.barangayid 
 							}
 		}
 		return ledgers
