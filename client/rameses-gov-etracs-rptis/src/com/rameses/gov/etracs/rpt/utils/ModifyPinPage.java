@@ -46,7 +46,7 @@ public class ModifyPinPage extends javax.swing.JPanel {
         formPanel1.setBorder(xTitledBorder1);
         formPanel1.setCaptionWidth(105);
         xLookupField1.setCaption("TD No.");
-        xLookupField1.setExpression("#{tdno}");
+        xLookupField1.setExpression("#{item.tdno}");
         xLookupField1.setHandler("lookupFaas");
         xLookupField1.setIndex(-100);
         xLookupField1.setName("faas");
@@ -92,9 +92,8 @@ public class ModifyPinPage extends javax.swing.JPanel {
 
         xComboBox1.setCaption("Municipality/City");
         xComboBox1.setDepends(new String[] {"faas"});
-        xComboBox1.setDoubleBuffered(true);
         xComboBox1.setDynamic(true);
-        xComboBox1.setExpression("#{lguname}");
+        xComboBox1.setExpression("#{item.name}");
         xComboBox1.setImmediate(true);
         xComboBox1.setItems("municityList");
         xComboBox1.setName("municity");
@@ -104,9 +103,8 @@ public class ModifyPinPage extends javax.swing.JPanel {
 
         xComboBox4.setCaption("District");
         xComboBox4.setDepends(new String[] {"municity"});
-        xComboBox4.setDoubleBuffered(true);
         xComboBox4.setDynamic(true);
-        xComboBox4.setExpression("#{lguname}");
+        xComboBox4.setExpression("#{item.name}");
         xComboBox4.setImmediate(true);
         xComboBox4.setItems("districtList");
         xComboBox4.setName("district");
@@ -117,7 +115,7 @@ public class ModifyPinPage extends javax.swing.JPanel {
         xComboBox2.setCaption("Barangay");
         xComboBox2.setDepends(new String[] {"municity", "district"});
         xComboBox2.setDynamic(true);
-        xComboBox2.setExpression("#{lguname}");
+        xComboBox2.setExpression("#{item.name}");
         xComboBox2.setImmediate(true);
         xComboBox2.setItems("barangayList");
         xComboBox2.setName("barangay");
@@ -148,14 +146,14 @@ public class ModifyPinPage extends javax.swing.JPanel {
         formPanel2.add(xNumberField3);
 
         xCheckBox1.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
-        xCheckBox1.setText(" Use old Index No.?");
         xCheckBox1.setCaption("");
         xCheckBox1.setMargin(new java.awt.Insets(0, 0, 0, 0));
         xCheckBox1.setName("useoldpin");
+        xCheckBox1.setText(" Use old Index No.?");
         formPanel2.add(xCheckBox1);
 
-        xLabel4.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(153, 153, 153)));
         xLabel4.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        xLabel4.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(153, 153, 153)));
         xLabel4.setCaption("New PIN");
         xLabel4.setCellPadding(new java.awt.Insets(10, 0, 0, 0));
         xLabel4.setFont(new java.awt.Font("Arial", 1, 18));
@@ -165,13 +163,13 @@ public class ModifyPinPage extends javax.swing.JPanel {
         formPanel2.add(xLabel4);
 
         xButton1.setMnemonic('c');
-        xButton1.setText("Cancel");
         xButton1.setImmediate(true);
         xButton1.setName("_close");
+        xButton1.setText("Cancel");
 
         xButton2.setMnemonic('u');
-        xButton2.setText("Update");
         xButton2.setName("updatePin");
+        xButton2.setText("Update");
 
         org.jdesktop.layout.GroupLayout xSeparator1Layout = new org.jdesktop.layout.GroupLayout(xSeparator1);
         xSeparator1.setLayout(xSeparator1Layout);
