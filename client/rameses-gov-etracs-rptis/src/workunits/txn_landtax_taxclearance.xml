@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <workunit>
     <invokers>
-        <invoker folderid="/explorer/txn/landtax" action="init" caption="Realty Tax Clearance" index="5" />
+        <invoker folderid="/txn/landtax" action="init" caption="Realty Tax Clearance" index="5" />
+        <invoker folderid="/menu/txn/landtax" action="init" caption="Realty Tax Clearance" index="5" />
         <invoker type="rpttaxclearance:open" action="open" caption="Realty Tax Clearance" />
         
         <!-- create -->

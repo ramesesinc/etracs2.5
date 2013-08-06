@@ -4,7 +4,10 @@
         
         <invoker type="faas_CE:open" action="open" />
         
-         <invoker folderid="/explorer/txn/rpt/faas" action="initTxn"  caption="Correction of Entry" index="4"
+         <invoker folderid="/txn/rpt/faas" action="initTxn"  caption="Correction of Entry" index="4"
+            txntypeid="CE" txntype="Correction of Entry" newledger="false" newrpu="true"/>
+            
+        <invoker folderid="/menu/txn/rpt/faas" action="initTxn"  caption="Correction of Entry" index="4"
             txntypeid="CE" txntype="Correction of Entry" newledger="false" newrpu="true"/>
 
          <invoker type="quick_launcher" code="CE01" action="initTxn"  caption="Correction of Entry" index="4"

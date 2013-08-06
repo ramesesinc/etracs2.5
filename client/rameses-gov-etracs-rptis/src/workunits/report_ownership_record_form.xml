@@ -1,6 +1,6 @@
 <workunit extends="rpt_wtemplates/ReportController.xml" >
     <invokers>
-        <invoker folderid="/explorer/report/rpt" action="init" caption="Ownership Record Form" target="window" index="8" />
+        <invoker folderid="/menu/report/rpt" action="init" caption="Ownership Record Form" target="window" index="8" />
     </invokers>
     <code>
 

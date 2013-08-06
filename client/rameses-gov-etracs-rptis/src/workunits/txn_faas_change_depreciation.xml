@@ -3,7 +3,10 @@
     <invokers>
         <invoker type="faas_CD:open" action="open" />
         
-         <invoker folderid="/explorer/txn/rpt/faas" action="initTxn"  caption="Change Depreciation" index="7"
+         <invoker folderid="/txn/rpt/faas" action="initTxn"  caption="Change Depreciation" index="7"
+            txntypeid="CD" txntype="Change Depreciation" newledger="false" newrpu="true"/>
+        
+         <invoker folderid="/menu/txn/rpt/faas" action="initTxn"  caption="Change Depreciation" index="7"
             txntypeid="CD" txntype="Change Depreciation" newledger="false" newrpu="true"/>
 
          <invoker type="quick_launcher" code="CD01" action="initTxn"  caption="Change Depreciation" index="7"

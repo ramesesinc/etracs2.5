@@ -3,7 +3,10 @@
     <invokers>
         <invoker type="resection:open" action="open" caption="Resection" target="window"  />
         
-         <invoker folderid="/explorer/txn/rpt/faas" action="init"  caption="Resection" index="25"
+         <invoker folderid="/txn/rpt/faas" action="init"  caption="Resection" index="25"
+            txntypeid="RS" txntype="Resection" newledger="false" newrpu="true" newrealproperpty="true" />
+            
+        <invoker folderid="/menu/txn/rpt/faas" action="init"  caption="Resection" index="25"
             txntypeid="RS" txntype="Resection" newledger="false" newrpu="true" newrealproperpty="true" />
 
          <invoker type="quick_launcher" code="SD01" action="init"  caption="Resection" index="25"

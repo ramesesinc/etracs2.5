@@ -3,7 +3,10 @@
     <invokers>
         <invoker type="faas_GR:open" action="open" />
         
-        <invoker folderid="/explorer/txn/rpt/faas" action="initGeneralRevision"  caption="General Revision" index="13"
+        <invoker folderid="/txn/rpt/faas" action="initGeneralRevision"  caption="General Revision" index="13"
+            txntypeid="GR" txntype="General Revision" newledger="true" newrpu="true" newrealproperty="true"/>
+            
+        <invoker folderid="/menu/txn/rpt/faas" action="initGeneralRevision"  caption="General Revision" index="13"
             txntypeid="GR" txntype="General Revision" newledger="true" newrpu="true" newrealproperty="true"/>
 
          <invoker type="quick_launcher" code="GR01" action="initGeneralRevision"  caption="General Revision" index="13"

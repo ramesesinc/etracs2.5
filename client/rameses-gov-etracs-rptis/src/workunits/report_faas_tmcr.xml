@@ -1,6 +1,6 @@
 <workunit extends="rpt_wtemplates/ReportController.xml" >
     <invokers>
-        <invoker folderid="/explorer/report/rpt" action="init" caption="Tax Mapping Control Roll" target="window" index="4" />
+        <invoker folderid="/menu/report/rpt" action="init" caption="Tax Mapping Control Roll" target="window" index="4" />
     </invokers>
     <code>
 

@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <workunit>
     <invokers>
-        <invoker type="quick_launcher" code="KB01" action="init" caption="Notice of Assessment" role="MASTER_ENCODER" permission="bldgkind.create"/>
         <invoker type="assessmentnotice:create" action="init" caption="Notice of Assessment" />
         <invoker type="assessmentnotice:open" action="open" caption="Notice of Assessment" />
         
