@@ -20,6 +20,13 @@ FROM rpu rpu
 	INNER JOIN realproperty rp ON rpu.realpropertyid = rp.objid 
 WHERE rpu.realpropertyid = $P{realpropertyid} 
   AND rpu.rputype = 'land' 
+  
+[getLandImprovementsRpuByRealPropertyId]
+SELECT rpu.*
+FROM rpu rpu
+	INNER JOIN realproperty rp ON rpu.realpropertyid = rp.objid 
+WHERE rpu.realpropertyid = $P{realpropertyid} 
+  AND rpu.rputype != 'land'   
 
 
 [updateBldgRpuLandRpuId]  
@@ -52,3 +59,9 @@ UPDATE miscrpu m, rpu r SET
 WHERE m.objid = r.objid 
   AND r.realpropertyid = $P{realpropertyid}
   AND r.state <> 'CANCELLED'     
+  
+  
+[modifyPin]
+update rpu set 
+	fullpin=$P{newpin}, suffix=$P{suffix}
+where objid=$P{rpuid}

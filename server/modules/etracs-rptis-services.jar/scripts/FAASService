@@ -100,7 +100,7 @@ class FAASService
 		def faas = em.sqlContext.createNamedQuery('faas:openFaas')
 					.setParameter('objid', faasid).singleResult
 		if (!faas) 
-			throw new Exception('FAAS ' + info.faas.tdno + ' does not exsits or has already been deleted. Please verify.')
+			throw new Exception('FAAS does not exist or has already been deleted. Please verify.')
 
 		faas.txntype = getTxnType( faas.txntype.objid )
 		faas.rpu = rpuSvc.openRpu( faas.rpuid )

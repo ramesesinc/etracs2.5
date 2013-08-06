@@ -26,6 +26,16 @@ WHERE f.tdno LIKE $P{searchtext}
    OR rpu.fullpin LIKE $P{searchtext}
 ORDER BY rpu.ry, rpu.fullpin, f.tdno    
 
+[getFaasIds]
+select
+  f.objid, f.tdno
+from faas f  
+  inner join rpu r on r.objid = f.rpuid 
+  inner join realproperty rp on rp.objid = r.realpropertyid 
+where f.state = 'CURRENT' 
+	and r.ry = $P{revisionyear} 
+	and rp.barangayid = $P{barangayid}
+	and rp.section like $P{section} 
 
 [openFaas]
 SELECT * FROM faas WHERE objid = $P{objid}
@@ -48,6 +58,13 @@ WHERE faasid = $P{faasid}
 [getBackTaxes]
 SELECT * FROM faasbacktax WHERE faasid = $P{faasid} ORDER BY effectivityyear DESC 
 
+[getLandReference]
+select
+	r.fullpin, r.totalareasqm, f.ownername, f.tdno, rp.cadastrallotno 
+ from rpu r 
+	inner join faas f on f.rpuid = r.objid 
+	inner join realproperty rp on rp.objid = r.realpropertyid 
+where r.objid=$P{landrpuid} and r.rputype ='land'
 
 [cancelFaas]
 UPDATE faas SET 
@@ -61,6 +78,8 @@ WHERE objid = $P{objid}
 
 [cancelRpu]
 UPDATE rpu SET state = 'CANCELLED' WHERE objid = $P{objid}
+
+
 
 
 

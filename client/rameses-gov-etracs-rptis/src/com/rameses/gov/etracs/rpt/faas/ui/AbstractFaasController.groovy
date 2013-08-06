@@ -163,6 +163,9 @@ public abstract class AbstractFaasController extends PageFlowController
         return InvokerUtil.lookupOpener('faasannotionlisting:open', [annotations:annotations])
     }
     
+    def previewFaas(){
+        return InvokerUtil.lookupOpener('faasreport:view', [faas:faas])
+    }
     /*-----------------------------------------------------
      * 
      * WORKFLOW ACTIONS

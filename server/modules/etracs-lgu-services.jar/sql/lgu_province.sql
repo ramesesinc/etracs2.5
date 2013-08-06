@@ -9,4 +9,5 @@ WHERE state = 'APPROVED'
   AND name LIKE $P{name}  
 ORDER BY name
 
- 
+ [lookupById]
+SELECT * FROM lgu_province WHERE objid = $P{objid} AND state = 'APPROVED'
