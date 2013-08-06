@@ -14,4 +14,13 @@ class BldgKindListService
 		return listSvc.getList( 'bldgkind:getList', params )
 	}
 	
+
+	@ProxyMethod
+	public def getColumns( params ) {
+	    return [
+            [name:"code", caption:"Code", width:80],
+            [name:"name", caption:"Title", width:250],
+            [name:"state", caption:"State", width:100],
+        ]
+	}
 }

@@ -1,0 +1,6 @@
+<workunit extends="wtemplates/ListController.xml" serviceName="BldgKindListService" entityName="bldgkind">
+    <invokers>
+        <invoker folderid="/master/rpt" caption="Kind of Buildings"  target="window" index="4" />
+        <invoker type="quick_launcher" code="KB00" caption="Kind of Buildings" role="MASTER_ENCODER" permission="bldgkind.view"/>
+    </invokers>
+</workunit>
