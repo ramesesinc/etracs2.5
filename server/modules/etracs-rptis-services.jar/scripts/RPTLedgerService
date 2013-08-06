@@ -131,7 +131,12 @@ class RPTLedgerService
 
     @ProxyMethod
     public def getLedgerByFaasId( faasid ) {
-        return em.sqlContext.createNamedQuery('rptledger:getLedgerByFaas').setParameter('faasid', faasid).singleResult
+        def ledger = em.sqlContext.createNamedQuery('rptledger:getLedgerByFaas').setParameter('faasid', faasid).singleResult
+        if (!ledger) throw new Exception('Ledger does not exist or has already been deleted.')
+        ledger.firstqtrpaidontime = util.toBoolean(ledger.firstqtrpaidontime, false)
+        ledger.qtrlypaymentavailed = util.toBoolean(ledger.qtrlypaymentavailed, false)
+        ledger.qtrlypaymentpaidontime = util.toBoolean(ledger.qtrlypaymentpaidontime, false )
+        return ledger
     }
 
 
@@ -169,6 +174,18 @@ class RPTLedgerService
         return pcSvc.lookupClassifications([:])
     }
 
+
+    @ProxyMethod
+    public def postLedgerFaas( ledgerfaas ) {
+        def ledgerfaases = getLedgerFaases(ledgerfaas.rptledgerid)
+        def latestledgerfaas = ledgerfaases.find{it.toyear == 0}
+        if (latestledgerfaas) {
+            latestledgerfaas.toyear = (ledgerfaas.fromqtr == 1 ? ledgerfaas.fromyear - 1 : ledgerfaas.fromyear)
+            latestledgerfaas.toqtr = (ledgerfaas.fromqtr == 1 ? 4 : ledgerfaas.fromqtr - 1)
+            saveLedgerFaas(latestledgerfaas)
+        }
+        saveLedgerFaas(ledgerfaas)
+    }
 
 
     void postLedgerItems(ledgerfaas){

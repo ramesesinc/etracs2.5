@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="12.0">
+  <zoom_level>10</zoom_level>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>110</x>
+      <y>70</y>
+      <w>190</w>
+      <h>530</h>
+    </coordinates>
+    <panel_attributes>resection
+--
+objid
+state
+pintype
+barangayid
+barangaypin
+section
+ry
+txntype_objid
+txnno
+txndate
+autonumber
+effectivityyear
+effectivityqtr
+memoranda
+appraiser_objid
+appraiser_name
+appraiser_title
+appraiser_dtsigned
+recommender_objid
+recommender_name
+recommender_title
+recommender_dtsigned
+taxmapper_objid
+taxmapper_name
+taxmapper_title
+taxmapper_dtsigned
+approver_objid
+approver_name
+approver_title
+approver_dtsigned</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>420</x>
+      <y>60</y>
+      <w>160</w>
+      <h>100</h>
+    </coordinates>
+    <panel_attributes>resectionitem
+--
+objid
+resectionid
+newsection
+landcount
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>270</x>
+      <y>180</y>
+      <w>170</w>
+      <h>70</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-
+affectedrpus</panel_attributes>
+    <additional_attributes>30;50;150;50</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>420</x>
+      <y>170</y>
+      <w>160</w>
+      <h>320</h>
+    </coordinates>
+    <panel_attributes>resectionaffectedrpu
+--
+objid
+resectionid
+rputype
+prevfaasid
+prevrpuid
+prevrpid
+newsection
+newparcel
+newtdno
+newutdno
+newpin
+newsuffix
+newfaasid
+newrpuid
+newrpid 
+memoranda
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>270</x>
+      <y>80</y>
+      <w>170</w>
+      <h>70</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-
+sections</panel_attributes>
+    <additional_attributes>30;50;150;50</additional_attributes>
+  </element>
+</diagram>

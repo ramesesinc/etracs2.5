@@ -30,6 +30,13 @@ class ProvinceInfoInterceptor
 	}
 
 
+	@Before(pattern="ResectionService.submitForApproval", eval="#{args[0].lgutype == 'province' && args[0].state == 'DRAFT'}") 
+	public void submitResectionForApproval( evt ) {
+		def resection = evt.args[0]
+		resection.state = STATE_FORPROVAPPROVAL
+	}
+
+
 	@After(pattern="RPUService.getLgus", eval="#{'province'.equals(args[0])}")
 	public void getLgus(evt){
 		def list = evt.result 

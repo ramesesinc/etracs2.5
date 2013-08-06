@@ -2,7 +2,6 @@ package test;
 
 import com.rameses.osiris2.test.OsirisTestPlatform;
 import com.rameses.rcp.common.EditorListModel;
-import com.rameses.rcp.common.SubListModel;
 
 
 import java.util.HashMap;
