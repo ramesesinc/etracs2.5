@@ -1,6 +1,6 @@
 <workunit extends="wtemplates/ListController.xml">
     <invokers>
-        <invoker folderid="/explorer/txnmgmt/landtax" caption="Realty Tax Ledgers"  target="window" index="110" />
+        <invoker folderid="/txnmgmt/landtax" caption="Realty Tax Ledgers"  target="window" index="110" />
         <invoker type="quick_launcher" code="RL00" caption="Realty Tax Ledgers" />
     </invokers>
     <code>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <workunit>
     <invokers>
-        <invoker folderid="/explorer/txnmgmt/rpt" caption="FAAS Transmittals" mnemonic="t" role="APPRAISER" permission="rpt_transmittal_mgmt.view" index="300"/>
+        <invoker folderid="/txnmgmt/rpt" caption="FAAS Transmittals" mnemonic="t" role="APPRAISER" permission="rpt_transmittal_mgmt.view" index="300"/>
         <invoker type="quick_launcher" code="RPTTR" caption="FAAS Transmittals" mnemonic="f" role="APPRAISER" permission="rpt_transmittal_mgmt.view" />
         
         <invoker type="formActions" action="create" shortcut="ctrl N" immediate="true" caption="New" mnemonic="n" icon="images/doc-new.png" role="APPRAISER" permission="faastransmittal.create" target="window"/>

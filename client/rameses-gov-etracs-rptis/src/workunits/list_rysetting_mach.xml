@@ -1,6 +1,6 @@
 <workunit extends="wtemplates/ListController.xml" >
     <invokers>
-        <invoker folderid="/explorer/setting/rpt" caption="Machine Revision Settings" target="window" role="MASTER_ENCODER" permission="rysetting.view" index="502"/>
+        <invoker folderid="/setting/rpt" caption="Machine Revision Settings" target="window" role="MASTER_ENCODER" permission="rysetting.view" index="502"/>
         <invoker type="quick_launcher" code="GRYM00" target="window" caption="Machine Revision Settings" />
         <invoker type="formActions" action="copy" shortcut="ctrl C" visibleWhen="#{selectedItem != null }" immediate="true" caption="Copy" mnemonic="c" icon="images/doc-new.png" />
     </invokers>

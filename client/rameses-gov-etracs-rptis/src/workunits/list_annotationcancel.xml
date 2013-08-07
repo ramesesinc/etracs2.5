@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <workunit>
     <invokers>
-        <invoker folderid="/explorer/txnmgmt/rpt" caption="Cancel Annotations" role="SHARED" permission="cancelannotationmgmt.view" index="140"/>
+        <invoker folderid="/txnmgmt/rpt" caption="Cancel Annotations" role="SHARED" permission="cancelannotationmgmt.view" index="140"/>
         <invoker type="quick_launcher" code="FAC00" caption="Cancel Annotations" role="SHARED" permission="cancelannotationmgmt.view"/>
         <invoker type="formActions" action="open" shortcut="ctrl O" visibleWhen="#{selectedItem != null and selectedItem.objid != null}" immediate="true" caption="Open" mnemonic="o" icon="images/open.png" role="APPRAISER" permission="cancelannotation.open"/>
     </invokers>

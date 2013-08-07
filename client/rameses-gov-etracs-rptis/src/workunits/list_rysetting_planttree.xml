@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <workunit extends="wtemplates/ListController.xml">
     <invokers>
-        <invoker folderid="/explorer/setting/rpt" caption="Plant/Tree Revision Settings" target="window" role="MASTER_ENCODER" permission="rysetting.view" index="504"/>
+        <invoker folderid="/setting/rpt" caption="Plant/Tree Revision Settings" target="window" role="MASTER_ENCODER" permission="rysetting.view" index="504"/>
         <invoker type="quick_launcher" code="GRY00" target="window" caption="Plant/Tree Revision Settings" />
         
         <invoker type="formActions" action="copy" shortcut="ctrl C" visibleWhen="#{selectedEntity != null }" immediate="true" caption="Copy" mnemonic="c" icon="images/doc-new.png" />
