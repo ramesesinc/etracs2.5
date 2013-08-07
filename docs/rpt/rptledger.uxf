@@ -2,10 +2,115 @@
 <diagram program="umlet" version="12.0">
   <zoom_level>9</zoom_level>
   <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>432</x>
+      <y>243</y>
+      <w>161</w>
+      <h>63</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-
+[faases]</panel_attributes>
+    <additional_attributes>27;45;144;45</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>360</x>
+      <y>315</y>
+      <w>44</w>
+      <h>98</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>27;81;27;27</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Note</type>
+    <coordinates>
+      <x>0</x>
+      <y>297</y>
+      <w>234</w>
+      <h>171</h>
+    </coordinates>
+    <panel_attributes>bg=yellow
+rptledger states:
+PENDING, APPROVED, CANCELLED
+
+--
+rptledgeritem states:
+OPEN, PAID
+--
+rptledgerhistory states:
+DRAFT, CURRENT, CANCELLED</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
     <type>com.umlet.element.Class</type>
     <coordinates>
-      <x>585</x>
-      <y>288</y>
+      <x>297</x>
+      <y>153</y>
+      <w>162</w>
+      <h>189</h>
+    </coordinates>
+    <panel_attributes>rptledger
+--
+objid
+state
+faasid
+nextbilldate
+lastyearpaid
+lastqtrpaid
+firstqtrpaidontime
+qtrlypaymentavailed
+qtrlypaymentpaidontime
+lastitemyear
+barangayid
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>90</x>
+      <y>198</y>
+      <w>90</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>faas
+
+bg=green</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>333</x>
+      <y>396</y>
+      <w>90</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>lgu_barangay
+
+bg=green</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>432</x>
+      <y>180</y>
+      <w>350</w>
+      <h>63</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-
+[items]</panel_attributes>
+    <additional_attributes>27;45;333;45</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>576</x>
+      <y>234</y>
       <w>171</w>
       <h>270</h>
     </coordinates>
@@ -32,99 +137,10 @@ systemcreated</panel_attributes>
   <element>
     <type>com.umlet.element.Class</type>
     <coordinates>
-      <x>99</x>
-      <y>153</y>
-      <w>90</w>
-      <h>27</h>
-    </coordinates>
-    <panel_attributes>faas
-
-bg=green</panel_attributes>
-    <additional_attributes/>
-  </element>
-  <element>
-    <type>com.umlet.element.Note</type>
-    <coordinates>
-      <x>9</x>
-      <y>252</y>
-      <w>234</w>
-      <h>171</h>
-    </coordinates>
-    <panel_attributes>bg=yellow
-rptledger states:
-PENDING, APPROVED, CANCELLED
-
---
-rptledgeritem states:
-OPEN, PAID
---
-rptledgerhistory states:
-DRAFT, CURRENT, CANCELLED</panel_attributes>
-    <additional_attributes/>
-  </element>
-  <element>
-    <type>com.umlet.element.Relation</type>
-    <coordinates>
-      <x>459</x>
-      <y>297</y>
-      <w>143</w>
-      <h>63</h>
-    </coordinates>
-    <panel_attributes>lt=&lt;&lt;-
-[faases]</panel_attributes>
-    <additional_attributes>27;45;126;45</additional_attributes>
-  </element>
-  <element>
-    <type>com.umlet.element.Class</type>
-    <coordinates>
-      <x>315</x>
-      <y>117</y>
-      <w>171</w>
-      <h>306</h>
-    </coordinates>
-    <panel_attributes>rptledger
---
-objid
-state
-faasid
-basic
-basicint
-basicdisc
-basiccredit
-sef
-sefint
-sefdisc
-sefcredit
-nextbilldate
-lastyearpaid
-lastqtrpaid
-firstqtrpaidontime
-qtrlypaymentavailed
-qtrlypaymentpaidontime
-posteditemyear
-
-</panel_attributes>
-    <additional_attributes/>
-  </element>
-  <element>
-    <type>com.umlet.element.Relation</type>
-    <coordinates>
-      <x>459</x>
-      <y>135</y>
-      <w>332</w>
-      <h>63</h>
-    </coordinates>
-    <panel_attributes>lt=&lt;&lt;-
-[items]</panel_attributes>
-    <additional_attributes>27;45;315;45</additional_attributes>
-  </element>
-  <element>
-    <type>com.umlet.element.Class</type>
-    <coordinates>
-      <x>774</x>
-      <y>144</y>
+      <x>765</x>
+      <y>189</y>
       <w>144</w>
-      <h>333</h>
+      <h>351</h>
     </coordinates>
     <panel_attributes>rptledgeritem
 --
@@ -148,21 +164,21 @@ sefdisc
 sefcredit
 sefpaid
 sefintpartial
-</panel_attributes>
+revtype</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
     <type>com.umlet.element.Relation</type>
     <coordinates>
-      <x>162</x>
-      <y>117</y>
-      <w>170</w>
+      <x>153</x>
+      <y>162</y>
+      <w>161</w>
       <h>63</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;-
 m1=1
 m2=1
 currentfaas</panel_attributes>
-    <additional_attributes>27;45;153;45</additional_attributes>
+    <additional_attributes>27;45;144;45</additional_attributes>
   </element>
 </diagram>

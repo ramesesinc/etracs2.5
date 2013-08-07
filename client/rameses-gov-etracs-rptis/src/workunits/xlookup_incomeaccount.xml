@@ -1,0 +1,5 @@
+<workunit extends="wtemplates/ServiceLookupController.xml" serviceName="XAccountLookupService" >
+    <invokers>
+        <invoker type="incomeaccount:lookup" action="init" caption="Account Lookup" target="popup" width="700"/>
+    </invokers>
+</workunit>

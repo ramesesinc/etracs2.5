@@ -1,0 +1,10 @@
+{
+	name: "Calculate Basic Interest",
+	template: "calculate-basicint",
+	params: [
+		{ name:"ledger", datatype:'RPTLedgerFact', usevar:true, caption:'Ledger ID', required:true },
+		{ name: "expr", datatype: 'string', caption: 'Computation Formula', expression:true },
+		{ name: "basicintacct", datatype: 'lookup', caption: 'Account Title', handler:'incomeaccount:lookup', itemKey:'objid', itemLabel:'title'},
+		{ name: "revtype", datatype: "lookup", caption: "Revenue Period", handler:"rptrevtype:lookup", itemKey:"key", itemLabel:"value", required:true},
+	]
+}

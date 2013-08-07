@@ -66,7 +66,7 @@
         <Component class="com.rameses.rcp.control.XLookupField" name="xLookupField1">
           <Properties>
             <Property name="caption" type="java.lang.String" value="TD No."/>
-            <Property name="expression" type="java.lang.String" value="#{tdno}"/>
+            <Property name="expression" type="java.lang.String" value="#{item.tdno}"/>
             <Property name="handler" type="java.lang.String" value="lookupFaas"/>
             <Property name="index" type="int" value="-100"/>
             <Property name="name" type="java.lang.String" value="faas"/>
@@ -180,9 +180,8 @@
                 <StringItem index="0" value="faas"/>
               </StringArray>
             </Property>
-            <Property name="doubleBuffered" type="boolean" value="true"/>
             <Property name="dynamic" type="boolean" value="true"/>
-            <Property name="expression" type="java.lang.String" value="#{lguname}"/>
+            <Property name="expression" type="java.lang.String" value="#{item.name}"/>
             <Property name="immediate" type="boolean" value="true"/>
             <Property name="items" type="java.lang.String" value="municityList"/>
             <Property name="name" type="java.lang.String" value="municity"/>
@@ -200,9 +199,8 @@
                 <StringItem index="0" value="municity"/>
               </StringArray>
             </Property>
-            <Property name="doubleBuffered" type="boolean" value="true"/>
             <Property name="dynamic" type="boolean" value="true"/>
-            <Property name="expression" type="java.lang.String" value="#{lguname}"/>
+            <Property name="expression" type="java.lang.String" value="#{item.name}"/>
             <Property name="immediate" type="boolean" value="true"/>
             <Property name="items" type="java.lang.String" value="districtList"/>
             <Property name="name" type="java.lang.String" value="district"/>
@@ -222,7 +220,7 @@
               </StringArray>
             </Property>
             <Property name="dynamic" type="boolean" value="true"/>
-            <Property name="expression" type="java.lang.String" value="#{lguname}"/>
+            <Property name="expression" type="java.lang.String" value="#{item.name}"/>
             <Property name="immediate" type="boolean" value="true"/>
             <Property name="items" type="java.lang.String" value="barangayList"/>
             <Property name="name" type="java.lang.String" value="barangay"/>
@@ -283,16 +281,17 @@
                 <EmptyBorder bottom="0" left="0" right="0" top="0"/>
               </Border>
             </Property>
-            <Property name="text" type="java.lang.String" value=" Use old Index No.?"/>
             <Property name="caption" type="java.lang.String" value=""/>
             <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
               <Insets value="[0, 0, 0, 0]"/>
             </Property>
             <Property name="name" type="java.lang.String" value="useoldpin"/>
+            <Property name="text" type="java.lang.String" value=" Use old Index No.?"/>
           </Properties>
         </Component>
         <Component class="com.rameses.rcp.control.XLabel" name="xLabel4">
           <Properties>
+            <Property name="horizontalAlignment" type="int" value="0"/>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="org.netbeans.modules.form.compat2.border.LineBorderInfo">
                 <LineBorder>
@@ -300,7 +299,6 @@
                 </LineBorder>
               </Border>
             </Property>
-            <Property name="horizontalAlignment" type="int" value="0"/>
             <Property name="caption" type="java.lang.String" value="New PIN"/>
             <Property name="cellPadding" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
               <Insets value="[10, 0, 0, 0]"/>
@@ -320,16 +318,16 @@
     <Component class="com.rameses.rcp.control.XButton" name="xButton1">
       <Properties>
         <Property name="mnemonic" type="int" value="99"/>
-        <Property name="text" type="java.lang.String" value="Cancel"/>
         <Property name="immediate" type="boolean" value="true"/>
         <Property name="name" type="java.lang.String" value="_close"/>
+        <Property name="text" type="java.lang.String" value="Cancel"/>
       </Properties>
     </Component>
     <Component class="com.rameses.rcp.control.XButton" name="xButton2">
       <Properties>
         <Property name="mnemonic" type="int" value="117"/>
-        <Property name="text" type="java.lang.String" value="Update"/>
         <Property name="name" type="java.lang.String" value="updatePin"/>
+        <Property name="text" type="java.lang.String" value="Update"/>
       </Properties>
     </Component>
     <Container class="com.rameses.rcp.control.XSeparator" name="xSeparator1">

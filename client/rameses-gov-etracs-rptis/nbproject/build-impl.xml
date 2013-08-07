@@ -234,9 +234,8 @@ is divided into following sections:
     ===================
     -->
     <target name="deps-jar" depends="init" unless="no.deps">
-        <ant target="jar" inheritall="false" antfile="${project.osiris2-client-ui}/build.xml"/>
-        <ant target="jar" inheritall="false" antfile="${project.osiris2-framework}/build.xml"/>
-        <ant target="jar" inheritall="false" antfile="${project.rameses-client-ui}/build.xml"/>
+        <ant target="jar" inheritall="false" antfile="${project.client-ui-extended}/build.xml"/>
+        <ant target="jar" inheritall="false" antfile="${project.rulemgmt}/build.xml"/>
     </target>
     <target name="-pre-pre-compile" depends="init,deps-jar">
         <mkdir dir="${build.classes.dir}"/>
@@ -533,9 +532,8 @@ is divided into following sections:
     ===============
     -->
     <target name="deps-clean" depends="init" unless="no.deps">
-        <ant target="clean" inheritall="false" antfile="${project.osiris2-client-ui}/build.xml"/>
-        <ant target="clean" inheritall="false" antfile="${project.osiris2-framework}/build.xml"/>
-        <ant target="clean" inheritall="false" antfile="${project.rameses-client-ui}/build.xml"/>
+        <ant target="clean" inheritall="false" antfile="${project.client-ui-extended}/build.xml"/>
+        <ant target="clean" inheritall="false" antfile="${project.rulemgmt}/build.xml"/>
     </target>
     <target name="-do-clean" depends="init">
         <delete dir="${build.dir}"/>

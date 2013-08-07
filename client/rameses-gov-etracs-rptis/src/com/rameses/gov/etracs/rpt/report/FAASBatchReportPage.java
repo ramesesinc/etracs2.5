@@ -32,6 +32,7 @@ public class FAASBatchReportPage extends javax.swing.JPanel {
     private void initComponents() {
         xActionBar1 = new com.rameses.rcp.control.XActionBar();
         formPanel1 = new com.rameses.rcp.util.FormPanel();
+        xNumberField2 = new com.rameses.rcp.control.XNumberField();
         xComboBox5 = new com.rameses.rcp.control.XComboBox();
         xComboBox1 = new com.rameses.rcp.control.XComboBox();
         xNumberField1 = new com.rameses.rcp.control.XNumberField();
@@ -47,10 +48,19 @@ public class FAASBatchReportPage extends javax.swing.JPanel {
         formPanel1.setBorder(xTitledBorder1);
         formPanel1.setCaptionWidth(120);
         formPanel1.setPadding(new java.awt.Insets(5, 10, 5, 25));
+        xNumberField2.setCaption("Revision Year");
+        xNumberField2.setFieldType(Integer.class);
+        xNumberField2.setIndex(-100);
+        xNumberField2.setName("revisionyear");
+        xNumberField2.setPreferredSize(new java.awt.Dimension(120, 19));
+        xNumberField2.setRequired(true);
+        formPanel1.add(xNumberField2);
+
         xComboBox5.setAllowNull(false);
         xComboBox5.setCaption("Municipality/District");
-        xComboBox5.setExpression("#{lguname}");
-        xComboBox5.setIndex(-100);
+        xComboBox5.setDynamic(true);
+        xComboBox5.setExpression("#{item.name}");
+        xComboBox5.setIndex(1);
         xComboBox5.setItems("lgus");
         xComboBox5.setName("lgu");
         xComboBox5.setPreferredSize(new java.awt.Dimension(0, 22));
@@ -60,7 +70,8 @@ public class FAASBatchReportPage extends javax.swing.JPanel {
         xComboBox1.setCaption("Barangay");
         xComboBox1.setDepends(new String[] {"lgu"});
         xComboBox1.setDynamic(true);
-        xComboBox1.setExpression("#{lguname}");
+        xComboBox1.setExpression("#{item.name}");
+        xComboBox1.setIndex(2);
         xComboBox1.setItems("barangays");
         xComboBox1.setName("barangay");
         xComboBox1.setPreferredSize(new java.awt.Dimension(0, 19));
@@ -69,29 +80,26 @@ public class FAASBatchReportPage extends javax.swing.JPanel {
 
         xNumberField1.setCaption("Section");
         xNumberField1.setFieldType(Integer.class);
-        xNumberField1.setIndex(-10);
+        xNumberField1.setIndex(3);
         xNumberField1.setName("section");
         xNumberField1.setPreferredSize(new java.awt.Dimension(120, 19));
         formPanel1.add(xNumberField1);
 
-        xLabel1.setForeground(new java.awt.Color(153, 0, 0));
         xLabel1.setFont(new java.awt.Font("Arial", 1, 11));
+        xLabel1.setForeground(new java.awt.Color(153, 0, 0));
         xLabel1.setName("msg");
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(org.jdesktop.layout.GroupLayout.TRAILING, xActionBar1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 619, Short.MAX_VALUE)
+            .add(org.jdesktop.layout.GroupLayout.TRAILING, xActionBar1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 603, Short.MAX_VALUE)
             .add(layout.createSequentialGroup()
                 .addContainerGap()
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(layout.createSequentialGroup()
-                        .add(formPanel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 406, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap())
-                    .add(layout.createSequentialGroup()
-                        .add(xLabel1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 385, Short.MAX_VALUE)
-                        .add(224, 224, 224))))
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
+                    .add(formPanel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 406, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(xLabel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 369, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(187, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -101,7 +109,7 @@ public class FAASBatchReportPage extends javax.swing.JPanel {
                 .add(formPanel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 187, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(xLabel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(54, Short.MAX_VALUE))
+                .addContainerGap(64, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
     
@@ -113,6 +121,7 @@ public class FAASBatchReportPage extends javax.swing.JPanel {
     private com.rameses.rcp.control.XComboBox xComboBox5;
     private com.rameses.rcp.control.XLabel xLabel1;
     private com.rameses.rcp.control.XNumberField xNumberField1;
+    private com.rameses.rcp.control.XNumberField xNumberField2;
     // End of variables declaration//GEN-END:variables
     
 }

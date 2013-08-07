@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <workunit extends="rpt_wtemplates/CertificationController.xml">
     <invokers>
-        <invoker folderid="/explorer/txn/rpt/cert" action="init" caption="Land Holding with Improvement" 
+        <invoker folderid="/txn/rpt/cert" action="init" caption="Land Holding with Improvement" 
+            opener="landholdingwithimprov" index="2" />
+            
+        <invoker folderid="/menu/txn/rpt/cert" action="init" caption="Land Holding with Improvement" 
             opener="landholdingwithimprov" index="2" />
             
         <invoker type="quick_launcher" action="init" code="RC02" caption="Land Holding with Improvement" 

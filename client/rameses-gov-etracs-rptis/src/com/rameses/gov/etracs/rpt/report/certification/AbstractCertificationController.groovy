@@ -55,7 +55,7 @@ public abstract class AbstractCertificationController
         return [:]
     }
     
-    void init() {
+    def init() {
         entity = createEntity();
         entity.objid            = RPTUtil.generateId('RC');
         entity.opener           = inv.properties.opener ;
@@ -67,6 +67,7 @@ public abstract class AbstractCertificationController
         entity.official         = false;
         certbytd                = false;
         mode = MODE_CREATE;
+        return 'default'
     }
     
     void initByTd(){

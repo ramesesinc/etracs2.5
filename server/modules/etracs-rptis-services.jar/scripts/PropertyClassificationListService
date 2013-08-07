@@ -13,4 +13,14 @@ class PropertyClassificationListService
 	public List getList( Map params ) {
 		return listSvc.getList( 'propertyclassification:getList', params )
 	}
+
+	@ProxyMethod
+	public def getColumns( params ) {
+		return [
+			[name:"code", caption:"Code", width:40],
+            [name:"name", caption:"Classification", width:250],
+            [name:"orderno", caption:"Order No.", width:100],
+            [name:"state", caption:"State", width:100],
+		]	
+	}
 }

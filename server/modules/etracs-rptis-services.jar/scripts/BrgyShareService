@@ -1,0 +1,157 @@
+import com.rameses.annotations.*;
+import com.rameses.common.*;
+
+class BrgyShareService
+{
+	@PersistenceContext('rpt')
+	def em
+
+	@Service('WorkflowStateService')
+	def workflowRef
+	
+	@Service('SequenceService')
+	def seqSvc
+	
+	@Service('DateService')
+	def dateSvc
+
+	@Service('RPTUtil')
+    def util 
+
+    @Service('Var')
+    def var
+
+	@Env
+	def env
+	
+	def SCHEMA_NAME = 'brgyshare'
+	def SCHEMA_ITEM = 'brgyshare:item'
+	
+	def STATE_DRAFT 	= 'DRAFT' 
+	def STATE_POSTED 	= 'POSTED' 
+	
+
+	@ProxyMethod
+	public def initBrgyShare(share) {
+		util.required('Year', share.year)
+		util.required('Month', share.mon)
+		checkPostedShare(share)
+		share.objid = util.generateId('BS')
+		share.items = em.sqlContext.createNamedQuery('brgyshare:getOpenBrgyShares')
+				.setParameter('year', share.year)
+				.setParameter('month', share.mon.index)
+				.resultList
+		share.totalshare = share.items.totalshare.sum()
+		share.items.each{
+			it.objid  = util.generateId('BSI')
+			it.brgyshareid = share.objid
+		}
+		return share 
+	}
+
+
+	@ProxyMethod
+	public def createBrgyShare( share ) {
+		if (!share.items)
+			throw new Exception('At least one (1) item is required.')
+
+		share.state = STATE_DRAFT
+		workflowRef.insert(share)
+		share.createdbyid = env.USERID
+		share.createdby   = (env.USERFORMALNAME ? env.USERFORMALNAME : 'system')
+		share.createdbytitle   = (env.JOBTITLE ? env.JOBTITLE : 'system')
+		share.month = share.mon.index 
+		em.validate(SCHEMA_NAME, share)
+		em.create(SCHEMA_NAME, share)
+
+		share.items.each{
+			em.validate(SCHEMA_ITEM, it)
+			em.create(SCHEMA_ITEM, it)
+		}
+		return share 
+	}
+
+	@ProxyMethod
+	public def openBrgyShare( objid) {
+		def share = em.sqlContext.createNamedQuery('brgyshare:openBrgyShare')
+				.setParameter('objid', objid).singleResult
+		if (!share) throw new Exception('Record does not exist or has already been deleted.')
+		share.items = em.sqlContext.createNamedQuery('brgyshare:getBrgyShareItems')
+				.setParameter('brgyshareid', objid).resultList
+		return share
+	}
+
+	@ProxyMethod
+	public void deleteBrgyShare( share ) {
+		em.sqlContext.createNamedExecutor('brgyshare:deleteItems').setParameter('brgyshareid', share.objid).execute()
+		em.delete(SCHEMA_NAME, share)
+	}
+
+	@ProxyMethod
+	public def postBrgyShare( share ) {
+		share.state = STATE_POSTED
+		workflowRef.insert(share)
+		def pdate = dateSvc.parseCurrentDate()
+		def cy = dateSvc.serverYear 
+		share.txnno		= cy + '-' + seqSvc.getNextFormattedSeries('BRGYSHARE-' + cy)
+		share.txndate 	= pdate.date 
+		share.postedbyid = env.USERID
+		share.postedby   = (env.USERFORMALNAME ? env.USERFORMALNAME : 'system')
+		share.postedbytitle   = (env.JOBTITLE ? env.JOBTITLE : 'system')
+		em.update(SCHEMA_NAME, share)
+		postToAccountPayable(share)
+		return share 
+	}
+
+	@ProxyMethod
+	public def generateBrgyShareReport(year, month) {
+		def items = em.sqlContext.createNamedQuery('brgyshare:getBrgyShareItemDetail')
+				.setParameter('year', year)
+				.setParameter('month', month)
+				.resultList 
+		return [items:items, rate:util.toDecimal(var.rptc_barangay_basic_rate) * 100.0]
+	}
+
+	@ProxyMethod
+	public def getMonths(  ) {
+		return dateSvc.getMonths();	
+	}
+
+	void postToAccountPayable(share){
+		def monthname = getMonths().find{it.index == share.month}?.caption
+		share.items.each{item ->
+			def ap = em.sqlContext.createNamedQuery('brgyshare:getAccountPayable')
+								.setParameter('subacctid', item.barangayid)
+								.singleResult
+			if (!ap){
+				ap = [:]
+				ap.objid = util.generateId('AP');
+				em.sqlContext.createNamedExecutor('brgyshare:insertPayable')
+					.setParameter('shareid', share.objid)
+					.setParameter('apid', ap.objid)
+					.execute()
+			}
+
+			em.sqlContext.createNamedExecutor('brgyshare:insertPayableItem')
+					.setParameter('shareid', share.objid)
+					.setParameter('apid', ap.objid)
+					.setParameter('smonth', monthname)
+					.execute()
+
+			em.sqlContext.createNamedExecutor('brgyshare:updatePayableBalance')
+					.setParameter('objid', ap.objid)
+					.setParameter('dr', item.totalshare)
+					.execute()
+		}
+	}
+
+	void checkPostedShare(share){
+		def s = em.sqlContext.createNamedQuery('brgyshare:getShareByYearMonth')
+				.setParameter('year', share.year)
+				.setParameter('month', share.mon.index)
+				.singleResult
+		if (s )
+		throw new Exception('Barangay Share for the Month of ' + share.mon.caption + ', ' + share.year + ' has already been posted.')
+	}
+
+}

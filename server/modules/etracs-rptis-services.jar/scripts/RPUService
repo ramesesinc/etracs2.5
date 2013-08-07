@@ -274,6 +274,13 @@ class RPUService
         return type 
     }
 
+    @ProxyMethod
+    public void validateSuffix( rputype, suffix ) { 
+        def type = getTypeFromSuffix(suffix)
+        if (type != rputype)
+            throw new Exception('Suffix is invalid for property type ' + rputype + '.')
+    }
+
 
     @ProxyMethod
     public List getClassifications(  ) {

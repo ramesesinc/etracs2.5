@@ -30,6 +30,12 @@ class MunicipalityInfoInterceptor
 		consolidation.state = STATE_FORPROVSUBMISSION
 	}
 
+	@Before(pattern="ResectionService.submitForApproval", eval="#{args[0].lgutype == 'municipality' && args[0].state == 'DRAFT'}") 
+	public void submitResectionForApproval( evt ) {
+		def resection = evt.args[0]
+		resection.state = STATE_FORPROVSUBMISSION
+	}
+
 
 	@After(pattern="RPUService.getLgus", eval="#{'municipality'.equals(args[0])}")
 	public void getLgus(evt){

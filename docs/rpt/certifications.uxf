@@ -30,22 +30,10 @@ official
 orno
 ordate
 oramount
-stampamount</panel_attributes>
-    <additional_attributes/>
-  </element>
-  <element>
-    <type>com.umlet.element.Class</type>
-    <coordinates>
-      <x>320</x>
-      <y>60</y>
-      <w>150</w>
-      <h>90</h>
-    </coordinates>
-    <panel_attributes>rptcertificationitem
---
-objid &lt;&lt;autonumber&gt;&gt;
-certificationid
-faasid</panel_attributes>
+stampamount
+createdbyid
+createdby
+createbytitle</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
@@ -59,5 +47,20 @@ faasid</panel_attributes>
     <panel_attributes>lt=&lt;-
 item</panel_attributes>
     <additional_attributes>30;50;120;50</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>320</x>
+      <y>60</y>
+      <w>150</w>
+      <h>90</h>
+    </coordinates>
+    <panel_attributes>rptcertificationitem
+--
+objid &lt;&lt;autonumber&gt;&gt;
+rptcertificationid
+refid</panel_attributes>
+    <additional_attributes/>
   </element>
 </diagram>

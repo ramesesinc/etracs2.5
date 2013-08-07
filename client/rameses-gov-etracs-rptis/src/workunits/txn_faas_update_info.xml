@@ -4,8 +4,10 @@
         <invoker type="faasupdate:create" action="init" caption="FAAS Information Update (New)" target="window"  />
         <invoker type="faasupdate:open" action="open" caption="FAAS Information Update" target="window"  />
         
-         <invoker folderid="/explorer/txn/rpt/faas" action="init"  caption="Update FAAS Information" index="23" />
-         <invoker type="quick_launcher" code="UFI01" action="init"  caption="Update FAAS Information" index="23" />
+         <invoker folderid="/txn/rpt/faas" action="init"  caption="Update FAAS Information" index="300" />
+         <invoker folderid="/menu/txn/rpt/faas" action="init"  caption="Update FAAS Information" index="300" />
+         
+         <invoker type="quick_launcher" code="UFI01" action="init"  caption="Update FAAS Information" index="300" />
         
    </invokers>
    <code class="com.rameses.gov.etracs.rpt.faasupdate.ui.FAASUpdateController">       

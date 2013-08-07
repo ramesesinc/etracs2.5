@@ -149,6 +149,13 @@ class FAASAnnotationService
 		return annotation 
 	}
 
+	@ProxyMethod
+	public def getAnnotationsByFaasId( faasid ) {
+		return em.sqlContext.createNamedQuery('faasannotation:getActiveAnnotationsByFaasId')
+					.setParameter('faasid', faasid)
+					.resultList 
+	}
+
 
 	void validateInfo( annotation ) {
 		def currdate = dateSvc.serverDate 

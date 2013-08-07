@@ -8,6 +8,7 @@
 package test;
 
 import com.rameses.osiris2.common.LookupController;
+import com.rameses.util.DateBean;
 import junit.framework.*;
 
 /**
@@ -22,6 +23,8 @@ public class NewEmptyJUnitTest extends TestCase {
 
     protected void setUp() throws Exception {
         LookupController c;
+        DateBean db;
+        
     }
 
     protected void tearDown() throws Exception {

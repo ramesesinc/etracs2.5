@@ -1,0 +1,6 @@
+<workunit extends="wtemplates/ListController.xml" serviceName="BrgyShareListService" entityName="brgyshare" formTarget="window" >
+    <invokers>
+        <invoker folderid="/explorer/txnmgmt/landtax" caption="Barangay Shares"  target="window" index="200" />
+        <invoker type="quick_launcher" code="BS00" caption="Barangay Shares" />
+    </invokers>
+</workunit>

@@ -2,7 +2,8 @@
 <workunit>
     
     <invokers>
-        <invoker folderid="/explorer/txn/rpt/faas" action="init" caption="Certified True Copy" index="100" role="APPRAISER" permission="truecopy.view" />
+        <invoker folderid="/txn/rpt/faas" action="init" caption="Certified True Copy" index="100" role="APPRAISER" permission="truecopy.view" />
+        <invoker folderid="/menu/txn/rpt/faas" action="init" caption="Certified True Copy" index="100" role="APPRAISER" permission="truecopy.view" />
         <invoker type="quick_launcher" code="TDTC" action="init" caption="Certified True Copy" index="100" role="APPRAISER" permission="truecopy.view" />
         
         <invoker type="formActions" action="create" shortcut="ctrl N" visibleWhen="#{mode == 'view'}" immediate="true" caption="New" mnemonic="n" icon="images/doc-new.png" role="APPRAISER" permission="truecopy.create" />

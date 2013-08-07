@@ -30,6 +30,7 @@ public class Main
         Map roles = new HashMap();
         roles.put("RPT.MASTER_ENCODER", null);
         roles.put("RPT.LANDTAX", null);
+        roles.put("RULEMGMT.RULE_AUTHOR", null);
         OsirisTestPlatform.runTest(env, roles); 
     }
 

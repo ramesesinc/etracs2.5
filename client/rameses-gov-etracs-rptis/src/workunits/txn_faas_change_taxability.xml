@@ -3,7 +3,10 @@
     <invokers>
         <invoker type="faas_CT:open" action="open" />
         
-         <invoker folderid="/explorer/txn/rpt/faas" action="initTxn"  caption="Change Taxability" index="6"
+         <invoker folderid="/txn/rpt/faas" action="initTxn"  caption="Change Taxability" index="6"
+            txntypeid="CT" txntype="Change Taxability" newledger="false" newrpu="true"/>
+            
+        <invoker folderid="/menu/txn/rpt/faas" action="initTxn"  caption="Change Taxability" index="6"
             txntypeid="CT" txntype="Change Taxability" newledger="false" newrpu="true"/>
 
          <invoker type="quick_launcher" code="CT01" action="initTxn"  caption="Change Taxability" index="6"
@@ -17,7 +20,7 @@
     import com.rameses.osiris2.client.*
     import com.rameses.osiris2.common.*
 
-    class ChangeTaxabilityFaasController extends com.rameses.gov.etracs.rpt.faas.controller.AbstractFaasController
+    class ChangeTaxabilityFaasController extends com.rameses.gov.etracs.rpt.faas.ui.AbstractFaasController
     {
         @Service('FAASService')
         def svc;

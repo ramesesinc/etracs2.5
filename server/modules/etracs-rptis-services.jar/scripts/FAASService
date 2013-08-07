@@ -36,6 +36,9 @@ class FAASService
 	@Service('WorkflowStateService')
     def wsSvc 
 
+    @Service('FAASAnnotationService')
+    def annotationSvc 
+
 	
 
 	def SCHEMA_FAAS				= 'faas'
@@ -81,14 +84,7 @@ class FAASService
 	public def initFaasTransaction( info ) {
 		def faas = openFaas( info.faas.objid )
 		validateFaasForTransaction(faas)
-
 		initNewFaasInfo(info, faas)
-		if (faas.txntype.newrpu){
-			faas.rpu.previd = faas.rpu.objid 
-			rpuSvc.generateNewIds(faas.rpu)
-			faas.rpuid 		= faas.rpu.objid 
-			faas.rpu.state 	= STATE_INTERIM
-		}
 		return faas
 	}
 
@@ -101,14 +97,16 @@ class FAASService
 
 	@ProxyMethod
 	public def openFaas( faasid ) {
-		def faas = em.read(SCHEMA_FAAS, [objid:faasid])
+		def faas = em.sqlContext.createNamedQuery('faas:openFaas')
+					.setParameter('objid', faasid).singleResult
 		if (!faas) 
-			throw new Exception('FAAS ' + info.faas.tdno + ' does not exsits or has already been deleted. Please verify.')
+			throw new Exception('FAAS does not exist or has already been deleted. Please verify.')
 
-		faas.txntype = getTxnType( faas.txntype_objid )
+		faas.txntype = getTxnType( faas.txntype.objid )
 		faas.rpu = rpuSvc.openRpu( faas.rpuid )
 		faas.previousfaases = getPreviousFaases(faasid)
 		faas.backtaxes      = getBackTaxes(faasid)
+		faas.annotated      = getAnnotatedStatus(faasid)
 		return faas
 	}
 
@@ -410,7 +408,8 @@ class FAASService
 	}
 
 
-	void initNewFaasInfo(info, newfaas){
+	@ProxyMethod
+	public void initNewFaasInfo(info, newfaas){
 		def pdate 	= dtSvc.parseCurrentDate()
 
 		def oldid  			 	= newfaas.objid 
@@ -452,6 +451,13 @@ class FAASService
 		newfaas.approvedby      	 = null
 		newfaas.approvedbytitle      = null
 		newfaas.dtapproved      	 = null
+
+		if (newfaas.txntype.newrpu){
+			newfaas.rpu.previd = newfaas.rpu.objid 
+			rpuSvc.generateNewIds(newfaas.rpu)
+			newfaas.rpuid 		= newfaas.rpu.objid 
+			newfaas.rpu.state 	= STATE_INTERIM
+		}
 	}
 
 	void clearOwnerInfo(faas){
@@ -536,7 +542,9 @@ class FAASService
             [objid:'CS', 	name:'Consolidation', 				newledger:true, 	newrpu:true, newrealproperty:true],
             [objid:'CTD', 	name:'Cancellation', 				newledger:false, 	newrpu:false],
             [objid:'MC', 	name:'Multiple Claim', 				newledger:true, 	newrpu:true, newrealproperty:true],
-
+            
+            [objid:'RS', 	name:'Resection', 					newledger:false, 	newrpu:true, newrealproperty:true],
+            
             [objid:'DC', 	name:'Data Capture', 				newledger:true, 	newrpu:true],
         ]
     }
@@ -588,6 +596,17 @@ class FAASService
 		def faas = em.sqlContext.createNamedQuery('faas:getState').setParameter('objid', faasid).singleResult
 		if (!faas) throw new Exception('FAAS does not exist or has already been deleted.')
 		return faas.state 
+	}
+
+	@ProxyMethod
+	public def getAnnotatedStatus(faasid){
+		def annotations = annotationSvc.getAnnotationsByFaasId(faasid)
+		return annotations.size() > 0
+	}
+
+	@ProxyMethod
+	public def getAnnotations( faasid ) {
+		return annotationSvc.getAnnotationsByFaasId(faasid)
 	}
 
 

@@ -34,15 +34,15 @@
 	<parameter name="PRINTDATE" isForPrompting="false" class="java.util.Date"/>
 	<parameter name="SANGGUNIANG" isForPrompting="false" class="java.lang.String"/>
 	<parameter name="LOGOLGU" isForPrompting="false" class="java.lang.String"/>
-	<parameter name="LGUNAME" isForPrompting="false" class="java.lang.String"/>
-	<parameter name="PARENTLGUNAME" isForPrompting="false" class="java.lang.String"/>
+	<parameter name="LGUFORMALNAME" isForPrompting="false" class="java.lang.String"/>
+	<parameter name="PARENTLGUFORMALNAME" isForPrompting="false" class="java.lang.String"/>
 	<parameter name="TDReportAnnotation" isForPrompting="false" class="java.lang.Object"/>
 	<parameter name="PURPOSE" isForPrompting="false" class="java.lang.String"/>
 	<parameter name="REQUESTEDBYADDRESS" isForPrompting="false" class="java.lang.String"/>
 	<parameter name="REQUESTEDBY" isForPrompting="false" class="java.lang.String"/>
 	<parameter name="ASSESSOROFFICENAME" isForPrompting="false" class="java.lang.String"/>
 	<parameter name="CERTIFICATIONORAMOUNT" isForPrompting="false" class="java.math.BigDecimal"/>
-	<parameter name="CERTIFICATIONORDATE" isForPrompting="false" class="java.lang.String"/>
+	<parameter name="CERTIFICATIONORDATE" isForPrompting="false" class="java.util.Date"/>
 	<parameter name="CERTIFICATIONORNO" isForPrompting="false" class="java.lang.String"/>
 	<parameter name="CERTIFIEDBYTITLE" isForPrompting="false" class="java.lang.String"/>
 	<parameter name="CERTIFIEDBY" isForPrompting="false" class="java.lang.String"/>
@@ -2510,7 +2510,7 @@ TRUE COPY]]></text>
 					</textElement>
 				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$P{CERTIFICATIONORAMOUNT}]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="false" pattern="MMMMM dd, yyyy" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+				<textField isStretchWithOverflow="false" pattern="MMMMM dd, yyyy" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						mode="Transparent"
 						x="69"
@@ -2528,7 +2528,7 @@ TRUE COPY]]></text>
 					<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
 						<font fontName="Tahoma" pdfFontName="Helvetica" size="7" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$P{CERTIFICATIONORDATE}]]></textFieldExpression>
+				<textFieldExpression   class="java.util.Date"><![CDATA[$P{CERTIFICATIONORDATE}]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement
@@ -2700,7 +2700,7 @@ TRUE COPY]]></text>
 					<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
 						<font fontName="Tahoma" pdfFontName="Helvetica" size="10" isBold="true" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$P{LGUNAME}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$P{LGUFORMALNAME}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -3002,9 +3002,9 @@ TRUE COPY]]></text>
 				<image  evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="53"
-						y="10"
-						width="45"
-						height="45"
+						y="0"
+						width="60"
+						height="60"
 						key="image-1"/>
 					<box></box>
 					<graphicElement stretchType="NoStretch"/>
@@ -3024,7 +3024,7 @@ TRUE COPY]]></text>
 					<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
 						<font fontName="Tahoma" pdfFontName="Helvetica" size="8" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$P{LGUNAME}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$P{LGUFORMALNAME}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -3040,7 +3040,7 @@ TRUE COPY]]></text>
 					<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
 						<font fontName="Tahoma" pdfFontName="Helvetica" size="8" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$P{PARENTLGUNAME}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$P{PARENTLGUFORMALNAME}]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement

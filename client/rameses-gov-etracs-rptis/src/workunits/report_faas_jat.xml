@@ -1,6 +1,6 @@
 <workunit extends="rpt_wtemplates/ReportController.xml" >
     <invokers>
-        <invoker folderid="/explorer/report/rpt" action="init" caption="Journal of Assessment Transaction" target="window" index="5" />
+        <invoker folderid="/menu/report/rpt" action="init" caption="Journal of Assessment Transaction" target="window" index="5" />
     </invokers>
     <code>
 

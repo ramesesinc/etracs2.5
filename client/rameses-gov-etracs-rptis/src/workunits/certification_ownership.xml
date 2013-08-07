@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <workunit extends="rpt_wtemplates/CertificationController.xml">
     <invokers>
-        <invoker folderid="/explorer/txn/rpt/cert" action="init" caption="Ownership" 
+        <invoker folderid="/txn/rpt/cert" action="init" caption="Ownership" 
+            opener="ownership" index="6" />    
+            
+        <invoker folderid="/menu/txn/rpt/cert" action="init" caption="Ownership" 
             opener="ownership" index="6" />    
             
         <invoker type="quick_launcher" action="init" code="RC06" caption="Ownership" 

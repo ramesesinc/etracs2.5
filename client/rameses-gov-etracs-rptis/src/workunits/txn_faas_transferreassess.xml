@@ -3,7 +3,10 @@
     <invokers>
         <invoker type="faas_TRE:open" action="open" />
         
-         <invoker folderid="/explorer/txn/rpt/faas" action="initTxn"  caption="Transfer with Reassessment" index="2"
+         <invoker folderid="/txn/rpt/faas" action="initTxn"  caption="Transfer with Reassessment" index="2"
+            txntypeid="TRE" txntype="Transfer with Reassessment" newledger="false" newrpu="true"/>
+            
+        <invoker folderid="/menu/txn/rpt/faas" action="initTxn"  caption="Transfer with Reassessment" index="2"
             txntypeid="TRE" txntype="Transfer with Reassessment" newledger="false" newrpu="true"/>
 
          <invoker type="quick_launcher" code="TR02" action="initTxn"  caption="Transfer with Reassessment" index="2"
@@ -17,7 +20,7 @@
     import com.rameses.osiris2.client.*
     import com.rameses.osiris2.common.*
 
-    class TransferFaasController extends com.rameses.gov.etracs.rpt.faas.controller.AbstractFaasController
+    class TransferFaasController extends com.rameses.gov.etracs.rpt.faas.ui.AbstractFaasController
     {
         @Service('FAASService')
         def svc;

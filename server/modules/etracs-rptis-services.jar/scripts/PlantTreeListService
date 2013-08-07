@@ -14,4 +14,13 @@ class PlantTreeListService
 		return listSvc.getList( 'planttree:getList', params )
 	}
 
+	@ProxyMethod
+	public def getColumns( params ) {
+		return [
+			[name:"code", caption:"Code", width:80],
+            [name:"name", caption:"Plant/Tree", width:250],
+            [name:"state", caption:"State", width:100],
+		]	
+	}
+
 }

@@ -3,7 +3,10 @@
     <invokers>
         <invoker type="consolidation:open" action="open" caption="Consolidation" target="window"  />
         
-         <invoker folderid="/explorer/txn/rpt/faas" action="init"  caption="Consolidation" index="21"
+         <invoker folderid="/txn/rpt/faas" action="init"  caption="Consolidation" index="21"
+            txntypeid="CS" txntype="Consolidation" newledger="true" newrpu="true"/>
+            
+        <invoker folderid="/menu/txn/rpt/faas" action="init"  caption="Consolidation" index="21"
             txntypeid="CS" txntype="Consolidation" newledger="true" newrpu="true"/>
 
          <invoker type="quick_launcher" code="CS01" action="init"  caption="Consolidation" index="21"

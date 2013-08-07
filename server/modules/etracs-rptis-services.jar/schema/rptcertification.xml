@@ -25,5 +25,10 @@
 		<field name="createdby" required="true" />
 		<field name="createdbytitle" required="true" />
 	</element>
+
+	<element name="item" tablename="rptcertificationitem">
+		<field name="rptcertificationid" required="true" />
+		<field name="refid" required="true" />
+	</element>
 	
 </schema>
