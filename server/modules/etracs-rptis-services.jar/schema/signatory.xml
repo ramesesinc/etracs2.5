@@ -1,6 +1,7 @@
 <schema>
     <element name="signatory" tablename="signatory">
-        <field name="objid" required="true" />
+        <field name="objid" primary="true" />
+        <field name="type" required="true" />
         <field name="personnelid" />
         <field name="name" required="true" />
         <field name="title" required="true" />

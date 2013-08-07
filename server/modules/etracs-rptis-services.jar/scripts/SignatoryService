@@ -1,0 +1,49 @@
+import com.rameses.annotations.*;
+import com.rameses.common.*;
+import com.rameses.util.*
+
+class SignatoryService
+{
+	@PersistenceContext('main')
+	def em
+	
+
+	def SCHEMA_NAME = 'signatory'
+
+
+	@ProxyMethod
+	public void saveSignatories(entity, signatories) {
+		if (entity){
+			signatories.each{
+				def signatory = entity[it]
+				if (signatory){
+					em.validate(SCHEMA_NAME, signatory)
+					em.save(SCHEMA_NAME, signatory)
+				}
+			}
+		}
+	}
+
+	
+	@ProxyMethod
+	public void openSignatories(entity, signatories){
+		signatories.each{
+			def signatory = entity[it]
+			if (signatory){
+				entity[it] = em.read(SCHEMA_NAME, signatory)
+			}
+		}
+	}
+
+
+	@ProxyMethod
+	public def deleteSignatories(entity, signatories){
+		signatories.each{
+			def signatory = entity[it]
+			if (signatory){
+				em.delete(SCHEMA_NAME, signatory)
+			}
+		}
+	}
+
+}

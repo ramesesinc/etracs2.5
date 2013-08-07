@@ -112,9 +112,7 @@ class ConsolidationService
 
     	workflowRef.insert(consolidation)
     	rpuSvc.createRpu(consolidation.newrpu, consolidation.txntype )
-        def xconsolidation = EntityUtil.mapToField(consolidation)
-        em.validate(SCHEMA_CONSOLIDATION, xconsolidation)
-        em.create(SCHEMA_CONSOLIDATION, xconsolidation)
+        em.create(SCHEMA_CONSOLIDATION, consolidation)
         createAffectedRpus(consolidation)
     	return consolidation   			
    	}
@@ -125,9 +123,7 @@ class ConsolidationService
         if( !old ) throw new Exception('Consolidation does not exist or has already been deleted.')
         if( old.state == STATE_APPROVED ) throw new Exception('Consolidation has already been approved.')
         if( old.state == STATE_FORPROVAPPROVAL ) throw new Exception('Consolidation has already been submitted to province.')
-        def xconsolidation = EntityUtil.mapToField(consolidation)
-        em.validate(SCHEMA_CONSOLIDATION, xconsolidation)
-        em.update(SCHEMA_CONSOLIDATION, xconsolidation)
+        em.update(SCHEMA_CONSOLIDATION, consolidation)
 		return consolidation   			
    	}
 

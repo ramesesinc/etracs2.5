@@ -93,9 +93,7 @@ class RPUService
             createRealProperty(rpu, txntype)
             checkDuplicateFullPin(rpu)
             rpu.state = STATE_INTERIM
-            def xrpu = EntityUtil.mapToField(rpu)
-            em.validate(SCHEMA_RPU, xrpu)
-            em.create(SCHEMA_RPU, xrpu)
+            em.create(SCHEMA_RPU, rpu)
         }
         return rpu 
     }
@@ -104,10 +102,7 @@ class RPUService
     @ProxyMethod
     public def updateRpu( rpu ) {
         rpSvc.updateRealProperty(rpu.rp)
-        rpu = EntityUtil.mapToField(rpu)
-        em.validate(SCHEMA_RPU, rpu)
         em.update(SCHEMA_RPU, rpu)
-        rpu = EntityUtil.fieldToMap(rpu)
         return rpu
     }
 
@@ -116,8 +111,8 @@ class RPUService
     public def openRpu( rpuid ) {
         def rpu             = em.read(SCHEMA_RPU, [objid:rpuid])
         if (!rpu) throw new Exception('Cannot open RPU. The record does not exist or has already been deleted.')
-        rpu.classification  = classSvc.lookupById(rpu.classification_objid)
-        rpu.exemptiontype   = exemptSvc.lookupById(rpu.exemptiontype_objid)
+        rpu.classification  = classSvc.lookupById(rpu.classification.objid)
+        rpu.exemptiontype   = exemptSvc.lookupById(rpu.exemptiontype.objid)
         rpu.taxable  = util.toBoolean(rpu.taxable, true)
         rpu.hasswornamount  = util.toBoolean(rpu.hasswornamount, false)
         rpu.useswornamount  = util.toBoolean(rpu.useswornamount, false)

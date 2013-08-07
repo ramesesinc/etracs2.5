@@ -79,7 +79,7 @@ class SubdivisionService
         subdivision.effectivityqtr  = 1
         subdivision.motherfaasid    = info.motherfaas.objid
 
-    	em.create(SCHEMA_SUBDIVISION, EntityUtil.mapToField(subdivision))
+    	em.create(SCHEMA_SUBDIVISION, subdivision)
     	txnRef.insertRef(subdivision.motherfaasid, subdivision.objid, 'FAAS is currently referenced by Subdivision No. ' + subdivision.txnno +'.')
     	workflowRef.insert(subdivision)
         createAffectedRpus(subdivision)
@@ -89,8 +89,7 @@ class SubdivisionService
 
     @ProxyMethod
     public def updateSubdivision(subdivision) {
-    	def xsubdivision = EntityUtil.mapToField(subdivision)
-    	em.update(SCHEMA_SUBDIVISION, xsubdivision)
+    	em.update(SCHEMA_SUBDIVISION, subdivision)
     	return subdivision
     }
 

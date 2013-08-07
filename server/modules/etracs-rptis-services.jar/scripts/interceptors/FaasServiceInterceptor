@@ -2,6 +2,9 @@ import com.rameses.annotations.*
 import com.rameses.eserver.*;
 import com.rameses.common.*;
 
+@Service('RPUService')
+def rpuSvc 
+
 class FaasServiceInterceptor
 {
 	@After(pattern="FAASService.initFaasTransaction", eval="#{result.txntype.objid == 'TR'}") 
@@ -30,7 +33,6 @@ class FaasServiceInterceptor
 			throw new Exception('Cannot depreciate Land property.')
 		}
 	}
-
 
 	/*---------------------------------------------------
 	*

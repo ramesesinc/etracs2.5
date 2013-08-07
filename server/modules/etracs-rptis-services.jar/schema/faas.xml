@@ -34,21 +34,9 @@
 		<field name="prevav" required="true"/>
 		<field name="prevmv" required="true"/>
 		<field name="appraiser_objid"  />
-        <field name="appraiser_name"  required="true" />
-        <field name="appraiser_title"  required="true" />
-        <field name="appraiser_dtsigned"  required="true" />
         <field name="recommender_objid" />
-        <field name="recommender_name" />
-        <field name="recommender_title" />
-        <field name="recommender_dtsigned" />
         <field name="taxmapper_objid" />
-        <field name="taxmapper_name" />
-        <field name="taxmapper_title" />
-        <field name="taxmapper_dtsigned" />
         <field name="approver_objid"  />
-        <field name="approver_name"  required="true" />
-        <field name="approver_title"  required="true" />
-        <field name="approver_dtsigned"  required="true" />
 		<field name="cancelreason" />
 		<field name="canceldate" />
 		<field name="cancelledbytdnos" />

@@ -219,7 +219,12 @@ public abstract class AbstractFaasController extends PageFlowController
      *===============================================*/
     def getLookupAppraiser(){
         return InvokerUtil.lookupOpener('rptappraiser:lookup',[
-            onselect : { faas.appraiser = it },
+            onselect : { 
+                it.personnelid = it.objid;
+                it.objid = RPTUtil.generateId('S');
+                it.type = 'appraiser';
+                faas.appraiser = it 
+            },
             onempty  : { faas.appraiser = null },
         ])
     }
@@ -227,7 +232,12 @@ public abstract class AbstractFaasController extends PageFlowController
     
     def getLookupRecommender(){
         return InvokerUtil.lookupOpener('rptrecommender:lookup',[
-            onselect : { faas.recommender = it },
+            onselect : { 
+                it.personnelid = it.objid;
+                it.objid = RPTUtil.generateId('S');
+                it.type = 'appraiser';
+                faas.recommender = it 
+            },
             onempty  : { faas.recommender = null },
         ])
     }
@@ -235,7 +245,12 @@ public abstract class AbstractFaasController extends PageFlowController
     
     def getLookupApprover(){
         return InvokerUtil.lookupOpener('rptapprover:lookup',[
-            onselect : { faas.approver = it },
+            onselect : { 
+                it.personnelid = it.objid;
+                it.objid = RPTUtil.generateId('S');
+                it.type = 'appraiser';
+                faas.approver = it 
+            },
             onempty  : { faas.approver = null },
         ])
     }

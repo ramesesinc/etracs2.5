@@ -21,6 +21,9 @@ class TDReportService
 	@Service('RPTUtil')
 	def util 
 
+	@Service('SignatoryService')
+	def signatorySvc 
+
 
 	@ProxyMethod
 	public def buildTaxDec(faasid){
@@ -30,6 +33,7 @@ class TDReportService
 
 		td.taxable = util.toBoolean(td.taxable, true)
 		td.propertytype = td.rputype
+		signatorySvc.openSignatories(td, faasSvc.getSignatories())
 
 		td.location = td.lguname
 		if (td.parentlguname) {

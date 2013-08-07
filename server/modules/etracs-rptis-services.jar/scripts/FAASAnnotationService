@@ -78,9 +78,7 @@ class FAASAnnotationService
 		workflowRef.insert(annotation)
 		annotation.txnno  = seqSvc.getNextFormattedSeries('FAASAnnotation')
 		annotation.txndate  = dateSvc.serverDate
-		def xannotation= EntityUtil.mapToField(annotation)
-		em.validate(SCHEMA_NAME, xannotation )
-		em.create(SCHEMA_NAME,  xannotation)
+		em.create(SCHEMA_NAME,  annotation)
 		//allow multiple annotations 
 		//txnrefSvc.insert(annotation.faasid,  annotation.objid, 'Annotation', 'FAAS is referenced by Annotation No. ' + annotation.docno + '.' )
 		return annotation 
@@ -90,9 +88,7 @@ class FAASAnnotationService
 	@ProxyMethod
 	public Map updateAnnotation( annotation ) {
 		validateInfo( annotation )
-		def xannotation= EntityUtil.mapToField(annotation)
-		em.validate(SCHEMA_NAME, xannotation )
-		em.update(SCHEMA_NAME, xannotation)
+		em.update(SCHEMA_NAME, annotation)
 		return annotation 
 	}
 

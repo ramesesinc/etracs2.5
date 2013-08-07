@@ -39,6 +39,11 @@ class FAASService
     @Service('FAASAnnotationService')
     def annotationSvc 
 
+    @Service('SignatoryService')
+    def signatorySvc 
+
+    def signatories = ['appraiser', 'recommender', 'taxmapper', 'approver']
+
 	
 
 	def SCHEMA_FAAS				= 'faas'
@@ -53,6 +58,12 @@ class FAASService
 	def STATE_CANCELLED  		= 'CANCELLED'
 
 	def UTDNO_KEY 				= 'UNIQUE_TDNO'
+
+
+	@ProxyMethod
+	public def getSignatories(  ) {
+		return signatories;	
+	}
 
 	@ProxyMethod
 	public def initDataCaptureFaas( info ) {
@@ -97,17 +108,18 @@ class FAASService
 
 	@ProxyMethod
 	public def openFaas( faasid ) {
-		def faas = em.sqlContext.createNamedQuery('faas:openFaas')
-					.setParameter('objid', faasid).singleResult
+		def faas = em.read(SCHEMA_FAAS, [objid:faasid])
 		if (!faas) 
 			throw new Exception('FAAS does not exist or has already been deleted. Please verify.')
 
 		faas.txntype = getTxnType( faas.txntype.objid )
 		faas.rpu = rpuSvc.openRpu( faas.rpuid )
+		println 'rpu.classification -> ' + faas.rpu.classification
 		faas.previousfaases = getPreviousFaases(faasid)
 		faas.backtaxes      = getBackTaxes(faasid)
 		faas.annotated      = getAnnotatedStatus(faasid)
-		return faas
+		signatorySvc.openSignatories(faas, signatories)
+		return faas 
 	}
 
 
@@ -115,8 +127,9 @@ class FAASService
 	public def openFaasInfo(objid){
 		def faas = em.read(SCHEMA_FAAS, [objid:objid])
 		if ( faas ){
-			faas.txntype = getTxnType( faas.txntype_objid )
+			faas.txntype = getTxnType( faas.txntype.objid )
 		}
+		signatorySvc.openSignatories(faas, signatories)
 		return faas 
 	}
 
@@ -129,10 +142,9 @@ class FAASService
 		faas.utdno = generateUniqueTdNo(faas)
 		faas.rpuid = faas.rpu.objid 
 		faas.txntimestamp = dtSvc.buildCustomTimeStamp(faas.approver.dtsigned)
-		def xfaas  = EntityUtil.mapToField(faas)
-		em.validate(SCHEMA_FAAS, xfaas)
-		em.create(SCHEMA_FAAS, xfaas)
-		wsSvc.insert(xfaas)
+		em.create(SCHEMA_FAAS, faas)
+		signatorySvc.saveSignatories(faas, signatories)
+		wsSvc.insert(faas)
 		postBackTaxes(faas)
 		return faas;	
 	}
@@ -146,9 +158,8 @@ class FAASService
 		faas.utdno = generateUniqueTdNo(faas)
 		faas.rpuid = faas.rpu.objid 
 		faas.txntimestamp = dtSvc.buildCustomTimeStamp(faas.approver.dtsigned)
-		def xfaas = EntityUtil.mapToField(faas)
-		em.validate(SCHEMA_FAAS, xfaas)
-		em.create(SCHEMA_FAAS, xfaas)
+		em.create(SCHEMA_FAAS, faas)
+		signatorySvc.saveSignatories(faas, signatories)
 		
 		faas.previousfaases.each{
 			em.create(SCHEMA_PREVIOUSFAAS, it)
@@ -163,9 +174,8 @@ class FAASService
 		faas.utdno = generateUniqueTdNo(faas)
 		faas.rpuid = faas.rpu.objid 
 		faas.txntimestamp = dtSvc.buildCustomTimeStamp(faas.approver.dtsigned)
-		def xfaas = EntityUtil.mapToField(faas)
-		em.validate(SCHEMA_FAAS, xfaas)
-		em.create(SCHEMA_FAAS, xfaas)
+		em.create(SCHEMA_FAAS, faas)
+		signatorySvc.saveSignatories(faas, signatories)
 		faas.previousfaases.each{
 			em.create(SCHEMA_PREVIOUSFAAS, it)
 		}
@@ -178,10 +188,8 @@ class FAASService
 	public def updateFaas( faas ) {
 		faas.txntimestamp = dtSvc.buildCustomTimeStamp(faas.approver.dtsigned)
 		rpuSvc.updateRpu( faas.rpu )
-		faas = EntityUtil.mapToField(faas)
-		em.validate(SCHEMA_FAAS, faas)
 		em.update(SCHEMA_FAAS, faas)
-		faas = EntityUtil.fieldToMap(faas)
+		signatorySvc.saveSignatories(faas, signatories)
 		postBackTaxes(faas)
 		return faas;	
 	}
@@ -190,9 +198,8 @@ class FAASService
 	@ProxyMethod
 	public def updateFaasOnly( faas ) {
 		faas.txntimestamp = dtSvc.buildCustomTimeStamp(faas.approver.dtsigned)
-		faas = EntityUtil.mapToField(faas)
-		em.validate(SCHEMA_FAAS, faas)
 		em.update(SCHEMA_FAAS, faas)
+		signatorySvc.saveSignatories(faas, signatories)
 		return faas;	
 	}
 
@@ -215,6 +222,8 @@ class FAASService
 			rpuSvc.deleteRpu( faas.rpu )
 		}
 
+		signatorySvc.deleteSignatories(faas, signatories)
+		
 		wsSvc.deleteAll(faas.objid)
 	}
 
@@ -224,6 +233,8 @@ class FAASService
 			em.delete(SCHEMA_PREVIOUSFAAS, it)
 		}
 		em.delete(SCHEMA_FAAS, faas)
+
+		wsSvc.deleteAll(faas.objid)
 	}
 
 	
