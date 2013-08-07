@@ -21,7 +21,11 @@
 
 		<!-- client shared modules -->
 		<module file="shared/client-system.jar" />
+		<module file="shared/client-ui-extended.jar" />
 		<module file="shared/rameses-client-menu.jar" />
+		<module file="shared/rameses-client-report.jar" />
+		<module file="shared/rameses-enterprise-admin.jar" />
+		<module file="shared/rameses-gov-lgu.jar" />
 
 		<!-- plugins -->
 		<module file="rameses-gov-etracs-rptis.jar" />
