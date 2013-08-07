@@ -24,6 +24,7 @@
 		<module file="shared/rameses-client-menu.jar" />
 
 		<!-- plugins -->
+		<module file="rameses-gov-etracs-rptis.jar" />
     </modules>
 </app>
 
