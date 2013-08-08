@@ -4,6 +4,48 @@
   <element>
     <type>com.umlet.element.Class</type>
     <coordinates>
+      <x>207</x>
+      <y>639</y>
+      <w>81</w>
+      <h>99</h>
+    </coordinates>
+    <panel_attributes>bldgrpu
+--
+objid
+landrpuid
+houseno
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>225</x>
+      <y>36</y>
+      <w>198</w>
+      <h>90</h>
+    </coordinates>
+    <panel_attributes>lt=-</panel_attributes>
+    <additional_attributes>189;27;27;81</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>99</x>
+      <y>639</y>
+      <w>90</w>
+      <h>72</h>
+    </coordinates>
+    <panel_attributes>landrpu
+--
+objid
+idleland</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
       <x>414</x>
       <y>27</y>
       <w>126</w>
@@ -13,6 +55,27 @@
 --
 realpropertyid
 faasid</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>0</x>
+      <y>0</y>
+      <w>99</w>
+      <h>144</h>
+    </coordinates>
+    <panel_attributes>lgu
+--
+objid
+state
+parentid
+lgutype
+indexno
+pin
+lguname
+lguformalname
+</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
@@ -52,43 +115,129 @@ previd
     <additional_attributes/>
   </element>
   <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>216</x>
+      <y>486</y>
+      <w>224</w>
+      <h>170</h>
+    </coordinates>
+    <panel_attributes>lt=-</panel_attributes>
+    <additional_attributes>27;153;207;27</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>342</x>
+      <y>486</y>
+      <w>98</w>
+      <h>116</h>
+    </coordinates>
+    <panel_attributes>lt=-</panel_attributes>
+    <additional_attributes>27;99;81;27</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>252</x>
+      <y>180</y>
+      <w>108</w>
+      <h>63</h>
+    </coordinates>
+    <panel_attributes>lt=&gt;
+rp</panel_attributes>
+    <additional_attributes>99;45;27;45</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>396</x>
+      <y>486</y>
+      <w>188</w>
+      <h>116</h>
+    </coordinates>
+    <panel_attributes>lt=-</panel_attributes>
+    <additional_attributes>171;99;27;27</additional_attributes>
+  </element>
+  <element>
     <type>com.umlet.element.Class</type>
     <coordinates>
-      <x>207</x>
-      <y>639</y>
+      <x>423</x>
+      <y>585</y>
       <w>81</w>
-      <h>99</h>
+      <h>72</h>
     </coordinates>
-    <panel_attributes>bldgrpu
+    <panel_attributes>planttreerpu
 --
 objid
 landrpuid
-houseno
-
 </panel_attributes>
     <additional_attributes/>
   </element>
   <element>
     <type>com.umlet.element.Relation</type>
     <coordinates>
-      <x>126</x>
-      <y>486</y>
-      <w>314</w>
-      <h>170</h>
+      <x>468</x>
+      <y>180</y>
+      <w>171</w>
+      <h>63</h>
     </coordinates>
-    <panel_attributes>lt=-</panel_attributes>
-    <additional_attributes>27;153;297;27</additional_attributes>
+    <panel_attributes>lt=&lt;-
+rpu</panel_attributes>
+    <additional_attributes>27;45;162;45</additional_attributes>
   </element>
   <element>
     <type>com.umlet.element.Relation</type>
     <coordinates>
-      <x>513</x>
-      <y>36</y>
-      <w>188</w>
-      <h>134</h>
+      <x>747</x>
+      <y>567</y>
+      <w>179</w>
+      <h>63</h>
     </coordinates>
-    <panel_attributes>lt=-</panel_attributes>
-    <additional_attributes>171;117;27;27</additional_attributes>
+    <panel_attributes>lt=&lt;-
+signatories</panel_attributes>
+    <additional_attributes>27;45;162;45</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>909</x>
+      <y>513</y>
+      <w>108</w>
+      <h>234</h>
+    </coordinates>
+    <panel_attributes>signatory
+bg=red
+&lt;&lt;appraiser&gt;
+&lt;&lt;recommender&gt;
+&lt;&lt;taxmapper&gt;&gt;
+&lt;&lt;approver&gt;&gt;
+--
+objid
+refid
+type
+caption
+personnelid
+name
+title
+dtsigned
+seqno</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>945</x>
+      <y>180</y>
+      <w>81</w>
+      <h>72</h>
+    </coordinates>
+    <panel_attributes>previousfaas
+--
+faasid
+prevfaasid
+</panel_attributes>
+    <additional_attributes/>
   </element>
   <element>
     <type>com.umlet.element.Relation</type>
@@ -101,53 +250,6 @@ houseno
     <panel_attributes>lt=&lt;-
 [backtaxes]</panel_attributes>
     <additional_attributes>27;45;198;45</additional_attributes>
-  </element>
-  <element>
-    <type>com.umlet.element.Relation</type>
-    <coordinates>
-      <x>747</x>
-      <y>639</y>
-      <w>188</w>
-      <h>63</h>
-    </coordinates>
-    <panel_attributes>lt=&lt;&lt;&lt;&lt;-
-approver</panel_attributes>
-    <additional_attributes>27;45;171;45</additional_attributes>
-  </element>
-  <element>
-    <type>com.umlet.element.Class</type>
-    <coordinates>
-      <x>0</x>
-      <y>0</y>
-      <w>99</w>
-      <h>144</h>
-    </coordinates>
-    <panel_attributes>lgu
---
-objid
-state
-parentid
-lgutype
-indexno
-pin
-lguname
-lguformalname
-</panel_attributes>
-    <additional_attributes/>
-  </element>
-  <element>
-    <type>com.umlet.element.Class</type>
-    <coordinates>
-      <x>99</x>
-      <y>639</y>
-      <w>90</w>
-      <h>72</h>
-    </coordinates>
-    <panel_attributes>landrpu
---
-objid
-idleland</panel_attributes>
-    <additional_attributes/>
   </element>
   <element>
     <type>com.umlet.element.Class</type>
@@ -165,98 +267,33 @@ landrpuid
     <additional_attributes/>
   </element>
   <element>
-    <type>com.umlet.element.Relation</type>
+    <type>com.umlet.element.Class</type>
     <coordinates>
-      <x>468</x>
-      <y>180</y>
-      <w>179</w>
-      <h>63</h>
-    </coordinates>
-    <panel_attributes>lt=&lt;-
-rpu</panel_attributes>
-    <additional_attributes>27;45;162;45</additional_attributes>
-  </element>
-  <element>
-    <type>com.umlet.element.Relation</type>
-    <coordinates>
-      <x>342</x>
-      <y>486</y>
-      <w>98</w>
-      <h>116</h>
-    </coordinates>
-    <panel_attributes>lt=-</panel_attributes>
-    <additional_attributes>27;99;81;27</additional_attributes>
-  </element>
-  <element>
-    <type>com.umlet.element.Relation</type>
-    <coordinates>
-      <x>72</x>
-      <y>0</y>
-      <w>116</w>
-      <h>44</h>
-    </coordinates>
-    <panel_attributes>lt=&gt;</panel_attributes>
-    <additional_attributes>99;27;27;27</additional_attributes>
-  </element>
-  <element>
-    <type>com.umlet.element.Relation</type>
-    <coordinates>
-      <x>252</x>
-      <y>180</y>
-      <w>116</w>
-      <h>63</h>
-    </coordinates>
-    <panel_attributes>lt=&gt;
-rp</panel_attributes>
-    <additional_attributes>99;45;27;45</additional_attributes>
-  </element>
-  <element>
-    <type>com.umlet.element.Relation</type>
-    <coordinates>
-      <x>189</x>
-      <y>63</y>
-      <w>44</w>
-      <h>71</h>
-    </coordinates>
-    <panel_attributes>lt=&gt;</panel_attributes>
-    <additional_attributes>27;54;27;27</additional_attributes>
-  </element>
-  <element>
-    <type>com.umlet.element.Relation</type>
-    <coordinates>
-      <x>396</x>
-      <y>486</y>
-      <w>188</w>
-      <h>116</h>
-    </coordinates>
-    <panel_attributes>lt=-</panel_attributes>
-    <additional_attributes>171;99;27;27</additional_attributes>
-  </element>
-  <element>
-    <type>com.umlet.element.Relation</type>
-    <coordinates>
-      <x>747</x>
+      <x>522</x>
       <y>585</y>
-      <w>188</w>
-      <h>63</h>
+      <w>81</w>
+      <h>72</h>
     </coordinates>
-    <panel_attributes>lt=&lt;&lt;&lt;&lt;-
-appraiser</panel_attributes>
-    <additional_attributes>27;45;171;45</additional_attributes>
+    <panel_attributes>miscrpu
+--
+objid
+landrpuid
+</panel_attributes>
+    <additional_attributes/>
   </element>
   <element>
     <type>com.umlet.element.Class</type>
     <coordinates>
-      <x>945</x>
-      <y>180</y>
-      <w>81</w>
-      <h>72</h>
+      <x>171</x>
+      <y>0</y>
+      <w>90</w>
+      <h>90</h>
     </coordinates>
-    <panel_attributes>previousfaas
+    <panel_attributes>pin
 --
-faasid
-prevfaasid
-</panel_attributes>
+objid
+state
+barangayid</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
@@ -299,19 +336,49 @@ previd
     <additional_attributes/>
   </element>
   <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>189</x>
+      <y>63</y>
+      <w>36</w>
+      <h>63</h>
+    </coordinates>
+    <panel_attributes>lt=&gt;</panel_attributes>
+    <additional_attributes>27;54;27;27</additional_attributes>
+  </element>
+  <element>
     <type>com.umlet.element.Class</type>
     <coordinates>
-      <x>171</x>
-      <y>0</y>
-      <w>90</w>
-      <h>90</h>
+      <x>945</x>
+      <y>261</y>
+      <w>135</w>
+      <h>180</h>
     </coordinates>
-    <panel_attributes>pin
+    <panel_attributes>faasbacktax
 --
 objid
-state
-barangayid</panel_attributes>
+faasid
+ry
+tdno
+bmv
+mv
+av
+effectivityyear
+effectivityqtr
+taxable
+</panel_attributes>
     <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>513</x>
+      <y>36</y>
+      <w>180</w>
+      <h>126</h>
+    </coordinates>
+    <panel_attributes>lt=-</panel_attributes>
+    <additional_attributes>171;117;27;27</additional_attributes>
   </element>
   <element>
     <type>com.umlet.element.Class</type>
@@ -319,7 +386,7 @@ barangayid</panel_attributes>
       <x>630</x>
       <y>153</y>
       <w>144</w>
-      <h>639</h>
+      <h>576</h>
     </coordinates>
     <panel_attributes>faas
 --
@@ -358,11 +425,7 @@ prevowner
 prevav
 prevmv
 --
-appraiser_objid
-recommender_objid
-taxmapper_objid
-approver_objid
---
+
 cancelreason
 canceldate
 cancelledbytdnos
@@ -376,45 +439,24 @@ cancelledtimestamp
   <element>
     <type>com.umlet.element.Relation</type>
     <coordinates>
-      <x>216</x>
-      <y>486</y>
-      <w>224</w>
-      <h>170</h>
+      <x>72</x>
+      <y>0</y>
+      <w>108</w>
+      <h>36</h>
     </coordinates>
-    <panel_attributes>lt=-</panel_attributes>
-    <additional_attributes>27;153;207;27</additional_attributes>
+    <panel_attributes>lt=&gt;</panel_attributes>
+    <additional_attributes>99;27;27;27</additional_attributes>
   </element>
   <element>
     <type>com.umlet.element.Relation</type>
     <coordinates>
-      <x>747</x>
-      <y>603</y>
-      <w>188</w>
-      <h>63</h>
+      <x>126</x>
+      <y>486</y>
+      <w>314</w>
+      <h>170</h>
     </coordinates>
-    <panel_attributes>lt=&lt;&lt;&lt;&lt;-
-recommender</panel_attributes>
-    <additional_attributes>27;45;171;45</additional_attributes>
-  </element>
-  <element>
-    <type>com.umlet.element.Class</type>
-    <coordinates>
-      <x>918</x>
-      <y>585</y>
-      <w>108</w>
-      <h>135</h>
-    </coordinates>
-    <panel_attributes>signatory
-bg=red
---
-objid
-type
-personnelid
-name
-title
-dtsigned
-</panel_attributes>
-    <additional_attributes/>
+    <panel_attributes>lt=-</panel_attributes>
+    <additional_attributes>27;153;297;27</additional_attributes>
   </element>
   <element>
     <type>com.umlet.element.Relation</type>
@@ -431,88 +473,12 @@ dtsigned
     <type>com.umlet.element.Relation</type>
     <coordinates>
       <x>747</x>
-      <y>621</y>
-      <w>188</w>
-      <h>63</h>
-    </coordinates>
-    <panel_attributes>lt=&lt;&lt;&lt;&lt;-
-taxmapper</panel_attributes>
-    <additional_attributes>27;45;171;45</additional_attributes>
-  </element>
-  <element>
-    <type>com.umlet.element.Relation</type>
-    <coordinates>
-      <x>747</x>
       <y>162</y>
-      <w>215</w>
+      <w>207</w>
       <h>63</h>
     </coordinates>
     <panel_attributes>lt=&lt;-
 [previousfaasses]</panel_attributes>
     <additional_attributes>27;45;198;45</additional_attributes>
-  </element>
-  <element>
-    <type>com.umlet.element.Relation</type>
-    <coordinates>
-      <x>225</x>
-      <y>36</y>
-      <w>206</w>
-      <h>98</h>
-    </coordinates>
-    <panel_attributes>lt=-</panel_attributes>
-    <additional_attributes>189;27;27;81</additional_attributes>
-  </element>
-  <element>
-    <type>com.umlet.element.Class</type>
-    <coordinates>
-      <x>945</x>
-      <y>261</y>
-      <w>135</w>
-      <h>180</h>
-    </coordinates>
-    <panel_attributes>faasbacktax
---
-objid
-faasid
-ry
-tdno
-bmv
-mv
-av
-effectivityyear
-effectivityqtr
-taxable
-</panel_attributes>
-    <additional_attributes/>
-  </element>
-  <element>
-    <type>com.umlet.element.Class</type>
-    <coordinates>
-      <x>423</x>
-      <y>585</y>
-      <w>81</w>
-      <h>72</h>
-    </coordinates>
-    <panel_attributes>planttreerpu
---
-objid
-landrpuid
-</panel_attributes>
-    <additional_attributes/>
-  </element>
-  <element>
-    <type>com.umlet.element.Class</type>
-    <coordinates>
-      <x>522</x>
-      <y>585</y>
-      <w>81</w>
-      <h>72</h>
-    </coordinates>
-    <panel_attributes>miscrpu
---
-objid
-landrpuid
-</panel_attributes>
-    <additional_attributes/>
   </element>
 </diagram>

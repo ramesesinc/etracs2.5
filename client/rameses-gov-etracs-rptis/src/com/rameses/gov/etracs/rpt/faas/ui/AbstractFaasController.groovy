@@ -33,6 +33,11 @@ public abstract class AbstractFaasController extends PageFlowController
     def barangays;
     def mode;
     
+    @FormId
+    public String getFormId(){
+        return 'FAAS : ' + faas?.tdno
+    }
+    
     
     /*=================================
      *
@@ -133,7 +138,7 @@ public abstract class AbstractFaasController extends PageFlowController
     
     void saveCapture(){
         if (mode == MODE_CREATE)
-            faas = service.createDataCaptureFaas(faas);
+            faas = service.createFaas(faas);
         else 
             faas = service.updateFaas(faas);
         mode = MODE_READ;
@@ -215,8 +220,31 @@ public abstract class AbstractFaasController extends PageFlowController
     
     
     /*===============================================
-     * Lookup Support
+     * Signatory Lookup Support
      *===============================================*/
+    def selectedSignatory 
+            
+    def signatoryListHandler = [
+        fetchList : { return faas.signatories }
+    ] as EditorListModel
+            
+    def getLookupSignatory(){
+         return InvokerUtil.lookupOpener('signatory:lookup',[
+            type : selectedSignatory.type,
+                 
+            onselect : { 
+                selectedSignatory.personnelid = it.objid;
+                selectedSignatory.name = it.name;
+                selectedSignatory.title = it.title;
+            },
+            onempty  : { 
+                selectedSignatory.name = null;
+                selectedSignatory.dtsigned = null;
+                selectedSignatory.title = null;
+            },
+        ])
+    }
+            
     def getLookupAppraiser(){
         return InvokerUtil.lookupOpener('rptappraiser:lookup',[
             onselect : { 

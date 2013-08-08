@@ -2,11 +2,12 @@ import com.rameses.annotations.*
 import com.rameses.eserver.*;
 import com.rameses.common.*;
 
-@Service('RPUService')
-def rpuSvc 
-
 class FaasServiceInterceptor
 {
+
+	@Service('RPUService')
+	def rpuSvc 
+
 	@After(pattern="FAASService.initFaasTransaction", eval="#{result.txntype.objid == 'TR'}") 
 	public void initSimpleTransfer( evt ) {
 		def faas = evt.result 
@@ -31,6 +32,51 @@ class FaasServiceInterceptor
 		def faas = evt.result 
 		if (faas.rpu.rputype == 'land') {
 			throw new Exception('Cannot depreciate Land property.')
+		}
+	}
+
+
+
+
+	@Before(pattern="FAASService.createFaas", eval="#{args[0].datacapture==true}") 
+	public void interceptCreateDataCaptureFaas( evt ) {
+		println 'interceptCreateDataCaptureFaas'
+		def faas = evt.args[0]
+		faas.txntype.newrealproperty = true 
+		rpuSvc.createRpu( faas.rpu, faas.txntype )
+	}
+
+
+	@Before(pattern="FAASService.createFaas", eval="#{args[0].datacapture==false}") 
+	public void interceptCreateFaas( evt ) {
+		println 'interceptCreateFaas'
+		def faas = evt.args[0]
+		rpuSvc.createRpu( faas.rpu, faas.txntype)
+	}
+
+
+
+
+	@After(pattern="FAASService.openFaas") 
+	public void interceptOpenFaas( evt ) {
+		println 'interceptOpenFaas'
+		def faas = evt.result 
+		faas.rpu = rpuSvc.openRpu( faas.rpuid )
+	}
+
+	@Before(pattern="FAASService.updateFaas") 
+	public void interceptUpdateFaas(evt) {
+		println 'interceptUpdateFaas'
+		def faas = evt.args[0]
+		rpuSvc.updateRpu( faas.rpu )
+	}
+
+	@After(pattern="FAASService.deleteFaas") 
+	public void interceptDeleteFaas( evt ) {
+		println 'interceptUpdateFaas'
+		def faas = evt.result 
+		if (faas.txntype.newrpu){
+			rpuSvc.deleteRpu( faas.rpu )
 		}
 	}
 

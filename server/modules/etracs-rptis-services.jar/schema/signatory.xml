@@ -1,11 +1,14 @@
 <schema>
     <element name="signatory" tablename="signatory">
         <field name="objid" primary="true" />
+        <field name="refid" required="true" />
         <field name="type" required="true" />
+        <field name="caption" />
         <field name="personnelid" />
         <field name="name" required="true" />
         <field name="title" required="true" />
         <field name="dtsigned" required="true" />
+        <field name="seqno" type="integer" required="true" />
     </element>
 </schema>
 

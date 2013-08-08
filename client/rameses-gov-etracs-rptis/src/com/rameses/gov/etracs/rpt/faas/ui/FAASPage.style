@@ -1,5 +1,9 @@
-"faas.*|appraiser|recommender|approver|taxpayer|administrator" [allowEdit == true] {
+"faas.*|taxpayer|administrator" [allowEdit == true] {
     enabled:true;
+}
+
+"selectedSignatory" [allowEdit == true]{
+    readonly:false;
 }
 
 
@@ -37,8 +41,12 @@
     enabled:false;
 }
 
-"faas.*|appraiser|recommender|approver|taxpayer|administrator" [allowEdit == false] {
+"faas.*|taxpayer|administrator" [allowEdit == false] {
     enabled:false;
+}
+
+"selectedSignatory" [allowEdit == false]{
+    readonly:true;
 }
 
 "faas.cancelnote" [faas.datacapture == true ] {

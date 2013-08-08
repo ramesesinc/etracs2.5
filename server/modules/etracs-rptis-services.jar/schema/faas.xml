@@ -33,10 +33,6 @@
 		<field name="prevowner" />
 		<field name="prevav" required="true"/>
 		<field name="prevmv" required="true"/>
-		<field name="appraiser_objid"  />
-        <field name="recommender_objid" />
-        <field name="taxmapper_objid" />
-        <field name="approver_objid"  />
 		<field name="cancelreason" />
 		<field name="canceldate" />
 		<field name="cancelledbytdnos" />

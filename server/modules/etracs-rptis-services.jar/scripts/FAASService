@@ -42,6 +42,9 @@ class FAASService
     @Service('SignatoryService')
     def signatorySvc 
 
+    @Service('FAASService')
+    def faasSvc
+
     def signatories = ['appraiser', 'recommender', 'taxmapper', 'approver']
 
 	
@@ -93,7 +96,7 @@ class FAASService
 
 	@ProxyMethod
 	public def initFaasTransaction( info ) {
-		def faas = openFaas( info.faas.objid )
+		def faas = faasSvc.openFaas( info.faas.objid )
 		validateFaasForTransaction(faas)
 		initNewFaasInfo(info, faas)
 		return faas
@@ -108,140 +111,94 @@ class FAASService
 
 	@ProxyMethod
 	public def openFaas( faasid ) {
-		def faas = em.read(SCHEMA_FAAS, [objid:faasid])
+		def faas = openFaasInfo(faasid)
 		if (!faas) 
 			throw new Exception('FAAS does not exist or has already been deleted. Please verify.')
-
-		faas.txntype = getTxnType( faas.txntype.objid )
-		faas.rpu = rpuSvc.openRpu( faas.rpuid )
-		println 'rpu.classification -> ' + faas.rpu.classification
-		faas.previousfaases = getPreviousFaases(faasid)
-		faas.backtaxes      = getBackTaxes(faasid)
-		faas.annotated      = getAnnotatedStatus(faasid)
-		signatorySvc.openSignatories(faas, signatories)
 		return faas 
 	}
 
 
 	@ProxyMethod
-	public def openFaasInfo(objid){
-		def faas = em.read(SCHEMA_FAAS, [objid:objid])
+	public def openFaasInfo(faasid){
+		def faas = em.read(SCHEMA_FAAS, [objid:faasid])
 		if ( faas ){
 			faas.txntype = getTxnType( faas.txntype.objid )
+			faas.previousfaases = getPreviousFaases(faasid)
+			faas.backtaxes      = getBackTaxes(faasid)
+			faas.annotated      = getAnnotatedStatus(faasid)
+			faas.signatories = signatorySvc.getSignatories(faas)
+
 		}
-		signatorySvc.openSignatories(faas, signatories)
 		return faas 
 	}
-
-
-	@ProxyMethod
-	public def createDataCaptureFaas( faas ) {
-		faas.txntype.newrealproperty = true 
-		rpuSvc.createRpu( faas.rpu, faas.txntype )
-		faas.state = STATE_INTERIM
-		faas.utdno = generateUniqueTdNo(faas)
-		faas.rpuid = faas.rpu.objid 
-		faas.txntimestamp = dtSvc.buildCustomTimeStamp(faas.approver.dtsigned)
-		em.create(SCHEMA_FAAS, faas)
-		signatorySvc.saveSignatories(faas, signatories)
-		wsSvc.insert(faas)
-		postBackTaxes(faas)
-		return faas;	
-	}
-
 
 	@ProxyMethod
 	public def createFaas( faas ) {
-		checkTxnReference(faas)
-		rpuSvc.createRpu( faas.rpu, faas.txntype)
-		faas.state = STATE_INTERIM;
-		faas.utdno = generateUniqueTdNo(faas)
-		faas.rpuid = faas.rpu.objid 
-		faas.txntimestamp = dtSvc.buildCustomTimeStamp(faas.approver.dtsigned)
-		em.create(SCHEMA_FAAS, faas)
-		signatorySvc.saveSignatories(faas, signatories)
-		
-		faas.previousfaases.each{
-			em.create(SCHEMA_PREVIOUSFAAS, it)
-		}
-		postBackTaxes(faas)
-		insertTxnReference(faas)
-		return faas;	
+		return createFaasOnly(faas)
 	}
 
 	@ProxyMethod
 	public def createFaasOnly( faas ) {
+		validateSignatories(faas)
+		checkTxnReference(faas)
 		faas.utdno = generateUniqueTdNo(faas)
 		faas.rpuid = faas.rpu.objid 
-		faas.txntimestamp = dtSvc.buildCustomTimeStamp(faas.approver.dtsigned)
+		faas.txntimestamp = dtSvc.buildCustomTimeStamp(getSignatory(faas, 'approver').dtsigned)
 		em.create(SCHEMA_FAAS, faas)
-		signatorySvc.saveSignatories(faas, signatories)
+		signatorySvc.saveSignatories(faas)
 		faas.previousfaases.each{
 			em.create(SCHEMA_PREVIOUSFAAS, it)
 		}
-		postBackTaxes(faas)
+		saveBackTaxes(faas)
+		insertTxnReference(faas)
 		return faas;	
 	}
 
 
 	@ProxyMethod
 	public def updateFaas( faas ) {
-		faas.txntimestamp = dtSvc.buildCustomTimeStamp(faas.approver.dtsigned)
-		rpuSvc.updateRpu( faas.rpu )
-		em.update(SCHEMA_FAAS, faas)
-		signatorySvc.saveSignatories(faas, signatories)
-		postBackTaxes(faas)
+		updateFaasOnly(faas)
 		return faas;	
 	}
 
 
 	@ProxyMethod
 	public def updateFaasOnly( faas ) {
-		faas.txntimestamp = dtSvc.buildCustomTimeStamp(faas.approver.dtsigned)
+		faas.txntimestamp = dtSvc.buildCustomTimeStamp(getSignatory(faas, 'approver').dtsigned)
 		em.update(SCHEMA_FAAS, faas)
-		signatorySvc.saveSignatories(faas, signatories)
+		signatorySvc.saveSignatories(faas)
+		saveBackTaxes(faas)
 		return faas;	
 	}
 
 
 	@ProxyMethod
-	public void deleteFaas( faas ) {
+	public def deleteFaas( faas ) {
+		return deleteFaasOnly(faas)
+	}
+
+	@ProxyMethod
+	public def deleteFaasOnly( faas ) {
 		def currentstate = getState(faas.objid)
 		if (currentstate == STATE_FORPROVAPPROVAL)  throw new Exception('FAAS has already been submitted to province.')
 		if (currentstate == STATE_CURRENT)  throw new Exception('FAAS is already current.')
 		if (currentstate == STATE_CANCELLED)  throw new Exception('FAAS has already been cancelled.')
 
 		txnRef.delete(faas.objid)
-
-		getPreviousFaases(faas.objid).each{
-			em.delete(SCHEMA_PREVIOUSFAAS, it)
-		}
-
-		em.delete(SCHEMA_FAAS, faas)
-		if (faas.txntype.newrpu){
-			rpuSvc.deleteRpu( faas.rpu )
-		}
-
-		signatorySvc.deleteSignatories(faas, signatories)
-		
-		wsSvc.deleteAll(faas.objid)
-	}
-
-	@ProxyMethod
-	public def deleteFaasOnly( faas ) {
 		getPreviousFaases(faas.objid).each{
 			em.delete(SCHEMA_PREVIOUSFAAS, it)
 		}
 		em.delete(SCHEMA_FAAS, faas)
-
+		signatorySvc.deleteSignatories(faas)
 		wsSvc.deleteAll(faas.objid)
+		return faas 
 	}
 
 	
 	@ProxyMethod
 	public void deleteFaasById( faasid ) {
 		if (faasid) {
-			deleteFaas(openFaas(faasid))
+			deleteFaas(faasSvc.openFaas(faasid))
 		}
 	}
 
@@ -450,25 +407,14 @@ class FAASService
 		newfaas.titledate		= null
 		newfaas.memoranda		= null
 
-		newfaas.appraisedby     	 = null
-		newfaas.appraisedbytitle     = null
-		newfaas.dtappraised     	 = null
-		newfaas.recommendedby   	 = null
-		newfaas.recommendedbytitle   = null
-		newfaas.dtrecommended   	 = null
-		newfaas.taxmappedby     	 = null
-		newfaas.taxmappedbytitle     = null
-		newfaas.dttaxmapped     	 = null
-		newfaas.approvedby      	 = null
-		newfaas.approvedbytitle      = null
-		newfaas.dtapproved      	 = null
-
 		if (newfaas.txntype.newrpu){
 			newfaas.rpu.previd = newfaas.rpu.objid 
 			rpuSvc.generateNewIds(newfaas.rpu)
 			newfaas.rpuid 		= newfaas.rpu.objid 
 			newfaas.rpu.state 	= STATE_INTERIM
 		}
+
+		signatorySvc.initSignatories(newfaas, signatories)
 	}
 
 	void clearOwnerInfo(faas){
@@ -498,7 +444,7 @@ class FAASService
 	}
 
 
-	void postBackTaxes(faas){
+	void saveBackTaxes(faas){
 		faas._backtaxes?.each{
 			em.delete(SCHEMA_BACKTAX, it)
 		}
@@ -510,12 +456,13 @@ class FAASService
 
 	void cancelPreviousFaases(faas){
 		getPreviousFaases(faas.objid).each{
+			def approver = getSignatory(faas, 'approver')
 			def params = [
 				objid  			: it.prevfaasid,
 				cancelreason	: faas.txntype.objid,
-				canceldate		: (faas.approver ? faas.approver.dtsigned : faas.approver_dtsigned),
+				canceldate		: approver.dtsigned,
 				cancelledbytdnos: faas.tdno,
-				cancelledtimestamp : dtSvc.buildCustomTimeStamp((faas.approver ? faas.approver.dtsigned : faas.approver_dtsigned)),
+				cancelledtimestamp : dtSvc.buildCustomTimeStamp(approver.dtsigned),
 			]
 			em.sqlContext.createNamedExecutor('faas:cancelFaas').setParameters(params).execute()
 			if (faas.txntype.newrpu){
@@ -568,8 +515,8 @@ class FAASService
 	**
 	------------------------------------------------------------------------*/
 	def initFaas(info){
-		return [
-			objid 		  	: 'F' + new java.rmi.server.UID(),
+		def faas = [
+			objid 		  	: utilSvc.generateId('F'),
 			state 		  	: STATE_INTERIM,
 			autonumber   	: 0,
 			prevav		  	: 0.0,
@@ -582,6 +529,8 @@ class FAASService
 			txntype 		: info.txntype,
 			lguid			: var.lgu_objid,
 		]
+		signatorySvc.initSignatories(faas, signatories)
+		return faas 
 	}
 
 	@ProxyMethod
@@ -686,5 +635,21 @@ class FAASService
 		}
 	}
 
+
+	def getSignatory(faas, type){
+		return faas.signatories.find{it.type == type }
+	}
+
+	void validateSignatories(faas){
+		def appraiser = getSignatory(faas, 'appraiser')
+		utilSvc.required('Appraiser', appraiser)
+		utilSvc.required('Appraiser', appraiser.name)
+		utilSvc.required('Appraiser Date Signed', appraiser.dtsigned)
+
+		def approver = getSignatory(faas, 'approver')
+		utilSvc.required('Approver', approver)
+		utilSvc.required('Approver', approver.name)
+		utilSvc.required('Approver Date Signed', approver.dtsigned)
+	}
 }
 

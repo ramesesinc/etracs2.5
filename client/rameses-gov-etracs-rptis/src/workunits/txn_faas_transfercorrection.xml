@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <workunit extends="rpt_wtemplates/FaasController.xml">
     <invokers>
-        <invoker type="faas_TRC:open" action="open" />
+        <invoker type="faas_TRC:open" action="open" caption="FAAS"/>
         
         
          <invoker folderid="/txn/rpt/faas" action="initTxn"  caption="Transfer with Correction" index="3"
