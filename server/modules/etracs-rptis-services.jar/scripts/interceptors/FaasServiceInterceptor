@@ -8,26 +8,44 @@ class FaasServiceInterceptor
 	@Service('RPUService')
 	def rpuSvc 
 
-	@After(pattern="FAASService.initFaasTransaction", eval="#{result.txntype.objid == 'TR'}") 
+	@Service('RPTLedgerService')
+	def ledgerSvc
+
+	@Service('RPTUtil')
+	def util
+
+	@Service('Var')
+	def var
+
+	@Before(pattern="FAASService.initFaasTransaction") 
+	public void interceptInitFaasTransaction( evt ) {
+		def info = evt.args[0]
+		if ( ! util.toBoolean(var.allow_faas_transaction_with_balance, false)){
+			ledgerSvc.checkLedgerBalance(info.faas.objid)
+		}
+
+	}
+
+	@After(pattern="FAASService.initFaasTransaction", eval="#{result.txntype.objid == 'TR'}", index=10) 
 	public void initSimpleTransfer( evt ) {
 		def faas = evt.result 
 		clearInfo(faas)
 		
 	}
 
-	@After(pattern="FAASService.initFaasTransaction", eval="#{result.txntype.objid == 'TRE'}") 
+	@After(pattern="FAASService.initFaasTransaction", eval="#{result.txntype.objid == 'TRE'}", index=10) 
 	public void initTransferWithReassessment( evt ) {
 		def faas = evt.result 
 		clearInfo(faas)
 	}
 
-	@After(pattern="FAASService.initFaasTransaction", eval="#{result.txntype.objid == 'TRC'}") 
+	@After(pattern="FAASService.initFaasTransaction", eval="#{result.txntype.objid == 'TRC'}", index=10) 
 	public void initTransferWithCorrection( evt ) {
 		def faas = evt.result 
 		clearInfo(faas)
 	}
 
-	@After(pattern="FAASService.initFaasTransaction", eval="#{result.txntype.objid == 'CD'}") 
+	@After(pattern="FAASService.initFaasTransaction", eval="#{result.txntype.objid == 'CD'}", index=10) 
 	public void initChangeDepreciation( evt ) {
 		def faas = evt.result 
 		if (faas.rpu.rputype == 'land') {

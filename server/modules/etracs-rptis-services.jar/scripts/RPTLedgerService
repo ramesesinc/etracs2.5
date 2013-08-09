@@ -123,6 +123,17 @@ class RPTLedgerService
     }
 
     @ProxyMethod
+    public void checkLedgerBalance(faasid){
+        def ledger = em.sqlContext.createNamedQuery('rptledger:getLedgerByFaasId')
+                            .setParameter('faasid', faasid).singleResult
+        if (!ledger)
+            throw new Exception('Ledger does not exist or has already been deleted.')
+            
+        if ( ledger.lastyearpaid < dtSvc.serverYear || (ledger.lastyearpaid == dtSvc.serverYear && ledger.lastqtrpaid < 4))
+            throw new Exception('Ledger has not yet been fully paid.')
+    }
+
+    @ProxyMethod
     public void clearNextBillDateByLedger( ledgerid ) {
         em.sqlContext.createNamedExecutor('rptledger:clearNextBillDateByLedger').setParameter('objid', ledgerid).execute() 
     }

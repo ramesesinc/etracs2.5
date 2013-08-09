@@ -55,9 +55,9 @@ class TDReportService
 		}
 
 		try{
-			td.ordinanceno = var.ordinance_no 
-			if ( var.ordinance_date )
-			td.ordinancedate = dtSvc.parse('yyyy-MM-dd', var.ordinance_date)
+			td.ordinanceno = var.gr_ordinance_no 
+			if ( var.gr_ordinance_date )
+				td.ordinancedate = dtSvc.parse('yyyy-MM-dd', var.gr_ordinance_date)
 		}
 		catch(e)
 		{

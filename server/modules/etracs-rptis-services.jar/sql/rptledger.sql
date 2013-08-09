@@ -38,6 +38,10 @@ WHERE rl.objid = $P{objid}
 ORDER BY rl.state, f.tdno 
 
 	
+[getLedgerByFaasId]
+SELECT * FROM rptledger WHERE faasid = $P{faasid} AND state = 'APPROVED' 
+
+
 [getLedgerByFaas]	
 SELECT * FROM rptledger WHERE faasid = $P{faasid} 
 

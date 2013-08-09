@@ -45,6 +45,9 @@ class ConsolidationService
     @Service('SignatoryService')
     def signatorySvc     
 
+    @Service('RPTLedgerService')
+    def ledgerSvc
+
     def SCHEMA_CONSOLIDATION 		= 'consolidation'
     def SCHEMA_CONSOLIDATED_LAND 	= 'consolidation:consolidatedland'
     def SCHEMA_AFFECTED_RPU 		= 'consolidation:affectedrpu'
@@ -197,6 +200,11 @@ class ConsolidationService
             if (brgy.barangayid != consolidatedland.faas.barangayid ){
                 throw new Exception('Consolidation is allowed only for properties within the same barangay.')
             }
+        }
+
+        //check allow with balance
+        if (util.toBoolean(var.allow_consolidation_with_balance, false) == false){
+          ledgerSvc.checkLedgerBalance(consolidatedland.faas.objid)
         }
     }
 

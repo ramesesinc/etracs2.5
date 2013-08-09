@@ -7,9 +7,27 @@ class SubdivisionInterceptor
 	@Service('SubdivisionService')
 	def svc 
 
+	@Service('RPTLedgerService')
+	def ledgerSvc 
+
+	@Service('Var')
+	def var
+
+	@Service('RPTUtil')
+	def util
+
 	@Before(pattern="FAASService.deleteFaas", eval="#{args[0].rpu.rputype != 'land'}") 
 	public void deleteAffectedRpu( evt ) {
 		svc.deleteAffectedRpuByPrevFaasId(evt.args[0].objid)
+	}
+
+
+	@Before(pattern="SubdivisionService.createSubdivision") 
+	public void interceptCreateSubdivision( evt ) {
+		def info = evt.args[0]
+		if (util.toBoolean(var.allow_subdivision_with_balance, false) == false){
+			ledgerSvc.checkLedgerBalance(info.motherfaas.objid)
+		}
 	}
 }
 
