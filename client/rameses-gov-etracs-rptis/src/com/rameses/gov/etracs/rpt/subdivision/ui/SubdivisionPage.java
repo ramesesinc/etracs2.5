@@ -31,22 +31,6 @@ public class SubdivisionPage extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc=" Generated Code ">//GEN-BEGIN:initComponents
     private void initComponents() {
         jPanel1 = new javax.swing.JPanel();
-        formPanel4 = new com.rameses.rcp.util.FormPanel();
-        formPanel17 = new com.rameses.rcp.util.FormPanel();
-        xLookupField1 = new com.rameses.rcp.control.XLookupField();
-        xDateField10 = new com.rameses.rcp.control.XDateField();
-        formPanel16 = new com.rameses.rcp.util.FormPanel();
-        formPanel19 = new com.rameses.rcp.util.FormPanel();
-        xLookupField2 = new com.rameses.rcp.control.XLookupField();
-        xDateField11 = new com.rameses.rcp.control.XDateField();
-        formPanel15 = new com.rameses.rcp.util.FormPanel();
-        formPanel20 = new com.rameses.rcp.util.FormPanel();
-        xLookupField3 = new com.rameses.rcp.control.XLookupField();
-        xDateField12 = new com.rameses.rcp.control.XDateField();
-        formPanel18 = new com.rameses.rcp.util.FormPanel();
-        formPanel21 = new com.rameses.rcp.util.FormPanel();
-        xLookupField4 = new com.rameses.rcp.control.XLookupField();
-        xDateField13 = new com.rameses.rcp.control.XDateField();
         formPanel3 = new com.rameses.rcp.util.FormPanel();
         xLabel14 = new com.rameses.rcp.control.XLabel();
         xLabel15 = new com.rameses.rcp.control.XLabel();
@@ -89,122 +73,13 @@ public class SubdivisionPage extends javax.swing.JPanel {
         xLabel25 = new com.rameses.rcp.control.XLabel();
         xLabel28 = new com.rameses.rcp.control.XLabel();
         xLabel29 = new com.rameses.rcp.control.XLabel();
+        xDataTable3 = new com.rameses.rcp.control.XDataTable();
 
         setLayout(new java.awt.BorderLayout());
 
         com.rameses.rcp.control.border.XTitledBorder xTitledBorder1 = new com.rameses.rcp.control.border.XTitledBorder();
-        xTitledBorder1.setTitle("Signatories");
-        formPanel4.setBorder(xTitledBorder1);
-
-        formPanel17.setOrientation(com.rameses.rcp.constant.UIConstants.HORIZONTAL);
-        formPanel17.setPadding(new java.awt.Insets(1, 1, 1, 1));
-        formPanel17.setShowCaption(false);
-        xLookupField1.setCaption("Appraised By");
-        xLookupField1.setCaptionWidth(100);
-        xLookupField1.setCellPadding(new java.awt.Insets(0, 0, 0, 5));
-        xLookupField1.setExpression("#{subdivision.appraiser.name}");
-        xLookupField1.setHandler("lookupAppraiser");
-        xLookupField1.setName("subdivision.appraiser");
-        xLookupField1.setPreferredSize(new java.awt.Dimension(200, 20));
-        xLookupField1.setRequired(true);
-        formPanel17.add(xLookupField1);
-
-        xDateField10.setCaption("Date");
-        xDateField10.setCaptionWidth(50);
-        xDateField10.setCellPadding(new java.awt.Insets(0, 0, 0, 5));
-        xDateField10.setName("subdivision.appraiser.dtsigned");
-        xDateField10.setPreferredSize(new java.awt.Dimension(100, 20));
-        xDateField10.setRequired(true);
-        formPanel17.add(xDateField10);
-
-        formPanel4.add(formPanel17);
-
-        formPanel16.setOrientation(com.rameses.rcp.constant.UIConstants.HORIZONTAL);
-        formPanel16.setPadding(new java.awt.Insets(0, 0, 0, 0));
-        formPanel16.setShowCaption(false);
-
-        formPanel19.setOrientation(com.rameses.rcp.constant.UIConstants.HORIZONTAL);
-        formPanel19.setPadding(new java.awt.Insets(1, 1, 1, 1));
-        formPanel19.setShowCaption(false);
-        xLookupField2.setCaption("Recommended By");
-        xLookupField2.setCaptionWidth(100);
-        xLookupField2.setCellPadding(new java.awt.Insets(0, 0, 0, 5));
-        xLookupField2.setExpression("#{subdivision.recommender.name}");
-        xLookupField2.setHandler("lookupRecommender");
-        xLookupField2.setName("subdivision.recommender");
-        xLookupField2.setPreferredSize(new java.awt.Dimension(200, 20));
-        formPanel19.add(xLookupField2);
-
-        xDateField11.setCaption("Date");
-        xDateField11.setCaptionWidth(50);
-        xDateField11.setCellPadding(new java.awt.Insets(0, 0, 0, 5));
-        xDateField11.setName("subdivision.recommender.dtsigned");
-        xDateField11.setPreferredSize(new java.awt.Dimension(100, 20));
-        formPanel19.add(xDateField11);
-
-        formPanel16.add(formPanel19);
-
-        formPanel4.add(formPanel16);
-
-        formPanel15.setOrientation(com.rameses.rcp.constant.UIConstants.HORIZONTAL);
-        formPanel15.setPadding(new java.awt.Insets(0, 0, 0, 0));
-        formPanel15.setShowCaption(false);
-
-        formPanel20.setOrientation(com.rameses.rcp.constant.UIConstants.HORIZONTAL);
-        formPanel20.setPadding(new java.awt.Insets(1, 1, 1, 1));
-        formPanel20.setShowCaption(false);
-        xLookupField3.setCaption("Taxmapped By");
-        xLookupField3.setCaptionWidth(100);
-        xLookupField3.setCellPadding(new java.awt.Insets(0, 0, 0, 5));
-        xLookupField3.setExpression("#{subdivision.taxmapper.name}");
-        xLookupField3.setHandler("lookupTaxmapper");
-        xLookupField3.setName("subdivision.taxmapper");
-        xLookupField3.setPreferredSize(new java.awt.Dimension(200, 20));
-        formPanel20.add(xLookupField3);
-
-        xDateField12.setCaption("Date");
-        xDateField12.setCaptionWidth(50);
-        xDateField12.setCellPadding(new java.awt.Insets(0, 0, 0, 5));
-        xDateField12.setName("subdivision.taxmapper.dtsigned");
-        xDateField12.setPreferredSize(new java.awt.Dimension(100, 20));
-        formPanel20.add(xDateField12);
-
-        formPanel15.add(formPanel20);
-
-        formPanel4.add(formPanel15);
-
-        formPanel18.setOrientation(com.rameses.rcp.constant.UIConstants.HORIZONTAL);
-        formPanel18.setPadding(new java.awt.Insets(0, 0, 0, 0));
-        formPanel18.setShowCaption(false);
-
-        formPanel21.setOrientation(com.rameses.rcp.constant.UIConstants.HORIZONTAL);
-        formPanel21.setPadding(new java.awt.Insets(1, 1, 1, 1));
-        formPanel21.setShowCaption(false);
-        xLookupField4.setCaption("Approved By");
-        xLookupField4.setCaptionWidth(100);
-        xLookupField4.setCellPadding(new java.awt.Insets(0, 0, 0, 5));
-        xLookupField4.setExpression("#{subdivision.approver.name}");
-        xLookupField4.setHandler("lookupApprover");
-        xLookupField4.setName("subdivision.approver");
-        xLookupField4.setPreferredSize(new java.awt.Dimension(200, 20));
-        xLookupField4.setRequired(true);
-        formPanel21.add(xLookupField4);
-
-        xDateField13.setCaption("Date");
-        xDateField13.setCaptionWidth(50);
-        xDateField13.setCellPadding(new java.awt.Insets(0, 0, 0, 5));
-        xDateField13.setName("subdivision.approver.dtsigned");
-        xDateField13.setPreferredSize(new java.awt.Dimension(100, 20));
-        xDateField13.setRequired(true);
-        formPanel21.add(xDateField13);
-
-        formPanel18.add(formPanel21);
-
-        formPanel4.add(formPanel18);
-
-        com.rameses.rcp.control.border.XTitledBorder xTitledBorder2 = new com.rameses.rcp.control.border.XTitledBorder();
-        xTitledBorder2.setTitle("Subdivision Information");
-        formPanel3.setBorder(xTitledBorder2);
+        xTitledBorder1.setTitle("Subdivision Information");
+        formPanel3.setBorder(xTitledBorder1);
         formPanel3.setCaptionWidth(95);
         xLabel14.setCaption("State");
         xLabel14.setCaptionWidth(115);
@@ -262,7 +137,6 @@ public class SubdivisionPage extends javax.swing.JPanel {
         xDataTable1.setHandler("landListHandler");
         xDataTable1.setImmediate(true);
         xDataTable1.setName("selectedLand");
-        xDataTable1.setShowRowHeader(true);
 
         jPanel2.setLayout(new java.awt.BorderLayout());
 
@@ -293,9 +167,9 @@ public class SubdivisionPage extends javax.swing.JPanel {
         xActionBar2.setUseToolBar(false);
         jPanel2.add(xActionBar2, java.awt.BorderLayout.WEST);
 
-        com.rameses.rcp.control.border.XTitledBorder xTitledBorder3 = new com.rameses.rcp.control.border.XTitledBorder();
-        xTitledBorder3.setTitle("Subdivided Land Detail");
-        xFormPanel2.setBorder(xTitledBorder3);
+        com.rameses.rcp.control.border.XTitledBorder xTitledBorder2 = new com.rameses.rcp.control.border.XTitledBorder();
+        xTitledBorder2.setTitle("Subdivided Land Detail");
+        xFormPanel2.setBorder(xTitledBorder2);
         xFormPanel2.setPreferredSize(new java.awt.Dimension(0, 50));
         xTextField1.setCaption("New TD No.");
         xTextField1.setCaptionWidth(130);
@@ -358,7 +232,7 @@ public class SubdivisionPage extends javax.swing.JPanel {
         xLabel1.setPreferredSize(new java.awt.Dimension(0, 19));
         xFormPanel2.add(xLabel1);
 
-        jScrollPane1.setPreferredSize(new java.awt.Dimension(0, 80));
+        jScrollPane1.setPreferredSize(new java.awt.Dimension(0, 60));
         xTextArea1.setCaption("Memoranda");
         xTextArea1.setCaptionWidth(130);
         xTextArea1.setDepends(new String[] {"selectedLand"});
@@ -381,9 +255,9 @@ public class SubdivisionPage extends javax.swing.JPanel {
         );
         xFormPanel2.add(xSeparator1);
 
-        xFormPanel3.setOrientation("HORIZONTAL");
+        xFormPanel3.setOrientation(com.rameses.rcp.constant.UIConstants.HORIZONTAL);
         xFormPanel3.setPadding(new java.awt.Insets(0, 0, 0, 0));
-        xFormPanel3.setPreferredSize(new java.awt.Dimension(0, 50));
+        xFormPanel3.setPreferredSize(new java.awt.Dimension(0, 25));
         xFormPanel3.setShowCaption(false);
         xButton2.setName("editLandInfo");
         xButton2.setShowCaption(false);
@@ -420,12 +294,12 @@ public class SubdivisionPage extends javax.swing.JPanel {
             .add(jPanel4Layout.createSequentialGroup()
                 .addContainerGap()
                 .add(jPanel4Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(xFormPanel2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 334, Short.MAX_VALUE)
-                    .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanel4Layout.createSequentialGroup()
-                        .add(xDataTable1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 297, Short.MAX_VALUE)
+                    .add(xFormPanel2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 338, Short.MAX_VALUE)
+                    .add(jPanel4Layout.createSequentialGroup()
+                        .add(xDataTable1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 290, Short.MAX_VALUE)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(jPanel2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 31, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap())
+                        .add(jPanel2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 31, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap())))
         );
         jTabbedPane1.addTab("Subdivided Lands", jPanel4);
 
@@ -441,7 +315,6 @@ public class SubdivisionPage extends javax.swing.JPanel {
         xDataTable2.setHandler("affectedrpuListHandler");
         xDataTable2.setImmediate(true);
         xDataTable2.setName("selectedAffectedRpu");
-        xDataTable2.setShowRowHeader(true);
 
         org.jdesktop.layout.GroupLayout jPanel7Layout = new org.jdesktop.layout.GroupLayout(jPanel7);
         jPanel7.setLayout(jPanel7Layout);
@@ -456,19 +329,20 @@ public class SubdivisionPage extends javax.swing.JPanel {
             jPanel7Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(jPanel7Layout.createSequentialGroup()
                 .addContainerGap()
-                .add(xDataTable2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 334, Short.MAX_VALUE)
+                .add(xDataTable2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 327, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jTabbedPane1.addTab("Real Property Units Affected by the Subdivision", jPanel7);
 
         jPanel3.add(jTabbedPane1, java.awt.BorderLayout.CENTER);
 
-        com.rameses.rcp.control.border.XTitledBorder xTitledBorder4 = new com.rameses.rcp.control.border.XTitledBorder();
-        xTitledBorder4.setTitle("Mother FAAS Information");
-        formPanel5.setBorder(xTitledBorder4);
+        com.rameses.rcp.control.border.XTitledBorder xTitledBorder3 = new com.rameses.rcp.control.border.XTitledBorder();
+        xTitledBorder3.setTitle("Mother FAAS Information");
+        formPanel5.setBorder(xTitledBorder3);
+        formPanel5.setCellspacing(1);
         formPanel5.setPreferredSize(new java.awt.Dimension(120, 80));
 
-        xFormPanel1.setOrientation("HORIZONTAL");
+        xFormPanel1.setOrientation(com.rameses.rcp.constant.UIConstants.HORIZONTAL);
         xFormPanel1.setPadding(new java.awt.Insets(0, 0, 0, 0));
         xFormPanel1.setPreferredSize(new java.awt.Dimension(300, 23));
         xFormPanel1.setShowCaption(false);
@@ -524,6 +398,17 @@ public class SubdivisionPage extends javax.swing.JPanel {
         xLabel29.setPreferredSize(new java.awt.Dimension(0, 19));
         formPanel5.add(xLabel29);
 
+        com.rameses.rcp.control.border.XTitledBorder xTitledBorder4 = new com.rameses.rcp.control.border.XTitledBorder();
+        xTitledBorder4.setTitle("Signatory Information");
+        xDataTable3.setBorder(xTitledBorder4);
+        xDataTable3.setColumns(new com.rameses.rcp.common.Column[]{
+            new com.rameses.rcp.common.Column("type", "Signatory", 90, 0, 0, false, true, true, false, null, new com.rameses.rcp.common.TextColumnHandler()),
+            new com.rameses.rcp.common.Column(null, "Name", 200, 0, 0, false, true, true, true, null, new com.rameses.rcp.common.LookupColumnHandler("#{item.name}", "lookupSignatory")),
+            new com.rameses.rcp.common.Column("dtsigned", "Date", 90, 0, 0, false, true, true, true, null, new com.rameses.rcp.common.DateColumnHandler("yyyy-MM-dd", "yyyy-MM-dd", null))
+        });
+        xDataTable3.setHandler("signatoryListHandler");
+        xDataTable3.setName("selectedSignatory");
+
         org.jdesktop.layout.GroupLayout jPanel1Layout = new org.jdesktop.layout.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -532,10 +417,10 @@ public class SubdivisionPage extends javax.swing.JPanel {
                 .addContainerGap()
                 .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
                     .add(org.jdesktop.layout.GroupLayout.LEADING, jPanel3, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 1062, Short.MAX_VALUE)
-                    .add(org.jdesktop.layout.GroupLayout.LEADING, jPanel1Layout.createSequentialGroup()
+                    .add(jPanel1Layout.createSequentialGroup()
                         .add(formPanel3, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 296, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(formPanel4, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 473, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                        .add(xDataTable3, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 473, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(formPanel5, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 281, Short.MAX_VALUE)))
                 .addContainerGap())
@@ -545,11 +430,11 @@ public class SubdivisionPage extends javax.swing.JPanel {
             .add(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
-                    .add(formPanel4, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 162, Short.MAX_VALUE)
-                    .add(formPanel5, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 162, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(xDataTable3, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 162, Short.MAX_VALUE)
+                    .add(formPanel5, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 162, Short.MAX_VALUE)
                     .add(formPanel3, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 162, Short.MAX_VALUE))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(jPanel3, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 384, Short.MAX_VALUE)
+                .add(jPanel3, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 377, Short.MAX_VALUE)
                 .addContainerGap())
         );
         add(jPanel1, java.awt.BorderLayout.CENTER);
@@ -558,15 +443,7 @@ public class SubdivisionPage extends javax.swing.JPanel {
     
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private com.rameses.rcp.util.FormPanel formPanel15;
-    private com.rameses.rcp.util.FormPanel formPanel16;
-    private com.rameses.rcp.util.FormPanel formPanel17;
-    private com.rameses.rcp.util.FormPanel formPanel18;
-    private com.rameses.rcp.util.FormPanel formPanel19;
-    private com.rameses.rcp.util.FormPanel formPanel20;
-    private com.rameses.rcp.util.FormPanel formPanel21;
     private com.rameses.rcp.util.FormPanel formPanel3;
-    private com.rameses.rcp.util.FormPanel formPanel4;
     private com.rameses.rcp.util.FormPanel formPanel5;
     private com.rameses.rcp.util.FormPanel formPanel7;
     private javax.swing.JPanel jPanel1;
@@ -585,11 +462,8 @@ public class SubdivisionPage extends javax.swing.JPanel {
     private com.rameses.rcp.control.XComboBox xComboBox2;
     private com.rameses.rcp.control.XDataTable xDataTable1;
     private com.rameses.rcp.control.XDataTable xDataTable2;
+    private com.rameses.rcp.control.XDataTable xDataTable3;
     private com.rameses.rcp.control.XDateField xDateField1;
-    private com.rameses.rcp.control.XDateField xDateField10;
-    private com.rameses.rcp.control.XDateField xDateField11;
-    private com.rameses.rcp.control.XDateField xDateField12;
-    private com.rameses.rcp.control.XDateField xDateField13;
     private com.rameses.rcp.control.XDecimalField xDecimalField1;
     private com.rameses.rcp.control.XDecimalField xDecimalField2;
     private com.rameses.rcp.control.XFormPanel xFormPanel1;
@@ -605,10 +479,6 @@ public class SubdivisionPage extends javax.swing.JPanel {
     private com.rameses.rcp.control.XLabel xLabel28;
     private com.rameses.rcp.control.XLabel xLabel29;
     private com.rameses.rcp.control.XLabel xLabel3;
-    private com.rameses.rcp.control.XLookupField xLookupField1;
-    private com.rameses.rcp.control.XLookupField xLookupField2;
-    private com.rameses.rcp.control.XLookupField xLookupField3;
-    private com.rameses.rcp.control.XLookupField xLookupField4;
     private com.rameses.rcp.control.XLookupField xLookupField5;
     private com.rameses.rcp.control.XNumberField xNumberField1;
     private com.rameses.rcp.control.XSeparator xSeparator1;

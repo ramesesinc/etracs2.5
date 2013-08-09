@@ -51,6 +51,14 @@ public class SubdivisionController extends PageFlowController
     }
     
     
+    def viewMotherFaas(){
+        def txntype = subdivision.motherfaas.txntype.objid
+        if ( RPTUtil.toBoolean(subdivision.motherfaas.datacapture, false) == true ){
+            txntype = 'DC' 
+        }
+        def opener = 'faas_' + txntype + ':open'
+        return InvokerUtil.lookupOpener(opener, [entity:[objid:subdivision.motherfaasid]]);
+    }
     
 
     /*-----------------------------------------------------
@@ -287,6 +295,33 @@ public class SubdivisionController extends PageFlowController
     }
     
     
+    /*===============================================
+    * Signatory Lookup Support
+    *===============================================*/
+    def selectedSignatory 
+            
+    def signatoryListHandler = [
+        fetchList : { return subdivision.signatories }
+    ] as EditorListModel
+            
+    def getLookupSignatory(){
+         return InvokerUtil.lookupOpener('signatory:lookup',[
+            type : selectedSignatory.type,
+                 
+            onselect : { 
+                selectedSignatory.personnelid = it.objid;
+                selectedSignatory.name = it.name;
+                selectedSignatory.title = it.title;
+            },
+            onempty  : { 
+                selectedSignatory.name = null;
+                selectedSignatory.dtsigned = null;
+                selectedSignatory.title = null;
+            },
+        ])
+    }
+    
+    
     def getLookupAppraiser(){
         return InvokerUtil.lookupOpener('rptofficer:lookup',[role:'APPRAISER']);
     }
@@ -338,4 +373,6 @@ public class SubdivisionController extends PageFlowController
         return RPTUtil.sum(subdividedLands, "areaha")
     }
      
+    
+    
 }

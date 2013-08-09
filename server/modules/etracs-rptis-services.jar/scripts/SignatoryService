@@ -37,6 +37,7 @@ class SignatoryService
 		signatories.eachWithIndex{ signatory, idx ->
 			entity.signatories << [
 				objid : 'S' + new UID(),
+				refid : entity.objid,
 				type : signatory,
 				seqno : idx,
 			]
@@ -44,12 +45,9 @@ class SignatoryService
 	}
 
 	@ProxyMethod
-	public void saveSignatories(entity) {
-		entity.signatories?.each{
-			if (it.name){
-				it.refid = entity.objid 
-				em.save(SCHEMA_NAME, it)
-			}
+	public void saveSignatories(signatories) {
+		signatories?.each{
+			em.save(SCHEMA_NAME, it)
 		}
 	}
 

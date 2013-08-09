@@ -75,6 +75,7 @@ public class RealPropertyPage extends javax.swing.JPanel {
         xIntegerField1.setMinValue(0.0);
         xIntegerField1.setName("rp.section");
         xIntegerField1.setPreferredSize(new java.awt.Dimension(0, 20));
+        xIntegerField1.setRequired(true);
         formPanel3.add(xIntegerField1);
 
         xIntegerField2.setCaption("Parcel No.");
@@ -82,6 +83,7 @@ public class RealPropertyPage extends javax.swing.JPanel {
         xIntegerField2.setMinValue(0.0);
         xIntegerField2.setName("rp.parcel");
         xIntegerField2.setPreferredSize(new java.awt.Dimension(0, 20));
+        xIntegerField2.setRequired(true);
         formPanel3.add(xIntegerField2);
 
         xTextField3.setCaption("Cadastral Lot No.");
@@ -149,7 +151,7 @@ public class RealPropertyPage extends javax.swing.JPanel {
             jPanel4Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(jPanel4Layout.createSequentialGroup()
                 .add(formPanel5, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(74, Short.MAX_VALUE))
+                .addContainerGap(77, Short.MAX_VALUE))
         );
 
         com.rameses.rcp.control.border.XTitledBorder xTitledBorder3 = new com.rameses.rcp.control.border.XTitledBorder();

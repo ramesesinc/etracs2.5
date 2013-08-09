@@ -18,6 +18,10 @@ class FaasLookupController extends LookupController
     def state;
     def taxpayerid;
     
+    int getRows(){
+        return  50;
+    }
+    
     Column[] getColumns() {
         return [
             new Column(name:"tdno", caption:"TD No.", width:80),

@@ -44,10 +44,14 @@ class RPTLedgerService
     public def openLedger( ledger ) {
         ledger = em.sqlContext.createNamedQuery('rptledger:openLedger').setParameters(ledger).singleResult
         if (!ledger) throw new Exception('Ledger does not exists.')
+        ledger.firstqtrpaidontime = util.toBoolean(ledger.firstqtrpaidontime, true)
+        ledger.qtrlypaymentavailed = util.toBoolean(ledger.qtrlypaymentavailed, true)
+        ledger.qtrlypaymentpaidontime = util.toBoolean(ledger.qtrlypaymentpaidontime, true)
+        ledger.systemcreated = util.toBoolean(ledger.systemcreated, true)
+
         ledger.faases = getLedgerFaases(ledger.objid).each{
             it.taxable = util.toBoolean(it.taxable, true)
             it.backtax = util.toBoolean(it.backtax, true)
-            it.systemcreated = util.toBoolean(it.systemcreated, true)
         }
         return ledger 
     }
@@ -194,40 +198,43 @@ class RPTLedgerService
         ledgerfaas.toqtr   = (ledgerfaas.toqtr == 0 ? 4 : ledgerfaas.toqtr )
         def qtrlyPrevYears = util.toBoolean(var.rptledger_previous_year_computed_as_quarterly, false)
 
-        ledgerfaas.fromyear.upto(ledgerfaas.toyear){ yr ->
-            postQuarterlyItems(ledgerfaas, yr)
-
-            /*
-            if ( yr < pdate.year && qtrlyPrevYears) {
-                //previous year qtrly
+        if (ledgerfaas.fromyear <= ledgerfaas.toyear ){
+            ledgerfaas.fromyear.upto(ledgerfaas.toyear){ yr ->
                 postQuarterlyItems(ledgerfaas, yr)
+                /*
+                if ( yr < pdate.year && qtrlyPrevYears) {
+                    //previous year qtrly
+                    postQuarterlyItems(ledgerfaas, yr)
+                }
+                else if ( yr < pdate.year ) {
+                    //previous year annual
+                    postYearlyItems(ledgerfaas, yr)
+                }
+                else {
+                    //current and advance years 
+                    postQuarterlyItems(ledgerfaas, yr)
+                }
+                */
             }
-            else if ( yr < pdate.year ) {
-                //previous year annual
-                postYearlyItems(ledgerfaas, yr)
-            }
-            else {
-                //current and advance years 
-                postQuarterlyItems(ledgerfaas, yr)
-            }
-            */
         }
     }
 
     @ProxyMethod
     public def insertLedgerItems(ledger, fromyear, toyear){
-        fromyear.upto(toyear){yr -> 
-            def ledgerfaas = em.sqlContext.createNamedQuery('rptledger:getLedgerFaasByFaasId')
-                    .setParameter('rptledgerid', ledger.objid )
-                    .setParameter('faasid', ledger.faasid)
-                    .singleResult
-            if( ledgerfaas ){
-                ledgerfaas.toqtr = 4;
-                postQuarterlyItems(ledgerfaas, yr)
-                em.sqlContext.createNamedExecutor('rptledger:updateLedgerLastItemYear')
-                        .setParameter('objid', ledger.objid)
-                        .setParameter('lastitemyear', toyear)
-                        .execute()
+        if( fromyear <= toyear) {
+            fromyear.upto(toyear){yr -> 
+                def ledgerfaas = em.sqlContext.createNamedQuery('rptledger:getLedgerFaasByFaasId')
+                        .setParameter('rptledgerid', ledger.objid )
+                        .setParameter('faasid', ledger.faasid)
+                        .singleResult
+                if( ledgerfaas ){
+                    ledgerfaas.toqtr = 4;
+                    postQuarterlyItems(ledgerfaas, yr)
+                    em.sqlContext.createNamedExecutor('rptledger:updateLedgerLastItemYear')
+                            .setParameter('objid', ledger.objid)
+                            .setParameter('lastitemyear', toyear)
+                            .execute()
+                }
             }
         }
     }

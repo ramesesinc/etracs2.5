@@ -40,6 +40,8 @@ public class ConsolidationController extends PageFlowController
     
     def init(){
         consolidation = svc.initConsolidation();
+        consolidatedlands = [];
+        affectedrpus = [];
         rp = [:]
         rpu = [:]
         mode = MODE_CREATE 
@@ -92,7 +94,6 @@ public class ConsolidationController extends PageFlowController
     }
     
     
-
     /*-----------------------------------------------------
      * 
      * WORKFLOW ACTIONS
@@ -105,6 +106,10 @@ public class ConsolidationController extends PageFlowController
         consolidation.newrpu = rpu;
     }
     
+    void createConsolidation(){
+        consolidation = svc.createConsolidation(consolidation);
+        mode = MODE_EDIT;
+    }
     
     void validateRpu(){
         rpu.putAll(svc.validateRpu(rpu))
@@ -269,6 +274,35 @@ public class ConsolidationController extends PageFlowController
     ] as EditorListModel 
             
             
+            
+    
+    
+    /*===============================================
+    * Signatory Lookup Support
+    *===============================================*/
+    def selectedSignatory 
+            
+    def signatoryListHandler = [
+        fetchList : { return consolidation.signatories }
+    ] as EditorListModel
+            
+    def getLookupSignatory(){
+         return InvokerUtil.lookupOpener('signatory:lookup',[
+            type : selectedSignatory.type,
+                 
+            onselect : { 
+                selectedSignatory.personnelid = it.objid;
+                selectedSignatory.name = it.name;
+                selectedSignatory.title = it.title;
+            },
+            onempty  : { 
+                selectedSignatory.name = null;
+                selectedSignatory.dtsigned = null;
+                selectedSignatory.title = null;
+            },
+        ])
+    }
+    
     
     
     /*===============================================

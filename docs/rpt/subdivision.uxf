@@ -27,12 +27,24 @@
 // This text will be stored with each diagram;  use it for notes.</help_text>
   <zoom_level>10</zoom_level>
   <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>270</x>
+      <y>120</y>
+      <w>160</w>
+      <h>70</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-
+signatories</panel_attributes>
+    <additional_attributes>140;50;30;50</additional_attributes>
+  </element>
+  <element>
     <type>com.umlet.element.Class</type>
     <coordinates>
-      <x>90</x>
-      <y>50</y>
+      <x>410</x>
+      <y>60</y>
       <w>160</w>
-      <h>480</h>
+      <h>210</h>
     </coordinates>
     <panel_attributes>subdivision
 --
@@ -46,116 +58,14 @@ effectivityyear
 effectivityqtr
 memoranda
 motherfaasid
-appraiser_objid
-appraiser_name
-appraiser_title
-appraiser_dtsigned
-recommender_objid
-recommender_name
-recommender_title
-recommender_dtsigned
-taxmapper_objid
-taxmapper_name
-taxmapper_title
-taxmapper_dtsigned
-approver_objid
-approver_name
-approver_title
-approver_dtsigned</panel_attributes>
-    <additional_attributes/>
-  </element>
-  <element>
-    <type>com.umlet.element.Relation</type>
-    <coordinates>
-      <x>130</x>
-      <y>500</y>
-      <w>290</w>
-      <h>100</h>
-    </coordinates>
-    <panel_attributes>lt=&lt;&lt;-
-affectedrpus</panel_attributes>
-    <additional_attributes>30;30;130;80;270;80</additional_attributes>
-  </element>
-  <element>
-    <type>com.umlet.element.Class</type>
-    <coordinates>
-      <x>400</x>
-      <y>20</y>
-      <w>160</w>
-      <h>430</h>
-    </coordinates>
-    <panel_attributes>subdividedland
---
-objid
-subdivisionid
-itemno
-newtdno
-newutdno
-newpin
-newtitletype
-newtitleno
-newtitledate
-areasqm
-areaha
-memoranda
-administratorid
-administratorname
-administratoraddress
-taxpayerid
-taxpayername
-taxpayeraddress
-ownername
-owneraddress
-newrpid
-newrpuid
-newfaasid
-</panel_attributes>
-    <additional_attributes/>
-  </element>
-  <element>
-    <type>com.umlet.element.Relation</type>
-    <coordinates>
-      <x>220</x>
-      <y>40</y>
-      <w>200</w>
-      <h>70</h>
-    </coordinates>
-    <panel_attributes>lt=&lt;&lt;-
-subdividedlands</panel_attributes>
-    <additional_attributes>30;50;180;50</additional_attributes>
-  </element>
-  <element>
-    <type>com.umlet.element.Class</type>
-    <coordinates>
-      <x>400</x>
-      <y>460</y>
-      <w>160</w>
-      <h>340</h>
-    </coordinates>
-    <panel_attributes>subdivisionaffectedrpu
---
-objid
-subdivisionid
-subdividedlandid
-rputype
-itemno
-prevfaasid
-newfaasid
-newtdno
-newutdno
-newsuffix
-newpin
-newrpuid
-newrpid 
-memoranda
 </panel_attributes>
     <additional_attributes/>
   </element>
   <element>
     <type>com.umlet.element.Class</type>
     <coordinates>
-      <x>660</x>
-      <y>0</y>
+      <x>980</x>
+      <y>10</y>
       <w>160</w>
       <h>830</h>
     </coordinates>
@@ -220,6 +130,119 @@ cancelledbytdnos
 lguid
 
 </panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>540</x>
+      <y>50</y>
+      <w>200</w>
+      <h>70</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-
+subdividedlands</panel_attributes>
+    <additional_attributes>30;50;180;50</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>720</x>
+      <y>30</y>
+      <w>160</w>
+      <h>430</h>
+    </coordinates>
+    <panel_attributes>subdividedland
+--
+objid
+subdivisionid
+itemno
+newtdno
+newutdno
+newpin
+newtitletype
+newtitleno
+newtitledate
+areasqm
+areaha
+memoranda
+administratorid
+administratorname
+administratoraddress
+taxpayerid
+taxpayername
+taxpayeraddress
+ownername
+owneraddress
+newrpid
+newrpuid
+newfaasid
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>720</x>
+      <y>470</y>
+      <w>160</w>
+      <h>340</h>
+    </coordinates>
+    <panel_attributes>subdivisionaffectedrpu
+--
+objid
+subdivisionid
+subdividedlandid
+rputype
+itemno
+prevfaasid
+newfaasid
+newtdno
+newutdno
+newsuffix
+newpin
+newrpuid
+newrpid 
+memoranda
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>450</x>
+      <y>240</y>
+      <w>290</w>
+      <h>370</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-
+affectedrpus</panel_attributes>
+    <additional_attributes>30;30;130;350;270;350</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>180</x>
+      <y>50</y>
+      <w>120</w>
+      <h>260</h>
+    </coordinates>
+    <panel_attributes>signatory
+bg=red
+&lt;&lt;appraiser&gt;
+&lt;&lt;recommender&gt;
+&lt;&lt;taxmapper&gt;&gt;
+&lt;&lt;approver&gt;&gt;
+--
+objid
+refid
+type
+caption
+personnelid
+name
+title
+dtsigned
+seqno</panel_attributes>
     <additional_attributes/>
   </element>
 </diagram>

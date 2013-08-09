@@ -41,7 +41,7 @@
         
         <page name="rpu" title="Consolidation: RPU Information">
             <transition caption="Back" to="rp"  mnemonic="c" icon="images/toolbars/back.png"/>
-            <transition caption="Next"  to="default" action="validateRpu" mnemonic="n"  icon="images/toolbars/next.png"/>
+            <transition caption="Next"  to="default" action="createConsolidation" mnemonic="n"  icon="images/toolbars/next.png"/>
         </page>
         
         

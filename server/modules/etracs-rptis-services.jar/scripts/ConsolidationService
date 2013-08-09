@@ -42,6 +42,8 @@ class ConsolidationService
     @Service('LGUService')
     def lguSvc
     
+    @Service('SignatoryService')
+    def signatorySvc     
 
     def SCHEMA_CONSOLIDATION 		= 'consolidation'
     def SCHEMA_CONSOLIDATED_LAND 	= 'consolidation:consolidatedland'
@@ -55,6 +57,8 @@ class ConsolidationService
 	def STATE_PENDING 			= 'PENDING'
     
     def TXNTYPE_CS = 'CS'
+
+    def signatories = ['appraiser', 'recommender', 'taxmapper', 'approver']
 
 
 	@ProxyMethod
@@ -82,17 +86,21 @@ class ConsolidationService
         def currdate = dateSvc.serverDate 
         def ry =  util.toInteger2(var.current_ry, currdate.year)
 
-        return [
+        def consolidation =  [
             objid           : util.generateId('CS'),
             state        	: STATE_DRAFT,
             ry              : ry,
             txntype         : faasSvc.getTxnType(TXNTYPE_CS),
             autonumber      : var.td_autonumber,
-            effectivityyear : dateSvc.getYear( currdate ),
+            effectivityyear : dateSvc.serverYear  + 1 ,
             effectivityqtr  : 1,
             lguid 			: var.lgu_objid,
             lgutype 		: var.lgu_type,
+            consolidatedlands : [],
+            affectedrpus : [],
         ]
+        signatorySvc.initSignatories(consolidation, signatories)
+        return consolidation
     }
 
 
@@ -112,8 +120,8 @@ class ConsolidationService
 
     	workflowRef.insert(consolidation)
     	rpuSvc.createRpu(consolidation.newrpu, consolidation.txntype )
-        em.create(SCHEMA_CONSOLIDATION, consolidation)
-        createAffectedRpus(consolidation)
+        em.create(SCHEMA_CONSOLIDATION, consolidation, false)
+        signatorySvc.saveSignatories(consolidation.signatories)
     	return consolidation   			
    	}
 
@@ -124,6 +132,7 @@ class ConsolidationService
         if( old.state == STATE_APPROVED ) throw new Exception('Consolidation has already been approved.')
         if( old.state == STATE_FORPROVAPPROVAL ) throw new Exception('Consolidation has already been submitted to province.')
         em.update(SCHEMA_CONSOLIDATION, consolidation)
+        signatorySvc.saveSignatories(consolidation.signatories)
 		return consolidation   			
    	}
 
@@ -133,6 +142,7 @@ class ConsolidationService
    		if (! consolidation) throw new Exception('Consolidation does not exist or has already been deleted.')
    		consolidation.txntype = faasSvc.getTxnType(TXNTYPE_CS)
    		consolidation.autonumber = util.toBoolean(var.td_autonumber, false)
+        consolidation.signatories = signatorySvc.getSignatories(consolidation)
 		return consolidation   			
    	}
 
@@ -152,6 +162,7 @@ class ConsolidationService
  		}
  		workflowRef.deleteAll(consolidation.objid)
         txnRef.delete(consolidation.objid)
+        signatorySvc.deleteSignatories(consolidation)
         em.delete(SCHEMA_CONSOLIDATION, consolidation)
         rpu = rpuSvc.openRpu(consolidation.newrpuid)
  		if (rpu) rpuSvc.deleteRpu(rpu)
@@ -473,7 +484,16 @@ class ConsolidationService
         consolidatedlands.each{
             faas.previousfaases.add([faasid:faas.objid, prevfaasid:it.landfaasid])
         }
+        initFaasSignatories(faas, consolidation)
         return faas 
+    }
+
+    void initFaasSignatories(faas, consolidation){
+        faas.signatories = signatorySvc.getSignatories(consolidation)
+        faas.signatories.each{
+            it.refid = faas.objid 
+            it.objid = util.generateId('S')
+        }
     }
 
     def createFaasFromAffectedRpu(consolidation, arpu){
@@ -496,6 +516,7 @@ class ConsolidationService
         faas.rpu = arpu.rpu 
         faas.rpuid = arpu.rpu.objid 
         faas.previousfaases = [[faasid:faas.objid, prevfaasid:arpu.prevfaasid]]
+        initFaasSignatories(faas, consolidation)
         return faas 
     }
 

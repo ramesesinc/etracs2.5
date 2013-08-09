@@ -134,23 +134,24 @@ class FAASService
 
 	@ProxyMethod
 	public def createFaas( faas ) {
-		return createFaasOnly(faas)
+		checkTxnReference(faas)
+		createFaasOnly(faas)
+		insertTxnReference(faas)
+		return faas
 	}
 
 	@ProxyMethod
 	public def createFaasOnly( faas ) {
 		validateSignatories(faas)
-		checkTxnReference(faas)
 		faas.utdno = generateUniqueTdNo(faas)
 		faas.rpuid = faas.rpu.objid 
 		faas.txntimestamp = dtSvc.buildCustomTimeStamp(getSignatory(faas, 'approver').dtsigned)
 		em.create(SCHEMA_FAAS, faas)
-		signatorySvc.saveSignatories(faas)
+		signatorySvc.saveSignatories(faas.signatories)
 		faas.previousfaases.each{
 			em.create(SCHEMA_PREVIOUSFAAS, it)
 		}
 		saveBackTaxes(faas)
-		insertTxnReference(faas)
 		return faas;	
 	}
 
@@ -166,7 +167,7 @@ class FAASService
 	public def updateFaasOnly( faas ) {
 		faas.txntimestamp = dtSvc.buildCustomTimeStamp(getSignatory(faas, 'approver').dtsigned)
 		em.update(SCHEMA_FAAS, faas)
-		signatorySvc.saveSignatories(faas)
+		signatorySvc.saveSignatories(faas.signatories)
 		saveBackTaxes(faas)
 		return faas;	
 	}
@@ -642,6 +643,7 @@ class FAASService
 
 	void validateSignatories(faas){
 		def appraiser = getSignatory(faas, 'appraiser')
+		println 'appraiser -> ' + appraiser
 		utilSvc.required('Appraiser', appraiser)
 		utilSvc.required('Appraiser', appraiser.name)
 		utilSvc.required('Appraiser Date Signed', appraiser.dtsigned)

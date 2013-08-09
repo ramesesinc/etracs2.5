@@ -21,8 +21,6 @@ public class ConsolidationPage extends javax.swing.JPanel {
     /** Creates new form SubdivisionPage */
     public ConsolidationPage() {
         initComponents();
-        infoTab.setMnemonicAt(0, 'c');
-        infoTab.setMnemonicAt(1, 's');
         consolidatedTab.setMnemonicAt(0, 'l');
         consolidatedTab.setMnemonicAt(1, 'r');
     }
@@ -34,7 +32,14 @@ public class ConsolidationPage extends javax.swing.JPanel {
      */
     // <editor-fold defaultstate="collapsed" desc=" Generated Code ">//GEN-BEGIN:initComponents
     private void initComponents() {
-        jPanel1 = new javax.swing.JPanel();
+        jPanel9 = new javax.swing.JPanel();
+        jPanel8 = new javax.swing.JPanel();
+        xFormPanel1 = new com.rameses.rcp.control.XFormPanel();
+        xLabel5 = new com.rameses.rcp.control.XLabel();
+        xLabel9 = new com.rameses.rcp.control.XLabel();
+        xFormPanel2 = new com.rameses.rcp.control.XFormPanel();
+        xLabel13 = new com.rameses.rcp.control.XLabel();
+        xLabel7 = new com.rameses.rcp.control.XLabel();
         consolidatedTab = new javax.swing.JTabbedPane();
         jPanel4 = new javax.swing.JPanel();
         jPanel5 = new javax.swing.JPanel();
@@ -46,7 +51,7 @@ public class ConsolidationPage extends javax.swing.JPanel {
         xDataTable1 = new com.rameses.rcp.control.XDataTable();
         jPanel7 = new javax.swing.JPanel();
         xDataTable2 = new com.rameses.rcp.control.XDataTable();
-        infoTab = new javax.swing.JTabbedPane();
+        jPanel1 = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
         formPanel3 = new com.rameses.rcp.util.FormPanel();
         xLabel2 = new com.rameses.rcp.control.XLabel();
@@ -56,7 +61,6 @@ public class ConsolidationPage extends javax.swing.JPanel {
         xDateField8 = new com.rameses.rcp.control.XDateField();
         xNumberField1 = new com.rameses.rcp.control.XNumberField();
         xComboBox1 = new com.rameses.rcp.control.XComboBox();
-        xCheckBox1 = new com.rameses.rcp.control.XCheckBox();
         formPanel4 = new com.rameses.rcp.util.FormPanel();
         xLookupField5 = new com.rameses.rcp.control.XLookupField();
         xTextField1 = new com.rameses.rcp.control.XTextField();
@@ -65,32 +69,65 @@ public class ConsolidationPage extends javax.swing.JPanel {
         xTextField6 = new com.rameses.rcp.control.XTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
         xTextArea1 = new com.rameses.rcp.control.XTextArea();
-        jPanel2 = new javax.swing.JPanel();
-        formPanel5 = new com.rameses.rcp.util.FormPanel();
-        formPanel17 = new com.rameses.rcp.util.FormPanel();
-        xLookupField1 = new com.rameses.rcp.control.XLookupField();
-        xDateField10 = new com.rameses.rcp.control.XDateField();
-        formPanel18 = new com.rameses.rcp.util.FormPanel();
-        formPanel19 = new com.rameses.rcp.util.FormPanel();
-        xLookupField2 = new com.rameses.rcp.control.XLookupField();
-        xDateField11 = new com.rameses.rcp.control.XDateField();
-        formPanel20 = new com.rameses.rcp.util.FormPanel();
-        formPanel21 = new com.rameses.rcp.util.FormPanel();
-        xLookupField3 = new com.rameses.rcp.control.XLookupField();
-        xDateField12 = new com.rameses.rcp.control.XDateField();
-        formPanel22 = new com.rameses.rcp.util.FormPanel();
-        formPanel23 = new com.rameses.rcp.util.FormPanel();
-        xLookupField4 = new com.rameses.rcp.control.XLookupField();
-        xDateField13 = new com.rameses.rcp.control.XDateField();
-        jPanel8 = new javax.swing.JPanel();
-        xFormPanel1 = new com.rameses.rcp.control.XFormPanel();
-        xLabel5 = new com.rameses.rcp.control.XLabel();
-        xLabel9 = new com.rameses.rcp.control.XLabel();
-        xFormPanel2 = new com.rameses.rcp.control.XFormPanel();
-        xLabel13 = new com.rameses.rcp.control.XLabel();
-        xLabel7 = new com.rameses.rcp.control.XLabel();
+        xDataTable3 = new com.rameses.rcp.control.XDataTable();
 
-        setLayout(new java.awt.BorderLayout());
+        jPanel9.setLayout(new java.awt.BorderLayout());
+
+        jPanel9.setPreferredSize(new java.awt.Dimension(255, 80));
+        com.rameses.rcp.control.border.XTitledBorder xTitledBorder1 = new com.rameses.rcp.control.border.XTitledBorder();
+        xTitledBorder1.setTitle("New RPU Information");
+        jPanel8.setBorder(xTitledBorder1);
+        jPanel8.setPreferredSize(new java.awt.Dimension(0, 75));
+
+        xLabel5.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(153, 153, 153)));
+        xLabel5.setCaption("Total Area (ha)");
+        xLabel5.setCaptionWidth(110);
+        xLabel5.setExpression("#{consolidation.newrpu.totalareaha}");
+        xLabel5.setPreferredSize(new java.awt.Dimension(0, 20));
+        xFormPanel1.add(xLabel5);
+
+        xLabel9.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(153, 153, 153)));
+        xLabel9.setCaption("Total Area (sqm)");
+        xLabel9.setCaptionWidth(110);
+        xLabel9.setExpression("#{consolidation.newrpu.totalareasqm}");
+        xLabel9.setPreferredSize(new java.awt.Dimension(0, 20));
+        xFormPanel1.add(xLabel9);
+
+        xLabel13.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(153, 153, 153)));
+        xLabel13.setCaption("New RY");
+        xLabel13.setCaptionWidth(70);
+        xLabel13.setExpression("#{consolidation.ry}");
+        xLabel13.setPreferredSize(new java.awt.Dimension(0, 20));
+        xFormPanel2.add(xLabel13);
+
+        xLabel7.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(153, 153, 153)));
+        xLabel7.setCaption("New PIN");
+        xLabel7.setCaptionWidth(70);
+        xLabel7.setExpression("#{consolidation.newrpu.fullpin}");
+        xLabel7.setPreferredSize(new java.awt.Dimension(0, 20));
+        xFormPanel2.add(xLabel7);
+
+        org.jdesktop.layout.GroupLayout jPanel8Layout = new org.jdesktop.layout.GroupLayout(jPanel8);
+        jPanel8.setLayout(jPanel8Layout);
+        jPanel8Layout.setHorizontalGroup(
+            jPanel8Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(jPanel8Layout.createSequentialGroup()
+                .addContainerGap()
+                .add(xFormPanel2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 330, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(xFormPanel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 294, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(489, Short.MAX_VALUE))
+        );
+        jPanel8Layout.setVerticalGroup(
+            jPanel8Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(jPanel8Layout.createSequentialGroup()
+                .add(xFormPanel2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 47, Short.MAX_VALUE)
+                .add(41, 41, 41))
+            .add(jPanel8Layout.createSequentialGroup()
+                .add(xFormPanel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+        jPanel9.add(jPanel8, java.awt.BorderLayout.NORTH);
 
         jPanel5.setLayout(new java.awt.BorderLayout());
 
@@ -119,8 +156,8 @@ public class ConsolidationPage extends javax.swing.JPanel {
 
         jPanel5.add(formPanel16, java.awt.BorderLayout.EAST);
 
-        xLabel1.setForeground(new java.awt.Color(153, 0, 0));
         xLabel1.setFont(new java.awt.Font("Arial", 1, 11));
+        xLabel1.setForeground(new java.awt.Color(153, 0, 0));
         xLabel1.setName("errorMsg");
         jPanel5.add(xLabel1, java.awt.BorderLayout.CENTER);
 
@@ -133,7 +170,7 @@ public class ConsolidationPage extends javax.swing.JPanel {
         xDataTable1.setHandler("landListHandler");
         xDataTable1.setImmediate(true);
         xDataTable1.setName("selectedLand");
-        xDataTable1.setShowRowHeader(true);
+        xDataTable1.setPreferredSize(new java.awt.Dimension(0, 0));
 
         org.jdesktop.layout.GroupLayout jPanel6Layout = new org.jdesktop.layout.GroupLayout(jPanel6);
         jPanel6.setLayout(jPanel6Layout);
@@ -141,21 +178,21 @@ public class ConsolidationPage extends javax.swing.JPanel {
             jPanel6Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(jPanel6Layout.createSequentialGroup()
                 .addContainerGap()
-                .add(xDataTable1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 746, Short.MAX_VALUE)
+                .add(xDataTable1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 1108, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel6Layout.setVerticalGroup(
             jPanel6Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanel6Layout.createSequentialGroup()
                 .addContainerGap()
-                .add(xDataTable1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 225, Short.MAX_VALUE))
+                .add(xDataTable1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 81, Short.MAX_VALUE))
         );
 
         org.jdesktop.layout.GroupLayout jPanel4Layout = new org.jdesktop.layout.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
         jPanel4Layout.setHorizontalGroup(
             jPanel4Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(jPanel5, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 766, Short.MAX_VALUE)
+            .add(jPanel5, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 1128, Short.MAX_VALUE)
             .add(jPanel6, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         jPanel4Layout.setVerticalGroup(
@@ -179,7 +216,7 @@ public class ConsolidationPage extends javax.swing.JPanel {
         xDataTable2.setHandler("affectedrpuListHandler");
         xDataTable2.setImmediate(true);
         xDataTable2.setName("selectedAffectedRpu");
-        xDataTable2.setShowRowHeader(true);
+        xDataTable2.setPreferredSize(new java.awt.Dimension(0, 0));
 
         org.jdesktop.layout.GroupLayout jPanel7Layout = new org.jdesktop.layout.GroupLayout(jPanel7);
         jPanel7.setLayout(jPanel7Layout);
@@ -187,17 +224,26 @@ public class ConsolidationPage extends javax.swing.JPanel {
             jPanel7Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(jPanel7Layout.createSequentialGroup()
                 .addContainerGap()
-                .add(xDataTable2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 746, Short.MAX_VALUE)
+                .add(xDataTable2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 1108, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel7Layout.setVerticalGroup(
             jPanel7Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(jPanel7Layout.createSequentialGroup()
                 .addContainerGap()
-                .add(xDataTable2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 243, Short.MAX_VALUE)
+                .add(xDataTable2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 99, Short.MAX_VALUE)
                 .addContainerGap())
         );
         consolidatedTab.addTab("Real Property Units Affected by the Consolidation", jPanel7);
+
+        jPanel9.add(consolidatedTab, java.awt.BorderLayout.CENTER);
+
+        jPanel1.setLayout(new java.awt.BorderLayout());
+
+        com.rameses.rcp.control.border.XTitledBorder xTitledBorder2 = new com.rameses.rcp.control.border.XTitledBorder();
+        xTitledBorder2.setTitle("Consolidation Information");
+        jPanel3.setBorder(xTitledBorder2);
+        jPanel3.setPreferredSize(new java.awt.Dimension(0, 220));
 
         formPanel3.setCaptionWidth(95);
         xLabel2.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(153, 153, 153)));
@@ -253,14 +299,6 @@ public class ConsolidationPage extends javax.swing.JPanel {
         xComboBox1.setRequired(true);
         formPanel3.add(xComboBox1);
 
-        xCheckBox1.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
-        xCheckBox1.setCaption(" ");
-        xCheckBox1.setCaptionWidth(110);
-        xCheckBox1.setMargin(new java.awt.Insets(0, 0, 0, 0));
-        xCheckBox1.setName("consolidation.autonumber");
-        xCheckBox1.setText(" Auto-number");
-        formPanel3.add(xCheckBox1);
-
         formPanel4.setCaptionWidth(110);
         xLookupField5.setCaption("Taxpayer");
         xLookupField5.setCaptionWidth(125);
@@ -312,262 +350,85 @@ public class ConsolidationPage extends javax.swing.JPanel {
 
         formPanel4.add(jScrollPane1);
 
+        com.rameses.rcp.control.border.XTitledBorder xTitledBorder3 = new com.rameses.rcp.control.border.XTitledBorder();
+        xTitledBorder3.setTitle("Signatory Information");
+        xDataTable3.setBorder(xTitledBorder3);
+        xDataTable3.setColumns(new com.rameses.rcp.common.Column[]{
+            new com.rameses.rcp.common.Column("type", "Signatory", 90, 0, 0, false, true, true, false, null, new com.rameses.rcp.common.TextColumnHandler()),
+            new com.rameses.rcp.common.Column(null, "Name", 200, 0, 0, false, true, true, true, null, new com.rameses.rcp.common.LookupColumnHandler("#{item.name}", "lookupSignatory")),
+            new com.rameses.rcp.common.Column("dtsigned", "Date", 90, 0, 0, false, true, true, true, null, new com.rameses.rcp.common.DateColumnHandler("yyyy-MM-dd", "yyyy-MM-dd", null))
+        });
+        xDataTable3.setHandler("signatoryListHandler");
+        xDataTable3.setName("selectedSignatory");
+
         org.jdesktop.layout.GroupLayout jPanel3Layout = new org.jdesktop.layout.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
-                .add(formPanel3, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 350, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(formPanel3, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 301, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(formPanel4, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 390, Short.MAX_VALUE)
+                .add(formPanel4, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 374, Short.MAX_VALUE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(xDataTable3, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 422, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanel3Layout.createSequentialGroup()
+                .add(jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
+                    .add(org.jdesktop.layout.GroupLayout.LEADING, xDataTable3, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 190, Short.MAX_VALUE)
+                    .add(formPanel4, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .add(1786, 1786, 1786))
             .add(jPanel3Layout.createSequentialGroup()
-                .add(formPanel4, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .add(formPanel3, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 201, Short.MAX_VALUE)
-        );
-        infoTab.addTab("Consolidation Information", jPanel3);
-
-        formPanel17.setOrientation(com.rameses.rcp.constant.UIConstants.HORIZONTAL);
-        formPanel17.setPadding(new java.awt.Insets(1, 1, 1, 1));
-        formPanel17.setShowCaption(false);
-        xLookupField1.setCaption("Appraised By");
-        xLookupField1.setCaptionWidth(100);
-        xLookupField1.setCellPadding(new java.awt.Insets(0, 0, 0, 5));
-        xLookupField1.setExpression("#{consolidation.appraiser.name}");
-        xLookupField1.setHandler("lookupAppraiser");
-        xLookupField1.setName("consolidation.appraiser");
-        xLookupField1.setPreferredSize(new java.awt.Dimension(220, 20));
-        xLookupField1.setRequired(true);
-        formPanel17.add(xLookupField1);
-
-        xDateField10.setCaption("Date");
-        xDateField10.setCaptionWidth(50);
-        xDateField10.setCellPadding(new java.awt.Insets(0, 0, 0, 5));
-        xDateField10.setName("consolidation.appraiser.dtsigned");
-        xDateField10.setPreferredSize(new java.awt.Dimension(90, 20));
-        xDateField10.setRequired(true);
-        formPanel17.add(xDateField10);
-
-        formPanel5.add(formPanel17);
-
-        formPanel18.setOrientation(com.rameses.rcp.constant.UIConstants.HORIZONTAL);
-        formPanel18.setPadding(new java.awt.Insets(0, 0, 0, 0));
-        formPanel18.setShowCaption(false);
-
-        formPanel19.setOrientation(com.rameses.rcp.constant.UIConstants.HORIZONTAL);
-        formPanel19.setPadding(new java.awt.Insets(1, 1, 1, 1));
-        formPanel19.setShowCaption(false);
-        xLookupField2.setCaption("Recommended By");
-        xLookupField2.setCaptionWidth(100);
-        xLookupField2.setCellPadding(new java.awt.Insets(0, 0, 0, 5));
-        xLookupField2.setExpression("#{consolidation.recommender.name}");
-        xLookupField2.setHandler("lookupRecommender");
-        xLookupField2.setName("consolidation.recommender");
-        xLookupField2.setPreferredSize(new java.awt.Dimension(220, 20));
-        formPanel19.add(xLookupField2);
-
-        xDateField11.setCaption("Date");
-        xDateField11.setCaptionWidth(50);
-        xDateField11.setCellPadding(new java.awt.Insets(0, 0, 0, 5));
-        xDateField11.setName("consolidation.recommender.dtsigned");
-        xDateField11.setPreferredSize(new java.awt.Dimension(90, 20));
-        formPanel19.add(xDateField11);
-
-        formPanel18.add(formPanel19);
-
-        formPanel5.add(formPanel18);
-
-        formPanel20.setOrientation(com.rameses.rcp.constant.UIConstants.HORIZONTAL);
-        formPanel20.setPadding(new java.awt.Insets(0, 0, 0, 0));
-        formPanel20.setShowCaption(false);
-
-        formPanel21.setOrientation(com.rameses.rcp.constant.UIConstants.HORIZONTAL);
-        formPanel21.setPadding(new java.awt.Insets(1, 1, 1, 1));
-        formPanel21.setShowCaption(false);
-        xLookupField3.setCaption("Taxmapped By");
-        xLookupField3.setCaptionWidth(100);
-        xLookupField3.setCellPadding(new java.awt.Insets(0, 0, 0, 5));
-        xLookupField3.setExpression("#{consolidation.taxmapper.name}");
-        xLookupField3.setHandler("lookupTaxmapper");
-        xLookupField3.setName("consolidation.taxmapper");
-        xLookupField3.setPreferredSize(new java.awt.Dimension(220, 20));
-        formPanel21.add(xLookupField3);
-
-        xDateField12.setCaption("Date");
-        xDateField12.setCaptionWidth(50);
-        xDateField12.setCellPadding(new java.awt.Insets(0, 0, 0, 5));
-        xDateField12.setName("consolidation.taxmapper.dtsigned");
-        xDateField12.setPreferredSize(new java.awt.Dimension(90, 20));
-        formPanel21.add(xDateField12);
-
-        formPanel20.add(formPanel21);
-
-        formPanel5.add(formPanel20);
-
-        formPanel22.setOrientation(com.rameses.rcp.constant.UIConstants.HORIZONTAL);
-        formPanel22.setPadding(new java.awt.Insets(0, 0, 0, 0));
-        formPanel22.setShowCaption(false);
-
-        formPanel23.setOrientation(com.rameses.rcp.constant.UIConstants.HORIZONTAL);
-        formPanel23.setPadding(new java.awt.Insets(1, 1, 1, 1));
-        formPanel23.setShowCaption(false);
-        xLookupField4.setCaption("Approved By");
-        xLookupField4.setCaptionWidth(100);
-        xLookupField4.setCellPadding(new java.awt.Insets(0, 0, 0, 5));
-        xLookupField4.setExpression("#{consolidation.approver.name}");
-        xLookupField4.setHandler("lookupApprover");
-        xLookupField4.setName("consolidation.approver");
-        xLookupField4.setPreferredSize(new java.awt.Dimension(220, 20));
-        xLookupField4.setRequired(true);
-        formPanel23.add(xLookupField4);
-
-        xDateField13.setCaption("Date");
-        xDateField13.setCaptionWidth(50);
-        xDateField13.setCellPadding(new java.awt.Insets(0, 0, 0, 5));
-        xDateField13.setName("consolidation.approver.dtsigned");
-        xDateField13.setPreferredSize(new java.awt.Dimension(90, 20));
-        xDateField13.setRequired(true);
-        formPanel23.add(xDateField13);
-
-        formPanel22.add(formPanel23);
-
-        formPanel5.add(formPanel22);
-
-        org.jdesktop.layout.GroupLayout jPanel2Layout = new org.jdesktop.layout.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
-                .add(formPanel5, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 746, Short.MAX_VALUE)
+                .add(formPanel3, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 204, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(jPanel2Layout.createSequentialGroup()
+        jPanel1.add(jPanel3, java.awt.BorderLayout.CENTER);
+
+        org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(this);
+        this.setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .add(formPanel5, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 121, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(69, Short.MAX_VALUE))
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
+                    .add(org.jdesktop.layout.GroupLayout.LEADING, jPanel9, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 1133, Short.MAX_VALUE)
+                    .add(org.jdesktop.layout.GroupLayout.LEADING, jPanel1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 1133, Short.MAX_VALUE))
+                .addContainerGap())
         );
-        infoTab.addTab("Signatories", jPanel2);
-
-        com.rameses.rcp.control.border.XTitledBorder xTitledBorder1 = new com.rameses.rcp.control.border.XTitledBorder();
-        xTitledBorder1.setTitle("New RPU Information");
-        jPanel8.setBorder(xTitledBorder1);
-
-        xLabel5.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(153, 153, 153)));
-        xLabel5.setCaption("Total Area (ha)");
-        xLabel5.setCaptionWidth(110);
-        xLabel5.setExpression("#{consolidation.newrpu.totalareaha}");
-        xLabel5.setPreferredSize(new java.awt.Dimension(0, 20));
-        xFormPanel1.add(xLabel5);
-
-        xLabel9.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(153, 153, 153)));
-        xLabel9.setCaption("Total Area (sqm)");
-        xLabel9.setCaptionWidth(110);
-        xLabel9.setExpression("#{consolidation.newrpu.totalareasqm}");
-        xLabel9.setPreferredSize(new java.awt.Dimension(0, 20));
-        xFormPanel1.add(xLabel9);
-
-        xLabel13.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(153, 153, 153)));
-        xLabel13.setCaption("New RY");
-        xLabel13.setCaptionWidth(70);
-        xLabel13.setExpression("#{consolidation.ry}");
-        xLabel13.setPreferredSize(new java.awt.Dimension(0, 20));
-        xFormPanel2.add(xLabel13);
-
-        xLabel7.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(153, 153, 153)));
-        xLabel7.setCaption("New PIN");
-        xLabel7.setCaptionWidth(70);
-        xLabel7.setExpression("#{consolidation.newrpu.fullpin}");
-        xLabel7.setPreferredSize(new java.awt.Dimension(0, 20));
-        xFormPanel2.add(xLabel7);
-
-        org.jdesktop.layout.GroupLayout jPanel8Layout = new org.jdesktop.layout.GroupLayout(jPanel8);
-        jPanel8.setLayout(jPanel8Layout);
-        jPanel8Layout.setHorizontalGroup(
-            jPanel8Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanel8Layout.createSequentialGroup()
+        layout.setVerticalGroup(
+            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(layout.createSequentialGroup()
                 .addContainerGap()
-                .add(xFormPanel2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 343, Short.MAX_VALUE)
+                .add(jPanel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(xFormPanel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 398, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(jPanel9, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 224, Short.MAX_VALUE)
                 .addContainerGap())
         );
-        jPanel8Layout.setVerticalGroup(
-            jPanel8Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(jPanel8Layout.createSequentialGroup()
-                .add(jPanel8Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING, false)
-                    .add(org.jdesktop.layout.GroupLayout.LEADING, xFormPanel2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .add(org.jdesktop.layout.GroupLayout.LEADING, xFormPanel1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .add(41, 41, 41))
-        );
-
-        org.jdesktop.layout.GroupLayout jPanel1Layout = new org.jdesktop.layout.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
-                    .add(org.jdesktop.layout.GroupLayout.LEADING, consolidatedTab, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 771, Short.MAX_VALUE)
-                    .add(jPanel8, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .add(infoTab, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 771, Short.MAX_VALUE))
-                .addContainerGap())
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .add(infoTab, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(jPanel8, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 81, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(consolidatedTab, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 293, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-        add(jPanel1, java.awt.BorderLayout.CENTER);
-
     }// </editor-fold>//GEN-END:initComponents
     
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTabbedPane consolidatedTab;
     private com.rameses.rcp.util.FormPanel formPanel16;
-    private com.rameses.rcp.util.FormPanel formPanel17;
-    private com.rameses.rcp.util.FormPanel formPanel18;
-    private com.rameses.rcp.util.FormPanel formPanel19;
-    private com.rameses.rcp.util.FormPanel formPanel20;
-    private com.rameses.rcp.util.FormPanel formPanel21;
-    private com.rameses.rcp.util.FormPanel formPanel22;
-    private com.rameses.rcp.util.FormPanel formPanel23;
     private com.rameses.rcp.util.FormPanel formPanel3;
     private com.rameses.rcp.util.FormPanel formPanel4;
-    private com.rameses.rcp.util.FormPanel formPanel5;
-    private javax.swing.JTabbedPane infoTab;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
     private javax.swing.JPanel jPanel7;
     private javax.swing.JPanel jPanel8;
+    private javax.swing.JPanel jPanel9;
     private javax.swing.JScrollPane jScrollPane1;
-    private com.rameses.rcp.control.XCheckBox xCheckBox1;
     private com.rameses.rcp.control.XComboBox xComboBox1;
     private com.rameses.rcp.control.XComboBox xComboBox2;
     private com.rameses.rcp.control.XDataTable xDataTable1;
     private com.rameses.rcp.control.XDataTable xDataTable2;
-    private com.rameses.rcp.control.XDateField xDateField10;
-    private com.rameses.rcp.control.XDateField xDateField11;
-    private com.rameses.rcp.control.XDateField xDateField12;
-    private com.rameses.rcp.control.XDateField xDateField13;
+    private com.rameses.rcp.control.XDataTable xDataTable3;
     private com.rameses.rcp.control.XDateField xDateField8;
     private com.rameses.rcp.control.XDecimalField xDecimalField1;
     private com.rameses.rcp.control.XDecimalField xDecimalField2;
@@ -579,10 +440,6 @@ public class ConsolidationPage extends javax.swing.JPanel {
     private com.rameses.rcp.control.XLabel xLabel5;
     private com.rameses.rcp.control.XLabel xLabel7;
     private com.rameses.rcp.control.XLabel xLabel9;
-    private com.rameses.rcp.control.XLookupField xLookupField1;
-    private com.rameses.rcp.control.XLookupField xLookupField2;
-    private com.rameses.rcp.control.XLookupField xLookupField3;
-    private com.rameses.rcp.control.XLookupField xLookupField4;
     private com.rameses.rcp.control.XLookupField xLookupField5;
     private com.rameses.rcp.control.XNumberField xNumberField1;
     private com.rameses.rcp.control.XTextArea xTextArea1;
