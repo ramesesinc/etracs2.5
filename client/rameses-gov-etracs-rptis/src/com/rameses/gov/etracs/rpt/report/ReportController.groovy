@@ -48,7 +48,7 @@ abstract class ReportController
         def parsedate = dtSvc.parseCurrentDate();
         entity.year = parsedate.year;
         entity.qtr  = parsedate.qtr;
-        entity.month = svc.getMonths(null).find{ it.month == parsedate.month }
+        entity.month = getMonthsByQtr().find{it.index == parsedate.month}
         mode = 'init'
         return initReport();
     }
@@ -87,8 +87,12 @@ abstract class ReportController
         return [1,2,3,4]
     }
         
-    List getMonths() {
-        return svc.getMonths( entity.qtr )
+    List getMonthsByQtr() {
+        return dtSvc.getMonthsByQtr( entity.qtr );
+    }
+    
+    List getMonths(){
+        return getMonthsByQtr();
     }
     
     List getBarangays(){

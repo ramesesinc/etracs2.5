@@ -31,9 +31,10 @@ class RPTReportService
 
     @ProxyMethod
     public def getApproveFaasListing(params){
+    	println 'params -> ' + params 
     	params.lguid = (params.lguid ? params.lguid : '%')
     	params.barangayid = (params.barangayid ? params.barangayid : '%')
-    	params.month = (params.month ? params.month.month : '%')
+    	params.month = (params.month ? params.month.index : '%')
 
 		def list = em.sqlContext.createNamedQuery( 'rptreport:getApproveFaasListing' )
 						.setParameters( params )
@@ -128,14 +129,14 @@ class RPTReportService
 	public def generatePdapRpta100(params){
 		def year = dtSvc.serverYear
 
-		if (!params.month || params.month.month <= 0 ) 
+		if (!params.month || params.month.index <= 0 ) 
 			throw new Exception('Month is required.')
 
 		def title = 'ASSESSMENT AND COLLECTION MONTHLY STATISTICAL SUMMARY'
-		def period = 'FOR THE MONTH OF ' + util.getMonthName( params.month.month ) + ', ' + year 
+		def period = 'FOR THE MONTH OF ' + util.getMonthName( params.month.index ) + ', ' + year 
 		def periodtype = 'MONTH'  
 		
-		def txntimestamp = util.calculateEndingTimeStamp( year, params.month.qtr, params.month.month )
+		def txntimestamp = util.calculateEndingTimeStamp( year, params.month.qtr, params.month.index )
 		def reportdata   = em.sqlContext.createNamedQuery('rptreport:getRDAP-RPTA-100')
 								.setParameter('txntimestamp', txntimestamp)
 								.resultList.each{
@@ -170,9 +171,9 @@ class RPTReportService
 		def period 		= 'FOR THE ' + util.getQuarterName( params.qtr ) + ' OF ' + params.year 
 		def periodtype 	= 'QUARTER'
 
-		if( params.month && params.month.month > 0 ) {
+		if( params.month && params.month.index > 0 ) {
 			title = 'MONTHLY ACCOMPLISHMENT REPORT ON REAL PROPERTY ASSESSMENTS'
-			period = 'FOR THE MONTH OF ' + util.getMonthName( params.month.month ) + ', ' + params.year 
+			period = 'FOR THE MONTH OF ' + util.getMonthName( params.month.index ) + ', ' + params.year 
 			periodtype = 'MONTH' 
 		}
 		
@@ -256,9 +257,9 @@ class RPTReportService
 		def title 		= 'QUARTERLY COMPARATIVE DATA ON ASSESSED VALUE OF REAL PROPERTY'
 		def period 		= 'FOR THE ' + util.getQuarterName( params.qtr ) + ' OF ' + params.year 
 		def periodtype 	= 'QUARTER'
-		if( params.month  && params.month.month > 0 ) {
+		if( params.month  && params.month.index > 0 ) {
 			title = 'MONTHLY COMPARATIVE DATA ON ASSESSED VALUE OF REAL PROPERTY'
-			period = 'FOR THE MONTH OF ' + util.getMonthName( params.month.month ) + ', ' + params.year 
+			period = 'FOR THE MONTH OF ' + util.getMonthName( params.month.index ) + ', ' + params.year 
 			periodtype = 'MONTH' 
 		}
 		
@@ -348,9 +349,9 @@ class RPTReportService
 		def title 		= 'QUARTERLY COMPARATIVE DATA ON NUMBER OF RPUs'
 		def period 		= 'FOR THE ' + util.getQuarterName( params.qtr ) + ' OF ' + params.year 
 		def periodtype 	= 'QUARTER'
-		if( params.month && params.month.month > 0 ) {
+		if( params.month && params.month.index > 0 ) {
 			title = 'MONTHLY COMPARATIVE DATA ON NUMBER OF RPUs'
-			period = 'FOR THE MONTH OF ' + util.getMonthName( params.month.month ) + ', ' + params.year 
+			period = 'FOR THE MONTH OF ' + util.getMonthName( params.month.index ) + ', ' + params.year 
 			periodtype = 'MONTH' 
 		}
 		
@@ -440,9 +441,9 @@ class RPTReportService
 		def title 		= 'QUARTERLY COMPARATIVE DATA ON MARKET VALUE OF REAL PROPERTY ASSESSMENT'
 		def period 		= 'FOR THE ' + util.getQuarterName( params.qtr ) + ' OF ' + params.year 
 		def periodtype 	= 'QUARTER'
-		if( params.month && params.month.month > 0 ) {
+		if( params.month && params.month.index > 0 ) {
 			title = 'MONTHLY COMPARATIVE DATA ON MARKET VALUE OF REAL PROPERTY ASSESSMENT'
-			period = 'FOR THE MONTH OF ' + util.getMonthName( params.month.month ) + ', ' + params.year 
+			period = 'FOR THE MONTH OF ' + util.getMonthName( params.month.index ) + ', ' + params.year 
 			periodtype = 'MONTH' 
 		}
 		
@@ -517,9 +518,9 @@ class RPTReportService
 		def title 		= 'QUARTERLY REPORT ON REAL PROPERTY ASSESSMENTS'
 		def period 		= util.buildQuarterlyPeriod( params.year, params.qtr )
 		def periodtype 	= 'QUARTER'
-		if( params.month && params.month.month > 0 ) {
+		if( params.month && params.month.index > 0 ) {
 			title = 'MONTHLY REPORT ON REAL PROPERTY ASSESSMENTS'
-			period = util.getMonthName( params.month.month ) + ', ' + params.year 
+			period = util.getMonthName( params.month.index ) + ', ' + params.year 
 			periodtype = 'MONTH' 
 		}
 		
@@ -646,6 +647,10 @@ class RPTReportService
     *
     *--------------------------------------------------------------------*/
 
+    @ProxyMethod
+    public def buildPeriod( params ) {
+    	return util.buildPeriod(params)
+    }
     @ProxyMethod
     public def getClassifications(){
     	return pcSvc.lookupClassifications([:])

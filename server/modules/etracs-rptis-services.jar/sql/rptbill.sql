@@ -2,11 +2,9 @@
 SELECT DISTINCT rl.objid
 FROM rptledger rl
 	INNER JOIN faas f ON rl.faasid = f.objid 
-	INNER JOIN rptledgeritem rli ON rl.objid = rli.rptledgerid
 WHERE f.taxpayerid = $P{taxpayerid}
  AND rl.state = 'APPROVED'
  AND (rl.nextbilldate IS NULL OR rl.nextbilldate <= NOW() OR rl.lastitemyear < $P{billtoyear})
- AND rli.state = 'OPEN'  
 
 
 [getOpenLedgerItemByLedgerId]

@@ -32,6 +32,7 @@ public class Main
         roles.put("RPT.APPRAISER", null);
         roles.put("RPT.CERTIFICATION_ISSUER", null);
         roles.put("RPT.RULE_AUTHOR", null);
+        roles.put("RPT.LANDTAX", null);
         OsirisTestPlatform.runTest(env, roles);         
     }
 

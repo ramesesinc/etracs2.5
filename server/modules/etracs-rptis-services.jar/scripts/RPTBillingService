@@ -387,14 +387,13 @@ public class RPTBillingService
 						.singleResult
 			)
 			if (ledger.lastitemyear < bill.billtoyear ){
-				ledgerSvc.insertLedgerItems(it, ledger.lastitemyear + 1, bill.billtoyear)
+				ledgerSvc.insertLedgerItems(ledger, ledger.lastitemyear + 1, bill.billtoyear)
 			}
 			ledger.items = em.sqlContext.createNamedQuery('rptbill:getOpenLedgerItemByLedgerId')
 							.setParameter('ledgerid', ledger.objid)
 							.resultList.each{
 								it.basic = it.basic - it.basicpaid
 								it.sef = it.sef - it.sefpaid
-								println 'item.barangayid -> '  + it.barangayid 
 							}
 		}
 		return ledgers
