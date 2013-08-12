@@ -33,6 +33,8 @@
             <folder id="rpt" caption="Assessor"/>
             <folder id="landtax" caption="Land Tax"/>
         </folder>
+        <folder id="rulemgmt" caption="Rule Management">
+        </folder>
     </folder>
 </folders>
 

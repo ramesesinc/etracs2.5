@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <workunit>
     <invokers>
-        <invoker type="cancelannotation:create" action="init" caption="FAAS Cancel Cancel Annotation (New)" target="window"  />
+        <invoker type="cancelannotation:create" action="init" caption="FAAS Cancel Cancel Annotation (New)" target="window"  
+            role="APPRAISER" permission="cancelannotation.create" />
         <invoker type="cancelannotation:open" action="open" caption="FAAS Cancel Annotation" target="window"  />
         
    </invokers>
@@ -28,11 +29,11 @@
         
         <page name="default" title="Cancel Annotation (Draft)">
             <transition caption="Close"  to="end"      mnemonic="c" icon="images/toolbars/cancel.png" visibleWhen="#{mode == 'read'}"/>
-            <transition caption="Edit"   to="back-to-default" action="edit"  name="edit" mnemonic="e" shortcut="ctrl E" icon="images/toolbars/edit.png"  visibleWhen="#{mode == 'read'}" />
+            <transition caption="Edit"   to="back-to-default" action="edit"  name="edit" mnemonic="e" shortcut="ctrl E" icon="images/toolbars/edit.png"  visibleWhen="#{mode == 'read'}" role="APPRAISER"/>
             <transition caption="Cancel" to="back-to-default" action="cancelEdit" name="cancel" mnemonic="c" icon="images/toolbars/cancel.png" visibleWhen="#{mode != 'read'}"/>
             <transition caption="Save"   to="back-to-default" action="save" name="save" mnemonic="s" shortcut="ctrl S" icon="images/toolbars/save.png"  visibleWhen="#{mode != 'read'}" />
-            <transition caption="Delete" to="delete"  action="delete" confirm="Delete record?"    mnemonic="d" icon="images/toolbars/trash.png"  visibleWhen="#{mode == 'read'}" />
-            <transition caption="Submit" to="forapproval" action="submitCancelAnnotationForApproval"  mnemonic="m"  visibleWhen="#{mode == 'read'}" confirm="Submit Cancel Annotation for approval?"/>
+            <transition caption="Delete" to="delete"  action="delete" confirm="Delete record?"    mnemonic="d" icon="images/toolbars/trash.png"  visibleWhen="#{mode == 'read'}" role="APPRAISER"/>
+            <transition caption="Submit" to="forapproval" action="submitCancelAnnotationForApproval"  mnemonic="m"  visibleWhen="#{mode == 'read'}" confirm="Submit Cancel Annotation for approval?" role="APPRAISER"/>
         </page>
         
         <process name="back-to-default">
@@ -46,11 +47,11 @@
         
         <page name="forapproval" title="Cancel Annotation (For Approval)">
             <transition caption="Close" to="end" mnemonic="c" icon="images/toolbars/cancel.png" visibleWhen="#{mode == 'read'}" />
-            <transition caption="Edit"   to="back-to-forapproval" action="edit" name="edit" mnemonic="e" shortcut="ctrl E" icon="images/toolbars/edit.png"  visibleWhen="#{mode == 'read'}" />
+            <transition caption="Edit"   to="back-to-forapproval" action="edit" name="edit" mnemonic="e" shortcut="ctrl E" icon="images/toolbars/edit.png"  visibleWhen="#{mode == 'read'}" role="APPROVER"/>
             <transition caption="Cancel" to="back-to-forapproval" action="cancelEdit" name="cancel"  mnemonic="c" icon="images/toolbars/cancel.png" visibleWhen="#{mode != 'read'}"/>
             <transition caption="Save"   to="back-to-forapproval" action="save" name="save" mnemonic="s" shortcut="ctrl S" icon="images/toolbars/save.png"  visibleWhen="#{mode != 'read'}" />
-            <transition caption="Disapprove" to="default" action="disapproveCancelAnnotation" mnemonic="d" visibleWhen="#{mode == 'read'}" confirm="Disapprove Subdivision?"/>
-            <transition caption="Approve" to="approved" action="approveCancelAnnotation" mnemonic="v" icon="images/toolbars/approve.png" visibleWhen="#{mode == 'read'}" confirm="Approve Subdivision?"/>
+            <transition caption="Disapprove" to="default" action="disapproveCancelAnnotation" mnemonic="d" visibleWhen="#{mode == 'read'}" confirm="Disapprove cancel annotation?" role="APPROVER"/>
+            <transition caption="Approve" to="approved" action="approveCancelAnnotation" mnemonic="v" icon="images/toolbars/approve.png" visibleWhen="#{mode == 'read'}" confirm="Approve cancel annotation?" role="APPROVER"/>
         </page>
         
         <process name="back-to-forapproval">

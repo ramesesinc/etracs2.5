@@ -1,0 +1,24 @@
+import com.rameses.annotations.*
+import com.rameses.eserver.*;
+import com.rameses.common.*;
+
+class RPTReceiptInterceptor
+{
+	@PersistenceContext('rpt')
+	def em
+
+	@Service('MiscRPUGRService')
+	def grSvc 
+
+
+	@After(pattern="RPTReceiptService.createReceipt") 
+	public void interceptcreateRPTReceipt( evt ) {
+		def receipt = evt.result
+
+		//add formatted items for printing
+		receipt._items = em.sqlContext.createNamedQuery('rptreceipt:getReceiptItemsForPrinting')
+				.setParameter('rptreceiptid', receipt.objid).resultList
+	}
+
+}
+

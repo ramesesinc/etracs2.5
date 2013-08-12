@@ -58,10 +58,10 @@
         
         <page name="default" title="FAAS #{faas.txntype.name} (Interim)">
             <transition caption="Close"  to="end"      mnemonic="c" icon="images/toolbars/cancel.png" visibleWhen="#{mode == 'read'}"/>
-            <transition caption="Edit"   to="back-to-default" action="edit"  name="edit" mnemonic="e" shortcut="ctrl E" icon="images/toolbars/edit.png"  visibleWhen="#{mode == 'read'}" />
+            <transition caption="Edit"   to="back-to-default" action="edit"  name="edit" mnemonic="e" shortcut="ctrl E" icon="images/toolbars/edit.png"  visibleWhen="#{mode == 'read'}" role="APPRAISER" permission="faas.edit"/>
             <transition caption="Cancel" to="back-to-default" action="cancelEdit" name="cancel" mnemonic="c" icon="images/toolbars/cancel.png" visibleWhen="#{mode != 'read'}"/>
             <transition caption="Save"   to="back-to-default" action="save" name="save" mnemonic="s" shortcut="ctrl S" icon="images/toolbars/save.png"  visibleWhen="#{mode != 'read'}" />
-            <transition caption="Delete" to="delete"  action="delete" confirm="Delete record?"    mnemonic="d" icon="images/toolbars/trash.png"  visibleWhen="#{mode == 'read'}" />
+            <transition caption="Delete" to="delete"  action="delete" confirm="Delete record?"    mnemonic="d" icon="images/toolbars/trash.png"  visibleWhen="#{mode == 'read'}" role="APPRAISER" permission="faas.delete"/>
             <transition caption="Submit" to="submit" action="submitFaasForApproval"  mnemonic="m"  visibleWhen="#{mode == 'read'}" confirm="Submit FAAS for approval?"/>
         </page>
         
@@ -83,11 +83,11 @@
         <!-- CITY-->
         <page name="forapproval" title="FAAS #{faas.txntype.name} (For Approval)">
             <transition caption="Close" to="end" mnemonic="c" icon="images/toolbars/cancel.png" visibleWhen="#{mode == 'read'}" />
-            <transition caption="Edit"   to="back-to-forapproval" action="edit" name="edit" mnemonic="e" shortcut="ctrl E" icon="images/toolbars/edit.png"  visibleWhen="#{mode == 'read'}" />
+            <transition caption="Edit"   to="back-to-forapproval" action="edit" name="edit" mnemonic="e" shortcut="ctrl E" icon="images/toolbars/edit.png"  visibleWhen="#{mode == 'read'}" role="APPROVER"/>
             <transition caption="Cancel" to="back-to-forapproval" action="cancelEdit" name="cancel"  mnemonic="c" icon="images/toolbars/cancel.png" visibleWhen="#{mode != 'read'}"/>
             <transition caption="Save"   to="back-to-forapproval" action="save" name="save" mnemonic="s" shortcut="ctrl S" icon="images/toolbars/save.png"  visibleWhen="#{mode != 'read'}" />
-            <transition caption="Disapprove" to="default" action="disapproveFaas" mnemonic="d" visibleWhen="#{mode == 'read'}" confirm="Disapprove FAAS?"/>
-            <transition caption="Approve" to="current" action="approveFaas" mnemonic="v" icon="images/toolbars/approve.png" visibleWhen="#{mode == 'read'}" confirm="Approve FAAS?"/>
+            <transition caption="Disapprove" to="default" action="disapproveFaas" mnemonic="d" visibleWhen="#{mode == 'read'}" confirm="Disapprove FAAS?" role="APPROVER"/>
+            <transition caption="Approve" to="current" action="approveFaas" mnemonic="v" icon="images/toolbars/approve.png" visibleWhen="#{mode == 'read'}" confirm="Approve FAAS?" role="APPROVER" />
         </page>
         
         <process name="back-to-forapproval">
@@ -98,11 +98,11 @@
         <!-- MUNICIPALIY -->
         <page name="forprovsubmission" title="FAAS #{faas.txntype.name} (For Submission to Province)">
             <transition caption="Close"  to="end" mnemonic="c" icon="images/toolbars/cancel.png" visibleWhen="#{mode == 'read'}" />
-            <transition caption="Edit"   to="back-to-prov-submission" action="edit" name="edit" mnemonic="e" shortcut="ctrl E" icon="images/toolbars/edit.png"  visibleWhen="#{mode == 'read'}" />
+            <transition caption="Edit"   to="back-to-prov-submission" action="edit" name="edit" mnemonic="e" shortcut="ctrl E" icon="images/toolbars/edit.png"  visibleWhen="#{mode == 'read'}" role="RECOMMENDER" />
             <transition caption="Cancel" to="back-to-prov-submission" action="cancelEdit" name="cancel"  mnemonic="c" icon="images/toolbars/cancel.png" visibleWhen="#{mode != 'read'}"/>
             <transition caption="Save"   to="back-to-prov-submission" action="save" name="save" mnemonic="s" shortcut="ctrl S" icon="images/toolbars/save.png"  visibleWhen="#{mode != 'read'}" />
-            <transition caption="Disapprove" to="default" action="disapproveFaasSubmissionToProvince"  mnemonic="d" visibleWhen="#{mode == 'read'}" confirm="Disapprove FAAS?"/>
-            <transition caption="Submit to Province" to="provsubmissionapproval" action="submitFaasToProvince" mnemonic="m" visibleWhen="#{mode == 'read'}" confirm="Submit FAAS to province?"/>
+            <transition caption="Disapprove" to="default" action="disapproveFaasSubmissionToProvince"  mnemonic="d" visibleWhen="#{mode == 'read'}" confirm="Disapprove FAAS?" role="RECOMMENDER" permission="faas.disapprove"/>
+            <transition caption="Submit to Province" to="provsubmissionapproval" action="submitFaasToProvince" mnemonic="m" visibleWhen="#{mode == 'read'}" confirm="Submit FAAS to province?" role="RECOMMENDER" permission="faas.submitToProvince"/>
         </page>
         
         <process name="back-to-prov-submission">
@@ -111,19 +111,19 @@
         
         <page name="provsubmissionapproval" title="FAAS #{faas.txntype.name} (For Province Approval)">
             <transition caption="Close" to="end" mnemonic="c" icon="images/toolbars/cancel.png"/>
-            <transition caption="Disapprove" to="forprovsubmission" action="disapproveFaasByProvince"  mnemonic="d" confirm="Disapprove FAAS?"/>
-            <transition caption="Approve" to="current" action="approveFaasByProvince"  mnemonic="v" confirm="Submit FAAS for approval?"/>
+            <transition caption="Disapprove" to="forprovsubmission" action="disapproveFaasByProvince"  mnemonic="d" confirm="Disapprove FAAS?" role="RECOMMENDER" permission="faas.disapprove"/>
+            <transition caption="Approve" to="current" action="approveFaasByProvince"  mnemonic="v" confirm="Approve FAAS?" role="RECOMMENDER" permission="faas.approve"/>
         </page>
         
         
         <!-- PROVINCE -->
         <page name="forprovapproval" title="FAAS #{faas.txntype.name} (Province Approval)">
             <transition caption="Close" to="end" mnemonic="c" icon="images/toolbars/cancel.png" visibleWhen="#{mode == 'read'}" />
-            <transition caption="Edit"   to="back-to-forprovapproval" action="edit" name="edit" mnemonic="e" shortcut="ctrl E" icon="images/toolbars/edit.png"  visibleWhen="#{mode == 'read'}" />
+            <transition caption="Edit"   to="back-to-forprovapproval" action="edit" name="edit" mnemonic="e" shortcut="ctrl E" icon="images/toolbars/edit.png"  visibleWhen="#{mode == 'read'}" role="APPROVER"  />
             <transition caption="Cancel" to="back-to-forprovapproval" action="cancelEdit" name="cancel"  mnemonic="c" icon="images/toolbars/cancel.png" visibleWhen="#{mode != 'read'}"/>
             <transition caption="Save"   to="back-to-forprovapproval" action="save" name="save" mnemonic="s" shortcut="ctrl S" icon="images/toolbars/save.png"  visibleWhen="#{mode != 'read'}" />
-            <transition caption="Disapprove" to="default" action="disapproveFaasByProvince"  mnemonic="d"  visibleWhen="#{mode == 'read'}" confirm="Disapprove FAAS?"/>
-            <transition caption="Approve" to="current" action="approveFaasByProvince"  mnemonic="v" visibleWhen="#{mode == 'read'}" confirm="Approve FAAS?" />
+            <transition caption="Disapprove" to="default" action="disapproveFaasByProvince"  mnemonic="d"  visibleWhen="#{mode == 'read'}" confirm="Disapprove FAAS?" role="APPROVER" permission="faas.disapprove"/>
+            <transition caption="Approve" to="current" action="approveFaasByProvince"  mnemonic="v" visibleWhen="#{mode == 'read'}" confirm="Approve FAAS?" role="APPROVER" permission="faas.approve"/>
         </page>
         
         <process name="back-to-forprovapproval">

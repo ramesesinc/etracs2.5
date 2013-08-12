@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <workunit>
     <invokers>
-        <invoker type="quick_launcher" code="ST01" action="init" caption="Structure" role="MASTER_ENCODER" permission="structure.create"/>
-        <invoker type="structure:create" action="init" caption="Structure" />
-        <invoker type="structure:open" action="open" caption="Structure" />
+        <invoker type="quick_launcher" code="ST01" action="init" caption="Structure" role="ASSESSOR_DATAMGMT" />
+        <invoker type="structure:create" action="init" caption="Structure" role="ASSESSOR_DATAMGMT" />
+        <invoker type="structure:open" action="open" caption="Structure" role="ASSESSOR_DATAMGMT" />
     </invokers>
         
     <code lang="groovy">

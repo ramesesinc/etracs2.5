@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <workunit>
     <invokers>
-        <invoker type="quick_launcher" code="KB01" action="create" caption="Kind of Building" role="MASTER_ENCODER" permission="bldgkind.create"/>
-        <invoker type="bldgkind:create" action="init" caption="Kind of Building" />
-        <invoker type="bldgkind:open" action="open" caption="Kind of Building" />
+        <invoker type="quick_launcher" code="KB01" action="create" caption="Kind of Building" role="ASSESSOR_DATAMGMT" />
+        <invoker type="bldgkind:create" action="init" caption="Kind of Building" role="ASSESSOR_DATAMGMT" />
+        <invoker type="bldgkind:open" action="open" caption="Kind of Building" role="ASSESSOR_DATAMGMT" />
     </invokers>
         
     <code lang="groovy">

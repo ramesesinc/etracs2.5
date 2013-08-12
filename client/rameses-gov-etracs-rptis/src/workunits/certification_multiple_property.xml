@@ -2,13 +2,13 @@
 <workunit extends="rpt_wtemplates/CertificationController.xml">
     <invokers>
         <invoker folderid="/txn/rpt/cert" action="init" caption="Multiple Property" 
-            opener="multiple" index="4" />
+            opener="multiple" index="4" role="CERTIFICATION_ISSUER" permission="certification.multipleproperty"/>
             
         <invoker folderid="/menu/txn/rpt/cert" action="init" caption="Multiple Property" 
-            opener="multiple" index="4" />
+            opener="multiple" index="4"  role="CERTIFICATION_ISSUER" permission="certification.multipleproperty"/>
             
         <invoker type="quick_launcher" action="init" code="RC04" caption="Multiple Property" 
-            opener="multiple" index="4" />
+            opener="multiple" index="4" role="CERTIFICATION_ISSUER" permission="certification.multipleproperty"/>
             
         <invoker type="multiple:open" action="open" caption="Multiple Property" /> 
     </invokers>

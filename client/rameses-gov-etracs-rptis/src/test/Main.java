@@ -14,7 +14,8 @@ public class Main
     {
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName()); 
-        }catch(Exception e){;} 
+        }
+        catch(Exception e){;} 
         
         Map env = new HashMap();
         env.put("app.debugMode", "true");         
@@ -28,9 +29,9 @@ public class Main
         env.put("JOBTITLE", "AA - II");
         
         Map roles = new HashMap();
-        roles.put("RPT.MASTER_ENCODER", null);
-        roles.put("RPT.LANDTAX", null);
-        roles.put("RULEMGMT.RULE_AUTHOR", null);
+        roles.put("RPT.APPRAISER", null);
+        roles.put("RPT.CERTIFICATION_ISSUER", null);
+        roles.put("RPT.RULE_AUTHOR", null);
         OsirisTestPlatform.runTest(env, roles);         
     }
 

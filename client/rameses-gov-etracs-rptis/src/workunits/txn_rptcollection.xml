@@ -8,6 +8,7 @@
         <invoker type="navActions" action="init" caption="New" mnemonic="n" shortcut="ctrl N" visibleWhen="#{mode=='read'}" icon="images/toolbars/create.png" />
         
         <invoker type="navActions" action="voidReceipt" caption="Void Receipt" mnemonic="v" visibleWhen="#{mode=='read'}"/>
+        <invoker type="navActions" action="previewReceipt" caption="Preview Receipt" mnemonic="p" visibleWhen="#{mode=='read'}"/>
     </invokers>
     <code class="com.rameses.gov.etracs.rpt.collection.ui.RPTReceiptController">
 
@@ -16,6 +17,7 @@
         <page name="init" template="com.rameses.gov.etracs.rpt.collection.ui.RPTReceiptInitPage" />
         <page name="main" template="com.rameses.gov.etracs.rpt.collection.ui.RPTReceiptPage" />
         <page name="view" template="com.rameses.gov.etracs.rpt.collection.ui.RPTReceiptViewPage" />
+        <page name="preview" template="com.rameses.gov.etracs.rpt.report.PreviewPage" />
     </pages>
     
 </workunit>

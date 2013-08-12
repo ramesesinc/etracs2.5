@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <workunit>
     <invokers>
-        <invoker type="quick_launcher" code="PC01" action="init" caption="Property Classification" role="MASTER_ENCODER" permission="propertyclassification.create"/>
-        <invoker type="propertyclassification:create" action="init" caption="Property Classification" />
-        <invoker type="propertyclassification:open" action="open" caption="Property Classification" />
+        <invoker type="quick_launcher" code="PC01" action="init" caption="Property Classification" role="ASSESSOR_DATAMGMT" />
+        <invoker type="propertyclassification:create" action="init" caption="Property Classification" role="ASSESSOR_DATAMGMT" />
+        <invoker type="propertyclassification:open" action="open" caption="Property Classification" role="ASSESSOR_DATAMGMT" />
     </invokers>
         
     <code lang="groovy">

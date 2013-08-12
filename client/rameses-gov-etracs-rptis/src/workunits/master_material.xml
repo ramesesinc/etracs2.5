@@ -2,9 +2,9 @@
 <workunit>
     
     <invokers>
-        <invoker type="quick_launcher" code="MAT01" action="init" caption="Material" role="MASTER_ENCODER" permission="material.create"/>
-        <invoker type="material:create" action="init" caption="Material" />
-        <invoker type="material:open" action="open" caption="Material" />
+        <invoker type="quick_launcher" code="MAT01" action="init" caption="Material" role="ASSESSOR_DATAMGMT" />
+        <invoker type="material:create" action="init" caption="Material" role="ASSESSOR_DATAMGMT" />
+        <invoker type="material:open" action="open" caption="Material" role="ASSESSOR_DATAMGMT" />
     </invokers>
         
     <code lang="groovy">

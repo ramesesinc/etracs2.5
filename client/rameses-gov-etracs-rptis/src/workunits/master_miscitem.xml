@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <workunit>
     <invokers>
-        <invoker type="quick_launcher" code="MISC01" action="init" caption="Miscellaneous Item" role="MASTER_ENCODER" permission="miscitem.create"/>
-        <invoker type="miscitem:create" action="init" caption="Miscellaneous Item" />
-        <invoker type="miscitem:open" action="open" caption="Miscellaneous Item" />
+        <invoker type="quick_launcher" code="MISC01" action="init" caption="Miscellaneous Item" role="ASSESSOR_DATAMGMT" />
+        <invoker type="miscitem:create" action="init" caption="Miscellaneous Item" role="ASSESSOR_DATAMGMT" />
+        <invoker type="miscitem:open" action="open" caption="Miscellaneous Item" role="ASSESSOR_DATAMGMT" />
     </invokers>
         
     <code lang="groovy">

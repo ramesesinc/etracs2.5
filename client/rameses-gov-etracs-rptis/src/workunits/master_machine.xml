@@ -2,9 +2,9 @@
 <workunit>
     
     <invokers>
-        <invoker type="quick_launcher" code="MACH01" action="init" caption="Machine" role="MASTER_ENCODER" permission="machine.create"/>
-        <invoker type="machine:create" action="init" caption="Machine" />
-        <invoker type="machine:open" action="open" caption="Machine" />
+        <invoker type="quick_launcher" code="MACH01" action="init" caption="Machine" role="ASSESSOR_DATAMGMT" />
+        <invoker type="machine:create" action="init" caption="Machine" role="ASSESSOR_DATAMGMT" />
+        <invoker type="machine:open" action="open" caption="Machine" role="ASSESSOR_DATAMGMT" />
     </invokers>
         
     <code lang="groovy">

@@ -1,8 +1,8 @@
 <workunit extends="rpt_wtemplates/rysetting.xml">
     <invokers>
-        <invoker type="machrysetting:create" action="create" caption="Create Machine Revision Settting" target="window"/>
-        <invoker type="machrysetting:open" action="open" caption="Edit Machine Revision Settting" target="window"/>
-        <invoker type="machrysetting:copy" action="copy" caption="Copy Machine Revision Settting" target="window"/>
+        <invoker type="machrysetting:create" action="create" caption="Create Machine Revision Settting" target="window" role="ASSESSOR_DATAMGMT" />
+        <invoker type="machrysetting:open" action="open" caption="Edit Machine Revision Settting" target="window" role="ASSESSOR_DATAMGMT" />
+        <invoker type="machrysetting:copy" action="copy" caption="Copy Machine Revision Settting" target="window" role="ASSESSOR_DATAMGMT" />
     </invokers>
     
     <code class="com.rameses.gov.etracs.rpt.rysetting.machrysetting.ui.MachRYSettingController"/>

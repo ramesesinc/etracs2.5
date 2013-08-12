@@ -48,3 +48,41 @@ UPDATE rptledger SET
 	lastqtrpaid = $P{lastqtrpaid},
 	nextbilldate = null 
 WHERE objid = $P{objid}	  
+
+
+[getReceiptItemsForPrinting]
+SELECT
+	f.tdno,
+	f.taxpayername,
+	r.rputype,
+	r.totalav,
+	r.fullpin,
+	rp.cadastrallotno,
+	pc.code AS classcode,
+	b.name AS barangay,
+	CASE 
+		WHEN MIN(ri.year) = MAX(ri.year) AND MIN(ri.qtr) = 1 AND MAX(ri.qtr) = 4
+			THEN CONCAT('FULL ', MIN(ri.year))
+		WHEN MIN(ri.year) = MAX(ri.year) AND MIN(ri.qtr) = MAX(ri.qtr)
+			THEN CONCAT('FULL ', MIN(ri.qtr), 'Q,', MIN(ri.year))
+		WHEN MIN(ri.year) = MAX(ri.year)
+			THEN CONCAT(MIN(ri.qtr), 'Q-', MAX(ri.qtr), 'Q, ', MIN(ri.year) )
+		ELSE 
+			CONCAT(  MIN(CONCAT(ri.qtr, 'Q,', ri.year)), ' - ', MAX(CONCAT(ri.qtr, 'Q,', ri.year)) )
+	END AS period,
+	SUM(basic) AS basic,
+	SUM(basicint - basicdisc) AS basicdp,
+	SUM(sef) AS sef,
+	SUM(sefint - sefdisc) AS sefdp,
+	SUM(basic + basicint - basicdisc + sef + sefint - sefdisc) AS amount 
+FROM rptreceiptitem ri
+		INNER JOIN rptledger rl ON ri.rptledgerid = rl.objid 
+		INNER JOIN faas f ON rl.faasid = f.objid 
+		INNER JOIN rpu r ON f.rpuid = r.objid 
+		INNER JOIN propertyclassification pc ON r.classification_objid = pc.objid 
+		INNER JOIN realproperty rp ON r.realpropertyid = rp.objid 
+		INNER JOIN lgu_barangay b ON rp.barangayid = b.objid 
+WHERE ri.rptreceiptid = $P{rptreceiptid}
+GROUP BY ri.rptledgerid, f.tdno, f.taxpayername, r.rputype, r.totalav, r.fullpin, rp.cadastrallotno, pc.code, b.name
+ORDER BY f.tdno 
+

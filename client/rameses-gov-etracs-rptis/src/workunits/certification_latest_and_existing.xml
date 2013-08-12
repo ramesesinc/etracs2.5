@@ -2,13 +2,13 @@
 <workunit extends="rpt_wtemplates/CertificationController.xml">
     <invokers>
         <invoker folderid="/txn/rpt/cert" action="init" caption="Latest and Existing" 
-            opener="latest" index="5" />
+            opener="latest" index="5" role="CERTIFICATION_ISSUER" permission="certification.latestandexisting"/>
             
         <invoker folderid="/menu/txn/rpt/cert" action="init" caption="Latest and Existing" 
-            opener="latest" index="5" />
+            opener="latest" index="5" role="CERTIFICATION_ISSUER" permission="certification.latestandexisting"/>
             
         <invoker type="quick_launcher" action="init" code="RC05" caption="Latest and Existing" 
-            opener="latest" index="5" />
+            opener="latest" index="5" role="CERTIFICATION_ISSUER" permission="certification.latestandexisting"/>
             
         <invoker type="latest:open" action="open" caption="Latest and Existing" /> 
     </invokers>

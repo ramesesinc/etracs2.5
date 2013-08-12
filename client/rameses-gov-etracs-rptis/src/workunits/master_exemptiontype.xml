@@ -2,9 +2,9 @@
 <workunit>
     
     <invokers>
-        <invoker type="quick_launcher" code="ET01" action="init" caption="Exemption Type" role="MASTER_ENCODER" permission="exemptiontype.create"/>
-        <invoker type="exemptiontype:create" action="init" caption="Exemption Type" />
-        <invoker type="exemptiontype:open" action="open" caption="Exemption Type" />
+        <invoker type="quick_launcher" code="ET01" action="init" caption="Exemption Type" role="ASSESSOR_DATAMGMT" />
+        <invoker type="exemptiontype:create" action="init" caption="Exemption Type" role="ASSESSOR_DATAMGMT" />
+        <invoker type="exemptiontype:open" action="open" caption="Exemption Type" role="ASSESSOR_DATAMGMT" />
     </invokers>
     
     <code lang="groovy">

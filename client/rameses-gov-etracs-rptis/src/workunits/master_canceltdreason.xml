@@ -2,9 +2,9 @@
 <workunit>
     
     <invokers>
-        <invoker type="quick_launcher" code="CTD01" action="init" caption="Cancel TD Reason" role="MASTER_ENCODER" permission="canceltdreason.create"/>
-        <invoker type="canceltdreason:create" action="init" caption="Cancel TD Reason" />
-        <invoker type="canceltdreason:open" action="open" caption="Cancel TD Reason" />
+        <invoker type="quick_launcher" code="CTD01" action="init" caption="Cancel TD Reason" role="ASSESSOR_DATAMGMT" />
+        <invoker type="canceltdreason:create" action="init" caption="Cancel TD Reason" role="ASSESSOR_DATAMGMT" />
+        <invoker type="canceltdreason:open" action="open" caption="Cancel TD Reason" role="ASSESSOR_DATAMGMT" />
     </invokers>
     
     <code lang="groovy">

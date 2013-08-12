@@ -2,9 +2,9 @@
 <workunit>
     
     <invokers>
-        <invoker type="quick_launcher" code="RPARAM01" action="init" caption="Parameter" role="MASTER_ENCODER" permission="rptparameter.create"/>
-        <invoker type="rptparameter:create" action="init" caption="Parameter" />
-        <invoker type="rptparameter:open" action="open" caption="Parameter" />
+        <invoker type="quick_launcher" code="RPARAM01" action="init" caption="Parameter" role="ASSESSOR_DATAMGMT" />
+        <invoker type="rptparameter:create" action="init" caption="Parameter" role="ASSESSOR_DATAMGMT" />
+        <invoker type="rptparameter:open" action="open" caption="Parameter" role="ASSESSOR_DATAMGMT" />
     </invokers>
         
     <code lang="groovy">

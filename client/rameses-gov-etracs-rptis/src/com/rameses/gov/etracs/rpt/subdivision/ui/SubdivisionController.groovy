@@ -98,6 +98,8 @@ public class SubdivisionController extends PageFlowController
      *----------------------------------------------------*/
     void createSubdivision(){
         subdivision =  svc.createSubdivision(subdivision)
+        subdividedLands = [];
+        affectedrpus = []
     }
     
     

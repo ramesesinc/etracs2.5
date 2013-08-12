@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <workunit extends="rpt_wtemplates/RPTSetting.xml">
     <invokers>
-        <invoker folderid="/setting/rpt" action="init" caption="Assessor Settings and Preferences" index="2" category="assessor" />
+        <invoker folderid="/setting/rpt" action="init" caption="Assessor Settings and Preferences" index="2" category="assessor" role="ASSESSOR_DATAMGMT" />
     </invokers>
 </workunit>

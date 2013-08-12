@@ -4,13 +4,16 @@
         <invoker type="resection:open" action="open" caption="Resection" target="window"  />
         
          <invoker folderid="/txn/rpt/faas" action="init"  caption="Resection" index="25"
-            txntypeid="RS" txntype="Resection" newledger="false" newrpu="true" newrealproperpty="true" />
+            txntypeid="RS" txntype="Resection" newledger="false" newrpu="true" newrealproperpty="true" 
+            role="APPRAISER" permission="resection.create" />
             
         <invoker folderid="/menu/txn/rpt/faas" action="init"  caption="Resection" index="25"
-            txntypeid="RS" txntype="Resection" newledger="false" newrpu="true" newrealproperpty="true" />
+            txntypeid="RS" txntype="Resection" newledger="false" newrpu="true" newrealproperpty="true" 
+            role="APPRAISER" permission="resection.create" />
 
          <invoker type="quick_launcher" code="SD01" action="init"  caption="Resection" index="25"
-            txntypeid="SD" txntype="Resection" newledger="false" newrpu="true" newrealproperpty="true" />
+            txntypeid="SD" txntype="Resection" newledger="false" newrpu="true" newrealproperpty="true" 
+            role="APPRAISER" permission="resection.create" />
    </invokers>
    <code class="com.rameses.gov.etracs.rpt.resection.ResectionController">
        
@@ -38,11 +41,11 @@
         
         <page name="default" title="Resection (Draft)">
             <transition caption="Close"  to="end"      mnemonic="c" icon="images/toolbars/cancel.png" visibleWhen="#{mode == 'read'}"/>
-            <transition caption="Edit"   to="back-to-default" action="edit"  name="edit" mnemonic="e" shortcut="ctrl E" icon="images/toolbars/edit.png"  visibleWhen="#{mode == 'read'}" />
+            <transition caption="Edit"   to="back-to-default" action="edit"  name="edit" mnemonic="e" shortcut="ctrl E" icon="images/toolbars/edit.png"  visibleWhen="#{mode == 'read'}" role="APPRAISER" permission="resection.edit" />
             <transition caption="Cancel" to="back-to-default" action="cancelEdit" name="cancel" mnemonic="c" icon="images/toolbars/cancel.png" visibleWhen="#{mode != 'read'}"/>
             <transition caption="Save"   to="back-to-default" action="save" name="save" mnemonic="s" shortcut="ctrl S" icon="images/toolbars/save.png"  visibleWhen="#{mode != 'read'}" />
-            <transition caption="Delete" to="delete"  action="delete" confirm="Delete record?"    mnemonic="d" icon="images/toolbars/trash.png"  visibleWhen="#{mode == 'read'}" />
-            <transition caption="Submit" to="submit" action="submitForApproval"  mnemonic="m"  visibleWhen="#{mode == 'read'}" confirm="Submit Resection for approval?"/>
+            <transition caption="Delete" to="delete"  action="delete" confirm="Delete record?"    mnemonic="d" icon="images/toolbars/trash.png"  visibleWhen="#{mode == 'read'}" role="APPRAISER" permission="resection.delete" />
+            <transition caption="Submit" to="submit" action="submitForApproval"  mnemonic="m"  visibleWhen="#{mode == 'read'}" confirm="Submit Resection for approval?" role="APPRAISER" permission="resection.submit" />
         </page>
         
         <process name="back-to-default">
@@ -63,11 +66,11 @@
         <!-- CITY-->
         <page name="forapproval" title="Resection (For Approval)">
             <transition caption="Close" to="end" mnemonic="c" icon="images/toolbars/cancel.png" visibleWhen="#{mode == 'read'}" />
-            <transition caption="Edit"   to="back-to-forapproval" action="edit" name="edit" mnemonic="e" shortcut="ctrl E" icon="images/toolbars/edit.png"  visibleWhen="#{mode == 'read'}" />
+            <transition caption="Edit"   to="back-to-forapproval" action="edit" name="edit" mnemonic="e" shortcut="ctrl E" icon="images/toolbars/edit.png"  visibleWhen="#{mode == 'read'}" role="APPROVER" />
             <transition caption="Cancel" to="back-to-forapproval" action="cancelEdit" name="cancel"  mnemonic="c" icon="images/toolbars/cancel.png" visibleWhen="#{mode != 'read'}"/>
             <transition caption="Save"   to="back-to-forapproval" action="save" name="save" mnemonic="s" shortcut="ctrl S" icon="images/toolbars/save.png"  visibleWhen="#{mode != 'read'}" />
-            <transition caption="Disapprove" to="default" action="disapproveResection" mnemonic="d" visibleWhen="#{mode == 'read'}" confirm="Disapprove Resection?"/>
-            <transition caption="Approve" to="current" action="approveResection" mnemonic="v" icon="images/toolbars/approve.png" visibleWhen="#{mode == 'read'}" confirm="Approve Resection?"/>
+            <transition caption="Disapprove" to="default" action="disapproveResection" mnemonic="d" visibleWhen="#{mode == 'read'}" confirm="Disapprove Resection?" role="APPROVER"/>
+            <transition caption="Approve" to="current" action="approveResection" mnemonic="v" icon="images/toolbars/approve.png" visibleWhen="#{mode == 'read'}" confirm="Approve Resection?" role="APPROVER"/>
         </page>
         
         <process name="back-to-forapproval">
@@ -78,11 +81,11 @@
         <!-- MUNICIPALIY -->
         <page name="forprovsubmission" title="Resection (For Submission to Province)">
             <transition caption="Close"  to="end" mnemonic="c" icon="images/toolbars/cancel.png" visibleWhen="#{mode == 'read'}" />
-            <transition caption="Edit"   to="back-to-prov-submission" action="edit" name="edit" mnemonic="e" shortcut="ctrl E" icon="images/toolbars/edit.png"  visibleWhen="#{mode == 'read'}" />
+            <transition caption="Edit"   to="back-to-prov-submission" action="edit" name="edit" mnemonic="e" shortcut="ctrl E" icon="images/toolbars/edit.png"  visibleWhen="#{mode == 'read'}" role="RECOMMENDER"/>
             <transition caption="Cancel" to="back-to-prov-submission" action="cancelEdit" name="cancel"  mnemonic="c" icon="images/toolbars/cancel.png" visibleWhen="#{mode != 'read'}"/>
             <transition caption="Save"   to="back-to-prov-submission" action="save" name="save" mnemonic="s" shortcut="ctrl S" icon="images/toolbars/save.png"  visibleWhen="#{mode != 'read'}" />
-            <transition caption="Disapprove" to="default" action="disapproveSubmitToProvice"  mnemonic="d" visibleWhen="#{mode == 'read'}" confirm="Disapprove Resection?"/>
-            <transition caption="Submit to Province" to="provsubmissionapproval" action="submitToProvince" mnemonic="m" visibleWhen="#{mode == 'read'}" confirm="Submit Resection to province?"/>
+            <transition caption="Disapprove" to="default" action="disapproveSubmitToProvice"  mnemonic="d" visibleWhen="#{mode == 'read'}" confirm="Disapprove Resection?" role="RECOMMENDER"/>
+            <transition caption="Submit to Province" to="provsubmissionapproval" action="submitToProvince" mnemonic="m" visibleWhen="#{mode == 'read'}" confirm="Submit Resection to province?" role="RECOMMENDER"/>
         </page>
         
         <process name="back-to-prov-submission">
@@ -91,19 +94,19 @@
         
         <page name="provsubmissionapproval" title="Resection (For Province Approval)">
             <transition caption="Close" to="end" mnemonic="c" icon="images/toolbars/cancel.png"/>
-            <transition caption="Disapprove" to="forprovsubmission" action="disapproveSubmittedToProvince"  mnemonic="d" confirm="Disapprove Resection?"/>
-            <transition caption="Approve" to="approved" action="approveSubmittedToProvince"  mnemonic="v" confirm="Submit Resection for approval?"/>
+            <transition caption="Disapprove" to="forprovsubmission" action="disapproveSubmittedToProvince"  mnemonic="d" confirm="Disapprove Resection?" role="RECOMMENDER"/>
+            <transition caption="Approve" to="approved" action="approveSubmittedToProvince"  mnemonic="v" confirm="Submit Resection for approval?" role="RECOMMENDER"/>
         </page>
         
         
         <!-- PROVINCE -->
         <page name="forprovapproval" title="Resection (Province Approval)">
             <transition caption="Close" to="end" mnemonic="c" icon="images/toolbars/cancel.png" visibleWhen="#{mode == 'read'}" />
-            <transition caption="Edit"   to="back-to-forprovapproval" action="edit" name="edit" mnemonic="e" shortcut="ctrl E" icon="images/toolbars/edit.png"  visibleWhen="#{mode == 'read'}" />
+            <transition caption="Edit"   to="back-to-forprovapproval" action="edit" name="edit" mnemonic="e" shortcut="ctrl E" icon="images/toolbars/edit.png"  visibleWhen="#{mode == 'read'}"  role="APPROVER"/>
             <transition caption="Cancel" to="back-to-forprovapproval" action="cancelEdit" name="cancel"  mnemonic="c" icon="images/toolbars/cancel.png" visibleWhen="#{mode != 'read'}"/>
             <transition caption="Save"   to="back-to-forprovapproval" action="save" name="save" mnemonic="s" shortcut="ctrl S" icon="images/toolbars/save.png"  visibleWhen="#{mode != 'read'}" />
-            <transition caption="Disapprove" to="forprovsubmission" action="disapproveByProvince"  mnemonic="d"  visibleWhen="#{mode == 'read'}" confirm="Disapprove Resection?"/>
-            <transition caption="Approve" to="approved" action="approveByProvince"  mnemonic="v" visibleWhen="#{mode == 'read'}" confirm="Approve Resection?" />
+            <transition caption="Disapprove" to="forprovsubmission" action="disapproveByProvince"  mnemonic="d"  visibleWhen="#{mode == 'read'}" confirm="Disapprove Resection?" role="APPROVER"/>
+            <transition caption="Approve" to="approved" action="approveByProvince"  mnemonic="v" visibleWhen="#{mode == 'read'}" confirm="Approve Resection?" role="APPROVER"/>
         </page>
         
         <process name="back-to-forprovapproval">

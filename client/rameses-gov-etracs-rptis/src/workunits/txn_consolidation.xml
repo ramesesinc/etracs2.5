@@ -4,13 +4,16 @@
         <invoker type="consolidation:open" action="open" caption="Consolidation" target="window"  />
         
          <invoker folderid="/txn/rpt/faas" action="init"  caption="Consolidation" index="21"
-            txntypeid="CS" txntype="Consolidation" newledger="true" newrpu="true"/>
+            txntypeid="CS" txntype="Consolidation" newledger="true" newrpu="true" 
+            role="APPRAISER" permission="consolidation.create"/>
             
         <invoker folderid="/menu/txn/rpt/faas" action="init"  caption="Consolidation" index="21"
-            txntypeid="CS" txntype="Consolidation" newledger="true" newrpu="true"/>
+            txntypeid="CS" txntype="Consolidation" newledger="true" newrpu="true" 
+            role="APPRAISER" permission="consolidation.create"/>
 
          <invoker type="quick_launcher" code="CS01" action="init"  caption="Consolidation" index="21"
-            txntypeid="CS" txntype="Consolidation" newledger="true" newrpu="true"/>
+            txntypeid="CS" txntype="Consolidation" newledger="true" newrpu="true" 
+            role="APPRAISER" permission="consolidation.create"/>
             
    </invokers>
    <code class="com.rameses.gov.etracs.rpt.consolidation.ui.ConsolidationController">
@@ -47,11 +50,11 @@
         
         <page name="default" title="Consolidation (Draft)">
             <transition caption="Close"  to="end"      mnemonic="c" icon="images/toolbars/cancel.png" visibleWhen="#{mode == 'read'}"/>
-            <transition caption="Edit"   to="back-to-default" action="edit"  name="edit" mnemonic="e" shortcut="ctrl E" icon="images/toolbars/edit.png"  visibleWhen="#{mode == 'read'}" />
+            <transition caption="Edit"   to="back-to-default" action="edit"  name="edit" mnemonic="e" shortcut="ctrl E" icon="images/toolbars/edit.png"  visibleWhen="#{mode == 'read'}" role="APPRAISER" permission="consolidation.edit"/>
             <transition caption="Cancel" to="back-to-default" action="cancelEdit" name="cancel" mnemonic="c" icon="images/toolbars/cancel.png" visibleWhen="#{mode != 'read'}"/>
             <transition caption="Save"   to="back-to-default" action="save" name="save" mnemonic="s" shortcut="ctrl S" icon="images/toolbars/save.png"  visibleWhen="#{mode != 'read'}" />
-            <transition caption="Delete" to="delete"  action="delete" confirm="Delete record?"    mnemonic="d" icon="images/toolbars/trash.png"  visibleWhen="#{mode == 'read'}" />
-            <transition caption="Submit" to="submit" action="submitForApproval"  mnemonic="m"  visibleWhen="#{mode == 'read'}" confirm="Submit for approval?"/>
+            <transition caption="Delete" to="delete"  action="delete" confirm="Delete record?"    mnemonic="d" icon="images/toolbars/trash.png"  visibleWhen="#{mode == 'read'}" role="APPRAISER" permission="consolidation.delete"/>
+            <transition caption="Submit" to="submit" action="submitForApproval"  mnemonic="m"  visibleWhen="#{mode == 'read'}" confirm="Submit for approval?" role="APPRAISER" />
         </page>
         
         <process name="back-to-default">
@@ -72,11 +75,11 @@
         <!-- CITY-->
         <page name="forapproval" title="Consolidation (For Approval)">
             <transition caption="Close" to="end" mnemonic="c" icon="images/toolbars/cancel.png" visibleWhen="#{mode == 'read'}" />
-            <transition caption="Edit"   to="back-to-forapproval" action="edit" name="edit" mnemonic="e" shortcut="ctrl E" icon="images/toolbars/edit.png"  visibleWhen="#{mode == 'read'}" />
+            <transition caption="Edit"   to="back-to-forapproval" action="edit" name="edit" mnemonic="e" shortcut="ctrl E" icon="images/toolbars/edit.png"  visibleWhen="#{mode == 'read'}" role="APPROVER"/>
             <transition caption="Cancel" to="back-to-forapproval" action="cancelEdit" name="cancel"  mnemonic="c" icon="images/toolbars/cancel.png" visibleWhen="#{mode != 'read'}"/>
             <transition caption="Save"   to="back-to-forapproval" action="save" name="save" mnemonic="s" shortcut="ctrl S" icon="images/toolbars/save.png"  visibleWhen="#{mode != 'read'}" />
-            <transition caption="Disapprove" to="default" action="disapproveConsolidation" mnemonic="d" visibleWhen="#{mode == 'read'}" confirm="Disapprove Consolidation?"/>
-            <transition caption="Approve" to="current" action="approveConsolidation" mnemonic="v" icon="images/toolbars/approve.png" visibleWhen="#{mode == 'read'}" confirm="Approve Consolidation?"/>
+            <transition caption="Disapprove" to="default" action="disapproveConsolidation" mnemonic="d" visibleWhen="#{mode == 'read'}" confirm="Disapprove Consolidation?" role="APPROVER"/>
+            <transition caption="Approve" to="current" action="approveConsolidation" mnemonic="v" icon="images/toolbars/approve.png" visibleWhen="#{mode == 'read'}" confirm="Approve Consolidation?" role="APPROVER"/>
         </page>
         
         <process name="back-to-forapproval">
@@ -87,11 +90,11 @@
         <!-- MUNICIPALIY -->
         <page name="forprovsubmission" title="Consolidation (For Submission to Province)">
             <transition caption="Close"  to="end" mnemonic="c" icon="images/toolbars/cancel.png" visibleWhen="#{mode == 'read'}" />
-            <transition caption="Edit"   to="back-to-prov-submission" action="edit" name="edit" mnemonic="e" shortcut="ctrl E" icon="images/toolbars/edit.png"  visibleWhen="#{mode == 'read'}" />
+            <transition caption="Edit"   to="back-to-prov-submission" action="edit" name="edit" mnemonic="e" shortcut="ctrl E" icon="images/toolbars/edit.png"  visibleWhen="#{mode == 'read'}" role="RECOMMENDER"/>
             <transition caption="Cancel" to="back-to-prov-submission" action="cancelEdit" name="cancel"  mnemonic="c" icon="images/toolbars/cancel.png" visibleWhen="#{mode != 'read'}"/>
             <transition caption="Save"   to="back-to-prov-submission" action="save" name="save" mnemonic="s" shortcut="ctrl S" icon="images/toolbars/save.png"  visibleWhen="#{mode != 'read'}" />
-            <transition caption="Disapprove" to="default" action="disapproveSubmitToProvince"  mnemonic="d" visibleWhen="#{mode == 'read'}" confirm="Disapprove Consolidation?"/>
-            <transition caption="Submit to Province" to="provsubmissionapproval" action="submitToProvince" mnemonic="m" visibleWhen="#{mode == 'read'}" confirm="Submit to province?"/>
+            <transition caption="Disapprove" to="default" action="disapproveSubmitToProvince"  mnemonic="d" visibleWhen="#{mode == 'read'}" confirm="Disapprove Consolidation?" role="RECOMMENDER"/>
+            <transition caption="Submit to Province" to="provsubmissionapproval" action="submitToProvince" mnemonic="m" visibleWhen="#{mode == 'read'}" confirm="Submit to province?" role="RECOMMENDER"/>
         </page>
         
         <process name="back-to-prov-submission">
@@ -100,19 +103,19 @@
         
         <page name="provsubmissionapproval" title="Consolidation (For Province Approval)">
             <transition caption="Close" to="end" mnemonic="c" icon="images/toolbars/cancel.png"/>
-            <transition caption="Disapprove" to="forprovsubmission" action="disapproveSubmittedToProvince"  mnemonic="d" confirm="Disapprove Consolidation?"/>
-            <transition caption="Approve" to="approved" action="approveSubmittedToProvince"  mnemonic="v" confirm="Approve Consolidation?"/>
+            <transition caption="Disapprove" to="forprovsubmission" action="disapproveSubmittedToProvince"  mnemonic="d" confirm="Disapprove Consolidation?" role="RECOMMENDER"/>
+            <transition caption="Approve" to="approved" action="approveSubmittedToProvince"  mnemonic="v" confirm="Approve Consolidation?" role="RECOMMENDER"/>
         </page>
         
         
         <!-- PROVINCE -->
         <page name="forprovapproval" title="Consolidation (Province Approval)">
             <transition caption="Close" to="end" mnemonic="c" icon="images/toolbars/cancel.png" visibleWhen="#{mode == 'read'}" />
-            <transition caption="Edit"   to="back-to-forprovapproval" action="edit" name="edit" mnemonic="e" shortcut="ctrl E" icon="images/toolbars/edit.png"  visibleWhen="#{mode == 'read'}" />
+            <transition caption="Edit"   to="back-to-forprovapproval" action="edit" name="edit" mnemonic="e" shortcut="ctrl E" icon="images/toolbars/edit.png"  visibleWhen="#{mode == 'read'}" role="APPROVER"/>
             <transition caption="Cancel" to="back-to-forprovapproval" action="cancelEdit" name="cancel"  mnemonic="c" icon="images/toolbars/cancel.png" visibleWhen="#{mode != 'read'}"/>
             <transition caption="Save"   to="back-to-forprovapproval" action="save" name="save" mnemonic="s" shortcut="ctrl S" icon="images/toolbars/save.png"  visibleWhen="#{mode != 'read'}" />
-            <transition caption="Disapprove" to="forprovsubmission" action="disapproveByProvince"  mnemonic="d"  visibleWhen="#{mode == 'read'}" confirm="Disapprove Consolidation?"/>
-            <transition caption="Approve" to="approved" action="approveByProvince"  mnemonic="v" visibleWhen="#{mode == 'read'}" confirm="Approve Consolidation?" />
+            <transition caption="Disapprove" to="forprovsubmission" action="disapproveByProvince"  mnemonic="d"  visibleWhen="#{mode == 'read'}" confirm="Disapprove Consolidation?" role="APPROVER"/>
+            <transition caption="Approve" to="approved" action="approveByProvince"  mnemonic="v" visibleWhen="#{mode == 'read'}" confirm="Approve Consolidation?" role="APPROVER"/>
         </page>
         
         <process name="back-to-forprovapproval">

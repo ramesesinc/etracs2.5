@@ -1,9 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <workunit>
     <invokers>
-        <invoker folderid="/txn/landtax" action="init"  caption="Realty Tax Billing"/>
-        <invoker folderid="/menu/txn/landtax" action="init"  caption="Realty Tax Billing"/>
-        <invoker type="quick_launcher" code="RPTBILL" action="init"  caption="RPT Billing"  role="LANDTAX" permission="rptbilling.generate"/>
+        <invoker folderid="/txn/landtax" action="init"  caption="Realty Tax Billing"
+            role="LANDTAX" permission="rptbilling.create" />
+            
+        <invoker folderid="/menu/txn/landtax" action="init"  caption="Realty Tax Billing"
+            role="LANDTAX" permission="rptbilling.create" />
+            
+        <invoker type="quick_launcher" code="RPTBILL" action="init"  caption="RPT Billing"  
+            role="LANDTAX" permission="rptbilling.create" />
         
         <invoker type="navActions" action="_close" caption="Close" shortcut="ctrl W" mnemonic="c" icon="images/toolbars/cancel.png" immediate="true" visibleWhen="#{mode=='init'}"/>
         <invoker type="navActions" action="printBill" caption="Print" shortcut="ctrl P" mnemonic="p" icon="images/toolbars/print.ping" visibleWhen="#{mode=='init'}"/>

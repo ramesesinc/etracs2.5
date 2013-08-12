@@ -60,6 +60,8 @@ class RPTReceiptService
 		em.validate(SCHEMA_RECEIPT, receipt)
 		em.create(SCHEMA_RECEIPT, receipt)
 
+		//TODO: clear rptitems and items after saving
+		//to avoid returing it to the client
 		receipt.rptitems.each{
 			calculateItemShares(it)
 			em.validate(SCHEMA_ITEM, it)

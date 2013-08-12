@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <workunit>
     <invokers>
-        <invoker type="quick_launcher" code="PT01" action="init" caption="Plant and Tree" role="MASTER_ENCODER" permission="planttree.create"/>
-        <invoker type="planttree:create" action="init" caption="Plant and Tree" />
-        <invoker type="planttree:open" action="open" caption="Plant and Tree" />
+        <invoker type="quick_launcher" code="PT01" action="init" caption="Plant and Tree" role="ASSESSOR_DATAMGMT" />
+        <invoker type="planttree:create" action="init" caption="Plant and Tree" role="ASSESSOR_DATAMGMT" />
+        <invoker type="planttree:open" action="open" caption="Plant and Tree" role="ASSESSOR_DATAMGMT" />
     </invokers>
         
     <code lang="groovy">

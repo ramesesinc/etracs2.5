@@ -16,20 +16,20 @@
     enabled:true;
 }
 
-"fullPayment" [selectedItem.partialled]{
+"fullPayment" [selectedItem.partialled == true]{
     enabled:true;
 }
 
-"fullPayment" [ ! selectedItem.partialled ]{
+"fullPayment" [selectedItem.partialled == false]{
     enabled:false;
 }
 
-"partialPayment" [!selectedItem.partialled]{
+"partialPayment" [selectedItem.partialled == false]{
     enabled:true;
 }
 
 
-"partialPayment" [selectedItem.partialled]{
+"partialPayment" [selectedItem.partialled == true]{
     enabled:false;
 }
 

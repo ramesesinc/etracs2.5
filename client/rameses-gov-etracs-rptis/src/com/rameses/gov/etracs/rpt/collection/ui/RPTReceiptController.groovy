@@ -5,6 +5,7 @@ import com.rameses.rcp.common.*;
 import com.rameses.rcp.annotations.*;
 import com.rameses.osiris2.client.*;
 import com.rameses.osiris2.common.*;
+import com.rameses.osiris2.reports.*;
 import com.rameses.gov.etracs.rpt.common.*;
 
 
@@ -15,6 +16,9 @@ class RPTReceiptController
     
     @Service('RPTReceiptService')
     def svc;
+    
+    @Service('ReportParameterService')
+    def paramSvc 
     
     @Service('RPTBillingService')
     def billSvc
@@ -141,6 +145,26 @@ class RPTReceiptController
         }
         return null;
     }
+    
+    
+    def previewReceipt(){
+        report.viewReport();
+        return 'preview';
+    }
+    
+    
+    def reportPath = 'com/rameses/gov/etracs/rpt/collection/ui/'
+    
+    def report = [
+        getReportName : { return reportPath + 'AF56.jasper'}, 
+        getReportData : { return entity },
+        getSubReports : { 
+            return [
+                new SubReport('AF56Item', reportPath + 'AF56Item.jasper'),
+            ] as SubReport[]
+        },
+        getParameters : { return  paramSvc.getStandardParameter() },
+    ] as ReportModel
     
     
     

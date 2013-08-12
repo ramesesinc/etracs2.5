@@ -1,8 +1,8 @@
 <workunit extends="rpt_wtemplates/rysetting.xml">
     <invokers>
-        <invoker type="miscrysetting:create" action="create" caption="Create Miscellaneous Revision Settting" target="window"/>
-        <invoker type="miscrysetting:open" action="open" caption="Edit Miscellaneous Revision Settting" target="window" />
-        <invoker type="miscrysetting:copy" action="copy" caption="Copy Miscellaneous Revision Settting" target="window" />
+        <invoker type="miscrysetting:create" action="create" caption="Create Miscellaneous Revision Settting" target="window" role="ASSESSOR_DATAMGMT" />
+        <invoker type="miscrysetting:open" action="open" caption="Edit Miscellaneous Revision Settting" target="window" role="ASSESSOR_DATAMGMT" />
+        <invoker type="miscrysetting:copy" action="copy" caption="Copy Miscellaneous Revision Settting" target="window" role="ASSESSOR_DATAMGMT" />
     </invokers>
     
     <code class="com.rameses.gov.etracs.rpt.rysetting.miscrysetting.ui.MiscRYSettingController">

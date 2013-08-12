@@ -1,12 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <workunit>
     <invokers>
-        <invoker type="cancelledfaas:create" action="init" caption="FAAS Cancellation (New)" target="window"  />
+        <invoker type="cancelledfaas:create" action="init" caption="FAAS Cancellation (New)" target="window"  
+            role="APPRAISER" permission="cancelfaas.create"/>
+        
         <invoker type="cancelledfaas:open" action="open" caption="Cancelled FAAS" target="window"  />
         
-         <invoker folderid="/txn/rpt/faas" action="init"  caption="Cancel FAAS" index="22" />
-          <invoker folderid="/menu/txn/rpt/faas" action="init"  caption="Cancel FAAS" index="22" />
-         <invoker type="quick_launcher" code="CF01" action="init"  caption="Cancel FAAS" index="22" />
+         <invoker folderid="/txn/rpt/faas" action="init"  caption="Cancel FAAS" index="22"
+            role="APPRAISER" permission="cancelfaas.create"/>
+            
+          <invoker folderid="/menu/txn/rpt/faas" action="init"  caption="Cancel FAAS" index="22" 
+            role="APPRAISER" permission="cancelfaas.create"/>
+            
+         <invoker type="quick_launcher" code="CF01" action="init"  caption="Cancel FAAS" index="22" 
+            role="APPRAISER" permission="cancelfaas.create"/>
         
    </invokers>
    <code class="com.rameses.gov.etracs.rpt.cancelledfaas.ui.CancelledFAASController">       
@@ -31,11 +38,11 @@
         
         <page name="default" title="FAAS Cancellation (Draft)">
             <transition caption="Close"  to="end"      mnemonic="c" icon="images/toolbars/cancel.png" visibleWhen="#{mode == 'read'}"/>
-            <transition caption="Edit"   to="back-to-default" action="edit"  name="edit" mnemonic="e" shortcut="ctrl E" icon="images/toolbars/edit.png"  visibleWhen="#{mode == 'read'}" />
+            <transition caption="Edit"   to="back-to-default" action="edit"  name="edit" mnemonic="e" shortcut="ctrl E" icon="images/toolbars/edit.png"  visibleWhen="#{mode == 'read'}" role="APPRAISER"/>
             <transition caption="Cancel" to="back-to-default" action="cancelEdit" name="cancel" mnemonic="c" icon="images/toolbars/cancel.png" visibleWhen="#{mode != 'read'}"/>
             <transition caption="Save"   to="back-to-default" action="save" name="save" mnemonic="s" shortcut="ctrl S" icon="images/toolbars/save.png"  visibleWhen="#{mode != 'read'}" />
-            <transition caption="Delete" to="delete"  action="delete" confirm="Delete record?"    mnemonic="d" icon="images/toolbars/trash.png"  visibleWhen="#{mode == 'read'}" />
-            <transition caption="Submit" to="forapproval" action="submitForApproval"  mnemonic="m"  visibleWhen="#{mode == 'read'}" confirm="Submit Annotation for approval?"/>
+            <transition caption="Delete" to="delete"  action="delete" confirm="Delete record?"    mnemonic="d" icon="images/toolbars/trash.png"  visibleWhen="#{mode == 'read'}" role="APPRAISER"/>
+            <transition caption="Submit" to="forapproval" action="submitForApproval"  mnemonic="m"  visibleWhen="#{mode == 'read'}" confirm="Submit for approval?" role="APPRAISER"/>
         </page>
         
         <process name="back-to-default">
@@ -49,11 +56,11 @@
         
         <page name="forapproval" title="FAAS Cancellation (For Approval)">
             <transition caption="Close" to="end" mnemonic="c" icon="images/toolbars/cancel.png" visibleWhen="#{mode == 'read'}" />
-            <transition caption="Edit"   to="back-to-forapproval" action="edit" name="edit" mnemonic="e" shortcut="ctrl E" icon="images/toolbars/edit.png"  visibleWhen="#{mode == 'read'}" />
+            <transition caption="Edit"   to="back-to-forapproval" action="edit" name="edit" mnemonic="e" shortcut="ctrl E" icon="images/toolbars/edit.png"  visibleWhen="#{mode == 'read'}" role="APPROVER"/>
             <transition caption="Cancel" to="back-to-forapproval" action="cancelEdit" name="cancel"  mnemonic="c" icon="images/toolbars/cancel.png" visibleWhen="#{mode != 'read'}"/>
             <transition caption="Save"   to="back-to-forapproval" action="save" name="save" mnemonic="s" shortcut="ctrl S" icon="images/toolbars/save.png"  visibleWhen="#{mode != 'read'}" />
-            <transition caption="Disapprove" to="default" action="disapproveFaasCancellation" mnemonic="d" visibleWhen="#{mode == 'read'}" confirm="Disapprove Subdivision?"/>
-            <transition caption="Approve" to="approved" action="approveFaasCancellation" mnemonic="v" icon="images/toolbars/approve.png" visibleWhen="#{mode == 'read'}" confirm="Approve Subdivision?"/>
+            <transition caption="Disapprove" to="default" action="disapproveFaasCancellation" mnemonic="d" visibleWhen="#{mode == 'read'}" confirm="Disapprove record?" role="APPROVER"/>
+            <transition caption="Approve" to="approved" action="approveFaasCancellation" mnemonic="v" icon="images/toolbars/approve.png" visibleWhen="#{mode == 'read'}" confirm="Approve record?" role="APPROVER"/>
         </page>
         
         <process name="back-to-forapproval">
