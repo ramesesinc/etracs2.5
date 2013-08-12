@@ -120,6 +120,78 @@ WHERE rl.objid = $P{ledgerid}
 ORDER BY rli.year, rli.qtr  
 
 
+[getPreviousBilledItemsForPrinting]
+SELECT 
+	rli.objid, 
+	rlf.tdno,
+	rlf.assessedvalue,
+	rlf.assessedvalue AS originalav,
+	rli.year, rli.qtr,
+	CASE 
+		WHEN MIN(rli.qtr) = MAX(rli.qtr) THEN CONCAT(rli.year,'-',MIN(rli.qtr))
+		ELSE CONCAT(rli.year, '-', MIN(rli.qtr), '', MAX(rli.qtr))
+	END AS period,
+	CASE WHEN rli.qtr = 0 THEN rli.year ELSE CONCAT(rli.year, '-', rli.qtr) END AS period,
+	SUM(rli.basic - rli.basicpaid) AS basic, 
+	SUM(rli.basicint) AS basicint, 
+	SUM(rli.basicdisc) AS basicdisc, 
+	SUM(rli.basiccredit) AS basiccredit,
+	SUM(rli.basicint - rli.basicdisc) AS  basicdp,
+	SUM(rli.basic + rli.basicint - rli.basicdisc - rli.basicpaid) AS basicnet,
+	SUM(rli.sef - rli.sefpaid) AS sef, 
+	SUM(rli.sefint) AS sefint, 
+	SUM(rli.sefdisc) AS sefdisc, 
+	SUM(rli.sefcredit) AS sefcredit,
+	SUM(rli.sefint - rli.sefdisc) AS sefdp,
+	SUM(rli.sef + rli.sefint - rli.sefdisc - rli.sefpaid) AS sefnet,
+	SUM(rli.basic + rli.basicint - rli.basicdisc - rli.basicpaid + rli.sef + rli.sefint - rli.sefdisc - rli.sefpaid) AS total,
+	rl.barangayid
+FROM faas f
+	INNER JOIN rpu r ON f.rpuid = r.objid 
+	INNER JOIN realproperty rp ON r.realpropertyid = rp.objid 
+	INNER JOIN lgu_barangay b ON rp.barangayid = b.objid 
+	INNER JOIN rptledger rl ON f.objid = rl.faasid
+	INNER JOIN rptledgeritem rli ON rl.objid = rli.rptledgerid
+	INNER JOIN rptledgerfaas rlf ON rli.rptledgerfaasid = rlf.objid
+WHERE rl.objid = $P{ledgerid}
+ AND rli.state = 'OPEN'
+ AND ( rli.year < $P{billtoyear} OR ( rli.year = $P{billtoyear} AND rli.qtr <= 4))
+ AND rli.year < $P{currentyr}
+GROUP BY rlf.tdno, rlf.assessedvalue, rli.year
+ORDER BY rli.year
+
+
+[getCurrentYearBilledItemsForPrinting]
+SELECT 
+	rli.objid, 
+	rlf.tdno,
+	rlf.assessedvalue,
+	rlf.assessedvalue AS originalav,
+	rli.year, rli.qtr,
+	CASE WHEN rli.qtr = 0 THEN rli.year ELSE CONCAT(rli.year, '-', rli.qtr) END AS period,
+	rli.basic - rli.basicpaid AS basic, 
+	rli.basicint, rli.basicdisc, rli.basiccredit,
+	rli.basicint - rli.basicdisc AS  basicdp,
+	rli.basic + rli.basicint - rli.basicdisc - rli.basicpaid AS basicnet,
+	rli.sef - rli.sefpaid AS sef, 
+	rli.sefint, rli.sefdisc, rli.sefcredit,
+	rli.sefint - rli.sefdisc AS sefdp,
+	rli.sef + rli.sefint - rli.sefdisc - rli.sefpaid AS sefnet,
+	rli.basic + rli.basicint - rli.basicdisc - rli.basicpaid + rli.sef + rli.sefint - rli.sefdisc - rli.sefpaid AS total,
+	rl.barangayid
+FROM faas f
+	INNER JOIN rpu r ON f.rpuid = r.objid 
+	INNER JOIN realproperty rp ON r.realpropertyid = rp.objid 
+	INNER JOIN lgu_barangay b ON rp.barangayid = b.objid 
+	INNER JOIN rptledger rl ON f.objid = rl.faasid
+	INNER JOIN rptledgeritem rli ON rl.objid = rli.rptledgerid
+	INNER JOIN rptledgerfaas rlf ON rli.rptledgerfaasid = rlf.objid
+WHERE rl.objid = $P{ledgerid}
+ AND rli.state = 'OPEN'
+ AND ( rli.year < $P{billtoyear} OR ( rli.year = $P{billtoyear} AND rli.qtr <= $P{billtoqtr}))
+ AND rli.year >= $P{currentyr}
+ORDER BY rli.year, rli.qtr  
+
 
 [updateLedgerNextBillDate]
 UPDATE rptledger SET 
