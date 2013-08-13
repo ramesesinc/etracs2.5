@@ -20,7 +20,7 @@ SELECT
 FROM faas f
 	INNER JOIN rpu rpu ON f.rpuid = rpu.objid
 	LEFT JOIN realproperty rp ON rpu.realpropertyid = rp.objid
-	LEFT JOIN lgu_barangay b ON rp.barangayid = b.objid 
+	LEFT JOIN barangay b ON rp.barangayid = b.objid 
 WHERE f.tdno LIKE $P{searchtext}	
    OR f.ownername LIKE $P{searchtext} 
    OR rpu.fullpin LIKE $P{searchtext}
@@ -101,6 +101,6 @@ FROM faas f
 	INNER JOIN rpu r ON f.rpuid = r.objid 
 	INNER JOIN realproperty rp ON r.realpropertyid = rp.objid 
 	INNER JOIN propertyclassification pc ON r.classification_objid = pc.objid 
-	INNER JOIN lgu_barangay b ON rp.barangayid = b.objid 
+	INNER JOIN barangay b ON rp.barangayid = b.objid 
 ${filters}	
 ORDER BY f.tdno 

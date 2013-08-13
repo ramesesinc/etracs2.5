@@ -12,7 +12,7 @@ SELECT
 FROM faas f 
 	INNER JOIN rpu rpu ON f.rpuid = rpu.objid
 	INNER JOIN realproperty rp ON rpu.realpropertyid = rp.objid
-	INNER JOIN lgu_barangay b ON rp.barangayid = b.objid 
+	INNER JOIN barangay b ON rp.barangayid = b.objid 
 	INNER JOIN rptledger rl ON rl.faasid = f.objid 
 ${filters}	
 ORDER BY rl.state, f.tdno 
@@ -33,7 +33,7 @@ FROM rptledger rl
 	INNER JOIN faas f ON rl.faasid = f.objid
 	INNER JOIN rpu rpu ON f.rpuid = rpu.objid
 	INNER JOIN realproperty rp ON rpu.realpropertyid = rp.objid
-	INNER JOIN lgu_barangay b ON rp.barangayid = b.objid 
+	INNER JOIN barangay b ON rp.barangayid = b.objid 
 WHERE rl.objid = $P{objid}
 ORDER BY rl.state, f.tdno 
 

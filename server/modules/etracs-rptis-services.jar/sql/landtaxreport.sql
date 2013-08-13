@@ -14,7 +14,7 @@ SELECT
 	rl.lastqtrpaid,
 	b.objid
 FROM realproperty rp 
-	INNER JOIN lgu_barangay b ON rp.barangayid = b.objid 
+	INNER JOIN barangay b ON rp.barangayid = b.objid 
 	INNER JOIN rpu r ON rp.objid = r.realpropertyid 
 	INNER JOIN propertyclassification pc ON r.classification_objid = pc.objid 
 	INNER JOIN faas f ON r.objid = f.rpuid 
@@ -47,7 +47,7 @@ SELECT
 	xr.serialno AS orno,
 	xr.txndate AS ordate
 FROM realproperty rp 
-	INNER JOIN lgu_barangay b ON rp.barangayid = b.objid 
+	INNER JOIN barangay b ON rp.barangayid = b.objid 
 	INNER JOIN rpu r ON rp.objid = r.realpropertyid 
 	INNER JOIN propertyclassification pc ON r.classification_objid = pc.objid 
 	INNER JOIN faas f ON r.objid = f.rpuid 
@@ -91,7 +91,7 @@ FROM xreceipt xr
 	INNER JOIN faas f ON rl.faasid = f.objid 
 	INNER JOIN rpu r ON f.rpuid = r.objid
 	INNER JOIN propertyclassification pc ON r.classification_objid = pc.objid 
-	INNER JOIN lgu_barangay b ON rl.barangayid = b.objid 
+	INNER JOIN barangay b ON rl.barangayid = b.objid 
 ${whereclause}
 GROUP BY xr.serialno, xr.txndate, f.taxpayername, f.tdno, b.name, pc.code 	
 ORDER BY xr.serialno;
@@ -129,7 +129,7 @@ FROM xreceipt xr
 	INNER JOIN faas f ON rl.faasid = f.objid 
 	INNER JOIN rpu r ON f.rpuid = r.objid
 	INNER JOIN propertyclassification pc ON r.classification_objid = pc.objid 
-	INNER JOIN lgu_barangay b ON rl.barangayid = b.objid 
+	INNER JOIN barangay b ON rl.barangayid = b.objid 
 ${whereclause}
 GROUP BY xr.serialno, xr.txndate, f.taxpayername, f.tdno, b.name, pc.code 	
 ORDER BY xr.serialno;

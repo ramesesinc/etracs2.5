@@ -14,7 +14,7 @@ FROM faas f
 	INNER JOIN rpu r ON f.rpuid = r.objid 
 	INNER JOIN realproperty rp ON r.realpropertyid = rp.objid 
 	INNER JOIN propertyclassification pc ON r.classification_objid = pc.objid 
-	INNER JOIN lgu_barangay b ON rp.barangayid = b.objid 
+	INNER JOIN barangay b ON rp.barangayid = b.objid 
 WHERE f.taxpayerid	= $P{taxpayerid}
   AND f.state = 'CURRENT' 
   AND r.rputype = 'land'
@@ -29,7 +29,7 @@ FROM faas f
 	INNER JOIN rpu r ON f.rpuid = r.objid 
 	INNER JOIN realproperty rp ON r.realpropertyid = rp.objid 
 	INNER JOIN propertyclassification pc ON r.classification_objid = pc.objid 
-	INNER JOIN lgu_barangay b ON rp.barangayid = b.objid 
+	INNER JOIN barangay b ON rp.barangayid = b.objid 
 WHERE f.taxpayerid	= $P{taxpayerid}
   AND f.state = 'CURRENT' 
   AND r.rputype = 'land'
@@ -48,7 +48,7 @@ FROM faas f
 	INNER JOIN rpu r ON f.rpuid = r.objid 
 	INNER JOIN realproperty rp ON r.realpropertyid = rp.objid 
 	INNER JOIN propertyclassification pc ON r.classification_objid = pc.objid 
-	INNER JOIN lgu_barangay b ON rp.barangayid = b.objid 
+	INNER JOIN barangay b ON rp.barangayid = b.objid 
 WHERE f.taxpayerid	= $P{taxpayerid}
   AND f.state = 'CURRENT' 
   AND r.rputype = 'land'
@@ -79,7 +79,7 @@ FROM rptcertificationitem rci
 	INNER JOIN rpu r ON f.rpuid = r.objid 
 	INNER JOIN realproperty rp ON r.realpropertyid = rp.objid 
 	INNER JOIN propertyclassification pc ON r.classification_objid = pc.objid 
-	INNER JOIN lgu_barangay b ON rp.barangayid = b.objid 
+	INNER JOIN barangay b ON rp.barangayid = b.objid 
 WHERE rci.rptcertificationid = $P{rptcertificationid}
 ORDER BY r.fullpin
 
@@ -97,7 +97,7 @@ FROM faas f
 	INNER JOIN rpu r ON f.rpuid = r.objid 
 	INNER JOIN realproperty rp ON r.realpropertyid = rp.objid 
 	INNER JOIN propertyclassification pc ON r.classification_objid = pc.objid 
-	INNER JOIN lgu_barangay b ON rp.barangayid = b.objid 
+	INNER JOIN barangay b ON rp.barangayid = b.objid 
 WHERE f.taxpayerid	= $P{taxpayerid}
   AND f.state = 'CURRENT' 
 
@@ -123,7 +123,7 @@ FROM rptcertificationitem rci
 	INNER JOIN rpu r ON f.rpuid = r.objid 
 	INNER JOIN realproperty rp ON r.realpropertyid = rp.objid 
 	INNER JOIN propertyclassification pc ON r.classification_objid = pc.objid 
-	INNER JOIN lgu_barangay b ON rp.barangayid = b.objid 
+	INNER JOIN barangay b ON rp.barangayid = b.objid 
 WHERE rci.rptcertificationid = $P{rptcertificationid}  
 ORDER BY r.fullpin
 
@@ -141,7 +141,7 @@ FROM faas f
 	INNER JOIN rpu r ON f.rpuid = r.objid 
 	INNER JOIN realproperty rp ON r.realpropertyid = rp.objid 
 	INNER JOIN propertyclassification pc ON r.classification_objid = pc.objid 
-	INNER JOIN lgu_barangay b ON rp.barangayid = b.objid 
+	INNER JOIN barangay b ON rp.barangayid = b.objid 
 WHERE f.objid = $P{faasid}
 
 

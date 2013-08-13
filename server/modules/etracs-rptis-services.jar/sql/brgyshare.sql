@@ -61,7 +61,7 @@ SELECT
 	0.0 AS balance
 FROM brgyshare bs
 	INNER JOIN brgyshareitem bsi ON bs.objid = bsi.brgyshareid 
-	INNER JOIN lgu_barangay b ON bsi.barangayid = b.objid 
+	INNER JOIN barangay b ON bsi.barangayid = b.objid 
 WHERE bs.objid = $P{shareid}
 
 
@@ -80,7 +80,7 @@ SELECT
 	0.0 AS cr
 FROM brgyshare bs
 	INNER JOIN brgyshareitem bsi ON bs.objid = bsi.brgyshareid 
-	INNER JOIN lgu_barangay b ON bsi.barangayid = b.objid 
+	INNER JOIN barangay b ON bsi.barangayid = b.objid 
 WHERE bs.objid = $P{shareid}
 
 
@@ -103,7 +103,7 @@ SELECT
 FROM rptreceipt rc 
 	INNER JOIN rptreceiptitem rci ON rc.objid = rci.rptreceiptid 
 	INNER JOIN rptledger rl ON rci.rptledgerid = rl.objid 
-	INNER JOIN lgu_barangay b ON rl.barangayid = b.objid 
+	INNER JOIN barangay b ON rl.barangayid = b.objid 
 WHERE rc.year = $P{year}
   AND rc.month = $P{month}
   AND rci.revtype <> 'advance'
@@ -116,7 +116,7 @@ SELECT
 	bsi.basicshare + bsi.basicintshare AS totalshare,
 	b.name AS barangay
 FROM brgyshareitem bsi 
-	INNER JOIN lgu_barangay b ON bsi.barangayid = b.objid 
+	INNER JOIN barangay b ON bsi.barangayid = b.objid 
 ORDER BY b.name 	
 
 
@@ -136,7 +136,7 @@ SELECT
 FROM rptreceipt r
 		INNER JOIN rptreceiptitem ri ON r.objid = ri.rptreceiptid 
 		INNER JOIN rptledger rl ON ri.rptledgerid = rl.objid
-		INNER JOIN lgu_barangay b ON rl.barangayid = b.objid 
+		INNER JOIN barangay b ON rl.barangayid = b.objid 
 WHERE r.year = $P{year}		
   AND r.month = $P{month}
   AND ri.revtype <> 'advance'

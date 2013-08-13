@@ -15,7 +15,7 @@ FROM faas f
 	INNER JOIN rpu r ON f.rpuid = r.objid 
 	INNER JOIN realproperty rp ON r.realpropertyid = rp.objid
 	INNER JOIN propertyclassification pc ON r.classification_objid = pc.objid 
-	INNER JOIN lgu_barangay b ON rp.barangayid = b.objid 
+	INNER JOIN barangay b ON rp.barangayid = b.objid 
 	LEFT JOIN exemptiontype et ON r.exemptiontype_objid = et.objid 
 	LEFT JOIN lgu_municipality m ON b.parentid = m.objid  
 	LEFT JOIN lgu_district d ON b.parentid = d.objid 

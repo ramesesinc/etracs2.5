@@ -81,7 +81,7 @@ FROM rptreceiptitem ri
 		INNER JOIN rpu r ON f.rpuid = r.objid 
 		INNER JOIN propertyclassification pc ON r.classification_objid = pc.objid 
 		INNER JOIN realproperty rp ON r.realpropertyid = rp.objid 
-		INNER JOIN lgu_barangay b ON rp.barangayid = b.objid 
+		INNER JOIN barangay b ON rp.barangayid = b.objid 
 WHERE ri.rptreceiptid = $P{rptreceiptid}
 GROUP BY ri.rptledgerid, f.tdno, f.taxpayername, r.rputype, r.totalav, r.fullpin, rp.cadastrallotno, pc.code, b.name
 ORDER BY f.tdno 

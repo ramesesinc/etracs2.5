@@ -40,7 +40,7 @@ SELECT DISTINCT rl.objid
 FROM faas f
 	INNER JOIN rpu r ON f.rpuid = r.objid 
 	INNER JOIN realproperty rp ON r.realpropertyid = rp.objid 
-	INNER JOIN lgu_barangay b ON rp.barangayid = b.objid 
+	INNER JOIN barangay b ON rp.barangayid = b.objid 
 	INNER JOIN rptledger rl ON f.objid = rl.faasid
 	INNER JOIN rptledgeritem rli ON rl.objid = rli.rptledgerid
 WHERE f.taxpayerid = $P{taxpayerid}
@@ -78,7 +78,7 @@ FROM faas f
 	INNER JOIN rpu r ON f.rpuid = r.objid 
 	INNER JOIN propertyclassification pc ON r.classification_objid = pc.objid 
 	INNER JOIN realproperty rp ON r.realpropertyid = rp.objid 
-	INNER JOIN lgu_barangay b ON rp.barangayid = b.objid 
+	INNER JOIN barangay b ON rp.barangayid = b.objid 
 	INNER JOIN rptledger rl ON f.objid = rl.faasid
 WHERE rl.objid = $P{ledgerid}
 
@@ -108,7 +108,7 @@ SELECT
 FROM faas f
 	INNER JOIN rpu r ON f.rpuid = r.objid 
 	INNER JOIN realproperty rp ON r.realpropertyid = rp.objid 
-	INNER JOIN lgu_barangay b ON rp.barangayid = b.objid 
+	INNER JOIN barangay b ON rp.barangayid = b.objid 
 	INNER JOIN rptledger rl ON f.objid = rl.faasid
 	INNER JOIN rptledgeritem rli ON rl.objid = rli.rptledgerid
 	INNER JOIN rptledgerfaas rlf ON rli.rptledgerfaasid = rlf.objid
@@ -147,7 +147,7 @@ SELECT
 FROM faas f
 	INNER JOIN rpu r ON f.rpuid = r.objid 
 	INNER JOIN realproperty rp ON r.realpropertyid = rp.objid 
-	INNER JOIN lgu_barangay b ON rp.barangayid = b.objid 
+	INNER JOIN barangay b ON rp.barangayid = b.objid 
 	INNER JOIN rptledger rl ON f.objid = rl.faasid
 	INNER JOIN rptledgeritem rli ON rl.objid = rli.rptledgerid
 	INNER JOIN rptledgerfaas rlf ON rli.rptledgerfaasid = rlf.objid
@@ -180,7 +180,7 @@ SELECT
 FROM faas f
 	INNER JOIN rpu r ON f.rpuid = r.objid 
 	INNER JOIN realproperty rp ON r.realpropertyid = rp.objid 
-	INNER JOIN lgu_barangay b ON rp.barangayid = b.objid 
+	INNER JOIN barangay b ON rp.barangayid = b.objid 
 	INNER JOIN rptledger rl ON f.objid = rl.faasid
 	INNER JOIN rptledgeritem rli ON rl.objid = rli.rptledgerid
 	INNER JOIN rptledgerfaas rlf ON rli.rptledgerfaasid = rlf.objid

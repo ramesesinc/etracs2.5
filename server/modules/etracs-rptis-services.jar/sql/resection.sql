@@ -3,7 +3,7 @@ SELECT
 	r.objid, r.state, r.pintype, r.txnno, r.section, r.appraiser_name, r.appraiser_title,
 	b.name AS barangay 
 FROM resection r 
-	INNER JOIN lgu_barangay b ON r.barangayid = b.objid 
+	INNER JOIN barangay b ON r.barangayid = b.objid 
 ${filters}	
 ORDER BY r.txnno DESC 
 
