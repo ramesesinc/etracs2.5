@@ -1,6 +1,6 @@
 <workunit extends="wtemplates/ListController.xml" serviceName="PlantTreeListService" entityName="planttree">
     <invokers>
-        <invoker folderid="/master/rpt" caption="Plants and Trees" xrole="MASTER_ENCODER" xpermission="planttree.view" target="window" index="8" />
-        <invoker type="quick_launcher" code="PT00" caption="Plants and Trees" role="MASTER_ENCODER" permission="planttree.view"/>
+        <invoker folderid="/master/rpt" caption="Plants and Trees" target="window" index="8"  role="ASSESSOR_DATAMGMT" />
+        <invoker type="quick_launcher" code="PT00" caption="Plants and Trees"  role="ASSESSOR_DATAMGMT" />
     </invokers>
 </workunit>

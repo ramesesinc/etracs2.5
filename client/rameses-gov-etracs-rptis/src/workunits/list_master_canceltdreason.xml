@@ -1,6 +1,6 @@
 <workunit extends="wtemplates/ListController.xml" serviceName="CancelTDReasonListService" entityName="canceltdreason">
     <invokers>
-        <invoker folderid="/master/rpt" caption="Cancel TD Reasons" target="window" index="3" />
-        <invoker type="quick_launcher" code="CTD00" caption="Cancel TD Reasons" role="MASTER_ENCODER" permission="canceltdreason.view"/>
+        <invoker folderid="/master/rpt" caption="Cancel TD Reasons" target="window" index="3"  role="ASSESSOR_DATAMGMT" />
+        <invoker type="quick_launcher" code="CTD00" caption="Cancel TD Reasons"  role="ASSESSOR_DATAMGMT" />
     </invokers>
 </workunit>

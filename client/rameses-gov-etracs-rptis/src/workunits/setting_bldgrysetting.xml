@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<workunit extends="rpt_wtemplates/rysetting.xml">
+<workunit extends="rpt_wtemplates/RYSetting.xml">
     <invokers>
         <invoker type="bldgrysetting:create" action="create" caption="Create Building Revision Setting" mnemonic="b" icon="images/doc-new.png" target="window" role="ASSESSOR_DATAMGMT" />
         <invoker type="bldgrysetting:open" action="open" caption="Edit Building Revision Setting" mnemonic="b" icon="images/edit.png" target="window" role="ASSESSOR_DATAMGMT" />

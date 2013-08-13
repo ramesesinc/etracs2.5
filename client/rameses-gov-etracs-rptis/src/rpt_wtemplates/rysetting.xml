@@ -34,13 +34,10 @@
         <page name="default" title="#{settingTitle}">
             <transition caption="Close" to="end" visibleWhen="#{mode == 'read'}" icon="images/toolbars/cancel.png" mnemonic="c" />
             <transition caption="Cancel" to="cancel-edit" visibleWhen="#{mode == 'edit'}" icon="images/toolbars/cancel.png" mnemonic="c"/>
-            <transition caption="Edit" to="edit" visibleWhen="#{mode == 'read' and entity.state == 'DRAFT'}" icon="images/toolbars/edit.png" mnemonic="e" shortcut="ctrl E"/>
+            <transition caption="Edit" to="edit" visibleWhen="#{mode == 'read' &amp;&amp; entity.state == 'DRAFT'}" icon="images/toolbars/edit.png" mnemonic="e" shortcut="ctrl E"/>
             <transition caption="Save" to="saveCreate" visibleWhen="#{mode == 'create'}" icon="images/toolbars/save.png" mnemonic="s" shortcut="ctrl S"/>
             <transition caption="Save" to="saveUpdate" visibleWhen="#{mode == 'edit'}" icon="images/toolbars/save.png" mnemonic="s" shortcut="ctrl S"/>            
             <transition caption="Delete" to="delete" confirm="Delete setting?" visibleWhen="#{mode == 'edit'}" icon="images/toolbars/trash.png" mnemonic="d"/>
-            <!-- 
-            <transition caption="Approve" to="approve" confirm="Approve setting?" visibleWhen="#{mode == 'read' and entity.state == 'DRAFT'}" icon="images/toolbars/approve.png" mnemonic="v"/>
-            -->
         </page>
         
         <process name="edit">

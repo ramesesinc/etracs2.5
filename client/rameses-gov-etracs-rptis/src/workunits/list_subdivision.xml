@@ -1,7 +1,7 @@
 <workunit extends="wtemplates/ListController.xml">
     <invokers>
-        <invoker folderid="/txnmgmt/rpt" caption="Subdivisions"  target="window" index="110" />
-        <invoker type="quick_launcher" code="SD00" caption="Subdivisions" />
+        <invoker folderid="/txnmgmt/rpt" caption="Subdivisions"  target="window" index="110" role="ASSESSOR_SHARED"/>
+        <invoker type="quick_launcher" code="SD00" caption="Subdivisions"  role="ASSESSOR_SHARED"/>
     </invokers>
     <code>
         import com.rameses.rcp.common.*

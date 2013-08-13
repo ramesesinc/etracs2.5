@@ -1,7 +1,7 @@
 <workunit extends="wtemplates/ListController.xml">
     <invokers>
-        <invoker folderid="/explorer/master/rpt" caption="Parameters" xrole="MASTER_ENCODER" xpermission="rptparameter.view" target="window" index="10" />
-        <invoker type="quick_launcher" code="RPARAM00" caption="Parameters" role="MASTER_ENCODER" permission="rptparameter.view"/>
+        <invoker folderid="/explorer/master/rpt" caption="Parameters"  role="ASSESSOR_DATAMGMT" target="window" index="10" />
+        <invoker type="quick_launcher" code="RPARAM00" caption="Parameters"  role="ASSESSOR_DATAMGMT" />
     </invokers>
     <code>
         import com.rameses.rcp.common.*

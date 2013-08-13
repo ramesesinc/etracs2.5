@@ -1,7 +1,7 @@
 <workunit extends="wtemplates/ListController.xml">
     <invokers>
-        <invoker folderid="/txnmgmt/landtax" caption="Realty Tax Ledgers"  target="window" index="110" />
-        <invoker type="quick_launcher" code="RL00" caption="Realty Tax Ledgers" />
+        <invoker folderid="/txnmgmt/landtax" caption="Realty Tax Ledgers"  target="window" index="110"  role="LANDTAX_SHARED"/>
+        <invoker type="quick_launcher" code="RL00" caption="Realty Tax Ledgers"  role="LANDTAX_SHARED"/>
     </invokers>
     <code>
         import com.rameses.rcp.common.*

@@ -19,6 +19,7 @@ public class PlantTreeRYSettingListController extends ListController
 {
     String serviceName = 'PlantTreeRYSettingListService'
     String entityName  = 'planttreerysetting'
+    String formTarget = 'window' 
     
     def copy() {
         if( MsgBox.confirm('Copy revision year ' + selectedEntity.ry + '?' ) ) {

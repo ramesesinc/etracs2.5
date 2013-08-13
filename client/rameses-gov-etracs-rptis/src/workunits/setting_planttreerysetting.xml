@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<workunit extends="rpt_wtemplates/rysetting.xml">
+<workunit extends="rpt_wtemplates/RYSetting.xml">
     <invokers>
         <invoker type="planttreerysetting:create" action="create" caption="Create Plant/Tree Revision Setting" role="ASSESSOR_DATAMGMT" />
         <invoker type="planttreerysetting:open" action="open" caption="Edit Plant/Tree Revision Setting" role="ASSESSOR_DATAMGMT" />

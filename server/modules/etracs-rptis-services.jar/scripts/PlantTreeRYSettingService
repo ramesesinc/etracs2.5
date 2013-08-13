@@ -221,7 +221,7 @@ public class PlantTreeRYSettingService
 
     void buildAppliedToInfo(entity){
         if (! entity.lgus) {
-            entity.lgus = [[rysettingid:entity.objid,lguid:var.lgu_index, lguname:var.lgu_name, settingtype:SETTING_TYPE]]
+            entity.lgus = [[rysettingid:entity.objid,lguid:var.lgu_objid, lguname:var.lgu_name, settingtype:SETTING_TYPE]]
         }
         entity.appliedto = entity.lgus.lguname.join(', ')
     }      

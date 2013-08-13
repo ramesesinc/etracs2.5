@@ -1,7 +1,7 @@
 <workunit extends="wtemplates/ListController.xml">
     <invokers>
-        <invoker folderid="/txnmgmt/rpt" caption="Annotation Cancellations"  target="window" index="155" />
-        <invoker type="quick_launcher" code="FA02" caption="Annotation Cancellations" />
+        <invoker folderid="/txnmgmt/rpt" caption="Annotation Cancellations"  target="window" index="155" role="ASSESSOR_SHARED" />
+        <invoker type="quick_launcher" code="FA02" caption="Annotation Cancellations" role="ASSESSOR_SHARED" />
     </invokers>
     <code>
         import com.rameses.rcp.common.*

@@ -1,4 +1,4 @@
-<workunit extends="rpt_wtemplates/rysetting.xml">
+<workunit extends="rpt_wtemplates/RYSetting.xml">
     <invokers>
         <invoker type="miscrysetting:create" action="create" caption="Create Miscellaneous Revision Settting" target="window" role="ASSESSOR_DATAMGMT" />
         <invoker type="miscrysetting:open" action="open" caption="Edit Miscellaneous Revision Settting" target="window" role="ASSESSOR_DATAMGMT" />

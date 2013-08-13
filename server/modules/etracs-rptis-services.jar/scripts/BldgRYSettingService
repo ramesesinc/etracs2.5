@@ -46,6 +46,11 @@ public class BldgRYSettingService
     @ProxyMethod
     public def create( entity ) {
         entity.state = STATE_DRAFT
+        entity.predominant = false 
+        entity.depreciatecoreanditemseparately = false
+        entity.computedepreciationbasedonschedule = false
+        entity.straightdepreciation = false
+        entity.calcbldgagebasedondtoccupied = false 
         buildAppliedToInfo( entity )
 		validate( entity )		
         em.create(SCHEMA_RYSETTING, entity )
@@ -336,7 +341,7 @@ public class BldgRYSettingService
     ----------------------------------------------------------*/
     void buildAppliedToInfo(entity){
         if (! entity.lgus) {
-            entity.lgus = [[rysettingid:entity.objid,lguid:var.lgu_index, lguname:var.lgu_name, settingtype:SETTING_TYPE]]
+            entity.lgus = [[rysettingid:entity.objid,lguid:var.lgu_objid, lguname:var.lgu_name, settingtype:SETTING_TYPE]]
         }
         entity.appliedto = entity.lgus.lguname.join(', ')
     }

@@ -1,4 +1,4 @@
-<workunit extends="rpt_wtemplates/rysetting.xml">
+<workunit extends="rpt_wtemplates/RYSetting.xml">
     <invokers>
         <invoker type="machrysetting:create" action="create" caption="Create Machine Revision Settting" target="window" role="ASSESSOR_DATAMGMT" />
         <invoker type="machrysetting:open" action="open" caption="Edit Machine Revision Settting" target="window" role="ASSESSOR_DATAMGMT" />
