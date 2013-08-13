@@ -14,13 +14,14 @@ class FAASListService
         params.searchtext = (params.searchtext ? params.searchtext : '') + '%'
 
         def qry = em.sqlContext.createNamedQuery('faas:getList')
+        //qry.setPagingKeys = 'f.objid'
         
         if (params._start != null){
             qry.setFirstResult( params._start )
             qry.setMaxResults(params._limit)
         }
         
-        return qry.setParameters(params).resultList 
+        return qry.setParameters(params).resultList  
     }
 	
 }

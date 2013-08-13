@@ -37,23 +37,121 @@ class LandTaxReportService
 
 	@ProxyMethod
 	public def generateDelinquencyReportOldFormat(params){
+		println 'params -> ' + params
 		util.required('Barangay', params.barangay)
-		return em.sqlContext.createNamedQuery('landtaxreport:generateDelinquencyReportOldFormat')
+		def list = em.sqlContext.createNamedQuery('landtaxreport:generateDelinquencyReportOldFormat')
 				.setParameter('barangayid', params.barangay.objid)
 				.setParameter('currentyear', dateSvc.serverYear)
 				.resultList.each{
 					it.yearsdelinquent = util.toInteger(it.yearsdelinquent)
 				}
+		println list
+		return list 
 	} 
+
+
+	@ProxyMethod
+	public def generateAbstractOfCollection( params ) {
+		def parsedate = dateSvc.parseCurrentDate()		
+		if(params.year > parsedate.year ) throw new Exception('Year must not exceed current year.')
+
+		def reportparams = buildReportParams(params)
+		
+		def whereclause = ''
+		whereclause += 'WHERE rr.year = $P{year}'
+		whereclause += '  AND rr.qtr = $P{qtr}'
+		if (reportparams.month != null)
+			whereclause += '  AND rr.month = $P{month}'
+		if (reportparams.day != null)
+			whereclause += '  AND rr.day = $P{day}'
+		if (reportparams.collectorid)
+			whereclause += '  AND xr.collectorid LIKE $P{collectorid}'
+
+		def items = []
+		def advitems = []
+		
+		//type -> BASIC, SEF 
+		if( params.accttype == null || params.accttype == 'BASIC'  ) {
+			reportparams.whereclause = whereclause + ' AND ri.year <= $P{currentyr}'
+			items +=  em.sqlContext.createNamedQuery('landtaxreport:getAbstractCollectionBASIC')
+							.setVars(reportparams)
+							.setParameters( reportparams ).resultList 
+
+			reportparams.whereclause = whereclause + ' AND ri.year > $P{currentyr}'
+			advitems +=  em.sqlContext.createNamedQuery('landtaxreport:getAbstractCollectionBASIC')
+							.setVars(reportparams)
+							.setParameters( reportparams ).resultList 
+		}
+		if( params.accttype == null || params.accttype == 'SEF'  ) {
+			reportparams.whereclause = whereclause + ' AND ri.year <= $P{currentyr}'
+			items +=  em.sqlContext.createNamedQuery('landtaxreport:getAbstractCollectionSEF')
+							.setVars(reportparams)
+							.setParameters( reportparams ).resultList 
+
+			reportparams.whereclause = whereclause + ' AND ri.year > $P{currentyr}'
+			advitems +=  em.sqlContext.createNamedQuery('landtaxreport:getAbstractCollectionSEF')
+							.setVars(reportparams)
+							.setParameters( reportparams ).resultList 
+		}
+
+
+		if( ! items ) throw new Exception('No records found.')
+		
+		return [
+			title 	: buildTitle( params.year, params.qtr, params.month, params.day, params.accttype, params.collector  ),
+			period 	: util.buildPeriod(params),
+			items  	: items.sort{a,b -> a.type + '-' + a.orno <=> b.type + '-' + b.orno }, 
+			advitems : advitems.sort{a,b -> a.type + '-' + a.orno <=> b.type + '-' + b.orno }, 
+		]
+	}
+
+
+
+
+
 
 	@ProxyMethod
 	public def getBarangays( params ) {
 		return brgySvc.lookupBarangays(params) 
 	}
 
-	@ProxyMethod 
-	public def getMonths(param){
-		return dateSvc.getMonths();
+
+	@ProxyMethod
+	public List getNumDays( year, month ) {
+		if ( !month && month < 0 ) return []
+		
+		Calendar cal = Calendar.getInstance()
+        cal.set( year, month, 1)
+        int maxday = cal.getActualMaximum(cal.DAY_OF_MONTH)
+		def numdays = []
+		1.upto( maxday ) { numdays.add( it ) }
+		return numdays 
+	}
+
+
+	def buildReportParams(params){
+		def reportparams = [
+			accttype : params.accttype, 
+			year : params.year,
+			qtr  : params.qtr, 
+			currentyr : dateSvc.serverYear,
+		]
+
+		if (params.month)
+			reportparams.month = params.month.index 
+		if (params.collector)
+			reportparams.collectorid = params.collector.objid 
+		return reportparams
+	}
+
+
+	def buildTitle( year, qtr, month, day, type, collector  ) {
+		def stype = ( type ? type + ' ' : '' )
+		def collectorname = ( collector ? ' of ' + collector.name : '' )
+		if( day ) return 'Daily ' + stype + 'Abstract of Realty Tax Collection ' + collectorname
+		if( month ) return 'Monthly ' + stype + 'Abstract of Realty Tax Collection ' + collectorname
+		if( qtr ) return 'Quarterly ' + stype + 'Abstract of Realty Tax Collection ' + collectorname
+		return 'Annual ' + stype + 'Abstract of Realty Tax Collection ' + collectorname
 	}
 
 }	

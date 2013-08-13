@@ -36,7 +36,7 @@ class RPTDelinquencyListingOldController extends com.rameses.gov.etracs.rpt.repo
    def formControl = [
         getFormControls: {
             return [
-                new FormControl( "combo", [caption:'Barangay', name:'entity.barangay', items:'barangays', expression:'#{item.name}', preferredSize:'0,21']),
+                new FormControl( "combo", [caption:'Barangay', name:'entity.barangay', items:'barangays', required:true, expression:'#{item.name}', preferredSize:'0,21']),
             ]    
         },
    ] as FormPanelModel;

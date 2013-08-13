@@ -40,6 +40,7 @@ public class RPTBillingController
     }
     
     void buildBillReportInfo(){
+        bill.forprinting = true;
         bill = svc.generateBill( bill )
         report.viewReport()
     }

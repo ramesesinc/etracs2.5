@@ -12,10 +12,10 @@ import com.rameses.rcp.ui.annotations.Template;
 
 @Template(FormPage.class)
 @StyleSheet
-public class FAASDataCaptureInitPage extends javax.swing.JPanel {
+public class FAASDataCaptureInitPage_orig extends javax.swing.JPanel {
     
     /** Creates new form FAASNewPage */
-    public FAASDataCaptureInitPage() {
+    public FAASDataCaptureInitPage_orig() {
         initComponents();
     }
     
@@ -35,6 +35,10 @@ public class FAASDataCaptureInitPage extends javax.swing.JPanel {
         xIntegerField3 = new com.rameses.rcp.control.XIntegerField();
         xIntegerField4 = new com.rameses.rcp.control.XIntegerField();
         xTextField2 = new com.rameses.rcp.control.XTextField();
+        jPanel1 = new javax.swing.JPanel();
+        formPanel2 = new com.rameses.rcp.util.FormPanel();
+        xTextField1 = new com.rameses.rcp.control.XTextField();
+        xCheckBox1 = new com.rameses.rcp.control.XCheckBox();
 
         com.rameses.rcp.control.border.XTitledBorder xTitledBorder1 = new com.rameses.rcp.control.border.XTitledBorder();
         xTitledBorder1.setTitle("New FAAS Initial Information");
@@ -109,13 +113,39 @@ public class FAASDataCaptureInitPage extends javax.swing.JPanel {
 
         formPanel1.add(xTextField2);
 
+        jPanel1.setLayout(null);
+
+        jPanel1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
+
+        formPanel2.setCaptionBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
+        formPanel2.setPreferredSize(new java.awt.Dimension(0, 29));
+        xTextField1.setCaption("Sub-Suffix");
+        xTextField1.setDepends(new String[] {"initinfo.iscondo", "initinfo.suffix"});
+        xTextField1.setName("initinfo.subsuffix");
+        xTextField1.setPreferredSize(new java.awt.Dimension(0, 19));
+        formPanel2.add(xTextField1);
+
+        jPanel1.add(formPanel2);
+        formPanel2.setBounds(42, 24, 164, 29);
+
+        xCheckBox1.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 5, 0, 0));
+        xCheckBox1.setText("Is Condominium ?");
+        xCheckBox1.setDepends(new String[] {"faas.rpu.suffix"});
+        xCheckBox1.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        xCheckBox1.setName("initinfo.iscondo");
+        xCheckBox1.setPreferredSize(new java.awt.Dimension(101, 19));
+        jPanel1.add(xCheckBox1);
+        xCheckBox1.setBounds(10, 6, 112, 18);
+
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(layout.createSequentialGroup()
                 .addContainerGap()
-                .add(formPanel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 344, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(formPanel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 344, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(jPanel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 344, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(137, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -123,7 +153,9 @@ public class FAASDataCaptureInitPage extends javax.swing.JPanel {
             .add(layout.createSequentialGroup()
                 .addContainerGap()
                 .add(formPanel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 242, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(145, Short.MAX_VALUE))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(jPanel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 62, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(77, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -134,6 +166,9 @@ public class FAASDataCaptureInitPage extends javax.swing.JPanel {
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private com.rameses.rcp.util.FormPanel formPanel1;
+    private com.rameses.rcp.util.FormPanel formPanel2;
+    private javax.swing.JPanel jPanel1;
+    private com.rameses.rcp.control.XCheckBox xCheckBox1;
     private com.rameses.rcp.control.XComboBox xComboBox1;
     private com.rameses.rcp.control.XComboBox xComboBox2;
     private com.rameses.rcp.control.XComboBox xComboBox3;
@@ -141,6 +176,7 @@ public class FAASDataCaptureInitPage extends javax.swing.JPanel {
     private com.rameses.rcp.control.XIntegerField xIntegerField2;
     private com.rameses.rcp.control.XIntegerField xIntegerField3;
     private com.rameses.rcp.control.XIntegerField xIntegerField4;
+    private com.rameses.rcp.control.XTextField xTextField1;
     private com.rameses.rcp.control.XTextField xTextField2;
     // End of variables declaration//GEN-END:variables
     

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <workunit extends="wtemplates/ListController.xml">
     <invokers>
-        <invoker folderid="/setting/rpt" caption="Land Revision Settings" target="window" xrole="MASTER_ENCODER" xpermission="rysetting.view" index="500"/>
+        <invoker folderid="/setting/rpt" caption="Land Revision Settings" target="window" role="ASSESSOR_DATAMGMT" index="1`"/>
         <invoker type="quick_launcher" code="GRY00" target="window" caption="Land Revision Settings" />
         
         <invoker type="formActions" action="copy" shortcut="ctrl C" visibleWhen="#{selectedEntity != null }" immediate="true" caption="Copy" mnemonic="c" icon="images/doc-new.png" />

@@ -102,8 +102,8 @@ public class RPTBillingService
 		if (!bill.ledgers) 
 			throw new Exception('There are no unpaid ledgers for payment.')
 
-		//calculate expirydate
-		bill.expirydate = dtSvc.parse('yyyy-MM-dd', '2013-07-31')
+		//TODO: calculate expirydate
+		bill.expirydate = dtSvc.getMonthEndDate(dtSvc.serverDate)
 		
 		return bill
 	}
@@ -288,6 +288,7 @@ public class RPTBillingService
 			billtoyear	: bill.billtoyear,
 			billtoqtr   : bill.billtoqtr,
 			taxpayerid  : bill.taxpayerid,
+			currentyr   : dtSvc.serverYear,
 		]
 
 		bill.ledgers = []
@@ -312,9 +313,19 @@ public class RPTBillingService
 			)
 
 			params.ledgerid = ledger.objid
-			ledger.items = em.sqlContext.createNamedQuery('rptbill:getBilledItemsByLedgerId')
-							.setParameters(params)
-							.resultList 
+			if (bill.forprinting) {
+				ledger.items = em.sqlContext.createNamedQuery('rptbill:getPreviousBilledItemsForPrinting')
+								.setParameters(params)
+								.resultList 
+				ledger.items += em.sqlContext.createNamedQuery('rptbill:getCurrentYearBilledItemsForPrinting')
+								.setParameters(params)
+								.resultList 
+			}
+			else {
+				ledger.items = em.sqlContext.createNamedQuery('rptbill:getBilledItemsByLedgerId')
+								.setParameters(params)
+								.resultList 	
+			}
 
 			summarizeLedgerInfo(ledger)
 		}
@@ -376,14 +387,13 @@ public class RPTBillingService
 						.singleResult
 			)
 			if (ledger.lastitemyear < bill.billtoyear ){
-				ledgerSvc.insertLedgerItems(it, ledger.lastitemyear + 1, bill.billtoyear)
+				ledgerSvc.insertLedgerItems(ledger, ledger.lastitemyear + 1, bill.billtoyear)
 			}
 			ledger.items = em.sqlContext.createNamedQuery('rptbill:getOpenLedgerItemByLedgerId')
 							.setParameter('ledgerid', ledger.objid)
 							.resultList.each{
 								it.basic = it.basic - it.basicpaid
 								it.sef = it.sef - it.sefpaid
-								println 'item.barangayid -> '  + it.barangayid 
 							}
 		}
 		return ledgers
