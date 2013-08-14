@@ -18,14 +18,19 @@ class RPTLedgerListService
         params.prevtdno = params.searchtext
         params.searchtext = (params.searchtext ? params.searchtext : '') + '%'
 
+        def whereclause = 'WHERE '
+        if (params.state){
+            whereclause += ' rl.state = $P{state} AND '
+        }
+
         def filters = [
-            'WHERE f.tdno = $P{tdno}',
-            'WHERE f.ownername LIKE $P{searchtext}',
-            'WHERE rpu.fullpin LIKE $P{searchtext}',
-            'WHERE rp.cadastrallotno LIKE $P{searchtext}',
-            'WHERE rp.surveyno LIKE $P{searchtext}',
-            'WHERE f.prevtdno = $P{prevtdno}',
-            'WHERE f.prevowner LIKE $P{searchtext}',
+            whereclause +  'f.tdno = $P{tdno}',
+            whereclause +  'f.ownername LIKE $P{searchtext}',
+            whereclause +  'rpu.fullpin LIKE $P{searchtext}',
+            whereclause +  'rp.cadastrallotno LIKE $P{searchtext}',
+            whereclause +  'rp.surveyno LIKE $P{searchtext}',
+            whereclause +  'f.prevtdno = $P{prevtdno}',
+            whereclause +  'f.prevowner LIKE $P{searchtext}',
         ]
 
         return util.getListFromQuery('rptledger:getList', filters, params, 'rl.objid')

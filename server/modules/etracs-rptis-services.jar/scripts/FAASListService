@@ -7,22 +7,67 @@ class FAASListService
 	@PersistenceContext('main')
 	def em
 
+    @Service('RPTUtil')
+    def util
+
+    @Service('Var')
+    def var 
+
+
+    def STATE_INTERIM           = 'INTERIM'
+    def STATE_FORAPPROVAL       = 'FORAPPROVAL'
+    def STATE_FORPROVSUBMISSION = 'FORPROVSUBMISSION'
+    def STATE_FORPROVAPPROVAL   = 'FORPROVAPPROVAL'
+    def STATE_CURRENT           = 'CURRENT'
+    def STATE_CANCELLED         = 'CANCELLED'
 
     @ProxyMethod
     public def getList( params ) {
-        if (! params) params = [:]
+        params.tdno = params.searchtext
+        params.barangay = params.searchtext
+        params.blockno = params.searchtext
         params.searchtext = (params.searchtext ? params.searchtext : '') + '%'
 
-        def qry = em.sqlContext.createNamedQuery('faas:getList')
-        //qry.setPagingKeys = 'f.objid'
-        
-        if (params._start != null){
-            qry.setFirstResult( params._start )
-            qry.setMaxResults(params._limit)
+        def whereclause = 'WHERE '
+        if (params.state){
+            whereclause += ' f.state = $P{state} AND '
         }
-        
-        return qry.setParameters(params).resultList  
+
+        def filters = [
+            whereclause + 'f.tdno = $P{tdno}',
+            whereclause + 'f.ownername LIKE $P{searchtext}',
+            whereclause + 'rpu.fullpin LIKE $P{searchtext}',
+            whereclause + 'rp.surveyno LIKE $P{searchtext}',
+            whereclause + 'rp.cadastrallotno LIKE $P{searchtext}',
+            whereclause + 'rp.blockno = $P{blockno}',
+            whereclause + 'b.name = $P{blockno}',
+            whereclause + 'f.prevtdno LIKE $P{searchtext}',
+            
+        ]
+        return util.getListFromQuery( 'faas:getList' , filters, params, 'f.objid' )
     }
 	
+
+    @ProxyMethod
+    public def getStates(  ) {
+        println 'getstates'
+        if ('city'.equalsIgnoreCase(var.lgu_type)){
+            return [
+                STATE_INTERIM, 
+                STATE_FORAPPROVAL,
+                STATE_CURRENT,
+                STATE_CANCELLED,
+            ]
+        }
+        else{
+            return [
+                STATE_INTERIM, 
+                STATE_FORPROVSUBMISSION,
+                STATE_FORPROVAPPROVAL,
+                STATE_CURRENT,
+                STATE_CANCELLED,
+            ]
+        }
+    }
 }
 

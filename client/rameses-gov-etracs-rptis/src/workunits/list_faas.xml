@@ -13,6 +13,14 @@
         
         class FAASListController extends ListController
         {
+            @Service('FAASListService')
+            def svc 
+            
+            @PropertyChangeListener
+            def listener = [
+                'query.state' : { search(); }
+            ]
+            
             String formTarget = 'window'
             String serviceName = 'FAASListService'
             
@@ -23,7 +31,6 @@
                 if ( RPTUtil.toBoolean(selectedEntity?.datacapture, false) == true ){
                     txntype = 'DC' 
                 }
-                println 'txntype  ----> ' + txntype 
                 return 'faas_' + txntype
             }
             
@@ -32,7 +39,7 @@
             Column[] getColumns(){
                 return [
                     new Column(name:"state", caption:"State", width:100),
-                new Column(name:"ry", caption:"RY", width:50, type:'integer', format:'0000'),
+                    new Column(name:"ry", caption:"RY", width:50, type:'integer', format:'0000'),
                     new Column(name:"txntype.objid", caption:"Txn", width:50),
                     new Column(name:"rputype", caption:"Type", width:60),
                     new Column(name:"tdno", caption:"TD No.", width:100),
@@ -47,6 +54,14 @@
                     new Column(name:"totalav", caption:"Assessed Value", width:100, type:'decimal', format:'#,##0.00'),
                 ]
             }
+            
+            
+            List getStates(){
+                return svc.getStates();
+            }
         }
     </code>
+    <pages>
+        <page name="queryform" template="com.rameses.gov.etracs.rpt.common.StateQueryPanel"/>
+    </pages>
 </workunit>

@@ -15,6 +15,11 @@
             String formTarget   = 'window'
             String serviceName  = 'RPTLedgerListService'
             String entityName   = 'rptledger'
+            
+            @PropertyChangeListener
+            def listener = [
+                'query.state' : { search(); }
+            ]
                 
             
             int getRows() { return 50 }
@@ -34,6 +39,14 @@
                     new Column(name:"lastqtrpaid", caption:"Last Qtr Paid", width:80, type:'integer', format:'0'),
                 ]
             }
+            
+            List getStates(){
+                return ['PENDING', 'APPROVED', 'CANCELLED']
+            }
         }
+        
     </code>
+    <pages>
+        <page name="queryform" template="com.rameses.gov.etracs.rpt.common.StateQueryPanel"/>
+    </pages>
 </workunit>

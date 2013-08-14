@@ -21,9 +21,7 @@ FROM faas f
 	INNER JOIN rpu rpu ON f.rpuid = rpu.objid
 	LEFT JOIN realproperty rp ON rpu.realpropertyid = rp.objid
 	LEFT JOIN barangay b ON rp.barangayid = b.objid 
-WHERE f.tdno LIKE $P{searchtext}	
-   OR f.ownername LIKE $P{searchtext} 
-   OR rpu.fullpin LIKE $P{searchtext}
+${filters}
 ORDER BY rpu.ry, rpu.fullpin, f.tdno    
 
 [getFaasIds]
