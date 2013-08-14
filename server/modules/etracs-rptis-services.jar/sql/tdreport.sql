@@ -17,10 +17,10 @@ FROM faas f
 	INNER JOIN propertyclassification pc ON r.classification_objid = pc.objid 
 	INNER JOIN barangay b ON rp.barangayid = b.objid 
 	LEFT JOIN exemptiontype et ON r.exemptiontype_objid = et.objid 
-	LEFT JOIN lgu_municipality m ON b.parentid = m.objid  
-	LEFT JOIN lgu_district d ON b.parentid = d.objid 
-	LEFT JOIN lgu_province p ON m.parentid = p.objid 
-	LEFT JOIN lgu_city c ON d.parentid = c.objid 
+	LEFT JOIN municipality m ON b.parentid = m.objid  
+	LEFT JOIN district d ON b.parentid = d.objid 
+	LEFT JOIN province p ON m.parentid = p.objid 
+	LEFT JOIN city c ON d.parentid = c.objid 
 WHERE f.objid = $P{faasid}
 
 
