@@ -13,9 +13,7 @@ class TxnSignatoryService
 
 	@ProxyMethod
 	public def lookup( params ) {
-		//
-		//TODO: fetch this fom signatory template
-		//
+		println 'params -> ' + params 
 		params.searchtext = (params.searchtext ? params.searchtext : '') + '%'
 		def qry = em.sqlContext.createNamedQuery('txnsignatory:lookup')
 

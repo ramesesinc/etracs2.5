@@ -229,8 +229,9 @@ public abstract class AbstractFaasController extends PageFlowController
     ] as EditorListModel
             
     def getLookupSignatory(){
-         return InvokerUtil.lookupOpener('signatory:lookup',[
-            type : selectedSignatory.type,
+         def doctype = 'RPT' + selectedSignatory.type.toUpperCase();
+         return InvokerUtil.lookupOpener('txnsignatory:lookup',[
+            doctype : doctype,
                  
             onselect : { 
                 selectedSignatory.personnelid = it.objid;
@@ -244,45 +245,6 @@ public abstract class AbstractFaasController extends PageFlowController
             },
         ])
     }
-            
-    def getLookupAppraiser(){
-        return InvokerUtil.lookupOpener('rptappraiser:lookup',[
-            onselect : { 
-                it.personnelid = it.objid;
-                it.objid = RPTUtil.generateId('S');
-                it.type = 'appraiser';
-                faas.appraiser = it 
-            },
-            onempty  : { faas.appraiser = null },
-        ])
-    }
-    
-    
-    def getLookupRecommender(){
-        return InvokerUtil.lookupOpener('rptrecommender:lookup',[
-            onselect : { 
-                it.personnelid = it.objid;
-                it.objid = RPTUtil.generateId('S');
-                it.type = 'appraiser';
-                faas.recommender = it 
-            },
-            onempty  : { faas.recommender = null },
-        ])
-    }
-    
-    
-    def getLookupApprover(){
-        return InvokerUtil.lookupOpener('rptapprover:lookup',[
-            onselect : { 
-                it.personnelid = it.objid;
-                it.objid = RPTUtil.generateId('S');
-                it.type = 'appraiser';
-                faas.approver = it 
-            },
-            onempty  : { faas.approver = null },
-        ])
-    }
-    
     
     def getLookupTaxpayer(){
         return InvokerUtil.lookupOpener('rpttaxpayer:lookup',[
