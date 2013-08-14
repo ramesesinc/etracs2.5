@@ -39,7 +39,7 @@ class FAASService
     @Service('FAASAnnotationService')
     def annotationSvc 
 
-    @Service('SignatoryService')
+    @Service('TxnSignatoryService')
     def signatorySvc 
 
     @Service('FAASService')
@@ -213,6 +213,7 @@ class FAASService
 
 	@ProxyMethod
 	public def submitFaasForApproval( faas ) {
+		println 'submitFaasForApproval -> ' + faas.state 
 		if (faas.txntype.newrpu) {
 			faas.rpu.state = faas.state 
 			faas.rpu.rp.state  = faas.state 
@@ -225,6 +226,7 @@ class FAASService
 
 	@ProxyMethod
 	public def approveFaas( faas ) {
+		println 'approveFaas -> ' + faas.tdno 
 		faas.state = STATE_CURRENT
 		wsSvc.insert(faas)
 		if (faas.txntype.newrpu){
@@ -341,7 +343,7 @@ class FAASService
 
 	@ProxyMethod
 	public def getBarangays(params) {
-		return brgySvc.lookupBarangays(params)
+		return brgySvc.getList(params)
 	}
 
 

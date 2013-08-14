@@ -29,12 +29,18 @@ public class Main
         env.put("JOBTITLE", "AA - II");
         
         Map roles = new HashMap();
-        roles.put("RPT.APPRAISER", null);
-        roles.put("RPT.CERTIFICATION_ISSUER", null);
+        //roles.put("RPT.APPRAISER", null);
+        //roles.put("RPT.CERTIFICATION_ISSUER", null);
         roles.put("RPT.RULE_AUTHOR", null);
         roles.put("RPT.LANDTAX", null);
         roles.put("RPT.LANDTAX_DATAMGMT", null);
+        roles.put("RPT.APPRAISER", null);
+        roles.put("RPT.RECOMMENDER", null);
+        roles.put("RPT.APPROVER", null);
         roles.put("RPT.ASSESSOR_DATAMGMT", null);
+        roles.put("RPT.ASSESSOR_SHARED", null);
+        roles.put("RPT.LANDTAX_SHARED", null);
+        roles.put("ADMIN.SYSADMIN", null);
         OsirisTestPlatform.runTest(env, roles);         
     }
 

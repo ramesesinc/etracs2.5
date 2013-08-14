@@ -49,7 +49,7 @@ class SubdivisionService
     @Service('NumberService')
     def numSvc
 
-    @Service('SignatoryService')
+    @Service('TxnSignatoryService')
     def signatorySvc 
 
 

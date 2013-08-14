@@ -29,37 +29,26 @@
   <element>
     <type>com.umlet.element.Relation</type>
     <coordinates>
-      <x>270</x>
-      <y>120</y>
-      <w>160</w>
+      <x>540</x>
+      <y>50</y>
+      <w>200</w>
       <h>70</h>
     </coordinates>
-    <panel_attributes>lt=&lt;-
-signatories</panel_attributes>
-    <additional_attributes>140;50;30;50</additional_attributes>
+    <panel_attributes>lt=&lt;&lt;-
+subdividedlands</panel_attributes>
+    <additional_attributes>30;50;180;50</additional_attributes>
   </element>
   <element>
-    <type>com.umlet.element.Class</type>
+    <type>com.umlet.element.Relation</type>
     <coordinates>
-      <x>410</x>
-      <y>60</y>
-      <w>160</w>
-      <h>210</h>
+      <x>450</x>
+      <y>240</y>
+      <w>290</w>
+      <h>370</h>
     </coordinates>
-    <panel_attributes>subdivision
---
-objid
-state
-ry
-txntype
-txnno
-autonumber
-effectivityyear
-effectivityqtr
-memoranda
-motherfaasid
-</panel_attributes>
-    <additional_attributes/>
+    <panel_attributes>lt=&lt;&lt;-
+affectedrpus</panel_attributes>
+    <additional_attributes>30;30;130;350;270;350</additional_attributes>
   </element>
   <element>
     <type>com.umlet.element.Class</type>
@@ -133,16 +122,53 @@ lguid
     <additional_attributes/>
   </element>
   <element>
-    <type>com.umlet.element.Relation</type>
+    <type>com.umlet.element.Class</type>
     <coordinates>
-      <x>540</x>
+      <x>180</x>
       <y>50</y>
-      <w>200</w>
-      <h>70</h>
+      <w>120</w>
+      <h>260</h>
     </coordinates>
-    <panel_attributes>lt=&lt;&lt;-
-subdividedlands</panel_attributes>
-    <additional_attributes>30;50;180;50</additional_attributes>
+    <panel_attributes>txnsignatory
+bg=red
+&lt;&lt;appraiser&gt;
+&lt;&lt;recommender&gt;
+&lt;&lt;taxmapper&gt;&gt;
+&lt;&lt;approver&gt;&gt;
+--
+objid
+refid
+type
+caption
+personnelid
+name
+title
+dtsigned
+seqno</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>410</x>
+      <y>60</y>
+      <w>160</w>
+      <h>210</h>
+    </coordinates>
+    <panel_attributes>subdivision
+--
+objid
+state
+ry
+txntype
+txnno
+autonumber
+effectivityyear
+effectivityqtr
+memoranda
+motherfaasid
+</panel_attributes>
+    <additional_attributes/>
   </element>
   <element>
     <type>com.umlet.element.Class</type>
@@ -210,39 +236,13 @@ memoranda
   <element>
     <type>com.umlet.element.Relation</type>
     <coordinates>
-      <x>450</x>
-      <y>240</y>
-      <w>290</w>
-      <h>370</h>
+      <x>270</x>
+      <y>120</y>
+      <w>160</w>
+      <h>70</h>
     </coordinates>
-    <panel_attributes>lt=&lt;&lt;-
-affectedrpus</panel_attributes>
-    <additional_attributes>30;30;130;350;270;350</additional_attributes>
-  </element>
-  <element>
-    <type>com.umlet.element.Class</type>
-    <coordinates>
-      <x>180</x>
-      <y>50</y>
-      <w>120</w>
-      <h>260</h>
-    </coordinates>
-    <panel_attributes>signatory
-bg=red
-&lt;&lt;appraiser&gt;
-&lt;&lt;recommender&gt;
-&lt;&lt;taxmapper&gt;&gt;
-&lt;&lt;approver&gt;&gt;
---
-objid
-refid
-type
-caption
-personnelid
-name
-title
-dtsigned
-seqno</panel_attributes>
-    <additional_attributes/>
+    <panel_attributes>lt=&lt;-
+signatories</panel_attributes>
+    <additional_attributes>140;50;30;50</additional_attributes>
   </element>
 </diagram>

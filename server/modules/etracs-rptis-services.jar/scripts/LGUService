@@ -24,58 +24,58 @@ class LGUService
 
     @ProxyMethod
     public def lookupBarangays(params) {
-    	return brgySvc.lookupBarangays(params)
+    	return brgySvc.getList(params)
     }
 
 
     @ProxyMethod
     public def lookupBarangayById( objid ) {
-    	return brgySvc.lookupBarangayById(objid)
+    	return brgySvc.getById(objid)
     }
 
 
     @ProxyMethod
     public def lookupMunicipalities(params) {
-    	return muniSvc.lookupMunicipalities(params)
+    	return muniSvc.getList(params)
     }
 
 
     @ProxyMethod
     public def lookupMunicipalityById( objid ) {
-    	return muniSvc.lookupMunicipalityById(objid)
+    	return muniSvc.getById(objid)
     }
 
 
     @ProxyMethod
     public def lookupCities(params) {
-    	return citySvc.lookupCities(params)
+    	return citySvc.getList(params)
     }
 
 
     @ProxyMethod
     public def lookupCityById( objid ) {
-    	return citySvc.lookupCityById(objid)
+    	return citySvc.getById(objid)
     }
 
 
     @ProxyMethod
     public def lookupDistricts(params) {
-    	return distSvc.lookupDistricts(params)
+    	return distSvc.getList(params)
     }
 
 
     @ProxyMethod
     public def lookupDistrictById( objid ) {
-    	return distSvc.lookupDistrictById(objid)
+    	return distSvc.getById(objid)
     }
 	
 	@ProxyMethod
     public def lookupProvinces(params) {
-    	return provSvc.lookupProvinces(params)
+    	return provSvc.getList(params)
     }
 	
 	@ProxyMethod
     public def lookupProvinceById( objid ) {
-    	return provSvc.lookupProvinceById(objid)
+    	return provSvc.getById(objid)
     }
 }

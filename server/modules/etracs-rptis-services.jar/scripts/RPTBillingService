@@ -102,10 +102,61 @@ public class RPTBillingService
 		if (!bill.ledgers) 
 			throw new Exception('There are no unpaid ledgers for payment.')
 
-		//TODO: calculate expirydate
-		bill.expirydate = dtSvc.getMonthEndDate(dtSvc.serverDate)
-		
+		// bill.expirydate = dtSvc.getMonthEndDate(dtSvc.serverDate)
+		bill.expirydate = getExpiryDate(bill)
 		return bill
+	}
+
+	
+	def getExpiryDate(bill) {
+		def dt = dtSvc.parseDate(bill.billdate,null);
+
+		//check in database if there is qtr deadline overrides
+		def qtr_deadline = em.sqlContext.createQuery('''
+				select expirydate,expirytype from rptexpiry 
+				where iqtr=$P{qtr} and iyear=$P{year}
+				and expirydate >= $P{date}
+				order by expirydate asc 
+		''')
+			.setParameters([qtr:dt.qtr, year:dt.year, date:dt.date])
+			.singleResult;
+		
+		//check discount, interest overrides
+		def expirydate = null;
+		def expirytype = null;
+
+		if( ! qtr_deadline ) {
+			qtr_deadline = [
+				expirydate : dtSvc.getQtrEndDate(dt.qtr, dt.year),
+				expirytype : 'QTRDUEDATE',
+			]
+		}
+
+		expirydate = qtr_deadline.expirydate;
+		expirytype = qtr_deadline.expirytype;
+
+		//check discount first
+		if(expirytype?.equalsIgnoreCase("DISCOUNT")) {
+			return qtr_deadline.expirydate;
+		}
+		
+		//if there are arrears, expiry is first day of next month
+		def years = bill.ledgers.items.year.flatten().unique()
+		if (years.findAll{ util.toInteger(it) < dt.year}){
+			return dtSvc.add(dtSvc.getMonthEndDate(dt.date), '1d')
+		}
+
+		//check for interest overrides
+		if( expirytype?.equalsIgnoreCase("INTEREST")) {
+			return qtr_deadline.expirydate;
+		}
+		
+		if( qtr_deadline ) {
+			return qtr_deadline.expirydate;
+		}	
+		else {
+			return dtSvc.add(dtSvc.getMonthEndDate(dt.date), '1d')
+		} 
 	}
 
 

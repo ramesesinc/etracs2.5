@@ -1,5 +1,5 @@
 <schema>
-    <element name="signatory" tablename="signatory">
+    <element name="txnsignatory" tablename="txnsignatory">
         <field name="objid" primary="true" />
         <field name="refid" required="true" />
         <field name="type" required="true" />

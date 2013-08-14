@@ -12,7 +12,7 @@ import com.rameses.osiris2.common.*
 
 class SignatoryLookupController extends LookupController
 {
-    @Service("SignatoryService")
+    @Service("TxnSignatoryService")
     def svc
     
     def type;

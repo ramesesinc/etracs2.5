@@ -23,7 +23,7 @@ FROM faas f
 	INNER JOIN rpu r ON f.rpuid = r.objid
 	INNER JOIN realproperty rp ON r.realpropertyid = rp.objid 
 	INNER JOIN propertyclassification pc ON r.classification_objid = pc.objid 
-	INNER JOIN signatory s ON f.objid = s.refid AND s.type = 'approver'
+	INNER JOIN txnsignatory s ON f.objid = s.refid AND s.type = 'approver'
 WHERE f.state IN ('CURRENT', 'CANCELLED')
 	AND rp.barangayid LIKE $P{barangayid}
 	AND YEAR(s.dtsigned) = $P{year}  
@@ -151,7 +151,7 @@ FROM faas f
 	INNER JOIN realproperty rp ON r.realpropertyid = rp.objid
 	INNER JOIN propertyclassification pc ON r.classification_objid = pc.objid 
 	INNER JOIN barangay b ON rp.barangayid = b.objid 
-	INNER JOIN signatory s ON f.objid = s.refid AND s.type = 'approver'
+	INNER JOIN txnsignatory s ON f.objid = s.refid AND s.type = 'approver'
 WHERE rp.barangayid = $P{barangayid} 
   AND f.state IN ('CURRENT', 'CANCELLED')
 ORDER BY s.dtsigned, tdno 

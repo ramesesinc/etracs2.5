@@ -42,7 +42,7 @@ class ConsolidationService
     @Service('LGUService')
     def lguSvc
     
-    @Service('SignatoryService')
+    @Service('TxnSignatoryService')
     def signatorySvc     
 
     @Service('RPTLedgerService')
