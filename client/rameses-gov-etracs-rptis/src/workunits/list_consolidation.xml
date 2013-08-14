@@ -1,6 +1,6 @@
 <workunit extends="wtemplates/ListController.xml">
     <invokers>
-        <invoker folderid="/txnmgmt/rpt" caption="Consolidations"  target="window" index="111" role="ASSESSOR_SHARED" />
+        <invoker folderid="/explorer/txn/rpt" caption="Consolidations"  target="window" index="111" role="ASSESSOR_SHARED" />
         <invoker type="quick_launcher" code="CS00" caption="Consolidations" role="ASSESSOR_SHARED" />
     </invokers>
     <code>

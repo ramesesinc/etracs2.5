@@ -1,23 +1,27 @@
 <folders>
-    <folder id="master">
-        <folder id="rpt" caption="Assessor" index="1" />
-    </folder>
-    <folder id="txnmgmt">
-        <folder id="rpt" caption="Assessor" index="1" />
-        <folder id="landtax" caption="Land Tax" index="2" />
-    </folder>
-    <folder id="txn">
-        <folder id="rpt" caption="Assessor" index="1">
-            <folder id="faas" caption="FAAS" index="1"/>
-            <folder id="cert" caption="Certifications" index="2"/>
-            <folder id="util" caption="Utilities" index="3" />
+    <folder id="explorer">
+        <folder id="master">
+            <folder id="rpt" caption="Assessor" index="1" />
         </folder>
-        <folder id="landtax" caption="Land Tax" index="1"/>
+        <folder id="txn" caption="Transactions" index="2">
+            <folder id="rpt" caption="Assessor" index="1" />
+            <folder id="landtax" caption="Land Tax" index="2" />
+        </folder>
+        <folder id="setting" caption="Settings" index="3">
+        </folder>
+        
+        
+        <folder id="xtxn">
+            <folder id="rpt" caption="Assessor" index="1">
+                <folder id="faas" caption="FAAS" index="1"/>
+                <folder id="cert" caption="Certifications" index="2"/>
+                <folder id="util" caption="Utilities" index="3" />
+            </folder>
+            <folder id="landtax" caption="Land Tax" index="1"/>
+        </folder>
+        
     </folder>
-    <folder id="setting">
-        <folder id="rpt" caption="Assessor" index="1" />
-        <folder id="landtax" caption="Land Tax" index="2" />
-    </folder>
+    
     
     <folder id="menu">
         <folder id="test" caption="Test"/>

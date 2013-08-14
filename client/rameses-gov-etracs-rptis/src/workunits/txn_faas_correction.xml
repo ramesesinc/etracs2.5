@@ -4,9 +4,6 @@
         
         <invoker type="faas_CE:open" action="open" caption="FAAS" role="APPRAISER" permission="faas.read" />
         
-         <invoker folderid="/txn/rpt/faas" action="initTxn"  caption="Correction of Entry" index="4"
-            txntypeid="CE" txntype="Correction of Entry" newledger="false" newrpu="true" role="APPRAISER" permission="faas.createCorrection"/>
-            
         <invoker folderid="/menu/txn/rpt/faas" action="initTxn"  caption="Correction of Entry" index="4"
             txntypeid="CE" txntype="Correction of Entry" newledger="false" newrpu="true" role="APPRAISER" permission="faas.createCorrection"/>
 

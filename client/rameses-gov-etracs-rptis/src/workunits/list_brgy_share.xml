@@ -1,6 +1,6 @@
 <workunit extends="wtemplates/ListController.xml" serviceName="BrgyShareListService" entityName="brgyshare" formTarget="window" >
     <invokers>
-        <invoker folderid="/txnmgmt/landtax" caption="Barangay Shares"  target="window" index="200" role="LANDTAX_SHARED" />
+        <invoker folderid="/explorer/txn/landtax" caption="Barangay Shares"  target="window" index="200" role="LANDTAX_SHARED" />
         <invoker type="quick_launcher" code="BS00" caption="Barangay Shares" role="LANDTAX_SHARED" />
     </invokers>
 </workunit>

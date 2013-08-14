@@ -6,9 +6,6 @@
         
         <invoker type="cancelledfaas:open" action="open" caption="Cancelled FAAS" target="window"  />
         
-         <invoker folderid="/txn/rpt/faas" action="init"  caption="Cancel FAAS" index="22"
-            role="APPRAISER" permission="cancelfaas.create"/>
-            
           <invoker folderid="/menu/txn/rpt/faas" action="init"  caption="Cancel FAAS" index="22" 
             role="APPRAISER" permission="cancelfaas.create"/>
             

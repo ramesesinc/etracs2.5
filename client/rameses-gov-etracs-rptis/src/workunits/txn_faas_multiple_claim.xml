@@ -3,9 +3,6 @@
     <invokers>
         <invoker type="faas_MC:open" action="open" caption="FAAS" role="APPRAISER" permission="faas.read" />
         
-        <invoker folderid="/txn/rpt/faas" action="initMultipleClaim"  caption="Multiple Claim" index="12"
-            txntypeid="MC" txntype="Multiple Claim" newledger="true" newrpu="true" newrealproperty="true" role="APPRAISER" permission="faas.createMultipleClaim"/>
-            
         <invoker folderid="/menu/txn/rpt/faas" action="initMultipleClaim"  caption="Multiple Claim" index="12"
             txntypeid="MC" txntype="Multiple Claim" newledger="true" newrpu="true" newrealproperty="true" role="APPRAISER" permission="faas.createMultipleClaim"/>
 

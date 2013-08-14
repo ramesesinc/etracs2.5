@@ -3,10 +3,7 @@
     <invokers>
         <invoker type="faas_TRC:open" action="open" caption="FAAS" role="APPRAISER" permission="faas.read" />
         
-        
-         <invoker folderid="/txn/rpt/faas" action="initTxn"  caption="Transfer with Correction" index="3"
-            txntypeid="TRC" txntype="Transfer with Correction" newledger="false" newrpu="true" role="APPRAISER" permission="faas.createTransfer"/>
-            
+           
         <invoker folderid="/menu/txn/rpt/faas" action="initTxn"  caption="Transfer with Correction" index="3"
             txntypeid="TRC" txntype="Transfer with Correction" newledger="false" newrpu="true" role="APPRAISER" permission="faas.createTransfer"/>
 

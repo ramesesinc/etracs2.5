@@ -2,11 +2,7 @@
 <workunit>
     <invokers>
         <invoker type="resection:open" action="open" caption="Resection" target="window"  />
-        
-         <invoker folderid="/txn/rpt/faas" action="init"  caption="Resection" index="25"
-            txntypeid="RS" txntype="Resection" newledger="false" newrpu="true" newrealproperpty="true" 
-            role="APPRAISER" permission="resection.create" />
-            
+          
         <invoker folderid="/menu/txn/rpt/faas" action="init"  caption="Resection" index="25"
             txntypeid="RS" txntype="Resection" newledger="false" newrpu="true" newrealproperpty="true" 
             role="APPRAISER" permission="resection.create" />

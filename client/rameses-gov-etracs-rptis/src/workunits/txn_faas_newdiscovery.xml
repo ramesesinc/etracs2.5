@@ -3,9 +3,6 @@
     <invokers>
         <invoker type="faas_ND:open" action="open" caption="FAAS" role="APPRAISER" permission="faas.read" />
         
-        <invoker folderid="/txn/rpt/faas" action="initNewDiscovery"  caption="New Discovery" index="11"
-            txntypeid="ND" txntype="New Discovery" newledger="false" newrpu="true" newrealproperty="true" role="APPRAISER" permission="faas.createNewDiscovery"/>
-            
         <invoker folderid="/menu/txn/rpt/faas" action="initNewDiscovery"  caption="New Discovery" index="11"
             txntypeid="ND" txntype="New Discovery" newledger="false" newrpu="true" newrealproperty="true" role="APPRAISER" permission="faas.createNewDiscovery"/>
 

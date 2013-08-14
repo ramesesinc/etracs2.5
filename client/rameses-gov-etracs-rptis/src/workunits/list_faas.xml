@@ -1,6 +1,6 @@
 <workunit extends="wtemplates/ListController.xml">
     <invokers>
-        <invoker folderid="/txnmgmt/rpt" caption="FAAS Management"  target="window" index="101" role="ASSESSOR_SHARED" />
+        <invoker folderid="/explorer/txn/rpt" caption="FAAS Management"  target="window" index="101" role="ASSESSOR_SHARED" />
         <invoker type="home.action" caption="FAAS Management"  target="window" index="101" role="ASSESSOR_SHARED" />
         <invoker type="quick_launcher" code="FA00" caption="FAAS Management" role="ASSESSOR_SHARED" />
     </invokers>

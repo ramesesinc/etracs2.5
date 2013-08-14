@@ -3,9 +3,6 @@
     <invokers>
         <invoker type="faas_CT:open" action="open" caption="FAAS" role="APPRAISER" permission="faas.read" />
         
-         <invoker folderid="/txn/rpt/faas" action="initTxn"  caption="Change Taxability" index="6"
-            txntypeid="CT" txntype="Change Taxability" newledger="false" newrpu="true" role="APPRAISER" permission="faas.createChangeTaxability"/>
-            
         <invoker folderid="/menu/txn/rpt/faas" action="initTxn"  caption="Change Taxability" index="6"
             txntypeid="CT" txntype="Change Taxability" newledger="false" newrpu="true" role="APPRAISER" permission="faas.createChangeTaxability"/>
 

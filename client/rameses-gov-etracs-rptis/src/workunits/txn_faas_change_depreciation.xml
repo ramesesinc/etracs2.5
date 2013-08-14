@@ -3,9 +3,6 @@
     <invokers>
         <invoker type="faas_CD:open" action="open" caption="FAAS" role="APPRAISER" permission="faas.read" />
         
-         <invoker folderid="/txn/rpt/faas" action="initTxn"  caption="Change Depreciation" index="7"
-            txntypeid="CD" txntype="Change Depreciation" newledger="false" newrpu="true"  role="APPRAISER" permission="faas.createChangeDepreciation"/>
-        
          <invoker folderid="/menu/txn/rpt/faas" action="initTxn"  caption="Change Depreciation" index="7"
             txntypeid="CD" txntype="Change Depreciation" newledger="false" newrpu="true"  role="APPRAISER" permission="faas.createChangeDepreciation"/>
 
