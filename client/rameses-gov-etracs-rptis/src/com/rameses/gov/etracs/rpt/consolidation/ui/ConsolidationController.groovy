@@ -287,8 +287,9 @@ public class ConsolidationController extends PageFlowController
     ] as EditorListModel
             
     def getLookupSignatory(){
-         return InvokerUtil.lookupOpener('signatory:lookup',[
-            type : selectedSignatory.type,
+         def doctype = 'RPT' + selectedSignatory.type.toUpperCase();
+         return InvokerUtil.lookupOpener('txnsignatory:lookup',[
+            doctype : doctype,
                  
             onselect : { 
                 selectedSignatory.personnelid = it.objid;

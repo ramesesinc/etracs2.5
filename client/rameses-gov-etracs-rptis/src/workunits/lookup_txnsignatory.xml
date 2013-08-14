@@ -1,6 +1,6 @@
 <workunit extends="wtemplates/LookupController.xml">
     <invokers>
-        <invoker type="signatory:lookup" action="init" caption="Signatory Lookup" target="popup" />
+        <invoker type="txnsignatory:lookup" action="init" caption="Signatory Lookup" target="popup" />
     </invokers>
     
     <code>
@@ -15,7 +15,7 @@ class SignatoryLookupController extends LookupController
     @Service("TxnSignatoryService")
     def svc
     
-    def type;
+    def doctype;
     
     Column[] getColumns() {
         return [
@@ -25,7 +25,7 @@ class SignatoryLookupController extends LookupController
     }
     
     List fetchList( Map params ) { 
-        params.type = type;
+        params.doctype = doctype;
         return svc.lookup(params)
     }
 }  
