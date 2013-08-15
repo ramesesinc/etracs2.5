@@ -69,7 +69,7 @@
                 <StringItem index="0" value="bill.taxpayer"/>
               </StringArray>
             </Property>
-            <Property name="expression" type="java.lang.String" value="#{bill.taxpayer.taxpayername}"/>
+            <Property name="expression" type="java.lang.String" value="#{bill.taxpayer.name}"/>
             <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
               <Dimension value="[0, 19]"/>
             </Property>

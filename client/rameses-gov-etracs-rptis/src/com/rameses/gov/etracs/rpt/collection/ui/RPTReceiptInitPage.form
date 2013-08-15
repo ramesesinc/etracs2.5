@@ -48,7 +48,7 @@
             <Property name="cellPadding" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
               <Insets value="[5, 0, 0, 0]"/>
             </Property>
-            <Property name="expression" type="java.lang.String" value="#{entity.taxpayer.taxpayername}"/>
+            <Property name="expression" type="java.lang.String" value="#{entity.taxpayer.name}"/>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
               <Font name="Arial" size="12" style="0"/>
             </Property>

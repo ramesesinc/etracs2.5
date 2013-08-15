@@ -27,9 +27,9 @@ objid
 state
 txnno
 txndate
-taxpayerid
-taxpayername
-taxpayeraddress
+taxpayer_objid
+taxpayer_name
+taxpayer_address
 createdbyid
 createdbyname
 createdbytitle

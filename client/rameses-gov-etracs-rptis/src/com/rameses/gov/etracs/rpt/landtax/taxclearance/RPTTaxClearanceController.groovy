@@ -56,7 +56,7 @@ class RPTTaxClearanceController
     }
     
     def getLookupTaxpayer(){
-        return InvokerUtil.lookupOpener('rpttaxpayer:lookup',[
+        return InvokerUtil.lookupOpener('entity:lookup',[
                 onselect : {
                     entity.taxpayer = it;
                     entity.requestedby = it.name;
@@ -77,7 +77,7 @@ class RPTTaxClearanceController
     
     def getLookupLedger(){
         return InvokerUtil.lookupOpener('rptledger:lookup', [
-            taxpayerid : entity.taxpayerid,
+            taxpayerid : entity.taxpayer.objid,
             state      : 'APPROVED',
                 
             onselect : { ledger ->

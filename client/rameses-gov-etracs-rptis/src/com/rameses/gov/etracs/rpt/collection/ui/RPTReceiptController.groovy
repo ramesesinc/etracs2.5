@@ -59,14 +59,14 @@ class RPTReceiptController
      * INIT PAGE SUPPORT
      *
      -----------------------------------------------------------------*/
-    def lookupTaxpayer = InvokerUtil.lookupOpener('rpttaxpayer:lookup', [
+    def lookupTaxpayer = InvokerUtil.lookupOpener('entity:lookup', [
             onselect    : {
                 entity.taxpayer = it;
                 bill.taxpayer = it;
-                entity.payorname = it.taxpayername;
-                entity.payoraddress = it.taxpayeraddress;
-                entity.paidby = it.taxpayername;
-                entity.paidbyaddress = it.taxpayeraddress;
+                entity.payorname = it.name;
+                entity.payoraddress = it.address;
+                entity.paidby = it.name;
+                entity.paidbyaddress = it.address;
                 binding.refresh('entity.taxpayer.*|entity.paidby.*');
             }
     ]);
