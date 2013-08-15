@@ -2,8 +2,8 @@
 SELECT 
 	s.*,
 	f.tdno AS tdno,
-	f.ownername, 
-	f.owneraddress,
+	f.owner_name, 
+	f.owner_address,
 	r.totalareaha,
 	r.totalareasqm,
 	r.fullpin,
@@ -21,7 +21,7 @@ FROM subdivision s
 	INNER JOIN propertyclassification pc ON r.classification_objid = pc.objid 
 WHERE s.state LIKE $P{state}
   AND (s.txnno LIKE $P{searchtext} OR f.tdno LIKE $P{searchtext} OR 
-       f.ownername LIKE $P{searchtext} OR r.fullpin LIKE $P{searchtext} )
+       f.owner_name LIKE $P{searchtext} OR r.fullpin LIKE $P{searchtext} )
 ORDER BY s.txnno        
 
 
@@ -29,10 +29,10 @@ ORDER BY s.txnno
 SELECT s.*,
 	f.tdno AS motherfaas_tdno, 
 	f.taxpayerid AS motherfaas_taxpayerid,
-	f.taxpayername AS motherfaas_taxpayername,
-	f.taxpayeraddress AS motherfaas_taxpayeraddress,
-	f.ownername AS motherfaas_ownername,
-	f.owneraddress AS motherfaas_owneraddress,
+	f.taxpayer_name AS motherfaas_taxpayername,
+	f.taxpayer_address AS motherfaas_taxpayeraddress,
+	f.owner_name AS motherfaas_ownername,
+	f.owner_address AS motherfaas_owneraddress,
 	f.lguid AS motherfaas_lguid, 
 	f.txntype_objid AS motherfaas_txntype_objid,
 	f.datacapture AS motherfaas_datacapture,

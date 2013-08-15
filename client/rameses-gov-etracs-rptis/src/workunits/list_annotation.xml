@@ -32,8 +32,8 @@
                     new Column(name:"faas.tdno", caption:"TD No.", width:120),
                     new Column(name:"faas.fullpin", caption:"PIN", width:180),
                     new Column(name:"faas.classification", caption:"Classification", width:80),
-                    new Column(name:"faas.ownername", caption:"Owner Name", width:250),
-                    new Column(name:"faas.owneraddress", caption:"Owner Address", width:250),
+                    new Column(name:"faas.owner.name", caption:"Owner Name", width:250),
+                    new Column(name:"faas.owner.address", caption:"Owner Address", width:250),
                     new Column(name:"memoranda", caption:"Memoranda", width:300),
                 ]
             }

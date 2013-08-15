@@ -64,14 +64,14 @@ public class NoticeOfDelinquencyPage extends javax.swing.JPanel {
         xLabel7.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(153, 153, 153)));
         xLabel7.setCaption("Administrator");
         xLabel7.setFont(new java.awt.Font("Arial", 1, 11));
-        xLabel7.setName("notice.administratorname");
+        xLabel7.setName("notice.administrator.name");
         xLabel7.setPreferredSize(new java.awt.Dimension(0, 19));
         formPanel1.add(xLabel7);
 
         xLabel8.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(153, 153, 153)));
         xLabel8.setCaption("Address");
         xLabel8.setFont(new java.awt.Font("Arial", 1, 11));
-        xLabel8.setName("notice.administratoraddress");
+        xLabel8.setName("notice.administrator.address");
         xLabel8.setPreferredSize(new java.awt.Dimension(0, 19));
         formPanel1.add(xLabel8);
 

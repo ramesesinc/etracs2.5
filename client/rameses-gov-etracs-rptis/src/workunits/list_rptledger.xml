@@ -29,7 +29,7 @@
                     new Column(name:"state", caption:"State", width:80),
                     new Column(name:"tdno", caption:"TD No.", width:100),
                     new Column(name:"prevtdno", caption:"Prev. TD No.", width:100),
-                    new Column(name:"ownername", caption:"Owner Name", width:250),
+                    new Column(name:"owner.name", caption:"Owner Name", width:250),
                     new Column(name:"fullpin", caption:"PIN", width:150),
                     new Column(name:"cadastrallotno", caption:"Lot No.", width:100),
                     new Column(name:"totalareaha", caption:"Area (ha)", width:100, type:'decimal', format:'#,##0.0000'),

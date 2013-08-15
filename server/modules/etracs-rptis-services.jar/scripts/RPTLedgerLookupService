@@ -21,7 +21,7 @@ class RPTLedgerLookupService
 
         def filters = [
             'WHERE f.tdno = $P{tdno} AND rl.state = $P{state}',
-            'WHERE f.ownername LIKE $P{searchtext} AND rl.state = $P{state}',
+            'WHERE f.owner_name LIKE $P{searchtext} AND rl.state = $P{state}',
             'WHERE rpu.fullpin LIKE $P{searchtext} AND rl.state = $P{state}',
             'WHERE rp.cadastrallotno LIKE $P{searchtext} AND rl.state = $P{state}',
             'WHERE rp.surveyno LIKE $P{searchtext} AND rl.state = $P{state}',

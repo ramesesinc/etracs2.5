@@ -43,7 +43,7 @@ class FAASAnnotationService
         def filters = [
             'WHERE fa.txnno LIKE $P{searchtext}',
             'WHERE f.tdno LIKE $P{searchtext}',
-            'WHERE f.ownername LIKE $P{searchtext}',
+            'WHERE f.owner_name LIKE $P{searchtext}',
             'WHERE r.fullpin LIKE $P{searchtext}',
             'WHERE fa.fileno LIKE $P{searchtext}',
         ]

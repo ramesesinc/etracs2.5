@@ -53,7 +53,7 @@ WHERE objid = $P{objid}
 [getReceiptItemsForPrinting]
 SELECT
 	f.tdno,
-	f.taxpayername,
+	f.taxpayer_name,
 	r.rputype,
 	r.totalav,
 	r.fullpin,
@@ -83,6 +83,6 @@ FROM rptreceiptitem ri
 		INNER JOIN realproperty rp ON r.realpropertyid = rp.objid 
 		INNER JOIN barangay b ON rp.barangayid = b.objid 
 WHERE ri.rptreceiptid = $P{rptreceiptid}
-GROUP BY ri.rptledgerid, f.tdno, f.taxpayername, r.rputype, r.totalav, r.fullpin, rp.cadastrallotno, pc.code, b.name
+GROUP BY ri.rptledgerid, f.tdno, f.taxpayer_name, r.rputype, r.totalav, r.fullpin, rp.cadastrallotno, pc.code, b.name
 ORDER BY f.tdno 
 

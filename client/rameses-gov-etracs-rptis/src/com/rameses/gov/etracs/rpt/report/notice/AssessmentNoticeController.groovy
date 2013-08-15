@@ -62,13 +62,11 @@ class AssessmentNoticeController
     def getLookupTaxpayer(){
         return InvokerUtil.lookupOpener('rpttaxpayer:lookup',[
                 onselect : {
-                    entity.putAll(it);
+                    it.taxpayer = it;
                     loadProperties();
                 },
                 onempty : {
-                    entity.taxpayerid = null;
-                    entity.taxpayername = null;
-                    entity.taxpayeraddress = null;
+                    entity.taxpayer = null;
                 },
         ])
     }

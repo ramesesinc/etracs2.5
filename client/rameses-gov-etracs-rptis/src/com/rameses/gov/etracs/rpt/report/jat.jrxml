@@ -39,7 +39,7 @@
 	<field name="tdno" class="java.lang.String"/>
 	<field name="fullpin" class="java.lang.String"/>
 	<field name="txntype" class="java.lang.String"/>
-	<field name="ownername" class="java.lang.String"/>
+	<field name="owner.name" class="java.lang.String"/>
 	<field name="barangay" class="java.lang.String"/>
 	<field name="rputype" class="java.lang.String"/>
 	<field name="classcode" class="java.lang.String"/>
@@ -632,7 +632,7 @@ VALUE]]></text>
 					<textElement verticalAlignment="Middle">
 						<font fontName="Tahoma" size="8"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{ownername}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{owner.name}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement

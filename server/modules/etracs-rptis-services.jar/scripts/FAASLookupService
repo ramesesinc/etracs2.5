@@ -21,7 +21,7 @@ class FAASLookupService
 		
 		def filters = [
 			' WHERE f.tdno = $P{tdno} AND f.state LIKE $P{state} AND f.taxpayerid LIKE $P{taxpayerid}',
-			' WHERE f.ownername LIKE $P{searchtext} AND f.state LIKE $P{state} AND f.taxpayerid LIKE $P{taxpayerid}',
+			' WHERE f.owner_name LIKE $P{searchtext} AND f.state LIKE $P{state} AND f.taxpayerid LIKE $P{taxpayerid}',
 			' WHERE r.fullpin LIKE $P{searchtext} AND f.state LIKE $P{state} AND f.taxpayerid LIKE $P{taxpayerid}',
 			' WHERE rp.cadastrallotno LIKE $P{searchtext} AND f.state LIKE $P{state} AND f.taxpayerid LIKE $P{taxpayerid}',
 			' WHERE rp.blockno = $P{blockno} AND f.state LIKE $P{state} AND f.taxpayerid LIKE $P{taxpayerid}',

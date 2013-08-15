@@ -97,7 +97,7 @@
                 <StringItem index="0" value="entity.faas"/>
               </StringArray>
             </Property>
-            <Property name="expression" type="java.lang.String" value="#{entity.faas.ownername}"/>
+            <Property name="expression" type="java.lang.String" value="#{entity.faas.owner.name}"/>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
               <Font name="Arial" size="11" style="1"/>
             </Property>

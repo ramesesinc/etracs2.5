@@ -114,7 +114,7 @@ public class RPTLedgerPage extends javax.swing.JPanel {
         xLabel7.setCaption("Administrator");
         xLabel7.setCaptionWidth(80);
         xLabel7.setFont(new java.awt.Font("Arial", 1, 11));
-        xLabel7.setName("ledger.administratorname");
+        xLabel7.setName("ledger.administrator.name");
         xLabel7.setPreferredSize(new java.awt.Dimension(0, 19));
         formPanel1.add(xLabel7);
 
@@ -122,7 +122,7 @@ public class RPTLedgerPage extends javax.swing.JPanel {
         xLabel8.setCaption("Address");
         xLabel8.setCaptionWidth(80);
         xLabel8.setFont(new java.awt.Font("Arial", 1, 11));
-        xLabel8.setName("ledger.administratoraddress");
+        xLabel8.setName("ledger.administrator.address");
         xLabel8.setPreferredSize(new java.awt.Dimension(0, 19));
         formPanel1.add(xLabel8);
 

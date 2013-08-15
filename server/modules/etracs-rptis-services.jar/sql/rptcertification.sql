@@ -62,8 +62,8 @@ WHERE f.taxpayerid	= $P{taxpayerid}
 [getLandHoldingItems]
 SELECT 
 	f.tdno,
-	f.taxpayername, 
-	f.ownername, 
+	f.taxpayer_name, 
+	f.owner_name, 
 	f.titleno,	
 	pc.code AS classcode, 
 	pc.name AS classname,
@@ -105,8 +105,8 @@ WHERE f.taxpayerid	= $P{taxpayerid}
 [getMultipleItems]
 SELECT 
 	f.tdno,
-	f.taxpayername, 
-	f.ownername, 
+	f.taxpayer_name, 
+	f.owner_name, 
 	f.titleno,	
 	pc.code AS classcode, 
 	pc.name AS classname,

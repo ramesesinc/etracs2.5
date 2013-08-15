@@ -2,7 +2,7 @@
 SELECT 
 	f.state,
 	f.tdno,
-	f.ownername,
+	f.owner_name,
 	f.titleno,
 	f.prevtdno,
 	f.prevowner,
@@ -36,7 +36,7 @@ ORDER BY r.fullpin
 [getMasterListing]
 SELECT t.* FROM (  
 	SELECT 
-		f.state, f.ownername, r.fullpin, f.tdno, f.titleno, rp.cadastrallotno,  
+		f.state, f.owner_name, r.fullpin, f.tdno, f.titleno, rp.cadastrallotno,  
 		r.rputype, pc.code AS classcode, r.totalareaha, r.totalareasqm, r.totalmv, r.totalav, f.effectivityyear, 
 		f.prevtdno, f.prevowner, f.prevmv, f.prevav, 
 		NULL AS cancelledbytdnos, NULL AS cancelreason, canceldate 
@@ -50,7 +50,7 @@ SELECT t.* FROM (
 	UNION 
 
 	SELECT 
-		f.state, f.ownername, r.fullpin, f.tdno, f.titleno, rp.cadastrallotno,  
+		f.state, f.owner_name, r.fullpin, f.tdno, f.titleno, rp.cadastrallotno,  
 		r.rputype, pc.code AS classcode, r.totalareaha, r.totalareasqm, r.totalmv, r.totalav, f.effectivityyear, 
 		f.prevtdno, f.prevowner, f.prevmv, f.prevav, 
 		cancelledbytdnos, cancelreason, canceldate 
@@ -75,7 +75,7 @@ SELECT
 	CASE WHEN m.objid IS NOT NULL THEN m.indexno ELSE d.indexno END AS lguindex,  
 	
 	b.name AS barangay, b.indexno AS barangayindex, 
-	f.ownername, f.owneraddress, f.tdno, f.effectivityyear, 
+	f.owner_name, f.owner_address, f.tdno, f.effectivityyear, 
 	rp.cadastrallotno, pc.code AS classcode, r.rputype, r.totalav, 
 	r.fullpin, f.prevtdno, f.memoranda, rp.barangayid 
 FROM faas f
@@ -103,7 +103,7 @@ SELECT
 	CASE WHEN m.objid IS NOT NULL THEN m.indexno ELSE d.indexno END AS lguindex,  
 	
 	b.name AS barangay, b.indexno AS barangayindex, 
-	f.ownername, f.owneraddress, f.tdno, f.effectivityyear, 
+	f.owner_name, f.owner_address, f.tdno, f.effectivityyear, 
 	rp.cadastrallotno, pc.code AS classcode, r.rputype, r.totalav, 
 	r.fullpin, f.memoranda, rp.barangayid,
 	f.memoranda, et.code AS legalbasis  
@@ -127,7 +127,7 @@ ORDER BY fullpin
 [getTmcrList]
 SELECT
 	b.name AS barangay, pc.code AS classcode, 
-	f.state,  f.memoranda, f.ownername, f.owneraddress, r.rputype, f.tdno, f.titleno, 
+	f.state,  f.memoranda, f.owner_name, f.owner_address, r.rputype, f.tdno, f.titleno, 
 	rp.cadastrallotno, rp.section, rp.surveyno, 
 	r.fullpin, r.totalareasqm, r.totalareasqm, r.totalav, r.totalmv 
 FROM faas f
@@ -144,7 +144,7 @@ ORDER BY fullpin
 [getJAT]
 SELECT 
 	b.name AS barangay, s.dtsigned AS issuedate, f.tdno, r.fullpin, 
-	f.txntype_objid AS txntype, f.ownername, r.rputype, pc.code AS classcode, 
+	f.txntype_objid AS txntype, f.owner_name, r.rputype, pc.code AS classcode, 
 	r.totalareaha, r.totalmv, r.totalav, f.state 
 FROM faas f
 	INNER JOIN rpu r ON f.rpuid = r.objid 
@@ -159,7 +159,7 @@ ORDER BY s.dtsigned, tdno
 
 [getAnnotationListing]
 SELECT 
-	f.tdno, f.titleno, f.titledate, f.titletype, f.ownername, f.owneraddress, 
+	f.tdno, f.titleno, f.titledate, f.titletype, f.owner_name, f.owner_address, 
 	r.fullpin, rp.cadastrallotno, r.rputype, b.name AS barangay, pc.code AS classcode, r.totalmv, r.totalav, 
 	r.totalareaha,	r.totalareasqm, fat.type AS annotationtype, fa.memoranda 
 FROM faasannotation fa 
@@ -208,7 +208,7 @@ ORDER BY b.pin
 [getORF]  
 SELECT
 	b.name AS barangay, rp.cadastrallotno, pc.code AS classcode, r.fullpin, 
-	f.prevtdno, f.taxpayeraddress, f.taxpayername, f.tdno, 
+	f.prevtdno, f.taxpayer_address, f.taxpayer_name, f.tdno, 
 	r.totalareasqm, r.totalareaha, r.totalav, f.txntype_objid AS txntype
 FROM faas f
 	INNER JOIN rpu r ON f.rpuid = r.objid 
@@ -800,7 +800,7 @@ ORDER BY e.orderno
 
 [generateTopNDelinquentProperty]
 SELECT
-	f.ownername,
+	f.owner_name,
 	f.tdno,
 	r.totalav,
 	MIN(ri.year) AS minyear, 
@@ -814,7 +814,7 @@ FROM rptledger rl
 WHERE rl.state = 'APPROVED'
   AND ri.state = 'OPEN' 
   AND ri.year <= $P{cy}
-GROUP BY f.ownername, f.tdno, r.totalav, ri.rptledgerid
+GROUP BY f.owner_name, f.tdno, r.totalav, ri.rptledgerid
 ORDER BY 
 	SUM( ri.basic + ri.basicint - ri.basicdisc - ri.basicpaid + 
 		 ri.sef + ri.sefint - ri.sefdisc - ri.sefpaid 
@@ -830,7 +830,7 @@ SELECT
 	SUM(tmp.amount) AS amount
 FROM (
 	SELECT
-		f.ownername,
+		f.owner_name,
 		rl.objid, 
 		r.totalav,
 		SUM( ri.basic + ri.basicint - ri.basicdisc - ri.basicpaid + 
@@ -843,7 +843,7 @@ FROM (
 	WHERE rl.state = 'APPROVED' 
 	  AND ri.state = 'OPEN' 
 	  AND ri.year <= $P{cy}
-	GROUP BY f.ownername, rl.objid 
+	GROUP BY f.owner_name, rl.objid 
 	ORDER BY amount DESC
 	LIMIT $P{topn}
 ) tmp	

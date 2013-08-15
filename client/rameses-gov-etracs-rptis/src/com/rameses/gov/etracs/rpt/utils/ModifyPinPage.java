@@ -57,7 +57,7 @@ public class ModifyPinPage extends javax.swing.JPanel {
         xLabel1.setCaption("Taxpayer Name");
         xLabel1.setDepends(new String[] {"faas"});
         xLabel1.setFont(new java.awt.Font("Arial", 1, 11));
-        xLabel1.setName("faas.taxpayername");
+        xLabel1.setName("faas.taxpayer.name");
         xLabel1.setPreferredSize(new java.awt.Dimension(0, 19));
         formPanel1.add(xLabel1);
 

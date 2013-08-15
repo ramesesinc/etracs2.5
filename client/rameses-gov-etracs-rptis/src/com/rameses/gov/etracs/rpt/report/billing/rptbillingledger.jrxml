@@ -40,9 +40,9 @@
 	<field name="sefnet" class="java.math.BigDecimal"/>
 	<field name="total" class="java.math.BigDecimal"/>
 	<field name="items" class="java.lang.Object"/>
-	<field name="ownername" class="java.lang.String"/>
+	<field name="owner.name" class="java.lang.String"/>
 	<field name="classcode" class="java.lang.String"/>
-	<field name="administratorname" class="java.lang.String"/>
+	<field name="administrator.name" class="java.lang.String"/>
 	<field name="rputype" class="java.lang.String"/>
 	<field name="totalareasqm" class="java.math.BigDecimal"/>
 	<field name="totalareaha" class="java.math.BigDecimal"/>
@@ -288,7 +288,7 @@
 					<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
 						<font fontName="Tahoma" pdfFontName="Helvetica" size="9" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{ownername}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{owner.name}]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement
@@ -368,7 +368,7 @@
 					<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
 						<font fontName="Tahoma" pdfFontName="Helvetica" size="9" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{administratorname}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{administrator.name}]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement

@@ -19,7 +19,7 @@
 		<field name="cadastrallotno" required="true" />
 		<field name="surveyno" />
 		<field name="blockno" />
-		<field name="ownername" required="true" />
+		<field name="owner.name" required="true" />
 		
 		<field name="signedby" />
 		<field name="signedbytitle" />

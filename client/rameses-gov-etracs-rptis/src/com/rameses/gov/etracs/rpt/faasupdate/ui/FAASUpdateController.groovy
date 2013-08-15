@@ -74,16 +74,12 @@ public class FAASUpdateController extends PageFlowController
     def getLookupTaxpayer(){
         return InvokerUtil.lookupOpener('rpttaxpayer:lookup',[
             onselect : { 
-                entity.faas.putAll( it );
-                entity.faas.ownername      = it.taxpayername;
-                entity.faas.owneraddress   = it.taxpayeraddress;
+                entity.faas.taxpayer = it;
+                entity.faas.owner    = it;
             },
             onempty  : { 
-                entity.faas.taxpayerid        = null;
-                entity.faas.taxpayername      = null;
-                entity.faas.taxpayeraddress   = null;
-                entity.faas.ownername         = null;
-                entity.faas.owneraddress      = null;
+                entity.faas.taxpayer = null;
+                entity.faas.owner    = null;
             } 
         ])
     }

@@ -2,8 +2,8 @@
 SELECT 
 	fu.*,
 	f.tdno AS tdno,
-	f.ownername,
-	f.owneraddress,
+	f.owner_name,
+	f.owner_address,
 	r.ry, 
 	r.fullpin,
 	r.realpropertyid,
@@ -21,8 +21,8 @@ ORDER BY fu.txnno
 SELECT 
 	fu.*,
 	f.tdno AS tdno,
-	f.ownername,
-	f.owneraddress,
+	f.owner_name,
+	f.owner_address,
 	r.ry, 
 	r.fullpin,
 	r.rputype,

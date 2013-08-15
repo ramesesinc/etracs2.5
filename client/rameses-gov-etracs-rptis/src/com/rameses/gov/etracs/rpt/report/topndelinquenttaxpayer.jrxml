@@ -39,7 +39,7 @@
 	<parameter name="TOPN" isForPrompting="false" class="java.lang.Integer"/>
 
 	<field name="rank" class="java.lang.Integer"/>
-	<field name="ownername" class="java.lang.String"/>
+	<field name="owner.name" class="java.lang.String"/>
 	<field name="rpucount" class="java.lang.Integer"/>
 	<field name="totalav" class="java.math.BigDecimal"/>
 	<field name="amount" class="java.math.BigDecimal"/>
@@ -329,7 +329,7 @@
 					<textElement verticalAlignment="Middle">
 						<font fontName="Tahoma" size="8"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{ownername}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{owner.name}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement

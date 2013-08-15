@@ -58,16 +58,14 @@ class RPTTaxClearanceController
     def getLookupTaxpayer(){
         return InvokerUtil.lookupOpener('rpttaxpayer:lookup',[
                 onselect : {
-                    entity.putAll(it);
-                    entity.requestedby = it.taxpayername;
-                    entity.requestedbyaddress = it.taxpayeraddress;
-                    binding.refresh('entity.taxpayeraddress|entity.requested.*')
+                    entity.taxpayer = it;
+                    entity.requestedby = it.name;
+                    entity.requestedbyaddress = it.address;
+                    binding.refresh('entity.taxpayer.*|entity.requested.*')
                     loadProperties();
                 },
                 onempty : {
-                    entity.taxpayerid = null;
-                    entity.taxpayername = null;
-                    entity.taxpayeraddress = null;
+                    entity.taxpayer = null;
                     entity.requestedby = null;
                     entity.requestedbyaddress = null;
                     entity.items = [];

@@ -37,7 +37,7 @@ class MasterListingController extends com.rameses.gov.etracs.rpt.report.ReportCo
    
    
    def orderbyColumns = [
-        [fieldname:'t.ownername', caption:'Owner Name'],
+        [fieldname:'t.owner_name', caption:'Owner Name'],
         [fieldname:'t.fullpin', caption:'PIN'],
         [fieldname:'t.tdno', caption:'TD No.'],
     ]

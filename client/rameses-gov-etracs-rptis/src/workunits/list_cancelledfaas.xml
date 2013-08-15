@@ -28,7 +28,7 @@
                     new Column(name:"reason.name", caption:"Cancel Reason", width:150),
                     new Column(name:"faas.tdno", caption:"TD No.", width:120),
                     new Column(name:"faas.fullpin", caption:"PIN", width:150),
-                    new Column(name:"faas.ownername", caption:"Owner Name", width:250),
+                    new Column(name:"faas.owner.name", caption:"Owner Name", width:250),
                     new Column(name:"faas.totalareaha", caption:"New Area (ha)", width:120, type:'decimal', format:'#,##0.0000'),
                     new Column(name:"faas.totalmv", caption:"Market Value", width:120, type:'decimal', format:'#,##0.00'),
                     new Column(name:"faas.totalav", caption:"Assessed Value", width:120, type:'decimal', format:'#,##0.00'),

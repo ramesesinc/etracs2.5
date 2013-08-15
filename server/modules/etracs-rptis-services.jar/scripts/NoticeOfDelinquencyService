@@ -195,8 +195,7 @@ public class NoticeOfDelinquencyService
 		reportdata.totalintdue = reportdata.basicint + reportdata.sefint
 		reportdata.totalnet = reportdata.basicnet + reportdata.sefnet
 		
-		reportdata.administratorname = faas.administratorname
-		reportdata.administratoraddress = faas.administratoraddress
+		reportdata.administrator = faas.administrator
 		reportdata.amountinwords = numSvc.doubleToWords( reportdata.delinquentamount )
 		reportdata.billno = extended.billno    
 		

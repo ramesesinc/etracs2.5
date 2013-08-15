@@ -108,17 +108,10 @@ class FaasServiceInterceptor
 		faas.titletype				= null
 		faas.titleno				= null
 		faas.titledate				= null
-		faas.taxpayerid 			= null
-		faas.taxpayername 			= null
-		faas.taxpayeraddress		= null
-		faas.ownername 				= null
-		faas.owneraddress 			= null
-		faas.administratorid 		= null
-		faas.administratorname 		= null
-		faas.administratoraddress	= null
-		faas.beneficiaryid 			= null
-		faas.beneficiary 			= null
-		faas.beneficiaryaddress 	= null
+		faas.taxpayer				= [:]
+		faas.owner					= [:]
+		faas.administrator 			= [:]
+		faas.beneficiary 			= [:]
 		faas.memoranda				= null
 	}
 }

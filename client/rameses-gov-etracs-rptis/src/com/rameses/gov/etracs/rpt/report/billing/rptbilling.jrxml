@@ -53,7 +53,7 @@
 	<field name="grandtotal" class="java.math.BigDecimal"/>
 	<field name="ledgers" class="java.lang.Object"/>
 	<field name="objid" class="java.lang.String"/>
-	<field name="administratorname" class="java.lang.String"/>
+	<field name="administrator.name" class="java.lang.String"/>
 	<field name="administratoraddress" class="java.lang.String"/>
 	<field name="taxpayerno" class="java.lang.String"/>
 

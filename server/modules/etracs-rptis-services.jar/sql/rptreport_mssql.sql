@@ -56,7 +56,7 @@ ORDER BY fullpin
 SELECT 
 	f.objid, f.tdno, f.fullpin, f.barangay, f.classcode, 
 	f.totalmv, f.totalav, f.effectivityyear, 
-	f.administratorname, f.administratoraddress 
+	f.administrator_name, f.administrator_address 
 FROM noticeofassessmentitem n 
 INNER JOIN faaslist f on f.objid=n.faasid 
 WHERE n.noticeid = $P{noticeid} 

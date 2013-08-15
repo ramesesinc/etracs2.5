@@ -461,22 +461,15 @@ class ConsolidationService
             titletype       : consolidation.newtitletype,
             titleno         : consolidation.newtitleno,
             titledate       : consolidation.newtitledate,
-            taxpayerid      : consolidation.taxpayer.objid, 
-            taxpayername    : consolidation.taxpayer.name,
-            taxpayeraddress : consolidation.taxpayer.address, 
-            ownername       : consolidation.owner.name,
-            owneraddress    : consolidation.owner.address, 
-            administratorid : consolidation.administrator?.objid, 
-            administratorname : consolidation.administrator?.name,
-            administratoraddress : consolidation.administrator?.address, 
-            beneficiaryid       : consolidation.beneficiary?.objid,
-            beneficiaryname     : consolidation.beneficiary?.name, 
-            beneficiaryaddress  : consolidation.beneficiary?.address, 
+            taxpayer        : consolidation.taxpayer,
+            owner           : consolidation.owner,
+            administrator   : consolidation.administrator, 
+            beneficiary       : consolidation.beneficiary,
             memoranda           : consolidation.memoranda,
             backtaxyrs          : 0,
             prevtdno            : consolidatedlands.faas.tdno.join(','),
             prevpin             : consolidatedlands.rpu.fullpin.join(','),
-            prevowner           : consolidatedlands.faas.ownername.join('/'),
+            prevowner           : consolidatedlands.faas.owner.name.join('/'),
             prevav              : consolidatedlands.rpu.totalav.sum(),
             prevmv              : consolidatedlands.rpu.totalmv.sum(),
             appraiser           : consolidation.appraiser,
@@ -509,7 +502,7 @@ class ConsolidationService
 
         faas.prevtdno = faas.tdno
         faas.prevpin =  faas.rpu.fullpin 
-        faas.prevowner =  faas.ownername
+        faas.prevowner =  faas.owner.name
         faas.prevav =  faas.rpu.totalav 
         faas.prevmv =  faas.rpu.totalmv 
 

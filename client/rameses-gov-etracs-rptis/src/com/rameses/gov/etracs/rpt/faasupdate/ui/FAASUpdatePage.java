@@ -207,7 +207,7 @@ public class FAASUpdatePage extends javax.swing.JPanel {
         xLookupField3.setCaption("Taxpayer");
         xLookupField3.setCaptionWidth(130);
         xLookupField3.setDepends(new String[] {"entity.tdno"});
-        xLookupField3.setExpression("#{entity.faas.taxpayername}");
+        xLookupField3.setExpression("#{entity.faas.taxpayer.name}");
         xLookupField3.setHandler("lookupTaxpayer");
         xLookupField3.setName("entity.faas.taxpayer");
         xLookupField3.setPreferredSize(new java.awt.Dimension(0, 20));
@@ -218,14 +218,14 @@ public class FAASUpdatePage extends javax.swing.JPanel {
         xLabel3.setCaption("Address");
         xLabel3.setCaptionWidth(130);
         xLabel3.setDepends(new String[] {"entity.tdno", "entity.faas.taxpayer"});
-        xLabel3.setExpression("#{entity.faas.taxpayeraddress}");
+        xLabel3.setExpression("#{entity.faas.taxpayer.address}");
         xLabel3.setPreferredSize(new java.awt.Dimension(0, 19));
         xFormPanel2.add(xLabel3);
 
         xTextField44.setCaption("Owner Name");
         xTextField44.setCaptionWidth(130);
         xTextField44.setDepends(new String[] {"entity.tdno", "entity.faas.taxpayer"});
-        xTextField44.setName("entity.faas.ownername");
+        xTextField44.setName("entity.faas.owner.name");
         xTextField44.setPreferredSize(new java.awt.Dimension(0, 19));
         xTextField44.setRequired(true);
         xFormPanel2.add(xTextField44);
@@ -233,7 +233,7 @@ public class FAASUpdatePage extends javax.swing.JPanel {
         xTextField45.setCaption("Owner Address");
         xTextField45.setCaptionWidth(130);
         xTextField45.setDepends(new String[] {"entity.tdno", "entity.faas.taxpayer"});
-        xTextField45.setName("entity.faas.owneraddress");
+        xTextField45.setName("entity.faas.owner.address");
         xTextField45.setPreferredSize(new java.awt.Dimension(0, 19));
         xTextField45.setRequired(true);
         xFormPanel2.add(xTextField45);

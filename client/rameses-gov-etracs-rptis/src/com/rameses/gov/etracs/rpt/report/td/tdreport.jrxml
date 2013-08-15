@@ -52,11 +52,11 @@
 	<field name="lands" class="java.lang.Object"/>
 	<field name="tdno" class="java.lang.String"/>
 	<field name="fullpin" class="java.lang.String"/>
-	<field name="ownername" class="java.lang.String"/>
-	<field name="owneraddress" class="java.lang.String"/>
+	<field name="owner.name" class="java.lang.String"/>
+	<field name="owner.address" class="java.lang.String"/>
 	<field name="ownertin" class="java.lang.String"/>
 	<field name="ownertelno" class="java.lang.String"/>
-	<field name="administratorname" class="java.lang.String"/>
+	<field name="administrator.name" class="java.lang.String"/>
 	<field name="administratoraddress" class="java.lang.String"/>
 	<field name="admintin" class="java.lang.String"/>
 	<field name="admintelno" class="java.lang.String"/>
@@ -177,7 +177,7 @@
 					<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
 						<font fontName="Tahoma" pdfFontName="Helvetica-Bold" size="8" isBold="true" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{ownername}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{owner.name}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -428,7 +428,7 @@
 					<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
 						<font fontName="Tahoma" pdfFontName="Helvetica-Bold" size="8" isBold="true" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{owneraddress}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{owner.address}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -468,7 +468,7 @@
 					<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
 						<font fontName="Tahoma" pdfFontName="Helvetica" size="8" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{administratorname}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{administrator.name}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement

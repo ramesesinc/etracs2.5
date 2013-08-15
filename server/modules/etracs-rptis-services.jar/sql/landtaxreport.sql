@@ -1,7 +1,7 @@
 [generateDelinquencyReport]
 SELECT
-	f.taxpayername,
-	f.taxpayeraddress,
+	f.taxpayer_name,
+	f.taxpayer_address,
 	r.fullpin AS pin,
 	f.tdno,
 	pc.code AS classcode,
@@ -26,8 +26,8 @@ WHERE rp.barangayid = $P{barangayid}
 
 [generateDelinquencyReportOldFormat]
 SELECT
-	f.taxpayername,
-	f.taxpayeraddress,
+	f.taxpayer_name,
+	f.taxpayer_address,
 	r.fullpin AS pin,
 	f.tdno,
 	pc.code AS classcode,
@@ -75,7 +75,7 @@ SELECT
 		ELSE 
 			CONCAT(  MIN(CONCAT(ri.qtr, 'Q,', ri.year)), ' - ', MAX(CONCAT(ri.qtr, 'Q,', ri.year)) )
 	END AS period,
-	CASE WHEN xr.voided = 0 THEN f.taxpayername ELSE '*** VOIDED ***' END AS taxpayername, 
+	CASE WHEN xr.voided = 0 THEN f.taxpayer_name ELSE '*** VOIDED ***' END AS taxpayername, 
 	CASE WHEN xr.voided = 0 THEN f.tdno ELSE '' END AS tdno, 
 	CASE WHEN xr.voided = 0 THEN b.name ELSE '' END AS barangay, 
 	CASE WHEN xr.voided = 0 THEN pc.code ELSE '' END AS classification, 
@@ -93,7 +93,7 @@ FROM xreceipt xr
 	INNER JOIN propertyclassification pc ON r.classification_objid = pc.objid 
 	INNER JOIN barangay b ON rl.barangayid = b.objid 
 ${whereclause}
-GROUP BY xr.serialno, xr.txndate, f.taxpayername, f.tdno, b.name, pc.code 	
+GROUP BY xr.serialno, xr.txndate, f.taxpayer_name, f.tdno, b.name, pc.code 	
 ORDER BY xr.serialno;
 
 
@@ -113,7 +113,7 @@ SELECT
 		ELSE 
 			CONCAT(  MIN(CONCAT(ri.qtr, 'Q,', ri.year)), ' - ', MAX(CONCAT(ri.qtr, 'Q,', ri.year)) )
 	END AS period,
-	CASE WHEN xr.voided = 0 THEN f.taxpayername ELSE '*** VOIDED ***' END AS taxpayername, 
+	CASE WHEN xr.voided = 0 THEN f.taxpayer_name ELSE '*** VOIDED ***' END AS taxpayername, 
 	CASE WHEN xr.voided = 0 THEN f.tdno ELSE '' END AS tdno, 
 	CASE WHEN xr.voided = 0 THEN b.name ELSE '' END AS barangay, 
 	CASE WHEN xr.voided = 0 THEN pc.code ELSE '' END AS classification, 
@@ -131,6 +131,6 @@ FROM xreceipt xr
 	INNER JOIN propertyclassification pc ON r.classification_objid = pc.objid 
 	INNER JOIN barangay b ON rl.barangayid = b.objid 
 ${whereclause}
-GROUP BY xr.serialno, xr.txndate, f.taxpayername, f.tdno, b.name, pc.code 	
+GROUP BY xr.serialno, xr.txndate, f.taxpayer_name, f.tdno, b.name, pc.code 	
 ORDER BY xr.serialno;
 

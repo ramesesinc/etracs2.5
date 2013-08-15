@@ -521,18 +521,13 @@ class SubdivisionService
             titletype           : sl.newtitletype,
             titleno             : sl.newtitleno,
             titledate           : sl.newtitledate,
-            taxpayerid          : ( sl.taxpayerid ? sl.taxpayerid : subdivision.motherfaas.taxpayerid ),
-            taxpayername        : ( sl.taxpayername ? sl.taxpayername : subdivision.motherfaas.taxpayername ),
-            taxpayeraddress     : ( sl.taxpayeraddress ? sl.taxpayeraddress : subdivision.motherfaas.taxpayeraddress ),
-            ownername           : (sl.ownername ? sl.ownername : subdivision.motherfaas.ownername),
-            owneraddress        : (sl.owneraddress ? sl.owneraddress : subdivision.motherfaas.owneraddress),
-            administratorid     : sl.administratorid,
-            administratorname   : sl.administratorname,
-            administratoraddress: sl.administratoraddress,
+            taxpayer            : ( sl.taxpayer ? sl.taxpayer : subdivision.motherfaas.taxpayer ),
+            owner               : (sl.owner ? sl.owner : subdivision.motherfaas.owner),
+            administrator       : sl.administrator,
             memoranda           : sl.memoranda,
             prevtdno            : subdivision.motherfaas.tdno,
             prevpin             : subdivision.motherfaas.fullpin,
-            prevowner           : subdivision.motherfaas.ownername,
+            prevowner           : subdivision.motherfaas.owner.name,
             prevmv              : subdivision.motherfaas.totalmv,
             prevav              : subdivision.motherfaas.totalav,
             appraiser           : subdivision.appraiser,
@@ -563,7 +558,7 @@ class SubdivisionService
 
         faas.prevtdno = faas.tdno
         faas.prevpin =  faas.rpu.fullpin 
-        faas.prevowner =  faas.ownername
+        faas.prevowner =  faas.owner.name
         faas.prevav =  faas.rpu.totalav 
         faas.prevmv =  faas.rpu.totalmv 
 

@@ -36,8 +36,8 @@
 	<parameter name="USERJOBTITLE" isForPrompting="false" class="java.lang.String"/>
 
 	<field name="tdno" class="java.lang.String"/>
-	<field name="ownername" class="java.lang.String"/>
-	<field name="owneraddress" class="java.lang.String"/>
+	<field name="owner.name" class="java.lang.String"/>
+	<field name="owner.address" class="java.lang.String"/>
 	<field name="fullpin" class="java.lang.String"/>
 	<field name="cadastrallotno" class="java.lang.String"/>
 	<field name="rputype" class="java.lang.String"/>
@@ -439,7 +439,7 @@ VALUE]]></text>
 					<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
 						<font fontName="Tahoma" pdfFontName="Helvetica" size="8" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{ownername}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{owner.name}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement

@@ -32,10 +32,10 @@
 
 	<field name="tdno" class="java.lang.String"/>
 	<field name="rpu.fullpin" class="java.lang.String"/>
-	<field name="ownername" class="java.lang.String"/>
-	<field name="owneraddress" class="java.lang.String"/>
+	<field name="owner.name" class="java.lang.String"/>
+	<field name="owner.address" class="java.lang.String"/>
 	<field name="taxpayerno" class="java.lang.String"/>
-	<field name="administratorname" class="java.lang.String"/>
+	<field name="administrator.name" class="java.lang.String"/>
 	<field name="administratoraddress" class="java.lang.String"/>
 	<field name="administratorno" class="java.lang.String"/>
 	<field name="rpu.rp.street" class="java.lang.String"/>
@@ -175,7 +175,7 @@
 					<textElement verticalAlignment="Middle">
 						<font fontName="Tahoma" pdfFontName="Helvetica-Bold" size="8" isBold="true"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{ownername}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{owner.name}]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement
@@ -206,7 +206,7 @@
 					<textElement verticalAlignment="Middle">
 						<font fontName="Tahoma" pdfFontName="Helvetica-Bold" size="8" isBold="true"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{owneraddress}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{owner.address}]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement
@@ -283,7 +283,7 @@
 					<textElement verticalAlignment="Middle">
 						<font fontName="Tahoma" pdfFontName="Helvetica-Bold" size="8" isBold="true"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{administratorname}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{administrator.name}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement

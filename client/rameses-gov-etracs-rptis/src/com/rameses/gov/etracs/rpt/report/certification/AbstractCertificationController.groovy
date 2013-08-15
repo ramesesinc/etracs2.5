@@ -85,15 +85,12 @@ public abstract class AbstractCertificationController
     def getLookupTaxpayer(){
         return InvokerUtil.lookupOpener('rpttaxpayer:lookup',[
             onselect : { 
-                entity.putAll(it);
-                entity.requestedby = it.taxpayername;
-                entity.requestedbyaddress = it.taxpayeraddress;
+                entity.taxpayer = it;
+                entity.requestedby = it.name;
+                entity.requestedbyaddress = it.address;
             },
             onempty  : { 
                 entity.taxpayer = null;
-                entity.taxpayerid = null;
-                entity.taxpayername = null;
-                entity.taxpayeraddress = null;
                 entity.requestedby = null;
                 entity.requestedbyaddress = null;
             },

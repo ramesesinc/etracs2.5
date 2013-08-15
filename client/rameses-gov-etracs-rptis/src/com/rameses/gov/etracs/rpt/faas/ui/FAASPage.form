@@ -545,7 +545,7 @@
                           </StringArray>
                         </Property>
                         <Property name="expression" type="java.lang.String" value="faas.taxpayer.address"/>
-                        <Property name="name" type="java.lang.String" value="faas.taxpayeraddress"/>
+                        <Property name="name" type="java.lang.String" value="faas.taxpayer.address"/>
                         <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                           <Dimension value="[0, 19]"/>
                         </Property>

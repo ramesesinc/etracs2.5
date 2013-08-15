@@ -134,14 +134,14 @@ public class FAASAnnotationPage extends javax.swing.JPanel {
         xLabel5.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(153, 153, 153)));
         xLabel5.setCaption("Owner Name");
         xLabel5.setFont(new java.awt.Font("Arial", 1, 11));
-        xLabel5.setName("entity.faas.ownername");
+        xLabel5.setName("entity.faas.owner.name");
         xLabel5.setPreferredSize(new java.awt.Dimension(0, 19));
         formPanel6.add(xLabel5);
 
         xLabel6.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(153, 153, 153)));
         xLabel6.setCaption("Address");
         xLabel6.setFont(new java.awt.Font("Arial", 1, 11));
-        xLabel6.setName("entity.faas.owneraddress");
+        xLabel6.setName("entity.faas.owner.address");
         xLabel6.setPreferredSize(new java.awt.Dimension(0, 19));
         formPanel6.add(xLabel6);
 

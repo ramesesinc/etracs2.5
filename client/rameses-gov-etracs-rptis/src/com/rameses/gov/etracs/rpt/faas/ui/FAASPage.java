@@ -325,7 +325,7 @@ public class FAASPage extends javax.swing.JPanel {
         xLabel4.setCaptionWidth(70);
         xLabel4.setDepends(new String[] {"taxpayer"});
         xLabel4.setExpression("faas.taxpayer.address");
-        xLabel4.setName("faas.taxpayeraddress");
+        xLabel4.setName("faas.taxpayer.address");
         xLabel4.setPreferredSize(new java.awt.Dimension(0, 19));
         xFormPanel7.add(xLabel4);
 

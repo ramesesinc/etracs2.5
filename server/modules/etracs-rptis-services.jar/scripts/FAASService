@@ -398,7 +398,7 @@ class FAASService
 		
 		newfaas.prevtdno		= newfaas.tdno
 		newfaas.prevpin		 	= newfaas.rpu.fullpin
-		newfaas.prevowner		= newfaas.ownername
+		newfaas.prevowner		= newfaas.owner.name
 		newfaas.prevav			= newfaas.rpu.totalav
 		newfaas.prevmv			= newfaas.rpu.totalmv
 		
@@ -421,17 +421,10 @@ class FAASService
 	}
 
 	void clearOwnerInfo(faas){
-		faas.taxpayerid 			= null
-		faas.taxpayername 			= null
-		faas.taxpayeraddress		= null
-		faas.ownername 				= null
-		faas.owneraddress 			= null
-		faas.administratorid 		= null
-		faas.administratorname 		= null
-		faas.administratoraddress	= null
-		faas.beneficiaryid 			= null
-		faas.beneficiary 			= null
-		faas.beneficiaryaddress 	= null
+		faas.taxpayer  = null
+		faas.owner  = null
+		faas.administrator  = null
+		faas.beneficiary  = null
 	}
 
 
