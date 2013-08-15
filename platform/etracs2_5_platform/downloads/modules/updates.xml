@@ -32,13 +32,6 @@
 		<module file="shared/rameses-gov-lgu-treasury.jar" />
 		<module file="shared/rameses-gov-treasury.jar" />
 
-		
-		<!-- add-on / plugin modules -->
-		<module file="shared/rameses-enterprise-accounts.jar" />
-		<module file="shared/rameses-enterprise-treasury.jar" />
-		<module file="shared/rameses-gov-treasury.jar" />
-		<module file="shared/rameses-gov-lgu-treasury.jar" />
-		
 		<!-- plugins -->
 		<module file="rameses-gov-etracs-rptis.jar" />
     </modules>
