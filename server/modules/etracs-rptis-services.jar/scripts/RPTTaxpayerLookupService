@@ -9,9 +9,9 @@ public class RPTTaxpayerLookupService
 	@ProxyMethod
 	public def lookupTaxpayers( params ) {
 		return [
-			[taxpayerid:'E-4795cca5:13cec253f5f:-7ecb', taxpayerno:'0001', taxpayername:'PETER SANTOS', taxpayeraddress:'CEBU CITY'],
-			[taxpayerid:'T001', taxpayerno:'0002', taxpayername:'ROBERT DINERO', taxpayeraddress:'CEBU CITY'],
-			[taxpayerid:'T002', taxpayerno:'0003', taxpayername:'SHARON STONE', taxpayeraddress:'CEBU CITY'],
+			[objid:'E-4795cca5:13cec253f5f:-7ecb', acctno:'0001', name:'PETER SANTOS', address:'CEBU CITY'],
+			[objid:'T001', acctno:'0002', name:'ROBERT DINERO', address:'CEBU CITY'],
+			[objid:'T002', acctno:'0003', name:'SHARON STONE', address:'CEBU CITY'], 
 		]
 	}
 

@@ -292,7 +292,7 @@ public class FAASPage extends javax.swing.JPanel {
         xFormPanel6.setPadding(new java.awt.Insets(0, 0, 0, 0));
         xLookupField5.setCaption("Owner");
         xLookupField5.setCaptionWidth(105);
-        xLookupField5.setExpression("#{faas.taxpayername}");
+        xLookupField5.setExpression("#{faas.taxpayer.name}");
         xLookupField5.setHandler("lookupTaxpayer");
         xLookupField5.setName("taxpayer");
         xLookupField5.setPreferredSize(new java.awt.Dimension(0, 20));
@@ -304,7 +304,7 @@ public class FAASPage extends javax.swing.JPanel {
         xTextField27.setCaptionWidth(105);
         xTextField27.setDepends(new String[] {"taxpayer"});
         xTextField27.setMargin(new java.awt.Insets(1, 1, 1, 1));
-        xTextField27.setName("faas.ownername");
+        xTextField27.setName("faas.owner.name");
         xTextField27.setPreferredSize(new java.awt.Dimension(0, 19));
         xTextField27.setRequired(true);
         xFormPanel6.add(xTextField27);
@@ -312,7 +312,7 @@ public class FAASPage extends javax.swing.JPanel {
         xTextField28.setCaption("Administrator");
         xTextField28.setCaptionWidth(105);
         xTextField28.setMargin(new java.awt.Insets(1, 1, 1, 1));
-        xTextField28.setName("faas.administratorname");
+        xTextField28.setName("faas.administrator.name");
         xTextField28.setPreferredSize(new java.awt.Dimension(0, 19));
         xFormPanel6.add(xTextField28);
 
@@ -324,7 +324,7 @@ public class FAASPage extends javax.swing.JPanel {
         xLabel4.setCaption("Address");
         xLabel4.setCaptionWidth(70);
         xLabel4.setDepends(new String[] {"taxpayer"});
-        xLabel4.setExpression("faas.taxpayeraddress");
+        xLabel4.setExpression("faas.taxpayer.address");
         xLabel4.setName("faas.taxpayeraddress");
         xLabel4.setPreferredSize(new java.awt.Dimension(0, 19));
         xFormPanel7.add(xLabel4);
@@ -333,7 +333,7 @@ public class FAASPage extends javax.swing.JPanel {
         xTextField9.setCaptionWidth(70);
         xTextField9.setDepends(new String[] {"taxpayer"});
         xTextField9.setMargin(new java.awt.Insets(1, 1, 1, 1));
-        xTextField9.setName("faas.owneraddress");
+        xTextField9.setName("faas.owner.address");
         xTextField9.setPreferredSize(new java.awt.Dimension(0, 19));
         xTextField9.setRequired(true);
         xFormPanel7.add(xTextField9);
@@ -341,7 +341,7 @@ public class FAASPage extends javax.swing.JPanel {
         xTextField29.setCaption("Address");
         xTextField29.setCaptionWidth(70);
         xTextField29.setMargin(new java.awt.Insets(1, 1, 1, 1));
-        xTextField29.setName("faas.administratoraddress");
+        xTextField29.setName("faas.administrator.address");
         xTextField29.setPreferredSize(new java.awt.Dimension(0, 19));
         xFormPanel7.add(xTextField29);
 

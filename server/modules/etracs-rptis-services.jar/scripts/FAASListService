@@ -35,7 +35,7 @@ class FAASListService
 
         def filters = [
             whereclause + 'f.tdno = $P{tdno}',
-            whereclause + 'f.ownername LIKE $P{searchtext}',
+            whereclause + 'f.owner_name LIKE $P{searchtext}',
             whereclause + 'rpu.fullpin LIKE $P{searchtext}',
             whereclause + 'rp.surveyno LIKE $P{searchtext}',
             whereclause + 'rp.cadastrallotno LIKE $P{searchtext}',

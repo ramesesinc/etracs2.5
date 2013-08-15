@@ -13,17 +13,17 @@
 		<field name="titleno" />
 		<field name="titledate" />
 		<field name="rpuid" required="true"/>
-		<field name="taxpayerid" required="true"/>
-		<field name="taxpayername" required="true"/>
-		<field name="taxpayeraddress" required="true"/>
-		<field name="ownername" required="true"/>
-		<field name="owneraddress" required="true"/>
-		<field name="administratorid" />
-		<field name="administratorname" />
-		<field name="administratoraddress" />
-		<field name="beneficiaryid" />
-		<field name="beneficiary" />
-		<field name="beneficiaryaddress" />
+		<field name="taxpayer_objid" required="true"/>
+		<field name="taxpayer_name" required="true"/>
+		<field name="taxpayer_address" required="true"/>
+		<field name="owner_name" required="true"/>
+		<field name="owner_address" required="true"/>
+		<field name="administrator_objid" />
+		<field name="administrator_name" />
+		<field name="administrator_address" />
+		<field name="beneficiary_objid" />
+		<field name="beneficiary_name" />
+		<field name="beneficiary_address" />
 		<field name="memoranda" required="true"/>
 		<field name="cancelnote" />
 		<field name="restrictionid" />

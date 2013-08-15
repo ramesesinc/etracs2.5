@@ -17,9 +17,9 @@ class RPTTaxpayerLookupController extends LookupController
     
     Column[] getColumns() {
         return [
-            new Column(name:"taxpayerno", caption:"Acct No.", width:80),
-            new Column(name:"taxpayername", caption:"Taxpayer Name", width:250),
-            new Column(name:"taxpayeraddress", caption:"Address", width:250),
+            new Column(name:"acctno", caption:"Acct No.", width:80),
+            new Column(name:"name", caption:"Taxpayer Name", width:250),
+            new Column(name:"address", caption:"Address", width:250),
         ]
     }
     

@@ -58,7 +58,7 @@ SELECT * FROM faasbacktax WHERE faasid = $P{faasid} ORDER BY effectivityyear DES
 
 [getLandReference]
 select
-	r.fullpin, r.totalareasqm, f.ownername, f.tdno, rp.cadastrallotno 
+	r.fullpin, r.totalareasqm, f.owner_name, f.tdno, rp.cadastrallotno 
  from rpu r 
 	inner join faas f on f.rpuid = r.objid 
 	inner join realproperty rp on rp.objid = r.realpropertyid 
