@@ -78,14 +78,14 @@ public class SubdividedLandInfoPage extends javax.swing.JPanel {
         xTextField3.setCaption("Administrator Name");
         xTextField3.setCaptionWidth(130);
         xTextField3.setDepends(new String[] {"selectedLand"});
-        xTextField3.setName("subdividedland.administratorname");
+        xTextField3.setName("subdividedland.administrator.name");
         xTextField3.setPreferredSize(new java.awt.Dimension(0, 20));
         xFormPanel2.add(xTextField3);
 
         xTextField4.setCaption("Administrator Address");
         xTextField4.setCaptionWidth(130);
         xTextField4.setDepends(new String[] {"selectedLand"});
-        xTextField4.setName("subdividedland.administratoraddress");
+        xTextField4.setName("subdividedland.administrator.address");
         xTextField4.setPreferredSize(new java.awt.Dimension(0, 20));
         xFormPanel2.add(xTextField4);
 

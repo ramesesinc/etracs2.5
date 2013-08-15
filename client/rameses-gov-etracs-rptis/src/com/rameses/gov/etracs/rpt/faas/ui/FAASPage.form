@@ -474,7 +474,7 @@
                       <Properties>
                         <Property name="caption" type="java.lang.String" value="Owner"/>
                         <Property name="captionWidth" type="int" value="105"/>
-                        <Property name="expression" type="java.lang.String" value="#{faas.taxpayername}"/>
+                        <Property name="expression" type="java.lang.String" value="#{faas.taxpayer.name}"/>
                         <Property name="handler" type="java.lang.String" value="lookupTaxpayer"/>
                         <Property name="name" type="java.lang.String" value="taxpayer"/>
                         <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
@@ -496,7 +496,7 @@
                         <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
                           <Insets value="[1, 1, 1, 1]"/>
                         </Property>
-                        <Property name="name" type="java.lang.String" value="faas.ownername"/>
+                        <Property name="name" type="java.lang.String" value="faas.owner.name"/>
                         <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                           <Dimension value="[0, 19]"/>
                         </Property>
@@ -510,7 +510,7 @@
                         <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
                           <Insets value="[1, 1, 1, 1]"/>
                         </Property>
-                        <Property name="name" type="java.lang.String" value="faas.administratorname"/>
+                        <Property name="name" type="java.lang.String" value="faas.administrator.name"/>
                         <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                           <Dimension value="[0, 19]"/>
                         </Property>
@@ -544,8 +544,8 @@
                             <StringItem index="0" value="taxpayer"/>
                           </StringArray>
                         </Property>
-                        <Property name="expression" type="java.lang.String" value="faas.taxpayeraddress"/>
-                        <Property name="name" type="java.lang.String" value="faas.taxpayeraddress"/>
+                        <Property name="expression" type="java.lang.String" value="faas.taxpayer.address"/>
+                        <Property name="name" type="java.lang.String" value="faas.taxpayer.address"/>
                         <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                           <Dimension value="[0, 19]"/>
                         </Property>
@@ -563,7 +563,7 @@
                         <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
                           <Insets value="[1, 1, 1, 1]"/>
                         </Property>
-                        <Property name="name" type="java.lang.String" value="faas.owneraddress"/>
+                        <Property name="name" type="java.lang.String" value="faas.owner.address"/>
                         <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                           <Dimension value="[0, 19]"/>
                         </Property>
@@ -577,7 +577,7 @@
                         <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
                           <Insets value="[1, 1, 1, 1]"/>
                         </Property>
-                        <Property name="name" type="java.lang.String" value="faas.administratoraddress"/>
+                        <Property name="name" type="java.lang.String" value="faas.administrator.address"/>
                         <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                           <Dimension value="[0, 19]"/>
                         </Property>

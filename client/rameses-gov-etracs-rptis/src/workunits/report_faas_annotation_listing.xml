@@ -36,7 +36,7 @@ class FAASAnnotationListingController extends com.rameses.gov.etracs.rpt.report.
    
     def orderbyColumns = [
         [fieldname:'f.tdno', caption:'TD No.'],
-        [fieldname:'f.ownername', caption:'Owner Name'],
+        [fieldname:'f.owner_name', caption:'Owner Name'],
     ]
 }
 

@@ -83,17 +83,14 @@ public abstract class AbstractCertificationController
 
     
     def getLookupTaxpayer(){
-        return InvokerUtil.lookupOpener('rpttaxpayer:lookup',[
+        return InvokerUtil.lookupOpener('entity:lookup',[
             onselect : { 
-                entity.putAll(it);
-                entity.requestedby = it.taxpayername;
-                entity.requestedbyaddress = it.taxpayeraddress;
+                entity.taxpayer = it;
+                entity.requestedby = it.name;
+                entity.requestedbyaddress = it.address;
             },
             onempty  : { 
                 entity.taxpayer = null;
-                entity.taxpayerid = null;
-                entity.taxpayername = null;
-                entity.taxpayeraddress = null;
                 entity.requestedby = null;
                 entity.requestedbyaddress = null;
             },
@@ -109,19 +106,14 @@ public abstract class AbstractCertificationController
                 }
                 entity.faasid = it.objid;
                 entity.tdno= it.tdno;
-                entity.taxpayerid = it.taxpayerid;
-                entity.taxpayername = it.taxpayername;
-                entity.taxpayeraddress = it.taxpayeraddress;
-                entity.requestedby = it.taxpayername;
-                entity.requestedbyaddress = it.taxpayeraddress;
+                entity.taxpayer = it.taxpayer;
+                entity.requestedby = it.taxpayer.name;
+                entity.requestedbyaddress = it.taxpayer.address;
             },
             onempty  : { 
                 entity.faasid = null;
                 entity.tdno= null;
                 entity.taxpayer = null;
-                entity.taxpayerid = null;
-                entity.taxpayername = null;
-                entity.taxpayeraddress = null;
                 entity.requestedby = null;
                 entity.requestedbyaddress = null;
             },

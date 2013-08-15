@@ -28,8 +28,8 @@ class PdapRpta100ReportController extends com.rameses.gov.etracs.rpt.report.Repo
    def formControl = [
         getFormControls: {
             return [
-                new FormControl( "lookup", [caption:'Taxpayer', name:'entity.taxpayer', handler:'rpttaxpayer:lookup', expression:'#{entity.taxpayer.taxpayername}', required:true]),
-                new FormControl("label", [caption:'Address', name:'entity.taxpayer.taxpayeraddress',  depends:'entity.taxpayer'])
+                new FormControl( "lookup", [caption:'Taxpayer', name:'entity.taxpayer', handler:'entity:lookup', expression:'#{entity.taxpayer.name}', required:true]),
+                new FormControl("label", [caption:'Address', name:'entity.taxpayer.address',  depends:'entity.taxpayer'])
             ]    
         },
    ] as FormPanelModel;

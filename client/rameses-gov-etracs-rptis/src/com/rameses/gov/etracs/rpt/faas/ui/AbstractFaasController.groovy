@@ -247,18 +247,14 @@ public abstract class AbstractFaasController extends PageFlowController
     }
     
     def getLookupTaxpayer(){
-        return InvokerUtil.lookupOpener('rpttaxpayer:lookup',[
+        return InvokerUtil.lookupOpener('entity:lookup',[
             onselect : { 
-                faas.putAll( it );
-                faas.ownername      = it.taxpayername;
-                faas.owneraddress   = it.taxpayeraddress;
+                faas.taxpayer = it;
+                faas.owner    = it;
             },
             onempty  : { 
-                faas.taxpayerid        = null;
-                faas.taxpayername      = null;
-                faas.taxpayeraddress   = null;
-                faas.ownername         = null;
-                faas.owneraddress      = null;
+                faas.taxpayer = null;
+                faas.owner    = null;
             } 
         ])
     }

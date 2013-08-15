@@ -25,7 +25,7 @@ class FaasLookupController extends LookupController
     Column[] getColumns() {
         return [
             new Column(name:"tdno", caption:"TD No.", width:80),
-            new Column(name:"ownername", caption:"Declared Owner", width:250),
+            new Column(name:"owner.name", caption:"Declared Owner", width:250),
             new Column(name:"classification.code", caption:"Class", width:50),
             new Column(name:"rputype", caption:"Type", width:50),
             new Column(name:"fullpin", caption:"PIN", width:140),

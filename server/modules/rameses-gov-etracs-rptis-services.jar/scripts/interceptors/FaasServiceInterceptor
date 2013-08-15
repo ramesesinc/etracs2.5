@@ -1,0 +1,118 @@
+import com.rameses.annotations.*
+import com.rameses.eserver.*;
+import com.rameses.common.*;
+
+class FaasServiceInterceptor
+{
+
+	@Service('RPUService')
+	def rpuSvc 
+
+	@Service('RPTLedgerService')
+	def ledgerSvc
+
+	@Service('RPTUtil')
+	def util
+
+	@Service('Var')
+	def var
+
+	@Before(pattern="FAASService.initFaasTransaction") 
+	public void interceptInitFaasTransaction( evt ) {
+		def info = evt.args[0]
+		if ( ! util.toBoolean(var.allow_faas_transaction_with_balance, false)){
+			ledgerSvc.checkLedgerBalance(info.faas.objid)
+		}
+
+	}
+
+	@After(pattern="FAASService.initFaasTransaction", eval="#{result.txntype.objid == 'TR'}", index=10) 
+	public void initSimpleTransfer( evt ) {
+		def faas = evt.result 
+		clearInfo(faas)
+		
+	}
+
+	@After(pattern="FAASService.initFaasTransaction", eval="#{result.txntype.objid == 'TRE'}", index=10) 
+	public void initTransferWithReassessment( evt ) {
+		def faas = evt.result 
+		clearInfo(faas)
+	}
+
+	@After(pattern="FAASService.initFaasTransaction", eval="#{result.txntype.objid == 'TRC'}", index=10) 
+	public void initTransferWithCorrection( evt ) {
+		def faas = evt.result 
+		clearInfo(faas)
+	}
+
+	@After(pattern="FAASService.initFaasTransaction", eval="#{result.txntype.objid == 'CD'}", index=10) 
+	public void initChangeDepreciation( evt ) {
+		def faas = evt.result 
+		if (faas.rpu.rputype == 'land') {
+			throw new Exception('Cannot depreciate Land property.')
+		}
+	}
+
+
+
+
+	@Before(pattern="FAASService.createFaas", eval="#{args[0].datacapture==true}") 
+	public void interceptCreateDataCaptureFaas( evt ) {
+		println 'interceptCreateDataCaptureFaas'
+		def faas = evt.args[0]
+		faas.txntype.newrealproperty = true 
+		rpuSvc.createRpu( faas.rpu, faas.txntype )
+	}
+
+
+	@Before(pattern="FAASService.createFaas", eval="#{args[0].datacapture==false}") 
+	public void interceptCreateFaas( evt ) {
+		println 'interceptCreateFaas'
+		def faas = evt.args[0]
+		rpuSvc.createRpu( faas.rpu, faas.txntype)
+	}
+
+
+
+
+	@After(pattern="FAASService.openFaas") 
+	public void interceptOpenFaas( evt ) {
+		println 'interceptOpenFaas'
+		def faas = evt.result 
+		faas.rpu = rpuSvc.openRpu( faas.rpuid )
+	}
+
+	@Before(pattern="FAASService.updateFaas") 
+	public void interceptUpdateFaas(evt) {
+		println 'interceptUpdateFaas'
+		def faas = evt.args[0]
+		rpuSvc.updateRpu( faas.rpu )
+	}
+
+	@After(pattern="FAASService.deleteFaas") 
+	public void interceptDeleteFaas( evt ) {
+		println 'interceptUpdateFaas'
+		def faas = evt.result 
+		if (faas.txntype.newrpu){
+			rpuSvc.deleteRpu( faas.rpu )
+		}
+	}
+
+	/*---------------------------------------------------
+	*
+	* Clear info related to transfer
+	*
+	*--------------------------------------------------*/	
+	void clearInfo(faas){
+		faas.tdno 					= null
+		faas.titletype				= null
+		faas.titleno				= null
+		faas.titledate				= null
+		faas.taxpayer				= [:]
+		faas.owner					= [:]
+		faas.administrator 			= [:]
+		faas.beneficiary 			= [:]
+		faas.memoranda				= null
+	}
+}
+

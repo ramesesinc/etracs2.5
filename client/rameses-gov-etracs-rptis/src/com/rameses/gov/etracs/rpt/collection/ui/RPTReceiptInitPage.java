@@ -43,7 +43,7 @@ public class RPTReceiptInitPage extends javax.swing.JPanel {
         formPanel1.setCaptionFont(new java.awt.Font("Arial", 0, 12));
         xLookupField1.setCaption("Taxpayer");
         xLookupField1.setCellPadding(new java.awt.Insets(5, 0, 0, 0));
-        xLookupField1.setExpression("#{entity.taxpayer.taxpayername}");
+        xLookupField1.setExpression("#{entity.taxpayer.name}");
         xLookupField1.setFont(new java.awt.Font("Arial", 0, 12));
         xLookupField1.setHandler("lookupTaxpayer");
         xLookupField1.setHint("Search Payor");

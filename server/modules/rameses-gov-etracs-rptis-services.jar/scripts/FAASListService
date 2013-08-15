@@ -1,0 +1,73 @@
+import com.rameses.annotations.*
+import com.rameses.common.*;
+
+
+class FAASListService
+{
+	@PersistenceContext('main')
+	def em
+
+    @Service('RPTUtil')
+    def util
+
+    @Service('Var')
+    def var 
+
+
+    def STATE_INTERIM           = 'INTERIM'
+    def STATE_FORAPPROVAL       = 'FORAPPROVAL'
+    def STATE_FORPROVSUBMISSION = 'FORPROVSUBMISSION'
+    def STATE_FORPROVAPPROVAL   = 'FORPROVAPPROVAL'
+    def STATE_CURRENT           = 'CURRENT'
+    def STATE_CANCELLED         = 'CANCELLED'
+
+    @ProxyMethod
+    public def getList( params ) {
+        params.tdno = params.searchtext
+        params.barangay = params.searchtext
+        params.blockno = params.searchtext
+        params.searchtext = (params.searchtext ? params.searchtext : '') + '%'
+
+        def whereclause = 'WHERE '
+        if (params.state){
+            whereclause += ' f.state = $P{state} AND '
+        }
+
+        def filters = [
+            whereclause + 'f.tdno = $P{tdno}',
+            whereclause + 'f.owner_name LIKE $P{searchtext}',
+            whereclause + 'rpu.fullpin LIKE $P{searchtext}',
+            whereclause + 'rp.surveyno LIKE $P{searchtext}',
+            whereclause + 'rp.cadastrallotno LIKE $P{searchtext}',
+            whereclause + 'rp.blockno = $P{blockno}',
+            whereclause + 'b.name = $P{blockno}',
+            whereclause + 'f.prevtdno LIKE $P{searchtext}',
+            
+        ]
+        return util.getListFromQuery( 'faas:getList' , filters, params, 'f.objid' )
+    }
+	
+
+    @ProxyMethod
+    public def getStates(  ) {
+        println 'getstates'
+        if ('city'.equalsIgnoreCase(var.lgu_type)){
+            return [
+                STATE_INTERIM, 
+                STATE_FORAPPROVAL,
+                STATE_CURRENT,
+                STATE_CANCELLED,
+            ]
+        }
+        else{
+            return [
+                STATE_INTERIM, 
+                STATE_FORPROVSUBMISSION,
+                STATE_FORPROVAPPROVAL,
+                STATE_CURRENT,
+                STATE_CANCELLED,
+            ]
+        }
+    }
+}
+

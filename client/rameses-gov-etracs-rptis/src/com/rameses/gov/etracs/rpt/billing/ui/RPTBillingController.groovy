@@ -36,7 +36,7 @@ public class RPTBillingController
     }
     
     def getLookupTaxpayer() {
-        return InvokerUtil.lookupOpener('rpttaxpayer:lookup', [:] )
+        return InvokerUtil.lookupOpener('entity:lookup', [:] )
     }
     
     void buildBillReportInfo(){

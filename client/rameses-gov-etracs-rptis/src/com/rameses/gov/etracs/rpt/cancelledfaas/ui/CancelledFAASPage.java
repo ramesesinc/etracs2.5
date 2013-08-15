@@ -63,7 +63,7 @@ public class CancelledFAASPage extends javax.swing.JPanel {
         xLabel1.setCaption("Owner");
         xLabel1.setCaptionWidth(90);
         xLabel1.setDepends(new String[] {"entity.faas"});
-        xLabel1.setExpression("#{entity.faas.ownername}");
+        xLabel1.setExpression("#{entity.faas.owner.name}");
         xLabel1.setFont(new java.awt.Font("Arial", 1, 11));
         xLabel1.setPreferredSize(new java.awt.Dimension(0, 19));
         formPanel1.add(xLabel1);

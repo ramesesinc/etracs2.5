@@ -60,22 +60,20 @@ class AssessmentNoticeController
     }
     
     def getLookupTaxpayer(){
-        return InvokerUtil.lookupOpener('rpttaxpayer:lookup',[
+        return InvokerUtil.lookupOpener('entity:lookup',[
                 onselect : {
-                    entity.putAll(it);
+                    it.taxpayer = it;
                     loadProperties();
                 },
                 onempty : {
-                    entity.taxpayerid = null;
-                    entity.taxpayername = null;
-                    entity.taxpayeraddress = null;
+                    entity.taxpayer = null;
                 },
         ])
     }
     
     def getLookupFaas(){
         return InvokerUtil.lookupOpener('faas:lookup', [
-            taxpayerid : entity.taxpayerid, 
+            taxpayerid : entity.taxpayer.objid, 
             state      : 'CURRENT',
                 
             onselect : { faas ->
@@ -108,7 +106,7 @@ class AssessmentNoticeController
     
     void loadProperties(){
         if (addoption == 'all'){
-            entity.items = svc.getApprovedFaasList(entity.taxpayerid)
+            entity.items = svc.getApprovedFaasList(entity.taxpayer.objid)
             entity.items.each{
                 it.assessmentnoticeid = entity.objid;
                 it.included = true;

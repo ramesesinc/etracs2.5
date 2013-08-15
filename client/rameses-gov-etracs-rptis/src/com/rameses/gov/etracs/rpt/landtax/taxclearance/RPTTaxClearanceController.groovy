@@ -56,18 +56,16 @@ class RPTTaxClearanceController
     }
     
     def getLookupTaxpayer(){
-        return InvokerUtil.lookupOpener('rpttaxpayer:lookup',[
+        return InvokerUtil.lookupOpener('entity:lookup',[
                 onselect : {
-                    entity.putAll(it);
-                    entity.requestedby = it.taxpayername;
-                    entity.requestedbyaddress = it.taxpayeraddress;
-                    binding.refresh('entity.taxpayeraddress|entity.requested.*')
+                    entity.taxpayer = it;
+                    entity.requestedby = it.name;
+                    entity.requestedbyaddress = it.address;
+                    binding.refresh('entity.taxpayer.*|entity.requested.*')
                     loadProperties();
                 },
                 onempty : {
-                    entity.taxpayerid = null;
-                    entity.taxpayername = null;
-                    entity.taxpayeraddress = null;
+                    entity.taxpayer = null;
                     entity.requestedby = null;
                     entity.requestedbyaddress = null;
                     entity.items = [];
@@ -79,7 +77,7 @@ class RPTTaxClearanceController
     
     def getLookupLedger(){
         return InvokerUtil.lookupOpener('rptledger:lookup', [
-            taxpayerid : entity.taxpayerid,
+            taxpayerid : entity.taxpayer.objid,
             state      : 'APPROVED',
                 
             onselect : { ledger ->

@@ -204,14 +204,14 @@ public class SubdivisionPage extends javax.swing.JPanel {
         xTextField3.setCaption("Administrator Name");
         xTextField3.setCaptionWidth(130);
         xTextField3.setDepends(new String[] {"selectedLand"});
-        xTextField3.setName("selectedLand.administratorname");
+        xTextField3.setName("selectedLand.administrator.name");
         xTextField3.setPreferredSize(new java.awt.Dimension(0, 20));
         xFormPanel2.add(xTextField3);
 
         xTextField4.setCaption("Administrator Address");
         xTextField4.setCaptionWidth(130);
         xTextField4.setDepends(new String[] {"selectedLand"});
-        xTextField4.setName("selectedLand.administratoraddress");
+        xTextField4.setName("selectedLand.administrator.address");
         xTextField4.setPreferredSize(new java.awt.Dimension(0, 20));
         xFormPanel2.add(xTextField4);
 
@@ -366,7 +366,7 @@ public class SubdivisionPage extends javax.swing.JPanel {
         xLabel17.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(153, 153, 153)));
         xLabel17.setCaption("Owner");
         xLabel17.setCaptionWidth(100);
-        xLabel17.setName("subdivision.motherfaas.ownername");
+        xLabel17.setName("subdivision.motherfaas.owner.name");
         xLabel17.setPreferredSize(new java.awt.Dimension(0, 19));
         formPanel5.add(xLabel17);
 

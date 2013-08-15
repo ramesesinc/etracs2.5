@@ -330,17 +330,10 @@ public class ConsolidationController extends PageFlowController
     
         
     def getLookupTaxpayer(){
-        return InvokerUtil.lookupOpener('rpttaxpayer:lookup',[
+        return InvokerUtil.lookupOpener('entity:lookup',[
             onselect : { 
-                consolidation.taxpayer = [
-                    objid : it.taxpayerid,
-                    name  : it.taxpayername,
-                    address : it.taxpayeraddress,
-                ];
-                consolidation.owner = [
-                    name  : it.taxpayername,
-                    address : it.taxpayeraddress,
-                ];
+                consolidation.taxpayer = it;
+                consolidation.owner    = it;
             },
             onempty  : { 
                 consolidation.taxpayer = null;

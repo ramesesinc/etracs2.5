@@ -16,9 +16,9 @@ txnno
 txndate
 opener
 faasid
-taxpayerid
-taxpayername
-taxpayeraddress
+taxpayer_objid
+taxpayer_name
+taxpayer_address
 requestedby
 requestedbyaddress
 purpose
