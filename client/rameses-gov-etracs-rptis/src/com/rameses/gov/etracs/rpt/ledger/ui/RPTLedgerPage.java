@@ -97,22 +97,23 @@ public class RPTLedgerPage extends javax.swing.JPanel {
         xLabel3.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(153, 153, 153)));
         xLabel3.setCaption("Taxpayer");
         xLabel3.setCaptionWidth(80);
+        xLabel3.setExpression("#{ledger.taxpayer.name}");
         xLabel3.setFont(new java.awt.Font("Arial", 1, 11));
-        xLabel3.setName("ledger.taxpayername");
         xLabel3.setPreferredSize(new java.awt.Dimension(0, 19));
         formPanel1.add(xLabel3);
 
         xLabel4.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(153, 153, 153)));
         xLabel4.setCaption("Address");
         xLabel4.setCaptionWidth(80);
+        xLabel4.setExpression("#{ledger.taxpayer.address}");
         xLabel4.setFont(new java.awt.Font("Arial", 1, 11));
-        xLabel4.setName("ledger.taxpayeraddress");
         xLabel4.setPreferredSize(new java.awt.Dimension(0, 19));
         formPanel1.add(xLabel4);
 
         xLabel7.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(153, 153, 153)));
         xLabel7.setCaption("Administrator");
         xLabel7.setCaptionWidth(80);
+        xLabel7.setExpression("#{ledger.administrator.name}");
         xLabel7.setFont(new java.awt.Font("Arial", 1, 11));
         xLabel7.setName("ledger.administrator.name");
         xLabel7.setPreferredSize(new java.awt.Dimension(0, 19));
@@ -121,6 +122,7 @@ public class RPTLedgerPage extends javax.swing.JPanel {
         xLabel8.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(153, 153, 153)));
         xLabel8.setCaption("Address");
         xLabel8.setCaptionWidth(80);
+        xLabel8.setExpression("#{ledger.administrator.address}");
         xLabel8.setFont(new java.awt.Font("Arial", 1, 11));
         xLabel8.setName("ledger.administrator.address");
         xLabel8.setPreferredSize(new java.awt.Dimension(0, 19));

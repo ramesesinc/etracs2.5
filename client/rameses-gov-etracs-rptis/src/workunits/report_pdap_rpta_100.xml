@@ -1,6 +1,7 @@
 <workunit extends="rpt_wtemplates/ReportController.xml" >
     <invokers>
-        <invoker folderid="/menu/report/rpt" action="init" caption="PDAP-RPTA 100 Report" target="window" index="7" />
+        <invoker folderid="/menu/report/rpt" action="init" caption="PDAP-RPTA 100 Report" target="window" index="7" 
+            role="ASSESSOR_REPORT" />
     </invokers>
     <code>
 

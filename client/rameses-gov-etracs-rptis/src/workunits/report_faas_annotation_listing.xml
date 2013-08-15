@@ -1,6 +1,7 @@
 <workunit extends="rpt_wtemplates/ReportController.xml" >
     <invokers>
-        <invoker folderid="/menu/report/rpt" action="init" caption="FAAS Annotation Listing" target="window" index="6" />
+        <invoker folderid="/menu/report/rpt" action="init" caption="FAAS Annotation Listing" target="window" index="6" 
+            role="ASSESSOR_REPORT" />
     </invokers>
     <code>
 
