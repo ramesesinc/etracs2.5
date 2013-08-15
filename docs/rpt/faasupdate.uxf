@@ -47,8 +47,8 @@ faas_titledate
 faas_taxpayerid
 faas_taxpayername
 faas_taxpayeraddress
-faas_ownername
-faas_owneraddress
+faas_owner_name
+faas_owner_address
 faas_administratorid
 faas_administratorname
 faas_administratoraddress

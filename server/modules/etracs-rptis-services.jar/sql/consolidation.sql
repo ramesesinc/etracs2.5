@@ -24,7 +24,7 @@ WHERE c.objid = $P{objid}
 [getConsolidatedLands]
 SELECT cl.*,
 	f.tdno AS faas_tdno,
-	f.owner_name AS faas_ownername, 
+	f.owner_name AS faas_owner_name, 
 	r.realpropertyid AS rpu_realpropertyid,
 	r.fullpin AS rpu_fullpin,
 	r.totalmv AS rpu_totalmv,

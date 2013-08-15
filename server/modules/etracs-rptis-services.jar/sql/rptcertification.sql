@@ -15,7 +15,7 @@ FROM faas f
 	INNER JOIN realproperty rp ON r.realpropertyid = rp.objid 
 	INNER JOIN propertyclassification pc ON r.classification_objid = pc.objid 
 	INNER JOIN barangay b ON rp.barangayid = b.objid 
-WHERE f.taxpayerid	= $P{taxpayerid}
+WHERE f.taxpayer_objid	= $P{taxpayerid}
   AND f.state = 'CURRENT' 
   AND r.rputype = 'land'
 
@@ -30,7 +30,7 @@ FROM faas f
 	INNER JOIN realproperty rp ON r.realpropertyid = rp.objid 
 	INNER JOIN propertyclassification pc ON r.classification_objid = pc.objid 
 	INNER JOIN barangay b ON rp.barangayid = b.objid 
-WHERE f.taxpayerid	= $P{taxpayerid}
+WHERE f.taxpayer_objid	= $P{taxpayerid}
   AND f.state = 'CURRENT' 
   AND r.rputype = 'land'
   AND EXISTS( SELECT * FROM rpu 
@@ -49,7 +49,7 @@ FROM faas f
 	INNER JOIN realproperty rp ON r.realpropertyid = rp.objid 
 	INNER JOIN propertyclassification pc ON r.classification_objid = pc.objid 
 	INNER JOIN barangay b ON rp.barangayid = b.objid 
-WHERE f.taxpayerid	= $P{taxpayerid}
+WHERE f.taxpayer_objid	= $P{taxpayerid}
   AND f.state = 'CURRENT' 
   AND r.rputype = 'land'
   AND NOT EXISTS( SELECT * FROM rpu 
@@ -98,7 +98,7 @@ FROM faas f
 	INNER JOIN realproperty rp ON r.realpropertyid = rp.objid 
 	INNER JOIN propertyclassification pc ON r.classification_objid = pc.objid 
 	INNER JOIN barangay b ON rp.barangayid = b.objid 
-WHERE f.taxpayerid	= $P{taxpayerid}
+WHERE f.taxpayer_objid	= $P{taxpayerid}
   AND f.state = 'CURRENT' 
 
 

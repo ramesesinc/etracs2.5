@@ -2,7 +2,7 @@
 SELECT DISTINCT rl.objid
 FROM rptledger rl
 	INNER JOIN faas f ON rl.faasid = f.objid 
-WHERE f.taxpayerid = $P{taxpayerid}
+WHERE f.taxpayer_objid = $P{taxpayerid}
  AND rl.state = 'APPROVED'
  AND (rl.nextbilldate IS NULL OR rl.nextbilldate <= NOW() OR rl.lastitemyear < $P{billtoyear})
 
@@ -43,7 +43,7 @@ FROM faas f
 	INNER JOIN barangay b ON rp.barangayid = b.objid 
 	INNER JOIN rptledger rl ON f.objid = rl.faasid
 	INNER JOIN rptledgeritem rli ON rl.objid = rli.rptledgerid
-WHERE f.taxpayerid = $P{taxpayerid}
+WHERE f.taxpayer_objid = $P{taxpayerid}
  AND rl.state = 'APPROVED'
  AND rli.state = 'OPEN'  
  AND ( rli.year < $P{billtoyear} OR ( rli.year = $P{billtoyear} AND rli.qtr <= $P{billtoqtr}))
@@ -202,7 +202,7 @@ UPDATE faas f, rptledger rl SET
 	rl.nextbilldate = $P{nextbilldate}
 WHERE f.objid = rl.faasid 
  AND rl.state = 'APPROVED'
- AND f.taxpayerid = $P{taxpayerid}
+ AND f.taxpayer_objid = $P{taxpayerid}
  
 
 

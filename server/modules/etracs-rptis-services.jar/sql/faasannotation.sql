@@ -1,8 +1,8 @@
 [getList]
 SELECT fa.*,
 	f.tdno AS faas_tdno,
-	f.owner_name AS faas_ownername,
-	f.owner_address AS faas_owneraddress,
+	f.owner_name AS faas_owner_name,
+	f.owner_address AS faas_owner_address,
 	r.fullpin AS faas_fullpin,
 	r.totalmv AS faas_totalmv,
 	r.totalav AS faas_totalav,
@@ -21,8 +21,8 @@ ORDER BY fa.txnno DESC
 [getActiveAnnotationsByFaasId]
 SELECT fa.*,
 	f.tdno AS faas_tdno,
-	f.owner_name AS faas_ownername,
-	f.owner_address AS faas_owneraddress,
+	f.owner_name AS faas_owner_name,
+	f.owner_address AS faas_owner_address,
 	r.fullpin AS faas_fullpin,
 	r.totalmv AS faas_totalmv,
 	r.totalav AS faas_totalav,
@@ -42,8 +42,8 @@ ORDER BY fa.txnno DESC
 [open]
 SELECT fa.*,
 	f.tdno AS faas_tdno,
-	f.owner_name AS faas_ownername,
-	f.owner_address AS faas_owneraddress,
+	f.owner_name AS faas_owner_name,
+	f.owner_address AS faas_owner_address,
 	r.fullpin AS faas_fullpin,
 	r.totalmv AS faas_totalmv,
 	r.totalav AS faas_totalav,

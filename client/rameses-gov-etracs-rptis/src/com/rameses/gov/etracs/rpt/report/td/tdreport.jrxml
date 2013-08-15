@@ -2052,7 +2052,7 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
 						<font fontName="Tahoma" pdfFontName="Helvetica-Bold" size="7" isBold="true" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[""+$F{recommender.name}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[""+ ($F{recommender.name} != null ? $F{recommender.name} : "")]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement
@@ -2193,7 +2193,7 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
 						<font fontName="Tahoma" pdfFontName="Helvetica" size="7" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[""+$F{recommender.title}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[""+ ($F{recommender.title} != null ? $F{recommender.title} : "")]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement

@@ -62,5 +62,5 @@ FROM faas f
 	INNER JOIN propertyclassification pc ON rpu.classification_objid = pc.objid
 	LEFT JOIN realproperty rp ON rpu.realpropertyid = rp.objid
 	LEFT JOIN barangay b ON rp.barangayid = b.objid 
-WHERE f.taxpayerid = $P{taxpayerid}
+WHERE f.taxpayer_objid = $P{taxpayerid}
   AND f.state = 'CURRENT'

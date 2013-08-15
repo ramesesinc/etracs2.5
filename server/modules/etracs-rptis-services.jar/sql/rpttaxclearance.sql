@@ -70,7 +70,7 @@ FROM rptledger rl
 	INNER JOIN realproperty rp ON rpu.realpropertyid = rp.objid
 	LEFT JOIN barangay b ON rp.barangayid = b.objid 
 WHERE rl.state = 'APPROVED'
-  AND f.taxpayerid = $P{taxpayerid}
+  AND f.taxpayer_objid = $P{taxpayerid}
   AND f.state = 'CURRENT'
   AND ( rl.lastyearpaid > $P{year} OR (rl.lastyearpaid = $P{year} AND rl.lastqtrpaid >= $P{qtr}))
 

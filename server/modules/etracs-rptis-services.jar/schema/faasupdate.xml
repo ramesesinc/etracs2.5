@@ -31,14 +31,14 @@
 		<field name="faas_titletype"  />
 		<field name="faas_titleno"  />
 		<field name="faas_titledate"  />
-		<field name="faas_taxpayerid" required="true" />
-		<field name="faas_taxpayername" required="true" />
-		<field name="faas_taxpayeraddress" required="true" />
-		<field name="faas_ownername" required="true" />
-		<field name="faas_owneraddress" required="true" />
-		<field name="faas_administratorid" />
-		<field name="faas_administratorname" />
-		<field name="faas_administratoraddress" />
+		<field name="faas_taxpayer_objid" required="true" />
+		<field name="faas_taxpayer_name" required="true" />
+		<field name="faas_taxpayer_address" required="true" />
+		<field name="faas_owner_name" required="true" />
+		<field name="faas_owner_address" required="true" />
+		<field name="faas_administrator_objid" />
+		<field name="faas_administrator_name" />
+		<field name="faas_administrator_address" />
 		<field name="faas_restrictionid" />
 		<field name="faas_memoranda" required="true" />
 		

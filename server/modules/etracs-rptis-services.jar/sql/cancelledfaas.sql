@@ -2,7 +2,7 @@
 SELECT 
 	cf.*,
 	f.tdno AS faas_tdno,
-	f.owner_name AS faas_ownername,
+	f.owner_name AS faas_owner_name,
 	r.fullpin AS faas_fullpin,
 	r.rputype AS faas_rputype,
 	r.totalareasqm AS faas_totalareasqm,
@@ -23,7 +23,7 @@ SELECT
 	cf.*,
 	f.objid as faas_objid,
 	f.tdno AS faas_tdno,
-	f.owner_name AS faas_ownername,
+	f.owner_name AS faas_owner_name,
 	f.rpuid AS faas_rpuid,
 	r.fullpin AS faas_fullpin,
 	r.rputype AS faas_rputype,

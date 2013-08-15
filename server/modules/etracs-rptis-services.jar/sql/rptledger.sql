@@ -2,7 +2,7 @@
 SELECT 
 	rl.*,
 	f.tdno, f.txntype_objid,
-	f.taxpayerid, f.taxpayer_name, f.taxpayer_address,
+	f.taxpayer_objid, f.taxpayer_name, f.taxpayer_address,
 	f.owner_name, f.owner_address,
 	f.prevtdno, f.prevpin, f.prevowner, f.prevmv, f.prevav,
 	rpu.rputype, rpu.ry, rpu.fullpin, rpu.taxable,
@@ -22,7 +22,7 @@ ORDER BY rl.state, f.tdno
 SELECT 
 	rl.*,
 	f.tdno, f.txntype_objid,
-	f.taxpayerid, f.taxpayer_name, f.taxpayer_address,
+	f.taxpayer_objid, f.taxpayer_name, f.taxpayer_address,
 	f.owner_name, f.owner_address,
 	f.prevtdno, f.prevpin, f.prevowner, f.prevmv, f.prevav,
 	rpu.rputype, rpu.ry, rpu.fullpin, rpu.taxable,
