@@ -1,0 +1,41 @@
+<workunit>
+    <invokers>
+        <invoker type="cashreceipt-form:56" />
+    </invokers>
+    
+    <code>
+        <![CDATA[    
+
+        import com.rameses.rcp.annotations.*
+        import com.rameses.rcp.common.*
+        import com.rameses.osiris2.client.*
+        import com.rameses.osiris2.common.*
+        import com.rameses.osiris2.reports.*;
+        
+        class  CashReceiptForm56 extends ReportModel {
+        
+            def reportData;
+            def parameters = [:];
+            
+            def reportPath = 'com/rameses/gov/etracs/rpt/collection/ui/'
+            
+            
+            public Map getParameters() {
+                return parameters;
+            }
+            public Object getReportData() {
+                return reportData;
+            }
+            public String getReportName() {
+                return reportPath + 'AF56.jasper';
+            }
+            public SubReport[] getSubReports(){
+                return [
+                    new SubReport('AF56Item', reportPath + 'AF56Item.jasper'),
+                ] as SubReport[];    
+            }
+        }
+        ]]>
+    </code>
+    
+</workunit>

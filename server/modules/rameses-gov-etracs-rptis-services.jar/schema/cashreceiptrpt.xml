@@ -1,5 +1,5 @@
 <schema>
-	<element name="rptreceipt" tablename="rptreceipt">
+	<element name="cashreceiptrpt" tablename="cashreceipt_rpt">
 		<field name="objid" primary="true" />
 		<field name="year" type="integer" required="true" />
 		<field name="qtr" type="integer" required="true" />
@@ -8,7 +8,7 @@
 		<field name="type" required="true" />
 	</element>
 
-	<element name="rptreceiptitem" tablename="rptreceiptitem">
+	<element name="cashreceiptrptitem" tablename="cashreceipt_rpt_item">
 		<field name="objid" primary="true" />
 		<field name="rptreceiptid" required="true" />
 		<field name="rptledgerid"  />
@@ -20,14 +20,14 @@
 		<field name="basicint" type="decimal" required="true" />
 		<field name="basicdisc" type="decimal" required="true" />
 		<field name="basiccredit" type="decimal" required="true" />
-		<field name="basicacctid" required="true" />
-		<field name="basicintacctid" />
+		<field name="basicacct_objid" required="true" />
+		<field name="basicintacct_objid" />
 		<field name="sef" type="decimal" required="true" />
 		<field name="sefint" type="decimal" required="true" />
 		<field name="sefdisc" type="decimal" required="true" />
 		<field name="sefcredit" type="decimal" required="true" />
-		<field name="sefacctid" required="true" />
-		<field name="sefintacctid" />
+		<field name="sefacct_objid" required="true" />
+		<field name="sefintacct_objid" />
 		<field name="partial" type="boolean" required="true" />
 		<field name="revtype" required="true" />
 		<field name="citybasic" type="decimal" required="true"/>

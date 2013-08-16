@@ -6,9 +6,6 @@ class RPTReceiptService
 	@PersistenceContext('main')
 	def em
     
-    @Service('XReceiptService')
-	def receiptSvc
-    
     @Service('DateService')
 	def dateSvc
 
@@ -21,9 +18,8 @@ class RPTReceiptService
 	@Service('Var')
 	def var 
 
-	def SCHEMA_RECEIPT 		= 'rptreceipt:rptreceipt'
-	def SCHEMA_ITEM 		= 'rptreceipt:rptreceiptitem'
-	def SCHEMA_MAPPING 		= 'rptreceipt:mapping'
+	def SCHEMA_RECEIPT 		= 'cashreceiptrpt:cashreceiptrpt'
+	def SCHEMA_ITEM 		= 'cashreceiptrpt:cashreceiptrptitem'
 
 	def RECEIPT_TYPE_ONLINE = 'online'
 	def RECEIPT_TYPE_MANUAL = 'manual'
@@ -44,12 +40,7 @@ class RPTReceiptService
 			throw new Exception('Lgu Type ' + var.lgu_type + ' is invalid.')
 		if (receipt.rptitems.size() == 0)
 			throw new Exception('Items for payment are required.')
-		
-		//create receipt
-		createReceiptItems(receipt)
-		receiptSvc.createReceipt(receipt)
 
-		//create rptreceipt
 		def pdate = dateSvc.parseDate(receipt.txndate, null)
 		receipt.year = pdate.year
 		receipt.qtr = pdate.qtr
@@ -57,35 +48,26 @@ class RPTReceiptService
 		receipt.day = pdate.day
 		receipt.type = RECEIPT_TYPE_ONLINE
 
-		em.validate(SCHEMA_RECEIPT, receipt)
 		em.create(SCHEMA_RECEIPT, receipt)
 
-		//TODO: clear rptitems and items after saving
-		//to avoid returing it to the client
 		receipt.rptitems.each{
+			println it.rptledgeritemid;
 			calculateItemShares(it)
-			em.validate(SCHEMA_ITEM, it)
 			em.create(SCHEMA_ITEM, it)
 			updateLedgerPaymentInfo(it)
 		}
-
-		receipt.items.each{
-			em.validate(SCHEMA_MAPPING, it)
-			em.create(SCHEMA_MAPPING, it)
-		}
-		
-		return receipt 
+		return receipt
 	}
 
 
 	@ProxyMethod
 	public def voidReceipt( receipt ) {
-		def paidledgers = em.sqlContext.createNamedQuery('rptreceipt:getPaidLedgers')
+		def paidledgers = em.sqlContext.createNamedQuery('cashreceiptrpt:getPaidLedgers')
 							.setParameter('rptreceiptid', receipt.objid)
 							.resultList 
 
 		paidledgers.each{
-			def firstpaiditem = em.sqlContext.createNamedQuery('rptreceipt:getFirstPaidLedgerItem')
+			def firstpaiditem = em.sqlContext.createNamedQuery('cashreceiptrpt:getFirstPaidLedgerItem')
 					.setParameter('rptreceiptid', receipt.objid)
 					.singleResult
 
@@ -93,7 +75,7 @@ class RPTReceiptService
 			def lastyearpaid = (firstpaiditem.qtr == 1 ? firstpaiditem.year - 1 : firstpaiditem.year )
 			def lastqtrpaid = (firstpaiditem.qtr == 1 ? 4 : firstpaiditem.qtr - 1 )
 
-			em.sqlContext.createNamedExecutor('rptreceipt:voidLedgerPayment')
+			em.sqlContext.createNamedExecutor('cashreceiptrpt:voidLedgerPayment')
 					.setParameter('objid', firstpaiditem.rptledgerid)
 					.setParameter('lastyearpaid', lastyearpaid)
 					.setParameter('lastqtrpaid', lastqtrpaid)
@@ -101,7 +83,7 @@ class RPTReceiptService
 		}
 
 		//void  basic and sef payment
-		em.sqlContext.createNamedExecutor('rptreceipt:voidLedgerItemPayment')
+		em.sqlContext.createNamedExecutor('cashreceiptrpt:voidLedgerItemPayment')
 				.setParameter('rptreceiptid', receipt.objid)
 				.execute()
 		
@@ -125,7 +107,7 @@ class RPTReceiptService
 		}
 
 
-		em.sqlContext.createNamedExecutor('rptreceipt:updateLedgerItemPaidInfo')
+		em.sqlContext.createNamedExecutor('cashreceiptrpt:updateLedgerItemPaidInfo')
 				.setParameter('objid', item.rptledgeritemid)
 				.setParameter('basicpaid', item.basic)
 				.setParameter('basicintpaid', basicintpaid)
@@ -135,46 +117,12 @@ class RPTReceiptService
 				.setParameter('sefdisctaken', sefdisctaken)
 				.execute()
 
-		em.sqlContext.createNamedExecutor('rptreceipt:updateLedgerLastYearQtrPaid')
+		em.sqlContext.createNamedExecutor('cashreceiptrpt:updateLedgerLastYearQtrPaid')
 				.setParameter('objid', item.rptledgerid)
 				.setParameter('lastyearpaid', item.year)
 				.setParameter('lastqtrpaid', (item.qtr == 0 ? 4 : item.qtr))
 				.setParameter('lastreceiptid', item.rptreceiptid)
 				.execute()
-	}
-
-	void createReceiptItems(receipt){
-		receipt.items = []
-		receipt.rptitems.each{ item ->
-			receipt.items += createItem(receipt.objid, item.objid, item.basicacctid, item.basic - item.basicdisc, buildRemarks(item))
-			if (item.basicint > 0.0){
-				receipt.items += createItem(receipt.objid, item.objid, item.basicintacctid, item.basicint, buildRemarks(item))
-			}
-			receipt.items += createItem(receipt.objid, item.objid, item.sefacctid, item.sef - item.sefdisc, buildRemarks(item))
-			if (item.sefint > 0.0){
-				receipt.items += createItem(receipt.objid, item.objid, item.sefintacctid, item.sefint, buildRemarks(item))
-			}
-		}
-	}
-
-	def buildRemarks(item){
-		if ( item.qtr == 0)
-			return item.year 
-		return item.qtr +'qtr, ' + item.year 
-	}
-
-	def createItem(receiptid, itemid, acctid, amount, remarks){
-		def receiptitemid = util.generateId('RI')
-		return [
-			objid 		: receiptitemid,
-			receiptid	: receiptid,
-			acctid 		: acctid,
-			amount 		: amount,
-			remarks		: remarks,
-
-			receiptitemid 	 : receiptitemid,
-			rptreceiptitemid : itemid,
-		]
 	}
 
 	void calculateItemShares(item){

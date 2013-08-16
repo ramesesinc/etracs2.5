@@ -6,11 +6,11 @@
 
 package com.rameses.gov.etracs.rpt.collection.ui;
 
-import com.rameses.osiris2.themes.FormPage;
+import com.rameses.enterprise.treasury.cashreceipt.SerialCashReceiptPage;
 import com.rameses.rcp.ui.annotations.StyleSheet;
 import com.rameses.rcp.ui.annotations.Template;
 
-@Template(FormPage.class)
+@Template(value=SerialCashReceiptPage.class, target="content")
 @StyleSheet()
 public class RPTReceiptInitPage extends javax.swing.JPanel {
     
@@ -26,62 +26,16 @@ public class RPTReceiptInitPage extends javax.swing.JPanel {
      */
     // <editor-fold defaultstate="collapsed" desc=" Generated Code ">//GEN-BEGIN:initComponents
     private void initComponents() {
-        formPanel1 = new com.rameses.rcp.util.FormPanel();
-        xLookupField1 = new com.rameses.rcp.control.XLookupField();
-        xLabel1 = new com.rameses.rcp.control.XLabel();
-        xTextField1 = new com.rameses.rcp.control.XTextField();
-        xTextField2 = new com.rameses.rcp.control.XTextField();
-        xDateField1 = new com.rameses.rcp.control.XDateField();
         formPanel2 = new com.rameses.rcp.util.FormPanel();
         formPanel3 = new com.rameses.rcp.util.FormPanel();
         xCheckBox1 = new com.rameses.rcp.control.XCheckBox();
         xIntegerField1 = new com.rameses.rcp.control.XIntegerField();
+        xSeparator1 = new com.rameses.rcp.control.XSeparator();
+        xButton1 = new com.rameses.rcp.control.XButton();
 
         com.rameses.rcp.control.border.XTitledBorder xTitledBorder1 = new com.rameses.rcp.control.border.XTitledBorder();
-        xTitledBorder1.setTitle("Collection Initial Information");
-        formPanel1.setBorder(xTitledBorder1);
-        formPanel1.setCaptionFont(new java.awt.Font("Arial", 0, 12));
-        xLookupField1.setCaption("Taxpayer");
-        xLookupField1.setCellPadding(new java.awt.Insets(5, 0, 0, 0));
-        xLookupField1.setExpression("#{entity.taxpayer.name}");
-        xLookupField1.setFont(new java.awt.Font("Arial", 0, 12));
-        xLookupField1.setHandler("lookupTaxpayer");
-        xLookupField1.setHint("Search Payor");
-        xLookupField1.setIndex(-10);
-        xLookupField1.setPreferredSize(new java.awt.Dimension(0, 19));
-        xLookupField1.setRequired(true);
-        formPanel1.add(xLookupField1);
-
-        xLabel1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(153, 153, 153)));
-        xLabel1.setCaption("Address");
-        xLabel1.setExpression("#{entity.taxpayer.taxpayeraddress}");
-        xLabel1.setFont(new java.awt.Font("Arial", 0, 12));
-        xLabel1.setPreferredSize(new java.awt.Dimension(0, 19));
-        formPanel1.add(xLabel1);
-
-        xTextField1.setCaption("Paid By");
-        xTextField1.setFont(new java.awt.Font("Arial", 0, 12));
-        xTextField1.setName("entity.paidby");
-        xTextField1.setPreferredSize(new java.awt.Dimension(0, 19));
-        xTextField1.setRequired(true);
-        formPanel1.add(xTextField1);
-
-        xTextField2.setCaption("Address");
-        xTextField2.setFont(new java.awt.Font("Arial", 0, 12));
-        xTextField2.setName("entity.paidbyaddress");
-        xTextField2.setPreferredSize(new java.awt.Dimension(0, 19));
-        xTextField2.setRequired(true);
-        formPanel1.add(xTextField2);
-
-        xDateField1.setCaption("Txn Date");
-        xDateField1.setCellPadding(new java.awt.Insets(0, 0, 10, 0));
-        xDateField1.setName("entity.txndate");
-        xDateField1.setPreferredSize(new java.awt.Dimension(110, 19));
-        formPanel1.add(xDateField1);
-
-        com.rameses.rcp.control.border.XTitledBorder xTitledBorder2 = new com.rameses.rcp.control.border.XTitledBorder();
-        xTitledBorder2.setTitle("Payment Options");
-        formPanel2.setBorder(xTitledBorder2);
+        xTitledBorder1.setTitle("Payment Options");
+        formPanel2.setBorder(xTitledBorder1);
         formPanel2.setPreferredSize(new java.awt.Dimension(5200, 210));
         formPanel2.setShowCaption(false);
 
@@ -111,38 +65,46 @@ public class RPTReceiptInitPage extends javax.swing.JPanel {
 
         formPanel2.add(formPanel3);
 
-        formPanel1.add(formPanel2);
+        xSeparator1.setPreferredSize(new java.awt.Dimension(0, 20));
+        org.jdesktop.layout.GroupLayout xSeparator1Layout = new org.jdesktop.layout.GroupLayout(xSeparator1);
+        xSeparator1.setLayout(xSeparator1Layout);
+        xSeparator1Layout.setHorizontalGroup(
+            xSeparator1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(0, 481, Short.MAX_VALUE)
+        );
+        xSeparator1Layout.setVerticalGroup(
+            xSeparator1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(0, 20, Short.MAX_VALUE)
+        );
+        formPanel2.add(xSeparator1);
+
+        xButton1.setMnemonic('p');
+        xButton1.setDefaultCommand(true);
+        xButton1.setName("process");
+        xButton1.setShowCaption(false);
+        xButton1.setText("Process");
+        formPanel2.add(xButton1);
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(layout.createSequentialGroup()
-                .addContainerGap()
-                .add(formPanel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 559, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(39, Short.MAX_VALUE))
+            .add(formPanel2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 495, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(layout.createSequentialGroup()
-                .addContainerGap()
-                .add(formPanel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 369, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(67, Short.MAX_VALUE))
+            .add(formPanel2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 311, Short.MAX_VALUE)
         );
     }// </editor-fold>//GEN-END:initComponents
     
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private com.rameses.rcp.util.FormPanel formPanel1;
     private com.rameses.rcp.util.FormPanel formPanel2;
     private com.rameses.rcp.util.FormPanel formPanel3;
+    private com.rameses.rcp.control.XButton xButton1;
     private com.rameses.rcp.control.XCheckBox xCheckBox1;
-    private com.rameses.rcp.control.XDateField xDateField1;
     private com.rameses.rcp.control.XIntegerField xIntegerField1;
-    private com.rameses.rcp.control.XLabel xLabel1;
-    private com.rameses.rcp.control.XLookupField xLookupField1;
-    private com.rameses.rcp.control.XTextField xTextField1;
-    private com.rameses.rcp.control.XTextField xTextField2;
+    private com.rameses.rcp.control.XSeparator xSeparator1;
     // End of variables declaration//GEN-END:variables
     
 }
