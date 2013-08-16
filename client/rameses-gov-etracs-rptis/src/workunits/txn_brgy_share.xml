@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <workunit>
     <invokers>
-        <invoker folderid="/menu/report/landtax" action="init" caption="Barangay Share" role="LANDTAX" />
+        <invoker folderid="/menu/txn/landtax" action="init" caption="Barangay Share" role="LANDTAX" />
         <invoker type="brgyshare:create" action="init" caption="Barangay Share" role="LANDTAX" />
         <invoker type="brgyshare:open" action="open" caption="Barangay Share" />
         

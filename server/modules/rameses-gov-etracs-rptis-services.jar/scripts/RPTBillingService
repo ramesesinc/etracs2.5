@@ -88,8 +88,7 @@ public class RPTBillingService
 			bill.billdate = dtSvc.serverDate 
 		}
 
-		if (bill.taxpayer) bill.putAll( bill.taxpayer )
-		
+		bill.taxpayerid = bill.taxpayer?.objid 
 		if (! bill.taxpayerid && ! bill.ledgerids)
 			throw new Exception('Either a Taxpayer or Ledger to bill is required.')
 

@@ -1,6 +1,7 @@
 <workunit extends="rpt_wtemplates/ReportController.xml" >
     <invokers>
-        <invoker folderid="/menu/report/rpt" action="init" caption="Comparative Data on Market Value" target="window" index="11" />
+        <invoker folderid="/menu/report/rpt" action="init" caption="Comparative Data on Market Value" target="window" index="11" 
+            role="ASSESSOR_REPORT" />
     </invokers>
     <code>
 

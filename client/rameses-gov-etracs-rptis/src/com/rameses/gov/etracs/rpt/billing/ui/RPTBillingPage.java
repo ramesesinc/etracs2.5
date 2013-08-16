@@ -45,7 +45,7 @@ public class RPTBillingPage extends javax.swing.JPanel {
         formPanel1.setBorder(xTitledBorder1);
         xLookupField1.setCaption("Taxpayer");
         xLookupField1.setCaptionWidth(90);
-        xLookupField1.setExpression("#{item.taxpayername}");
+        xLookupField1.setExpression("#{bill.taxpayer.name}");
         xLookupField1.setHandler("lookupTaxpayer");
         xLookupField1.setIndex(-100);
         xLookupField1.setName("bill.taxpayer");
@@ -57,7 +57,7 @@ public class RPTBillingPage extends javax.swing.JPanel {
         xLabel1.setCaption("Address");
         xLabel1.setCaptionWidth(90);
         xLabel1.setDepends(new String[] {"bill.taxpayer"});
-        xLabel1.setExpression("#{bill.taxpayer.name}");
+        xLabel1.setExpression("#{bill.taxpayer.address}");
         xLabel1.setPreferredSize(new java.awt.Dimension(0, 19));
         formPanel1.add(xLabel1);
 
