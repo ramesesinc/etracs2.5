@@ -1,3 +1,7 @@
+build/*/build
+build/*/dist
+build/*/build.xml
+build/*/nbproject/private
 client/*/build
 client/*/dist
 client/*/build.xml
