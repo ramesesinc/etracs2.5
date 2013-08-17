@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="12.0">
+  <zoom_level>10</zoom_level>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>240</x>
+      <y>80</y>
+      <w>130</w>
+      <h>70</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-
+items</panel_attributes>
+    <additional_attributes>30;50;110;50</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>130</x>
+      <y>90</y>
+      <w>140</w>
+      <h>310</h>
+    </coordinates>
+    <panel_attributes>assessmentnotice
+--
+objid
+state
+txnno
+txndate
+taxpayer_objid
+taxpayer_name
+taxpayer_address
+createdbyid
+createdbyname
+createdbytitle
+approvedbyid
+approvedbyname
+approvedbytitle
+dtdelivered
+receivedby
+remarks</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>350</x>
+      <y>90</y>
+      <w>160</w>
+      <h>80</h>
+    </coordinates>
+    <panel_attributes>assessmentnoticeitem
+--
+objid
+assessmentnoticeid
+faasid</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>

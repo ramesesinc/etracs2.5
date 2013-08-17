@@ -1,0 +1,453 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="11.5.1">
+  <zoom_level>9</zoom_level>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>981</x>
+      <y>225</y>
+      <w>107</w>
+      <h>44</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>90;27;27;27</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>1269</x>
+      <y>432</y>
+      <w>107</w>
+      <h>62</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-
+</panel_attributes>
+    <additional_attributes>90;45;27;27</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.custom.State</type>
+    <coordinates>
+      <x>900</x>
+      <y>225</y>
+      <w>108</w>
+      <h>54</h>
+    </coordinates>
+    <panel_attributes>APPROVED
+--
+print riv/ris
+preview riv/ris</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.custom.InitialState</type>
+    <coordinates>
+      <x>432</x>
+      <y>234</y>
+      <w>18</w>
+      <h>18</h>
+    </coordinates>
+    <panel_attributes>i</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>1062</x>
+      <y>369</y>
+      <w>134</w>
+      <h>116</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-
+</panel_attributes>
+    <additional_attributes>117;99;27;27</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>522</x>
+      <y>603</y>
+      <w>117</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>AFInventory</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.custom.State</type>
+    <coordinates>
+      <x>702</x>
+      <y>225</y>
+      <w>108</w>
+      <h>54</h>
+    </coordinates>
+    <panel_attributes>DRAFT
+--
+type must be set</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>918</x>
+      <y>351</y>
+      <w>171</w>
+      <h>63</h>
+    </coordinates>
+    <panel_attributes>Post to AFInventoryCredit
+--
+issuedqty = beginqty
+endqty = 0 (consumed)</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>423</x>
+      <y>198</y>
+      <w>296</w>
+      <h>63</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-
+type == collection</panel_attributes>
+    <additional_attributes>279;45;27;45</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.custom.State</type>
+    <coordinates>
+      <x>1179</x>
+      <y>432</y>
+      <w>117</w>
+      <h>72</h>
+    </coordinates>
+    <panel_attributes>APPROVED
+--
+- print iraf
+- print riv/ris</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>756</x>
+      <y>369</y>
+      <w>179</w>
+      <h>125</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-
+type==sale</panel_attributes>
+    <additional_attributes>162;27;27;108</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.custom.FinalState</type>
+    <coordinates>
+      <x>1359</x>
+      <y>468</y>
+      <w>18</w>
+      <h>18</h>
+    </coordinates>
+    <panel_attributes>i</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>612</x>
+      <y>675</y>
+      <w>116</w>
+      <h>44</h>
+    </coordinates>
+    <panel_attributes>lt=-
+m1=1
+m2=1</panel_attributes>
+    <additional_attributes>27;27;99;27</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>648</x>
+      <y>432</y>
+      <w>134</w>
+      <h>63</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-
+approve</panel_attributes>
+    <additional_attributes>117;45;27;45</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>423</x>
+      <y>450</y>
+      <w>125</w>
+      <h>44</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>108;27;27;27</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Note</type>
+    <coordinates>
+      <x>342</x>
+      <y>0</y>
+      <w>270</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>RIV/IRAF Transaction
+bg=green</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>711</x>
+      <y>693</y>
+      <w>90</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>AFIssue</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>1062</x>
+      <y>441</y>
+      <w>134</w>
+      <h>44</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-
+</panel_attributes>
+    <additional_attributes>117;27;27;27</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>522</x>
+      <y>693</y>
+      <w>117</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>AFInventoryCredit</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Interface</type>
+    <coordinates>
+      <x>738</x>
+      <y>468</y>
+      <w>72</w>
+      <h>81</h>
+    </coordinates>
+    <panel_attributes/>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>783</x>
+      <y>207</y>
+      <w>134</w>
+      <h>63</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-
+approve</panel_attributes>
+    <additional_attributes>117;45;27;45</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>423</x>
+      <y>135</y>
+      <w>296</w>
+      <h>125</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-
+type == purchase
+</panel_attributes>
+    <additional_attributes>279;99;243;45;99;45;27;108</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>558</x>
+      <y>603</y>
+      <w>44</w>
+      <h>107</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-
+m1=1
+m2= *</panel_attributes>
+    <additional_attributes>27;27;27;90</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.custom.State</type>
+    <coordinates>
+      <x>531</x>
+      <y>450</y>
+      <w>144</w>
+      <h>72</h>
+    </coordinates>
+    <panel_attributes>DRAFT
+--
+reference an open RIV
+add delivered items</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.custom.InitialState</type>
+    <coordinates>
+      <x>432</x>
+      <y>468</y>
+      <w>18</w>
+      <h>18</h>
+    </coordinates>
+    <panel_attributes>i</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>1107</x>
+      <y>441</y>
+      <w>89</w>
+      <h>125</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-
+</panel_attributes>
+    <additional_attributes>72;27;27;108</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>918</x>
+      <y>459</y>
+      <w>171</w>
+      <h>45</h>
+    </coordinates>
+    <panel_attributes>Post to AFInventoryCredit
+--
+post to afissue</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>756</x>
+      <y>432</y>
+      <w>179</w>
+      <h>63</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-
+type==collection</panel_attributes>
+    <additional_attributes>162;45;27;45</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.custom.FinalState</type>
+    <coordinates>
+      <x>1071</x>
+      <y>243</y>
+      <w>18</w>
+      <h>18</h>
+    </coordinates>
+    <panel_attributes>i</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>891</x>
+      <y>531</y>
+      <w>243</w>
+      <h>99</h>
+    </coordinates>
+    <panel_attributes>Post to AFInventory
+--
+if craaf is empty
+   create craaf for prev month
+if craaf size == 1
+   insert inventory to prev month craaf   </panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>423</x>
+      <y>216</y>
+      <w>296</w>
+      <h>117</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-
+type == sale</panel_attributes>
+    <additional_attributes>279;45;243;99;99;99;27;27</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>756</x>
+      <y>450</y>
+      <w>152</w>
+      <h>116</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-
+type==purchase</panel_attributes>
+    <additional_attributes>135;99;27;27</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>0</x>
+      <y>738</y>
+      <w>513</w>
+      <h>720</h>
+    </coordinates>
+    <panel_attributes>CRAAF Snapshot Algorithm
+--
+1. prevCraaf = previous previous month craaf
+2. craaf = previous month craaf
+3. if prevCraaf afinventoryid != null
+3.1. true
+3.1.1. set craaf afinventoryid, beginqty, beginfrom, beginto to
+prevCraaf afinventoryid, endqty, endfrom, endto
+3.2. false
+3.2.1. set craaf afinventorycreditid, receivedqty, receivedfrom, receivedto to
+prevCraaf afinventorycreditid, endqty, endfrom, endto
+4. if prevCraaf afinventoryid != null
+4.1. true
+4.1.1. get afinventory where afinventory objid = afinventoryid
+4.1.2 if afinventory != null
+4.1.2.1. true
+4.1.2.1.1. set craaf issuedqty, issuedfrom, issuedto, endqty, endfrom, endto to
+afinventory issuedqty, issuedfrom, issuedto, endqty, endfrom, endto
+4.1.2.1.2. get irafissueditem where irafissueditem iraf_objid = afinventory iraf_objid
+4.1.2.1.3. if irafissueditem != null
+4.1.2.1.3.1. true
+4.1.2.1.3.1.1. set craaf canceledqty, cancelfrom, canceledto, cancelreason
+4.2. false
+4.2.1. get afinventorycredit where afinventorycredit objid = afinventorycreditid
+4.2.2. if afinventorycredit != null
+4.2.2.1. true
+4.2.2.1.1. set craaf issuedqty, issuedfrom, issuedto, endqty, endfrom, endto to 
+afinventorycredit issuedqty, issuedfrom, issuedto, endqty, endfrom, endto
+5. set craaf collector[objid, name, title], afid to prevCraaf collector[objid, name, title],
+afid
+6. get afinventorylist where iyear == craafyear and imonth == craafmonth
+7. if afinventorylist != null
+7.1. true
+7.1.1. i = 0
+7.1.2. i &lt; afinventorylist.length
+7.1.2.1. true
+7.1.2.1.1. insert afinventorylist[i] to craaf
+7.1.2.1.2. get afinventorycreditlist where afinventoryid = afinventorylist[i] objid
+7.1.2.1.3. if afinventorycreditlist != null
+7.1.2.1.3.1. true
+7.1.2.1.3.1.1. j = 0
+7.1.2.1.3.1.2. j &lt; afinventorycreditlist.length
+7.1.2.1.3.1.2.1. true
+7.1.2.1.3.1.2.1.1. insert afinventorycreditlist[j] to craaf
+7.1.2.1.3.1.2.1.2. j++
+7.1.2.1.3.1.2.1.3. go 7.1.2.1.3.1.2.
+7.1.2.1.4. i++
+7.1.2.1.5. go 7.1.2.</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>

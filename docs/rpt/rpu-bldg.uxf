@@ -1,0 +1,489 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="12.0">
+  <zoom_level>9</zoom_level>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>792</x>
+      <y>45</y>
+      <w>144</w>
+      <h>360</h>
+    </coordinates>
+    <panel_attributes>rpu
+--
+objid
+state
+realpropertyid
+rputype
+ry
+fullpin
+suffix
+subsuffix
+classification_objid
+exemptiontye_objid
+taxable
+totalareaha
+totalareasqm
+totalbmv
+totalmv
+totalav
+-
+hasswornstatement
+swornamount
+useswornamount
+--
+previd
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>0</x>
+      <y>171</y>
+      <w>135</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>material</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>108</x>
+      <y>99</y>
+      <w>170</w>
+      <h>63</h>
+    </coordinates>
+    <panel_attributes>lt=&gt;&gt;&gt;&gt;
+structure</panel_attributes>
+    <additional_attributes>27;45;153;45</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>126</x>
+      <y>360</y>
+      <w>134</w>
+      <h>63</h>
+    </coordinates>
+    <panel_attributes>lt=&gt;&gt;&gt;&gt;
+actualuse</panel_attributes>
+    <additional_attributes>27;45;117;45</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>540</x>
+      <y>468</y>
+      <w>125</w>
+      <h>63</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;
+m1=1
+m2=*
+additionals</panel_attributes>
+    <additional_attributes>27;45;108;45</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>243</x>
+      <y>297</y>
+      <w>135</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>bldgkindbucc</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>549</x>
+      <y>0</y>
+      <w>162</w>
+      <h>396</h>
+    </coordinates>
+    <panel_attributes>bldgrpu
+--
+objid
+landrpuid
+houseno
+psic
+permitno
+permitdate
+permitissuedby
+--
+bldgtype_objid
+bldgkindbucc_objid
+basevalue
+bldgclass
+dtcompleted
+dtoccupied
+floorcount
+depreciation
+depreciationvalue
+totaladjustment
+additionalinfo
+bldgage
+percentcompleted
+bldgassesslevel_objid
+assesslevel
+condominium
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>846</x>
+      <y>477</y>
+      <w>144</w>
+      <h>126</h>
+    </coordinates>
+    <panel_attributes>bldgflooraddionalparam
+--
+objid
+bldgflooradditionalid
+bldgrpuid
+param_objid
+intvalue
+decimalvalue</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>243</x>
+      <y>261</y>
+      <w>135</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>bldgtype</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>18</x>
+      <y>387</y>
+      <w>135</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>bldgasseslevel</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>1089</x>
+      <y>162</y>
+      <w>117</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>exemptiontype</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>441</x>
+      <y>477</y>
+      <w>126</w>
+      <h>225</h>
+    </coordinates>
+    <panel_attributes>bldgfloor
+--
+objid
+bldguseid
+bldgrpuid
+floorno
+area
+storeyrate
+basevalue
+unitvalue
+basemarketvalue
+adjustment
+marketvalue</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>855</x>
+      <y>675</y>
+      <w>135</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>rptparameter</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>684</x>
+      <y>72</y>
+      <w>125</w>
+      <h>44</h>
+    </coordinates>
+    <panel_attributes>lt=-
+m1=1
+m2=1
+</panel_attributes>
+    <additional_attributes>108;27;27;27</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>342</x>
+      <y>387</y>
+      <w>181</w>
+      <h>107</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;
+m1=1
+m2=*
+floors</panel_attributes>
+    <additional_attributes>27;45;144;45;144;90</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>909</x>
+      <y>81</y>
+      <w>188</w>
+      <h>63</h>
+    </coordinates>
+    <panel_attributes>lt=&gt;&gt;&gt;&gt;
+classification</panel_attributes>
+    <additional_attributes>171;45;27;45</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>243</x>
+      <y>225</y>
+      <w>135</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>bldgasseslevel</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>351</x>
+      <y>234</y>
+      <w>215</w>
+      <h>63</h>
+    </coordinates>
+    <panel_attributes>lt=&gt;&gt;&gt;&gt;
+bldgtype</panel_attributes>
+    <additional_attributes>27;45;198;45</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>261</x>
+      <y>99</y>
+      <w>126</w>
+      <h>99</h>
+    </coordinates>
+    <panel_attributes>bldgstructure
+--
+objid
+bldgrpuid
+structure_objid
+material_objid</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>108</x>
+      <y>135</y>
+      <w>170</w>
+      <h>63</h>
+    </coordinates>
+    <panel_attributes>lt=&gt;&gt;&gt;&gt;
+material</panel_attributes>
+    <additional_attributes>27;45;153;45</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>648</x>
+      <y>684</y>
+      <w>135</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>BldgAdditionalItem</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>909</x>
+      <y>135</y>
+      <w>197</w>
+      <h>63</h>
+    </coordinates>
+    <panel_attributes>lt=&gt;&gt;&gt;&gt;
+exemptiontype</panel_attributes>
+    <additional_attributes>180;45;27;45</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>1080</x>
+      <y>117</y>
+      <w>126</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>propertyclassification</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>360</x>
+      <y>99</y>
+      <w>206</w>
+      <h>63</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;
+m1=1
+m2=*
+structures</panel_attributes>
+    <additional_attributes>189;45;27;45</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>243</x>
+      <y>342</y>
+      <w>126</w>
+      <h>216</h>
+    </coordinates>
+    <panel_attributes>bldguse
+--
+objid
+bldgrpuid
+actualuse_objid
+basevalue
+area
+basemarketvalue
+depreciationvalue
+adjustment
+marketvalue
+assesslevel
+assessedvalue</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>648</x>
+      <y>576</y>
+      <w>117</w>
+      <h>125</h>
+    </coordinates>
+    <panel_attributes>lt=&gt;&gt;&gt;&gt;
+additionalitem</panel_attributes>
+    <additional_attributes>63;108;63;27</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>351</x>
+      <y>198</y>
+      <w>215</w>
+      <h>63</h>
+    </coordinates>
+    <panel_attributes>lt=&gt;&gt;&gt;&gt;
+bldgassesslevel</panel_attributes>
+    <additional_attributes>27;45;198;45</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>342</x>
+      <y>333</y>
+      <w>224</w>
+      <h>63</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;
+m1=1
+m2=*
+bldguses</panel_attributes>
+    <additional_attributes>207;45;27;45</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>747</x>
+      <y>486</y>
+      <w>116</w>
+      <h>63</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;
+m1=1
+m2=*
+params</panel_attributes>
+    <additional_attributes>27;45;99;45</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>0</x>
+      <y>135</y>
+      <w>135</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>structure</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>648</x>
+      <y>477</y>
+      <w>126</w>
+      <h>126</h>
+    </coordinates>
+    <panel_attributes>bldgflooradditional
+--
+objid
+bldgfloorid
+bldgrpuid
+additionalitem_objid
+amount
+expr</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>351</x>
+      <y>270</y>
+      <w>215</w>
+      <h>63</h>
+    </coordinates>
+    <panel_attributes>lt=&gt;&gt;&gt;&gt;
+bldgkindbucc</panel_attributes>
+    <additional_attributes>27;45;198;45</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>864</x>
+      <y>576</y>
+      <w>86</w>
+      <h>116</h>
+    </coordinates>
+    <panel_attributes>lt=&gt;&gt;&gt;&gt;
+param</panel_attributes>
+    <additional_attributes>45;99;45;27</additional_attributes>
+  </element>
+</diagram>

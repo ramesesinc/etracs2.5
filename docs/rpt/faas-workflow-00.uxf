@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="12.0">
+  <zoom_level>9</zoom_level>
+  <element>
+    <type>com.umlet.element.custom.InitialState</type>
+    <coordinates>
+      <x>1125</x>
+      <y>189</y>
+      <w>18</w>
+      <h>18</h>
+    </coordinates>
+    <panel_attributes>i</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.custom.State</type>
+    <coordinates>
+      <x>864</x>
+      <y>171</y>
+      <w>144</w>
+      <h>54</h>
+    </coordinates>
+    <panel_attributes>APPROVED
+--
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.custom.State</type>
+    <coordinates>
+      <x>117</x>
+      <y>171</y>
+      <w>90</w>
+      <h>117</h>
+    </coordinates>
+    <panel_attributes>INTERIM
+--
+create
+- pin
+- realproperty
+- rpu
+- faas
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>207</x>
+      <y>189</y>
+      <w>251</w>
+      <h>117</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-
+state == FORPROVSUBMISSION</panel_attributes>
+    <additional_attributes>234;99;117;99;117;27</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>225</x>
+      <y>90</y>
+      <w>260</w>
+      <h>143</h>
+    </coordinates>
+    <panel_attributes>state==FORAPPROVAL</panel_attributes>
+    <additional_attributes>243;45;99;45;99;126</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>567</x>
+      <y>243</y>
+      <w>161</w>
+      <h>63</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-
+submitToProvince</panel_attributes>
+    <additional_attributes>144;45;27;45</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>0</x>
+      <y>189</y>
+      <w>134</w>
+      <h>44</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>117;27;27;27</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.custom.InitialState</type>
+    <coordinates>
+      <x>9</x>
+      <y>207</y>
+      <w>18</w>
+      <h>18</h>
+    </coordinates>
+    <panel_attributes>i</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.custom.State</type>
+    <coordinates>
+      <x>711</x>
+      <y>261</y>
+      <w>144</w>
+      <h>54</h>
+    </coordinates>
+    <panel_attributes>FORPROVAPPROVAL
+--
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>981</x>
+      <y>153</y>
+      <w>161</w>
+      <h>63</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-
+end</panel_attributes>
+    <additional_attributes>144;45;27;45</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>585</x>
+      <y>90</y>
+      <w>402</w>
+      <h>98</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-
+approve</panel_attributes>
+    <additional_attributes>360;81;360;45;27;45</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.custom.State</type>
+    <coordinates>
+      <x>468</x>
+      <y>117</y>
+      <w>144</w>
+      <h>54</h>
+    </coordinates>
+    <panel_attributes>FORAPPROVAL
+--
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>828</x>
+      <y>198</y>
+      <w>189</w>
+      <h>108</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-
+approvedByProvince</panel_attributes>
+    <additional_attributes>117;27;117;90;27;90</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.custom.State</type>
+    <coordinates>
+      <x>441</x>
+      <y>261</y>
+      <w>153</w>
+      <h>54</h>
+    </coordinates>
+    <panel_attributes>FORPROVSUBMISSION
+--
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>180</x>
+      <y>171</y>
+      <w>125</w>
+      <h>63</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-
+submit</panel_attributes>
+    <additional_attributes>108;45;27;45</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.custom.Decision</type>
+    <coordinates>
+      <x>288</x>
+      <y>198</y>
+      <w>36</w>
+      <h>36</h>
+    </coordinates>
+    <panel_attributes/>
+    <additional_attributes/>
+  </element>
+</diagram>

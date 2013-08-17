@@ -1,0 +1,25 @@
+
+import com.rameses.annotations.*;
+import com.rameses.http.*;
+
+class TestSMSService 
+{	
+	@Service(value="SMSService", connection="etracsorg.sms")
+	def smsSvc;
+
+	@Cache
+	def cache
+	
+	@ProxyMethod
+	@Async
+	public def listen(def id) 
+	{
+		println "TestSMSService_listen: id=$id";
+		def queue = cache.get(id);
+		def result = queue.poll();
+		println "received result-> $result";
+		
+		println "sending sms...";
+		smsSvc.send(result);
+	}		
+}

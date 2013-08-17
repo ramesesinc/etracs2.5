@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="12.0">
+  <zoom_level>10</zoom_level>
+  <element>
+    <type>com.umlet.element.UseCase</type>
+    <coordinates>
+      <x>370</x>
+      <y>400</y>
+      <w>200</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes>Generate CRAAF Report</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Note</type>
+    <coordinates>
+      <x>130</x>
+      <y>20</y>
+      <w>450</w>
+      <h>110</h>
+    </coordinates>
+    <panel_attributes>Note..
+bg=yellow
+RIV = Requisition Issue Voucher
+IRAF - Invoice of Receipt and Accountable Form
+CRAAF - Consolidated Report of Accountability of Accountable Form </panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>170</x>
+      <y>210</y>
+      <w>220</w>
+      <h>110</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;.
+&lt;&lt;includes&gt;&gt;</panel_attributes>
+    <additional_attributes>200;30;30;90</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>170</x>
+      <y>270</y>
+      <w>220</w>
+      <h>170</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;.
+&lt;&lt;includes&gt;&gt;</panel_attributes>
+    <additional_attributes>200;150;30;30</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Note</type>
+    <coordinates>
+      <x>150</x>
+      <y>520</y>
+      <w>310</w>
+      <h>60</h>
+    </coordinates>
+    <panel_attributes>RIV
+- remove Qty delivered column
+- </panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Actor</type>
+    <coordinates>
+      <x>130</x>
+      <y>280</y>
+      <w>80</w>
+      <h>120</h>
+    </coordinates>
+    <panel_attributes>AFO</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>170</x>
+      <y>270</y>
+      <w>220</w>
+      <h>110</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;.
+&lt;&lt;includes&gt;&gt;</panel_attributes>
+    <additional_attributes>200;90;30;30</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>170</x>
+      <y>270</y>
+      <w>220</w>
+      <h>220</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;.
+&lt;&lt;includes&gt;&gt;</panel_attributes>
+    <additional_attributes>200;200;30;30</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.UseCase</type>
+    <coordinates>
+      <x>370</x>
+      <y>220</y>
+      <w>120</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes>IRAF</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.UseCase</type>
+    <coordinates>
+      <x>370</x>
+      <y>160</y>
+      <w>170</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes>RIV (Purchase NPO)</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>170</x>
+      <y>150</y>
+      <w>220</w>
+      <h>170</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;.
+&lt;&lt;includes&gt;&gt;</panel_attributes>
+    <additional_attributes>200;30;30;150</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.UseCase</type>
+    <coordinates>
+      <x>370</x>
+      <y>340</y>
+      <w>200</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes>Transfer of AF to Collector</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>170</x>
+      <y>250</y>
+      <w>220</w>
+      <h>70</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;.
+&lt;&lt;includes&gt;&gt;</panel_attributes>
+    <additional_attributes>200;50;30;50</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.UseCase</type>
+    <coordinates>
+      <x>370</x>
+      <y>460</y>
+      <w>200</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes>View Open RIVs</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.UseCase</type>
+    <coordinates>
+      <x>370</x>
+      <y>280</y>
+      <w>130</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes>Cancel AF Series</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>

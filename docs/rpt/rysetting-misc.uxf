@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="12.0">
+  <zoom_level>10</zoom_level>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>180</x>
+      <y>340</y>
+      <w>112</w>
+      <h>150</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;-
+miscitem</panel_attributes>
+    <additional_attributes>60;30;60;130</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>470</x>
+      <y>240</y>
+      <w>200</w>
+      <h>70</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;-
+classification</panel_attributes>
+    <additional_attributes>30;50;180;50</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>190</x>
+      <y>80</y>
+      <w>90</w>
+      <h>50</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>70;30;30;30</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>650</x>
+      <y>280</y>
+      <w>160</w>
+      <h>30</h>
+    </coordinates>
+    <panel_attributes>propertyclassification</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>380</x>
+      <y>400</y>
+      <w>50</w>
+      <h>80</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>30;30;30;60</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>180</x>
+      <y>250</y>
+      <w>140</w>
+      <h>120</h>
+    </coordinates>
+    <panel_attributes>miscitemvalue
+--
+objid
+miscrysettingid
+miscitem_objid
+expr
+previd</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>340</x>
+      <y>460</y>
+      <w>150</w>
+      <h>130</h>
+    </coordinates>
+    <panel_attributes>miscassesslevelrange
+--
+objid
+miscassesslevelid
+miscrysettingid
+mvfrom
+mvto
+rate</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>260</x>
+      <y>50</y>
+      <w>170</w>
+      <h>140</h>
+    </coordinates>
+    <panel_attributes>miscrysetting
+--
+objid
+state
+ry
+appliedto
+previd</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>350</x>
+      <y>160</y>
+      <w>80</w>
+      <h>110</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>30;30;60;90</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>350</x>
+      <y>250</y>
+      <w>150</w>
+      <h>180</h>
+    </coordinates>
+    <panel_attributes>miscassesslevel
+--
+objid
+miscrysettingid
+classification_objid
+code
+name
+fixrate
+rate
+previd</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>160</x>
+      <y>470</y>
+      <w>160</w>
+      <h>30</h>
+    </coordinates>
+    <panel_attributes>miscitem</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>90</x>
+      <y>50</y>
+      <w>130</w>
+      <h>110</h>
+    </coordinates>
+    <panel_attributes>rysetting_lgu
+--
+rysettingid
+lguid
+lguname
+settingtype</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>210</x>
+      <y>160</y>
+      <w>100</w>
+      <h>110</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>80;30;30;90</additional_attributes>
+  </element>
+</diagram>

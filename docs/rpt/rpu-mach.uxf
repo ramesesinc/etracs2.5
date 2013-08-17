@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="12.0">
+  <zoom_level>9</zoom_level>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>234</x>
+      <y>45</y>
+      <w>162</w>
+      <h>648</h>
+    </coordinates>
+    <panel_attributes>machdetail
+--
+objid
+machuseid
+machrpuid
+machine_objid
+operationyear
+replacementcost
+depreciation
+depreciationvalue
+basemarketvalue
+marketvalue
+assesslevel
+assessedvalue
+brand
+capacity
+model
+serialno
+status
+yearacquired
+estimatedlife
+remaininglife
+yearinstalled
+yearsused
+originalcost
+freightcost
+insurancecost
+installationcost
+brokeragecost
+arrastrecost
+othercost
+acquisitioncost
+feracid
+ferac
+forexid
+forex
+residualrate
+conversionfactor
+useswornamount
+swornamount
+imported
+newlyinstalled
+autodepreciate</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>1044</x>
+      <y>162</y>
+      <w>117</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>exemptiontype</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>522</x>
+      <y>369</y>
+      <w>117</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>machasseslevel</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>513</x>
+      <y>45</y>
+      <w>144</w>
+      <h>63</h>
+    </coordinates>
+    <panel_attributes>machrpu
+--
+objid
+landrpuid
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>0</x>
+      <y>99</y>
+      <w>135</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>machine</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>531</x>
+      <y>81</y>
+      <w>106</w>
+      <h>89</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;
+m1=1
+m2=*
+.
+machuses</panel_attributes>
+    <additional_attributes>54;27;54;72</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>873</x>
+      <y>81</y>
+      <w>188</w>
+      <h>63</h>
+    </coordinates>
+    <panel_attributes>lt=&gt;&gt;&gt;&gt;
+classification</panel_attributes>
+    <additional_attributes>171;45;27;45</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>873</x>
+      <y>135</y>
+      <w>188</w>
+      <h>63</h>
+    </coordinates>
+    <panel_attributes>lt=&gt;&gt;&gt;&gt;
+exemptiontype</panel_attributes>
+    <additional_attributes>171;45;27;45</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>369</x>
+      <y>180</y>
+      <w>161</w>
+      <h>84</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;
+m1=1
+m2=*
+.
+machines</panel_attributes>
+    <additional_attributes>144;45;27;45</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>108</x>
+      <y>72</y>
+      <w>143</w>
+      <h>63</h>
+    </coordinates>
+    <panel_attributes>lt=&gt;&gt;&gt;&gt;
+machine</panel_attributes>
+    <additional_attributes>27;45;126;45</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>531</x>
+      <y>261</y>
+      <w>104</w>
+      <h>125</h>
+    </coordinates>
+    <panel_attributes>lt=&gt;&gt;&gt;&gt;
+.
+actualuse</panel_attributes>
+    <additional_attributes>54;108;54;27</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>513</x>
+      <y>153</y>
+      <w>144</w>
+      <h>135</h>
+    </coordinates>
+    <panel_attributes>machuse
+--
+objid
+machrpuid
+actualuse_objid
+basemarketvalue
+marketvalue
+assesslevel
+assessedvalue
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>630</x>
+      <y>45</y>
+      <w>143</w>
+      <h>44</h>
+    </coordinates>
+    <panel_attributes>lt=-
+m1=1
+m2=1
+</panel_attributes>
+    <additional_attributes>126;27;27;27</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>1044</x>
+      <y>117</y>
+      <w>126</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>propertyclassification</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>756</x>
+      <y>45</y>
+      <w>144</w>
+      <h>360</h>
+    </coordinates>
+    <panel_attributes>rpu
+--
+objid
+state
+realpropertyid
+rputype
+ry
+fullpin
+suffix
+subsuffix
+classification_objid
+exemptiontye_objid
+taxable
+totalareaha
+totalareasqm
+totalbmv
+totalmv
+totalav
+-
+hasswornstatement
+swornamount
+useswornamount
+--
+previd
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>

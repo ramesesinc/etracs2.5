@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="12.0">
+  <zoom_level>10</zoom_level>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>330</x>
+      <y>60</y>
+      <w>170</w>
+      <h>230</h>
+    </coordinates>
+    <panel_attributes>faasannotation
+--
+objid
+state
+annotationtype_objid
+faasid
+txnno
+txndate
+fileno
+orno
+ordate
+oramount
+memoranda</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>600</x>
+      <y>140</y>
+      <w>160</w>
+      <h>30</h>
+    </coordinates>
+    <panel_attributes>faas
+bg=green</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>150</x>
+      <y>50</y>
+      <w>200</w>
+      <h>70</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;-
+annotationtype</panel_attributes>
+    <additional_attributes>180;50;30;50</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>470</x>
+      <y>100</y>
+      <w>150</w>
+      <h>70</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-
+faas
+</panel_attributes>
+    <additional_attributes>130;50;30;50</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>340</x>
+      <y>260</y>
+      <w>122</w>
+      <h>110</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-
+annotation</panel_attributes>
+    <additional_attributes>70;30;70;90</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>330</x>
+      <y>350</y>
+      <w>160</w>
+      <h>260</h>
+    </coordinates>
+    <panel_attributes>cancelannotation
+--
+objid
+state
+txnno
+txndate
+annotationid
+fileno
+remarks
+signedby
+signedbytitle
+dtsigned
+orno
+ordate
+oramount</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>50</x>
+      <y>60</y>
+      <w>130</w>
+      <h>70</h>
+    </coordinates>
+    <panel_attributes>faasannotationtype
+--
+objid
+type
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>
