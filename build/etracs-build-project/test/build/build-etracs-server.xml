@@ -134,11 +134,7 @@
         </copy>
     </target>
     
-    <target name="build-server" depends="init,copy-osiris3-server,deploy-etracs-server,deploy-project-shared,deploy-core">
-        
-    </target>
-    
-    <target name="xbuild-server" depends="init,copy-osiris3-server,copy-etracs-platform,deploy-etracs-server,deploy-project-shared,deploy-core">
+    <target name="build-server" depends="init,copy-osiris3-server,copy-etracs-platform,deploy-etracs-server,deploy-project-shared,deploy-core">
         
     </target>
 </project>
