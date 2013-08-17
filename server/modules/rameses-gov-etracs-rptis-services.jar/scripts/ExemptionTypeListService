@@ -1,0 +1,27 @@
+import com.rameses.annotations.*;
+import com.rameses.common.*;
+
+class ExemptionTypeListService
+{
+	@PersistenceContext('main')
+	def em
+
+	@Service('ListUtilService')
+	def listSvc 
+	
+	@ProxyMethod
+	public List getList( Map params ) {
+		return listSvc.getList( 'exemptiontype:getList', params )
+	}
+	
+
+	@ProxyMethod
+	public def getColumns( params ) {
+		return [
+			[name:"code", caption:"Code", width:50],
+            [name:"name", caption:"Exemption Type", width:250],
+            [name:"orderno", caption:"Order No.", width:50],
+            [name:"state", caption:"State", width:100],
+        ]	
+	}
+}

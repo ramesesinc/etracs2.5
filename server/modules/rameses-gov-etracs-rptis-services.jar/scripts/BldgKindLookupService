@@ -1,0 +1,17 @@
+import com.rameses.annotations.*;
+import com.rameses.eserver.*;
+import com.rameses.common.*;
+
+class BldgKindLookupService
+{
+	@PersistenceContext('main')
+	def em
+
+	@Service('LookupUtilService')
+	def lookupSvc 
+	
+	@ProxyMethod
+	public def lookupBldgKinds( params ) {
+		return lookupSvc.lookup( 'bldgkind:lookupBldgKinds', params )
+	}
+}

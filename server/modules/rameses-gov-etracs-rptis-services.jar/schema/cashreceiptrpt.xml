@@ -1,0 +1,53 @@
+<schema>
+	<element name="cashreceiptrpt" tablename="cashreceipt_rpt">
+		<field name="objid" primary="true" />
+		<field name="year" type="integer" required="true" />
+		<field name="qtr" type="integer" required="true" />
+		<field name="month" type="integer" required="true" />
+		<field name="day" type="integer" required="true" />
+		<field name="type" required="true" />
+	</element>
+
+	<element name="cashreceiptrptitem" tablename="cashreceipt_rpt_item">
+		<field name="objid" primary="true" />
+		<field name="rptreceiptid" required="true" />
+		<field name="rptledgerid"  />
+		<field name="rptledgeritemid"  />
+		<field name="barangayid"  required="true"/>
+		<field name="year" type="integer" required="true" />
+		<field name="qtr" type="integer" required="true" />
+		<field name="basic" type="decimal" required="true" />
+		<field name="basicint" type="decimal" required="true" />
+		<field name="basicdisc" type="decimal" required="true" />
+		<field name="basiccredit" type="decimal" required="true" />
+		<field name="basicacct_objid" required="true" />
+		<field name="basicintacct_objid" />
+		<field name="sef" type="decimal" required="true" />
+		<field name="sefint" type="decimal" required="true" />
+		<field name="sefdisc" type="decimal" required="true" />
+		<field name="sefcredit" type="decimal" required="true" />
+		<field name="sefacct_objid" required="true" />
+		<field name="sefintacct_objid" />
+		<field name="partial" type="boolean" required="true" />
+		<field name="revtype" required="true" />
+		<field name="citybasic" type="decimal" required="true"/>
+		<field name="citybasicint" type="decimal" required="true"/>
+		<field name="citysef" type="decimal" required="true"/>
+		<field name="citysefint" type="decimal" required="true"/>
+		<field name="provbasic" type="decimal" required="true"/>
+		<field name="provbasicint" type="decimal" required="true"/>
+		<field name="provsef" type="decimal" required="true"/>
+		<field name="provsefint" type="decimal" required="true"/>
+		<field name="munibasic" type="decimal" required="true"/>
+		<field name="munibasicint" type="decimal" required="true"/>
+		<field name="munisef" type="decimal" required="true"/>
+		<field name="munisefint" type="decimal" required="true"/>
+		<field name="brgybasic" type="decimal" required="true"/>
+		<field name="brgybasicint" type="decimal" required="true"/>
+	</element>
+
+	<element name="mapping" tablename="receiptitem_rptreceiptitem">
+		<field name="receiptitemid" primary="true" />
+		<field name="rptreceiptitemid" primary="true" />
+	</element>
+</schema>

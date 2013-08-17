@@ -1,0 +1,25 @@
+import com.rameses.annotations.*;
+import com.rameses.eserver.*;
+import com.rameses.common.*;
+
+class PropertyClassificationLookupService
+{
+	@PersistenceContext('main')
+	def em
+
+	@Service('LookupUtilService')
+	def lookupSvc 
+	
+
+	@ProxyMethod
+	public def lookupClassifications( params ) {
+		return lookupSvc.lookup( 'propertyclassification:lookupClassifications', params )
+	}
+
+
+	@ProxyMethod
+	public def lookupById( objid ) {
+		return em.sqlContext.createNamedQuery('propertyclassification:lookupById')
+				.setParameter('objid', objid).singleResult
+	}
+}

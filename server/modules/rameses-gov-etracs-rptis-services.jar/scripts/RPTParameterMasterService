@@ -1,0 +1,68 @@
+import com.rameses.annotations.*;
+import com.rameses.eserver.*;
+import com.rameses.common.*;
+
+class RPTParameterMasterService
+{
+	@PersistenceContext('main')
+	def em
+	
+	@Service('CrudMasterService')
+	def crudSvc 
+
+	def SCHEMA_NAME 	= 'rptparameter'
+	def STATE_DRAFT 	= 'DRAFT' 
+	def STATE_APPROVED 	= 'APPROVED'
+
+	def TYPE_RANGE_DECIMAL = 'range_decimal'
+	def TYPE_RANGE_INTEGER = 'range_integer'
+	
+	@ProxyMethod
+	public def init( ) {
+		return [:] 
+	}
+
+	@ProxyMethod
+	public def create( entity ) {
+		fixEntityName( entity )
+		validateRange(entity)
+		return crudSvc.create(SCHEMA_NAME, entity)
+	}
+
+	@ProxyMethod
+	public def update( entity ) {
+		fixEntityName( entity )
+		validateRange(entity)
+		return crudSvc.update(SCHEMA_NAME, entity)
+	}
+
+	@ProxyMethod
+	public def open( entity ) {
+		return crudSvc.open(SCHEMA_NAME, entity)
+	}
+
+	@ProxyMethod
+	public void delete( entity ) {
+		em.delete(SCHEMA_NAME, entity)
+	}
+
+	@ProxyMethod
+	public def approve( entity ) {
+		return crudSvc.approve(SCHEMA_NAME, entity)
+	}
+
+
+	/* replace whitespace and special chars with '_' */
+	void fixEntityName( entity ){
+        if ( entity.name ){
+            entity.name = entity.name.replaceAll("\\W", "_")
+        }
+    }
+
+    void validateRange(entity){
+    	if (entity.paramtype == TYPE_RANGE_DECIMAL || entity.paramtype == TYPE_RANGE_INTEGER){
+    		if (entity.minvalue >= entity.maxvalue)
+    			throw new Exception('Mininum Value must be less than Maximum Value.')
+    	}
+    }
+}

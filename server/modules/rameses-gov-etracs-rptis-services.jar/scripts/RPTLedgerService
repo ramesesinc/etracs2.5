@@ -1,0 +1,298 @@
+import com.rameses.annotations.*
+import com.rameses.common.*;
+import com.rameses.util.*
+
+class RPTLedgerService
+{
+    @PersistenceContext('rpt') 
+    def em
+
+    @Service('RPTUtil')
+    def util
+
+    @Service('Var')
+    def var 
+
+    @Service('DateService')
+    def dtSvc
+
+    @Service('NumberService')
+    def numSvc
+
+    @Service('FAASService')
+    def faasSvc 
+
+    @Service('PropertyClassificationLookupService')
+    def pcSvc 
+
+    @Service('RPTBillingService')
+    def billingSvc
+
+
+    def SCHEMA_LEDGER   = 'rptledger'
+    def SCHEMA_FAAS     = 'rptledger:faas'
+    def SCHEMA_ITEM     = 'rptledger:item'
+
+    def STATE_PENDING   = 'PENDING'
+    def STATE_APPROVED  = 'APPROVED'
+    def STATE_CANCELLED = 'CANCELLED'
+    def STATE_OPEN      = 'OPEN'
+    def STATE_CLOSED    = 'CLOSED'
+
+
+    @ProxyMethod
+    public def openLedger( ledger ) {
+        ledger = em.sqlContext.createNamedQuery('rptledger:openLedger').setParameters(ledger).singleResult
+        if (!ledger) throw new Exception('Ledger does not exists.')
+        ledger.firstqtrpaidontime = util.toBoolean(ledger.firstqtrpaidontime, true)
+        ledger.qtrlypaymentavailed = util.toBoolean(ledger.qtrlypaymentavailed, true)
+        ledger.qtrlypaymentpaidontime = util.toBoolean(ledger.qtrlypaymentpaidontime, true)
+        ledger.systemcreated = util.toBoolean(ledger.systemcreated, true)
+
+        ledger.faases = getLedgerFaases(ledger.objid).each{
+            it.taxable = util.toBoolean(it.taxable, true)
+            it.backtax = util.toBoolean(it.backtax, true)
+        }
+        return ledger 
+    }
+
+    @ProxyMethod
+    public def createLedger( ledger ) {
+        em.validate(SCHEMA_LEDGER, ledger)
+        em.create(SCHEMA_LEDGER, ledger)
+        ledger.faases.each{ ledgerfaas ->
+            saveLedgerFaas(ledgerfaas)
+        }
+    }
+
+
+    @ProxyMethod
+    public def updateLedger( ledger ) {
+        em.validate(SCHEMA_LEDGER, ledger)    
+        em.update(SCHEMA_LEDGER, ledger)    
+    }
+
+    
+    @ProxyMethod
+    public def saveLedgerFaas(ledgerfaas){
+        def xledgerfaas =  EntityUtil.mapToField(ledgerfaas)
+        em.validate(SCHEMA_FAAS, xledgerfaas)
+        em.save(SCHEMA_FAAS, xledgerfaas)
+        return ledgerfaas 
+    }
+
+    @ProxyMethod
+    public def removeLedgerFaas( ledgerfaas ) {
+        em.delete(SCHEMA_FAAS, ledgerfaas)    
+    }
+
+
+    @ProxyMethod
+    public def createLedgerItem( item ) {
+        em.validate(SCHEMA_ITEM, item)
+        em.create(SCHEMA_ITEM, item)
+    }
+
+    @ProxyMethod
+    public def updateLedgerItem( item ) {
+        em.validate(SCHEMA_ITEM, item)
+        em.update(SCHEMA_ITEM, item)
+    }
+
+    @ProxyMethod
+    public def approveLedger( ledger) {
+        ledger = openLedger(ledger)
+        if (ledger.state == STATE_APPROVED )
+            throw new Exception('Ledger has already been approved.')
+        if (ledger.state == STATE_CANCELLED)
+            throw new Exception('Ledger has already been cancelled.')
+
+        def lastfaas = ledger.faases.last()
+        ledger.state            =  STATE_APPROVED
+        ledger.lastyearpaid     = (lastfaas.fromqtr == 1 ? lastfaas.fromyear - 1 : lastfaas.fromyear)
+        ledger.lastqtrpaid      = (lastfaas.fromqtr == 1 ?  4 : lastfaas.fromqtr - 1)
+        ledger.lastitemyear     = dtSvc.serverYear 
+        ledger.nextbilldate     = null
+        em.update(SCHEMA_LEDGER, ledger)
+        //approve ledgerfaases
+        ledger.faases.each{
+            it.state = ledger.state 
+            saveLedgerFaas(it)
+            postLedgerItems(it)
+        }
+    }
+
+    @ProxyMethod
+    public void checkLedgerBalance(faasid){
+        def ledger = em.sqlContext.createNamedQuery('rptledger:getLedgerByFaasId')
+                            .setParameter('faasid', faasid).singleResult
+        if (!ledger)
+            throw new Exception('Ledger does not exist or has already been deleted.')
+            
+        if ( ledger.lastyearpaid < dtSvc.serverYear || (ledger.lastyearpaid == dtSvc.serverYear && ledger.lastqtrpaid < 4))
+            throw new Exception('Ledger has not yet been fully paid.')
+    }
+
+    @ProxyMethod
+    public void clearNextBillDateByLedger( ledgerid ) {
+        em.sqlContext.createNamedExecutor('rptledger:clearNextBillDateByLedger').setParameter('objid', ledgerid).execute() 
+    }
+
+    @ProxyMethod
+    public void clearNextBillDate() {
+        em.sqlContext.createNamedExecutor('rptledger:clearNextBillDate').execute() 
+    }
+
+
+    @ProxyMethod
+    public def getLedgerByFaasId( faasid ) {
+        def ledger = em.sqlContext.createNamedQuery('rptledger:getLedgerByFaas').setParameter('faasid', faasid).singleResult
+        if (!ledger) throw new Exception('Ledger does not exist or has already been deleted.')
+        ledger.firstqtrpaidontime = util.toBoolean(ledger.firstqtrpaidontime, false)
+        ledger.qtrlypaymentavailed = util.toBoolean(ledger.qtrlypaymentavailed, false)
+        ledger.qtrlypaymentpaidontime = util.toBoolean(ledger.qtrlypaymentpaidontime, false )
+        return ledger
+    }
+
+
+    @ProxyMethod
+    public def getLedgerFaases(ledgerid){
+        return em.sqlContext.createNamedQuery('rptledger:getLedgerFaases')
+                    .setParameter('rptledgerid', ledgerid)
+                    .resultList.each{
+                        it.taxable = util.toBoolean(it.taxable, true)
+                        it.backtax = util.toBoolean(it.backtax, false)
+                        it.systemcreated = util.toBoolean(it.systemcreated, true)
+                    }
+    }
+
+
+    @ProxyMethod
+    public def getLedgerItems(ledgerid){
+        return em.sqlContext.createNamedQuery('rptledger:getLedgerItems').setParameter('rptledgerid', ledgerid).resultList
+    }
+
+
+    @ProxyMethod
+    public def getLedgerCredits(ledgerid) {
+        return []
+    }
+
+
+    @ProxyMethod
+    public def getTxnTypes(){
+        return faasSvc.getTxnTypes();
+    }
+
+    @ProxyMethod
+    public def lookupClassifications(){
+        return pcSvc.lookupClassifications([:])
+    }
+
+
+    @ProxyMethod
+    public def postLedgerFaas( ledgerfaas ) {
+        def ledgerfaases = getLedgerFaases(ledgerfaas.rptledgerid)
+        def latestledgerfaas = ledgerfaases.find{it.toyear == 0}
+        if (latestledgerfaas) {
+            latestledgerfaas.toyear = (ledgerfaas.fromqtr == 1 ? ledgerfaas.fromyear - 1 : ledgerfaas.fromyear)
+            latestledgerfaas.toqtr = (ledgerfaas.fromqtr == 1 ? 4 : ledgerfaas.fromqtr - 1)
+            saveLedgerFaas(latestledgerfaas)
+        }
+        saveLedgerFaas(ledgerfaas)
+    }
+
+
+    void postLedgerItems(ledgerfaas){
+        def pdate = dtSvc.parseCurrentDate()
+        ledgerfaas.toyear  = (ledgerfaas.toyear == 0 ? pdate.year : ledgerfaas.toyear)
+        ledgerfaas.toqtr   = (ledgerfaas.toqtr == 0 ? 4 : ledgerfaas.toqtr )
+        def qtrlyPrevYears = util.toBoolean(var.rptledger_previous_year_computed_as_quarterly, false)
+
+        if (ledgerfaas.fromyear <= ledgerfaas.toyear ){
+            ledgerfaas.fromyear.upto(ledgerfaas.toyear){ yr ->
+                postQuarterlyItems(ledgerfaas, yr)
+                /*
+                if ( yr < pdate.year && qtrlyPrevYears) {
+                    //previous year qtrly
+                    postQuarterlyItems(ledgerfaas, yr)
+                }
+                else if ( yr < pdate.year ) {
+                    //previous year annual
+                    postYearlyItems(ledgerfaas, yr)
+                }
+                else {
+                    //current and advance years 
+                    postQuarterlyItems(ledgerfaas, yr)
+                }
+                */
+            }
+        }
+    }
+
+    @ProxyMethod
+    public def insertLedgerItems(ledger, fromyear, toyear){
+        if( fromyear <= toyear) {
+            fromyear.upto(toyear){yr -> 
+                def ledgerfaas = em.sqlContext.createNamedQuery('rptledger:getLedgerFaasByFaasId')
+                        .setParameter('rptledgerid', ledger.objid )
+                        .setParameter('faasid', ledger.faasid)
+                        .singleResult
+                if( ledgerfaas ){
+                    ledgerfaas.toqtr = 4;
+                    postQuarterlyItems(ledgerfaas, yr)
+                    em.sqlContext.createNamedExecutor('rptledger:updateLedgerLastItemYear')
+                            .setParameter('objid', ledger.objid)
+                            .setParameter('lastitemyear', toyear)
+                            .execute()
+                }
+            }
+        }
+    }
+
+
+
+    void postQuarterlyItems(ledgerfaas, yr){
+        def av1to3qtr = numSvc.round( ledgerfaas.assessedvalue / 4 )
+        def av4thqtr  = numSvc.round( ledgerfaas.assessedvalue - (av1to3qtr * 3))
+
+        ledgerfaas.fromqtr.upto(ledgerfaas.toqtr){ qtr ->
+            def item = doCreateLedgerItem(ledgerfaas, yr, qtr)
+            item.qtrlyav = ( qtr == 4 ? av4thqtr : av1to3qtr)
+            createLedgerItem(item)
+        }
+    }
+
+    void postYearlyItems(ledgerfaas, yr){
+        def item = doCreateLedgerItem(ledgerfaas, yr, 0)
+        createLedgerItem(item)
+    }
+
+
+    def doCreateLedgerItem(ledgerfaas, yr, qtr){
+        return [
+            objid               : util.generateId('RLI'),
+            state               : STATE_OPEN,
+            rptledgerid         : ledgerfaas.rptledgerid,
+            rptledgerfaasid     : ledgerfaas.objid, 
+            year                : yr, 
+            qtr                 : qtr, 
+            assessedvalue       : ledgerfaas.assessedvalue,
+            qtrlyav             : 0.0,
+            basic               : 0.0,
+            basicint            : 0.0,
+            basicdisc           : 0.0,
+            basiccredit         : 0.0,
+            basicpaid           : 0.0,
+            basicintpartial     : 0.0,
+            sef                 : 0.0,
+            sefint              : 0.0,
+            sefdisc             : 0.0,
+            sefcredit           : 0.0,
+            sefpaid             : 0.0,
+            sefintpartial       : 0.0,
+        ]
+    }
+
+}
+

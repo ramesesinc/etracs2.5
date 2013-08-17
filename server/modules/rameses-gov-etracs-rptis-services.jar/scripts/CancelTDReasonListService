@@ -1,0 +1,26 @@
+import com.rameses.annotations.*;
+import com.rameses.common.*;
+
+class CancelTDReasonListService
+{
+	@PersistenceContext('main')
+	def em
+
+	@Service('ListUtilService')
+	def listSvc 
+	
+	@ProxyMethod
+	public List getList( Map params ) {
+		return listSvc.getList( 'canceltdreason:getList', params )
+	}
+	
+	@ProxyMethod
+	public def getColumns( params ) {
+		return [
+            [name:"code", caption:"Code", width:50],
+            [name:"name", caption:"Title", width:250],
+            [name:"description", caption:"Description", width:250],
+            [name:"state", caption:"State", width:100],
+        ]	
+	}
+}

@@ -1,0 +1,116 @@
+import com.rameses.annotations.*
+import com.rameses.eserver.*;
+import com.rameses.common.*;
+
+class RPTCertificationService 
+{
+    @PersistenceContext('main')
+    def em;
+    
+    @Env
+    def env 
+
+    @Service('DateService')
+    def dtSvc;
+	
+	@Service('SequenceService')
+	def seqSvc;
+
+	@Service('RPTUtil')
+	def util;
+
+	@Service('FAASService')
+    def faasSvc
+
+	
+
+	def SCHEMA_NAME = 'rptcertification'
+	def SCHEMA_ITEM = 'rptcertification:item'
+
+
+	@ProxyMethod
+	public def getList( params ) {
+    	params.searchtext = (params.searchtext ? params.searchtext : '') + '%'
+        def filters = [
+            'WHERE txnno LIKE $P{searchtext}',
+            'WHERE requestedby LIKE $P{searchtext}',
+            'WHERE opener LIKE $P{searchtext}',
+        ]
+        return util.getListFromQuery( 'rptcertification:getList' , filters, params, 'objid' )
+	}
+
+
+	@ProxyMethod
+	public def createCertification( cert ) {
+		if (!cert.txnno){
+			cert.txnno = seqSvc.getNextFormattedSeries('RPTCERTIFICATION')
+		}
+		cert.txndate = dtSvc.serverDate
+		cert.createdbyid = env.USERID
+		cert.createdby = (env.USERFORMALNAME ? env.USERFORMALNAME : 'system')
+		cert.createdbytitle = (env.JOBTITLE ? env.JOBTITLE : 'system')
+		if (cert.official) {
+			cert.amount = 0.0
+			cert.stampamount = 0.0
+		}
+		validate(cert)
+		return cert 
+	}
+
+	@ProxyMethod
+	public def createItem( item ) {
+		em.validate(SCHEMA_ITEM, item)	
+		em.create(SCHEMA_ITEM, item)	
+	}
+
+
+	@ProxyMethod
+	public def openCertification(objid) {
+		def cert = em.read(SCHEMA_NAME, [objid:objid])
+		if (!cert) throw new Exception('Record does not exist or has already been deleted.')
+		cert.official = util.toBoolean(cert.official, false)
+		return cert 
+	}
+
+	@ProxyMethod
+	public def getFaasInfo(faasid){
+		return em.sqlContext.createNamedQuery('rptcertification:getFaasInfo')
+					.setParameter('faasid', faasid ).singleResult
+	}
+
+	@ProxyMethod
+	public void validateFaas(cert){
+		util.required('TD No.', cert.faasid)
+		def state = faasSvc.getState(cert.faasid)
+
+		if (state == 'CANCELLED')
+			throw new Exception('FAAS has already been cancelled.')
+		if (state != 'CURRENT')
+			throw new Exception('FAAS is not current.')
+	}
+
+
+	void validate(cert){
+		validateORInfo(cert)
+		em.validate(SCHEMA_NAME, cert)
+		em.create(SCHEMA_NAME, cert)
+	}
+
+	void validateORInfo(cert){
+		if (! cert.official){
+			if (cert.oramount <= 0.0)
+			throw new Exception('Amount must be greater than zero.')
+
+			def cdate = dtSvc.parseCurrentDate()
+			def ordate = dtSvc.parseDate(cert.ordate, null)
+			if (ordate.year < cdate.year)
+				throw new Exception('O.R. must be issued within this year.')
+			if (dtSvc.laterThanCurrentDate(cert.ordate))
+				throw new Exception('O.R. Date must not be later than current date.')
+		}
+		if (cert.ordate != null) {
+			cert.ordate = dtSvc.parse('yyyy-MM-dd', cert.ordate)
+		}
+	}
+	
+}

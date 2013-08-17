@@ -1,0 +1,26 @@
+import com.rameses.annotations.*;
+import com.rameses.common.*;
+
+class MiscItemListService
+{
+	@PersistenceContext('main')
+	def em
+	
+	@Service('ListUtilService')
+	def listSvc 
+	
+	@ProxyMethod
+	public List getList( Map params ) {
+		return listSvc.getList( 'miscitem:getList', params )
+	}
+
+	@ProxyMethod
+	public def getColumns( params ) {
+		return [
+			[name:"code", caption:"Code", width:80],
+            [name:"name", caption:"Description", width:250],
+            [name:"state", caption:"State", width:100],
+		]	
+	}
+
+}
