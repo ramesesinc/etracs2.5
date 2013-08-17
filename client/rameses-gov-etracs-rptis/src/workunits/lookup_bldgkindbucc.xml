@@ -1,0 +1,34 @@
+<workunit extends="wtemplates/LookupController.xml">
+    <invokers>
+        <invoker type="bldgkindbucc:lookup" action="init" caption="Building Kind Unit Cost Lookup" target="popup" />
+    </invokers>
+    
+    <code>
+
+import com.rameses.rcp.common.*
+import com.rameses.rcp.annotations.*
+import com.rameses.osiris2.client.*
+import com.rameses.osiris2.common.*
+
+class BldgKindBuccLookupController extends LookupController
+{
+    @Service("BldgRYSettingLookupService")
+    def svc
+    
+    def bldgtype;
+    
+    Column[] getColumns() {
+        return [
+            new Column(name:"bldgkind.code", caption:"Code", width:80),
+            new Column(name:"bldgkind.name", caption:"Name", width:250),
+        ]
+    }
+    
+    List fetchList( Map params ) { 
+        params.bldgtypeid = bldgtype.objid 
+        return svc.lookupBldgKindBuccs(params);
+    }
+}  
+
+    </code>
+</workunit>

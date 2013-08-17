@@ -1,0 +1,36 @@
+<workunit extends="wtemplates/LookupController.xml">
+    <invokers>
+        <invoker type="rysettinglgu:lookup" action="init" caption="Lookup LGU" target="popup" />
+    </invokers>
+    
+    <code>
+        
+import com.rameses.rcp.common.*;
+import com.rameses.rcp.annotations.*;
+import com.rameses.osiris2.client.*;
+import com.rameses.osiris2.common.*;
+
+class LookupRYSettingLGUController extends LookupController
+{
+    @Service("RYSettingService")
+    def svc;
+    
+    def settingtype;
+    def ry;
+    
+    Column[] getColumns() {
+        return [
+            new Column(name:"lguname", caption:"LGU Name"),
+            new Column(name:"pin", caption:"PIN")
+        ]
+    }
+    
+    List fetchList( Map params ) { 
+        params.settingtype = settingtype;
+        params.ry = ry;
+        return svc.lookupUnreferencedLgu( params )
+    }
+}  
+
+    </code>
+</workunit>

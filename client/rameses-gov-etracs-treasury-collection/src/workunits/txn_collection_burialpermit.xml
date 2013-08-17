@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workunit>
+    <invokers>
+        <invoker type="collection:handler" caption="BURIAL PERMIT" doctype="BURIAL_PERMIT" collectiontype="burial_permit" acceptClass="burial" />
+        
+        <invoker type="receipt.actions:burial_permit" action="edit" caption="Edit" target="popup"/>
+        <invoker type="receipt.actions:burial_permit" action="doPrint" caption="Print" />
+        <invoker type="receipt.actions:burial_permit" action="doVoid" caption="Void"/>
+    </invokers>
+    <code class="com.rameses.gov.etracs.treasury.collection.burial.BurialPermitCollectionTxnController"/>
+    <pageflow>
+        <start>
+            <transition to="default"/>
+        </start>
+        <page name="default">
+            <transition name="Back" to="new" visibleWhen="#{mode == 'create'}"/>
+            <transition name="Save" to="saveCreate" visibleWhen="#{mode == 'create'}" immediate="false"/>
+            <transition name="Save" to="saveUpdate" visibleWhen="#{mode == 'edit'}" immediate="false"/>
+        </page>
+        <page name="view">
+            <transition name="New" to="new" visibleWhen="#{mode == 'view' and txnmode != null}" immediate="false"/>
+            <transition name="Print" action="doPrint" visibleWhen="#{mode == 'view'}" immediate="false"/>
+            <transition name="Void" action="doVoid" visibleWhen="#{mode == 'view' and entity.voided == 0}" immediate="false"/>
+        </page>
+        <process name="new">
+            <transition to="end" tag="new"/>
+        </process>
+        <process name="saveCreate">
+            <transition to="view" action="create"/>
+        </process>
+        <process name="saveUpdate">
+            <transition to="view" action="update"/>
+        </process>
+        <end />
+    </pageflow>
+    <pages>
+        <page template="com.rameses.gov.etracs.treasury.collection.burial.BurialPermitCollectionPage" />
+        <page name="view" template="com.rameses.enterprise.treasury.collection.ui.CollectionViewPage" />
+    </pages>
+</workunit>

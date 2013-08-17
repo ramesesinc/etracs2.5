@@ -1,0 +1,26 @@
+<workunit extends="wtemplates/ListController.xml">  
+    <invokers>
+        <invoker folderid="/explorer/master/bpls" caption="Variables" xrole="MASTER_ENCODER" xpermission="variable.view" target="window" index="15" />
+        <invoker type="quick_launcher" code="VAR00" caption="Variables" role="MASTER_ENCODER" permission="variable.view"/>
+    </invokers>
+    <code>
+        import com.rameses.rcp.common.*
+        import com.rameses.rcp.annotations.*
+        import com.rameses.osiris2.client.*
+        import com.rameses.osiris2.common.*
+        
+        class ListVariableController extends ListController
+        {
+            String serviceName = 'VariableListService'
+            String entityName = 'variable'
+            
+            Column[] getColumns(){
+                return [
+                    new Column(name:"name", caption:"Name"),
+                    new Column(name:"caption", caption:"Caption"),
+                    new Column(name:"datatype", caption:"Data Type"),
+                ]
+            }
+        }
+    </code>
+</workunit>

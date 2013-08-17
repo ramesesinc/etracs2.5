@@ -1,0 +1,20 @@
+"rpu.*|classification"  [allowEdit == true] {
+    enabled:true;
+}
+
+"selectedItem" [allowEdit == true]{
+    readonly:false;
+}
+
+"rpu.exemptiontype" [ rpu.taxable == true || rpu.taxable == 1] {
+    enabled:false;
+}
+
+"rpu.*|classification"  [allowEdit != true] {
+    enabled:false;
+}
+
+
+"selectedItem" [allowEdit != true]{
+    readonly:true;
+}

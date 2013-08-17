@@ -1,0 +1,29 @@
+<workunit extends="wtemplates/ListController.xml">
+    <invokers>
+        <invoker folderid="/explorer/master/treasury" caption="Bank Accounts" xrole="MASTER_ENCODER" xpermission="bankacct.view" target="window" index="60" />
+        <invoker type="quick_launcher" code="BNKA00" caption="Bank Accounts" role="MASTER_ENCODER" permission="bankacct.view"/>
+    </invokers>
+    <code>
+        import com.rameses.rcp.common.*
+        import com.rameses.rcp.annotations.*
+        import com.rameses.osiris2.client.*
+        import com.rameses.osiris2.common.*
+        
+        class BankAcctListController extends ListController
+        {
+            String serviceName = 'BankAcctListService'
+            String entityName  = 'bankacct'
+            
+            Column[] getColumns(){
+                return [
+                    new Column(name:"state", caption:"State"),
+                    new Column(name:"acctno", caption:"Account No."),
+                    new Column(name:"fund", caption:"Fund"),
+                    new Column(name:"bank_code", caption:"Bank Code"),
+                    new Column(name:"bank_name", caption:"Bank Name"),
+                    new Column(name:"branchname", caption:"Branch Name"),
+                ]
+            }
+        }
+    </code>
+</workunit>

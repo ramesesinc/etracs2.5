@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workunit>
+    <invokers>
+        <invoker type="subdivision:open" action="open" caption="Subdivision" target="window"  />
+           
+        <invoker folderid="/menu/txn/rpt/faas" action="init"  caption="Subdivision" index="20"
+            txntypeid="SD" txntype="Subdivision" newledger="true" newrpu="true"
+            role="APPRAISER" permission="subdivision.create"/>
+
+         <invoker type="quick_launcher" code="SD01" action="init"  caption="Subdivision" index="20"
+            txntypeid="SD" txntype="Subdivision" newledger="true" newrpu="true"
+            role="APPRAISER" permission="subdivision.create"/>
+            
+            
+        <invoker type="subdividedlandActions" action="addSubdividedLand" caption="Add" mnemonic="a" visibleWhen="#{allowEdit == true}" />
+        <invoker type="subdividedlandActions" action="editSubdividedLand" caption="Edit" mnemonic="e" visibleWhen="#{allowEdit == true &amp;&amp; selectedLand != null}" />
+        
+   </invokers>
+   <code class="com.rameses.gov.etracs.rpt.subdivision.ui.SubdivisionController">
+       
+   </code>
+
+    <pageflow>
+        <start>
+            <transition name="init" to="init"/>
+            <transition name="open" to="open"/>
+        </start>
+        
+        <page name="init" title="Subdivision: Initial Information">
+            <transition caption="Cancel" to="end"  mnemonic="c" icon="images/toolbars/cancel.png"/>
+            <transition caption="Next"  to="default" action="createSubdivision" mnemonic="n"  />
+        </page>
+        
+        <process name="open">
+            <transition to="default" cond="#{subdivision.state == 'DRAFT'}"/>
+            <transition to="forapproval" cond="#{subdivision.state == 'FORAPPROVAL'}"/>
+            <transition to="forprovsubmission" cond="#{subdivision.state == 'FORPROVSUBMISSION'}"/>
+            <transition to="forprovapproval" cond="#{subdivision.state == 'FORPROVAPPROVAL'}"/>
+            <transition to="approved" cond="#{subdivision.state == 'APPROVED'}"/>
+            <transition to="cancelled" cond="#{subdivision.state == 'CANCELLED'}"/>
+        </process>
+        
+        <page name="default" title="Subdivision (Draft)">
+            <transition caption="Close"  to="end"      mnemonic="c" icon="images/toolbars/cancel.png" visibleWhen="#{mode == 'read'}"/>
+            <transition caption="Edit"   to="back-to-default" action="edit"  name="edit" mnemonic="e" shortcut="ctrl E" icon="images/toolbars/edit.png"  visibleWhen="#{mode == 'read'}" role="APPRAISER" permission="subdivision.edit" />
+            <transition caption="Cancel" to="back-to-default" action="cancelEdit" name="cancel" mnemonic="c" icon="images/toolbars/cancel.png" visibleWhen="#{mode != 'read'}"/>
+            <transition caption="Save"   to="back-to-default" action="save" name="save" mnemonic="s" shortcut="ctrl S" icon="images/toolbars/save.png"  visibleWhen="#{mode != 'read'}" />
+            <transition caption="Delete" to="delete"  action="delete" confirm="Delete record?"    mnemonic="d" icon="images/toolbars/trash.png"  visibleWhen="#{mode == 'read'}" role="APPRAISER" permission="subdivision.delete"/>
+            <transition caption="Submit" to="submit" action="submitForApproval"  mnemonic="m"  visibleWhen="#{mode == 'read'}" confirm="Submit Subdivision for approval?" role="APPRAISER" permission="subdivision.submit"/>
+        </page>
+        
+        <process name="back-to-default">
+            <transition to="default" />
+        </process>
+        
+        <process name="delete">
+            <transition to="end"/>
+        </process>
+        
+        <process name="submit">
+            <transition to="forapproval" cond="#{subdivision.state == 'FORAPPROVAL'}"/>
+            <transition to="forprovapproval" cond="#{subdivision.state == 'FORPROVAPPROVAL'}"/>
+            <transition to="forprovsubmission" cond="#{subdivision.state == 'FORPROVSUBMISSION'}"/>
+        </process>
+        
+        <!-- CITY-->
+        <page name="forapproval" title="Subdivision (For Approval)">
+            <transition caption="Close" to="end" mnemonic="c" icon="images/toolbars/cancel.png" visibleWhen="#{mode == 'read'}" />
+            <transition caption="Edit"   to="back-to-forapproval" action="edit" name="edit" mnemonic="e" shortcut="ctrl E" icon="images/toolbars/edit.png"  visibleWhen="#{mode == 'read'}" role="APPROVER"/>
+            <transition caption="Cancel" to="back-to-forapproval" action="cancelEdit" name="cancel"  mnemonic="c" icon="images/toolbars/cancel.png" visibleWhen="#{mode != 'read'}"/>
+            <transition caption="Save"   to="back-to-forapproval" action="save" name="save" mnemonic="s" shortcut="ctrl S" icon="images/toolbars/save.png"  visibleWhen="#{mode != 'read'}" />
+            <transition caption="Disapprove" to="default" action="disapproveSubdivision" mnemonic="d" visibleWhen="#{mode == 'read'}" confirm="Disapprove Subdivision?" role="APPROVER"/>
+            <transition caption="Approve" to="current" action="approveSubdivision" mnemonic="v" icon="images/toolbars/approve.png" visibleWhen="#{mode == 'read'}" confirm="Approve Subdivision?" role="APPROVER"/>
+        </page>
+        
+        <process name="back-to-forapproval">
+            <transition to="forapproval"/>
+        </process>
+        
+        
+        <!-- MUNICIPALIY -->
+        <page name="forprovsubmission" title="Subdivision (For Submission to Province)">
+            <transition caption="Close"  to="end" mnemonic="c" icon="images/toolbars/cancel.png" visibleWhen="#{mode == 'read'}" />
+            <transition caption="Edit"   to="back-to-prov-submission" action="edit" name="edit" mnemonic="e" shortcut="ctrl E" icon="images/toolbars/edit.png"  visibleWhen="#{mode == 'read'}" role="RECOMMENDER"/>
+            <transition caption="Cancel" to="back-to-prov-submission" action="cancelEdit" name="cancel"  mnemonic="c" icon="images/toolbars/cancel.png" visibleWhen="#{mode != 'read'}"/>
+            <transition caption="Save"   to="back-to-prov-submission" action="save" name="save" mnemonic="s" shortcut="ctrl S" icon="images/toolbars/save.png"  visibleWhen="#{mode != 'read'}" />
+            <transition caption="Disapprove" to="default" action="disapproveSubmitToProvice"  mnemonic="d" visibleWhen="#{mode == 'read'}" confirm="Disapprove Subdivision?"  role="RECOMMENDER"/>
+            <transition caption="Submit to Province" to="provsubmissionapproval" action="submitToProvince" mnemonic="m" visibleWhen="#{mode == 'read'}" confirm="Submit Subdivision to province?"  role="RECOMMENDER"/>
+        </page>
+        
+        <process name="back-to-prov-submission">
+            <transition to="forprovsubmission"/>
+        </process>
+        
+        <page name="provsubmissionapproval" title="Subdivision (For Province Approval)">
+            <transition caption="Close" to="end" mnemonic="c" icon="images/toolbars/cancel.png"/>
+            <transition caption="Disapprove" to="forprovsubmission" action="disapproveSubmittedToProvince"  mnemonic="d" confirm="Disapprove Subdivision?"  role="RECOMMENDER"/>
+            <transition caption="Approve" to="approved" action="approveSubmittedToProvince"  mnemonic="v" confirm="Approve Subdivision?"  role="RECOMMENDER"/>
+        </page>
+        
+        
+        <!-- PROVINCE -->
+        <page name="forprovapproval" title="Subdivision (Province Approval)">
+            <transition caption="Close" to="end" mnemonic="c" icon="images/toolbars/cancel.png" visibleWhen="#{mode == 'read'}" />
+            <transition caption="Edit"   to="back-to-forprovapproval" action="edit" name="edit" mnemonic="e" shortcut="ctrl E" icon="images/toolbars/edit.png"  visibleWhen="#{mode == 'read'}"  role="APPROVER"/>
+            <transition caption="Cancel" to="back-to-forprovapproval" action="cancelEdit" name="cancel"  mnemonic="c" icon="images/toolbars/cancel.png" visibleWhen="#{mode != 'read'}"/>
+            <transition caption="Save"   to="back-to-forprovapproval" action="save" name="save" mnemonic="s" shortcut="ctrl S" icon="images/toolbars/save.png"  visibleWhen="#{mode != 'read'}" />
+            <transition caption="Disapprove" to="forprovsubmission" action="disapproveByProvince"  mnemonic="d"  visibleWhen="#{mode == 'read'}" confirm="Disapprove Subdivision?" role="APPROVER"/>
+            <transition caption="Approve" to="approved" action="approveByProvince"  mnemonic="v" visibleWhen="#{mode == 'read'}" confirm="Approve Subdivision?" role="APPROVER"/>
+        </page>
+        
+        <process name="back-to-forprovapproval">
+            <transition to="forprovapproval"/>
+        </process>
+        
+        <page name="approved" title="Subdivision (Approved)">
+            <transition caption="Close" to="end" mnemonic="c" icon="images/toolbars/cancel.png"/>
+        </page>
+        
+        <end />
+        
+    </pageflow>
+    
+    <pages> 
+        <page name="init" template="com.rameses.gov.etracs.rpt.subdivision.ui.SubdivisionInitPage"/>
+        <page name="default" template="com.rameses.gov.etracs.rpt.subdivision.ui.SubdivisionPage"/>
+        <page name="forapproval" template="com.rameses.gov.etracs.rpt.subdivision.ui.SubdivisionPage"/>
+        <page name="forprovsubmission" template="com.rameses.gov.etracs.rpt.subdivision.ui.SubdivisionPage"/>
+        <page name="provsubmissionapproval" template="com.rameses.gov.etracs.rpt.subdivision.ui.SubdivisionPage"/>
+        <page name="forprovapproval" template="com.rameses.gov.etracs.rpt.subdivision.ui.SubdivisionPage"/>
+        <page name="approved" template="com.rameses.gov.etracs.rpt.subdivision.ui.SubdivisionPage"/>
+    </pages>
+</workunit>
+
+

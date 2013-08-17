@@ -1,0 +1,30 @@
+<workunit extends="wtemplates/LookupController.xml">
+    <invokers>
+         <invoker type="lobclassification:lookup" caption="Lob Classification Lookup"/> 
+    </invokers>
+    <code>
+        import com.rameses.rcp.common.*
+        import com.rameses.rcp.annotations.*
+        import com.rameses.osiris2.client.*
+        import com.rameses.osiris2.common.*
+        
+        class LookupLobClassificationController extends LookupController
+        { 
+            @Service('LobClassificationLookupService')
+            def svc
+           
+            Column[] getColumns(){
+                return [
+                    new Column(name:"name", caption:"Name"),
+                    new Column(name:"remarks", caption:"Remarks"),
+                ]
+            }
+            
+            List fetchList(Map params) {
+                 return svc.lookup( params );
+            }
+            
+        }
+    </code>
+    
+</workunit>

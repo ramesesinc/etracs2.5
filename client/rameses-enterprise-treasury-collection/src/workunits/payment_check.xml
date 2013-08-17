@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workunit>
+    <invokers>
+        <invoker type="collection:payment" caption="Check - F10" shortcut="F10" target="popup" />
+    </invokers>
+    <code>
+        <![CDATA[
+            import com.rameses.rcp.annotations.*;
+            import com.rameses.rcp.common.*;
+            import com.rameses.osiris2.client.*;
+            
+            class PaymentCheckController {
+                @Binding
+                def binding;
+
+                @Service('ReceiptService')
+                def receiptSvc;
+                
+                def acceptHandler;
+
+                def bank;
+                def checkno;
+                def checkdate;
+                BigDecimal checkamount = 0.00;
+                def checktype ;
+
+                def initExternalCheck() {
+                    return 'checktype2';
+                }
+
+                void invokeAcceptHandler() {
+                    if( acceptHandler ) {
+                        def paymentInfo = [
+                            paytype     : 'CHECK', 
+                            particulars : 'CHECK NO.: ' + checkno + '  DATE: ' + checkdate + '  BANK: ' + bank,
+                            amount      : checkamount,
+                            checkno     : checkno,
+                            checkdate   : checkdate,
+                            bank        : bank,
+                            checktype   : checktype, 
+                        ];
+                        acceptHandler( paymentInfo );
+                    }
+                }
+
+                void validate() {
+                    if( checkamount <= 0 )  {
+                        binding.focus('checkamount');
+                        throw new Exception( 'Amount must be greater than zero.' );
+                    }
+                    // invoke service to impose rules for stale and postdated checks.;
+                    receiptSvc.validateCheckDate( checkdate );
+                }
+
+                List getChecktypelist() {
+                    return [ 'LOCAL', 'REGIONAL', 'OUT_OF_TOWN', 'ON_USMC', 'OTHER_BANK_MC'];
+                }
+                
+                def approve() {
+                    validate();
+                    invokeAcceptHandler();
+                    cancel();
+                }
+                
+                def cancel() {
+                    return "_close";
+                }
+            }
+        ]]>
+    </code>
+    <pages>
+        <page template="com.rameses.client.collection.CheckPaymentPage" />
+    </pages>
+</workunit>

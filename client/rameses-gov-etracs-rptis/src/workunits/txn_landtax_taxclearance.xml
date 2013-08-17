@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workunit>
+    <invokers>
+        <invoker folderid="/menu/txn/landtax" action="init" caption="Realty Tax Clearance" index="5" 
+            role="LANDTAX" permission="taxclearance.create"/>
+            
+        <invoker type="rpttaxclearance:open" action="open" caption="Realty Tax Clearance" />
+        
+        <!-- create -->
+        <invoker type="navActions" action="_close" caption="Cancel" mnemonic="c" icon="images/toolbars/cancel.png" visibleWhen="#{mode=='create'}" immediate="true"/>
+        <invoker type="navActions" action="save" caption="Save" mnemonic="s" shortcut="Ctrl S" icon="images/toolbars/save.png" visibleWhen="#{mode=='create'}"/>
+        
+        <!-- preview -->
+        <invoker type="navActions" action="_close" caption="Close" mnemonic="c" icon="images/toolbars/cancel.png" visibleWhen="#{mode=='preview'}"  immediate="true"/>
+        <invoker type="navActions" action="init" caption="New" mnemonic="n" icon="images/toolbars/create.png" visibleWhen="#{mode=='preview'}"/>
+    </invokers>
+        
+    <code class="com.rameses.gov.etracs.rpt.landtax.taxclearance.RPTTaxClearanceController">
+    </code>
+    
+    <pages>
+        <page template="com.rameses.gov.etracs.rpt.landtax.taxclearance.RPTTaxClearancePage" />
+        <page name="preview" template="com.rameses.gov.etracs.rpt.report.PreviewPage" />
+    </pages>
+</workunit>

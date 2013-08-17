@@ -1,0 +1,54 @@
+<workunit extends="rpt_wtemplates/ReportController.xml" >
+    <invokers>
+        <invoker folderid="/menu/report/rpt" action="init" caption="Assessment Roll" target="window" index="3" 
+            role="ASSESSOR_REPORT" />
+    </invokers>
+    <code>
+
+<![CDATA[
+
+import com.rameses.rcp.common.*;
+import com.rameses.rcp.annotations.*;
+import com.rameses.osiris2.client.*;
+import com.rameses.osiris2.reports.*;
+
+
+class AssessmentRollController extends com.rameses.gov.etracs.rpt.report.ReportController
+{
+    @Service('RPTReportService') 
+    def svc 
+    
+    String title = 'Assessment Roll'
+    
+    String getReportName(){
+        if (entity.taxability == 'TAXABLE')
+            return 'com/rameses/gov/etracs/rpt/report/assessmentrolltaxable.jasper';
+        return 'com/rameses/gov/etracs/rpt/report/assessmentrollexempt.jasper';
+    }
+    
+    def getReportData(){
+        if (entity.taxability == 'TAXABLE')
+            return svc.generateAssessmentRollTaxable( entity )
+        return svc.generateAssessmentRollExempt( entity )
+    }
+    
+    def formControl = [
+        getFormControls: {
+            return [
+                new FormControl( "combo", [caption:'Taxability', name:'entity.taxability', items:'taxabilities', required:true, immediate:true]),
+                new FormControl( "combo", [caption:'Barangay', name:'entity.barangay', required:true, items:'barangays', expression:'#{item.name}']),
+                new FormControl( "integer", [caption:'Section', name:'entity.section', preferredSize:'50,19']),
+            ]    
+        },
+   ] as FormPanelModel;
+   
+    
+    def getTaxabilities(){
+        return ['TAXABLE', 'EXEMPT']
+    }
+}
+
+]]>        
+        
+    </code>
+</workunit>

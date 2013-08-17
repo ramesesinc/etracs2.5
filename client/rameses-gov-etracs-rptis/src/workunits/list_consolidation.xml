@@ -1,0 +1,42 @@
+<workunit extends="wtemplates/ListController.xml">
+    <invokers>
+        <invoker folderid="/explorer/txn/rpt" caption="Consolidations"  target="window" index="111" role="ASSESSOR_SHARED" />
+        <invoker type="quick_launcher" code="CS00" caption="Consolidations" role="ASSESSOR_SHARED" />
+    </invokers>
+    <code>
+        import com.rameses.rcp.common.*
+        import com.rameses.rcp.annotations.*
+        import com.rameses.osiris2.client.*
+        import com.rameses.osiris2.common.*
+        import com.rameses.gov.etracs.rpt.common.RPTUtil;
+        
+        class ConsolidationListController extends ListController
+        {
+            String serviceName = 'ConsolidationService'
+            
+            String formTarget = 'window'
+            boolean allowCreate = false;
+            
+            public String getEntityName(){ 
+                return 'consolidation' 
+            }
+            
+            int getRows() { return 50 }
+            
+            Column[] getColumns(){
+                return [
+                    new Column(name:"state", caption:"State", width:100),
+                    new Column(name:"txnno", caption:"Txn No.", width:70),
+                    new Column(name:"txndate", caption:"Txn Date", width:80),
+                    new Column(name:"ry", caption:"RY", width:50, type:'integer', format:'0000'),
+                    new Column(name:"newtdno", caption:"New TD No.", width:100),
+                    new Column(name:"newrpu.fullpin", caption:"New PIN", width:180),
+                    new Column(name:"owner.name", caption:"New Owner Name", width:250),
+                    new Column(name:"owner.address", caption:"New Owner Address", width:250),
+                    new Column(name:"newrpu.totalareasqm", caption:"New Area (sqm)", width:120, type:'decimal', format:'#,##0.00'),
+                    new Column(name:"newrpu.totalareaha", caption:"New Area (ha)", width:120, type:'decimal', format:'#,##0.0000'),
+                ]
+            }
+        }
+    </code>
+</workunit>

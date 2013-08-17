@@ -1,0 +1,15 @@
+"entity.*" [mode == 'view'] {
+    readonly:true;
+}
+
+"entity.*" [mode != 'view'] {
+    readonly:false;
+}
+
+"make|unittype" [mode == 'view'] {
+    readonly:true;
+}
+
+"make|unittype" [mode != 'view'] {
+    readonly:false;
+}

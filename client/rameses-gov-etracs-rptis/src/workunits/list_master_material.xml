@@ -1,0 +1,6 @@
+<workunit extends="wtemplates/ListController.xml" serviceName="MaterialListService" entityName="material" >
+    <invokers>
+        <invoker folderid="/explorer/master/rpt" caption="Materials"  target="window" index="5"  role="ASSESSOR_DATAMGMT" />
+        <invoker type="quick_launcher" code="MAT00" caption="Materials"  role="ASSESSOR_DATAMGMT" />
+    </invokers>
+</workunit>

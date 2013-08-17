@@ -1,0 +1,30 @@
+"consolidation.*" [allowEdit == true]{
+    enabled:true;
+}
+
+"selectedLand|selectedAffectedRpu" [allowEdit == true]{
+    readonly:false;
+}
+
+
+"consolidation.newtitleno|consolidation.newtitledate" [consolidation.newtitletype != null]{
+    enabled:true;
+}
+
+"consolidation.newtitleno|consolidation.newtitledate" [consolidation.newtitletype == null]{
+    enabled:false;
+}
+
+
+
+"consolidation.*" [allowEdit != true]{
+    enabled:false;
+}
+
+"selectedLand|selectedAffectedRpu" [allowEdit != true]{
+    readonly:true;
+}
+
+"consolidation.autonumber" [true ==  true]{
+    enabled:false;
+}

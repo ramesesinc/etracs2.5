@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workunit>
+    <invokers>
+        <invoker type="assessmentnotice:create" action="init" caption="Notice of Assessment" role="APPRAISER" permission="noticeofassessment.create" />
+        <invoker type="assessmentnotice:open" action="open" caption="Notice of Assessment" role="APPRAISER" />
+        
+        <!-- create -->
+        <invoker type="navActions" action="_close" caption="Cancel" mnemonic="c" icon="images/toolbars/cancel.png" visibleWhen="#{mode=='create'}"/>
+        <invoker type="navActions" action="save" caption="Save" mnemonic="s" shortcut="Ctrl S" icon="images/toolbars/save.png" visibleWhen="#{mode=='create'}"/>
+        
+        <!-- read -->
+        <invoker type="navActions" action="_close" caption="Close" mnemonic="c" icon="images/toolbars/cancel.png" visibleWhen="#{mode=='read'}"/>
+        <invoker type="navActions" action="preview" caption="Preview" mnemonic="v" icon="images/toolbars/preview.png" visibleWhen="#{mode=='read'}"/>
+        <invoker type="navActions" action="receive" caption="Receive" mnemonic="r" visibleWhen="#{mode=='read' &amp;&amp; entity.state != 'RECEIVED'}"/>
+        
+        <!-- receive -->
+        <invoker type="navActions" action="cancelReceive" caption="Cancel" mnemonic="c" icon="images/toolbars/cancel.png" visibleWhen="#{mode=='receive'}"/>
+        <invoker type="navActions" action="receiveNotice" caption="Save" mnemonic="s" visibleWhen="#{mode=='receive'"/>
+        
+        <!-- preview -->
+        <invoker type="navActions" action="back" caption="Back" mnemonic="b" icon="images/toolbars/back.png" visibleWhen="#{mode=='preview'}"/>
+    </invokers>
+        
+    <code class="com.rameses.gov.etracs.rpt.report.notice.AssessmentNoticeController">
+    </code>
+    
+    <pages>
+        <page template="com.rameses.gov.etracs.rpt.report.notice.AssessmentNoticePage" />
+        <page name="init" template="com.rameses.gov.etracs.rpt.report.notice.AssessmentNoticeCreatePage" />
+        <page name="preview" template="com.rameses.gov.etracs.rpt.report.PreviewPage" />
+    </pages>
+</workunit>

@@ -1,0 +1,35 @@
+"subdivision.effectivityyear|subdivision.effectivityqtr|editLandInfo|updateLandInfo|cancelLandInfo" [allowEdit == true]{
+    enabled:true;
+}
+
+"selectedSignatory|selectedLand|selectedAffectedRpu" [allowEdit == true]{
+    readonly:false;
+}
+
+
+
+"selectedLand.*" [ editinfo == false]{
+    enabled:false;
+}
+
+
+"selectedLand.*" [ editinfo == true]{
+    enabled:true;
+}
+
+
+
+
+
+"subdivision.effectivityyear|editLandInfo|updateLandInfo|cancelLandInfo" [allowEdit != true]{
+    enabled:false;
+}
+
+"selectedSignatory|selectedLand|selectedAffectedRpu" [allowEdit != true]{
+    readonly:true;
+}
+
+
+"selectedLand" [true == true]{
+    enabled:true;
+}

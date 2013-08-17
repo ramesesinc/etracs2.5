@@ -1,0 +1,15 @@
+"autonumber" [ allowAutoNumber == true ] {
+    enabled:true;
+}
+
+"autonumber" [ allowAutoNumber != true ] {
+    enabled:false;
+}
+
+"initinfo.claimno" [multipleClaim == false] {
+    visible:false;
+}
+
+"initinfo.claimno" [multipleClaim == true] {
+    visible:true;
+}

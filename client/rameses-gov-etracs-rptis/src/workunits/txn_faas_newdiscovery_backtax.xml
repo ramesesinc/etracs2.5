@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workunit>
+    <invokers>
+        <invoker type="backtax:open" action="init" caption="Back Taxes" target="popup" />
+    </invokers>
+    <code class="com.rameses.gov.etracs.rpt.faas.ui.FaasBackTaxController">
+
+    </code>
+    
+    <pages>
+        <page template="com.rameses.gov.etracs.rpt.faas.ui.BackTaxPage"/>
+    </pages>
+</workunit>

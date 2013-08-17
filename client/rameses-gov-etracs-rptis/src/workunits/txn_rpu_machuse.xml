@@ -1,0 +1,13 @@
+<workunit>
+    <invokers>
+        <invoker type="machuse:open" action="open" caption="Machine Actual Use Information" target="popup" icon="images/open.png"/>
+        
+        <invoker type="formActions" action="ok" caption="OK" mnemonic="o" icon="images/approve.png"/>
+    </invokers>
+    <code class="com.rameses.gov.etracs.rpt.rpu.mach.ui.MachUseController" >
+    </code>
+    
+    <pages>
+        <page template="com.rameses.gov.etracs.rpt.rpu.mach.ui.MachUsePage"/>
+    </pages>
+</workunit>

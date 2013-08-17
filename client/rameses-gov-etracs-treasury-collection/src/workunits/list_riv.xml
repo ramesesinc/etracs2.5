@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workunit extends="wtemplates/ListController.xml">
+    <invokers>
+        <invoker folderid="/explorer/txn/treasury/af" caption="RIV (Purchase)" index="5"/>
+        <invoker folderid="/explorer/txn/treasury/af" action="initCollector" caption="RIV (Collector)" index="6"/>
+        <invoker folderid="/explorer/txn/treasury/af" action="initSale" caption="RIV (Sale)" index="7"/>
+    </invokers>
+    <code>
+        import com.rameses.rcp.common.*
+        import com.rameses.rcp.annotations.*
+        import com.rameses.osiris2.client.*
+        import com.rameses.osiris2.common.*
+        
+        class RIVListController extends ListController
+        {
+            String serviceName = 'RIVListService'
+            String entityName  = 'riv'
+            def type = 'PURCHASE'
+            
+            void initCollector() { type = 'COLLECTION' }
+            void initSale() { type = 'SALE' }
+            
+            public Map getQuery() {
+                def map = super.getQuery();
+                map.type = type;
+                return map;
+            }
+            
+            Column[] getColumns(){
+                return [
+                    new Column(name:"txnno", caption:"RIV No.", minWidth:90),
+                    new Column(name:"requestedby_name", caption:"Requested By", width:200),
+                    new Column(name:"state", caption:"State", minWidth:50)
+                ]
+            }
+        }
+    </code>
+</workunit>

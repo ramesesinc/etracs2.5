@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workunit>
+    <invokers>
+        <invoker folderid="/explorer/txn/entity" caption="Reconcile Entity" action="init" xrole="ENTITY_ENCODER" xpermission="entity.reconcile" index="100"/>        
+    </invokers>
+    <code class="com.rameses.enterprise.entity.controllers.EntityReconcileTxnController" />
+    <pages>
+        <page template="com.rameses.enterprise.entity.ui.EntityReconcilePage"/>
+    </pages>
+</workunit>

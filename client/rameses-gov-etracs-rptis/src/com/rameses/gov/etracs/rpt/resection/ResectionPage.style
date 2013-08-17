@@ -1,0 +1,16 @@
+"entity.*" [allowEdit == true]{
+    enabled:true;
+}
+
+"selectedLand|selectedAffectedRpu|selectedSection" [allowEdit == true]{
+    readonly:false;
+}
+
+
+"entity.*" [allowEdit != true]{
+    enabled:false;
+}
+
+"selectedLand|selectedAffectedRpu|selectedSection" [allowEdit != true]{
+    readonly:true;
+}

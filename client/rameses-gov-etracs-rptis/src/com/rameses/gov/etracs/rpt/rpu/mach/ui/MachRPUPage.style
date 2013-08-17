@@ -1,0 +1,28 @@
+"rpu.*|classification|rpu.exemptiontype|viewMachines" [ allowEdit == true ] {
+    enabled:true;
+}
+
+"selectedItem" [ allowEdit == true ] {
+    readonly:false;
+}
+
+
+"viewMachines" [selectedItem == null] {
+    enabled:false;
+}
+
+
+"rpu.exemption" [ rpu.taxable == true || rpu.taxable == 1] {
+    enabled:false;
+}
+
+
+
+"rpu.*|classification" [ allowEdit == false ] {
+    enabled:false;
+}
+
+
+"selectedItem" [ allowEdit == false ] {
+    readonly:true;
+}

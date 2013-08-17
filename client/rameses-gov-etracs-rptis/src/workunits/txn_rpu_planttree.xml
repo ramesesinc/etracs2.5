@@ -1,0 +1,16 @@
+<workunit>
+    <invokers>
+        <invoker type="planttreerpu:open" action="open" caption="Plant/Tree Real Property Unit" target="popup" icon="images/open.png"/>
+        
+        <invoker type="formActions" action="ok" caption="OK" mnemonic="o" icon="images/approve.png"/>
+        <invoker type="formActions" action="_close" caption="Cancel" mnemonic="c" immediate="true" icon="images/cancel.png"/>
+        
+    </invokers>
+
+    <code class="com.rameses.gov.etracs.rpt.rpu.planttree.ui.PlantTreeRPUController">
+    </code>
+    
+    <pages>
+        <page template="com.rameses.gov.etracs.rpt.rpu.planttree.ui.PlantTreeRPUPage"/>
+    </pages>
+</workunit>
