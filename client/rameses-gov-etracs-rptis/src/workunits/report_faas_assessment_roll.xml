@@ -1,6 +1,7 @@
 <workunit extends="rpt_wtemplates/ReportController.xml" >
     <invokers>
-        <invoker folderid="/menu/report/rpt" action="init" caption="Assessment Roll" target="window" index="3" />
+        <invoker folderid="/menu/report/rpt" action="init" caption="Assessment Roll" target="window" index="3" 
+            role="ASSESSOR_REPORT" />
     </invokers>
     <code>
 

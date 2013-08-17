@@ -1,0 +1,14 @@
+<workunit extends="wtemplates/gov/treasury/BasicCashReceiptController.xml">
+    <invokers>
+        <invoker type="cashreceipt:rpt" action="init" />
+    </invokers>
+    
+    <code class="com.rameses.gov.etracs.rpt.collection.ui.RPTReceiptController" >
+    </code>
+    
+    <pages>
+        <page name="default" template="com.rameses.gov.etracs.rpt.collection.ui.RPTReceiptInitPage" />
+        <page name="main" template="com.rameses.gov.etracs.rpt.collection.ui.RPTReceiptPage" />
+    </pages>
+    
+</workunit>

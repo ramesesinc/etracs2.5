@@ -1,7 +1,8 @@
 <workunit>
     <invokers>
         <invoker type="faasreport:view" action="initPreview" caption="Faas Report" target="window"/>
-        <invoker type="navActions" action="_close" caption="Close" mnemonic="c" immediate="true" icon="images/toolbars/cancel.png"/>
+        <invoker type="navActions" action="_close" caption="Close" mnemonic="c" immediate="true" icon="images/toolbars/cancel.png"
+            role="ASSESSOR_REPORT" />
     </invokers>
     <code >
     <![CDATA[

@@ -9,7 +9,7 @@ import com.rameses.osiris2.reports.*;
 import com.rameses.gov.etracs.rpt.common.*;
 
 
-class RPTReceiptController
+class RPTReceiptController extends com.rameses.enterprise.treasury.controllers.AbstractCashReceipt
 {
     @Binding
     def binding;
@@ -30,7 +30,6 @@ class RPTReceiptController
     def PAY_OPTION_ALL = 'all';
     def PAY_OPTION_BYLEDGER = 'byledger';
     
-    def entity;
     def mode;
     def payoption;
     def bill;
@@ -38,19 +37,13 @@ class RPTReceiptController
             
     
     
-    def init(){
-        entity = [
-            objid   : RPTUtil.generateId('R'),
-            state   : 'OPEN',
-            txndate : null,
-            amount  : 0.0,
-        ]
-        
+    void init(){
+        super.init();
+        clearAllPayments();
+        entity.amount = 0.0;
         bill = billSvc.initBill();
-        
         mode = MODE_INIT;
         payoption = PAY_OPTION_ALL;
-        return 'init'
     }
     
     
@@ -59,20 +52,10 @@ class RPTReceiptController
      * INIT PAGE SUPPORT
      *
      -----------------------------------------------------------------*/
-    def lookupTaxpayer = InvokerUtil.lookupOpener('entity:lookup', [
-            onselect    : {
-                entity.taxpayer = it;
-                bill.taxpayer = it;
-                entity.payorname = it.name;
-                entity.payoraddress = it.address;
-                entity.paidby = it.name;
-                entity.paidbyaddress = it.address;
-                binding.refresh('entity.taxpayer.*|entity.paidby.*');
-            }
-    ]);
-    
     
     def process(){
+        RPTUtil.required("Payer", entity.payer);
+        bill.taxpayer = entity.payer;
         if (bill.advancepayment){
             bill.billtoyear = advanceyear;
         }
@@ -107,15 +90,39 @@ class RPTReceiptController
         ])
     }
     
-    def save(){
-        if (MsgBox.confirm('Save receipt?')){
-            buildRptItems();
-            entity.amount = entity.rptitems.total.sum();
-            entity = svc.createReceipt(entity);
-            mode = MODE_READ;
-            return 'view';
+    public void validateBeforePost() {
+        buildRptItems();
+        createReceiptItems();
+    }
+    
+    void createReceiptItems(receipt){
+        entity.items = []
+        entity.rptitems.each{ item ->
+            entity.items += createItem(entity.objid, item.objid, item.basicacct, item.basic - item.basicdisc, buildRemarks(item))
+            if (item.basicint > 0.0){
+                    entity.items += createItem(entity.objid, item.objid, item.basicintacct, item.basicint, buildRemarks(item))
+            }
+            entity.items += createItem(entity.objid, item.objid, item.sefacct, item.sef - item.sefdisc, buildRemarks(item))
+            if (item.sefint > 0.0){
+                    entity.items += createItem(entity.objid, item.objid, item.sefintacct, item.sefint, buildRemarks(item))
+            }
         }
-        return null;
+    }
+    
+    def createItem(receiptid, itemid, acct, amount, remarks){
+        return [
+            objid 	: RPTUtil.generateId('RI'),
+            receiptid	: receiptid,
+            item        : acct,
+            amount      : amount,
+            remarks     : remarks,
+        ]
+    }
+    
+    def buildRemarks(item){
+        if ( item.qtr == 0)
+                return item.year 
+        return item.qtr +'qtr, ' + item.year 
     }
     
     void buildRptItems(){
@@ -123,10 +130,11 @@ class RPTReceiptController
         bill.ledgers.each{ ledger ->
             if (ledger.pay) {
                 ledger.items.each{ item ->
-                    item.rptledgeritemid = item.objid;
+                    def oldid = item.objid;
+                    item.objid = RPTUtil.generateId('RI');
+                    item.rptledgeritemid = oldid;
                     item.rptreceiptid = entity.objid;
                     item.rptledgerid = ledger.objid;
-                    item.objid = RPTUtil.generateId('RI');
                     item.partial = false;
                 }
                 entity.rptitems += ledger.items
@@ -136,37 +144,6 @@ class RPTReceiptController
         if (!entity.rptitems)
             throw new Exception('There are no items selected for payment.')
     }
-    
-    
-    def voidReceipt(){
-        if (MsgBox.confirm('Void receipt?')){
-            svc.voidReceipt(entity);
-            return init();
-        }
-        return null;
-    }
-    
-    
-    def previewReceipt(){
-        report.viewReport();
-        return 'preview';
-    }
-    
-    
-    def reportPath = 'com/rameses/gov/etracs/rpt/collection/ui/'
-    
-    def report = [
-        getReportName : { return reportPath + 'AF56.jasper'}, 
-        getReportData : { return entity },
-        getSubReports : { 
-            return [
-                new SubReport('AF56Item', reportPath + 'AF56Item.jasper'),
-            ] as SubReport[]
-        },
-        getParameters : { return  paramSvc.getStandardParameter() },
-    ] as ReportModel
-    
-    
     
     def selectedItem;
     
@@ -204,6 +181,7 @@ class RPTReceiptController
     void generateBill(){
         bill = billSvc.generateBill(bill);
         listHandler.load();
+        calcReceiptAmount();
     }
         
     void validateToYear(item){
@@ -234,6 +212,7 @@ class RPTReceiptController
             it.total = 0.0;
         }
         listHandler.load();
+        calcReceiptAmount();
     }
     
     
@@ -243,6 +222,7 @@ class RPTReceiptController
         def xbill = billSvc.generateBillByLedgerId(selectedItem.objid);
         selectedItem.putAll(xbill.ledger[0])
         listHandler.load();
+        calcReceiptAmount();
     }
     
     def partialPayment(){
@@ -253,9 +233,22 @@ class RPTReceiptController
             onpartial : { partial ->
                 selectedItem.putAll( billSvc.computePartialPayment(selectedItem, partial) );
                 listHandler.load();
+                calcReceiptAmount();
             },
         ])
     }
+    
+    
+    void calcReceiptAmount(){
+        def paiditems = bill.ledgers.findAll{it.pay == true};
+        entity.amount = 0.0;
+        if (paiditems){
+            entity.amount = paiditems.total.sum();
+            updateBalances();
+        }
+    }
+    
+    
             
 }
 

@@ -101,8 +101,22 @@ SELECT
 	rli.sefint - rli.sefdisc AS sefdp,
 	rli.sef + rli.sefint - rli.sefdisc - rli.sefpaid AS sefnet,
 	rli.basic + rli.basicint - rli.basicdisc - rli.basicpaid + rli.sef + rli.sefint - rli.sefdisc - rli.sefpaid AS total,
-	rli.basicacctid, rli.basicintacctid,
-	rli.sefacctid, rli.sefintacctid,
+	rli.basicacctid AS basicacct_objid, 
+	revb.code AS basicacct_code,
+	revb.title AS basicacct_title,
+	revb.fund_objid AS basicacct_fund_objid,
+	rli.basicintacctid AS basicintacct_objid,
+	revbi.code AS basicintacct_code,
+	revbi.title AS basicintacct_title,
+	revbi.fund_objid AS basicintacct_fund_objid,
+	rli.sefacctid AS sefacct_objid, 
+	revs.code AS sefacct_code,
+	revs.title AS sefacct_title,
+	revs.fund_objid AS sefacct_fund_objid,
+	rli.sefintacctid AS sefintacct_objid,
+	revsi.code AS sefintacct_code,
+	revsi.title AS sefintacct_title,
+	revsi.fund_objid AS sefintacct_fund_objid,
 	rli.revtype ,
 	rl.barangayid
 FROM faas f
@@ -112,6 +126,10 @@ FROM faas f
 	INNER JOIN rptledger rl ON f.objid = rl.faasid
 	INNER JOIN rptledgeritem rli ON rl.objid = rli.rptledgerid
 	INNER JOIN rptledgerfaas rlf ON rli.rptledgerfaasid = rlf.objid
+	INNER JOIN revenueitem revb ON rli.basicacctid = revb.objid
+	INNER JOIN revenueitem revbi ON rli.basicintacctid = revbi.objid
+	INNER JOIN revenueitem revs ON rli.sefacctid = revs.objid
+	INNER JOIN revenueitem revsi ON rli.sefintacctid = revsi.objid
 WHERE rl.objid = $P{ledgerid}
  AND rli.state = 'OPEN'
  AND ( rli.year < $P{billtoyear} OR ( rli.year = $P{billtoyear} AND rli.qtr <= $P{billtoqtr}))

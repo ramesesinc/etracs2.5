@@ -1,6 +1,7 @@
 <workunit extends="rpt_wtemplates/ReportController.xml" >
     <invokers>
-        <invoker folderid="/menu/report/landtax" action="init" caption="Top N Delinquent Taxpayer" target="window" index="201" />
+        <invoker folderid="/menu/report/landtax" action="init" caption="Top N Delinquent Taxpayer" target="window" index="201" 
+            role="LANDTAX_REPORT" />
     </invokers>
     <code>
 

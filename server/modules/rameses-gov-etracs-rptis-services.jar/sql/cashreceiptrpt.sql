@@ -21,20 +21,20 @@ WHERE objid = $P{objid}
 
 
 [getPaidLedgers]
-SELECT DISTINCT rptledgerid FROM rptreceiptitem WHERE rptreceiptid = $P{rptreceiptid}
+SELECT DISTINCT rptledgerid FROM cashreceipt_rpt_item WHERE rptreceiptid = $P{rptreceiptid}
 
 [getFirstPaidLedgerItem]
 SELECT 
 	rci.rptledgerid, rci.year, rci.qtr, 
 	CASE WHEN rci.basic < rli.basic THEN 1 ELSE 0 END AS partialled
-FROM rptreceiptitem rci
+FROM cashreceipt_rpt_item rci
 	INNER JOIN rptledgeritem rli ON rci.rptledgeritemid = rli.objid 
 WHERE rci.rptreceiptid = $P{rptreceiptid}
 ORDER BY rci.year, rci.qtr 
 
 
 [voidLedgerItemPayment]
-UPDATE rptreceiptitem rci, rptledgeritem rli SET
+UPDATE cashreceipt_rpt_item rci, rptledgeritem rli SET
 	rli.state = 'OPEN', 
 	rli.basicpaid = rli.basicpaid - rci.basic,
 	rli.sefpaid = rli.sefpaid - rci.sef 
@@ -75,7 +75,7 @@ SELECT
 	SUM(sef) AS sef,
 	SUM(sefint - sefdisc) AS sefdp,
 	SUM(basic + basicint - basicdisc + sef + sefint - sefdisc) AS amount 
-FROM rptreceiptitem ri
+FROM cashreceipt_rpt_item ri
 		INNER JOIN rptledger rl ON ri.rptledgerid = rl.objid 
 		INNER JOIN faas f ON rl.faasid = f.objid 
 		INNER JOIN rpu r ON f.rpuid = r.objid 
