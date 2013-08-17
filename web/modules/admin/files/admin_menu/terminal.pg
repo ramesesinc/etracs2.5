@@ -1,0 +1,6 @@
+{
+	href:		'/entity/terminal/list',
+	sortorder:	10,
+	secured:	true,
+	fragment:	true
+}

@@ -1,0 +1,33 @@
+<% 
+	def listModel = PAGE.listModel? PAGE.listModel: 'listModel'; 
+%>
+<table id="fragmentlist" class="rui-fragment" cellpadding="0" cellspacing="0" width="100%" border="0">
+<tr>
+	<td id="pagetitle" valign="top"> @pagetitle() </td> 
+</tr>
+<tr class="actions-parent search-parent" style="height:1px;display:none;"> 
+	<td id="pageoption" class="criteria-section">
+		<table cellpadding="0" cellspacing="0" width="100%" border="0"> 
+		<tr>
+			<td id="actions"></td> 
+			<td id="search" align="right"></td> 
+		</tr>
+		</table> 
+	</td> 
+</tr> 
+<tr>
+	<td id="pagecontent" valign="top">	${_content} </td>
+</tr>
+<tr> 
+	<td id="pagefooter" class="criteria-section">
+		<button r:context="${PAGE.context}" r:name="${listModel}.moveFirst" icon="rui-button-icon12 rui-icon-navfirst12" title="Go to first page"/>
+		<button r:context="${PAGE.context}" r:name="${listModel}.movePrev"  icon="rui-button-icon12 rui-icon-navprev12" title="Go to previous page"/>
+		<button r:context="${PAGE.context}" r:name="${listModel}.moveNext"  icon="rui-button-icon12 rui-icon-navnext12" title="Go to next page"/>
+		<span style="padding-left:10px;"/>
+		<button r:context="${PAGE.context}" r:name="fragmentlist_refresh"  icon="rui-button-icon12 rui-icon-refresh12" title="Refresh page"/>				
+		<script> \$ctx("${PAGE.context}").fragmentlist_refresh = function() { this.${listModel}.refresh(true); } </script> 				
+	</td> 
+</tr> 
+</table>
+
+

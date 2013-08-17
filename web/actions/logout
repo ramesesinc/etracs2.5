@@ -1,0 +1,9 @@
+def target = PARAMS.target;
+if(!target) target = "/";
+
+String sessionid = SESSION.sessionid;
+def svc = SERVICE.lookup('SessionService', 'system');
+svc.unregister(sessionid);
+SESSION.destroySession();
+
+return target;
