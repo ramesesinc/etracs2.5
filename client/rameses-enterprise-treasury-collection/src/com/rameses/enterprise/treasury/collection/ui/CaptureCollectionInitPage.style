@@ -1,8 +1,0 @@
-"collectionhandler" [ collector == null ] {
-    enabled:false;
-}
-
-
-"collectionhandler" [ collector != null ] {
-    enabled:true;
-}
