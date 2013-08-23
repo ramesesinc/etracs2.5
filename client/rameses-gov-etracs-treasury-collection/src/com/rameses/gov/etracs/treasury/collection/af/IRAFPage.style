@@ -1,7 +1,0 @@
-"addPurchaseItem" [ entity.riv.type == 'PURCHASE' ] {
-    visible:true;
-}
-
-"addPurchaseItem" [ entity.riv.type != 'PURCHASE' || entity.riv == null ] {
-    visible:false;
-}
