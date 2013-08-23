@@ -1,0 +1,51 @@
+import com.rameses.annotations.*;
+import com.rameses.util.*;
+import java.rmi.server.*;
+
+public class BusinessApplicationMockup {
+	
+	@Service("DateService")
+	def dateSvc;
+
+	@ProxyMethod
+	public def open( o ) {
+
+		def m = [:];
+		m.appno = "123466";
+		m.appdate = dateSvc.serverDate;
+		m.apptype = "RENEW";
+		m.tradename = "RAMESES SYSTEMS INC.";
+		m.permitee = [name: "NAZARENO, ELMO", address:"CEBU CITY" ];
+		m.businessaddress = "2nd FLR. CEBU CHAMBER OF COMMERCE AND INDUSTRY BLDG.";
+		m.businessorgtype = "CORPORATION";
+		m.ids = [
+			[idtype:"TIN", idname: "TIN", idvalue:"126-716-172-1676"],
+			[idtype:"SSS", idname: "SSS", idvalue:"888-999-000"],
+		];
+		m.lobs = [
+			[id:"l1", name:"SOFTWARE DEVELOPMENT", classification:[name:'SERVICE']],
+			[id:"l2", name:"CONSULTANCY", classification:[name:'SERVICE']]
+		];
+		m.details = [
+			[ lobid:"l1", name:"GROSS", title:"GROSS", value: 25000.00, type: "decimal"  ],
+			[ lobid:"l1", name:"CAPITAL", title:"CAPITAL", value: 25000.00, type: "decimal"  ],
+			[ lobid:"l1", name:"NUM_EMP", title:"NO. OF EMPLOYEES",  value: 10, type: "integer"  ],
+			[ lobid:"l2", name:"NUM_EMP", title:"NO. OF EMPLOYEES",  value: 2, type: "integer"  ],
+		];
+		m.taxfees = [
+			[ lobid:"l1", name:"MP", title:"MAYORS PERMIT", value: 15000.00, type: "decimal"  ],
+			[ lobid:"l2", name:"MP", title:"MAYORS PERMIT", value: 25000.00, type: "decimal"  ],
+		];
+		m.permitno = "12577889";
+
+
+		
+		
+		return m;
+	}
+
+
+	
+		
+
+}

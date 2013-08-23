@@ -1,0 +1,28 @@
+<workunit>
+    <invokers>
+        <invoker type="businessapplication:formActions" caption="Report 1" action="init"/>
+    </invokers>
+    
+    <code>
+        <![CDATA[
+        import com.rameses.rcp.common.*;
+        import com.rameses.rcp.annotations.*;
+        import com.rameses.osiris2.client.*;
+        import com.rameses.osiris2.common.*
+        
+        class BPLSPermit  {
+        
+            def entity;
+            
+            void init() {
+                MsgBox.alert( "init data");
+            }
+        }
+        
+        ]]>
+    </code>
+    
+   
+    
+    
+</workunit>
