@@ -3,6 +3,9 @@ import com.rameses.common.*
 
 class ReportParameterService{
 	
+	@PersistenceContext('rpt')
+	def em 
+
 	@Service('Var')
 	def var;
 	
@@ -14,47 +17,98 @@ class ReportParameterService{
 	
 	@ProxyMethod
 	public def getStandardParameter(){
-		return [
+		def org = em.sqlContext.createQuery('SELECT * FROM sys_org WHERE parentid IS NULL').singleResult
+		org = (org ? org : [:])
+		def lgu = null 
+		if ('city'.equalsIgnoreCase(org.orgclass)){
+			lgu = em.sqlContext.createQuery('SELECT * FROM city WHERE objid=$P{objid}').setParameters(org).singleResult
+			if (lgu ){
+				org.lgu_name = lgu.name
+				org.lgu_fullname = lgu.fullname 
+				org.city_name = lgu.name
+			}
+		}
+		else if ('province'.equalsIgnoreCase(org.orgclass)){
+			lgu = em.sqlContext.createQuery('SELECT * FROM province WHERE objid=$P{objid}').setParameters(org).singleResult
+			if (lgu){
+				org.lgu_name = lgu.name
+				org.lgu_fullname = lgu.fullname 
+				org.province_name = lgu.name 
+				org.provincetreasurer = lgu.treasurer 
+				org.provinceassessor = lgu.assessor 
+			}
+		}
+		else if ('municipality'.equalsIgnoreCase(org.orgclass)){
+			lgu = em.sqlContext.createQuery('SELECT * FROM municipality WHERE objid=$P{objid}').setParameters(org).singleResult
+			if (lgu){
+				org.lgu_name = lgu.name
+				org.lgu_fullname = lgu.fullname 
+				org.municipality_name = lgu.name
+			}
+			def province = em.sqlContext.createQuery('''
+				SELECT * FROM province WHERE parentid=$P{objid} AND orgclass='PROVINCE'
+			''').setParameters(org).singleResult
+			if (province){
+				org.parent_lgu_name = province.name
+				org.parent_lgu_fullname = province.fullname 
+				org.province = province.name
+				org.provincetreasurer = province.treasurer 
+				org.provinceassessor = province.assessor 
+			}
+		}
+
+		org.treasurer = lgu.treasurer 
+		org.assessor = lgu.assessor 
+		org.mayor = lgu.mayor 
+		org.governor = lgu.governor 
+		org.address = lgu.address 
+
+		def params = [
 			SANGGUNIAN_NAME 			: var.sanggunian_name, 
             LOGOLGU     				: var.url_logo_lgu,                    
             LOGOBLGF    				: var.url_logo_blgf,                    
-            LGUNAME     				: var.lgu_name, 
-			LGUFORMALNAME 				: var.lgu_formal_name, 
-			LGUTYPE		  				: var.lgu_type, 
-			LGUADDRESS	  				: var.lgu_address, 
-            PARENTLGUNAME 				: var.parent_lgu_name,
-			PARENTLGUFORMALNAME 		: var.parent_lgu_formal_name,
-			PROVINCENAME  				: var.parent_lgu_name,
-			MUNICIPALNAME 				: var.lgu_name,
-			CITYNAME	  				: var.city_name,
+            LGUNAME     				: org.lgu_name, 
+			LGUFORMALNAME 				: org.lgu_fullname, 
+			LGUTYPE		  				: org.orgclass?.toLowerCase(), 
+			LGUADDRESS	  				: org.address, 
+            PARENTLGUNAME 				: org.parent_lgu_name,
+			PARENTLGUFORMALNAME 		: org.parent_lgu_fullname,
+			PROVINCENAME  				: org.province_name,
+			MUNICIPALNAME 				: org.municipality_name,
+			CITYNAME	  				: org.city_name,
 
-			PROVINCIALTREASURERNAME		: var.provincial_treasurer_name,
-			PROVINCIALTREASURERTITLE	: var.provincial_treasurer_title,
-            TREASURERNAME   			: var.treasurer_name,
-            TREASURERTITLE  			: var.treasurer_title,
-            TREASUREROFFICENAME  		: var.treasury_officename,
-			PROVINCIALASSESSORNAME 		: var.provincial_assessor_name,
-			PROVINCIALASSESSORTITLE 	: var.provincial_assessor_title,
-			
-			ASSESSORNAME 				: var.assessor_name,
-			ASSESSORTITLE 				: var.assessor_title,
-			ASSESSOROFFICENAME			: var.assessor_officename,
-			ASSTASSESSORNAME 			: var.asst_assessor_name,
-			ASSTASSESSORTITLE 			: var.asst_assessor_title,
-			
-			MAYOROFFICENAME 			: var.mayor_office_name,
-			MAYORNAME   				: var.mayor_name,
-			MAYORTITLE  				: var.mayor_title,
+			PROVINCIALTREASURERNAME		: org.provincetreasurer?.name,
+			PROVINCIALTREASURERTITLE	: org.provincetreasurer?.title,
+			PROVINCIALTREASUREROFFICENAME	: org.provincetreasurer?.office,
+			PROVINCIALASSESSORNAME 		: org.assessor?.name,
+			PROVINCIALASSESSORTITLE 	: org.assessor?.title,
+			PROVINCIALASSESSOROFFICENAME 	: org.assessor?.office,
 
-			GIVENAT 					: var.lgu_address,
-			USERNAME	 				: env.USERFORMALNAME,
+            
+            TREASURERNAME   			: org.treasurer?.name,
+            TREASURERTITLE  			: org.treasurer?.title,
+            TREASUREROFFICENAME  		: org.treasurer?.office,
+			ASSESSORNAME 				: org.assessor?.name,
+			ASSESSORTITLE 				: org.assessor?.title,
+			ASSESSOROFFICENAME			: org.assessor?.office,
+			
+
+			MAYOROFFICENAME 			: org.mayor?.office,
+			MAYORNAME   				: org.mayor?.name,
+			MAYORTITLE  				: org.mayor?.title,
+
+			GIVENAT 					: org.address,
+			USERNAME	 				: env.NAME,
+			USERFULLNAME	 			: env.FULLNAME,
 			USERJOBTITLE 				: env.JOBTITLE, 
             PRINTDATE   				: dateService.serverDate,
 			PRINTEDBY   				: env.USERFORMALNAME,
 			DATE 						: formalizeDate( 'd' ), 
 			MONTH 						: formalizeDate( 'MMMMM' ),
 			YEAR 						: formalizeDate( 'yyyy' ),
-		];
+		]
+		return params 
+		
 	}
 
 	def formalizeDate( def fdt ){

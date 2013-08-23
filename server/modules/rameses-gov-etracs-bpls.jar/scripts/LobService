@@ -1,0 +1,24 @@
+import com.rameses.annotations.*;
+import com.rameses.util.*;
+import java.rmi.server.*;
+
+class LobService {
+
+	@PersistenceContext("main")
+	def em;
+
+	@ProxyMethod
+	public def getColumns( def p ) {
+		return [
+			[name:'name', caption:'Name'],
+			[name:'title', caption:'X Title'],
+			[name:'permitee', caption:'Permitee'],
+		]	
+	}	
+	
+	@ProxyMethod
+	public def getList( p ) {
+		return [];
+	}
+	
+}

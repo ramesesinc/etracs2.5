@@ -1,5 +1,8 @@
 <workunit>
     <invokers>
+        <invoker folderid="/explorer/master/bpls" action="create" caption="Line of Business"/>
+
+                
         <invoker type="quick_launcher" code="LOB01" action="create" caption="Line of Business" xrole="MASTER_ENCODER" xpermission="lob.create"/>
         <invoker type="lob:create" action="init" caption="Line of Business" />
         <invoker type="lob:open" action="open" caption="Line of Business" />

@@ -4,6 +4,11 @@
         <property file="build-etracs-server.properties"/>
     </target>
     
+    
+    <target name="cleanup" depends="init">
+        <delete dir="${target.etracs.platform25.dir}/bin/osiris2"/>
+        <delete dir="${target.etracs.platform25.dir}/downloads"/>
+    </target>
         
     <!--=====================================================
     = COPY OSIRIS SERVER 
@@ -79,52 +84,62 @@
         <antcall target="deploy-shared-to-platform">
             <param name="sourcefile" value="rameses-gov-treasury"/>
         </antcall>
+        <antcall target="deploy-shared-to-platform">
+            <param name="sourcefile" value="rameses-rules-developer"/>
+        </antcall>
     </target>
     
     <target name="deploy-shared-to-platform">
         <echo message="====> Copying ${sourcefile}" />
         <property name="sourcejar" value="${shared.projects.dir}/client/${sourcefile}/dist/${sourcefile}.jar"/>
-        <copy file="${sourcejar}" todir="${target.etracs.platform25.modules.dir}/shared" failonerror="false"/>
-        <copy file="${sourcejar}" todir="${target.etracs.platform25.downloads.dir}/shared" failonerror="false"/>
+        <copy file="${sourcejar}" todir="${target.web.etracs25.dir}/downloads/modules/shared" failonerror="false"/>
     </target>
     
     
     <!--=====================================================
-    = DEPLOY CORE  
+    = DEPLOY ETRACS JAR 
     =======================================================-->
-    <target name="deploy-core">
+    <target name="deploy-etracs-client-jars">
         <!-- copy jars to platform core -->
-        <antcall target="deploy-core-to-platform">
-            <param name="sourcefile" value="osiris2-client-themes"/>
+        <antcall target="deploy-etracs-jars-to-platform">
+            <param name="sourcefile" value="rameses-gov-etracs-rptis"/>
         </antcall>
-        <antcall target="deploy-core-to-platform">
-            <param name="sourcefile" value="osiris2-client-ui"/>
+        <antcall target="deploy-etracs-jars-to-platform">
+            <param name="sourcefile" value="rameses-gov-etracs-bpls"/>
         </antcall>
-        <antcall target="deploy-core-to-platform">
-            <param name="sourcefile" value="osiris2-framework"/>
-        </antcall>
-        <antcall target="deploy-core-to-platform">
-            <param name="sourcefile" value="osiris2-report"/>
-        </antcall>
-        <antcall target="deploy-core-to-platform">
-            <param name="sourcefile" value="rameses-client-ui"/>
-        </antcall>
-        <antcall target="deploy-core-to-platform">
-            <param name="sourcefile" value="rameses-common2"/>
-        </antcall>
-        <antcall target="deploy-core-to-platform">
-            <param name="sourcefile" value="rameses-custom-impl"/>
+        <antcall target="deploy-etracs-jars-to-platform">
+            <param name="sourcefile" value="rameses-gov-etracs-signatory-template"/>
         </antcall>
     </target>
     
+<<<<<<< HEAD
     <target name="deploy-core-to-platform">
         <!--
         <property name="sourcejar" value="${incubation.dir}/${sourcefile}/dist/${sourcefile}.jar"/>
         -->
         <property name="sourcejar" value="${devlibs.dir}/${sourcefile}.jar"/>
+=======
+    <target name="deploy-etracs-jars-to-platform">
+        <property name="sourcejar" value="${etracs.project.dir}/client/${sourcefile}/dist/${sourcefile}.jar"/>
+>>>>>>> 999736f6f989015c706ca6b13643be2233e8764c
         <echo message="====> Copying ${sourcefile}" />
-        <copy file="${sourcejar}" todir="${target.etracs.platform25.modules.dir}/core" failonerror="false"/>
-        <copy file="${sourcejar}" todir="${target.etracs.platform25.downloads.dir}/core" failonerror="false"/>
+        <copy file="${sourcejar}" todir="${target.web.etracs25.dir}/downloads/modules" failonerror="false"/>
+    </target>
+    
+    
+    
+    <!--=====================================================
+    = DEPLOY DEVLIB JAR 
+    =======================================================-->
+    <target name="deploy-devlibs">
+        <property name="target.downloads.core.dir" value="${target.web.etracs25.dir}/downloads/modules/core"/>
+        <copy file="${devlib.projects.dir}/osiris2-client-themes.jar" todir="${target.downloads.core.dir}" failonerror="false"/>
+        <copy file="${devlib.projects.dir}/osiris2-client-ui.jar" todir="${target.downloads.core.dir}" failonerror="false"/>
+        <copy file="${devlib.projects.dir}/osiris2-framework.jar" todir="${target.downloads.core.dir}" failonerror="false"/>
+        <copy file="${devlib.projects.dir}/osiris2-report.jar" todir="${target.downloads.core.dir}" failonerror="false"/>
+        <copy file="${devlib.projects.dir}/rameses-client-ui.jar" todir="${target.downloads.core.dir}" failonerror="false"/>
+        <copy file="${devlib.projects.dir}/rameses-common2.jar" todir="${target.downloads.core.dir}" failonerror="false"/>
+        <copy file="${devlib.projects.dir}/rameses-custom-impl.jar" todir="${target.downloads.core.dir}" failonerror="false"/>
     </target>
     
     <!--=====================================================
@@ -137,11 +152,16 @@
         </copy>
     </target>
     
+<<<<<<< HEAD
     <target name="build-server" depends="init,copy-osiris3-server,copy-etracs-platform,deploy-etracs-server,deploy-project-shared,deploy-core">
         
     </target>
     
     <target name="xbuild-server" depends="init,copy-osiris3-server,copy-etracs-platform,deploy-etracs-server,deploy-project-shared,deploy-core">
         
+=======
+    <target name="build-server" depends="init,cleanup,copy-osiris3-server,copy-etracs-platform,deploy-etracs-server,deploy-project-shared, deploy-etracs-client-jars, deploy-devlibs">
+>>>>>>> 999736f6f989015c706ca6b13643be2233e8764c
     </target>
+
 </project>

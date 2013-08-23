@@ -15,7 +15,6 @@
     
     
     <folder id="menu">
-        <folder id="test" caption="Test"/>
         <folder id="txn" caption="Transaction">
             <folder id="rpt" caption="Assessor">
                 <folder id="faas" caption="FAAS" />
