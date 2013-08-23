@@ -118,7 +118,10 @@
     </target>
     
     <target name="deploy-core-to-platform">
+        <!--
         <property name="sourcejar" value="${incubation.dir}/${sourcefile}/dist/${sourcefile}.jar"/>
+        -->
+        <property name="sourcejar" value="${devlibs.dir}/${sourcefile}.jar"/>
         <echo message="====> Copying ${sourcefile}" />
         <copy file="${sourcejar}" todir="${target.etracs.platform25.modules.dir}/core" failonerror="false"/>
         <copy file="${sourcejar}" todir="${target.etracs.platform25.downloads.dir}/core" failonerror="false"/>
@@ -134,7 +137,7 @@
         </copy>
     </target>
     
-    <target name="build-server" depends="init,copy-osiris3-server,deploy-etracs-server,deploy-project-shared,deploy-core">
+    <target name="build-server" depends="init,copy-osiris3-server,copy-etracs-platform,deploy-etracs-server,deploy-project-shared,deploy-core">
         
     </target>
     
