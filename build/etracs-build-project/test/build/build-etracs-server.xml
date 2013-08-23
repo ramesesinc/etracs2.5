@@ -84,6 +84,7 @@
         <antcall target="deploy-shared-to-platform">
             <param name="sourcefile" value="rameses-gov-treasury"/>
         </antcall>
+        
     </target>
     
     <target name="deploy-shared-to-platform">
@@ -138,6 +139,9 @@
             <param name="sourcefile" value="rameses-gov-etracs-rptis"/>
         </antcall>
         <antcall target="deploy-etracs-jars-to-platform">
+            <param name="sourcefile" value="rameses-gov-etracs-bpls"/>
+        </antcall>
+        <antcall target="deploy-etracs-jars-to-platform">
             <param name="sourcefile" value="rameses-gov-etracs-signatory-template"/>
         </antcall>
     </target>
@@ -158,12 +162,7 @@
         </copy>
     </target>
     
-<<<<<<< HEAD
-    <target name="build-server" depends="init,copy-osiris3-server,copy-etracs-platform,deploy-etracs-server,deploy-project-shared,deploy-core">
-=======
     <target name="build-server" depends="init,cleanup,copy-osiris3-server,copy-etracs-platform,deploy-etracs-server,deploy-project-shared,deploy-core,deploy-etracs-client-jars">
->>>>>>> 221cbcde6a9dfe1c56ada6877b3dc6873f5dc486
-        
     </target>
 
 </project>
