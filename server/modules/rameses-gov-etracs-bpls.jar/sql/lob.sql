@@ -1,11 +1,16 @@
-[getRulesets]
-SELECT * FROM sys_ruleset
+[getList]
+SELECT l.*, lc.name AS classification_name 
+FROM lob l 
+INNER JOIN lobclassification lc
+ON l.classification_objid = lc.objid
 
-[getAgendagroups]
-SELECT * FROM sys_ruleagendagroup WHERE ruleset = $P{ruleset} ORDER BY sortorder
+[removeAttributes]
+DELETE FROM lob_lobattribute
+WHERE lobid = $P{lobid}
 
-[getFactsList]
-SELECT * FROM sys_rulefact WHERE ruleset = $P{ruleset} ORDER BY sortorder
-
-[getActionsList]
-SELECT * FROM sys_ruleaction WHERE ruleset = $P{ruleset} ORDER BY sortorder
+[getAttributes]
+SELECT la.* 
+FROM lob_lobattribute lla
+INNER JOIN lobattribute la
+ON lla.lobattributeid = la.objid
+WHERE lla.lobid = $P{lobid}

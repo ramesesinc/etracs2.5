@@ -1,24 +1,50 @@
 import com.rameses.annotations.*;
-import com.rameses.util.*;
-import java.rmi.server.*;
+import com.rameses.services.extended.*;
 
-class LobService {
+class LobService extends AbstractCrudListService {
 
 	@PersistenceContext("main")
 	def em;
 
+	String schemaName = 'lob'
+
 	@ProxyMethod
 	public def getColumns( def p ) {
 		return [
-			[name:'name', caption:'Name'],
-			[name:'title', caption:'X Title'],
-			[name:'permitee', caption:'Permitee'],
+			[name:'name', caption:'Line of Business'],
+			[name:'classification.name', caption:'Classification']
 		]	
-	}	
-	
-	@ProxyMethod
-	public def getList( p ) {
-		return [];
 	}
-	
+
+	public void afterCreate( Object data ) {
+		insertAttributes(data)
+	}
+
+	public void afterUpdate( Object data ) {
+		insertAttributes(data)
+	}
+
+	private void insertAttributes( entity ) {
+		em.sqlContext.createNamedExecutor("lob:removeAttributes").setParameter("lobid", entity.objid).execute()
+		println entity.attributes
+		entity.attributes.each{li->
+			def m = [
+				lobid: entity.objid,
+				lobattributeid: li.attribute.objid
+			]
+			em.validate("lob:lob_lobattribute", m)
+			em.create("lob:lob_lobattribute", m)
+		}
+	}
+
+	public void afterOpen( Object data ) {
+		data.classification = em.read("lobclassification", data.classification)
+		def attributes = em.sqlContext.createNamedQuery("lob:getAttributes")
+							.setParameter("lobid", data.objid)
+							.resultList
+		data.attributes = []
+		attributes.each{attr->
+			data.attributes.add([attribute:attr])
+		}
+	}	
 }

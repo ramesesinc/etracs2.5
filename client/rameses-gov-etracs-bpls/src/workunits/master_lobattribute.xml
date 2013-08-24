@@ -1,0 +1,21 @@
+<workunit>
+    <invokers>
+        <invoker type="lob:formActions" action="create" caption="Add Attribute" target="popup"/>
+    </invokers>
+    <code>
+        <![CDATA[
+            import com.rameses.rcp.annotations.*
+            import com.rameses.osiris2.common.*
+            
+            class LobAttributeController extends CRUDController
+            {
+                String serviceName = 'LobAttributeService'
+                String entityName = 'lobattribute'
+                String prefixId = 'LOBA'
+            }
+        ]]>
+    </code>
+    <pages>
+        <page template="com.rameses.gov.etracs.bpls.lob.LobAttributePage"/>
+    </pages>
+</workunit>

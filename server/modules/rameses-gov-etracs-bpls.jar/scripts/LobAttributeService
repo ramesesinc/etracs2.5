@@ -1,0 +1,10 @@
+import com.rameses.annotations.*;
+import com.rameses.services.extended.*;
+
+class LobAttributeService extends AbstractCrudListService
+{
+	@PersistenceContext("main")
+	def em;
+
+	String schemaName = 'lobattribute'
+}
