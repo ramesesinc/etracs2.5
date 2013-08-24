@@ -1,0 +1,18 @@
+import com.rameses.annotations.*;
+import com.rameses.services.extended.*;
+
+class LobClassificationService extends AbstractCrudListService
+{
+	@PersistenceContext("main")
+	def em;
+
+	String schemaName = "lobclassification"
+
+	@ProxyMethod
+	public def getColumns( def p ) {
+		return [
+			[name:'name',caption:'Classification'],
+		]
+	}
+
+}
