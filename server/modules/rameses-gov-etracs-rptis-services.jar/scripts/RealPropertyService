@@ -93,6 +93,7 @@ class RealPropertyService
 	public def openRealProperty( objid  ) {
 		def rp = em.read(SCHEMA_REALPROPERTY, [objid:objid])
 		rp?.barangay = lguSvc.lookupBarangayById(rp?.barangayid)
+		println 'barangay -> ' + rp.barangay 
 		return rp 
 	}
 

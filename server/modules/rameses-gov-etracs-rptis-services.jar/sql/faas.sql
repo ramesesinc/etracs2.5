@@ -22,7 +22,7 @@ FROM faas f
 	LEFT JOIN realproperty rp ON rpu.realpropertyid = rp.objid
 	LEFT JOIN barangay b ON rp.barangayid = b.objid 
 ${filters}
-ORDER BY rpu.ry, rpu.fullpin, f.tdno    
+
 
 [getFaasIds]
 select

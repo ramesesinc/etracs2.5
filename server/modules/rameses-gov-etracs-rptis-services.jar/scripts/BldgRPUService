@@ -91,8 +91,8 @@ class BldgRPUService
 		if (!rpu) {
 			throw new Exception('Building RPU does not exists or has been deleted.')
 		}
-		rpu.bldgtype 		= bldgSettingSvc.lookupBldgTypeById(rpu.bldgtype_objid)
-		rpu.bldgkindbucc	= bldgSettingSvc.lookupBldgKindBuccById(rpu.bldgkindbucc_objid)
+		rpu.bldgtype 		= bldgSettingSvc.lookupBldgTypeById(rpu.bldgtype.objid)
+		rpu.bldgkindbucc	= bldgSettingSvc.lookupBldgKindBuccById(rpu.bldgkindbucc.objid)
 		rpu.bldgassesslevel = bldgSettingSvc.lookupBldgAssessLevelById(rpu.bldgassesslevel?.objid)
 		rpu.condominium		= util.toBoolean(rpu.condominium, false)
 		rpu.swornstatement	= util.toBoolean(rpu.swornstatement, false)
@@ -105,7 +105,6 @@ class BldgRPUService
 
 	@ProxyMethod
 	public def deleteBldgRpu(rpu){
-		println 'delete 4'
 		em.sqlContext.createNamedExecutor('bldgrpu:deleteAllParams').setParameters(rpu).execute()
 		em.sqlContext.createNamedExecutor('bldgrpu:deleteAllFloorAdditionals').setParameters(rpu).execute()
 		em.sqlContext.createNamedExecutor('bldgrpu:deleteAllFloors').setParameters(rpu).execute()

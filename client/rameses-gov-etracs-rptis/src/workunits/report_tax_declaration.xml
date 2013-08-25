@@ -1,7 +1,7 @@
 <workunit>
     <invokers>
-        <invoker type="tdreport:view" action="initPreview" caption="Tax Declaration Report" target="window"/>
-        <invoker type="navActions" action="_close" caption="Close" mnemonic="c" immediate="true" icon="images/toolbars/cancel.png"/>
+        <invoker type="faas:formActions" action="initPreview" caption="Tax Declaration Report" target="window" visibleWhen="#{mode=='read'}"/>
+        <invoker type="formActions" action="_close" caption="Close" mnemonic="c" immediate="true" icon="images/toolbars/cancel.png"/>
     </invokers>
     <code class="com.rameses.gov.etracs.rpt.report.td.TDReportController">
     </code>
