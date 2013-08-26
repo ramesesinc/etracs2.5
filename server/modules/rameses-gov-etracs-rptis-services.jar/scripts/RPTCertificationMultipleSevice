@@ -32,7 +32,7 @@ class CertificationMultipleService
 	def createMultipleItems(cert){
 		em.sqlContext.createNamedExecutor('rptcertification:insertMultipleItems')
 			.setParameter('rptcertificationid', cert.objid)
-			.setParameter('taxpayerid', cert.taxpayerid)
+			.setParameter('taxpayerid', cert.taxpayer.objid)
 			.execute()
 
 		def items = getMultipleItems(cert)

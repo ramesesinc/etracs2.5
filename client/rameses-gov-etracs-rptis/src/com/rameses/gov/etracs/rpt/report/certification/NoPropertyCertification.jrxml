@@ -31,8 +31,8 @@
 	<parameter name="DATE" isForPrompting="false" class="java.lang.String"/>
 	<parameter name="MONTH" isForPrompting="false" class="java.lang.String"/>
 	<parameter name="YEAR" isForPrompting="false" class="java.lang.String"/>
-	<parameter name="LGUNAME" isForPrompting="false" class="java.lang.String"/>
-	<parameter name="PARENTLGUNAME" isForPrompting="false" class="java.lang.String"/>
+	<parameter name="LGUFORMALNAME" isForPrompting="false" class="java.lang.String"/>
+	<parameter name="PARENTFORMALLGUNAME" isForPrompting="false" class="java.lang.String"/>
 	<parameter name="PRINTEDBY" isForPrompting="false" class="java.lang.String"/>
 	<parameter name="PRINTDATE" isForPrompting="false" class="java.util.Date"/>
 	<parameter name="LOCATION" isForPrompting="false" class="java.lang.String"/>
@@ -41,7 +41,7 @@
 	<parameter name="LOGOLGU" isForPrompting="false" class="java.lang.String"/>
 	<parameter name="ISSUEDBYTIN" isForPrompting="false" class="java.lang.String"/>
 
-	<field name="taxpayername" class="java.lang.String"/>
+	<field name="taxpayer.name" class="java.lang.String"/>
 	<field name="requestedby" class="java.lang.String"/>
 	<field name="purpose" class="java.lang.String"/>
 	<field name="txndate" class="java.util.Date"/>
@@ -121,7 +121,7 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
 						<font fontName="Arial" pdfFontName="Helvetica" size="9" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$P{PARENTLGUNAME}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$P{PARENTFORMALLGUNAME}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -141,7 +141,7 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
 						<font fontName="Arial" pdfFontName="Helvetica" size="9" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$P{LGUNAME}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$P{LGUFORMALNAME}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -161,7 +161,7 @@
 					<textElement textAlignment="Justified" verticalAlignment="Top" rotation="None" isStyledText="true" lineSpacing="1_1_2">
 						<font fontName="Arial" pdfFontName="Helvetica" size="9" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA["                   <style isBold=\"true\">THIS IS TO CERTIFY</style> that as per record of this office, as of this date, no real property is declared in the name of <style  isBold=\"true\">" + $F{taxpayername}.replaceAll("&","&amp;") + "</style>, within the " + $P{GIVENAT} + "."]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA["                   <style isBold=\"true\">THIS IS TO CERTIFY</style> that as per record of this office, as of this date, no real property is declared in the name of <style  isBold=\"true\">" + $F{taxpayer.name}.replaceAll("&","&amp;") + "</style>, within the " + $P{GIVENAT} + "."]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement

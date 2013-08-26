@@ -76,7 +76,7 @@ public abstract class AbstractCertificationController
     }
     
     def open(){
-        entity = svc.openCertification(entity.objid);
+        entity = service.openCertification(entity.objid);
         mode = MODE_READ;
         return doPreview();
     }
@@ -141,7 +141,7 @@ public abstract class AbstractCertificationController
 
     
     def save(){
-        return svc.createCertification( entity )
+        return service.createCertification( entity )
     }
     
     public def doSave(){
