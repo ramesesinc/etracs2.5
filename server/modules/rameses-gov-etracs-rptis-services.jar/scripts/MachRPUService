@@ -152,7 +152,7 @@ class MachRPUService
     public def assessMachine(rpu, machuse, machine ){
         calcYearsUsed( rpu, machuse, machine )
         calcEstimatedLife( machine)
-        updateForexInfo( machine, rpu.ry) 
+        updateForexInfo( machine, rpu) 
         calculateRCNLD( machine )
         calculateDepreciation( machine )
         calculateDetailAssessment( machuse, machine )
@@ -237,23 +237,23 @@ class MachRPUService
     }
 
 
-    void updateForexInfo( machine, ry) {
+    void updateForexInfo( machine, rpu) {
         machine.forexid  = null
         machine.forex    = 0.0
         machine.feracid  = null
         machine.ferac    = 0.0
         
         if (util.isTrue(machine.imported)) {
-            def currdate  = dateSvc.parseCurrentDate()
+            def dtappraised  = dateSvc.parseDate(rpu.dtappraised, null)
             //forex 
-            def forex = machSettingSvc.lookupForex([ry:ry, year:currdate.year])
+            def forex = machSettingSvc.lookupForex([ry:rpu.ry, year:dtappraised.year])
             if(forex ) {
                 machine.forexid  = forex.objid 
                 machine.forex    = forex.forex 
             }
             
             //ferac info 
-            def ferac = machSettingSvc.lookupForex([ry:ry, year:machine.yearacquired])
+            def ferac = machSettingSvc.lookupForex([ry:rpu.ry, year:machine.yearacquired])
             if(ferac) {
                 machine.feracid  = ferac.objid 
                 machine.ferac    = ferac.forex 

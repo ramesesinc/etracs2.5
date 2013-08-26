@@ -17,12 +17,12 @@ class RPTParameterListService
 	@ProxyMethod
     public List getFieldList() {
         return [
-            [objid:'SYS_BASE_MARKET_VALUE', param_name:'SYS_BASE_MARKET_VALUE', param_caption:'BASE MARKET VALUE'],
-            [objid:'SYS_MARKET_VALUE', param_name:'SYS_MARKET_VALUE', param_caption:'MARKET VALUE'],
-            [objid:'SYS_BASE_VALUE', param_name:'SYS_BASE_VALUE', param_caption:'BASE VALUE'],
-            [objid:'SYS_UNIT_VALUE', param_name:'SYS_UNIT_VALUE', param_caption:'UNIT VALUE'],
-            [objid:'SYS_AREA', param_name:'SYS_AREA', param_caption:'AREA'],
-            [objid:'SYS_ASSESSED_VALUE', param_name:'SYS_ASSESSED_VALUE', param_caption:'ASSESSED VALUE'],
+            [objid:'SYS_BASE_MARKET_VALUE', name:'SYS_BASE_MARKET_VALUE', caption:'SYSTEM BASE MARKET VALUE'],
+            [objid:'SYS_MARKET_VALUE', name:'SYS_MARKET_VALUE', caption:'SYSTEM MARKET VALUE'],
+            [objid:'SYS_BASE_VALUE', name:'SYS_BASE_VALUE', caption:'SYSTEM BASE VALUE'],
+            [objid:'SYS_UNIT_VALUE', name:'SYS_UNIT_VALUE', caption:'SYSTEM UNIT VALUE'],
+            [objid:'SYS_AREA', name:'SYS_AREA', caption:'SYSTEM AREA'],
+            [objid:'SYS_ASSESSED_VALUE', name:'SYS_ASSESSED_VALUE', caption:'SYSTEM ASSESSED VALUE'],
         ]
     }
 

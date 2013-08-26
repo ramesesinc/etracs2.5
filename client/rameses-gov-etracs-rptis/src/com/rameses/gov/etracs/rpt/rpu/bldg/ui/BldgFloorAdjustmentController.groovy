@@ -49,6 +49,7 @@ public class BldgFloorAdjustmentController
                     selectedItem.additionalitem = it;
                     selectedItem.params  = it.params;
                     selectedItem.expr    = it.expr;
+                    selectedItem.basevalue = rpu.basevalue;
                     selectedItem.amount  = svc.calculateAdditionalItemAmount(selectedItem);
                     paramListHandler.load();
                 },

@@ -2,6 +2,8 @@ package test;
 
 import com.rameses.osiris2.common.LookupController;
 import com.rameses.osiris2.test.OsirisTestPlatform;
+import com.rameses.rcp.common.DecimalColumnHandler;
+import com.rameses.rcp.control.XDecimalField;
 
 
 import java.util.HashMap;
@@ -41,7 +43,8 @@ public class Main
         roles.put("RPT.ASSESSOR_SHARED", null);
         roles.put("RPT.LANDTAX_SHARED", null);
         roles.put("ADMIN.SYSADMIN", null);
-        OsirisTestPlatform.runTest(env, roles);         
+        OsirisTestPlatform.runTest(env, roles);       
+
     }
 
     public Main() {

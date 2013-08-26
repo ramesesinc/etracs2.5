@@ -43,19 +43,20 @@ public class MachRYSettingController extends com.rameses.gov.etracs.rpt.rysettin
         getRows    : { return 50 },
                 
         getColumns : { return [
-            new Column(name:'year', caption:'Year*', type:'integer', editableWhen:'#{allowYearColumnEdit[item]}', format:'0000' ),
+            new Column(name:'year', caption:'Year*', type:'integer', format:'0000', editable:true ),
             new Column(name:'forex', caption:'Rate*', type:'decimal', editable:true, format:'#,##0.0000'  ),
         ]},
         
         validate : { li -> 
             def forex = li.item 
-            def lastItem = null 
-            if( forexes ) {
-                lastItem = forexes.last()
+            def duplicate = false;
+            if (forex.isnew){
+                duplicate = forexes.find{it.year == forex.year} != null
             }
-            if( lastItem ) {
-                forex.year = (lastItem ? lastItem.year + 1 : 1)
+            else {
+                duplicate = forexes.findAll{it.year == forex.year}.size() > 1
             }
+            if (duplicate) throw new Exception('Duplicate year is not allowed.')
             svc.saveForex( forex )
         },
                 
@@ -112,14 +113,10 @@ public class MachRYSettingController extends com.rameses.gov.etracs.rpt.rysettin
     }
     
     Map createForex() {
-        def year = null 
-        if (forexes.size() > 0) {
-            year = forexes.last().year
-        }
         return [
             objid               : 'FO' + new UID(),
             machrysettingid     : entity.objid,
-            year                : ( year != null ? year + 1 : null), 
+            isnew               : true,
         ]
     }
     
