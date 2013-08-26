@@ -75,7 +75,7 @@
             <transition caption="Cancel" to="back-to-forapproval" action="cancelEdit" name="cancel"  mnemonic="c" icon="images/toolbars/cancel.png" visibleWhen="#{mode != 'read'}"/>
             <transition caption="Save"   to="back-to-forapproval" action="save" name="save" mnemonic="s" shortcut="ctrl S" icon="images/toolbars/save.png"  visibleWhen="#{mode != 'read'}" />
             <transition caption="Disapprove" to="default" action="disapproveConsolidation" mnemonic="d" visibleWhen="#{mode == 'read'}" confirm="Disapprove Consolidation?" role="APPROVER"/>
-            <transition caption="Approve" to="current" action="approveConsolidation" mnemonic="v" icon="images/toolbars/approve.png" visibleWhen="#{mode == 'read'}" confirm="Approve Consolidation?" role="APPROVER"/>
+            <transition caption="Approve" to="approved" action="approveConsolidation" mnemonic="v" icon="images/toolbars/approve.png" visibleWhen="#{mode == 'read'}" confirm="Approve Consolidation?" role="APPROVER"/>
         </page>
         
         <process name="back-to-forapproval">

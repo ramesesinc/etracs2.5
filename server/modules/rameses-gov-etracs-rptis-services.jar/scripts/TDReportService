@@ -76,7 +76,7 @@ class TDReportService
 		td.address = concatHousenoStreetPurok( td ) 
 
 		td.annotations =  em.sqlContext.createNamedQuery('tdreport:getAnnotationMemoranda')
-								.setParameter('faaid', td.faasid)
+								.setParameter('faasid', faasid)
 								.resultList
 		td.annotated = (td.annotations.size() > 0)
 

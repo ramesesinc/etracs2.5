@@ -372,6 +372,9 @@ class SubdivisionService
         em.sqlContext.createNamedExecutor('subdivision:cancelRealProperty')
             .setParameter('objid', subdivision.motherfaas.realpropertyid)
             .execute()
+        em.sqlContext.createNamedExecutor('subdivision:cancelMotherLandLedger')
+                .setParameter('faasid', subdivision.motherfaasid)
+                .execute()
  	}
 
  	void createFaasRecords(subdivision){
@@ -521,8 +524,8 @@ class SubdivisionService
             titletype           : sl.newtitletype,
             titleno             : sl.newtitleno,
             titledate           : sl.newtitledate,
-            taxpayer            : ( sl.taxpayer ? sl.taxpayer : subdivision.motherfaas.taxpayer ),
-            owner               : (sl.owner ? sl.owner : subdivision.motherfaas.owner),
+            taxpayer            : ( sl.taxpayer?.objid ? sl.taxpayer : subdivision.motherfaas.taxpayer ),
+            owner               : (sl.owner?.name ? sl.owner : subdivision.motherfaas.owner),
             administrator       : sl.administrator,
             memoranda           : sl.memoranda,
             prevtdno            : subdivision.motherfaas.tdno,
