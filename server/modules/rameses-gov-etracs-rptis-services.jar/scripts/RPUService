@@ -168,7 +168,6 @@ class RPUService
     public def disapproveRpu( rpu ) {
         rpSvc.disapproveRealProperty(rpu.rp)
         updateState(rpu, STATE_INTERIM )
-        updateLandRpuIds(rpu)
         return rpu 
     }
 

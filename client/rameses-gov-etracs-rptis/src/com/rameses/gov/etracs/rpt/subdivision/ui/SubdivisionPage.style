@@ -1,4 +1,4 @@
-"subdivision.effectivityyear|subdivision.effectivityqtr|subdivision.effectivityqtr|editLandInfo|updateLandInfo|cancelLandInfo" [allowEdit == true]{
+"subdivision.effectivityyear|subdivision.effectivityqtr|subdivision.effectivityqtr|editLandInfo|updateLandInfo|cancelLandInfo|appraiser.*|recommender.*|taxmapper.*|approver.*" [allowEdit == true]{
     enabled:true;
 }
 
@@ -21,7 +21,7 @@
 
 
 
-"subdivision.effectivityyear|subdivision.effectivityqtr|editLandInfo|updateLandInfo|cancelLandInfo" [allowEdit != true]{
+"subdivision.effectivityyear|subdivision.effectivityqtr|editLandInfo|updateLandInfo|cancelLandInfo|appraiser.*|recommender.*|taxmapper.*|approver.*" [allowEdit != true]{
     enabled:false;
 }
 

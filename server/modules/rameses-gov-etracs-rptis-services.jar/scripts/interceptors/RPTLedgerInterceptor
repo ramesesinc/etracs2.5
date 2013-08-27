@@ -15,7 +15,7 @@ class RPTLedgerInterceptor
 
 	@After(pattern="FAASService.approveFaas.*")
 	public void postFaasToRPTLedger(evt){
-		def faas = evt.result 
+        def faas = evt.result 
         if (faas.txntype.objid.matches('SD|CS') && faas.rpu.rputype == 'land'){
             postNewLedger(faas)
         }
@@ -77,6 +77,7 @@ class RPTLedgerInterceptor
             backtax.txntype         = faas.txntype 
             backtax.rpu             = faas.rpu 
             backtax.backtaxyrs      = faas.backtaxyrs
+            backtax.taxable         = util.toBoolean(backtax.taxable, true)
             def ledgerfaas 			= createLedgerFaas(ledger, backtax)
             ledgerfaas.faasid 		= backtax.faasid 
             ledgerfaas.assessedvalue = backtax.av 

@@ -153,7 +153,7 @@ public class BatchGRController {
     }
     
     List getRylist() {
-        return svc.getRyList( null ).ry
+        return svc.getRyList(null, null, null ).ry
     }
     
     def partitionBySection( list ) {
@@ -165,11 +165,11 @@ public class BatchGRController {
         
     
     def getBarangayList(){
-        return lguSvc.getBarangayListByParentId( lgu?.objid )
+        return lguSvc.lookupBarangays(null);
     }   
     
     def getLguList() {
-        return lguSvc.getCityMunicipalityList()
+        return lguSvc.lookupCities(null);
     }
     
 
@@ -255,6 +255,6 @@ class RevisionTask extends com.rameses.rcp.common.Task {
     </code>
     
     <pages>
-        <page template="com.rameses.gov.etracs.rpt.faas.BatchGRInitPage" />
+        <page template="com.rameses.gov.etracs.rpt.faas.ui.BatchGRInitPage" />
     </pages>
 </workunit>

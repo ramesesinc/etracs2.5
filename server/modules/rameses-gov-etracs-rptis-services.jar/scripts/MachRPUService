@@ -27,6 +27,9 @@ class MachRPUService
     @Service('MachineLookupService')
     def machSvc 
 
+    @Service('Var')
+    def var
+
     
     def SCHEMA_RPU          = 'machrpu'
     def SCHEMA_MACHUSE      = 'machrpu:machuse'
@@ -288,7 +291,10 @@ class MachRPUService
 
         if ( rpu.dtappraised) {
             def pdate = dateSvc.parseDate( rpu.dtappraised, null )
-            machine.yearsused =  pdate.year - fromyear + 1    
+            machine.yearsused =  pdate.year - fromyear 
+            if (util.toBoolean(var.machrpu_include_operation_year_in_yearsused, false)) {
+                machine.yearsused += 1
+            }
         }
     }
 

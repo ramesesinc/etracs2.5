@@ -58,7 +58,6 @@ class FaasServiceInterceptor
 
 	@Before(pattern="FAASService.createFaas", eval="#{args[0].datacapture==true}") 
 	public void interceptCreateDataCaptureFaas( evt ) {
-		println 'interceptCreateDataCaptureFaas'
 		def faas = evt.args[0]
 		faas.txntype.newrealproperty = true 
 		rpuSvc.createRpu( faas.rpu, faas.txntype )
@@ -67,7 +66,6 @@ class FaasServiceInterceptor
 
 	@Before(pattern="FAASService.createFaas", eval="#{args[0].datacapture==false}") 
 	public void interceptCreateFaas( evt ) {
-		println 'interceptCreateFaas'
 		def faas = evt.args[0]
 		rpuSvc.createRpu( faas.rpu, faas.txntype)
 	}
@@ -77,21 +75,18 @@ class FaasServiceInterceptor
 
 	@After(pattern="FAASService.openFaas") 
 	public void interceptOpenFaas( evt ) {
-		println 'interceptOpenFaas'
 		def faas = evt.result 
 		faas.rpu = rpuSvc.openRpu( faas.rpuid )
 	}
 
 	@Before(pattern="FAASService.updateFaas") 
 	public void interceptUpdateFaas(evt) {
-		println 'interceptUpdateFaas'
 		def faas = evt.args[0]
 		rpuSvc.updateRpu( faas.rpu )
 	}
 
 	@After(pattern="FAASService.deleteFaas") 
 	public void interceptDeleteFaas( evt ) {
-		println 'interceptUpdateFaas'
 		def faas = evt.result 
 		if (faas.txntype.newrpu){
 			rpuSvc.deleteRpu( faas.rpu )

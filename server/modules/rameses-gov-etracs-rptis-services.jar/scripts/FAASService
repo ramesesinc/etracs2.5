@@ -213,7 +213,7 @@ class FAASService
 
 	@ProxyMethod
 	public def submitFaasForApproval( faas ) {
-		println 'submitFaasForApproval -> ' + faas.state 
+		validateSignatories(faas)
 		if (faas.txntype.newrpu) {
 			faas.rpu.state = faas.state 
 			faas.rpu.rp.state  = faas.state 
@@ -226,7 +226,6 @@ class FAASService
 
 	@ProxyMethod
 	public def approveFaas( faas ) {
-		println 'approveFaas -> ' + faas.tdno 
 		faas.state = STATE_CURRENT
 		wsSvc.insert(faas)
 		if (faas.txntype.newrpu){
@@ -437,6 +436,9 @@ class FAASService
 	def getBackTaxes(faasid){
 		return em.sqlContext.createNamedQuery('faas:getBackTaxes')
 				.setParameter('faasid', faasid).resultList
+				.each{
+					it.taxable = utilSvc.toBoolean(it.taxable, true)
+				}
 	}
 
 
@@ -638,7 +640,6 @@ class FAASService
 
 	void validateSignatories(faas){
 		def appraiser = getSignatory(faas, 'appraiser')
-		println 'appraiser -> ' + appraiser
 		utilSvc.required('Appraiser', appraiser)
 		utilSvc.required('Appraiser', appraiser.name)
 		utilSvc.required('Appraiser Date Signed', appraiser.dtsigned)
