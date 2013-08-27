@@ -192,12 +192,24 @@ class MachRPUService
         if( util.isTrue(machine.autodepreciate) && machine.estimatedlife > 0) {
             def dep = machine.remaininglife / machine.estimatedlife
             dep = (1 - dep) * 100;
+            if (dep > (100 - getResidualRate())) {
+                dep = 100 - getResidualRate()
+            }
             machine.depreciation = numberSvc.roundA( dep, 0 )
             machine.depreciationvalue =  numberSvc.round( machine.replacementcost *  machine.depreciation / 100.0 )
         }
         else {
             machine.depreciationvalue =  numberSvc.round( machine.replacementcost *  machine.depreciation / 100.0 )
         }
+    }
+
+    def getResidualRate(){
+        def setting = em.sqlContext.createNamedQuery('machrpu:getMachRySetting')
+                            .setParameter('ry', var.current_ry)
+                            .singleResult
+        if (setting)
+            return setting.residualrate
+        return 20.0
     }
 
 
