@@ -74,12 +74,16 @@ public class SubdivisionPage extends javax.swing.JPanel {
         xLabel28 = new com.rameses.rcp.control.XLabel();
         xLabel29 = new com.rameses.rcp.control.XLabel();
         xFormPanel11 = new com.rameses.rcp.control.XFormPanel();
+        formPanel4 = new com.rameses.rcp.util.FormPanel();
         xLookupField1 = new com.rameses.rcp.control.XLookupField();
         xDateField3 = new com.rameses.rcp.control.XDateField();
+        formPanel6 = new com.rameses.rcp.util.FormPanel();
         xLookupField2 = new com.rameses.rcp.control.XLookupField();
         xDateField4 = new com.rameses.rcp.control.XDateField();
+        formPanel8 = new com.rameses.rcp.util.FormPanel();
         xLookupField3 = new com.rameses.rcp.control.XLookupField();
         xDateField5 = new com.rameses.rcp.control.XDateField();
+        formPanel9 = new com.rameses.rcp.util.FormPanel();
         xLookupField4 = new com.rameses.rcp.control.XLookupField();
         xDateField6 = new com.rameses.rcp.control.XDateField();
 
@@ -308,7 +312,8 @@ public class SubdivisionPage extends javax.swing.JPanel {
         xLabel1.setCaption("Taxpayer Address");
         xLabel1.setCaptionWidth(130);
         xLabel1.setDepends(new String[] {"selectedLand"});
-        xLabel1.setName("selectedLand.taxpayer.address");
+        xLabel1.setExpression("#{selectedLand.taxpayer.address}");
+        xLabel1.setName("selectedLand.taxpayer");
         xLabel1.setPreferredSize(new java.awt.Dimension(0, 19));
         xFormPanel2.add(xLabel1);
 
@@ -374,9 +379,9 @@ public class SubdivisionPage extends javax.swing.JPanel {
             .add(jPanel4Layout.createSequentialGroup()
                 .addContainerGap()
                 .add(jPanel4Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(xFormPanel2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 313, Short.MAX_VALUE)
+                    .add(xFormPanel2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 348, Short.MAX_VALUE)
                     .add(jPanel4Layout.createSequentialGroup()
-                        .add(xDataTable1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 265, Short.MAX_VALUE)
+                        .add(xDataTable1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 300, Short.MAX_VALUE)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(jPanel2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 31, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                         .addContainerGap())))
@@ -497,7 +502,7 @@ public class SubdivisionPage extends javax.swing.JPanel {
             jPanel7Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(jPanel7Layout.createSequentialGroup()
                 .addContainerGap()
-                .add(xDataTable2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 302, Short.MAX_VALUE)
+                .add(xDataTable2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 337, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jTabbedPane1.addTab("Real Property Units Affected by the Subdivision", jPanel7);
@@ -571,63 +576,84 @@ public class SubdivisionPage extends javax.swing.JPanel {
         xTitledBorder4.setTitle("Signatories");
         xFormPanel11.setBorder(xTitledBorder4);
         xFormPanel11.setCellspacing(1);
+
+        formPanel4.setOrientation(com.rameses.rcp.constant.UIConstants.HORIZONTAL);
+        formPanel4.setPadding(new java.awt.Insets(0, 0, 0, 0));
+        formPanel4.setPreferredSize(new java.awt.Dimension(0, 22));
+        formPanel4.setShowCaption(false);
         xLookupField1.setCaption("Appraiser");
-        xLookupField1.setCaptionWidth(115);
+        xLookupField1.setCaptionWidth(90);
         xLookupField1.setExpression("#{appraiser.name}");
         xLookupField1.setHandler("lookupAppraiser");
         xLookupField1.setName("appraiser");
-        xLookupField1.setPreferredSize(new java.awt.Dimension(0, 20));
+        xLookupField1.setPreferredSize(new java.awt.Dimension(220, 20));
         xLookupField1.setRequired(true);
-        xFormPanel11.add(xLookupField1);
+        formPanel4.add(xLookupField1);
 
-        xDateField3.setCaption("Date Appraised");
-        xDateField3.setCaptionWidth(115);
         xDateField3.setName("appraiser.dtsigned");
-        xDateField3.setPreferredSize(new java.awt.Dimension(0, 20));
-        xFormPanel11.add(xDateField3);
+        xDateField3.setPreferredSize(new java.awt.Dimension(90, 20));
+        xDateField3.setShowCaption(false);
+        formPanel4.add(xDateField3);
 
+        xFormPanel11.add(formPanel4);
+
+        formPanel6.setOrientation(com.rameses.rcp.constant.UIConstants.HORIZONTAL);
+        formPanel6.setPadding(new java.awt.Insets(0, 0, 0, 0));
+        formPanel6.setPreferredSize(new java.awt.Dimension(0, 22));
+        formPanel6.setShowCaption(false);
         xLookupField2.setCaption("Recommender");
-        xLookupField2.setCaptionWidth(115);
+        xLookupField2.setCaptionWidth(90);
         xLookupField2.setExpression("#{recommender.name}");
         xLookupField2.setHandler("lookupRecommender");
         xLookupField2.setName("recommender");
-        xLookupField2.setPreferredSize(new java.awt.Dimension(0, 20));
-        xFormPanel11.add(xLookupField2);
+        xLookupField2.setPreferredSize(new java.awt.Dimension(220, 20));
+        formPanel6.add(xLookupField2);
 
-        xDateField4.setCaption("Date Recommended");
-        xDateField4.setCaptionWidth(115);
         xDateField4.setName("recommender.dtsigned");
-        xDateField4.setPreferredSize(new java.awt.Dimension(0, 20));
-        xFormPanel11.add(xDateField4);
+        xDateField4.setPreferredSize(new java.awt.Dimension(90, 20));
+        xDateField4.setShowCaption(false);
+        formPanel6.add(xDateField4);
 
+        xFormPanel11.add(formPanel6);
+
+        formPanel8.setOrientation(com.rameses.rcp.constant.UIConstants.HORIZONTAL);
+        formPanel8.setPadding(new java.awt.Insets(0, 0, 0, 0));
+        formPanel8.setPreferredSize(new java.awt.Dimension(0, 22));
+        formPanel8.setShowCaption(false);
         xLookupField3.setCaption("Taxmapper");
-        xLookupField3.setCaptionWidth(115);
+        xLookupField3.setCaptionWidth(90);
         xLookupField3.setExpression("#{taxmapper.name}");
         xLookupField3.setHandler("lookupTaxmapper");
         xLookupField3.setName("taxmapper");
-        xLookupField3.setPreferredSize(new java.awt.Dimension(0, 20));
-        xFormPanel11.add(xLookupField3);
+        xLookupField3.setPreferredSize(new java.awt.Dimension(220, 20));
+        formPanel8.add(xLookupField3);
 
-        xDateField5.setCaption("Date Taxmapped");
-        xDateField5.setCaptionWidth(115);
         xDateField5.setName("taxmapper.dtsigned");
-        xDateField5.setPreferredSize(new java.awt.Dimension(0, 20));
-        xFormPanel11.add(xDateField5);
+        xDateField5.setPreferredSize(new java.awt.Dimension(90, 20));
+        xDateField5.setShowCaption(false);
+        formPanel8.add(xDateField5);
 
+        xFormPanel11.add(formPanel8);
+
+        formPanel9.setOrientation(com.rameses.rcp.constant.UIConstants.HORIZONTAL);
+        formPanel9.setPadding(new java.awt.Insets(0, 0, 0, 0));
+        formPanel9.setPreferredSize(new java.awt.Dimension(0, 22));
+        formPanel9.setShowCaption(false);
         xLookupField4.setCaption("Approver");
-        xLookupField4.setCaptionWidth(115);
+        xLookupField4.setCaptionWidth(90);
         xLookupField4.setExpression("#{approver.name}");
         xLookupField4.setHandler("lookupApprover");
         xLookupField4.setName("approver");
-        xLookupField4.setPreferredSize(new java.awt.Dimension(0, 20));
+        xLookupField4.setPreferredSize(new java.awt.Dimension(220, 20));
         xLookupField4.setRequired(true);
-        xFormPanel11.add(xLookupField4);
+        formPanel9.add(xLookupField4);
 
-        xDateField6.setCaption("Date Approved");
-        xDateField6.setCaptionWidth(115);
         xDateField6.setName("approver.dtsigned");
-        xDateField6.setPreferredSize(new java.awt.Dimension(0, 20));
-        xFormPanel11.add(xDateField6);
+        xDateField6.setPreferredSize(new java.awt.Dimension(90, 20));
+        xDateField6.setShowCaption(false);
+        formPanel9.add(xDateField6);
+
+        xFormPanel11.add(formPanel9);
 
         org.jdesktop.layout.GroupLayout jPanel1Layout = new org.jdesktop.layout.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -637,10 +663,10 @@ public class SubdivisionPage extends javax.swing.JPanel {
                 .addContainerGap()
                 .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
                     .add(org.jdesktop.layout.GroupLayout.LEADING, jPanel3, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 1062, Short.MAX_VALUE)
-                    .add(org.jdesktop.layout.GroupLayout.LEADING, jPanel1Layout.createSequentialGroup()
-                        .add(formPanel3, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 296, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(jPanel1Layout.createSequentialGroup()
+                        .add(formPanel3, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 273, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(xFormPanel11, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 387, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                        .add(xFormPanel11, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 410, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(formPanel5, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 367, Short.MAX_VALUE)))
                 .addContainerGap())
@@ -649,12 +675,12 @@ public class SubdivisionPage extends javax.swing.JPanel {
             jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
-                    .add(xFormPanel11, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 196, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(formPanel5, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 196, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(formPanel3, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 196, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(xFormPanel11, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 161, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(formPanel3, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 161, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(formPanel5, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 161, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(jPanel3, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 352, Short.MAX_VALUE)
+                .add(jPanel3, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 387, Short.MAX_VALUE)
                 .addContainerGap())
         );
         add(jPanel1, java.awt.BorderLayout.CENTER);
@@ -664,8 +690,12 @@ public class SubdivisionPage extends javax.swing.JPanel {
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private com.rameses.rcp.util.FormPanel formPanel3;
+    private com.rameses.rcp.util.FormPanel formPanel4;
     private com.rameses.rcp.util.FormPanel formPanel5;
+    private com.rameses.rcp.util.FormPanel formPanel6;
     private com.rameses.rcp.util.FormPanel formPanel7;
+    private com.rameses.rcp.util.FormPanel formPanel8;
+    private com.rameses.rcp.util.FormPanel formPanel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;

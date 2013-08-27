@@ -90,6 +90,7 @@ public class SubdivisionController extends PageFlowController
         else 
             subdivision = svc.updateSubdivision(subdivision);
         mode = MODE_READ;
+        editinfo = false;
     }    
    
     
@@ -166,6 +167,21 @@ public class SubdivisionController extends PageFlowController
     def subdividedLands;
     def selectedLand;
     boolean editinfo = false;
+    
+                
+    def getLookupTaxpayer(){
+        return InvokerUtil.lookupOpener('entity:lookup',[
+            onselect : { 
+                selectedLand.taxpayer = it;
+                selectedLand.owner    = it;
+            },
+            onempty  : { 
+                selectedLand.taxpayer = null;
+                selectedLand.owner    = null;
+            } 
+        ])
+    }
+    
      
     def landListHandler = [
         getRows : { return 25 },
@@ -203,7 +219,7 @@ public class SubdivisionController extends PageFlowController
                 svc.createSubdividedLand(sland);
                 subdividedLands.add(sland);
                 landListHandler.load()
-                binding.refresh('totalareasqm|totalareaha');
+                binding.refresh('totalareasqm|totalareaha|selectedLand.*');
             }
         ])
     }
@@ -218,7 +234,7 @@ public class SubdivisionController extends PageFlowController
             onupdate : { sland ->
                 svc.updateSubdividedLand(sland);
                 landListHandler.refresh(true)
-                binding.refresh('totalareasqm|totalareaha');
+                binding.refresh('totalareasqm|totalareaha|selectedLand.*');
             }
         ])
     }
@@ -408,5 +424,7 @@ public class SubdivisionController extends PageFlowController
         subdivision.signatories.find{it.type == 'approver'}?.putAll(approver);
     }
  
+    
+
     
 }

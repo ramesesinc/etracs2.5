@@ -3,7 +3,7 @@
     <invokers>
         <invoker type="faas_RE:open" action="open" caption="FAAS" role="APPRAISER" permission="faas.read" />
         
-         <invoker folderid="/txn/rpt/faas" action="initTxn"  caption="Re-Assessment" index="10"
+         <invoker folderid="/explorer/txn/rpt/txn" action="initTxn"  caption="Re-Assessment" index="10"
             txntypeid="RE" txntype="Re-Assessment" newledger="false" newrpu="true" role="APPRAISER" permission="faas.createReassessment"/>
             
         <invoker folderid="/menu/txn/rpt/faas" action="initTxn"  caption="Re-Assessment" index="10"

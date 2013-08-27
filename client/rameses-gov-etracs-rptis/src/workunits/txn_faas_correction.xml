@@ -6,6 +6,9 @@
         
         <invoker folderid="/menu/txn/rpt/faas" action="initTxn"  caption="Correction of Entry" index="4"
             txntypeid="CE" txntype="Correction of Entry" newledger="false" newrpu="true" role="APPRAISER" permission="faas.createCorrection"/>
+            
+        <invoker folderid="/explorer/txn/rpt/txn" action="initTxn"  caption="Correction of Entry" index="4"
+            txntypeid="CE" txntype="Correction of Entry" newledger="false" newrpu="true" role="APPRAISER" permission="faas.createCorrection"/>            
 
          <invoker type="quick_launcher" code="CE01" action="initTxn"  caption="Correction of Entry" index="4"
             txntypeid="CE" txntype="Correction of Entry" newledger="false" newrpu="true" role="APPRAISER" permission="faas.createCorrection"/>

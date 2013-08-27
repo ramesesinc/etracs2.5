@@ -17,13 +17,14 @@ class FaasServiceInterceptor
 	@Service('Var')
 	def var
 
-	@Before(pattern="FAASService.initFaasTransaction") 
+	@Before(pattern="FAASService.initFaasTransaction")  
 	public void interceptInitFaasTransaction( evt ) {
 		def info = evt.args[0]
-		if ( ! util.toBoolean(var.allow_faas_transaction_with_balance, false)){
-			ledgerSvc.checkLedgerBalance(info.faas.objid)
+		if (info.txntype.objid != 'GR') {
+			if ( ! util.toBoolean(var.allow_faas_transaction_with_balance, false) ){
+				ledgerSvc.checkLedgerBalance(info.faas.objid)
+			}
 		}
-
 	}
 
 	@After(pattern="FAASService.initFaasTransaction", eval="#{result.txntype.objid == 'TR'}", index=10) 

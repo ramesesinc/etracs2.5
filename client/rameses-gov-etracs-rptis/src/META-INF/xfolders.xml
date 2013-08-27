@@ -4,7 +4,11 @@
             <folder id="rpt" caption="Assessor" index="1" />
         </folder>
         <folder id="txn" caption="Transactions" index="2">
-            <folder id="rpt" caption="Assessor" index="1" />
+            <folder id="rpt" caption="Assessor" index="1">
+                <folder id="list" caption="Listings" index="1" />
+                <folder id="txn" caption="Transaction" index="2" />
+                <folder id="cert" caption="Certification" index="3" />
+            </folder>
             <folder id="landtax" caption="Land Tax" index="2" />
         </folder>
         <folder id="setting" caption="Settings" index="3">
@@ -17,8 +21,8 @@
     <folder id="menu">
         <folder id="txn" caption="Transaction">
             <folder id="rpt" caption="Assessor">
-                <folder id="faas" caption="FAAS" />
-                <folder id="cert" caption="Certifications" />
+                <folder id="faas" caption="FAAS" index="1" />
+                <folder id="cert" caption="Certifications" index="2" />
                 <folder id="util" caption="Utilities" index="3" />
             </folder>
             <folder id="landtax" caption="Land Tax"/>

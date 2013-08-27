@@ -1,6 +1,6 @@
 <workunit extends="wtemplates/ListController.xml">
     <invokers>
-        <invoker folderid="/explorer/txn/rpt" caption="Certifications and Clearances"  target="window" index="155" role="ASSESSOR_SHARED" />
+        <invoker folderid="/explorer/txn/rpt/list" caption="Certifications and Clearances"  target="window" index="155" role="ASSESSOR_SHARED" />
         <invoker type="quick_launcher" code="RC00" caption="Certifications and Clearances" role="ASSESSOR_SHARED" />
     </invokers>
     <code>

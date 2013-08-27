@@ -411,7 +411,6 @@ public abstract class AbstractFaasController extends PageFlowController
          if (mode != MODE_CREATE){
              // faas.rpu = service.openRpu(faas.rpu.objid);
          }
-         def appraiser = faas.signatories.find{it.type == 'appraiser'}
          faas.rpu.dtappraised = appraiser?.dtsigned
          def opener = faas.rpu.rputype + 'rpu:open'
          return InvokerUtil.lookupOpener(opener, [

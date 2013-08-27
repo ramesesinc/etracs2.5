@@ -6,6 +6,9 @@
            
         <invoker folderid="/menu/txn/rpt/faas" action="initTxn"  caption="Transfer with Correction" index="3"
             txntypeid="TRC" txntype="Transfer with Correction" newledger="false" newrpu="true" role="APPRAISER" permission="faas.createTransfer"/>
+            
+        <invoker folderid="/explorer/txn/rpt/txn" action="initTxn"  caption="Transfer with Correction" index="3"
+            txntypeid="TRC" txntype="Transfer with Correction" newledger="false" newrpu="true" role="APPRAISER" permission="faas.createTransfer"/>
 
          <invoker type="quick_launcher" code="TR03" action="initTxn"  caption="Transfer with Correction" index="3"
             txntypeid="TRC" txntype="Transfer with Correction" newledger="false" newrpu="true" role="APPRAISER" permission="faas.createTransfer"/>
