@@ -68,15 +68,15 @@ class TDReportService
 
 
 		if( td.state == 'CURRENT' || td.state == 'CANCELLED' ) {
-			td.appraiser.name = ( td.appraiser.name ? '(SGD.) ' + td.appraiser.name : null )
-			td.recommender.name = ( td.recommender.name ? '(SGD.) ' + td.recommender.name : null )
-			td.approver.name = ( td.approver.name ? '(SGD.) ' + td.approver.name : null )
+			td.appraiser.name = ( td.appraiser?.name ? '(SGD.) ' + td.appraiser?.name : null )
+			td.recommender.name = ( td.recommender?.name ? '(SGD.) ' + td.recommender?.name : null )
+			td.approver.name = ( td.approver?.name ? '(SGD.) ' + td.approver?.name : null )
 		}
 
 		td.address = concatHousenoStreetPurok( td ) 
 
 		td.annotations =  em.sqlContext.createNamedQuery('tdreport:getAnnotationMemoranda')
-								.setParameter('faaid', td.faasid)
+								.setParameter('faasid', faasid)
 								.resultList
 		td.annotated = (td.annotations.size() > 0)
 

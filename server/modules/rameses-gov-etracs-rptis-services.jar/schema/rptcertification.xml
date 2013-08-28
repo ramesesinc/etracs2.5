@@ -6,9 +6,9 @@
 		<field name="txndate" required="true"/>
 		<field name="opener" required="true"/>
 		<field name="faasid" />
-		<field name="taxpayerid" />
-		<field name="taxpayername" />
-		<field name="taxpayeraddress" />
+		<field name="taxpayer_objid" />
+		<field name="taxpayer_name" />
+		<field name="taxpayer_address" />
 		<field name="requestedby" required="true" />
 		<field name="requestedbyaddress" required="true" />
 		<field name="purpose" required="true" />

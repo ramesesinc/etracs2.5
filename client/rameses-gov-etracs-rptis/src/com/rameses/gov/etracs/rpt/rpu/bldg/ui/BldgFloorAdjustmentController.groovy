@@ -3,6 +3,7 @@ package com.rameses.gov.etracs.rpt.rpu.bldg.ui;
 import com.rameses.rcp.annotations.* 
 import com.rameses.rcp.common.* 
 import com.rameses.osiris2.client.* 
+import com.rameses.osiris2.common.* 
 import com.rameses.gov.etracs.rpt.common.*;
 
 public class BldgFloorAdjustmentController
@@ -48,6 +49,7 @@ public class BldgFloorAdjustmentController
                     selectedItem.additionalitem = it;
                     selectedItem.params  = it.params;
                     selectedItem.expr    = it.expr;
+                    selectedItem.basevalue = rpu.basevalue;
                     selectedItem.amount  = svc.calculateAdditionalItemAmount(selectedItem);
                     paramListHandler.load();
                 },

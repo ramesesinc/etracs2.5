@@ -56,12 +56,11 @@ class ReportParameterService{
 				org.provinceassessor = province.assessor 
 			}
 		}
-
-		org.treasurer = lgu.treasurer 
-		org.assessor = lgu.assessor 
-		org.mayor = lgu.mayor 
-		org.governor = lgu.governor 
-		org.address = lgu.address 
+		org.treasurer = lgu?.treasurer 
+		org.assessor = lgu?.assessor 
+		org.mayor = lgu?.mayor 
+		org.governor = lgu?.governor 
+		org.address = lgu?.address 
 
 		def params = [
 			SANGGUNIAN_NAME 			: var.sanggunian_name, 

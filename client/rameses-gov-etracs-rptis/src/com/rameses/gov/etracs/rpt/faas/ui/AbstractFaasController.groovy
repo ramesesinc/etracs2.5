@@ -26,12 +26,17 @@ public abstract class AbstractFaasController extends PageFlowController
     def STATE_CURRENT           = 'CURRENT';
     def STATE_CANCELLED         = 'CANCELLED';
     
-    
+    def entityName = 'faas'
+            
     def entity;
     def initinfo;
     def faas;
     def barangays;
     def mode;
+    
+    def getEntity() {
+        return faas
+    }
     
     @FormId
     public String getFormId(){
@@ -157,12 +162,7 @@ public abstract class AbstractFaasController extends PageFlowController
     void delete(){
         service.deleteFaas(faas);
     }
-    
-    
-    def previewTaxDec(){
-        return InvokerUtil.lookupOpener('tdreport:view', [faas:faas])
-    }
-    
+
     def viewAnnotations(){
         def annotations = svc.getAnnotations(faas.objid)
         return InvokerUtil.lookupOpener('faasannotionlisting:open', [annotations:annotations])
@@ -329,7 +329,8 @@ public abstract class AbstractFaasController extends PageFlowController
          if (mode != MODE_CREATE){
              // faas.rpu = service.openRpu(faas.rpu.objid);
          }
-         faas.rpu.dtappraised = faas.dtappraised
+         def appraiser = faas.signatories.find{it.type == 'appraiser'}
+         faas.rpu.dtappraised = appraiser?.dtsigned
          def opener = faas.rpu.rputype + 'rpu:open'
          return InvokerUtil.lookupOpener(opener, [
                     rpu         : faas.rpu, 

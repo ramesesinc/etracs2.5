@@ -146,3 +146,6 @@ UPDATE consolidation SET state = 'APPROVED' WHERE objid = $P{objid}
 
 [cancelRealProperty]
 UPDATE realproperty SET state = 'CANCELLED' WHERE objid = $P{objid}
+
+[cancelLandLedger]
+UPDATE rptledger SET state = 'CANCELLED' WHERE faasid = $P{faasid}

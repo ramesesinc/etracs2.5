@@ -47,7 +47,7 @@
 	<parameter name="ISSUEDBYTIN" isForPrompting="false" class="java.lang.String"/>
 	<parameter name="REPORTTITLE" isForPrompting="false" class="java.lang.String"/>
 
-	<field name="taxpayername" class="java.lang.String"/>
+	<field name="taxpayer.name" class="java.lang.String"/>
 	<field name="requestedby" class="java.lang.String"/>
 	<field name="purpose" class="java.lang.String"/>
 	<field name="txndate" class="java.util.Date"/>
@@ -60,7 +60,7 @@
 	<field name="items" class="java.lang.Object"/>
 	<field name="footnotes" class="java.lang.Object"/>
 	<field name="byauthority" class="java.lang.String"/>
-	<field name="taxpayeraddress" class="java.lang.String"/>
+	<field name="taxpayer.address" class="java.lang.String"/>
 	<field name="txnno" class="java.lang.String"/>
 	<field name="byauthoritytitle" class="java.lang.String"/>
 	<field name="requestedbyaddress" class="java.lang.String"/>
@@ -141,7 +141,7 @@
 					<textElement textAlignment="Justified" verticalAlignment="Top" rotation="None" isStyledText="true" lineSpacing="1_1_2">
 						<font fontName="Arial" pdfFontName="Helvetica" size="9" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA["                   <style isBold=\"true\">THIS IS TO CERTIFY</style> that per existing records of this Office, as of this date, Mr./Ms. <style isBold=\"true\">  " + $F{taxpayername}.replaceAll("&","&amp;") + "  </style> residing at " + $F{taxpayeraddress} + " is the declared owner of the following real properties."]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA["                   <style isBold=\"true\">THIS IS TO CERTIFY</style> that per existing records of this Office, as of this date, Mr./Ms. <style isBold=\"true\">  " + $F{taxpayer.name}.replaceAll("&","&amp;") + "  </style> residing at " + $F{taxpayer.address} + " is the declared owner of the following real properties."]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement

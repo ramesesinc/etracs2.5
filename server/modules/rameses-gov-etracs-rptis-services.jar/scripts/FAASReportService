@@ -99,7 +99,7 @@ class FaasReportService
 	}
 	
 	private void getOwnerContactNo( faas ) {
-		def info = em.sqlContext.createNamedQuery('entity:getContactNo').setParameter('objid', faas.taxpayerid).singleResult
+		def info = em.sqlContext.createNamedQuery('entity:getContactNo').setParameter('objid', faas.taxpayer.objid).singleResult
 		
 		if( info ) faas.ownercontactno = info.contactno
 	}
