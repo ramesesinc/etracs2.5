@@ -112,8 +112,16 @@
         </antcall>
     </target>
     
+<<<<<<< HEAD
+    <target name="deploy-core-to-platform">
+        <!--
+        <property name="sourcejar" value="${incubation.dir}/${sourcefile}/dist/${sourcefile}.jar"/>
+        -->
+        <property name="sourcejar" value="${devlibs.dir}/${sourcefile}.jar"/>
+=======
     <target name="deploy-etracs-jars-to-platform">
         <property name="sourcejar" value="${etracs.project.dir}/client/${sourcefile}/dist/${sourcefile}.jar"/>
+>>>>>>> 999736f6f989015c706ca6b13643be2233e8764c
         <echo message="====> Copying ${sourcefile}" />
         <copy file="${sourcejar}" todir="${target.web.etracs25.dir}/downloads/modules" failonerror="false"/>
     </target>
@@ -144,7 +152,16 @@
         </copy>
     </target>
     
+<<<<<<< HEAD
+    <target name="build-server" depends="init,copy-osiris3-server,copy-etracs-platform,deploy-etracs-server,deploy-project-shared,deploy-core">
+        
+    </target>
+    
+    <target name="xbuild-server" depends="init,copy-osiris3-server,copy-etracs-platform,deploy-etracs-server,deploy-project-shared,deploy-core">
+        
+=======
     <target name="build-server" depends="init,cleanup,copy-osiris3-server,copy-etracs-platform,deploy-etracs-server,deploy-project-shared, deploy-etracs-client-jars, deploy-devlibs">
+>>>>>>> 999736f6f989015c706ca6b13643be2233e8764c
     </target>
 
 </project>

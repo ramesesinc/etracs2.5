@@ -1,0 +1,88 @@
+import com.rameses.annotations.*;
+import com.rameses.rules.common.*;
+
+public class BusinessAssessmentReportService
+{
+	@ProxyMethod
+	public def buildAssessmentReportInfo( application ){ 
+		def info = [
+			barcode: null,
+			barcodeurl: null,
+			appno: application.appno,
+			apptype: application.apptype,
+			appdate: application.appdate,
+			tradename: application.tradename,
+			businessaddress: application.businessaddress, 
+			permiteeno: null, 
+			permiteename: application.permitee.name,
+			permiteeaddress: application.permitee.address,
+			signatories: null,
+			totalcharge: 0.0,
+			totaltax: 0.0,
+			totalregfee: 0.0,
+			totalamount: 0.0, 
+			applications: [ ],
+		]; 
+		
+		info.applications << addToApplications( info, application )
+		info.laterenewal = '0';
+		
+		//add application data from the late renewal
+		/*
+		em.sqlContext.createNamedQuery('bpapplication:getApplicationByParentId')
+					.setParameter( 'parentid', application.parentid)
+					.resultList.each { 
+						info.laterenewal = '1';		
+						it.taxfees = em.serializer.read( it.taxfees );
+						info.applications << addToApplications ( info, it );
+					}				
+		*/
+		
+		info.signatories = ( !info.signatories ) ? [[name:'', department:'', title:'']] : info.signatories ;
+		return info;
+	}
+	
+	def addToApplications( info, application ) {
+		def map = [ 
+			year : application.iyear,
+			taxes: [],
+			regfees: [],
+			charges:[] 
+		];
+		
+		
+		application.taxfees.each{ itm ->
+			/*
+			def acct = em.read('incomeacct:incomeacct', [objid: itm.acctid]);
+			itm.value = new BigDecimal( itm.value );
+			if( !acct  ) throw new Exception('Income Account with an id ' + acct.objid +' is no longer exist.');
+			else if( acct.systype == 'BUSINESS_TAX' ) addToTax( info, itm, map );
+			else if( acct.systype == 'REG_FEE' ) addToRegFee( info, itm, map );
+			else addToCharge( info, itm, map);
+			info.totalamount += itm.value;
+			*/
+			
+			// This is just a temporary code since taxfees have no 'acctid' field
+			itm.lobname = application.lobs?.find{ it.id == itm.lobid }?.name;
+			addToRegFee( info, itm, map );
+			info.totalamount += itm.value;
+		}
+		return map;
+	}
+	
+	void addToTax( info, fee, map ){
+		map.taxes.add( fee );
+		info.totaltax += fee.value;
+	}
+	
+	void addToRegFee( info, fee, map ){	
+		map.regfees.add( fee );
+		info.totalregfee += fee.value;
+	}
+	
+	void addToCharge( info, fee, map ){
+		map.charges.add( fee );
+		info.totalcharge += fee.value;
+	}  
+	
+}

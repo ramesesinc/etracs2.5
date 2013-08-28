@@ -1,0 +1,5 @@
+STR=string
+DEC=decimal
+INT=integer
+BOOL=boolean
+STRARR=string_array

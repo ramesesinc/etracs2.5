@@ -1,0 +1,61 @@
+<workunit>
+    <invokers>
+        <invoker type="businessapplication:formActions" caption="Business Permit"
+            action="preview" target="window" index="10" />
+    </invokers>
+    
+    <code>
+        <![CDATA[
+        import com.rameses.rcp.common.*;
+        import com.rameses.rcp.annotations.*;
+        import com.rameses.osiris2.client.*;
+        import com.rameses.osiris2.common.*
+        import com.rameses.osiris2.reports.*;
+        
+        class BPLSPermitPrintOut extends ReportModel
+        {
+            /*
+            @Service('ReportParameterService')
+            def svcParams;
+            */
+            
+            @Service('BusinessPermitReportService')
+            def svc;
+            
+            def entity;
+            
+            void preview() {
+                viewReport();
+            }
+            
+            public Map getParameters() {
+                //return svcParams.getStandardParameter( OsirisContext.env.USERNAME );
+                return;
+            }
+            
+            public Object getReportData() {
+                return svc.buildPermitReportInfo( entity );
+            }
+            
+            public String getReportName() {
+                return 'com/rameses/gov/etracs2/bpls/reports/permit/BusinessPermit.jasper';
+            }
+            
+            public SubReport[] getSubReports(){
+                return [
+                    new SubReport("BUSINESSPERMITLOB","com/rameses/gov/etracs2/bpls/reports/permit/BusinessPermitLOB.jasper"),
+                    new SubReport("BUSINESSPERMITLOB_I","com/rameses/gov/etracs2/bpls/reports/permit/BusinessPermitLOB_i.jasper"),
+                    new SubReport("BUSINESSPERMITLOB_II","com/rameses/gov/etracs2/bpls/reports/permit/BusinessPermitLOB_ii.jasper"),
+                    new SubReport("BUSINESSPERMITOR","com/rameses/gov/etracs2/bpls/reports/permit/BusinessPermitOR.jasper")
+                ] as SubReport[];    
+            }   
+        }
+        
+        ]]>
+    </code>
+    
+    <pages>
+        <page template="com.rameses.enterprise.treasury.report.PreviewPage" />
+    </pages>
+    
+</workunit>

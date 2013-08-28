@@ -1,8 +1,5 @@
 <workunit>
-    <invokers>
-        <invoker folderid="/explorer/master/bpls" action="create" caption="Line of Business"/>
-
-                
+    <invokers>       
         <invoker type="quick_launcher" code="LOB01" action="create" caption="Line of Business" xrole="MASTER_ENCODER" xpermission="lob.create"/>
         <invoker type="lob:create" action="init" caption="Line of Business" />
         <invoker type="lob:open" action="open" caption="Line of Business" />
@@ -18,46 +15,34 @@
         class LobController extends CRUDController
         {   
 
-            String serviceName = 'LobMasterService'
+            String serviceName = 'LobService'
             String entityName  = 'lob'
             String prefixId    = 'LOB';
-        
-            def attribute;
             
-            def getLookupAttribute() {
-                return InvokerUtil.lookupOpener('lobattribute:lookup', [onselect:{ attr->
-                    if( !entity.attributes ) entity.attributes = [];
-                    if( !entity.attributes.find{ it.objid == attr.lobattributeid } ){
-                        def a = [:];
-                        a.lobid = entity.objid;
-                        a.lobattributeid = attr.objid;
-                        a.name = attr.name;
-                        entity.attributes << a;
+            def selectedItem;
+            
+            Map createEntity() {
+                return [ attributes:[] ]
+            }
+            
+            def listHandler = [
+                fetchList: {o->
+                    return entity.attributes
+                },
+                onAddItem: {o->
+                    if( entity.attributes.find{ it.objid == o.objid } )
+                        throw new Exception("You have already added this attribute.")
+                    entity.attributes.add(o)
+                },
+                onRemoveItem: {o->
+                    if( MsgBox.confirm("You are about to delete this attribute. Continue?") ) {
+                        entity.attributes.remove(o)
+                        return true
                     }
-                }])
-            }
-            
-            def attributeListHandler = [
-                getColumns : {
-                    return [
-                        new Column(name:'name', caption:'Attribute'),
-                    ]
-                },
-                onRemoveItem : { removeAttribute( it ) },
-                fetchList    : { 
-                    if(entity.attributes==null) entity.attributes = []; 
-                    return entity.attributes 
-                },
-            ] as SubListModel
-
-            void removeAttribute( item ) {
-                if( MsgBox.confirm('Remove selected attribute?') ) {
-                    entity.attributes.remove( item )
+                    return false
                 }
-            }
-            
+            ] as EditorListModel;
         }
-
         ]]>        
         
     </code>
