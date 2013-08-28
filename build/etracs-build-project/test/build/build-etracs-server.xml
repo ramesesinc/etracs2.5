@@ -87,6 +87,9 @@
         <antcall target="deploy-shared-to-platform">
             <param name="sourcefile" value="rameses-rules-developer"/>
         </antcall>
+        <antcall target="deploy-shared-to-platform">
+            <param name="sourcefile" value="rulemgmt"/>
+        </antcall>
     </target>
     
     <target name="deploy-shared-to-platform">
