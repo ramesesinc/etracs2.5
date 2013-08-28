@@ -376,7 +376,7 @@ class BldgRPUService
 		
 		def depreciations = getDepreciations(rpu.bldgtype.objid)
         if( ! depreciations ) throw new Exception('Depreciation schedule for Type ' + rpu.bldgtype.code + ' is not defined.')
-		def depreciationrate = 0
+		def depreciationrate = 0.0
         
 		int bldgage = rpu.bldgage 
         if( bldgage > 0 )  {

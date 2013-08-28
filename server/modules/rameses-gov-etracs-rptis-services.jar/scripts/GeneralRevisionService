@@ -35,6 +35,7 @@ class GeneralRevisionService
 	public def initGeneralRevision( info ) {
 		utilSvc.required('Property to process', info.faas)
 		utilSvc.required('New Revision Year', info.newrysetting)
+		info.txntype = faasSvc.getTxnType('GR');
 		def faas = faasSvc.initFaasTransaction(info)
 		
 		if (faas.rpu.rputype == 'land'){

@@ -142,10 +142,13 @@ class FAASService
 
 	@ProxyMethod
 	public def createFaasOnly( faas ) {
-		validateSignatories(faas)
+		//validateSignatories(faas)
 		faas.utdno = generateUniqueTdNo(faas)
 		faas.rpuid = faas.rpu.objid 
-		faas.txntimestamp = dtSvc.buildCustomTimeStamp(getSignatory(faas, 'approver').dtsigned)
+		def approver = getSignatory(faas, 'approver')
+		if (approver.dtsigned) {
+			faas.txntimestamp = dtSvc.buildCustomTimeStamp(approver.dtsigned)
+		}
 		em.create(SCHEMA_FAAS, faas)
 		signatorySvc.saveSignatories(faas.signatories)
 		faas.previousfaases.each{
@@ -165,7 +168,10 @@ class FAASService
 
 	@ProxyMethod
 	public def updateFaasOnly( faas ) {
-		faas.txntimestamp = dtSvc.buildCustomTimeStamp(getSignatory(faas, 'approver').dtsigned)
+		def approver = getSignatory(faas, 'approver')
+		if (approver.dtsigned) {
+			faas.txntimestamp = dtSvc.buildCustomTimeStamp(approver.dtsigned)
+		}
 		em.update(SCHEMA_FAAS, faas)
 		signatorySvc.saveSignatories(faas.signatories)
 		saveBackTaxes(faas)
@@ -389,7 +395,7 @@ class FAASService
 		newfaas.state 			= STATE_INTERIM
 		newfaas.txntype 		= getTxnType( info.txntype.objid )
 		newfaas.datacapture 	= false
-		newfaas.autonumber 	    = false 
+		newfaas.autonumber 	    = (info.autonumber != null ? info.autonumber : false )
 		newfaas.backtaxyrs   	= 0
 		newfaas.backtaxes 		= []
 		newfaas.effectivityyear = pdate.year + 1
@@ -409,6 +415,10 @@ class FAASService
 		newfaas.titledate		= null
 		newfaas.memoranda		= null
 
+		if (newfaas.autonumber){
+
+		}
+
 		if (newfaas.txntype.newrpu){
 			newfaas.rpu.previd = newfaas.rpu.objid 
 			rpuSvc.generateNewIds(newfaas.rpu)
@@ -418,6 +428,31 @@ class FAASService
 
 		signatorySvc.initSignatories(newfaas, signatories)
 	}
+
+	@ProxyMethod
+    public def generateNextTdNo( faas ) {
+        //TD Formatting Options:
+        // Y - revision year
+        // P - province index 
+        // C - city index 
+        // M - municipality index 
+        // D - district index 
+        // B - barangay index 
+		def seqcount		= utilSvc.toInteger( var.td_autonumber_sequence_count, 5 )
+        def ry              = faas.rpu.ry +''
+        def provindex       = faas.rp.provcityindex 
+        def cityindex       = faas.rp.provcityindex 
+        def muniindex       = faas.rp.munidistrictindex
+        def districtindex   = faas.rp.munidistrictindex
+        def barangayindex   = faas.rp.barangayindex
+        
+        def values = [Y:ry, P:provindex, C:cityindex, M:muniindex, D:districtindex, B:barangayindex]
+        def tdno   = var.td_format 
+        values.keySet().each {
+            tdno = tdno.replace( it, values[it] )
+        }
+        return tdno + '-' + seqSvc.getNextFormattedSeriesA( tdno, seqcount )
+    }
 
 	void clearOwnerInfo(faas){
 		faas.taxpayer  = null
@@ -540,6 +575,14 @@ class FAASService
 			return seqSvc.getNextFormattedSeries(UTDNO_KEY)
 		}
 	}
+
+
+    @ProxyMethod
+    public List getLandImprovements( landfaasid) {
+        return em.sqlContext.createNamedQuery('faas:getLandImprovementIds')
+        		.setParameter('landfaasid', landfaasid )
+        		.resultList 
+    }
 
 	void validateFaasForTransaction(faas){
 		if (faas.state != STATE_CURRENT)

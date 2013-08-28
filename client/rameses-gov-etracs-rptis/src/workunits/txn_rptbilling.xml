@@ -4,6 +4,9 @@
         <invoker folderid="/menu/txn/landtax" action="init"  caption="Realty Tax Billing"
             role="LANDTAX" permission="rptbilling.create" />
             
+        <invoker folderid="/explorer/txn/landtax/txn" action="init"  caption="Realty Tax Billing"
+            role="LANDTAX" permission="rptbilling.create" />
+            
         <invoker type="quick_launcher" code="RPTBILL" action="init"  caption="RPT Billing"  
             role="LANDTAX" permission="rptbilling.create" />
         

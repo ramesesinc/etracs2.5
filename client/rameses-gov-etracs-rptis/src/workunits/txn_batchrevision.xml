@@ -2,6 +2,10 @@
 <workunit>
     <invokers>
         <invoker type="quick_launcher" code="BGR01" action="init" caption="Batch General Revision"  mnemonic="b" role="APPRAISER" permission="batchgr.create"/>
+         <invoker folderid="/explorer/txn/rpt/txn" action="init"  caption="Batch General Revision" index="14" role="APPRAISER" permission="batchgr.create"/>
+        
+        <invoker type="formActions" action="_close" caption="Close" mnemonic="c" immediate="true" icon="images/toolbars/cancel.png" />
+        <invoker type="formActions" action="revise" caption="Revise" mnemonic="r"/>
     </invokers>
     <code class="com.rameses.gov.etracs.rpt.faas.ui.BatchGRController" >
     </code>

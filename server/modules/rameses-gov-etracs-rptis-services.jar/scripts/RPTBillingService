@@ -88,6 +88,8 @@ public class RPTBillingService
 			bill.billdate = dtSvc.serverDate 
 		}
 
+		bill.expirydate = getExpiryDate(bill)
+
 		bill.taxpayerid = bill.taxpayer?.objid 
 		if (! bill.taxpayerid && ! bill.ledgerids)
 			throw new Exception('Either a Taxpayer or Ledger to bill is required.')
@@ -101,8 +103,6 @@ public class RPTBillingService
 		if (!bill.ledgers) 
 			throw new Exception('There are no unpaid ledgers for payment.')
 
-		// bill.expirydate = dtSvc.getMonthEndDate(dtSvc.serverDate)
-		bill.expirydate = getExpiryDate(bill)
 		return bill
 	}
 
@@ -301,10 +301,8 @@ public class RPTBillingService
 	}
 
 	void updateLedgerBillingInfo(bill){
-		//TODO: update next bill date 
-		def nextbilldate = dtSvc.add(bill.expirydate, '1d')
 		def ledgerinfo = [
-			nextbilldate : nextbilldate,
+			nextbilldate : bill.expirydate,
 		]
 		
 		if ( bill.ledgerids && bill.ledgerids.size() > 0) {
@@ -361,9 +359,10 @@ public class RPTBillingService
 							.setParameter('ledgerid', ledger.objid)
 							.singleResult 
 			)
-
+			
 			params.ledgerid = ledger.objid
-			if (bill.forprinting) {
+
+			if (util.toBoolean(bill.forprinting, false) == true ) {
 				ledger.items = em.sqlContext.createNamedQuery('rptbill:getPreviousBilledItemsForPrinting')
 								.setParameters(params)
 								.resultList 

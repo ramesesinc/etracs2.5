@@ -60,7 +60,7 @@ class RPTReceiptController extends com.rameses.enterprise.treasury.controllers.A
             bill.billtoyear = advanceyear;
         }
         
-        bill.putAll(bill.taxpayer)
+        //bill.putAll(bill.taxpayer)
         def openledgercount = billSvc.getOpenLedgerCount(bill)
         
         payoption = PAY_OPTION_BYLEDGER;
