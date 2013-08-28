@@ -15,6 +15,9 @@ abstract class ReportController
     
     @Service('DateService')
     def dtSvc
+            
+    @Service('LGUService')
+    def lguSvc
     
     def mode
     def entity = [:];
@@ -96,7 +99,7 @@ abstract class ReportController
     }
     
     List getBarangays(){
-        return svc.getBarangays([:])
+        return lguSvc.lookupBarangays([:])
     }
     
     List getClassifications(){
