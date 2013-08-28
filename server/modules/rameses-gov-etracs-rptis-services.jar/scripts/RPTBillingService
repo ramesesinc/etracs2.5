@@ -259,6 +259,7 @@ public class RPTBillingService
 
 		//create rptledgerfact 
 		bill.ledgers.each{ rl ->
+			createAssessedValueFacts(map, rl)
 			rl.items.each{
 				resetAssessmentValues(it)
 				def ledger = ruleSvc.createFact(RULESET, FACT_PACKAGE+'RPTLedgerFact')
@@ -276,6 +277,25 @@ public class RPTBillingService
 			}
 		}
 		return map 
+	}
+
+	void createAssessedValueFacts(map, rl){
+		def avyears = var.rptbilling_assessed_value_fact_years
+		if ( !avyears ) return 
+		avyears.split(',').each{ yr ->
+			def ledgerfaas = em.sqlContext.createNamedQuery('rptbill:getLedgerFaasAV')
+					.setParameter('rptledgerid', rl.objid)
+					.setParameter('avyear', yr)
+					.singleResult
+			if (ledgerfaas){
+				def avfact = ruleSvc.createFact(RULESET, FACT_PACKAGE+'AssessedValueFact')
+				avfact.rptledgerid = rl.objid
+				avfact.year  	   = util.toInteger(yr)
+				avfact.assessedvalue  = numSvc.round(ledgerfaas.assessedvalue/4)
+				map.facts << avfact 		
+			}
+		}
+
 	}
 
 	void resetAssessmentValues(item){

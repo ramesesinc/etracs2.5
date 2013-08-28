@@ -226,3 +226,12 @@ WHERE f.objid = rl.faasid
 
  [getLedgersToRecalc]
  SELECT objid FROM rptledger WHERE nextbilldate <= $P{billdate} OR nextbilldate IS NULL
+
+
+ [getLedgerFaasAV]
+ SELECT assessedvalue
+FROM rptledgerfaas rlf
+WHERE rlf.rptledgerid = $P{rptledgerid}
+  AND $P{avyear} >= rlf.fromyear 
+  AND ( $P{avyear} <= rlf.toyear OR rlf.toyear = 0)
+  AND rlf.state = 'APPROVED'
