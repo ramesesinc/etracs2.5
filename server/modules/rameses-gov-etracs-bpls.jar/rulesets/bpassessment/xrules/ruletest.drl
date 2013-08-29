@@ -1,0 +1,49 @@
+package com.rameses.rules.bpassessment;
+import java.util.*;
+
+global com.rameses.rules.common.RuleAction action;
+
+declare Application 
+	apptype:			String
+	businessorgtype:	String
+	barangayid:			String
+end
+
+declare Lob 
+	objid: 				String
+	name:				String
+	classificationid: 	String
+end
+
+declare LobAttribute 
+	objid: 				String
+	lob:				Lob
+	name: 				String
+end
+
+declare Info 
+	lob: 		  	Lob	
+	name: 		  	String
+	varid:			String
+	decimalValue: 	double
+	intValue:	  	int
+	stringValue:	String
+	booleanValue:	boolean 	
+end
+
+
+rule "test rule"
+	agenda-group "APPINFO"
+	when 
+		Application(apptype == "NEW")
+		lob: Lob()
+	then
+		Map m1 = new HashMap();
+		m1.put("name", "GROSS" );
+		m1.put("varid", "gross" );
+		m1.put("title", "Gross" );
+		m1.put("type", "decimal" );
+		m1.put("lobid", lob.getObjid() );
+		action.execute( "ask-info", m1, drools);
+end
+

@@ -1,0 +1,29 @@
+package bpassessment;
+
+declare Application 
+	apptype:			String
+	businessorgtype:	String
+	barangayid:			String
+end
+
+declare Lob 
+	objid: 				String
+	name:				String
+	classificationid: 	String
+end
+
+declare LobAttribute 
+	objid: 				String
+	lob:				Lob
+	name: 				String
+end
+
+declare Info 
+	lob: 		  	Lob	
+	name: 		  	String
+	varid:			String
+	decimalValue: 	double
+	intValue:	  	int
+	stringValue:	String
+	booleanValue:	boolean 	
+end
