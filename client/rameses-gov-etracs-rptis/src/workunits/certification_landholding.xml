@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <workunit extends="rpt_wtemplates/CertificationController.xml">
     <invokers>
-        <invoker folderid="/txn/rpt/cert" action="init" caption="Land Holding" opener="landholding" index="1" 
+        <invoker folderid="/explorer/txn/rpt/cert" action="init" caption="Land Holding" opener="landholding" index="1" 
             role="CERTIFICATION_ISSUER" permission="certification.landholding"/>
             
         <invoker folderid="/menu/txn/rpt/cert" action="init" caption="Land Holding" opener="landholding" index="1" 

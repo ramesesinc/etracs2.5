@@ -1,4 +1,4 @@
-"consolidation.*" [allowEdit == true]{
+"consolidation.*|appraiser.*|recommender.*|taxmapper.*|approver.*" [allowEdit == true]{
     enabled:true;
 }
 
@@ -17,7 +17,7 @@
 
 
 
-"consolidation.*" [allowEdit != true]{
+"consolidation.*|appraiser.*|recommender.*|taxmapper.*|approver.*" [allowEdit != true]{
     enabled:false;
 }
 

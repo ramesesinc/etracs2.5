@@ -27,3 +27,6 @@ DELETE FROM machdetail WHERE machrpuid = $P{objid}
 [deleteAllMachUses]
 DELETE FROM machuse WHERE machrpuid = $P{objid}
 
+
+[getMachRySetting]
+SELECT * FROM machrysetting WHERE ry = $P{ry}

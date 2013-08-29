@@ -33,6 +33,10 @@ class LGUService
     	return brgySvc.getById(objid)
     }
 
+    @ProxyMethod
+    public def lookupBarangaysByParentid(parentid) {
+        return brgySvc.getListByParentid( parentid )
+    }
 
     @ProxyMethod
     public def lookupMunicipalities(params) {
@@ -61,6 +65,11 @@ class LGUService
     @ProxyMethod
     public def lookupDistricts(params) {
     	return distSvc.getList(params)
+    }
+
+    @ProxyMethod
+    public def lookupDistrictsByParentid(parentid) {
+        return distSvc.getListByParentid( parentid )
     }
 
 

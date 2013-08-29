@@ -39,13 +39,13 @@ public class MachRYSettingPage extends javax.swing.JPanel {
         xLookupField1 = new com.rameses.rcp.control.XLookupField();
         formPanel1 = new com.rameses.rcp.util.FormPanel();
         xNumberField1 = new com.rameses.rcp.control.XNumberField();
+        xDecimalField1 = new com.rameses.rcp.control.XDecimalField();
 
         setLayout(new java.awt.BorderLayout());
 
         xDataTable1.setHandler("assessLevelListHandler");
         xDataTable1.setImmediate(true);
         xDataTable1.setName("selectedAssessLevel");
-        xDataTable1.setShowRowHeader(true);
 
         com.rameses.rcp.control.border.XTitledBorder xTitledBorder1 = new com.rameses.rcp.control.border.XTitledBorder();
         xTitledBorder1.setTitle("Non-Fixed Rate Assessment Levels");
@@ -54,7 +54,6 @@ public class MachRYSettingPage extends javax.swing.JPanel {
         xDataTable2.setDynamic(true);
         xDataTable2.setHandler("rangeLevelListHandler");
         xDataTable2.setName("selectedRange");
-        xDataTable2.setShowRowHeader(true);
 
         org.jdesktop.layout.GroupLayout jPanel1Layout = new org.jdesktop.layout.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -81,7 +80,6 @@ public class MachRYSettingPage extends javax.swing.JPanel {
         xDataTable3.setHandler("forexListHandler");
         xDataTable3.setImmediate(true);
         xDataTable3.setName("selectedForex");
-        xDataTable3.setShowRowHeader(true);
 
         org.jdesktop.layout.GroupLayout jPanel2Layout = new org.jdesktop.layout.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -135,13 +133,20 @@ public class MachRYSettingPage extends javax.swing.JPanel {
 
         formPanel1.setCellpadding(new java.awt.Insets(0, 0, 0, 10));
         formPanel1.setCellspacing(0);
-        formPanel1.setOrientation("HORIZONTAL");
+        formPanel1.setOrientation(com.rameses.rcp.constant.UIConstants.HORIZONTAL);
         xNumberField1.setCaption("Revision Year");
         xNumberField1.setCaptionWidth(100);
         xNumberField1.setFieldType(Integer.class);
         xNumberField1.setName("entity.ry");
         xNumberField1.setRequired(true);
         formPanel1.add(xNumberField1);
+
+        xDecimalField1.setCaption("Residual Rate");
+        xDecimalField1.setCaptionWidth(100);
+        xDecimalField1.setName("entity.residualrate");
+        xDecimalField1.setPreferredSize(new java.awt.Dimension(80, 20));
+        xDecimalField1.setRequired(true);
+        formPanel1.add(xDecimalField1);
 
         org.jdesktop.layout.GroupLayout jPanel7Layout = new org.jdesktop.layout.GroupLayout(jPanel7);
         jPanel7.setLayout(jPanel7Layout);
@@ -180,6 +185,7 @@ public class MachRYSettingPage extends javax.swing.JPanel {
     private com.rameses.rcp.control.XDataTable xDataTable2;
     private com.rameses.rcp.control.XDataTable xDataTable3;
     private com.rameses.rcp.control.XDataTable xDataTable4;
+    private com.rameses.rcp.control.XDecimalField xDecimalField1;
     private com.rameses.rcp.control.XLookupField xLookupField1;
     private com.rameses.rcp.control.XNumberField xNumberField1;
     // End of variables declaration//GEN-END:variables

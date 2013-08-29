@@ -26,6 +26,8 @@ public class SubdividedLandController
     def parcel  = 0;
     def step;  //rp, rpu
     
+    String title = 'Subdivided Land Information';
+    
     def create() {
         subdividedland =  svc.initSubdividedLand( subdivision )
         rp = subdividedland.rp 
@@ -99,8 +101,24 @@ public class SubdividedLandController
         return InvokerUtil.lookupOpener('landrpu:open', [rpu:rpu, lguid:subdivision.motherfaas.lguid])
     }
 
+    
+            
+    def getLookupTaxpayer(){
+        return InvokerUtil.lookupOpener('entity:lookup',[
+            onselect : { 
+                subdividedland.taxpayer = it;
+                subdividedland.owner    = it;
+            },
+            onempty  : { 
+                subdividedland.taxpayer = null;
+                subdividedland.owner    = null;
+            } 
+        ])
+    }
+    
     def close(){
         return '_close'
     }
+    
     
 }

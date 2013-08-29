@@ -21,9 +21,6 @@ public class ModifyPINUtilityController {
     @Service('RPTUtilityService') 
     def svc 
     
-    @Service('FaasService')
-    def faasSvc
-    
     @Service('LGUService')
     def lguSvc
     
@@ -223,19 +220,21 @@ public class ModifyPINUtilityController {
     
     List getMunicityList() {
         if( !faas ) return []
+        if( lgutype == 'city' || lgutype == 'CITY' )
+            return lguSvc.lookupCities([:]);
         
-        return faasSvc.getLgus()
+        return lguSvc.lookupMunicipalities([:]);
     }
     
     List getDistrictList() {
-        return lguSvc.lookupDistricts( [parentid:municity?.objid] )
+        return lguSvc.lookupDistrictsByParentid( municity?.objid )
     }
     
     List getBarangayList() {
         if( lgutype == 'city' || lgutype == 'CITY' )
-            return faasSvc.getBarangays( [parentid:district?.objid] )
+            return lguSvc.lookupBarangaysByParentid( district?.objid )
         
-        return faasSvc.getBarangays( [parentid:municity?.objid] )
+        return lguSvc.lookupBarangaysByParentid( municity?.objid )
     }
     
 }

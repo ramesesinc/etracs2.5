@@ -92,7 +92,7 @@ class RPTTaxClearanceService
         util.required('Taxpayer', cert.taxpayer.objid)
         util.required('Year', cert.year)
         util.required('Qtr', cert.qtr)
-
+        cert.taxpayerid = cert.taxpayer.objid 
         return em.sqlContext.createNamedQuery('rpttaxclearance:getClearedLedgers')
                 .setParameters(cert)
                 .resultList 

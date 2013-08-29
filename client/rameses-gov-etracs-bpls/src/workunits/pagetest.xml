@@ -1,0 +1,70 @@
+<workunit >
+    <invokers>
+        <invoker folderid="/menu/txn" caption="Page Test"  target="window" index="10" />
+    </invokers>
+    
+    <code>
+        <![CDATA[
+        import com.rameses.rcp.common.*;
+        import com.rameses.rcp.annotations.*;
+        import com.rameses.osiris2.client.*;
+        import com.rameses.osiris2.common.*
+        import java.rmi.server.*;
+        
+        class PageTest {
+        
+            @Service("RuleInfoService")
+            def svc;
+        
+            def data;
+            def entity = [:];
+            
+            void reload() {
+                data = svc.getRuleHtml(entity);
+            }
+            
+            def getData() {
+                return data;
+            }
+            
+            def addCondition(def m) {
+               return InvokerUtil.lookupOpener( "xruleaction:condition", [:] );
+            }
+            
+            def addConstraint(def m) {
+                return InvokerUtil.lookupOpener( "xrule:constraint", [pos:m.pos] );
+            }
+
+            def editConstraint(def m) {
+                MsgBox.alert( "edit constraint " + m );
+                return null;
+            }
+
+            def removeConstraint(def m) {
+                MsgBox.alert( "remove constraint " + m );
+                return null;
+            }
+            
+            def addAction(def m) {
+                MsgBox.alert( "add action " + m );
+            }
+
+            def editAction(def m) {
+                MsgBox.alert( "add action " + m );
+            }
+
+            def removeAction(def m) {
+                MsgBox.alert( "add action " + m );
+            }
+
+        }
+        
+        ]]>
+    </code>
+    
+    <pages>
+        <page template="com.rameses.gov.etracs.bpls.rules.facts.RulePage" />
+    </pages>
+    
+    
+</workunit>

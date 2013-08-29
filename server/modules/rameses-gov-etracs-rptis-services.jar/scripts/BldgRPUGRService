@@ -21,9 +21,13 @@ class BldgRPUGRService
 	@Service('RPTUtil')
 	def util
 
+	@Service('DateService')
+	def dtSvc 
+
 	
 	@ProxyMethod
 	public def reviseBldgRpu(rpu){
+		rpu.dtappraised = dtSvc.serverDate 
 		rpu.bldgtype = lookupSvc.lookupBldgTypeByPrevId(rpu.bldgtype.objid)
 
 		rpu.basevalue = 0;

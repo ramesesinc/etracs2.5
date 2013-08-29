@@ -4,6 +4,7 @@
         <invoker type="faas_DC:open" action="open" caption="FAAS" role="APPRAISER" permission="faas.read" />
         
          <invoker folderid="/menu/txn/rpt/faas" action="initCapture"  caption="Data Capture" index="500" newrpu="true" newrealproperty="true"  role="APPRAISER" permission="faas.createDataCapture"/>
+         <invoker folderid="/explorer/txn/rpt/txn" action="initCapture"  caption="Data Capture" index="500" newrpu="true" newrealproperty="true"  role="APPRAISER" permission="faas.createDataCapture"/>
          <invoker type="quick_launcher" code="DC01" action="initCapture"  caption="Data Capture" index="500" newrpu="true" newrealproperty="true"  role="APPRAISER" permission="faas.createDataCapture"/>
     </invokers>
         

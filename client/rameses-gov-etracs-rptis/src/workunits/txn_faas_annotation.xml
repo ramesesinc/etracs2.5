@@ -8,6 +8,9 @@
          
          <invoker folderid="/menu/txn/rpt/faas" action="init"  caption="Annotation" index="21" 
             role="APPRAISER" permission="annotation.create"/>
+            
+        <invoker folderid="/explorer/txn/rpt/txn" action="init"  caption="Annotation" index="21" 
+            role="APPRAISER" permission="annotation.create"/>
          
          <invoker type="quick_launcher" code="FA01" action="init"  caption="Annotation" index="21" 
             role="APPRAISER" permission="annotation.create"/>

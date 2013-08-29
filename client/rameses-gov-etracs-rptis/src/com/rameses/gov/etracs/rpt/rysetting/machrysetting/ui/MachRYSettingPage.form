@@ -89,7 +89,6 @@
                     <Property name="handler" type="java.lang.String" value="assessLevelListHandler"/>
                     <Property name="immediate" type="boolean" value="true"/>
                     <Property name="name" type="java.lang.String" value="selectedAssessLevel"/>
-                    <Property name="showRowHeader" type="boolean" value="true"/>
                   </Properties>
                 </Component>
                 <Component class="com.rameses.rcp.control.XDataTable" name="xDataTable2">
@@ -107,7 +106,6 @@
                     <Property name="dynamic" type="boolean" value="true"/>
                     <Property name="handler" type="java.lang.String" value="rangeLevelListHandler"/>
                     <Property name="name" type="java.lang.String" value="selectedRange"/>
-                    <Property name="showRowHeader" type="boolean" value="true"/>
                   </Properties>
                 </Component>
               </SubComponents>
@@ -147,7 +145,6 @@
                     <Property name="handler" type="java.lang.String" value="forexListHandler"/>
                     <Property name="immediate" type="boolean" value="true"/>
                     <Property name="name" type="java.lang.String" value="selectedForex"/>
-                    <Property name="showRowHeader" type="boolean" value="true"/>
                   </Properties>
                 </Component>
               </SubComponents>
@@ -229,6 +226,17 @@
                   <Connection code="Integer.class" type="code"/>
                 </Property>
                 <Property name="name" type="java.lang.String" value="entity.ry"/>
+                <Property name="required" type="boolean" value="true"/>
+              </Properties>
+            </Component>
+            <Component class="com.rameses.rcp.control.XDecimalField" name="xDecimalField1">
+              <Properties>
+                <Property name="caption" type="java.lang.String" value="Residual Rate"/>
+                <Property name="captionWidth" type="int" value="100"/>
+                <Property name="name" type="java.lang.String" value="entity.residualrate"/>
+                <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                  <Dimension value="[80, 20]"/>
+                </Property>
                 <Property name="required" type="boolean" value="true"/>
               </Properties>
             </Component>

@@ -35,6 +35,7 @@ class GeneralRevisionService
 	public def initGeneralRevision( info ) {
 		utilSvc.required('Property to process', info.faas)
 		utilSvc.required('New Revision Year', info.newrysetting)
+		info.txntype = faasSvc.getTxnType('GR');
 		def faas = faasSvc.initFaasTransaction(info)
 		
 		if (faas.rpu.rputype == 'land'){
@@ -67,6 +68,9 @@ class GeneralRevisionService
 	/* returns the list of revision settings which is greater than the specified ry*/
 	@ProxyMethod
 	public def getRyList(lguid, ry, rputype ) {
+		lguid = (lguid ? lguid : var.lgu_objid)
+		ry = (ry == null ? var.current_ry : ry)
+		rputype = (rputype ? rputype : 'LAND')
 		return em.sqlContext.createNamedQuery('generalrevision:getRyList' + rputype.toUpperCase())
 				.setParameters([lguid:lguid, ry:ry]).resultList 
 	}

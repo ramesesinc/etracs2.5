@@ -39,12 +39,10 @@ class FaasReportService
 		def district = lguSvc.lookupDistrictById(faas.rpu.rp.barangay.parentid)
 		def prov = lguSvc.lookupProvinceById(muni?.parentid)
 		def city = lguSvc.lookupCityById(district?.parentid)
-		
-		faas.munidistrict = muni ? muni.name : district.name 
-		faas.provcity = prov ? prov.name : city.name
-		
-		// contactno not yet implemented....
-		// getOwnerContactNo( faas )
+		faas.propertylocation = ( muni ? muni.name + ', ' : '') + ( prov ? prov.name : city.name )
+
+		getOwnerContactNo( faas )
+		loadSignatories(faas)
 		
 		if( faas.rpu.rputype == 'land' ) { 
 			faas.landappraisals = getLandDetails( faas.rpu )
@@ -99,9 +97,13 @@ class FaasReportService
 	}
 	
 	private void getOwnerContactNo( faas ) {
-		def info = em.sqlContext.createNamedQuery('entity:getContactNo').setParameter('objid', faas.taxpayer.objid).singleResult
-		
-		if( info ) faas.ownercontactno = info.contactno
+		def list = em.sqlContext.createNamedQuery('entity:getContacts').setParameter('objid', faas.taxpayer.objid).resultList
+			
+		if( list ) {
+			def contacts = []
+			list.each { contacts << it.contact }
+			faas.ownercontactno = contacts.join("/") 
+		}
 	}
 	
 	private def getLandDetails( rpu ) {
@@ -601,5 +603,15 @@ class FaasReportService
 			listlimitsize = listlimitsize - ( data.size - listlimitsize )
 			
 		return listlimitsize
+	}
+
+	private void loadSignatories(faas) {
+	    def appraiser = faas.signatories.find{it.type == 'appraiser'};
+        def recommender = faas.signatories.find{it.type == 'recommender'};
+        def approver = faas.signatories.find{it.type == 'approver'};
+        faas.appraiser = (appraiser ? appraiser : [:])
+        faas.recommender = (recommender ? recommender : [:])
+        faas.approver = (approver ? approver : [:])
+
 	}
 }

@@ -116,16 +116,16 @@ class SubdivisionService
  	@ProxyMethod
  	public def deleteSubdivision( subdivision ) {
  		getSubdividedLands(subdivision.objid).each{ sl ->
+            deleteSubdividedLand(sl)
             faasSvc.deleteFaasById(sl.newfaasid)
  			def rpu = rpuSvc.openRpu(sl.newrpuid)
             if (rpu ) rpuSvc.deleteRpu(rpu)
-            deleteSubdividedLand(sl)
  		}
         getAffectedRpus(subdivision.objid).each{arpu ->
+            em.delete(SCHEMA_AFFECTED_RPU, arpu)
             faasSvc.deleteFaasById(arpu.newfaasid)
             def rpu = rpuSvc.openRpu(arpu.newrpuid)
             if (rpu ) rpuSvc.deleteRpu(rpu)
-            em.delete(SCHEMA_AFFECTED_RPU, arpu)
         }
         workflowRef.deleteAll(subdivision.objid)
         txnRef.delete(subdivision.objid)
@@ -173,7 +173,9 @@ class SubdivisionService
     public def updateSubdividedLand( sland ) {
         sland.newutdno = faasSvc.generateUniqueTdNo(sland)
         validateSubdividedLand(sland)
-        rpuSvc.updateRpu(sland.rpu)
+        if (sland.rpu){
+            rpuSvc.updateRpu(sland.rpu)
+        }
         em.save(SCHEMA_SUBDIVIDED_LAND, sland)
         return sland 
     }

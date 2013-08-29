@@ -824,7 +824,7 @@ LIMIT $P{topn}
 
 [generateTopNDelinquentTaxpayer]
 SELECT 
-	tmp.ownername,
+	tmp.owner_name AS ownername,
 	COUNT(tmp.objid) AS rpucount,
 	SUM(tmp.totalav) AS totalav,
 	SUM(tmp.amount) AS amount
@@ -847,5 +847,5 @@ FROM (
 	ORDER BY amount DESC
 	LIMIT $P{topn}
 ) tmp	
-GROUP BY tmp.ownername 
+GROUP BY tmp.owner_name 
 

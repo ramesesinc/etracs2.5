@@ -74,7 +74,8 @@ ORDER BY rlf.fromyear DESC
 [getLedgerItems]
 SELECT 
 	rli.objid, rli.year, rli.qtr,
-	rli.basic,	rli.basicpaid,  rli.sef, rli.sefpaid,
+	rli.basic, rli.basicint, rli.basicdisc,	rli.basicpaid,  
+	rli.sef, rli.sefpaid, rli.sefint, rli.sefdisc, 
 	rli.assessedvalue, rli.qtrlyav,
 	rlf.tdno 
 FROM rptledgeritem rli
@@ -108,3 +109,21 @@ WHERE objid = $P{objid}
 UPDATE rptledger SET 
 	nextbilldate = NULL 
 WHERE state = 'APPROVED'
+
+
+[getLedgerCredits]
+SELECT 
+	cr.receiptno,
+	cr.txndate, 
+	cr.txnmode, 
+	cr.paidby, 
+	SUM(basic - basicdisc + basicint) AS basic,
+	SUM(sef - sefdisc + sefint) AS sef,
+	CONCAT(MIN(CONCAT(cri.qtr, 'Q,', cri.year)), '-', MAX(CONCAT(cri.qtr, 'Q,', cri.year))) AS period,
+	SUM(basic - basicdisc + basicint + sef - sefdisc + sefint) AS total
+FROM cashreceipt cr 
+	INNER JOIN cashreceipt_rpt_item cri ON cr.objid = cri.rptreceiptid
+	LEFT JOIN cashreceipt_void v ON cr.objid = v.receiptid 
+WHERE 	cri.rptledgerid = $P{rptledgerid}
+ AND v.objid IS NULL 
+GROUP BY cr.objid  	

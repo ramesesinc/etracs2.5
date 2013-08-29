@@ -62,14 +62,6 @@ public class RPTLedgerPage extends javax.swing.JPanel {
         xDataTable3 = new com.rameses.rcp.control.XDataTable();
         jPanel3 = new javax.swing.JPanel();
         xDataTable2 = new com.rameses.rcp.control.XDataTable();
-        formPanel6 = new com.rameses.rcp.util.FormPanel();
-        xNumberField2 = new com.rameses.rcp.control.XNumberField();
-        xNumberField4 = new com.rameses.rcp.control.XNumberField();
-        xNumberField5 = new com.rameses.rcp.control.XNumberField();
-        formPanel7 = new com.rameses.rcp.util.FormPanel();
-        xNumberField3 = new com.rameses.rcp.control.XNumberField();
-        xNumberField6 = new com.rameses.rcp.control.XNumberField();
-        xNumberField7 = new com.rameses.rcp.control.XNumberField();
         jPanel5 = new javax.swing.JPanel();
         formPanel8 = new com.rameses.rcp.util.FormPanel();
         xCheckBox1 = new com.rameses.rcp.control.XCheckBox();
@@ -259,16 +251,136 @@ public class RPTLedgerPage extends javax.swing.JPanel {
         xButton2.setText("Edit");
 
         xDataTable1.setColumns(new com.rameses.rcp.common.Column[]{
-            new com.rameses.rcp.common.Column("tdno", "TD No.", 130, 0, 0, false, true, true, false, null, new com.rameses.rcp.common.TextColumnHandler()),
-            new com.rameses.rcp.common.Column("txntype.objid", "Txn Type", 60, 0, 0, false, true, true, false, null, new com.rameses.rcp.common.TextColumnHandler()),
-            new com.rameses.rcp.common.Column("classification.code", "Class", 50, 0, 0, false, true, true, false, null, new com.rameses.rcp.common.TextColumnHandler()),
-            new com.rameses.rcp.common.Column("fromyear", "From Year", 70, 0, 0, false, true, true, false, null, new com.rameses.rcp.common.IntegerColumnHandler("0000", -1, -1)),
-            new com.rameses.rcp.common.Column("fromqtr", "From Qtr", 70, 0, 0, false, true, true, false, null, new com.rameses.rcp.common.IntegerColumnHandler("0", -1, -1)),
-            new com.rameses.rcp.common.Column("toyear", "To Year", 70, 0, 0, false, true, true, false, null, new com.rameses.rcp.common.IntegerColumnHandler("0000", -1, -1)),
-            new com.rameses.rcp.common.Column("toqtr", "To Qtr", 70, 0, 0, false, true, true, false, null, new com.rameses.rcp.common.IntegerColumnHandler("0", -1, -1)),
-            new com.rameses.rcp.common.Column("taxable", "Tax?", 60, 0, 0, false, true, true, false, null, new com.rameses.rcp.common.CheckBoxColumnHandler(java.lang.Boolean.class, true, false)),
-            new com.rameses.rcp.common.Column("backtax", "Back Tax?", 80, 0, 0, false, true, true, false, null, new com.rameses.rcp.common.CheckBoxColumnHandler(java.lang.Boolean.class, true, false)),
-            new com.rameses.rcp.common.Column("assessedvalue", "Assessed Value", 100, 0, 0, false, true, true, false, null, new com.rameses.rcp.common.DecimalColumnHandler("#,##0.00", -1.0, -1.0, false))
+            new com.rameses.rcp.common.Column(new Object[]{
+                new Object[]{"name", "tdno"}
+                , new Object[]{"caption", "TD No."}
+                , new Object[]{"width", 130}
+                , new Object[]{"minWidth", 0}
+                , new Object[]{"maxWidth", 0}
+                , new Object[]{"required", false}
+                , new Object[]{"resizable", true}
+                , new Object[]{"nullWhenEmpty", true}
+                , new Object[]{"editable", false}
+                , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
+                , new Object[]{"typeHandler", new com.rameses.rcp.common.TextColumnHandler()}
+            }),
+            new com.rameses.rcp.common.Column(new Object[]{
+                new Object[]{"name", "txntype.objid"}
+                , new Object[]{"caption", "Txn Type"}
+                , new Object[]{"width", 60}
+                , new Object[]{"minWidth", 0}
+                , new Object[]{"maxWidth", 0}
+                , new Object[]{"required", false}
+                , new Object[]{"resizable", true}
+                , new Object[]{"nullWhenEmpty", true}
+                , new Object[]{"editable", false}
+                , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
+                , new Object[]{"typeHandler", new com.rameses.rcp.common.TextColumnHandler()}
+            }),
+            new com.rameses.rcp.common.Column(new Object[]{
+                new Object[]{"name", "classification.code"}
+                , new Object[]{"caption", "Class"}
+                , new Object[]{"width", 50}
+                , new Object[]{"minWidth", 0}
+                , new Object[]{"maxWidth", 0}
+                , new Object[]{"required", false}
+                , new Object[]{"resizable", true}
+                , new Object[]{"nullWhenEmpty", true}
+                , new Object[]{"editable", false}
+                , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
+                , new Object[]{"typeHandler", new com.rameses.rcp.common.TextColumnHandler()}
+            }),
+            new com.rameses.rcp.common.Column(new Object[]{
+                new Object[]{"name", "fromyear"}
+                , new Object[]{"caption", "From Year"}
+                , new Object[]{"width", 70}
+                , new Object[]{"minWidth", 0}
+                , new Object[]{"maxWidth", 0}
+                , new Object[]{"required", false}
+                , new Object[]{"resizable", true}
+                , new Object[]{"nullWhenEmpty", true}
+                , new Object[]{"editable", false}
+                , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
+                , new Object[]{"typeHandler", new com.rameses.rcp.common.IntegerColumnHandler("0000", -1, -1)}
+            }),
+            new com.rameses.rcp.common.Column(new Object[]{
+                new Object[]{"name", "fromqtr"}
+                , new Object[]{"caption", "From Qtr"}
+                , new Object[]{"width", 70}
+                , new Object[]{"minWidth", 0}
+                , new Object[]{"maxWidth", 0}
+                , new Object[]{"required", false}
+                , new Object[]{"resizable", true}
+                , new Object[]{"nullWhenEmpty", true}
+                , new Object[]{"editable", false}
+                , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
+                , new Object[]{"typeHandler", new com.rameses.rcp.common.IntegerColumnHandler("0", -1, -1)}
+            }),
+            new com.rameses.rcp.common.Column(new Object[]{
+                new Object[]{"name", "toyear"}
+                , new Object[]{"caption", "To Year"}
+                , new Object[]{"width", 70}
+                , new Object[]{"minWidth", 0}
+                , new Object[]{"maxWidth", 0}
+                , new Object[]{"required", false}
+                , new Object[]{"resizable", true}
+                , new Object[]{"nullWhenEmpty", true}
+                , new Object[]{"editable", false}
+                , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
+                , new Object[]{"typeHandler", new com.rameses.rcp.common.IntegerColumnHandler("0000", -1, -1)}
+            }),
+            new com.rameses.rcp.common.Column(new Object[]{
+                new Object[]{"name", "toqtr"}
+                , new Object[]{"caption", "To Qtr"}
+                , new Object[]{"width", 70}
+                , new Object[]{"minWidth", 0}
+                , new Object[]{"maxWidth", 0}
+                , new Object[]{"required", false}
+                , new Object[]{"resizable", true}
+                , new Object[]{"nullWhenEmpty", true}
+                , new Object[]{"editable", false}
+                , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
+                , new Object[]{"typeHandler", new com.rameses.rcp.common.IntegerColumnHandler("0", -1, -1)}
+            }),
+            new com.rameses.rcp.common.Column(new Object[]{
+                new Object[]{"name", "taxable"}
+                , new Object[]{"caption", "Tax?"}
+                , new Object[]{"width", 60}
+                , new Object[]{"minWidth", 0}
+                , new Object[]{"maxWidth", 0}
+                , new Object[]{"required", false}
+                , new Object[]{"resizable", true}
+                , new Object[]{"nullWhenEmpty", true}
+                , new Object[]{"editable", false}
+                , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
+                , new Object[]{"typeHandler", new com.rameses.rcp.common.CheckBoxColumnHandler(java.lang.Boolean.class, true, false)}
+            }),
+            new com.rameses.rcp.common.Column(new Object[]{
+                new Object[]{"name", "backtax"}
+                , new Object[]{"caption", "Back Tax?"}
+                , new Object[]{"width", 80}
+                , new Object[]{"minWidth", 0}
+                , new Object[]{"maxWidth", 0}
+                , new Object[]{"required", false}
+                , new Object[]{"resizable", true}
+                , new Object[]{"nullWhenEmpty", true}
+                , new Object[]{"editable", false}
+                , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
+                , new Object[]{"typeHandler", new com.rameses.rcp.common.CheckBoxColumnHandler(java.lang.Boolean.class, true, false)}
+            }),
+            new com.rameses.rcp.common.Column(new Object[]{
+                new Object[]{"name", "assessedvalue"}
+                , new Object[]{"caption", "Assessed Value"}
+                , new Object[]{"width", 100}
+                , new Object[]{"minWidth", 0}
+                , new Object[]{"maxWidth", 0}
+                , new Object[]{"required", false}
+                , new Object[]{"resizable", true}
+                , new Object[]{"nullWhenEmpty", true}
+                , new Object[]{"editable", false}
+                , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
+                , new Object[]{"typeHandler", new com.rameses.rcp.common.DecimalColumnHandler("#,##0.00", -1.0, -1.0, false)}
+            })
         });
         xDataTable1.setHandler("historyListHandler");
         xDataTable1.setImmediate(true);
@@ -310,15 +422,123 @@ public class RPTLedgerPage extends javax.swing.JPanel {
         jTabbedPane1.addTab("FAAS History", jPanel2);
 
         xDataTable3.setColumns(new com.rameses.rcp.common.Column[]{
-            new com.rameses.rcp.common.Column("tdno", "TD No.", 100, 0, 0, false, true, true, false, null, new com.rameses.rcp.common.TextColumnHandler()),
-            new com.rameses.rcp.common.Column("year", "Year", 100, 0, 0, false, true, true, false, null, new com.rameses.rcp.common.IntegerColumnHandler("0000", -1, -1)),
-            new com.rameses.rcp.common.Column("qtr", "Qtr", 100, 0, 0, false, true, true, false, null, new com.rameses.rcp.common.IntegerColumnHandler("0", -1, -1)),
-            new com.rameses.rcp.common.Column("assessedvalue", "Assessed Value", 100, 0, 0, false, true, true, false, null, new com.rameses.rcp.common.DecimalColumnHandler("#,##0.00", -1.0, -1.0, false)),
-            new com.rameses.rcp.common.Column("qtrlyav", "Qtrly A.V.", 100, 0, 0, false, true, true, false, null, new com.rameses.rcp.common.DecimalColumnHandler("#,##0.00", -1.0, -1.0, false)),
-            new com.rameses.rcp.common.Column("basic", "Basic", 100, 0, 0, false, true, true, false, null, new com.rameses.rcp.common.DecimalColumnHandler("#,##0.00", -1.0, -1.0, false)),
-            new com.rameses.rcp.common.Column("basicpaid", "Basic Paid", 100, 0, 0, false, true, true, false, null, new com.rameses.rcp.common.DecimalColumnHandler("#,##0.00", -1.0, -1.0, false)),
-            new com.rameses.rcp.common.Column("sef", "SEF", 100, 0, 0, false, true, true, false, null, new com.rameses.rcp.common.DecimalColumnHandler("#,##0.00", -1.0, -1.0, false)),
-            new com.rameses.rcp.common.Column("sefpaid", "SEF Paid", 100, 0, 0, false, true, true, false, null, new com.rameses.rcp.common.DecimalColumnHandler("#,##0.00", -1.0, -1.0, false))
+            new com.rameses.rcp.common.Column(new Object[]{
+                new Object[]{"name", "tdno"}
+                , new Object[]{"caption", "TD No."}
+                , new Object[]{"width", 100}
+                , new Object[]{"minWidth", 0}
+                , new Object[]{"maxWidth", 0}
+                , new Object[]{"required", false}
+                , new Object[]{"resizable", true}
+                , new Object[]{"nullWhenEmpty", true}
+                , new Object[]{"editable", false}
+                , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
+                , new Object[]{"typeHandler", new com.rameses.rcp.common.TextColumnHandler()}
+            }),
+            new com.rameses.rcp.common.Column(new Object[]{
+                new Object[]{"name", "year"}
+                , new Object[]{"caption", "Year"}
+                , new Object[]{"width", 100}
+                , new Object[]{"minWidth", 0}
+                , new Object[]{"maxWidth", 0}
+                , new Object[]{"required", false}
+                , new Object[]{"resizable", true}
+                , new Object[]{"nullWhenEmpty", true}
+                , new Object[]{"editable", false}
+                , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
+                , new Object[]{"typeHandler", new com.rameses.rcp.common.IntegerColumnHandler("0000", -1, -1)}
+            }),
+            new com.rameses.rcp.common.Column(new Object[]{
+                new Object[]{"name", "qtr"}
+                , new Object[]{"caption", "Qtr"}
+                , new Object[]{"width", 100}
+                , new Object[]{"minWidth", 0}
+                , new Object[]{"maxWidth", 0}
+                , new Object[]{"required", false}
+                , new Object[]{"resizable", true}
+                , new Object[]{"nullWhenEmpty", true}
+                , new Object[]{"editable", false}
+                , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
+                , new Object[]{"typeHandler", new com.rameses.rcp.common.IntegerColumnHandler("0", -1, -1)}
+            }),
+            new com.rameses.rcp.common.Column(new Object[]{
+                new Object[]{"name", "assessedvalue"}
+                , new Object[]{"caption", "Assessed Value"}
+                , new Object[]{"width", 100}
+                , new Object[]{"minWidth", 0}
+                , new Object[]{"maxWidth", 0}
+                , new Object[]{"required", false}
+                , new Object[]{"resizable", true}
+                , new Object[]{"nullWhenEmpty", true}
+                , new Object[]{"editable", false}
+                , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
+                , new Object[]{"typeHandler", new com.rameses.rcp.common.DecimalColumnHandler("#,##0.00", -1.0, -1.0, false)}
+            }),
+            new com.rameses.rcp.common.Column(new Object[]{
+                new Object[]{"name", "qtrlyav"}
+                , new Object[]{"caption", "Qtrly A.V."}
+                , new Object[]{"width", 100}
+                , new Object[]{"minWidth", 0}
+                , new Object[]{"maxWidth", 0}
+                , new Object[]{"required", false}
+                , new Object[]{"resizable", true}
+                , new Object[]{"nullWhenEmpty", true}
+                , new Object[]{"editable", false}
+                , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
+                , new Object[]{"typeHandler", new com.rameses.rcp.common.DecimalColumnHandler("#,##0.00", -1.0, -1.0, false)}
+            }),
+            new com.rameses.rcp.common.Column(new Object[]{
+                new Object[]{"name", "basic"}
+                , new Object[]{"caption", "Basic"}
+                , new Object[]{"width", 100}
+                , new Object[]{"minWidth", 0}
+                , new Object[]{"maxWidth", 0}
+                , new Object[]{"required", false}
+                , new Object[]{"resizable", true}
+                , new Object[]{"nullWhenEmpty", true}
+                , new Object[]{"editable", false}
+                , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
+                , new Object[]{"typeHandler", new com.rameses.rcp.common.DecimalColumnHandler("#,##0.00", -1.0, -1.0, false)}
+            }),
+            new com.rameses.rcp.common.Column(new Object[]{
+                new Object[]{"name", "basicpaid"}
+                , new Object[]{"caption", "Basic Paid"}
+                , new Object[]{"width", 100}
+                , new Object[]{"minWidth", 0}
+                , new Object[]{"maxWidth", 0}
+                , new Object[]{"required", false}
+                , new Object[]{"resizable", true}
+                , new Object[]{"nullWhenEmpty", true}
+                , new Object[]{"editable", false}
+                , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
+                , new Object[]{"typeHandler", new com.rameses.rcp.common.DecimalColumnHandler("#,##0.00", -1.0, -1.0, false)}
+            }),
+            new com.rameses.rcp.common.Column(new Object[]{
+                new Object[]{"name", "sef"}
+                , new Object[]{"caption", "SEF"}
+                , new Object[]{"width", 100}
+                , new Object[]{"minWidth", 0}
+                , new Object[]{"maxWidth", 0}
+                , new Object[]{"required", false}
+                , new Object[]{"resizable", true}
+                , new Object[]{"nullWhenEmpty", true}
+                , new Object[]{"editable", false}
+                , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
+                , new Object[]{"typeHandler", new com.rameses.rcp.common.DecimalColumnHandler("#,##0.00", -1.0, -1.0, false)}
+            }),
+            new com.rameses.rcp.common.Column(new Object[]{
+                new Object[]{"name", "sefpaid"}
+                , new Object[]{"caption", "SEF Paid"}
+                , new Object[]{"width", 100}
+                , new Object[]{"minWidth", 0}
+                , new Object[]{"maxWidth", 0}
+                , new Object[]{"required", false}
+                , new Object[]{"resizable", true}
+                , new Object[]{"nullWhenEmpty", true}
+                , new Object[]{"editable", false}
+                , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
+                , new Object[]{"typeHandler", new com.rameses.rcp.common.DecimalColumnHandler("#,##0.00", -1.0, -1.0, false)}
+            })
         });
         xDataTable3.setHandler("debitListHandler");
 
@@ -340,71 +560,115 @@ public class RPTLedgerPage extends javax.swing.JPanel {
         );
         jTabbedPane1.addTab("Debits", jPanel4);
 
+        xDataTable2.setColumns(new com.rameses.rcp.common.Column[]{
+            new com.rameses.rcp.common.Column(new Object[]{
+                new Object[]{"name", "txnmode"}
+                , new Object[]{"caption", "Mode"}
+                , new Object[]{"width", 100}
+                , new Object[]{"minWidth", 0}
+                , new Object[]{"maxWidth", 0}
+                , new Object[]{"required", false}
+                , new Object[]{"resizable", true}
+                , new Object[]{"nullWhenEmpty", true}
+                , new Object[]{"editable", false}
+                , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
+                , new Object[]{"typeHandler", new com.rameses.rcp.common.TextColumnHandler()}
+            }),
+            new com.rameses.rcp.common.Column(new Object[]{
+                new Object[]{"name", "receiptno"}
+                , new Object[]{"caption", "Receipt No."}
+                , new Object[]{"width", 100}
+                , new Object[]{"minWidth", 0}
+                , new Object[]{"maxWidth", 0}
+                , new Object[]{"required", false}
+                , new Object[]{"resizable", true}
+                , new Object[]{"nullWhenEmpty", true}
+                , new Object[]{"editable", false}
+                , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
+                , new Object[]{"typeHandler", new com.rameses.rcp.common.TextColumnHandler()}
+            }),
+            new com.rameses.rcp.common.Column(new Object[]{
+                new Object[]{"name", "txndate"}
+                , new Object[]{"caption", "Receipt Date"}
+                , new Object[]{"width", 100}
+                , new Object[]{"minWidth", 0}
+                , new Object[]{"maxWidth", 0}
+                , new Object[]{"required", false}
+                , new Object[]{"resizable", true}
+                , new Object[]{"nullWhenEmpty", true}
+                , new Object[]{"editable", false}
+                , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
+                , new Object[]{"typeHandler", new com.rameses.rcp.common.DateColumnHandler(null, null, null)}
+            }),
+            new com.rameses.rcp.common.Column(new Object[]{
+                new Object[]{"name", "paidby"}
+                , new Object[]{"caption", "Paid By"}
+                , new Object[]{"width", 250}
+                , new Object[]{"minWidth", 0}
+                , new Object[]{"maxWidth", 0}
+                , new Object[]{"required", false}
+                , new Object[]{"resizable", true}
+                , new Object[]{"nullWhenEmpty", true}
+                , new Object[]{"editable", false}
+                , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
+                , new Object[]{"typeHandler", new com.rameses.rcp.common.TextColumnHandler()}
+            }),
+            new com.rameses.rcp.common.Column(new Object[]{
+                new Object[]{"name", "period"}
+                , new Object[]{"caption", "Period Paid"}
+                , new Object[]{"width", 150}
+                , new Object[]{"minWidth", 0}
+                , new Object[]{"maxWidth", 0}
+                , new Object[]{"required", false}
+                , new Object[]{"resizable", true}
+                , new Object[]{"nullWhenEmpty", true}
+                , new Object[]{"editable", false}
+                , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
+                , new Object[]{"typeHandler", new com.rameses.rcp.common.TextColumnHandler()}
+            }),
+            new com.rameses.rcp.common.Column(new Object[]{
+                new Object[]{"name", "basic"}
+                , new Object[]{"caption", "Basic"}
+                , new Object[]{"width", 120}
+                , new Object[]{"minWidth", 0}
+                , new Object[]{"maxWidth", 0}
+                , new Object[]{"required", false}
+                , new Object[]{"resizable", true}
+                , new Object[]{"nullWhenEmpty", true}
+                , new Object[]{"editable", false}
+                , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
+                , new Object[]{"typeHandler", new com.rameses.rcp.common.DecimalColumnHandler("#,##0.00", -1.0, -1.0, false)}
+            }),
+            new com.rameses.rcp.common.Column(new Object[]{
+                new Object[]{"name", "sef"}
+                , new Object[]{"caption", "SEF"}
+                , new Object[]{"width", 120}
+                , new Object[]{"minWidth", 0}
+                , new Object[]{"maxWidth", 0}
+                , new Object[]{"required", false}
+                , new Object[]{"resizable", true}
+                , new Object[]{"nullWhenEmpty", true}
+                , new Object[]{"editable", false}
+                , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
+                , new Object[]{"typeHandler", new com.rameses.rcp.common.DecimalColumnHandler("#,##0.00", -1.0, -1.0, false)}
+            }),
+            new com.rameses.rcp.common.Column(new Object[]{
+                new Object[]{"name", "total"}
+                , new Object[]{"caption", "Total"}
+                , new Object[]{"width", 150}
+                , new Object[]{"minWidth", 0}
+                , new Object[]{"maxWidth", 0}
+                , new Object[]{"required", false}
+                , new Object[]{"resizable", true}
+                , new Object[]{"nullWhenEmpty", true}
+                , new Object[]{"editable", false}
+                , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
+                , new Object[]{"typeHandler", new com.rameses.rcp.common.DecimalColumnHandler("#,##0.00", -1.0, -1.0, false)}
+            })
+        });
         xDataTable2.setHandler("paymentListHandler");
         xDataTable2.setImmediate(true);
         xDataTable2.setName("selectedPayment");
-
-        com.rameses.rcp.control.border.XTitledBorder xTitledBorder4 = new com.rameses.rcp.control.border.XTitledBorder();
-        xTitledBorder4.setTitle("Basic Payment Breakdown");
-        formPanel6.setBorder(xTitledBorder4);
-        formPanel6.setCaptionFont(new java.awt.Font("Arial", 0, 14));
-        xNumberField2.setCaption("Basic");
-        xNumberField2.setDepends(new String[] {"selectedPayment"});
-        xNumberField2.setFont(new java.awt.Font("Arial", 0, 14));
-        xNumberField2.setName("selectedPayment.basic");
-        xNumberField2.setPattern("#,##0.00");
-        xNumberField2.setPreferredSize(new java.awt.Dimension(150, 19));
-        xNumberField2.setReadonly(true);
-        formPanel6.add(xNumberField2);
-
-        xNumberField4.setCaption("Discount");
-        xNumberField4.setDepends(new String[] {"selectedPayment"});
-        xNumberField4.setFont(new java.awt.Font("Arial", 0, 14));
-        xNumberField4.setName("selectedPayment.basicdisc");
-        xNumberField4.setPattern("#,##0.00");
-        xNumberField4.setPreferredSize(new java.awt.Dimension(150, 19));
-        xNumberField4.setReadonly(true);
-        formPanel6.add(xNumberField4);
-
-        xNumberField5.setCaption("Penalty");
-        xNumberField5.setDepends(new String[] {"selectedPayment"});
-        xNumberField5.setFont(new java.awt.Font("Arial", 0, 14));
-        xNumberField5.setName("selectedPayment.basicint");
-        xNumberField5.setPattern("#,##0.00");
-        xNumberField5.setPreferredSize(new java.awt.Dimension(150, 19));
-        xNumberField5.setReadonly(true);
-        formPanel6.add(xNumberField5);
-
-        com.rameses.rcp.control.border.XTitledBorder xTitledBorder5 = new com.rameses.rcp.control.border.XTitledBorder();
-        xTitledBorder5.setTitle("SEF Payment Breakdown");
-        formPanel7.setBorder(xTitledBorder5);
-        formPanel7.setCaptionFont(new java.awt.Font("Arial", 0, 14));
-        xNumberField3.setCaption("SEF");
-        xNumberField3.setDepends(new String[] {"selectedPayment"});
-        xNumberField3.setFont(new java.awt.Font("Arial", 0, 14));
-        xNumberField3.setName("selectedPayment.sef");
-        xNumberField3.setPattern("#,##0.00");
-        xNumberField3.setPreferredSize(new java.awt.Dimension(150, 19));
-        xNumberField3.setReadonly(true);
-        formPanel7.add(xNumberField3);
-
-        xNumberField6.setCaption("Discount");
-        xNumberField6.setDepends(new String[] {"selectedPayment"});
-        xNumberField6.setFont(new java.awt.Font("Arial", 0, 14));
-        xNumberField6.setName("selectedPayment.sefdisc");
-        xNumberField6.setPattern("#,##0.00");
-        xNumberField6.setPreferredSize(new java.awt.Dimension(150, 19));
-        xNumberField6.setReadonly(true);
-        formPanel7.add(xNumberField6);
-
-        xNumberField7.setCaption("Penalty");
-        xNumberField7.setDepends(new String[] {"selectedPayment"});
-        xNumberField7.setFont(new java.awt.Font("Arial", 0, 14));
-        xNumberField7.setName("selectedPayment.sefint");
-        xNumberField7.setPattern("#,##0.00");
-        xNumberField7.setPreferredSize(new java.awt.Dimension(150, 19));
-        xNumberField7.setReadonly(true);
-        formPanel7.add(xNumberField7);
 
         org.jdesktop.layout.GroupLayout jPanel3Layout = new org.jdesktop.layout.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -412,30 +676,21 @@ public class RPTLedgerPage extends javax.swing.JPanel {
             jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
-                .add(jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanel3Layout.createSequentialGroup()
-                        .add(formPanel6, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 397, Short.MAX_VALUE)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(formPanel7, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 398, Short.MAX_VALUE))
-                    .add(xDataTable2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 801, Short.MAX_VALUE))
+                .add(xDataTable2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 801, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
-                .add(xDataTable2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 227, Short.MAX_VALUE)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(formPanel6, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 104, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(formPanel7, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 104, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .add(xDataTable2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 337, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jTabbedPane1.addTab("Credits", jPanel3);
 
-        com.rameses.rcp.control.border.XTitledBorder xTitledBorder6 = new com.rameses.rcp.control.border.XTitledBorder();
-        xTitledBorder6.setTitle("Payment Status");
-        formPanel8.setBorder(xTitledBorder6);
+        com.rameses.rcp.control.border.XTitledBorder xTitledBorder4 = new com.rameses.rcp.control.border.XTitledBorder();
+        xTitledBorder4.setTitle("Payment Status");
+        formPanel8.setBorder(xTitledBorder4);
         xCheckBox1.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
         xCheckBox1.setMargin(new java.awt.Insets(0, 0, 0, 0));
         xCheckBox1.setName("ledger.qtrlypaymentavailed");
@@ -466,9 +721,9 @@ public class RPTLedgerPage extends javax.swing.JPanel {
         xCheckBox3.setText("1st Qtr Paid On-Time");
         formPanel8.add(xCheckBox3);
 
-        com.rameses.rcp.control.border.XTitledBorder xTitledBorder7 = new com.rameses.rcp.control.border.XTitledBorder();
-        xTitledBorder7.setTitle("Billing Information");
-        formPanel9.setBorder(xTitledBorder7);
+        com.rameses.rcp.control.border.XTitledBorder xTitledBorder5 = new com.rameses.rcp.control.border.XTitledBorder();
+        xTitledBorder5.setTitle("Billing Information");
+        formPanel9.setBorder(xTitledBorder5);
         xDateField1.setCaption("Next Bill Date");
         xDateField1.setCaptionWidth(100);
         xDateField1.setFont(new java.awt.Font("Tahoma", 1, 11));
@@ -480,7 +735,7 @@ public class RPTLedgerPage extends javax.swing.JPanel {
         xIntegerField1.setCaption("Last Billed Year");
         xIntegerField1.setCaptionWidth(100);
         xIntegerField1.setFont(new java.awt.Font("Tahoma", 1, 11));
-        xIntegerField1.setName("ledger.posteditemyear");
+        xIntegerField1.setName("ledger.lastitemyear");
         xIntegerField1.setPreferredSize(new java.awt.Dimension(120, 20));
         xIntegerField1.setReadonly(true);
         formPanel9.add(xIntegerField1);
@@ -500,21 +755,21 @@ public class RPTLedgerPage extends javax.swing.JPanel {
 
         xDecimalField1.setCaption("Basic");
         xDecimalField1.setCaptionWidth(100);
-        xDecimalField1.setName("ledger.basic");
+        xDecimalField1.setName("basic");
         xDecimalField1.setPreferredSize(new java.awt.Dimension(120, 20));
         xDecimalField1.setReadonly(true);
         formPanel9.add(xDecimalField1);
 
         xDecimalField2.setCaption("Basic Discount");
         xDecimalField2.setCaptionWidth(100);
-        xDecimalField2.setName("ledger.basicdisc");
+        xDecimalField2.setName("basicdisc");
         xDecimalField2.setPreferredSize(new java.awt.Dimension(120, 20));
         xDecimalField2.setReadonly(true);
         formPanel9.add(xDecimalField2);
 
         xDecimalField3.setCaption("Basic Interest");
         xDecimalField3.setCaptionWidth(100);
-        xDecimalField3.setName("ledger.basicint");
+        xDecimalField3.setName("basicint");
         xDecimalField3.setPreferredSize(new java.awt.Dimension(120, 20));
         xDecimalField3.setReadonly(true);
         formPanel9.add(xDecimalField3);
@@ -542,21 +797,21 @@ public class RPTLedgerPage extends javax.swing.JPanel {
 
         xDecimalField5.setCaption("SEF");
         xDecimalField5.setCaptionWidth(100);
-        xDecimalField5.setName("ledger.sef");
+        xDecimalField5.setName("sef");
         xDecimalField5.setPreferredSize(new java.awt.Dimension(120, 20));
         xDecimalField5.setReadonly(true);
         formPanel9.add(xDecimalField5);
 
         xDecimalField6.setCaption("SEF Discount");
         xDecimalField6.setCaptionWidth(100);
-        xDecimalField6.setName("ledger.sefdisc");
+        xDecimalField6.setName("sefdisc");
         xDecimalField6.setPreferredSize(new java.awt.Dimension(120, 20));
         xDecimalField6.setReadonly(true);
         formPanel9.add(xDecimalField6);
 
         xDecimalField7.setCaption("SEF Interest");
         xDecimalField7.setCaptionWidth(100);
-        xDecimalField7.setName("ledger.sefint");
+        xDecimalField7.setName("sefint");
         xDecimalField7.setPreferredSize(new java.awt.Dimension(120, 20));
         xDecimalField7.setReadonly(true);
         formPanel9.add(xDecimalField7);
@@ -630,8 +885,6 @@ public class RPTLedgerPage extends javax.swing.JPanel {
     private com.rameses.rcp.util.FormPanel formPanel3;
     private com.rameses.rcp.util.FormPanel formPanel4;
     private com.rameses.rcp.util.FormPanel formPanel5;
-    private com.rameses.rcp.util.FormPanel formPanel6;
-    private com.rameses.rcp.util.FormPanel formPanel7;
     private com.rameses.rcp.util.FormPanel formPanel8;
     private com.rameses.rcp.util.FormPanel formPanel9;
     private javax.swing.JPanel jPanel1;
@@ -674,12 +927,6 @@ public class RPTLedgerPage extends javax.swing.JPanel {
     private com.rameses.rcp.control.XLabel xLabel6;
     private com.rameses.rcp.control.XLabel xLabel7;
     private com.rameses.rcp.control.XLabel xLabel8;
-    private com.rameses.rcp.control.XNumberField xNumberField2;
-    private com.rameses.rcp.control.XNumberField xNumberField3;
-    private com.rameses.rcp.control.XNumberField xNumberField4;
-    private com.rameses.rcp.control.XNumberField xNumberField5;
-    private com.rameses.rcp.control.XNumberField xNumberField6;
-    private com.rameses.rcp.control.XNumberField xNumberField7;
     private com.rameses.rcp.control.XSeparator xSeparator1;
     private com.rameses.rcp.control.XSeparator xSeparator2;
     private com.rameses.rcp.control.XSeparator xSeparator3;

@@ -1,4 +1,4 @@
-"faas.*|taxpayer|administrator" [allowEdit == true] {
+"faas.*|taxpayer|administrator|appraiser.*|recommender.*|taxmapper.*|approver.*" [allowEdit == true] {
     enabled:true;
 }
 
@@ -41,7 +41,7 @@
     enabled:false;
 }
 
-"faas.*|taxpayer|administrator" [allowEdit == false] {
+"faas.*|taxpayer|administrator|appraiser.*|recommender.*|taxmapper.*|approver.*" [allowEdit == false] {
     enabled:false;
 }
 
@@ -56,4 +56,12 @@
 
 "faas.backtaxyrs|faas.rpu.totalmv|faas.rpu.totalav" [  true == true ] {
     enabled:false;
+}
+
+"annotated" [showAnnotation == true]{
+    visible:true;
+}
+
+"annotated" [showAnnotation != true]{
+    visible:false;
 }

@@ -25,13 +25,26 @@
                 return [ attributes:[] ]
             }
             
+            void entityChanged() {
+                listHandler.reload();
+            }
+            
+            def getLookupAttribute() {
+                return InvokerUtil.lookupOpener( "lobattribute:lookup", [
+                    onselect: { o->
+                        if( entity.attributes.find{ it.objid == o.objid } )
+                            throw new Exception("You have already added this attribute.")
+                        selectedItem.name = o.name;
+                        selectedItem.objid = o.objid;
+                    }
+                ]);
+            }
+            
             def listHandler = [
                 fetchList: {o->
                     return entity.attributes
                 },
                 onAddItem: {o->
-                    if( entity.attributes.find{ it.objid == o.objid } )
-                        throw new Exception("You have already added this attribute.")
                     entity.attributes.add(o)
                 },
                 onRemoveItem: {o->

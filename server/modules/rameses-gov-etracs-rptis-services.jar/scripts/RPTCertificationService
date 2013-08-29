@@ -106,7 +106,7 @@ class RPTCertificationService
 			def ordate = dtSvc.parseDate(cert.ordate, null)
 			if (ordate.year < cdate.year)
 				throw new Exception('O.R. must be issued within this year.')
-			if (dtSvc.laterThanCurrentDate(cert.ordate))
+			if (dtSvc.parse('yyyy-MM-dd', cert.ordate) > dtSvc.serverDate )
 				throw new Exception('O.R. Date must not be later than current date.')
 		}
 		if (cert.ordate != null) {

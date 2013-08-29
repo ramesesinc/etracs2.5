@@ -12,8 +12,12 @@ class MiscRPUGRService
     @Service('MiscRPUService')
     def rpuSvc 
     
+    @Service('DateService')
+    def dtSvc 
+
     @ProxyMethod
     public def reviseMiscRpu(rpu){
+        rpu.dtappraised = dtSvc.serverDate 
         def actualuse = lookupSvc.lookupAssessLevelByPrevId(rpu.actualuse.objid)
         if( actualuse ) {
             rpu.actualuse = actualuse

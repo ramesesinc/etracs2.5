@@ -31,6 +31,11 @@ public class SubdivisionController extends PageFlowController
     def STATE_CANCELLED         = 'CANCELLED';
     
     
+    def appraiser = [:];
+    def recommender = [:];
+    def taxmapper = [:];
+    def approver = [:];
+    
     def mode;
     def entity;
     def subdivision;
@@ -38,6 +43,7 @@ public class SubdivisionController extends PageFlowController
     
     def init(){
         subdivision = [objid:RPTUtil.generateId('SD')]
+        initSignatoryVars();
         return super.signal('init')
     }
     
@@ -45,7 +51,8 @@ public class SubdivisionController extends PageFlowController
     def open(){
         subdivision= svc.openSubdivision( entity.objid );
         subdividedLands = svc.getSubdividedLands(subdivision.objid)
-        affectedrpus = svc.getAffectedRpus(subdivision.objid)
+        affectedrpus = svc.getAffectedRpus(subdivision.objid);
+        initSignatoryVars();
         mode = MODE_READ;
         return super.signal('open');
     }
@@ -77,11 +84,13 @@ public class SubdivisionController extends PageFlowController
     }
     
     void save(){
+        saveSignatoryInfo();
         if (mode == MODE_CREATE)
             subdivision = svc.createSubdivision(subdivision);
         else 
             subdivision = svc.updateSubdivision(subdivision);
         mode = MODE_READ;
+        editinfo = false;
     }    
    
     
@@ -158,6 +167,21 @@ public class SubdivisionController extends PageFlowController
     def subdividedLands;
     def selectedLand;
     boolean editinfo = false;
+    
+                
+    def getLookupTaxpayer(){
+        return InvokerUtil.lookupOpener('entity:lookup',[
+            onselect : { 
+                selectedLand.taxpayer = it;
+                selectedLand.owner    = it;
+            },
+            onempty  : { 
+                selectedLand.taxpayer = null;
+                selectedLand.owner    = null;
+            } 
+        ])
+    }
+    
      
     def landListHandler = [
         getRows : { return 25 },
@@ -195,7 +219,7 @@ public class SubdivisionController extends PageFlowController
                 svc.createSubdividedLand(sland);
                 subdividedLands.add(sland);
                 landListHandler.load()
-                binding.refresh('totalareasqm|totalareaha');
+                binding.refresh('totalareasqm|totalareaha|selectedLand.*');
             }
         ])
     }
@@ -210,7 +234,7 @@ public class SubdivisionController extends PageFlowController
             onupdate : { sland ->
                 svc.updateSubdividedLand(sland);
                 landListHandler.refresh(true)
-                binding.refresh('totalareasqm|totalareaha');
+                binding.refresh('totalareasqm|totalareaha|selectedLand.*');
             }
         ])
     }
@@ -297,54 +321,6 @@ public class SubdivisionController extends PageFlowController
     }
     
     
-    /*===============================================
-    * Signatory Lookup Support
-    *===============================================*/
-    def selectedSignatory 
-            
-    def signatoryListHandler = [
-        fetchList : { return subdivision.signatories }
-    ] as EditorListModel
-            
-    def getLookupSignatory(){
-          def doctype = 'RPT' + selectedSignatory.type.toUpperCase();
-         return InvokerUtil.lookupOpener('txnsignatory:lookup',[
-            doctype : doctype,
-                 
-            onselect : { 
-                selectedSignatory.personnelid = it.objid;
-                selectedSignatory.name = it.name;
-                selectedSignatory.title = it.title;
-            },
-            onempty  : { 
-                selectedSignatory.name = null;
-                selectedSignatory.dtsigned = null;
-                selectedSignatory.title = null;
-            },
-        ])
-    }
-    
-    
-    def getLookupAppraiser(){
-        return InvokerUtil.lookupOpener('rptofficer:lookup',[role:'APPRAISER']);
-    }
-    
-    
-    def getLookupRecommender(){
-        return InvokerUtil.lookupOpener('rptofficer:lookup',[role:'RECOMMENDER']);
-    }
-    
-    
-    def getLookupTaxmapper(){
-        return InvokerUtil.lookupOpener('rptofficer:lookup',[role:'TAXMAPPER']);
-    }
-    
-    def getLookupApprover(){
-        return InvokerUtil.lookupOpener('rptofficer:lookup',[role:'APPROVER']);
-    }
-    
-    
-    
     
     /*===============================================
      *
@@ -376,6 +352,79 @@ public class SubdivisionController extends PageFlowController
         return RPTUtil.sum(subdividedLands, "areaha")
     }
      
+ 
     
+    
+    def getLookupAppraiser(){
+        return InvokerUtil.lookupOpener('txnsignatory:lookup',[
+            doctype : 'RPTAPPRAISER',
+            onselect : { updateSignatoryInfo(appraiser, it) },
+            onempty  : { clearSignatoryInfo(appraiser) },
+        ])
+        
+    }
+    
+    def getLookupRecommender(){
+        return InvokerUtil.lookupOpener('txnsignatory:lookup',[
+            doctype : 'RPTRECOMMENDER',
+            onselect : { updateSignatoryInfo(recommender, it) },
+            onempty  : { clearSignatoryInfo(recommender) },
+        ])
+        
+    }
+    
+    def getLookupTaxmapper(){
+        return InvokerUtil.lookupOpener('txnsignatory:lookup',[
+            doctype : 'RPTTAXMAPPER',
+            onselect : { updateSignatoryInfo(taxmapper, it) },
+            onempty  : { clearSignatoryInfo(taxmapper) },
+        ])
+        
+    }
+    
+    def getLookupApprover(){
+        return InvokerUtil.lookupOpener('txnsignatory:lookup',[
+            doctype : 'RPTAPPROVER',
+            onselect : { updateSignatoryInfo(approver, it) },
+            onempty  : { clearSignatoryInfo(approver) },
+        ])
+        
+    }
+    
+    void updateSignatoryInfo(signatory, data){
+        signatory.personnelid = data.objid;
+        signatory.name = data.name;
+        signatory.title = data.title;
+    }
+    
+    void clearSignatoryInfo(signatory){
+        signatory.personnelid = null;
+        signatory.name = null;
+        signatory.title = null;
+    }
+ 
+    
+    void initSignatoryVars(){
+        appraiser = subdivision.signatories.find{it.type == 'appraiser'};
+        recommender = subdivision.signatories.find{it.type == 'recommender'};
+        taxmapper = subdivision.signatories.find{it.type == 'taxmapper'};
+        approver = subdivision.signatories.find{it.type == 'approver'};
+        appraiser = (appraiser ? appraiser : [:])
+        recommender = (recommender ? recommender : [:])
+        taxmapper = (taxmapper ? taxmapper : [:])
+        approver = (approver ? approver : [:])
+        
+    }
+    
+        
+    void saveSignatoryInfo(){
+        subdivision.signatories.find{it.type == 'appraiser'}?.putAll(appraiser);
+        subdivision.signatories.find{it.type == 'recommender'}?.putAll(recommender);
+        subdivision.signatories.find{it.type == 'taxmapper'}?.putAll(taxmapper);
+        subdivision.signatories.find{it.type == 'approver'}?.putAll(approver);
+    }
+ 
+    
+
     
 }

@@ -2,6 +2,7 @@
 <workunit>
     <invokers>
         <invoker folderid="/menu/txn/landtax" action="init" caption="Barangay Share" role="LANDTAX" />
+        <invoker folderid="/explorer/txn/landtax/txn" action="init" caption="Barangay Share" role="LANDTAX" />
         <invoker type="brgyshare:create" action="init" caption="Barangay Share" role="LANDTAX" />
         <invoker type="brgyshare:open" action="open" caption="Barangay Share" />
         

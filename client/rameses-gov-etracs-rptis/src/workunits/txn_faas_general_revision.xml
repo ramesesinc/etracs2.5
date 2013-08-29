@@ -6,6 +6,9 @@
         <invoker folderid="/menu/txn/rpt/faas" action="initGeneralRevision"  caption="General Revision" index="13"
             txntypeid="GR" txntype="General Revision" newledger="true" newrpu="true" newrealproperty="true" role="APPRAISER" permission="faas.createGeneralRevision"/>
 
+        <invoker folderid="/explorer/txn/rpt/txn" action="initGeneralRevision"  caption="General Revision" index="13"
+            txntypeid="GR" txntype="General Revision" newledger="true" newrpu="true" newrealproperty="true" role="APPRAISER" permission="faas.createGeneralRevision"/>
+
          <invoker type="quick_launcher" code="GR01" action="initGeneralRevision"  caption="General Revision" index="13"
             txntypeid="GR" txntype="General Revision" newledger="true" newrpu="true" newrealproperty="true" role="APPRAISER" permission="faas.createGeneralRevision"/>            
     </invokers>

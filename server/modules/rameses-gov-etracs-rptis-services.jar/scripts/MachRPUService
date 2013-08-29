@@ -27,6 +27,9 @@ class MachRPUService
     @Service('MachineLookupService')
     def machSvc 
 
+    @Service('Var')
+    def var
+
     
     def SCHEMA_RPU          = 'machrpu'
     def SCHEMA_MACHUSE      = 'machrpu:machuse'
@@ -189,12 +192,24 @@ class MachRPUService
         if( util.isTrue(machine.autodepreciate) && machine.estimatedlife > 0) {
             def dep = machine.remaininglife / machine.estimatedlife
             dep = (1 - dep) * 100;
+            if (dep > (100 - getResidualRate())) {
+                dep = 100 - getResidualRate()
+            }
             machine.depreciation = numberSvc.roundA( dep, 0 )
             machine.depreciationvalue =  numberSvc.round( machine.replacementcost *  machine.depreciation / 100.0 )
         }
         else {
             machine.depreciationvalue =  numberSvc.round( machine.replacementcost *  machine.depreciation / 100.0 )
         }
+    }
+
+    def getResidualRate(){
+        def setting = em.sqlContext.createNamedQuery('machrpu:getMachRySetting')
+                            .setParameter('ry', var.current_ry)
+                            .singleResult
+        if (setting)
+            return setting.residualrate
+        return 20.0
     }
 
 
@@ -288,7 +303,10 @@ class MachRPUService
 
         if ( rpu.dtappraised) {
             def pdate = dateSvc.parseDate( rpu.dtappraised, null )
-            machine.yearsused =  pdate.year - fromyear + 1    
+            machine.yearsused =  pdate.year - fromyear 
+            if (util.toBoolean(var.machrpu_include_operation_year_in_yearsused, false)) {
+                machine.yearsused += 1
+            }
         }
     }
 

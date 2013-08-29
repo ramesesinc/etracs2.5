@@ -1,7 +1,7 @@
 <workunit>
     <invokers>
         <invoker type="businessapplication:formActions" caption="Business Assessment"
-            action="preview" target="window" index="10" />
+            action="viewReport" target="window" index="10" visibleWhen="#{ entity.state == 'FOR-PAYMENT' }" />
     </invokers>
     
     <code>
@@ -12,21 +12,12 @@
         import com.rameses.osiris2.common.*
         import com.rameses.osiris2.reports.*;
         
-        class BPLSAssessmentPrintOut extends ReportModel
-        {
-            /*
-            @Service('ReportParameterService')
-            def svcParams;
-            */
+        class BPLSAssessmentPrintOut extends ReportModel{
             
             @Service('BusinessAssessmentReportService')
             def svc;
             
             def entity;
-            
-            void preview() {
-                viewReport();
-            }
             
             public Map getParameters() {
                 //return svcParams.getStandardParameter( OsirisContext.env.USERNAME );

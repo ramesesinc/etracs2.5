@@ -4,12 +4,15 @@
         <invoker type="faas_ND:open" action="open" caption="FAAS" role="APPRAISER" permission="faas.read" />
         
         <invoker folderid="/menu/txn/rpt/faas" action="initNewDiscovery"  caption="New Discovery" index="11"
-            txntypeid="ND" txntype="New Discovery" newledger="false" newrpu="true" newrealproperty="true" role="APPRAISER" permission="faas.createNewDiscovery"/>
+            txntypeid="ND" txntype="New Discovery" newledger="true" newrpu="true" newrealproperty="true" role="APPRAISER" permission="faas.createNewDiscovery"/>
+            
+        <invoker folderid="/explorer/txn/rpt/txn" action="initNewDiscovery"  caption="New Discovery" index="11"
+            txntypeid="ND" txntype="New Discovery" newledger="true" newrpu="true" newrealproperty="true" role="APPRAISER" permission="faas.createNewDiscovery"/>
 
          <invoker type="quick_launcher" code="ND01" action="initNewDiscovery"  caption="New Discovery" index="11"
-            txntypeid="ND" txntype="New Discovery" newledger="false" newrpu="true" newrealproperty="true" role="APPRAISER" permission="faas.createNewDiscovery"/>
+            txntypeid="ND" txntype="New Discovery" newledger="true" newrpu="true" newrealproperty="true" role="APPRAISER" permission="faas.createNewDiscovery"/>
             
-         <invoker type="formActions" action="viewBackTaxes" caption="View Back Taxes" immediate="true" visibleWhen="#{faas != null}"/>
+         <invoker type="navActions" action="viewBackTaxes" caption="View Back Taxes" immediate="true" visibleWhen="#{faas != null}"/>
             
     </invokers>
         

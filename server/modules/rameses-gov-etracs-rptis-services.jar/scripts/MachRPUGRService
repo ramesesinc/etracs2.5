@@ -12,8 +12,12 @@ class MachRPUGRService
     @Service('MachRPUService')
     def machRpuSvc 
     
+    @Service('DateService')
+    def dtSvc
+
     @ProxyMethod
     public def reviseMachRpu(rpu){
+        rpu.dtappraised = dtSvc.serverDate 
         def deletedItems = []
         rpu.machuses.each { machuse ->
             def actualuse = lookupSvc.lookupAssessLevelByPrevId(machuse.actualuse.objid)

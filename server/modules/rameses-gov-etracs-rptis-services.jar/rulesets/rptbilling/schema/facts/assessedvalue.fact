@@ -7,7 +7,7 @@
 	index:1,
 	agendagroup: ".*",
 	fields: [
-		{name: "rptledgerid", caption:"LedgerId" },
+		{name: "rptledgerid", caption:"LedgerId", datatype:"string" },
 		{name: "year", datatype:"integer", caption:"Year" },
 		{name: "assessedvalue", datatype:"decimal", caption:"Assessed Value" },
 	]

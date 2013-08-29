@@ -101,7 +101,7 @@ class ReportParameterService{
 			USERFULLNAME	 			: env.FULLNAME,
 			USERJOBTITLE 				: env.JOBTITLE, 
             PRINTDATE   				: dateService.serverDate,
-			PRINTEDBY   				: env.USERFORMALNAME,
+			PRINTEDBY   				: env.FULLNAME,
 			DATE 						: formalizeDate( 'd' ), 
 			MONTH 						: formalizeDate( 'MMMMM' ),
 			YEAR 						: formalizeDate( 'yyyy' ),
