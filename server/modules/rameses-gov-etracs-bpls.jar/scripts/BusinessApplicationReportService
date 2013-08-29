@@ -49,8 +49,8 @@ public class BusinessApplicationReportService
 	
 	def buildAppInfo( application ){
 		def appinfos = [];
-		if( application.details ){
-			application.details.each{ itm ->
+		if( application.infos ){
+			application.infos.each{ itm ->
 				appinfos << [
 					category: application.lobs?.find{ it.id == itm.lobid }?.name,
 					name: itm.title,
