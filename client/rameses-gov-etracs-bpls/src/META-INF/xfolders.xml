@@ -12,4 +12,7 @@
             <folder id="bpls" caption="BPLS"/>
         </folder>
     </folder>
+    <folder id="rules">
+        <folder id="bpls" caption="BPLS"/>
+    </folder>
 </folders>
