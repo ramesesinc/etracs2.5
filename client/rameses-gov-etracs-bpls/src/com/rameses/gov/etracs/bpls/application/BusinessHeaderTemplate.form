@@ -14,7 +14,7 @@
     <AuxValue name="FormSettings_listenerGenerationStyle" type="java.lang.Integer" value="0"/>
     <AuxValue name="FormSettings_variablesLocal" type="java.lang.Boolean" value="false"/>
     <AuxValue name="FormSettings_variablesModifier" type="java.lang.Integer" value="2"/>
-    <AuxValue name="designerSize" type="java.awt.Dimension" value="-84,-19,0,5,115,114,0,18,106,97,118,97,46,97,119,116,46,68,105,109,101,110,115,105,111,110,65,-114,-39,-41,-84,95,68,20,2,0,2,73,0,6,104,101,105,103,104,116,73,0,5,119,105,100,116,104,120,112,0,0,0,-50,0,0,3,75"/>
+    <AuxValue name="designerSize" type="java.awt.Dimension" value="-84,-19,0,5,115,114,0,18,106,97,118,97,46,97,119,116,46,68,105,109,101,110,115,105,111,110,65,-114,-39,-41,-84,95,68,20,2,0,2,73,0,6,104,101,105,103,104,116,73,0,5,119,105,100,116,104,120,112,0,0,1,-60,0,0,3,75"/>
   </AuxValues>
 
   <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout"/>
@@ -68,7 +68,7 @@
           <SubComponents>
             <Component class="com.rameses.rcp.control.XLabel" name="xLabel4">
               <Properties>
-                <Property name="expression" type="java.lang.String" value="&lt;html&gt;APP No.: #{ application.controlno  }(&lt;font color=&apos;blue&apos;&apos;&gt; #{ application.docstate }&lt;/font&gt;)&lt;/html&gt;"/>
+                <Property name="expression" type="java.lang.String" value="&lt;html&gt;APP No.: #{ entity.appno  }(&lt;font color=&apos;blue&apos;&apos;&gt; #{entity.state }&lt;/font&gt;)&lt;/html&gt;"/>
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                   <Font name="Tahoma" size="12" style="1"/>
                 </Property>
@@ -81,7 +81,7 @@
             </Component>
             <Component class="com.rameses.rcp.control.XLabel" name="xLabel8">
               <Properties>
-                <Property name="expression" type="java.lang.String" value="&lt;html&gt;#{application.txntype} (&lt;font color=&apos;red&apos;&gt;#{application.txnmode}&lt;/font&gt;)&lt;/html&gt;"/>
+                <Property name="expression" type="java.lang.String" value="&lt;html&gt;#{entity.apptype} (&lt;font color=&apos;red&apos;&gt;#{entity.txnmode}&lt;/font&gt;)&lt;/html&gt;"/>
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                   <Font name="Tahoma" size="12" style="1"/>
                 </Property>
@@ -109,7 +109,7 @@
                       </PropertyBean>
                     </Property>
                     <Property name="caption" type="java.lang.String" value="Permittee"/>
-                    <Property name="expression" type="java.lang.String" value="#{application.permitee.name}"/>
+                    <Property name="expression" type="java.lang.String" value="#{entity.permitee.name}"/>
                     <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                       <Dimension value="[0, 18]"/>
                     </Property>
@@ -125,7 +125,7 @@
                       </PropertyBean>
                     </Property>
                     <Property name="caption" type="java.lang.String" value="Address"/>
-                    <Property name="expression" type="java.lang.String" value="#{application.permitee.address}"/>
+                    <Property name="expression" type="java.lang.String" value="#{entity.permitee.address}"/>
                     <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                       <Dimension value="[0, 18]"/>
                     </Property>
@@ -151,7 +151,7 @@
                     </Property>
                     <Property name="caption" type="java.lang.String" value="Date"/>
                     <Property name="captionWidth" type="int" value="100"/>
-                    <Property name="expression" type="java.lang.String" value="#{application.txndate}"/>
+                    <Property name="expression" type="java.lang.String" value="#{entity.appdate}"/>
                     <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                       <Dimension value="[0, 18]"/>
                     </Property>
@@ -168,7 +168,7 @@
                     </Property>
                     <Property name="caption" type="java.lang.String" value="Applicable Year"/>
                     <Property name="captionWidth" type="int" value="100"/>
-                    <Property name="expression" type="java.lang.String" value="#{application.iyear}"/>
+                    <Property name="expression" type="java.lang.String" value="#{entity.iyear}"/>
                     <Property name="name" type="java.lang.String" value="application.year"/>
                     <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                       <Dimension value="[0, 18]"/>
@@ -180,7 +180,7 @@
             <Container class="com.rameses.rcp.control.XFormPanel" name="xFormPanel3">
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="10" y="80" width="710" height="-1"/>
+                  <AbsoluteConstraints x="10" y="80" width="368" height="-1"/>
                 </Constraint>
               </Constraints>
               <SubComponents>
@@ -194,10 +194,10 @@
                       </PropertyBean>
                     </Property>
                     <Property name="caption" type="java.lang.String" value="Trade Name"/>
+                    <Property name="expression" type="java.lang.String" value="#{entity.tradename}"/>
                     <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                       <Dimension value="[0, 18]"/>
                     </Property>
-                    <Property name="text" type="java.lang.String" value="#{application.tradename}"/>
                   </Properties>
                 </Component>
                 <Component class="com.rameses.rcp.control.XLabel" name="xLabel7">
@@ -210,11 +210,56 @@
                       </PropertyBean>
                     </Property>
                     <Property name="caption" type="java.lang.String" value="Address"/>
+                    <Property name="expression" type="java.lang.String" value="#{entity.businessaddress}"/>
                     <Property name="name" type="java.lang.String" value="application.info.taxpayeraddress"/>
                     <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                       <Dimension value="[0, 18]"/>
                     </Property>
-                    <Property name="text" type="java.lang.String" value="#{application.businessaddress}"/>
+                  </Properties>
+                </Component>
+              </SubComponents>
+            </Container>
+            <Container class="com.rameses.rcp.control.XFormPanel" name="xFormPanel4">
+              <Properties>
+                <Property name="captionWidth" type="int" value="100"/>
+              </Properties>
+              <Constraints>
+                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                  <AbsoluteConstraints x="390" y="76" width="332" height="-1"/>
+                </Constraint>
+              </Constraints>
+              <SubComponents>
+                <Component class="com.rameses.rcp.control.XLabel" name="xLabel9">
+                  <Properties>
+                    <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+                      <PropertyBean type="com.rameses.rcp.control.border.XLineBorder">
+                        <Property name="lineColor" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                          <Color blue="cc" green="cc" red="cc" type="rgb"/>
+                        </Property>
+                      </PropertyBean>
+                    </Property>
+                    <Property name="caption" type="java.lang.String" value="Bus. Org Type"/>
+                    <Property name="expression" type="java.lang.String" value="#{entity.businessorgtype}"/>
+                    <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                      <Dimension value="[0, 18]"/>
+                    </Property>
+                  </Properties>
+                </Component>
+                <Component class="com.rameses.rcp.control.XLabel" name="xLabel10">
+                  <Properties>
+                    <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+                      <PropertyBean type="com.rameses.rcp.control.border.XLineBorder">
+                        <Property name="lineColor" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                          <Color blue="cc" green="cc" red="cc" type="rgb"/>
+                        </Property>
+                      </PropertyBean>
+                    </Property>
+                    <Property name="caption" type="java.lang.String" value="Barangay"/>
+                    <Property name="expression" type="java.lang.String" value="#{entity.barangay.name}"/>
+                    <Property name="name" type="java.lang.String" value="application.info.taxpayeraddress"/>
+                    <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                      <Dimension value="[0, 18]"/>
+                    </Property>
                   </Properties>
                 </Component>
               </SubComponents>

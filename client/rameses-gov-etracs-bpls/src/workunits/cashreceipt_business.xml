@@ -1,0 +1,83 @@
+<workunit extends="wtemplates/gov/treasury/BasicCashReceiptController.xml">
+    <invokers>
+        <invoker type="cashreceipt:bpls" action="init" />
+    </invokers>
+    
+    <code>
+        <![CDATA[    
+        import com.rameses.rcp.annotations.*
+        import com.rameses.rcp.common.*
+        import com.rameses.osiris2.client.*
+        import com.rameses.osiris2.common.*
+        import com.rameses.enterprise.treasury.controllers.*
+        
+        class  BusinessCashReceiptController extends BasicCashReceipt {
+            
+            @Service("BusinessBillingService")
+            def billSvc;
+        
+            int startyear = 2013;
+            
+            def qtrs = [1,2,3,4];
+            def years = startyear..1980;
+            int year;
+            int qtr;
+            
+            public void payerChanged( o ) {
+                entity.tradename = null;
+                entity.appid = null;
+                entity.billitems?.clear();
+                entity.items.clear();
+                entity.amount = 0;
+                binding.refresh( "entity.tradename" );
+                listModel.reload();
+                super.clearAllPayments();
+                super.updateBalances();
+            }
+            
+            def getLookupBusiness() {
+                if(!entity.payer) {
+                    return new Exception("Please select a payer first");
+                }    
+                return InvokerUtil.lookupOpener( "businessapplication:lookup", [
+                    "query.permiteeid":entity.payer.objid,
+                    onselect: { o->
+                        entity.tradename = o.tradename;
+                        entity.appid = o.objid;
+                    }
+                ]);
+            }
+            
+            void runBilling() {
+                def m = [year:year,qtr:qtr,appid:entity.appid];
+                def result = billSvc.getBilling( m );
+                println result.billitems;
+                if(result.billitems.size()==0)
+                    throw new Exception("No open items for payment found for the criteria specified" );
+                entity.billitems = result.billitems;
+                listModel.reload();
+                entity.items.clear();
+                entity.items.addAll( result.receiptitems );
+                entity.amount = 0;
+                if(entity.items) {
+                    entity.amount = entity.items.sum{ it.amount };
+                }
+                super.updateBalances();
+            }
+            
+            def listModel = [
+                fetchList: { o->
+                    return entity.billitems;
+                }
+            ] as BasicListModel;
+            
+        }
+        ]]>
+        
+    </code>
+    
+    <pages>
+        <page template="com.rameses.gov.etracs.bpls.cashreceipt.BPLSCashReceipt"/>
+    </pages>
+    
+</workunit>

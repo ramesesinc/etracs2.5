@@ -1,0 +1,60 @@
+import com.rameses.annotations.*;
+import com.rameses.util.*;
+import java.rmi.server.*;
+import com.rameses.services.extended.*;
+import com.rameses.rules.common.*;
+
+public class BusinessAssessmentService {
+
+	@PersistenceContext("main")
+	def em;
+
+	@Resource("RuleService")
+	def ruleSvc;
+
+	String ruleset = "bpassessment";
+
+
+	private def buildFacts(def entity) {
+		def findLob = em.sqlContext.createNamedQuery("lob:findInfo");
+		def findLobAttr = em.sqlContext.createNamedQuery("lob:findAttr");
+			
+		def facts = [];
+		def app = ruleSvc.createFact( ruleset, "com.rameses.rules.bpassessment.Application", entity );		
+		app.barangayid = entity.barangay.objid;
+
+		facts << app;
+		entity.lobs.each { l->
+			def lb = findLob.setParameters(l).singleResult;
+			def lobFact = ruleSvc.createFact( ruleset, "com.rameses.rules.bpassessment.Lob", lb);		 
+			facts << lobFact;
+			def attrs = findLobAttr.setParameters(l).resultList;
+			attrs.each { att->
+				att.lob = lobFact;
+				facts <<  ruleSvc.createFact( ruleset, "com.rameses.rules.bpassessment.LobAttribute", att);
+			}
+		}
+		return facts;
+	}
+
+	private def buildRuleAction(def entity) {
+		def r = new RuleAction();
+		r.addCommand( "ask-info", { o,drools->      
+			//check lob and infoid from lob
+			if(!entity.infos.find{ it.lobid == o.lobid && it.varid == o.varid }) {
+				entity.infos << o
+			}
+		} as RuleActionHandler);
+		return r;
+	}
+
+	@ProxyMethod
+	public def execute(entity) {
+		def facts = buildFacts(entity);
+		def ruleAction = buildRuleAction(entity);
+		ruleSvc.execute( ruleset, facts, ruleAction, "APPINFO" );
+        return entity;
+	}	
+
+
+}

@@ -1,0 +1,40 @@
+<workunit >
+    <invokers>
+        <invoker type="xrule:constraint" action="init" target="popup"/>
+    </invokers>
+    
+    <code>
+        <![CDATA[
+        import com.rameses.rcp.common.*;
+        import com.rameses.rcp.annotations.*;
+        import com.rameses.osiris2.client.*;
+        import com.rameses.osiris2.common.*
+        import java.rmi.server.*;
+        
+        class RuleConstraint {
+        
+            def pos;
+            def condition;
+            def entity = [:];
+            
+            void init() {
+                MsgBox.alert("pos is "+pos);
+            }
+            
+            def doCancel(){
+                return "_close";
+            }
+            def doOk(){
+                return "_close";
+            }
+        }
+        
+        ]]>
+    </code>
+    
+    <pages>
+        <page template="com.rameses.gov.etracs.bpls.rules.facts.RuleConstraint" />
+    </pages>
+    
+    
+</workunit>

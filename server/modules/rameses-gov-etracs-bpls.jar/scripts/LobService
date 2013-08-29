@@ -26,25 +26,19 @@ class LobService extends AbstractCrudListService {
 
 	private void insertAttributes( entity ) {
 		em.sqlContext.createNamedExecutor("lob:removeAttributes").setParameter("lobid", entity.objid).execute()
-		println entity.attributes
 		entity.attributes.each{li->
 			def m = [
 				lobid: entity.objid,
-				lobattributeid: li.attribute.objid
+				lobattributeid: li.objid
 			]
-			em.validate("lob:lob_lobattribute", m)
 			em.create("lob:lob_lobattribute", m)
 		}
 	}
 
 	public void afterOpen( Object data ) {
 		data.classification = em.read("lobclassification", data.classification)
-		def attributes = em.sqlContext.createNamedQuery("lob:getAttributes")
+		data.attributes = em.sqlContext.createNamedQuery("lob:getAttributes")
 							.setParameter("lobid", data.objid)
 							.resultList
-		data.attributes = []
-		attributes.each{attr->
-			data.attributes.add([attribute:attr])
-		}
 	}	
 }

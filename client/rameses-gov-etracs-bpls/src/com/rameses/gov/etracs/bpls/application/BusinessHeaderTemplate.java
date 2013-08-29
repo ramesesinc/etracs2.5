@@ -4,7 +4,7 @@
  * Created on May 9, 2013, 10:05 AM
  */
 
-package etracs2.bpls.application;
+package com.rameses.gov.etracs.bpls.application;
 
 import com.rameses.osiris2.client.WorkUnitUIController;
 import com.rameses.osiris2.themes.FormPage;
@@ -42,6 +42,9 @@ public class BusinessHeaderTemplate extends javax.swing.JPanel {
         xFormPanel3 = new com.rameses.rcp.control.XFormPanel();
         xLabel6 = new com.rameses.rcp.control.XLabel();
         xLabel7 = new com.rameses.rcp.control.XLabel();
+        xFormPanel4 = new com.rameses.rcp.control.XFormPanel();
+        xLabel9 = new com.rameses.rcp.control.XLabel();
+        xLabel10 = new com.rameses.rcp.control.XLabel();
 
         setLayout(new java.awt.BorderLayout());
 
@@ -53,12 +56,12 @@ public class BusinessHeaderTemplate extends javax.swing.JPanel {
         xTitledBorder1.setTitle("Application Info");
         jPanel3.setBorder(xTitledBorder1);
         jPanel3.setPreferredSize(new java.awt.Dimension(800, 142));
-        xLabel4.setExpression("<html>APP No.: #{ application.controlno  }(<font color='blue''> #{ application.docstate }</font>)</html>");
+        xLabel4.setExpression("<html>APP No.: #{ entity.appno  }(<font color='blue''> #{entity.state }</font>)</html>");
         xLabel4.setFont(new java.awt.Font("Tahoma", 1, 12));
         jPanel3.add(xLabel4);
         xLabel4.setBounds(370, 0, 370, 30);
 
-        xLabel8.setExpression("<html>#{application.txntype} (<font color='red'>#{application.txnmode}</font>)</html>");
+        xLabel8.setExpression("<html>#{entity.apptype} (<font color='red'>#{entity.txnmode}</font>)</html>");
         xLabel8.setFont(new java.awt.Font("Tahoma", 1, 12));
         jPanel3.add(xLabel8);
         xLabel8.setBounds(100, 0, 260, 20);
@@ -67,7 +70,7 @@ public class BusinessHeaderTemplate extends javax.swing.JPanel {
         xLineBorder1.setLineColor(new java.awt.Color(204, 204, 204));
         xLabel1.setBorder(xLineBorder1);
         xLabel1.setCaption("Permittee");
-        xLabel1.setExpression("#{application.permitee.name}");
+        xLabel1.setExpression("#{entity.permitee.name}");
         xLabel1.setPreferredSize(new java.awt.Dimension(0, 18));
         xFormPanel1.add(xLabel1);
 
@@ -75,19 +78,19 @@ public class BusinessHeaderTemplate extends javax.swing.JPanel {
         xLineBorder2.setLineColor(new java.awt.Color(204, 204, 204));
         xLabel2.setBorder(xLineBorder2);
         xLabel2.setCaption("Address");
-        xLabel2.setExpression("#{application.permitee.address}");
+        xLabel2.setExpression("#{entity.permitee.address}");
         xLabel2.setPreferredSize(new java.awt.Dimension(0, 18));
         xFormPanel1.add(xLabel2);
 
         jPanel3.add(xFormPanel1);
-        xFormPanel1.setBounds(10, 30, 370, 48);
+        xFormPanel1.setBounds(10, 30, 370, 50);
 
         com.rameses.rcp.control.border.XLineBorder xLineBorder3 = new com.rameses.rcp.control.border.XLineBorder();
         xLineBorder3.setLineColor(new java.awt.Color(204, 204, 204));
         xLabel3.setBorder(xLineBorder3);
         xLabel3.setCaption("Date");
         xLabel3.setCaptionWidth(100);
-        xLabel3.setExpression("#{application.txndate}");
+        xLabel3.setExpression("#{entity.appdate}");
         xLabel3.setPreferredSize(new java.awt.Dimension(0, 18));
         xFormPanel2.add(xLabel3);
 
@@ -96,33 +99,54 @@ public class BusinessHeaderTemplate extends javax.swing.JPanel {
         xLabel5.setBorder(xLineBorder4);
         xLabel5.setCaption("Applicable Year");
         xLabel5.setCaptionWidth(100);
-        xLabel5.setExpression("#{application.iyear}");
+        xLabel5.setExpression("#{entity.iyear}");
         xLabel5.setName("application.year");
         xLabel5.setPreferredSize(new java.awt.Dimension(0, 18));
         xFormPanel2.add(xLabel5);
 
         jPanel3.add(xFormPanel2);
-        xFormPanel2.setBounds(390, 30, 330, 48);
+        xFormPanel2.setBounds(390, 30, 330, 50);
 
         com.rameses.rcp.control.border.XLineBorder xLineBorder5 = new com.rameses.rcp.control.border.XLineBorder();
         xLineBorder5.setLineColor(new java.awt.Color(204, 204, 204));
         xLabel6.setBorder(xLineBorder5);
         xLabel6.setCaption("Trade Name");
+        xLabel6.setExpression("#{entity.tradename}");
         xLabel6.setPreferredSize(new java.awt.Dimension(0, 18));
-        xLabel6.setText("#{application.tradename}");
         xFormPanel3.add(xLabel6);
 
         com.rameses.rcp.control.border.XLineBorder xLineBorder6 = new com.rameses.rcp.control.border.XLineBorder();
         xLineBorder6.setLineColor(new java.awt.Color(204, 204, 204));
         xLabel7.setBorder(xLineBorder6);
         xLabel7.setCaption("Address");
+        xLabel7.setExpression("#{entity.businessaddress}");
         xLabel7.setName("application.info.taxpayeraddress");
         xLabel7.setPreferredSize(new java.awt.Dimension(0, 18));
-        xLabel7.setText("#{application.businessaddress}");
         xFormPanel3.add(xLabel7);
 
         jPanel3.add(xFormPanel3);
-        xFormPanel3.setBounds(10, 80, 710, 48);
+        xFormPanel3.setBounds(10, 80, 368, 50);
+
+        xFormPanel4.setCaptionWidth(100);
+        com.rameses.rcp.control.border.XLineBorder xLineBorder7 = new com.rameses.rcp.control.border.XLineBorder();
+        xLineBorder7.setLineColor(new java.awt.Color(204, 204, 204));
+        xLabel9.setBorder(xLineBorder7);
+        xLabel9.setCaption("Bus. Org Type");
+        xLabel9.setExpression("#{entity.businessorgtype}");
+        xLabel9.setPreferredSize(new java.awt.Dimension(0, 18));
+        xFormPanel4.add(xLabel9);
+
+        com.rameses.rcp.control.border.XLineBorder xLineBorder8 = new com.rameses.rcp.control.border.XLineBorder();
+        xLineBorder8.setLineColor(new java.awt.Color(204, 204, 204));
+        xLabel10.setBorder(xLineBorder8);
+        xLabel10.setCaption("Barangay");
+        xLabel10.setExpression("#{entity.barangay.name}");
+        xLabel10.setName("application.info.taxpayeraddress");
+        xLabel10.setPreferredSize(new java.awt.Dimension(0, 18));
+        xFormPanel4.add(xLabel10);
+
+        jPanel3.add(xFormPanel4);
+        xFormPanel4.setBounds(390, 76, 332, 50);
 
         org.jdesktop.layout.GroupLayout jPanel1Layout = new org.jdesktop.layout.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -149,7 +173,9 @@ public class BusinessHeaderTemplate extends javax.swing.JPanel {
     private com.rameses.rcp.control.XFormPanel xFormPanel1;
     private com.rameses.rcp.control.XFormPanel xFormPanel2;
     private com.rameses.rcp.control.XFormPanel xFormPanel3;
+    private com.rameses.rcp.control.XFormPanel xFormPanel4;
     private com.rameses.rcp.control.XLabel xLabel1;
+    private com.rameses.rcp.control.XLabel xLabel10;
     private com.rameses.rcp.control.XLabel xLabel2;
     private com.rameses.rcp.control.XLabel xLabel3;
     private com.rameses.rcp.control.XLabel xLabel4;
@@ -157,6 +183,7 @@ public class BusinessHeaderTemplate extends javax.swing.JPanel {
     private com.rameses.rcp.control.XLabel xLabel6;
     private com.rameses.rcp.control.XLabel xLabel7;
     private com.rameses.rcp.control.XLabel xLabel8;
+    private com.rameses.rcp.control.XLabel xLabel9;
     // End of variables declaration//GEN-END:variables
     
 }
