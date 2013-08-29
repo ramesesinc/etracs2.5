@@ -44,6 +44,6 @@ rule "test rule"
 		m1.put("title", "Gross" );
 		m1.put("type", "decimal" );
 		m1.put("lobid", lob.getObjid() );
-		action.execute( "ask-info",m, drools);
+		action.execute( "ask-info", m1, drools);
 end
 
