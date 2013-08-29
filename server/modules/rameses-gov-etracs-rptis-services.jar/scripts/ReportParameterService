@@ -56,12 +56,11 @@ class ReportParameterService{
 				org.provinceassessor = province.assessor 
 			}
 		}
-
-		org.treasurer = lgu.treasurer 
-		org.assessor = lgu.assessor 
-		org.mayor = lgu.mayor 
-		org.governor = lgu.governor 
-		org.address = lgu.address 
+		org.treasurer = lgu?.treasurer 
+		org.assessor = lgu?.assessor 
+		org.mayor = lgu?.mayor 
+		org.governor = lgu?.governor 
+		org.address = lgu?.address 
 
 		def params = [
 			SANGGUNIAN_NAME 			: var.sanggunian_name, 
@@ -102,7 +101,7 @@ class ReportParameterService{
 			USERFULLNAME	 			: env.FULLNAME,
 			USERJOBTITLE 				: env.JOBTITLE, 
             PRINTDATE   				: dateService.serverDate,
-			PRINTEDBY   				: env.USERFORMALNAME,
+			PRINTEDBY   				: env.FULLNAME,
 			DATE 						: formalizeDate( 'd' ), 
 			MONTH 						: formalizeDate( 'MMMMM' ),
 			YEAR 						: formalizeDate( 'yyyy' ),

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <workunit extends="rpt_wtemplates/CertificationController.xml">
     <invokers>
-        <invoker folderid="/txn/rpt/cert" action="init" caption="Ownership" 
+        <invoker folderid="/explorer/txn/rpt/cert" action="init" caption="Ownership" 
             opener="ownership" index="6" role="CERTIFICATION_ISSUER" permission="certification.ownership"/>    
             
         <invoker folderid="/menu/txn/rpt/cert" action="init" caption="Ownership" 

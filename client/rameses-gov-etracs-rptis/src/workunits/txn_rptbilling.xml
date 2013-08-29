@@ -4,14 +4,17 @@
         <invoker folderid="/menu/txn/landtax" action="init"  caption="Realty Tax Billing"
             role="LANDTAX" permission="rptbilling.create" />
             
+        <invoker folderid="/explorer/txn/landtax/txn" action="init"  caption="Realty Tax Billing"
+            role="LANDTAX" permission="rptbilling.create" />
+            
         <invoker type="quick_launcher" code="RPTBILL" action="init"  caption="RPT Billing"  
             role="LANDTAX" permission="rptbilling.create" />
         
-        <invoker type="navActions" action="_close" caption="Close" shortcut="ctrl W" mnemonic="c" icon="images/toolbars/cancel.png" immediate="true" visibleWhen="#{mode=='init'}"/>
-        <invoker type="navActions" action="printBill" caption="Print" shortcut="ctrl P" mnemonic="p" icon="images/toolbars/print.ping" visibleWhen="#{mode=='init'}"/>
-        <invoker type="navActions" action="previewBill" caption="Preview" shortcut="ctrl v" mnemonic="v" icon="images/toolbars/preview.png" visibleWhen="#{mode=='init'}"/>
+        <invoker type="formActions" action="_close" caption="Close" shortcut="ctrl W" mnemonic="c" icon="images/toolbars/cancel.png" immediate="true" visibleWhen="#{mode=='init'}"/>
+        <invoker type="formActions" action="printBill" caption="Print" shortcut="ctrl P" mnemonic="p" icon="images/toolbars/print.ping" visibleWhen="#{mode=='init'}"/>
+        <invoker type="formActions" action="previewBill" caption="Preview" shortcut="ctrl v" mnemonic="v" icon="images/toolbars/preview.png" visibleWhen="#{mode=='init'}"/>
         
-        <invoker type="navActions" action="back" caption="Back" shortcut="ctrl b" mnemonic="b" icon="images/toolbars/back.png" visibleWhen="#{mode=='view'}"/>
+        <invoker type="formActions" action="back" caption="Back" shortcut="ctrl b" mnemonic="b" icon="images/toolbars/back.png" visibleWhen="#{mode=='view'}"/>
     </invokers>
     
     <code class="com.rameses.gov.etracs.rpt.billing.ui.RPTBillingController">

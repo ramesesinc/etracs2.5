@@ -25,7 +25,7 @@ WHERE f.objid = $P{faasid}
 
 
 [getAnnotationMemoranda]
-SELECT memoranda
+SELECT memoranda, memoranda as annotationtext
 FROM faasannotation 
 WHERE faasid = $P{faasid} 
   AND state = 'APPROVED'

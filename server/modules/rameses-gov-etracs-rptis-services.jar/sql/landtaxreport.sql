@@ -44,7 +44,7 @@ SELECT
 	(SELECT SUM(sefint) FROM rptledgeritem WHERE rptledgerid = rl.objid AND state = 'OPEN' AND year <= $P{currentyear}) AS sefint,
 	(SELECT SUM(sefdisc) FROM rptledgeritem WHERE rptledgerid = rl.objid AND state = 'OPEN' AND year <= $P{currentyear}) AS sefdisc,
 	(SELECT SUM(basic + basicint - basicdisc - basicpaid + sef + sefint - sefdisc - sefpaid) FROM rptledgeritem WHERE rptledgerid = rl.objid AND state = 'OPEN' AND year <= $P{currentyear}) AS total,
-	xr.serialno AS orno,
+	xr.receiptno AS orno,
 	xr.txndate AS ordate
 FROM realproperty rp 
 	INNER JOIN barangay b ON rp.barangayid = b.objid 
@@ -61,11 +61,11 @@ WHERE rp.barangayid = $P{barangayid}
 
 [getAbstractCollectionBASIC]
 SELECT  
-	xr.serialno AS orno, 
+	xr.receiptno AS orno, 
 	xr.txndate AS ordate, 	
 	'BASIC' AS `type`, 
 	CASE 
-		WHEN xr.voided = 1 THEN ''
+		WHEN v.objid IS NOT NULL  THEN ''
 		WHEN MIN(ri.year) = MAX(ri.year) AND MIN(ri.qtr) = 1 AND MAX(ri.qtr) = 4
 			THEN CONCAT('FULL ', MIN(ri.year))
 		WHEN MIN(ri.year) = MAX(ri.year) AND MIN(ri.qtr) = MAX(ri.qtr)
@@ -75,35 +75,36 @@ SELECT
 		ELSE 
 			CONCAT(  MIN(CONCAT(ri.qtr, 'Q,', ri.year)), ' - ', MAX(CONCAT(ri.qtr, 'Q,', ri.year)) )
 	END AS period,
-	CASE WHEN xr.voided = 0 THEN f.taxpayer_name ELSE '*** VOIDED ***' END AS taxpayername, 
-	CASE WHEN xr.voided = 0 THEN f.tdno ELSE '' END AS tdno, 
-	CASE WHEN xr.voided = 0 THEN b.name ELSE '' END AS barangay, 
-	CASE WHEN xr.voided = 0 THEN pc.code ELSE '' END AS classification, 
-	SUM(CASE WHEN xr.voided = 0 AND ri.revtype IN ('current', 'advance') THEN ri.basic ELSE 0.0 END) AS currentyear,
-	SUM(CASE WHEN xr.voided = 0 AND ri.revtype IN ('previous','prior') THEN ri.basic ELSE 0.0 END) AS previousyear,
-	SUM(CASE WHEN xr.voided = 0 AND ri.revtype IN ('current', 'advance') THEN ri.basicdisc ELSE 0.0 END) AS discount,
-	SUM(CASE WHEN xr.voided = 0 AND ri.revtype IN ('current', 'advance') THEN ri.basicint ELSE 0.0 END) AS penaltycurrent,
-	SUM(CASE WHEN xr.voided = 0 AND ri.revtype IN ('previous','prior') THEN ri.basicint ELSE 0.0 END) AS penaltyprevious
-FROM xreceipt xr
-	INNER JOIN rptreceipt rr ON xr.objid = rr.objid 
-	INNER JOIN rptreceiptitem ri ON rr.objid = ri.rptreceiptid 
+	CASE WHEN v.objid IS NULL THEN f.taxpayer_name ELSE '*** VOIDED ***' END AS taxpayername, 
+	CASE WHEN v.objid IS NULL THEN f.tdno ELSE '' END AS tdno, 
+	CASE WHEN v.objid IS NULL THEN b.name ELSE '' END AS barangay, 
+	CASE WHEN v.objid IS NULL THEN pc.code ELSE '' END AS classification, 
+	SUM(CASE WHEN v.objid IS NULL AND ri.revtype IN ('current', 'advance') THEN ri.basic ELSE 0.0 END) AS currentyear,
+	SUM(CASE WHEN v.objid IS NULL AND ri.revtype IN ('previous','prior') THEN ri.basic ELSE 0.0 END) AS previousyear,
+	SUM(CASE WHEN v.objid IS NULL AND ri.revtype IN ('current', 'advance') THEN ri.basicdisc ELSE 0.0 END) AS discount,
+	SUM(CASE WHEN v.objid IS NULL AND ri.revtype IN ('current', 'advance') THEN ri.basicint ELSE 0.0 END) AS penaltycurrent,
+	SUM(CASE WHEN v.objid IS NULL AND ri.revtype IN ('previous','prior') THEN ri.basicint ELSE 0.0 END) AS penaltyprevious
+FROM cashreceipt xr
+	INNER JOIN cashreceipt_rpt rr ON xr.objid = rr.objid 
+	INNER JOIN cashreceipt_rpt_item ri ON rr.objid = ri.rptreceiptid 
 	INNER JOIN rptledger rl ON ri.rptledgerid = rl.objid 
 	INNER JOIN faas f ON rl.faasid = f.objid 
 	INNER JOIN rpu r ON f.rpuid = r.objid
 	INNER JOIN propertyclassification pc ON r.classification_objid = pc.objid 
 	INNER JOIN barangay b ON rl.barangayid = b.objid 
+	LEFT JOIN cashreceipt_void v ON xr.objid = v.receiptid
 ${whereclause}
-GROUP BY xr.serialno, xr.txndate, f.taxpayer_name, f.tdno, b.name, pc.code 	
-ORDER BY xr.serialno;
+GROUP BY xr.receiptno, xr.txndate, f.taxpayer_name, f.tdno, b.name, pc.code 	
+ORDER BY xr.receiptno;
 
 
 [getAbstractCollectionSEF]
 SELECT  
-	xr.serialno AS orno, 
+	xr.receiptno AS orno, 
 	xr.txndate AS ordate, 	
 	'SEF' AS `type`, 
 	CASE 
-		WHEN xr.voided = 1 THEN ''
+		WHEN v.objid IS NOT NULL  THEN ''
 		WHEN MIN(ri.year) = MAX(ri.year) AND MIN(ri.qtr) = 1 AND MAX(ri.qtr) = 4
 			THEN CONCAT('FULL ', MIN(ri.year))
 		WHEN MIN(ri.year) = MAX(ri.year) AND MIN(ri.qtr) = MAX(ri.qtr)
@@ -113,24 +114,25 @@ SELECT
 		ELSE 
 			CONCAT(  MIN(CONCAT(ri.qtr, 'Q,', ri.year)), ' - ', MAX(CONCAT(ri.qtr, 'Q,', ri.year)) )
 	END AS period,
-	CASE WHEN xr.voided = 0 THEN f.taxpayer_name ELSE '*** VOIDED ***' END AS taxpayername, 
-	CASE WHEN xr.voided = 0 THEN f.tdno ELSE '' END AS tdno, 
-	CASE WHEN xr.voided = 0 THEN b.name ELSE '' END AS barangay, 
-	CASE WHEN xr.voided = 0 THEN pc.code ELSE '' END AS classification, 
-	SUM(CASE WHEN xr.voided = 0 AND ri.revtype IN ('current', 'advance') THEN ri.sef ELSE 0.0 END) AS currentyear,
-	SUM(CASE WHEN xr.voided = 0 AND ri.revtype IN ('previous','prior') THEN ri.sef ELSE 0.0 END) AS previousyear,
-	SUM(CASE WHEN xr.voided = 0 AND ri.revtype IN ('current', 'advance') THEN ri.sefdisc ELSE 0.0 END) AS discount,
-	SUM(CASE WHEN xr.voided = 0 AND ri.revtype IN ('current', 'advance') THEN ri.sefint ELSE 0.0 END) AS penaltycurrent,
-	SUM(CASE WHEN xr.voided = 0 AND ri.revtype IN ('previous','prior') THEN ri.sefint ELSE 0.0 END) AS penaltyprevious
-FROM xreceipt xr
-	INNER JOIN rptreceipt rr ON xr.objid = rr.objid 
-	INNER JOIN rptreceiptitem ri ON rr.objid = ri.rptreceiptid 
+	CASE WHEN v.objid IS NULL THEN f.taxpayer_name ELSE '*** VOIDED ***' END AS taxpayername, 
+	CASE WHEN v.objid IS NULL THEN f.tdno ELSE '' END AS tdno, 
+	CASE WHEN v.objid IS NULL THEN b.name ELSE '' END AS barangay, 
+	CASE WHEN v.objid IS NULL THEN pc.code ELSE '' END AS classification, 
+	SUM(CASE WHEN v.objid IS NULL AND ri.revtype IN ('current', 'advance') THEN ri.sef ELSE 0.0 END) AS currentyear,
+	SUM(CASE WHEN v.objid IS NULL AND ri.revtype IN ('previous','prior') THEN ri.sef ELSE 0.0 END) AS previousyear,
+	SUM(CASE WHEN v.objid IS NULL AND ri.revtype IN ('current', 'advance') THEN ri.sefdisc ELSE 0.0 END) AS discount,
+	SUM(CASE WHEN v.objid IS NULL AND ri.revtype IN ('current', 'advance') THEN ri.sefint ELSE 0.0 END) AS penaltycurrent,
+	SUM(CASE WHEN v.objid IS NULL AND ri.revtype IN ('previous','prior') THEN ri.sefint ELSE 0.0 END) AS penaltyprevious
+FROM cashreceipt xr
+	INNER JOIN cashreceipt_rpt rr ON xr.objid = rr.objid 
+	INNER JOIN cashreceipt_rpt_item ri ON rr.objid = ri.rptreceiptid 
 	INNER JOIN rptledger rl ON ri.rptledgerid = rl.objid 
 	INNER JOIN faas f ON rl.faasid = f.objid 
 	INNER JOIN rpu r ON f.rpuid = r.objid
 	INNER JOIN propertyclassification pc ON r.classification_objid = pc.objid 
 	INNER JOIN barangay b ON rl.barangayid = b.objid 
+	LEFT JOIN cashreceipt_void v ON xr.objid = v.receiptid
 ${whereclause}
-GROUP BY xr.serialno, xr.txndate, f.taxpayer_name, f.tdno, b.name, pc.code 	
-ORDER BY xr.serialno;
+GROUP BY xr.receiptno, xr.txndate, f.taxpayer_name, f.tdno, b.name, pc.code 	
+ORDER BY xr.receiptno;
 

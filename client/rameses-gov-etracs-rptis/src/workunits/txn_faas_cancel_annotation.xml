@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <workunit>
     <invokers>
-        <invoker type="cancelannotation:create" action="init" caption="FAAS Cancel Cancel Annotation (New)" target="window"  
+        <invoker type="cancelannotation:create" action="init" caption="FAAS Cancel Annotation (New)" target="window"  
             role="APPRAISER" permission="cancelannotation.create" />
         <invoker type="cancelannotation:open" action="open" caption="FAAS Cancel Annotation" target="window"  />
         

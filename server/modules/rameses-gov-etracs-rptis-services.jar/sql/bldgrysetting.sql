@@ -51,7 +51,7 @@ ORDER BY pc.orderno
 
 
 [getRanges]
-SELECT * FROM bldgassesslevelrange WHERE bldgassesslevelid = $P{bldgassesslevelid}
+SELECT * FROM bldgassesslevelrange WHERE bldgassesslevelid = $P{bldgassesslevelid} ORDER BY mvfrom 
 
 
 [deleteRanges]

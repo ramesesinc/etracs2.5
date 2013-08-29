@@ -5,6 +5,9 @@
         
         <invoker folderid="/menu/txn/rpt/faas" action="initTxn"  caption="Change Taxability" index="6"
             txntypeid="CT" txntype="Change Taxability" newledger="false" newrpu="true" role="APPRAISER" permission="faas.createChangeTaxability"/>
+            
+        <invoker folderid="/explorer/txn/rpt/txn" action="initTxn"  caption="Change Taxability" index="6"
+            txntypeid="CT" txntype="Change Taxability" newledger="false" newrpu="true" role="APPRAISER" permission="faas.createChangeTaxability"/>
 
          <invoker type="quick_launcher" code="CT01" action="initTxn"  caption="Change Taxability" index="6"
             txntypeid="CT" txntype="Change Taxability" newledger="false" newrpu="true" role="APPRAISER" permission="faas.createChangeTaxability"/>

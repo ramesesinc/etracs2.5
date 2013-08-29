@@ -5,6 +5,9 @@
           
         <invoker folderid="/menu/txn/rpt/faas" action="initTxn"  caption="Transfer with Reassessment" index="2"
             txntypeid="TRE" txntype="Transfer with Reassessment" newledger="false" newrpu="true" role="APPRAISER" permission="faas.createTransfer"/>
+            
+        <invoker folderid="/explorer/txn/rpt/txn" action="initTxn"  caption="Transfer with Reassessment" index="2"
+            txntypeid="TRE" txntype="Transfer with Reassessment" newledger="false" newrpu="true" role="APPRAISER" permission="faas.createTransfer"/>
 
          <invoker type="quick_launcher" code="TR02" action="initTxn"  caption="Transfer with Reassessment" index="2"
             txntypeid="TRE" txntype="Transfer with Reassessment" newledger="false" newrpu="true" role="APPRAISER" permission="faas.createTransfer"/>

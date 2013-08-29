@@ -1,7 +1,7 @@
 <workunit>
     <invokers>
-        <invoker type="faasannotionlisting:open" caption="Annotations" target="popup"/>
-        <invoker type="navActions" action="_close" caption="Close" mnemonic="c" icon="images/toolbars/cancel.png"/>
+        <invoker type="faas:formActions" caption="Annotations" action="init" target="popup" visibleWhen="#{mode=='read' &amp;&amp; showAnnotation == true}"/>
+        <invoker type="formActions" action="_close" caption="Close" mnemonic="c" icon="images/toolbars/cancel.png"/>
     </invokers>
     <code>
         import com.rameses.rcp.common.*
@@ -11,9 +11,18 @@
         
         class FAASAnnotationListisingController
         {
-            def annotations 
+            @Service('FAASService')
+            def svc
             
             def title = 'List of Annotations'
+            def entity 
+            
+            def annotations 
+            
+            void init(){
+                annotations = svc.getAnnotations(entity.objid);
+                if (!annotations) throw new Exception('There are no annotations for this record.')
+            }   
             
             def listHandler = [
                 fetchList : { return annotations },

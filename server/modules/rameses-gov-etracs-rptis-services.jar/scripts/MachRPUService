@@ -27,6 +27,9 @@ class MachRPUService
     @Service('MachineLookupService')
     def machSvc 
 
+    @Service('Var')
+    def var
+
     
     def SCHEMA_RPU          = 'machrpu'
     def SCHEMA_MACHUSE      = 'machrpu:machuse'
@@ -152,7 +155,7 @@ class MachRPUService
     public def assessMachine(rpu, machuse, machine ){
         calcYearsUsed( rpu, machuse, machine )
         calcEstimatedLife( machine)
-        updateForexInfo( machine, rpu.ry) 
+        updateForexInfo( machine, rpu) 
         calculateRCNLD( machine )
         calculateDepreciation( machine )
         calculateDetailAssessment( machuse, machine )
@@ -189,12 +192,24 @@ class MachRPUService
         if( util.isTrue(machine.autodepreciate) && machine.estimatedlife > 0) {
             def dep = machine.remaininglife / machine.estimatedlife
             dep = (1 - dep) * 100;
+            if (dep > (100 - getResidualRate())) {
+                dep = 100 - getResidualRate()
+            }
             machine.depreciation = numberSvc.roundA( dep, 0 )
             machine.depreciationvalue =  numberSvc.round( machine.replacementcost *  machine.depreciation / 100.0 )
         }
         else {
             machine.depreciationvalue =  numberSvc.round( machine.replacementcost *  machine.depreciation / 100.0 )
         }
+    }
+
+    def getResidualRate(){
+        def setting = em.sqlContext.createNamedQuery('machrpu:getMachRySetting')
+                            .setParameter('ry', var.current_ry)
+                            .singleResult
+        if (setting)
+            return setting.residualrate
+        return 20.0
     }
 
 
@@ -237,23 +252,23 @@ class MachRPUService
     }
 
 
-    void updateForexInfo( machine, ry) {
+    void updateForexInfo( machine, rpu) {
         machine.forexid  = null
         machine.forex    = 0.0
         machine.feracid  = null
         machine.ferac    = 0.0
         
         if (util.isTrue(machine.imported)) {
-            def currdate  = dateSvc.parseCurrentDate()
+            def dtappraised  = dateSvc.parseDate(rpu.dtappraised, null)
             //forex 
-            def forex = machSettingSvc.lookupForex([ry:ry, year:currdate.year])
+            def forex = machSettingSvc.lookupForex([ry:rpu.ry, year:dtappraised.year])
             if(forex ) {
                 machine.forexid  = forex.objid 
                 machine.forex    = forex.forex 
             }
             
             //ferac info 
-            def ferac = machSettingSvc.lookupForex([ry:ry, year:machine.yearacquired])
+            def ferac = machSettingSvc.lookupForex([ry:rpu.ry, year:machine.yearacquired])
             if(ferac) {
                 machine.feracid  = ferac.objid 
                 machine.ferac    = ferac.forex 
@@ -288,7 +303,10 @@ class MachRPUService
 
         if ( rpu.dtappraised) {
             def pdate = dateSvc.parseDate( rpu.dtappraised, null )
-            machine.yearsused =  pdate.year - fromyear + 1    
+            machine.yearsused =  pdate.year - fromyear 
+            if (util.toBoolean(var.machrpu_include_operation_year_in_yearsused, false)) {
+                machine.yearsused += 1
+            }
         }
     }
 

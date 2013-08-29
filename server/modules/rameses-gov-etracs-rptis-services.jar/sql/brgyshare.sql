@@ -100,8 +100,8 @@ SELECT
 	SUM(rci.brgybasic) AS basicshare,
 	SUM(rci.brgybasicint) AS basicintshare,
 	SUM( rci.brgybasic + rci.brgybasicint) AS totalshare
-FROM rptreceipt rc 
-	INNER JOIN rptreceiptitem rci ON rc.objid = rci.rptreceiptid 
+FROM cashreceipt_rpt rc 
+	INNER JOIN cashreceipt_rpt_item rci ON rc.objid = rci.rptreceiptid 
 	INNER JOIN rptledger rl ON rci.rptledgerid = rl.objid 
 	INNER JOIN barangay b ON rl.barangayid = b.objid 
 WHERE rc.year = $P{year}
@@ -133,8 +133,8 @@ SELECT
 	SUM(CASE WHEN ri.revtype = 'current' THEN ri.brgybasic + ri.brgybasicint ELSE 0.0 END) AS basiccurrentshare,
 	SUM(CASE WHEN ri.revtype = 'previous' THEN ri.brgybasic + ri.brgybasicint ELSE 0.0 END) AS basicpreviousshare,
 	SUM(ri.brgybasic + ri.brgybasicint) AS totalshare
-FROM rptreceipt r
-		INNER JOIN rptreceiptitem ri ON r.objid = ri.rptreceiptid 
+FROM cashreceipt_rpt r
+		INNER JOIN cashreceipt_rpt_item ri ON r.objid = ri.rptreceiptid 
 		INNER JOIN rptledger rl ON ri.rptledgerid = rl.objid
 		INNER JOIN barangay b ON rl.barangayid = b.objid 
 WHERE r.year = $P{year}		

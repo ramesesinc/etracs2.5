@@ -47,7 +47,7 @@ class RPTCertificationLandHoldingService
 	def createLandHoldingItems(cert){
 		em.sqlContext.createNamedExecutor('rptcertification:insertLandHoldingItems')
 			.setParameter('rptcertificationid', cert.objid)
-			.setParameter('taxpayerid', cert.taxpayerid)
+			.setParameter('taxpayerid', cert.taxpayer.objid)
 			.execute()
 
 		def items = getLandHoldingItems(cert)
@@ -60,7 +60,7 @@ class RPTCertificationLandHoldingService
 	def createLandHoldingWithImprovementItems(cert){
 		em.sqlContext.createNamedExecutor('rptcertification:insertLandHoldingWithImprovementItems')
 			.setParameter('rptcertificationid', cert.objid)
-			.setParameter('taxpayerid', cert.taxpayerid)
+			.setParameter('taxpayerid', cert.taxpayer.objid)
 			.execute()
 
 		def items = getLandHoldingItems(cert)
@@ -72,7 +72,7 @@ class RPTCertificationLandHoldingService
 	def createLandHoldingWithNoImprovementItems(cert){
 		em.sqlContext.createNamedExecutor('rptcertification:insertLandHoldingWithNoImprovementItems')
 			.setParameter('rptcertificationid', cert.objid)
-			.setParameter('taxpayerid', cert.taxpayerid)
+			.setParameter('taxpayerid', cert.taxpayer.objid)
 			.execute()
 
 		def items = getLandHoldingItems(cert)

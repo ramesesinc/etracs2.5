@@ -62,6 +62,7 @@ public class BldgRPUController extends com.rameses.gov.etracs.rpt.rpu.ui.Abstrac
         basevalue       = rpu.basevalue;
         loadSetting();
         loading = false;
+        binding?.refresh('depreciation')
     }
     
     

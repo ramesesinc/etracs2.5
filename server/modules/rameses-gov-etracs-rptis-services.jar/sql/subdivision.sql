@@ -28,7 +28,7 @@ ORDER BY s.txnno
 [openSubdivision]
 SELECT s.*,
 	f.tdno AS motherfaas_tdno, 
-	f.taxpayer_objid AS motherfaas_taxpayer_id,
+	f.taxpayer_objid AS motherfaas_taxpayer_objid,
 	f.taxpayer_name AS motherfaas_taxpayer_name,
 	f.taxpayer_address AS motherfaas_taxpayer_address,
 	f.owner_name AS motherfaas_owner_name,
@@ -82,6 +82,11 @@ SELECT
 	sar.*,
 	f.state AS prevstate,
 	f.tdno AS prevtdno,
+	f.taxpayer_objid,
+	f.taxpayer_name,
+	f.taxpayer_address,
+	f.owner_name,
+	f.owner_address,
 	r.suffix AS prevsuffix,
 	r.fullpin AS prevfullpin,
 	r.rputype 
@@ -137,5 +142,7 @@ UPDATE subdivision SET state = 'APPROVED' WHERE objid = $P{objid}
 [cancelRealProperty]
 UPDATE realproperty SET state = 'CANCELLED' WHERE objid = $P{objid}
 
+[cancelMotherLandLedger]
+UPDATE rptledger SET state = 'CANCELLED' WHERE faasid = $P{faasid}
 
 

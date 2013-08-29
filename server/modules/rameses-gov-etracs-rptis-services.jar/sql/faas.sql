@@ -22,7 +22,7 @@ FROM faas f
 	LEFT JOIN realproperty rp ON rpu.realpropertyid = rp.objid
 	LEFT JOIN barangay b ON rp.barangayid = b.objid 
 ${filters}
-ORDER BY rpu.ry, rpu.fullpin, f.tdno    
+
 
 [getFaasIds]
 select
@@ -102,3 +102,14 @@ FROM faas f
 	INNER JOIN barangay b ON rp.barangayid = b.objid 
 ${filters}	
 ORDER BY f.tdno 
+
+
+[getLandImprovementIds]
+SELECT fi.objid 
+FROM faas fl 
+	INNER JOIN rpu lr ON fl.rpuid = lr.objid 
+	INNER JOIN rpu ri ON lr.realpropertyid = ri.realpropertyid
+	INNER JOIN faas fi ON ri.objid = fi.rpuid 
+WHERE fl.objid = $P{landfaasid}
+  AND ri.rputype <> 'land' 
+  AND fi.state = 'CURRENT'

@@ -65,7 +65,7 @@ public class RPTCertificationPage extends javax.swing.JPanel {
         xLabel4.setCaption("Taxpayer");
         xLabel4.setCaptionWidth(135);
         xLabel4.setDepends(new String[] {"entity.taxpayer", "entity.tdno"});
-        xLabel4.setExpression("#{entity.taxpayername}");
+        xLabel4.setExpression("#{entity.taxpayer.name}");
         xLabel4.setName("entity.taxpayername");
         xLabel4.setPreferredSize(new java.awt.Dimension(0, 21));
         formPanel1.add(xLabel4);
@@ -73,7 +73,7 @@ public class RPTCertificationPage extends javax.swing.JPanel {
         xLookupField1.setCaption("Taxpayer");
         xLookupField1.setCaptionWidth(135);
         xLookupField1.setDepends(new String[] {"entity.taxpayer", "entity.tdno"});
-        xLookupField1.setExpression("#{entity.taxpayername}");
+        xLookupField1.setExpression("#{entity.taxpayer.name}");
         xLookupField1.setHandler("lookupTaxpayer");
         xLookupField1.setName("entity.taxpayer");
         xLookupField1.setPreferredSize(new java.awt.Dimension(0, 21));
@@ -86,7 +86,7 @@ public class RPTCertificationPage extends javax.swing.JPanel {
         xLabel3.setCaption("Address");
         xLabel3.setCaptionWidth(135);
         xLabel3.setDepends(new String[] {"entity.taxpayer", "entity.tdno"});
-        xLabel3.setExpression("#{entity.taxpayeraddress}");
+        xLabel3.setExpression("#{entity.taxpayer.address}");
         xLabel3.setPreferredSize(new java.awt.Dimension(0, 21));
         formPanel1.add(xLabel3);
 

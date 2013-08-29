@@ -30,6 +30,10 @@ public class ConsolidationController extends PageFlowController
     def STATE_CURRENT           = 'CURRENT';
     def STATE_CANCELLED         = 'CANCELLED';
     
+    def appraiser = [:];
+    def recommender = [:];
+    def taxmapper = [:];
+    def approver = [:];
     
     def mode;
     def entity;
@@ -42,8 +46,10 @@ public class ConsolidationController extends PageFlowController
         consolidation = svc.initConsolidation();
         consolidatedlands = [];
         affectedrpus = [];
-        rp = [:]
-        rpu = [:]
+        rp = [:];
+        rpu = [:];
+        initSignatoryVars();
+                
         mode = MODE_CREATE 
         return super.signal('init')
     }
@@ -53,6 +59,7 @@ public class ConsolidationController extends PageFlowController
         consolidation= svc.openConsolidation( entity.objid );
         svc.createNewlyCreatedAffectedRpus(consolidation);
         loadItems()
+        initSignatoryVars();
         mode = MODE_READ;
         return super.signal('open');
     }
@@ -77,10 +84,12 @@ public class ConsolidationController extends PageFlowController
     
     void cancelEdit(){
         consolidation = svc.openConsolidation(consolidation.objid);
+        initSignatoryVars();
         mode = MODE_READ;
     }
     
     void save(){
+        saveSignatoryInfo()
         if (mode == MODE_CREATE)
             consolidation = svc.createConsolidation(consolidation);
         else 
@@ -107,6 +116,7 @@ public class ConsolidationController extends PageFlowController
     }
     
     void createConsolidation(){
+        saveSignatoryInfo()
         consolidation = svc.createConsolidation(consolidation);
         mode = MODE_EDIT;
     }
@@ -309,25 +319,6 @@ public class ConsolidationController extends PageFlowController
     /*===============================================
      * Lookup Support
      *===============================================*/
-    
-    def getLookupAppraiser(){
-        return InvokerUtil.lookupOpener('rptofficer:lookup',[role:'APPRAISER']);
-    }
-    
-    
-    def getLookupRecommender(){
-        return InvokerUtil.lookupOpener('rptofficer:lookup',[role:'RECOMMENDER']);
-    }
-    
-    
-    def getLookupTaxmapper(){
-        return InvokerUtil.lookupOpener('rptofficer:lookup',[role:'TAXMAPPER']);
-    }
-    
-    def getLookupApprover(){
-        return InvokerUtil.lookupOpener('rptofficer:lookup',[role:'APPROVER']);
-    }
-    
         
     def getLookupTaxpayer(){
         return InvokerUtil.lookupOpener('entity:lookup',[
@@ -392,5 +383,76 @@ public class ConsolidationController extends PageFlowController
     def getOpener() {
         return InvokerUtil.lookupOpener('landrpu:open', [rpu:rpu, lguid:consolidation.lguid])
     }
-     
+    
+    
+    
+    def getLookupAppraiser(){
+        return InvokerUtil.lookupOpener('txnsignatory:lookup',[
+            doctype : 'RPTAPPRAISER',
+            onselect : { updateSignatoryInfo(appraiser, it) },
+            onempty  : { clearSignatoryInfo(appraiser) },
+        ])
+        
+    }
+    
+    def getLookupRecommender(){
+        return InvokerUtil.lookupOpener('txnsignatory:lookup',[
+            doctype : 'RPTRECOMMENDER',
+            onselect : { updateSignatoryInfo(recommender, it) },
+            onempty  : { clearSignatoryInfo(recommender) },
+        ])
+        
+    }
+    
+    def getLookupTaxmapper(){
+        return InvokerUtil.lookupOpener('txnsignatory:lookup',[
+            doctype : 'RPTTAXMAPPER',
+            onselect : { updateSignatoryInfo(taxmapper, it) },
+            onempty  : { clearSignatoryInfo(taxmapper) },
+        ])
+        
+    }
+    
+    def getLookupApprover(){
+        return InvokerUtil.lookupOpener('txnsignatory:lookup',[
+            doctype : 'RPTAPPROVER',
+            onselect : { updateSignatoryInfo(approver, it) },
+            onempty  : { clearSignatoryInfo(approver) },
+        ])
+        
+    }
+    
+    void updateSignatoryInfo(signatory, data){
+        signatory.personnelid = data.objid;
+        signatory.name = data.name;
+        signatory.title = data.title;
+    }
+    
+    void clearSignatoryInfo(signatory){
+        signatory.personnelid = null;
+        signatory.name = null;
+        signatory.title = null;
+    }
+ 
+    
+    void initSignatoryVars(){
+        appraiser = consolidation.signatories.find{it.type == 'appraiser'};
+        recommender = consolidation.signatories.find{it.type == 'recommender'};
+        taxmapper = consolidation.signatories.find{it.type == 'taxmapper'};
+        approver = consolidation.signatories.find{it.type == 'approver'};
+        appraiser = (appraiser ? appraiser : [:])
+        recommender = (recommender ? recommender : [:])
+        taxmapper = (taxmapper ? taxmapper : [:])
+        approver = (approver ? approver : [:])
+        
+    }
+    
+        
+    void saveSignatoryInfo(){
+        consolidation.signatories.find{it.type == 'appraiser'}?.putAll(appraiser);
+        consolidation.signatories.find{it.type == 'recommender'}?.putAll(recommender);
+        consolidation.signatories.find{it.type == 'taxmapper'}?.putAll(taxmapper);
+        consolidation.signatories.find{it.type == 'approver'}?.putAll(approver);
+    }
+    
 }

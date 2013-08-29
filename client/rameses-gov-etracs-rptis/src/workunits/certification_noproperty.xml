@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <workunit extends="rpt_wtemplates/CertificationController.xml">
     <invokers>
-        <invoker folderid="/txn/rpt/cert" action="init" caption="No Property" 
+        <invoker folderid="/explorer/txn/rpt/cert" action="init" caption="No Property" 
             opener="noproperty" index="8" role="CERTIFICATION_ISSUER" permission="certification.noproperty"/>    
             
         <invoker folderid="/menu/txn/rpt/cert" action="init" caption="No Property" 

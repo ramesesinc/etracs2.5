@@ -22,7 +22,7 @@ public class MultiplePropertyController extends com.rameses.gov.etracs.rpt.repor
     SubReport[] getSubReports() {
         return [
             new SubReport('MultiplePropertyCertificationItem', reportPath + 'MultiplePropertyCertificationItem.jasper'),
-            new SubReport('FootNoteItem', reportPath + '/FootNoteItem.jasper'),
+            new SubReport('FootNoteItem', reportPath + 'FootNoteItem.jasper'),
         ] as SubReport[]
     }
     

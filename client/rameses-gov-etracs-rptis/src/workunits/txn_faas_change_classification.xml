@@ -5,6 +5,9 @@
             
         <invoker folderid="/menu/txn/rpt/faas" action="initTxn"  caption="Change Classification" index="5"
             txntypeid="CC" txntype="Change Classification" newledger="false" newrpu="true" role="APPRAISER" permission="faas.createChangeClassification"/>
+            
+        <invoker folderid="/explorer/txn/rpt/txn" action="initTxn"  caption="Change Classification" index="5"
+            txntypeid="CC" txntype="Change Classification" newledger="false" newrpu="true" role="APPRAISER" permission="faas.createChangeClassification"/>
 
          <invoker type="quick_launcher" code="CC01" action="initTxn"  caption="Change Classification" index="5"
             txntypeid="CC" txntype="Change Classification" newledger="false" newrpu="true" role="APPRAISER" permission="faas.createChangeClassification"/>

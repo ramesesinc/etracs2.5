@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <workunit extends="rpt_wtemplates/CertificationController.xml">
     <invokers>
-        <invoker folderid="/txn/rpt/cert" action="init" caption="Latest and Existing" 
+        <invoker folderid="/explorer/txn/rpt/cert" action="init" caption="Latest and Existing" 
             opener="latest" index="5" role="CERTIFICATION_ISSUER" permission="certification.latestandexisting"/>
             
         <invoker folderid="/menu/txn/rpt/cert" action="init" caption="Latest and Existing" 

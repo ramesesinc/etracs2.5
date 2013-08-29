@@ -37,6 +37,8 @@ class BrgyShareService
 		util.required('Month', share.mon)
 		checkPostedShare(share)
 		share.objid = util.generateId('BS')
+		share.createdby = env.FULLNAME 
+		share.createdbytitle = env.JOBTITLE 
 		share.items = em.sqlContext.createNamedQuery('brgyshare:getOpenBrgyShares')
 				.setParameter('year', share.year)
 				.setParameter('month', share.mon.index)

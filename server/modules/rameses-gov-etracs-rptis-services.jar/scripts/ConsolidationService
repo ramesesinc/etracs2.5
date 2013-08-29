@@ -426,6 +426,9 @@ class ConsolidationService
         	em.sqlContext.createNamedExecutor('consolidation:cancelRealProperty')
 		            .setParameter('objid', cl.rpu.realpropertyid)
 		            .execute()
+          em.sqlContext.createNamedExecutor('consolidation:cancelLandLedger')
+                .setParameter('faasid', cl.landfaasid)
+                .execute()
         }
 
  	}

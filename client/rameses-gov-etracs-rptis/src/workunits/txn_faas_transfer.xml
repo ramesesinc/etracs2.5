@@ -5,6 +5,9 @@
             
         <invoker folderid="/menu/txn/rpt/faas" action="initTxn"  caption="Transfer of Ownership" index="1"
             txntypeid="TR" txntype="TRANSFER" newledger="false" newrpu="false" role="APPRAISER" permission="faas.createTransfer"/>
+            
+        <invoker folderid="/explorer/txn/rpt/txn" action="initTxn"  caption="Transfer of Ownership" index="1"
+            txntypeid="TR" txntype="TRANSFER" newledger="false" newrpu="false" role="APPRAISER" permission="faas.createTransfer"/>
 
          <invoker type="quick_launcher" code="TR01" action="initTxn"  caption="Transfer of Ownership" index="1"
             txntypeid="TR" txntype="TRANSFER" newledger="false" newrpu="false" role="APPRAISER" permission="faas.createTransfer"/>

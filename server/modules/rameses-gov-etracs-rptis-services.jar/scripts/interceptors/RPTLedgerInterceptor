@@ -15,23 +15,37 @@ class RPTLedgerInterceptor
 
 	@After(pattern="FAASService.approveFaas.*")
 	public void postFaasToRPTLedger(evt){
-		def faas = evt.result 
-		if (faas.txntype.newledger || util.isTrue(faas.datacapture)) {
-            def ledger = createLedger(faas)
-            svc.createLedger(ledger)
-            if (! util.isTrue(faas.datacapture)){
-            	svc.approveLedger(ledger)
-            }
+        def faas = evt.result 
+        if (faas.txntype.objid.matches('SD|CS') && faas.rpu.rputype == 'land'){
+            postNewLedger(faas)
+        }
+        else if (faas.txntype.objid.matches('SD|CS') && faas.rpu.rputype != 'land'){
+            postLedgerItems(faas);
+        }
+		else if ( faas.txntype.newledger || util.isTrue(faas.datacapture)) {
+            postNewLedger(faas);
         }
         else {
-        	def ledger = svc.getLedgerByFaasId(faas.previousfaases[0].prevfaasid)
-            if (!ledger) throw new Exception('Ledger not found for TD No. ' + faas.tdno + '.')
-        	ledger.faasid = faas.objid 
-        	svc.updateLedger(ledger)
-        	def ledgerfaas = createLedgerFaas(ledger, faas)
-        	svc.postLedgerFaas(ledgerfaas) 
+        	postLedgerItems(faas);
         }		
 	}
+
+    void postLedgerItems(faas){
+        def ledger = svc.getLedgerByFaasId(faas.previousfaases[0].prevfaasid)
+        if (!ledger) throw new Exception('Ledger not found for TD No. ' + faas.tdno + '.')
+        ledger.faasid = faas.objid 
+        svc.updateLedger(ledger)
+        def ledgerfaas = createLedgerFaas(ledger, faas)
+        svc.postLedgerFaas(ledgerfaas) 
+    }
+
+    void postNewLedger(faas){
+        def ledger = createLedger(faas)
+        svc.createLedger(ledger)
+        if (! util.isTrue(faas.datacapture)){
+            svc.approveLedger(ledger)
+        }
+    }
 
 
 	def createLedger(faas){
@@ -63,6 +77,7 @@ class RPTLedgerInterceptor
             backtax.txntype         = faas.txntype 
             backtax.rpu             = faas.rpu 
             backtax.backtaxyrs      = faas.backtaxyrs
+            backtax.taxable         = util.toBoolean(backtax.taxable, true)
             def ledgerfaas 			= createLedgerFaas(ledger, backtax)
             ledgerfaas.faasid 		= backtax.faasid 
             ledgerfaas.assessedvalue = backtax.av 

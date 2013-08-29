@@ -325,6 +325,13 @@ public class BldgRYSettingService
         setting.previd      = setting.objid 
         setting.objid       = util.generateId('BS')
         setting.ry          = newry  
+        
+        setting.predominant = util.toBoolean(setting.predominant, false)
+        setting.depreciatecoreanditemseparately = util.toBoolean(setting.depreciatecoreanditemseparately, false)
+        setting.computedepreciationbasedonschedule = util.toBoolean(setting.computedepreciationbasedonschedule, false)
+        setting.straightdepreciation = util.toBoolean(setting.straightdepreciation, false)
+        setting.calcbldgagebasedondtoccupied = util.toBoolean(setting.calcbldgagebasedondtoccupied, false)
+
         em.create(SCHEMA_RYSETTING, setting )
         
         copyAssessLevels(setting.objid, oldsettingid)

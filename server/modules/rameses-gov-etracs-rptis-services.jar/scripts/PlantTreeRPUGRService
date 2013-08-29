@@ -12,10 +12,13 @@ class PlantTreeRPUGRService
     @Service('PlantTreeRPUService')
     def rpuSvc 
 
+    @Service('DateService')
+    def dtSvc 
     
     @ProxyMethod
     public def revisePlantTreeRpu(rpu){
         def deletedItems = []
+        rpu.dtappraised = dtSvc.serverDate 
         rpu.planttrees.each { planttree -> 
             def ptuv = lookupSvc.lookupUnitValueByPrevId(planttree.planttreeunitvalue.objid)
             if( ptuv ) {

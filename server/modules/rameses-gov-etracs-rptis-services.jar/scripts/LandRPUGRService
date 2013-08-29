@@ -24,9 +24,13 @@ class LandRPUGRService
 	@Service('RPTUtil')
 	def util
 
+	@Service('DateService')
+	def dtSvc 
+
 
 	@ProxyMethod
 	public def reviseLandRpu(rpu){
+		rpu.dtappraised = dtSvc.serverDate 
 		pinSvc.renumberPin( rpu )
 		reviseLandDetails( rpu )
 		revisePlantTrees( rpu )

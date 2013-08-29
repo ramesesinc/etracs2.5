@@ -78,15 +78,15 @@ WHERE rl.state = 'APPROVED'
 
 [getPaymentInfo]
 SELECT 
-	xr.serialno AS orno,
+	xr.receiptno AS orno,
 	xr.txndate AS ordate,
 	SUM(ri.basic + ri.basicint - ri.basicdisc + ri.sef + ri.sefint - ri.sefdisc) AS oramount,
 	CONCAT(ri.year, '-', ri.qtr, 'Q') AS period
 FROM rptcertificationitem rci 
 	INNER JOIN rptledger rl ON rci.refid = rl.objid 
-	INNER JOIN rptreceiptitem  ri ON rl.objid = ri.rptledgerid
-	INNER JOIN xreceipt xr ON ri.rptreceiptid = xr.objid 
+	INNER JOIN cashreceipt_rpt_item  ri ON rl.objid = ri.rptledgerid
+	INNER JOIN cashreceipt xr ON ri.rptreceiptid = xr.objid 
 WHERE rci.rptcertificationid = $P{rptcertificationid}
   AND ri.year = $P{year}
   AND ri.qtr <= $P{qtr}
-GROUP BY ri.year, xr.serialno, xr.txndate
+GROUP BY ri.year, xr.receiptno, xr.txndate

@@ -5,6 +5,9 @@
         
         <invoker folderid="/menu/txn/rpt/faas" action="initMultipleClaim"  caption="Multiple Claim" index="12"
             txntypeid="MC" txntype="Multiple Claim" newledger="true" newrpu="true" newrealproperty="true" role="APPRAISER" permission="faas.createMultipleClaim"/>
+            
+        <invoker folderid="/explorer/txn/rpt/txn" action="initMultipleClaim"  caption="Multiple Claim" index="12"
+            txntypeid="MC" txntype="Multiple Claim" newledger="true" newrpu="true" newrealproperty="true" role="APPRAISER" permission="faas.createMultipleClaim"/>
 
          <invoker type="quick_launcher" code="MC01" action="initMultipleClaim"  caption="Multiple Claim" index="12"
             txntypeid="MC" txntype="Multiple Claim" newledger="true" newrpu="true" newrealproperty="true" role="APPRAISER" permission="faas.createMultipleClaim"/>            

@@ -102,6 +102,7 @@ public class SubdividedLandInfoPage extends javax.swing.JPanel {
         xLabel1.setCaption("Taxpayer Address");
         xLabel1.setCaptionWidth(130);
         xLabel1.setDepends(new String[] {"subdividedland.taxpayer"});
+        xLabel1.setExpression("#{subdividedland.taxpayer.address}");
         xLabel1.setName("subdividedland.taxpayer.address");
         xLabel1.setPreferredSize(new java.awt.Dimension(0, 19));
         xFormPanel2.add(xLabel1);
