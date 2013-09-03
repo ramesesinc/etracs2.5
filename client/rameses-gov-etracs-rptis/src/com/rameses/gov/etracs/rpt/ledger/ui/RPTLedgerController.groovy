@@ -39,8 +39,14 @@ public class RPTLedgerController
     void open(){
         mode    = MODE_READ
         ledger  = svc.openLedger(entity)
+        loadItems()
+    }
+    
+    void loadItems(){
         debits   = svc.getLedgerItems(ledger.objid)
         credits = svc.getLedgerCredits(ledger.objid)
+        debitListHandler.load();
+        paymentListHandler.load();
     }
 
     void cancel(){
@@ -61,8 +67,7 @@ public class RPTLedgerController
     void approve(){
         if (MsgBox.confirm('Approve ledger?')) {
             ledger = svc.approveLedger(ledger)
-            debits   = svc.getLedgerItems(ledger.objid)
-            debitListHandler.load()
+            loadItems();
         }
     }
 
