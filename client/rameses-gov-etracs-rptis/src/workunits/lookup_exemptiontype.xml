@@ -13,7 +13,7 @@ import com.rameses.osiris2.common.*;
 
 class LookupExemptionTypesController extends LookupController
 {
-    @Service("ExemptionTypeLookupService")
+    @Service("ExemptionTypeService")
     def svc;
     
     def state;
@@ -27,7 +27,7 @@ class LookupExemptionTypesController extends LookupController
     
     List fetchList( Map params ) { 
         params.state = (state ? state : '%')
-        return svc.lookupExemptionTypes( params );
+        return svc.getExemptionTypes( params );
     }
 }  
 

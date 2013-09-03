@@ -7,7 +7,7 @@ public class MiscRYSettingLookupService
 	def em
     
 
-    @Service('RPTParameterLookupService')
+    @Service('RPTParameterService')
     def paramSvc
 
          
@@ -66,6 +66,6 @@ public class MiscRYSettingLookupService
     
     @ProxyMethod
     public def getVariables() {
-        return paramSvc.lookupRPTParameters([:])    
+        return paramSvc.getRPTParameters([:])    
     }
 }

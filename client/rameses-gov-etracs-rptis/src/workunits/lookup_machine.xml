@@ -12,7 +12,7 @@ import com.rameses.osiris2.common.*
 
 class LookupMachinesController extends LookupController
 {
-    @Service("MachineLookupService")
+    @Service("MachineService")
     def svc;
     
     def state;
@@ -26,7 +26,7 @@ class LookupMachinesController extends LookupController
     
     List fetchList( Map params ) { 
         params.state = ( state ? state : '%')
-        return svc.lookupMachines( params )
+        return svc.getMachines( params )
     }
 }  
     </code>

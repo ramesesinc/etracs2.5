@@ -15,7 +15,7 @@
         
         public class MachineController  extends CRUDController
         {
-            String serviceName = "MachineMasterService"
+            String serviceName = "MachineService"
             String entityName  = 'machine'
             String prefixId    = 'MACH'
         }

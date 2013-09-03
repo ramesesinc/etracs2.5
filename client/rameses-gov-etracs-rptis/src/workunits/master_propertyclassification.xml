@@ -14,7 +14,7 @@
         
         public class PropertyClassificationController  extends CRUDController
         {
-            String serviceName = 'PropertyClassificationMasterService'
+            String serviceName = 'PropertyClassificationService'
             String entityName  = 'propertyclassification'
             String prefixId    = 'PC'
 

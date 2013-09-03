@@ -26,7 +26,7 @@ public class LandAdjustmentTypeController
     @Binding 
     def binding
     
-    @Service('RPTParameterListService')
+    @Service('RPTParameterService')
     def paramSvc 
     
     @Service('RPUService')

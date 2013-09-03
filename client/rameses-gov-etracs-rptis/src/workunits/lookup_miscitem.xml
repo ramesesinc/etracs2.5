@@ -12,7 +12,7 @@ import com.rameses.osiris2.common.*;
 
 class LookupMiscItemsController extends LookupController 
 {
-    @Service("MiscItemLookupService")
+    @Service("MiscItemService")
     def svc;
     
     def state;
@@ -26,7 +26,7 @@ class LookupMiscItemsController extends LookupController
     
     List fetchList( Map params ) { 
         params.state = (state ? state : '%')
-        return svc.lookupMiscItems(params)
+        return svc.getMiscItems(params)
     }
 }  
 

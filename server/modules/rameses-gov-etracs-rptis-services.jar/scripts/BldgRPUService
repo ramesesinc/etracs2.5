@@ -15,7 +15,7 @@ class BldgRPUService
 	@Service('BldgRYSettingLookupService')
 	def bldgSettingSvc 
 
-	@Service('StructureListService')
+	@Service('StructureService')
 	def structSvc
 	
 	@Service('Var')

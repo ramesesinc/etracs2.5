@@ -25,7 +25,7 @@ class CancelledFAASService
     @Service('RPTUtil')
     def util 
     
-    @Service('CancelTDReasonListService')
+    @Service('CancelTDReasonService')
     def reasonSvc
 
     @Service('FAASService')

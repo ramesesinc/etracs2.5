@@ -15,10 +15,10 @@ class RPTReportService
     @Service('LGUService')
     def lguSvc 
 
-    @Service('PropertyClassificationLookupService')
+    @Service('PropertyClassificationService')
     def pcSvc 
 
-    @Service('ExemptionTypeLookupService')
+    @Service('ExemptionTypeService')
     def etSvc
 
     @Service('DateService')
@@ -653,13 +653,13 @@ class RPTReportService
     }
     @ProxyMethod
     public def getClassifications(){
-    	return pcSvc.lookupClassifications([:])
+    	return pcSvc.getClassifications([:])
     }
 
     
     @ProxyMethod
     public def getExemptionTypes(  ) {
-    	return 	etSvc.lookupExemptionTypes([:])
+    	return 	etSvc.getExemptionTypes([:])
     }
 
 

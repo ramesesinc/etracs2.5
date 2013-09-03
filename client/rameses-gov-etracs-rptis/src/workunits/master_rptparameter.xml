@@ -15,7 +15,7 @@
         
         public class RPTParameterController  extends CRUDController
         {
-            String serviceName = "RPTParameterMasterService"
+            String serviceName = "RPTParameterService"
             String entityName  = 'rptparameter'
             String prefixId    = 'RP'
             

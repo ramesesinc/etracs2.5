@@ -4,8 +4,7 @@ FROM propertyclassification
 WHERE ( code LIKE $P{searchtext} OR name LIKE $P{searchtext} )
 ORDER BY orderno
 
-
-[lookupClassifications]
+[getClassifications]
 SELECT *
 FROM propertyclassification
 WHERE state = 'APPROVED'
@@ -13,7 +12,9 @@ WHERE state = 'APPROVED'
 ORDER BY orderno
 
 
-[lookupById]
+[findById]
 SELECT * FROM propertyclassification WHERE objid = $P{objid}
 
+[approve]
+UPDATE propertyclassification SET state = 'APPROVED' WHERE objid = $P{objid}
 

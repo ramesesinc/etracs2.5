@@ -12,7 +12,7 @@
 
     class LookupPropertyClassificationController extends LookupController
     {  
-        @Service('PropertyClassificationLookupService')
+        @Service('PropertyClassificationService')
         def svc
         
         def state
@@ -26,7 +26,7 @@
         
         List fetchList(Map params) {
             params.state  = ( state ? state : '%');
-            return svc.lookupClassifications(params);
+            return svc.getClassifications(params);
         }  
     }        
     

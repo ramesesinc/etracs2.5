@@ -7,13 +7,13 @@ public class PlantTreeRYSettingService
     @PersistenceContext('main')
     def em
      
-    @Service('PropertyClassificationListService')
+    @Service('PropertyClassificationService')
     def pcSvc
 
     @Service('PlantTreeRYSettingListService')
     def listSvc 
 
-    @Service('PlantTreeListService')
+    @Service('PlantTreeService')
     def ptSvc
     
     @Service('RYSettingService')

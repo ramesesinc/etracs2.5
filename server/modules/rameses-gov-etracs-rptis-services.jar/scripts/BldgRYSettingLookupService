@@ -10,7 +10,7 @@ public class BldgRYSettingLookupService
     @Service('LookupUtilService')
 	def lupSvc 
 
-    @Service('RPTParameterLookupService')
+    @Service('RPTParameterService')
     def paramSvc
 	
 
@@ -127,7 +127,7 @@ public class BldgRYSettingLookupService
 
     @ProxyMethod
     public def getVariables() {
-        return paramSvc.lookupRPTParameters([:])    
+        return paramSvc.getRPTParameters([:])    
     }
 
 

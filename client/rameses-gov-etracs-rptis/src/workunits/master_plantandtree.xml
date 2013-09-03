@@ -14,7 +14,7 @@
         
         public class PlantandTreeController  extends CRUDController
         {
-            String serviceName = "PlantTreeMasterService"
+            String serviceName = "PlantTreeService"
             String entityName  = 'planttree'
             String prefixId    = 'PT'
         }

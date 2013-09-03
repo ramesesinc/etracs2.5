@@ -15,7 +15,7 @@
         
         public class ExemptionTypeController  extends CRUDController
         {
-            String serviceName  = 'ExemptionTypeMasterService'
+            String serviceName  = 'ExemptionTypeService'
             String entityName   = 'exemptiontype'
             String prefixId     = 'ET'
         }

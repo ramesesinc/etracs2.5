@@ -14,7 +14,7 @@
         
         public class StructureController  extends CRUDController 
         {
-            String serviceName = 'StructureMasterService'
+            String serviceName = 'StructureService'
             String entityName  = 'structure'
             String prefixId    = 'ST'
             
@@ -34,7 +34,7 @@
                         new Column(name:"material.name", caption:"Material", minWidth:200 ),
                     ];
                 },
-                fetchList    : { return getMaterials() },
+                fetchList    : { return entity.materials },
                 createItem   : { return  [ structure_objid:entity.objid] },
                 validate     : { li -> validateItem( li.item ) },
                 onAddItem    : { item -> entity.materials.add( item ) },
@@ -60,10 +60,6 @@
                 item.material_name = item.material.name 
             }
             
-            
-            List getMaterials(){
-                return entity.materials
-            }
         }
 
     </code>

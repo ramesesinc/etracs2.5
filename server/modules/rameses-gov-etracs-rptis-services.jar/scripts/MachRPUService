@@ -24,7 +24,7 @@ class MachRPUService
     @Service('MachRYSettingLookupService')
     def machSettingSvc 
 
-    @Service('MachineLookupService')
+    @Service('MachineService')
     def machSvc 
 
     @Service('Var')
