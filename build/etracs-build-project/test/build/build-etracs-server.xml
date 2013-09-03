@@ -43,6 +43,39 @@
     
     
     <!--=====================================================
+    = DEPLOY INCUBATION JARS TO DEVLIBS
+    =======================================================-->
+    <target name="copy-incubation-jars-to-devlibs">
+        <antcall target="do-copy-incubation-jars-to-devlibs">
+            <param name="sourcefile" value="osiris2-client-themes.jar"/>
+        </antcall>
+        <antcall target="do-copy-incubation-jars-to-devlibs">
+            <param name="sourcefile" value="osiris2-client-ui.jar"/>
+        </antcall>
+        <antcall target="do-copy-incubation-jars-to-devlibs">
+            <param name="sourcefile" value="osiris2-framework.jar"/>
+        </antcall>
+        <antcall target="do-copy-incubation-jars-to-devlibs">
+            <param name="sourcefile" value="osiris2-report.jar"/>
+        </antcall>
+        <antcall target="do-copy-incubation-jars-to-devlibs">
+            <param name="sourcefile" value="rameses-client-ui.jar"/>
+        </antcall>
+        <antcall target="do-copy-incubation-jars-to-devlibs">
+            <param name="sourcefile" value="rameses-common2.jar"/>
+        </antcall>
+        <antcall target="do-copy-incubation-jars-to-devlibs">
+            <param name="sourcefile" value="rameses-custom-impl.jar"/>
+        </antcall>
+    </target>
+    
+    <target name="do-copy-incubation-jars-to-devlibs">
+        <echo message="====> Copying ${sourcefile}" />
+        <property name="sourcejar" value="${incubation.dir}/${sourcefile}/dist/${sourcefile}.jar"/>
+        <copy file="${sourcejar}" todir="${devlib.projects.dir}" failonerror="false"/>
+    </target>
+    
+    <!--=====================================================
     = DEPLOY SHARED  
     =======================================================-->
     <target name="deploy-project-shared">
@@ -144,7 +177,7 @@
         </copy>
     </target>
     
-    <target name="build-server" depends="init,cleanup,copy-osiris3-server,copy-etracs-platform,deploy-etracs-server,deploy-project-shared, deploy-etracs-client-jars, deploy-devlibs">
+    <target name="build-server" depends="init,cleanup,copy-osiris3-server,copy-etracs-platform,deploy-etracs-server,deploy-project-shared, deploy-etracs-client-jars, copy-incubation-jars-to-devlibs, deploy-devlibs">
     </target>
 
 </project>
