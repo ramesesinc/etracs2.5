@@ -560,6 +560,80 @@ SELECT
 
 
 
+
+INSERT INTO `iligan`.`planttreerysetting`
+            (`objid`,
+             `state`,
+             `ry`,
+             `applyagriadjustment`,
+             `appliedto`,
+             `previd`)
+SELECT	
+	objid,
+	'DRAFT' AS state,
+	intry AS ry,
+	1 AS applyagriadjustment,
+	'ILIGAN CITY' AS appliedto,
+	NULL AS previd
+FROM tracs_iligan.`tbltreeclass`;
+
+
+
+
+INSERT INTO `iligan`.`planttreeassesslevel`
+            (`objid`,
+             `planttreerysettingid`,
+             `code`,
+             `name`,
+             `rate`,
+             `previd`)
+SELECT 
+	objid,
+	(SELECT objid FROM tracs_iligan.tbltreeclass ) AS planttreerysettingid,
+	strcode AS CODE,
+	strdescription AS NAME,
+	curlevel AS rate,
+	NULL AS previd
+FROM tracs_iligan.`tbltreeclassitem`;
+
+
+INSERT INTO `iligan`.`planttreeunitvalue`
+            (`objid`,
+             `planttreerysettingid`,
+             `planttree_objid`,
+             `code`,
+             `name`,
+             `unitvalue`,
+             `previd`)
+SELECT
+	tv.objid,
+	(SELECT objid FROM tracs_iligan.`tbltreeclass`) AS planttreerysettingid,
+	tv.parentid AS  planttree_objid,
+	strtreeclass AS CODE,
+	tv.`strTreeClass` AS NAME,
+	tv.`curTreeValue` AS unitvalue,
+	NULL AS previd
+FROM tracs_iligan.`tbltreevalue` tv ;	
+
+
+
+
+INSERT INTO `iligan`.`rysetting_lgu`
+            (`rysettingid`,
+             `lguid`,
+             `lguname`,
+             `settingtype`)
+
+SELECT 
+(SELECT objid FROM iligan.`planttreerysetting`) AS rysetting, 
+'169' AS lguid,
+'ILIGAN CITY' AS lguname,
+'planttree' AS settingtype;
+
+
+
+
+
 /*================================================================
 *
 * PIN and REALPROPERTY
@@ -1024,123 +1098,53 @@ FROM iligan.landdetail ld
 	
 	
 	
+	
+ALTER TABLE iligan.planttreedetail CHANGE COLUMN planttreeunitvalue_objid planttreeunitvalue_objid VARCHAR(50) NULL;
 
-INSERT INTO `iligan`.`faas`
+INSERT INTO `iligan`.`planttreedetail`
             (`objid`,
-             `state`,
-             `rpuid`,
-             `datacapture`,
-             `autonumber`,
-             `utdno`,
-             `tdno`,
-             `txntype_objid`,
-             `effectivityyear`,
-             `effectivityqtr`,
-             `titletype`,
-             `titleno`,
-             `titledate`,
-             `taxpayer_objid`,
-             `taxpayer_name`,
-             `taxpayer_address`,
-             `owner_name`,
-             `owner_address`,
-             `administrator_objid`,
-             `administrator_name`,
-             `administrator_address`,
-             `beneficiary_objid`,
-             `beneficiary_name`,
-             `beneficiary_address`,
-             `memoranda`,
-             `cancelnote`,
-             `restrictionid`,
-             `backtaxyrs`,
-             `prevtdno`,
-             `prevpin`,
-             `prevowner`,
-             `prevav`,
-             `prevmv`,
-             `cancelreason`,
-             `canceldate`,
-             `cancelledbytdnos`,
-             `lguid`,
-             `txntimestamp`,
-             `cancelledtimestamp`)
+             `planttreerpuid`,
+             `landrpuid`,
+             `planttreeunitvalue_objid`,
+             `planttree_objid`,
+             `actualuse_objid`,
+             `productive`,
+             `nonproductive`,
+             `nonproductiveage`,
+             `unitvalue`,
+             `basemarketvalue`,
+             `adjustment`,
+             `adjustmentrate`,
+             `marketvalue`,
+             `assesslevel`,
+             `assessedvalue`)
 SELECT
-	td.objid,
-	CASE 
-		WHEN td.state = 1 THEN 'INTERIM' 
-		WHEN td.state = 2 THEN 'CURRENT' 
-		ELSE 'CANCELLED'
-    END AS state,
-	td.strdeclarationid AS rpuid,
-	CASE WHEN st.strtxncode = 'DA' THEN 1 ELSE 0 END AS datacapture,
-	0 AS autonumber,
-	td.strtdno AS utdno,
-	td.strtdno AS tdno,
-	st.strtxncode AS txntype_objid,
-	YEAR(td.dteffectivitydate) AS  effectivityyear,
-	QUARTER(td.dteffectivitydate) AS effectivityqtr,
-	NULL AS titletype,
-	td.strtitleno AS titleno,
-	NULL AS titledate,
-	t.objid AS taxpayer_objid,
-	t.name AS taxpayer_name,
-	t.address AS taxpayer_address,
-	t.name AS owner_name,
-	t.address AS owner_address,
-	a.objid AS administrator_objid,
-	a.name AS administrator_name,
-	a.address AS administrator_address,
-	NULL AS beneficiary_objid,
-	NULL AS beneficiary_name,
-	NULL AS beneficiary_address,
-	td.strremarks AS memoranda,
-	NULL AS cancelnote,
-	NULL AS restrictionid,
-	0 AS backtaxyrs,
-	td.strprevioustdno AS prevtdno,
-	NULL AS prevpin,
-	td.strpreviousowner AS  prevowner,
-	td.curprevassessedvalue AS prevav,
-	0.0 AS prevmv,
-	c.strcancelcode AS cancelreason,
-	td.dtcanceldate,
-	td.strcancelledbytdno AS cancelledbytdnos,
-	'169' AS lguid,
-	CONCAT(
-		YEAR(td.dtissuedate),
-		QUARTER(td.dtissuedate),
-		CASE WHEN MONTH(td.dtissuedate) < 10 THEN CONCAT('0', MONTH(td.dtissuedate)) ELSE MONTH(td.dtissuedate) END,
-		CASE WHEN DAY(td.dtissuedate) < 10 THEN CONCAT('0', DAY(td.dtissuedate)) ELSE DAY(td.dtissuedate) END 
-	) AS txntimestamp,
-	CASE WHEN td.dtcanceldate IS NOT NULL 
-		THEN CONCAT(
-				YEAR(td.dtcanceldate),
-				QUARTER(td.dtcanceldate),
-				CASE WHEN MONTH(td.dtcanceldate) < 10 THEN CONCAT('0', MONTH(td.dtcanceldate)) ELSE MONTH(td.dtissuedate) END,
-				CASE WHEN DAY(td.dtcanceldate) < 10 THEN CONCAT('0', DAY(td.dtcanceldate)) ELSE DAY(td.dtissuedate) END 
-			)
-		ELSE NULL 
-	END AS cancelledtimestamp
-FROM tracs_iligan.`tbltaxdeclaration` td
-	INNER JOIN tracs_iligan.systbltxntype st ON td.inttxntype = st.objid 
-	INNER JOIN iligan.entity t ON td.strtaxpayerid = t.objid 
-	INNER JOIN iligan.rpu r ON td.strdeclarationid = r.objid 
-	LEFT JOIN iligan.entity a ON td.stradministratorid = a.objid 
-	LEFT JOIN tracs_iligan.`systblcancelreason` c ON td.intcancelreason = c.objid;
+	p.objid,
+	NULL AS planttreerpuid,
+	p.parentid AS landrpuid,
+	p.`strTreeValueID` AS planttreeunitvalue_objid,
+	p.`strTreeID` AS  planttree_objid,
+	p.`strTreeClassItemID` AS  actualuse_objid,
+	p.`intBearing` AS productive,
+	p.`intNonBearing` AS nonproductive,
+	0 AS  nonproductiveage,
+	p.`curUnitValue` AS unitvalue,
+	p.`curMarketValue` AS basemarketvalue,
+	0 AS  adjustment,
+	0 AS adjustmentrate,
+	p.`curAdjMarketValue` AS marketvalue,
+	tci.`curLevel` AS  assesslevel,
+	p.`curAssessedValue` AS assessedvalue
+FROM tracs_iligan.`tbllandplantdetail` p
+	INNER JOIN tracs_iligan.`tbltreeclassitem` tci ON p.`strTreeClassItemID` = tci.objid 
+WHERE EXISTS(SELECT * FROM iligan.landrpu WHERE objid = p.parentid )
+AND EXISTS(SELECT * FROM iligan.`planttreeunitvalue` WHERE objid = p.`strTreeValueID`);
+
+
 	
 	
 	
-		
-		
-UPDATE faas SET txntype_objid = 'DC' WHERE txntype_objid = 'DA' ;
-
-
-		
-		
-		
-
-
+	
 INSERT INTO `iligan`.`bldgrysetting`
             (`objid`,
              `state`,
@@ -1515,4 +1519,688 @@ WHERE EXISTS(SELECT * FROM iligan.bldgrpu WHERE objid = bfa.rootid);
 	
 
 
+INSERT INTO `iligan`.`rptparameter`
+            (`objid`,
+             `state`,
+             `name`,
+             `caption`,
+             `description`,
+             `paramtype`,
+             `minvalue`,
+             `maxvalue`)
+VALUES ('AREA_SQM',
+        'APPROVED',
+        'AREA_SQM',
+        'AREA IN SQ.M.',
+        'AREA IN SQ. M.',
+        'integer',
+        0,
+        0);
+        
 
+INSERT INTO `iligan`.`rptparameter`
+            (`objid`,
+             `state`,
+             `name`,
+             `caption`,
+             `description`,
+             `paramtype`,
+             `minvalue`,
+             `maxvalue`)
+VALUES ('NO_OF_UNITS',
+        'APPROVED',
+        'NO_OF_UNITS',
+        'NO. OF UNITS',
+        'NO. OF UNITS',
+        'integer',
+        0,
+        0);
+        
+                
+        
+INSERT INTO `iligan`.`bldgflooradditionalparam`
+            (`objid`,
+             `bldgflooradditionalid`,
+             `bldgrpuid`,
+             `param_objid`,
+             `intvalue`,
+             `decimalvalue`)
+
+SELECT 
+	bf.objid,
+	bf.objid AS bldgflooradditionalid,
+	bf.rootid AS bldgrpuid,
+	CASE 
+		WHEN ai.stradditionalbasisid = 'RBU' THEN 'AREA_SQM'
+		ELSE 'NO_OF_UNITS'
+	END AS param_objid,
+	bf.curunit AS  intvalue,
+	bf.curunit AS decimalvalue
+FROM tracs_iligan.`tblbldgflooradditional` bf
+	INNER JOIN tracs_iligan.`tbladditionalitem` ai ON bf.strAdditionalItemId = ai.objid 
+WHERE EXISTS(SELECT * FROM iligan.`bldgflooradditional` WHERE objid = bf.objid);
+
+
+
+        
+
+INSERT INTO `iligan`.`machine`
+            (`objid`,
+             `state`,
+             `code`,
+             `name`)
+SELECT
+	objid,
+	'APPROVED' AS state,
+	strcode AS CODE,
+	strmachinename AS NAME
+FROM tracs_iligan.tblmachine;
+
+
+
+INSERT INTO `iligan`.`machrysetting`
+            (`objid`,
+             `state`,
+             `ry`,
+             `previd`,
+             `appliedto`)
+SELECT
+	objid,
+	'DRAFT' AS state,
+	intry AS ry,
+	NULL AS previd,
+	'ILIGAN CITY' AS appliedto
+FROM tracs_iligan.`tblmachclass`;
+
+
+
+ALTER TABLE iligan.`machassesslevel` CHANGE COLUMN classification_objid classification_objid VARCHAR(50) NULL;
+
+INSERT INTO `iligan`.`machassesslevel`
+            (`objid`,
+             `machrysettingid`,
+             `classification_objid`,
+             `code`,
+             `name`,
+             `fixrate`,
+             `rate`,
+             `previd`)
+
+SELECT
+	objid,
+	(SELECT objid FROM tracs_iligan.`tblmachclass`) AS machrysettingid,
+	NULL AS classification_objid,
+	strcode AS CODE,
+	strdescription AS  NAME,
+	bspecial AS  fixrate,
+	curlevel AS  rate,
+	NULL AS previd
+FROM tracs_iligan.tblmachclassitem;
+
+
+INSERT INTO `iligan`.`machassesslevelrange`
+            (`objid`,
+             `machassesslevelid`,
+             `machrysettingid`,
+             `mvfrom`,
+             `mvto`,
+             `rate`)
+SELECT
+	objid,
+	parentid AS machassesslevelid,
+	rootid AS machrysettingid,
+	currangefrom AS mvfrom,
+	currangeto AS  mvto,
+	curlevel AS  rate
+FROM tracs_iligan.`tblmachclassitemdetail`;
+
+
+
+INSERT INTO `iligan`.`rysetting_lgu`
+            (`rysettingid`,
+             `lguid`,
+             `lguname`,
+             `settingtype`)
+SELECT              
+	(SELECT objid FROM tracs_iligan.`tblmachclass`) AS  rysettingid,
+	'169' AS lguid,
+	'ILIGAN CITY' AS lguname,
+	'mach' AS settingtype;
+
+
+
+
+INSERT INTO `iligan`.`rpu`
+            (`objid`,
+             `state`,
+             `realpropertyid`,
+             `rputype`,
+             `ry`,
+             `fullpin`,
+             `suffix`,
+             `subsuffix`,
+             `classification_objid`,
+             `exemptiontype_objid`,
+             `taxable`,
+             `totalareaha`,
+             `totalareasqm`,
+             `totalbmv`,
+             `totalmv`,
+             `totalav`,
+             `hasswornamount`,
+             `swornamount`,
+             `useswornamount`,
+             `previd`)
+SELECT
+	md.objid,
+	CASE 
+		WHEN md.state = 1 THEN 'INTERIM' 
+		WHEN md.state = 2 THEN 'CURRENT' 
+		ELSE 'CANCELLED'
+	END AS  state,
+	md.strrealpropertyid AS realpropertyid,
+	'bldg' AS rputype,
+	md.intry AS ry,
+	CONCAT(r.pin, '-', md.intsuffix) AS fullpin,
+	md.intsuffix AS suffix,
+	NULL AS subsuffix,
+	md.strrptclassificationid AS  classification_objid,
+	md.strexemptid AS  exemptiontype_objid,
+	md.inttaxable AS  taxable,
+	0.0 AS  totalareaha,
+	0.0 AS totalareasqm,
+	md.curtotalmarketvalue AS totalbmv,
+	md.curtotaladjmarketvalue AS  totalmv,
+	md.curtotalassessedvalue AS  totalav,
+	0 AS hasswornamount,
+	0 AS  swornamount,
+	0 AS useswornamount,
+	NULL AS previd
+FROM tracs_iligan.`tblmachdeclaration` md
+		INNER JOIN iligan.`realproperty` r ON md.strrealpropertyid = r.objid 
+WHERE NOT EXISTS(SELECT * FROM iligan.rpu WHERE objid = md.objid );	
+
+
+
+
+
+
+ALTER TABLE iligan.machrpu CHANGE COLUMN landrpuid landrpuid VARCHAR(50) NULL;
+
+INSERT INTO `iligan`.`machrpu`
+            (`objid`,
+             `landrpuid`)
+SELECT 
+	objid,
+    NULL AS landrpuid
+FROM tracs_iligan.`tblmachdeclaration` md ;
+
+
+
+INSERT INTO `iligan`.`machuse`
+            (`objid`,
+             `machrpuid`,
+             `actualuse_objid`,
+             `basemarketvalue`,
+             `marketvalue`,
+             `assesslevel`,
+             `assessedvalue`)
+SELECT
+	mu.objid,
+	mu.`ParentID` AS machrpuid,
+	mu.`strMachClassItemID` AS  actualuse_objid,
+	mu.`curMarketValue` AS  basemarketvalue,
+	mu.`curMarketValue` AS marketvalue,
+	mu.`curAssessmentLevel` AS  assesslevel,
+	mu.`curAssessedValue` AS assessedvalue
+FROM tracs_iligan.`tblmachuse`	mu 
+WHERE EXISTS (SELECT * FROM iligan.machrpu WHERE objid = mu.parentid);
+
+
+
+INSERT INTO `iligan`.`machdetail`
+            (`objid`,
+             `machuseid`,
+             `machrpuid`,
+             `machine_objid`,
+             `operationyear`,
+             `replacementcost`,
+             `depreciation`,
+             `depreciationvalue`,
+             `basemarketvalue`,
+             `marketvalue`,
+             `assesslevel`,
+             `assessedvalue`,
+             `brand`,
+             `capacity`,
+             `model`,
+             `serialno`,
+             `status`,
+             `yearacquired`,
+             `estimatedlife`,
+             `remaininglife`,
+             `yearinstalled`,
+             `yearsused`,
+             `originalcost`,
+             `freightcost`,
+             `insurancecost`,
+             `installationcost`,
+             `brokeragecost`,
+             `arrastrecost`,
+             `othercost`,
+             `acquisitioncost`,
+             `feracid`,
+             `ferac`,
+             `forexid`,
+             `forex`,
+             `residualrate`,
+             `conversionfactor`,
+             `swornamount`,
+             `useswornamount`,
+             `imported`,
+             `newlyinstalled`,
+             `autodepreciate`)
+SELECT
+	ml.objid,
+	ml.parentid AS machuseid,
+	ml.`RootID` AS machrpuid,
+	ml.`strMachineID` AS machine_objid,
+	ml.`intOperationYear` AS operationyear,
+	ml.`curReplacementCost` AS  replacementcost,
+	ml.`curDepreciation` AS  depreciation,
+	ROUND(ml.`curReplacementCost` * ml.curdepreciation / 100.0) AS depreciationvalue,
+	ml.`curReplacementCost` AS basemarketvalue,
+	ml.`curMarketValue` AS  marketvalue,
+	mu.`curAssessmentLevel` AS  assesslevel,
+	ROUND(ml.`curMarketValue` * mu.curassessmentlevel) / 100 AS  assessedvalue,
+	NULL AS brand,
+	NULL  AS capacity,
+	NULL  AS model,
+	NULL  AS serialno,
+	NULL  AS `status`,
+	ml.intoperationyear AS yearacquired,
+	0 AS estimatedlife,
+	0 AS remaininglife,
+	ml.intoperationyear AS  yearinstalled,
+	0 AS yearsused,
+	0 AS originalcost,
+	0 AS freightcost,
+	0 AS insurancecost,
+	0 AS installationcost,
+	0 AS brokeragecost,
+	0 AS arrastrecost,
+	0 AS othercost,
+	0 AS acquisitioncost,
+	NULL AS feracid,
+	0 AS ferac,
+	NULL AS forexid,
+	0 AS forex,
+	0 AS residualrate,
+	1 AS conversionfactor,
+	0 AS swornamount,
+	0 AS useswornamount,
+	0 AS imported,
+	0 AS newlyinstalled,
+	0 AS autodepreciate
+FROM tracs_iligan.`tblmachlist`	ml 
+	INNER JOIN tracs_iligan.`tblmachuse` mu ON ml.`ParentID` = mu.objid ;
+	
+	
+	
+	
+	
+	
+INSERT INTO `iligan`.`miscrysetting`
+            (`objid`,
+             `state`,
+             `ry`,
+             `previd`,
+             `appliedto`)
+SELECT 
+	CONCAT('MI', objid) AS objid,
+	'DRAFT' AS state,
+	intry AS ry,
+	NULL AS previd,
+	'ILIGAN CITY' AS  appliedto
+FROM tracs_iligan.`tblbldgclass`;	
+        
+        
+ALTER TABLE `iligan`.`miscassesslevel` 
+CHANGE `classification_objid` `classification_objid` VARCHAR(50) NULL; 
+
+
+
+INSERT INTO `iligan`.`miscassesslevel`
+            (`objid`,
+             `miscrysettingid`,
+             `classification_objid`,
+             `code`,
+             `name`,
+             `fixrate`,
+             `rate`,
+             `previd`)
+SELECT
+	CONCAT('MI', objid) AS  objid,
+	CONCAT('MI', parentid) AS bldgrysettingid,
+	NULL AS classification_objid,
+	strcode AS CODE,
+	strdescription AS NAME,
+	bspecial AS fixrate,
+	curlevel AS rate,
+	NULL  AS previd
+FROM tracs_iligan.`tblbldgclassitem`;
+
+
+
+
+
+INSERT INTO `iligan`.`miscassesslevelrange`
+            (`objid`,
+             `miscassesslevelid`,
+             `miscrysettingid`,
+             `mvfrom`,
+             `mvto`,
+             `rate`)
+SELECT 
+	CONCAT('MI', objid) AS objid,
+	CONCAT('MI', parentid)  AS bldgassesslevelid,
+	CONCAT('MI', rootid) AS bldgrysettingid,
+	currangefrom AS mvfrom,
+	currangeto AS mvto,
+	curlevel AS rate
+FROM tracs_iligan.`tblbldgclassitemdetail`;
+
+
+
+
+
+INSERT INTO `iligan`.`rptparameter`
+            (`objid`,
+             `state`,
+             `name`,
+             `caption`,
+             `description`,
+             `paramtype`,
+             `minvalue`,
+             `maxvalue`)
+VALUES ('UNIT_VALUE',
+        'APPROVED',
+        'UNIT_VALUE',
+        'UNIT VALUE',
+        'UNIT VALUE',
+        'decimal',
+        0,
+        0);
+        
+        
+INSERT INTO `iligan`.`miscitemvalue`
+            (`objid`,
+             `miscrysettingid`,
+             `miscitem_objid`,
+             `expr`,
+             `previd`)
+SELECT             
+	mi.objid,
+	(SELECT objid FROM iligan.`miscrysetting`) AS miscrysettingid,
+	mi.objid AS miscitem_objid,
+	'UNIT_VALUE' AS expr,
+	NULL AS previd
+FROM iligan.`miscitem`	mi;
+
+
+
+        
+
+INSERT INTO `iligan`.`rysetting_lgu`
+            (`rysettingid`,
+             `lguid`,
+             `lguname`,
+             `settingtype`)
+SELECT              
+	(SELECT objid FROM iligan.`miscrysetting`) AS  rysettingid,
+	'169' AS lguid,
+	'ILIGAN CITY' AS lguname,
+	'misc' AS settingtype;
+	
+
+	
+	UPDATE tracs_iligan.`tblmiscdeclaration` SET 
+	strexemptid = NULL 
+WHERE strexemptid IS NOT NULL AND LENGTH(TRIM(strexemptid)) = 0;
+
+
+INSERT INTO `iligan`.`rpu`
+            (`objid`,
+             `state`,
+             `realpropertyid`,
+             `rputype`,
+             `ry`,
+             `fullpin`,
+             `suffix`,
+             `subsuffix`,
+             `classification_objid`,
+             `exemptiontype_objid`,
+             `taxable`,
+             `totalareaha`,
+             `totalareasqm`,
+             `totalbmv`,
+             `totalmv`,
+             `totalav`,
+             `hasswornamount`,
+             `swornamount`,
+             `useswornamount`,
+             `previd`)
+SELECT
+	md.objid,
+	CASE 
+		WHEN md.state = 1 THEN 'INTERIM' 
+		WHEN md.state = 2 THEN 'CURRENT' 
+		ELSE 'CANCELLED'
+	END AS  state,
+	md.strrealpropertyid AS realpropertyid,
+	'misc' AS rputype,
+	md.intry AS ry,
+	CONCAT(r.pin, '-', md.intsuffix) AS fullpin,
+	md.intsuffix AS suffix,
+	NULL AS subsuffix,
+	md.strrptclassificationid AS  classification_objid,
+	md.strexemptid AS  exemptiontype_objid,
+	md.inttaxable AS  taxable,
+	0 AS  totalareaha,
+	0 AS totalareasqm,
+	md.curtotalmarketvalue AS totalbmv,
+	md.curtotaladjmarketvalue AS  totalmv,
+	md.curtotalassessedvalue AS  totalav,
+	0 AS hasswornamount,
+	0 AS  swornamount,
+	0 AS useswornamount,
+	NULL AS previd
+FROM tracs_iligan.`tblmiscdeclaration` md
+		INNER JOIN iligan.`realproperty` r ON md.strrealpropertyid = r.objid 
+WHERE NOT EXISTS(SELECT * FROM iligan.rpu WHERE objid = md.objid );		
+
+
+
+INSERT INTO `iligan`.`miscrpu`
+            (`objid`,
+             `actualuse_objid`,
+             `landrpuid`)
+SELECT
+	md.objid,
+	CONCAT('MI', md.strbldgclassitemid) AS actualuse_objid,
+	NULL AS landrpuid
+FROM tracs_iligan.`tblmiscdeclaration` md 
+WHERE LENGTH(TRIM(strbldgclassitemid )) > 0;
+
+
+INSERT INTO `iligan`.`miscrpuitem`
+            (`objid`,
+             `miscrpuid`,
+             `miv_objid`,
+             `miscitem_objid`,
+             `expr`,
+             `depreciation`,
+             `depreciatedvalue`,
+             `basemarketvalue`,
+             `marketvalue`,
+             `assesslevel`,
+             `assessedvalue`)
+SELECT
+	mi.objid,
+	mi.parentid AS miscrpuid,
+	mi.`strAdditionalItemID` AS  miv_objid,
+	mi.`strAdditionalItemID` AS  miscitem_objid,
+	'UNIT_VALUE' AS  expr,
+	mi.`curDepreciation` AS  depreciation,
+	ROUND(mi.`curMarketValue` * mi.curdepreciation / 100) AS depreciatedvalue,
+	mi.`curMarketValue` AS  basemarketvalue,
+	mi.`curAdjMarketValue` AS  marketvalue,
+	0 AS  assesslevel,
+	0  AS   assessedvalue
+FROM tracs_iligan.`tblmiscdeclarationitem` mi 
+	INNER JOIN tracs_iligan.`tblmiscdeclaration` md ON mi.`ParentID` = md.objid 
+	INNER JOIN tracs_iligan.`tblbldgclassitem` bci ON md.`strBldgClassItemID` = bci.objid;
+	
+	
+INSERT INTO `iligan`.`miscrpuitem_rptparameter`
+            (`miscrpuitemid`,
+             `param_objid`,
+             `miscrpuid`,
+             `intvalue`,
+             `decimalvalue`)
+SELECT
+	mi.objid AS miscrpuitemid,
+	'UNIT_VALUE' AS  param_objid,
+	mi.rootid AS  miscrpuid,
+	mi.curunit AS  intvalue,
+	mi.curunit AS  decimalvalue
+FROM tracs_iligan.`tblmiscdeclarationitem` mi
+WHERE EXISTS(SELECT * FROM iligan.miscrpu WHERE objid = mi.parentid);
+
+
+	
+	
+	
+		
+		
+		
+		
+
+	
+
+INSERT INTO `iligan`.`faas`
+            (`objid`,
+             `state`,
+             `rpuid`,
+             `datacapture`,
+             `autonumber`,
+             `utdno`,
+             `tdno`,
+             `txntype_objid`,
+             `effectivityyear`,
+             `effectivityqtr`,
+             `titletype`,
+             `titleno`,
+             `titledate`,
+             `taxpayer_objid`,
+             `taxpayer_name`,
+             `taxpayer_address`,
+             `owner_name`,
+             `owner_address`,
+             `administrator_objid`,
+             `administrator_name`,
+             `administrator_address`,
+             `beneficiary_objid`,
+             `beneficiary_name`,
+             `beneficiary_address`,
+             `memoranda`,
+             `cancelnote`,
+             `restrictionid`,
+             `backtaxyrs`,
+             `prevtdno`,
+             `prevpin`,
+             `prevowner`,
+             `prevav`,
+             `prevmv`,
+             `cancelreason`,
+             `canceldate`,
+             `cancelledbytdnos`,
+             `lguid`,
+             `txntimestamp`,
+             `cancelledtimestamp`)
+SELECT
+	td.objid,
+	CASE 
+		WHEN td.state = 1 THEN 'INTERIM' 
+		WHEN td.state = 2 THEN 'CURRENT' 
+		ELSE 'CANCELLED'
+    END AS state,
+	td.strdeclarationid AS rpuid,
+	CASE WHEN st.strtxncode = 'DA' THEN 1 ELSE 0 END AS datacapture,
+	0 AS autonumber,
+	td.strtdno AS utdno,
+	td.strtdno AS tdno,
+	st.strtxncode AS txntype_objid,
+	YEAR(td.dteffectivitydate) AS  effectivityyear,
+	QUARTER(td.dteffectivitydate) AS effectivityqtr,
+	NULL AS titletype,
+	td.strtitleno AS titleno,
+	NULL AS titledate,
+	t.objid AS taxpayer_objid,
+	t.name AS taxpayer_name,
+	t.address AS taxpayer_address,
+	t.name AS owner_name,
+	t.address AS owner_address,
+	a.objid AS administrator_objid,
+	a.name AS administrator_name,
+	a.address AS administrator_address,
+	NULL AS beneficiary_objid,
+	NULL AS beneficiary_name,
+	NULL AS beneficiary_address,
+	td.strremarks AS memoranda,
+	NULL AS cancelnote,
+	NULL AS restrictionid,
+	0 AS backtaxyrs,
+	td.strprevioustdno AS prevtdno,
+	NULL AS prevpin,
+	td.strpreviousowner AS  prevowner,
+	td.curprevassessedvalue AS prevav,
+	0.0 AS prevmv,
+	c.strcancelcode AS cancelreason,
+	td.dtcanceldate,
+	td.strcancelledbytdno AS cancelledbytdnos,
+	'169' AS lguid,
+	CONCAT(
+		YEAR(td.dtissuedate),
+		QUARTER(td.dtissuedate),
+		CASE WHEN MONTH(td.dtissuedate) < 10 THEN CONCAT('0', MONTH(td.dtissuedate)) ELSE MONTH(td.dtissuedate) END,
+		CASE WHEN DAY(td.dtissuedate) < 10 THEN CONCAT('0', DAY(td.dtissuedate)) ELSE DAY(td.dtissuedate) END 
+	) AS txntimestamp,
+	CASE WHEN td.dtcanceldate IS NOT NULL 
+		THEN CONCAT(
+				YEAR(td.dtcanceldate),
+				QUARTER(td.dtcanceldate),
+				CASE WHEN MONTH(td.dtcanceldate) < 10 THEN CONCAT('0', MONTH(td.dtcanceldate)) ELSE MONTH(td.dtissuedate) END,
+				CASE WHEN DAY(td.dtcanceldate) < 10 THEN CONCAT('0', DAY(td.dtcanceldate)) ELSE DAY(td.dtissuedate) END 
+			)
+		ELSE NULL 
+	END AS cancelledtimestamp
+FROM tracs_iligan.`tbltaxdeclaration` td
+	INNER JOIN tracs_iligan.systbltxntype st ON td.inttxntype = st.objid 
+	INNER JOIN iligan.entity t ON td.strtaxpayerid = t.objid 
+	INNER JOIN iligan.rpu r ON td.strdeclarationid = r.objid 
+	LEFT JOIN iligan.entity a ON td.stradministratorid = a.objid 
+	LEFT JOIN tracs_iligan.`systblcancelreason` c ON td.intcancelreason = c.objid;
+	
+	
+	
+		
+		
+UPDATE faas SET txntype_objid = 'DC' WHERE txntype_objid = 'DA' ;
+
+
+		
+		
+		
+
+		

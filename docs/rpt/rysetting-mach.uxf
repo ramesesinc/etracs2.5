@@ -4,19 +4,61 @@
   <element>
     <type>com.umlet.element.Class</type>
     <coordinates>
-      <x>320</x>
-      <y>460</y>
+      <x>330</x>
+      <y>250</y>
       <w>150</w>
-      <h>130</h>
+      <h>180</h>
     </coordinates>
-    <panel_attributes>machassesslevelrange
+    <panel_attributes>bg=green
+machassesslevel
 --
 objid
-machassesslevelid
 machrysettingid
-mvfrom
-mvto
-rate</panel_attributes>
+classification_objid
+code
+name
+fixrate
+rate
+previd</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>170</x>
+      <y>80</y>
+      <w>90</w>
+      <h>50</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>70;30;30;30</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>630</x>
+      <y>280</y>
+      <w>160</w>
+      <h>30</h>
+    </coordinates>
+    <panel_attributes>propertyclassification</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>70</x>
+      <y>50</y>
+      <w>130</w>
+      <h>110</h>
+    </coordinates>
+    <panel_attributes>bg=green
+rysetting_lgu
+--
+rysettingid
+lguid
+lguname
+settingtype</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
@@ -73,45 +115,20 @@ classification</panel_attributes>
   <element>
     <type>com.umlet.element.Class</type>
     <coordinates>
-      <x>630</x>
-      <y>280</y>
-      <w>160</w>
-      <h>30</h>
+      <x>320</x>
+      <y>460</y>
+      <w>150</w>
+      <h>130</h>
     </coordinates>
-    <panel_attributes>propertyclassification</panel_attributes>
-    <additional_attributes/>
-  </element>
-  <element>
-    <type>com.umlet.element.Class</type>
-    <coordinates>
-      <x>70</x>
-      <y>50</y>
-      <w>130</w>
-      <h>110</h>
-    </coordinates>
-    <panel_attributes>rysetting_lgu
---
-rysettingid
-lguid
-lguname
-settingtype</panel_attributes>
-    <additional_attributes/>
-  </element>
-  <element>
-    <type>com.umlet.element.Class</type>
-    <coordinates>
-      <x>240</x>
-      <y>50</y>
-      <w>170</w>
-      <h>140</h>
-    </coordinates>
-    <panel_attributes>machrysetting
+    <panel_attributes>bg=green
+machassesslevelrange
 --
 objid
-state
-ry
-appliedto
-previd</panel_attributes>
+machassesslevelid
+machrysettingid
+mvfrom
+mvto
+rate</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
@@ -126,33 +143,20 @@ previd</panel_attributes>
     <additional_attributes>80;30;30;90</additional_attributes>
   </element>
   <element>
-    <type>com.umlet.element.Relation</type>
-    <coordinates>
-      <x>170</x>
-      <y>80</y>
-      <w>90</w>
-      <h>50</h>
-    </coordinates>
-    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
-    <additional_attributes>70;30;30;30</additional_attributes>
-  </element>
-  <element>
     <type>com.umlet.element.Class</type>
     <coordinates>
-      <x>330</x>
-      <y>250</y>
-      <w>150</w>
-      <h>180</h>
+      <x>240</x>
+      <y>50</y>
+      <w>170</w>
+      <h>140</h>
     </coordinates>
-    <panel_attributes>machassesslevel
+    <panel_attributes>bg=green
+machrysetting
 --
 objid
-machrysettingid
-classification_objid
-code
-name
-fixrate
-rate
+state
+ry
+appliedto
 previd</panel_attributes>
     <additional_attributes/>
   </element>

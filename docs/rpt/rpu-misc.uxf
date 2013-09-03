@@ -4,30 +4,79 @@
   <element>
     <type>com.umlet.element.Relation</type>
     <coordinates>
-      <x>612</x>
-      <y>540</y>
-      <w>86</w>
-      <h>107</h>
+      <x>459</x>
+      <y>216</y>
+      <w>152</w>
+      <h>63</h>
     </coordinates>
     <panel_attributes>lt=&gt;&gt;&gt;&gt;
-.
-param</panel_attributes>
-    <additional_attributes>45;90;45;27</additional_attributes>
+actualuse</panel_attributes>
+    <additional_attributes>135;45;27;45</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>333</x>
+      <y>216</y>
+      <w>153</w>
+      <h>90</h>
+    </coordinates>
+    <panel_attributes>bg=green
+miscrpu
+--
+objid
+actualuse_objid
+landrpuid</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>216</x>
+      <y>126</y>
+      <w>179</w>
+      <h>63</h>
+    </coordinates>
+    <panel_attributes>lt=&gt;&gt;&gt;&gt;
+exemptiontype</panel_attributes>
+    <additional_attributes>162;45;27;45</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>378</x>
+      <y>126</y>
+      <w>126</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>propertyclassification</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>594</x>
+      <y>630</y>
+      <w>117</w>
+      <h>72</h>
+    </coordinates>
+    <panel_attributes>rptparameter
+--
+name
+value</panel_attributes>
+    <additional_attributes/>
   </element>
   <element>
     <type>com.umlet.element.Relation</type>
     <coordinates>
       <x>459</x>
-      <y>450</y>
-      <w>143</w>
-      <h>84</h>
+      <y>342</y>
+      <w>170</w>
+      <h>63</h>
     </coordinates>
-    <panel_attributes>lt=&lt;&lt;
-m1=1
-m2=*
-.
-params</panel_attributes>
-    <additional_attributes>27;45;126;45</additional_attributes>
+    <panel_attributes>lt=&gt;&gt;&gt;&gt;
+miv</panel_attributes>
+    <additional_attributes>153;45;27;45</additional_attributes>
   </element>
   <element>
     <type>com.umlet.element.Class</type>
@@ -66,16 +115,90 @@ previd
     <additional_attributes/>
   </element>
   <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>594</x>
+      <y>252</y>
+      <w>117</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>miscassesslevel</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>585</x>
+      <y>468</y>
+      <w>153</w>
+      <h>99</h>
+    </coordinates>
+    <panel_attributes>bg=green
+miscrpuitem_rptparameter
+--
+miscrpuitemid
+param_objid
+miscrpuid
+intvalue
+decimalvalue</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>612</x>
+      <y>540</y>
+      <w>86</w>
+      <h>107</h>
+    </coordinates>
+    <panel_attributes>lt=&gt;&gt;&gt;&gt;
+.
+param</panel_attributes>
+    <additional_attributes>45;90;45;27</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>459</x>
+      <y>450</y>
+      <w>143</w>
+      <h>84</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;
+m1=1
+m2=*
+.
+params</panel_attributes>
+    <additional_attributes>27;45;126;45</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>360</x>
+      <y>279</y>
+      <w>80</w>
+      <h>98</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;
+m1=1
+m2=*
+.
+items</panel_attributes>
+    <additional_attributes>45;27;45;81</additional_attributes>
+  </element>
+  <element>
     <type>com.umlet.element.Relation</type>
     <coordinates>
       <x>216</x>
-      <y>126</y>
-      <w>179</w>
-      <h>63</h>
+      <y>225</y>
+      <w>134</w>
+      <h>44</h>
     </coordinates>
-    <panel_attributes>lt=&gt;&gt;&gt;&gt;
-exemptiontype</panel_attributes>
-    <additional_attributes>162;45;27;45</additional_attributes>
+    <panel_attributes>lt=-
+m1=1
+m2=1
+</panel_attributes>
+    <additional_attributes>27;27;117;27</additional_attributes>
   </element>
   <element>
     <type>com.umlet.element.Class</type>
@@ -85,7 +208,8 @@ exemptiontype</panel_attributes>
       <w>153</w>
       <h>207</h>
     </coordinates>
-    <panel_attributes>miscrpuitem
+    <panel_attributes>bg=green
+miscrpuitem
 --
 objid
 miscrpuid
@@ -113,110 +237,16 @@ assessedvalue
     <additional_attributes/>
   </element>
   <element>
-    <type>com.umlet.element.Class</type>
-    <coordinates>
-      <x>594</x>
-      <y>252</y>
-      <w>117</w>
-      <h>27</h>
-    </coordinates>
-    <panel_attributes>miscassesslevel</panel_attributes>
-    <additional_attributes/>
-  </element>
-  <element>
-    <type>com.umlet.element.Class</type>
-    <coordinates>
-      <x>585</x>
-      <y>468</y>
-      <w>153</w>
-      <h>99</h>
-    </coordinates>
-    <panel_attributes>miscrpuitem_rptparameter
---
-miscrpuitemid
-param_objid
-miscrpuid
-intvalue
-decimalvalue</panel_attributes>
-    <additional_attributes/>
-  </element>
-  <element>
-    <type>com.umlet.element.Relation</type>
-    <coordinates>
-      <x>459</x>
-      <y>342</y>
-      <w>170</w>
-      <h>63</h>
-    </coordinates>
-    <panel_attributes>lt=&gt;&gt;&gt;&gt;
-miv</panel_attributes>
-    <additional_attributes>153;45;27;45</additional_attributes>
-  </element>
-  <element>
-    <type>com.umlet.element.Relation</type>
-    <coordinates>
-      <x>459</x>
-      <y>378</y>
-      <w>170</w>
-      <h>63</h>
-    </coordinates>
-    <panel_attributes>lt=&gt;&gt;&gt;&gt;
-miscitem</panel_attributes>
-    <additional_attributes>153;45;27;45</additional_attributes>
-  </element>
-  <element>
     <type>com.umlet.element.Relation</type>
     <coordinates>
       <x>216</x>
-      <y>225</y>
-      <w>134</w>
-      <h>44</h>
+      <y>99</y>
+      <w>179</w>
+      <h>63</h>
     </coordinates>
-    <panel_attributes>lt=-
-m1=1
-m2=1
-</panel_attributes>
-    <additional_attributes>27;27;117;27</additional_attributes>
-  </element>
-  <element>
-    <type>com.umlet.element.Class</type>
-    <coordinates>
-      <x>594</x>
-      <y>630</y>
-      <w>117</w>
-      <h>72</h>
-    </coordinates>
-    <panel_attributes>rptparameter
---
-name
-value</panel_attributes>
-    <additional_attributes/>
-  </element>
-  <element>
-    <type>com.umlet.element.Class</type>
-    <coordinates>
-      <x>378</x>
-      <y>126</y>
-      <w>126</w>
-      <h>27</h>
-    </coordinates>
-    <panel_attributes>propertyclassification</panel_attributes>
-    <additional_attributes/>
-  </element>
-  <element>
-    <type>com.umlet.element.Class</type>
-    <coordinates>
-      <x>333</x>
-      <y>216</y>
-      <w>153</w>
-      <h>90</h>
-    </coordinates>
-    <panel_attributes>miscrpu
---
-objid
-actualuse_objid
-landrpuid</panel_attributes>
-    <additional_attributes/>
+    <panel_attributes>lt=&gt;&gt;&gt;&gt;
+classification</panel_attributes>
+    <additional_attributes>162;45;27;45</additional_attributes>
   </element>
   <element>
     <type>com.umlet.element.Class</type>
@@ -228,18 +258,6 @@ landrpuid</panel_attributes>
     </coordinates>
     <panel_attributes>miscitem</panel_attributes>
     <additional_attributes/>
-  </element>
-  <element>
-    <type>com.umlet.element.Relation</type>
-    <coordinates>
-      <x>459</x>
-      <y>216</y>
-      <w>152</w>
-      <h>63</h>
-    </coordinates>
-    <panel_attributes>lt=&gt;&gt;&gt;&gt;
-actualuse</panel_attributes>
-    <additional_attributes>135;45;27;45</additional_attributes>
   </element>
   <element>
     <type>com.umlet.element.Class</type>
@@ -255,28 +273,13 @@ actualuse</panel_attributes>
   <element>
     <type>com.umlet.element.Relation</type>
     <coordinates>
-      <x>216</x>
-      <y>99</y>
-      <w>179</w>
+      <x>459</x>
+      <y>378</y>
+      <w>170</w>
       <h>63</h>
     </coordinates>
     <panel_attributes>lt=&gt;&gt;&gt;&gt;
-classification</panel_attributes>
-    <additional_attributes>162;45;27;45</additional_attributes>
-  </element>
-  <element>
-    <type>com.umlet.element.Relation</type>
-    <coordinates>
-      <x>360</x>
-      <y>279</y>
-      <w>80</w>
-      <h>98</h>
-    </coordinates>
-    <panel_attributes>lt=&lt;&lt;
-m1=1
-m2=*
-.
-items</panel_attributes>
-    <additional_attributes>45;27;45;81</additional_attributes>
+miscitem</panel_attributes>
+    <additional_attributes>153;45;27;45</additional_attributes>
   </element>
 </diagram>
