@@ -1,23 +1,15 @@
-"revise|revise|newry|lgu|barangay|memoranda|lgu|barangay|memoranda" [ processing == false] {
+"params.*" [ processing == false] {
     enabled:true;
 }
 
-"revise|revise|newry|lgu|barangay|memoranda|lgu|barangay|memoranda" [ processing == true] {
+"params.*" [ processing == true] {
     enabled:false;
 }
 
-"doCancel" [ processing == false] {
-    enabled:false;
+"msg" [ processing == false] {
+    visible:false;
 }
 
-"doCancel" [ processing == true] {
-    enabled:true;
-}
-
-"revise|newry|lgu|barangay|memoranda" [ processing == false] {
-    enabled:true;
-}
-
-"revise|newry|lgu|barangay|memoranda" [ processing == true] {
-    enabled:false;
+"msg" [ processing == true] {
+    visible:true;
 }

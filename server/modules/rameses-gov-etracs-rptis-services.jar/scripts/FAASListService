@@ -48,6 +48,25 @@ class FAASListService
     }
 	
 
+
+    @ProxyMethod
+    public def getColumns(params) {
+        return [
+            [name:"state", caption:"State", width:100],
+            [name:"ry", caption:"RY", width:50, type:'integer', format:'0000'],
+            [name:"txntype.objid", caption:"Txn", width:50],
+            [name:"rputype", caption:"Type", width:80],
+            [name:"tdno", caption:"TD No.", width:140],
+            [name:"fullpin", caption:"PIN", width:200],
+            [name:"owner.name", caption:"Owner Name", width:250],
+            [name:"owner.address", caption:"Owner Address", width:250],
+            [name:"cadastrallotno", caption:"Lot No.", width:100],
+            [name:"totalareasqm", caption:"Area (sqm)", width:120, type:'decimal', format:'#,##0.00'],
+            [name:"totalmv", caption:"Market Value", width:100, type:'decimal', format:'#,##0.00'],
+            [name:"totalav", caption:"Assessed Value", width:100, type:'decimal', format:'#,##0.00'],
+        ]
+    }
+
     @ProxyMethod
     public def getStates(  ) {
         println 'getstates'

@@ -43,3 +43,13 @@
 "rpu.depreciationvalue|rpu.floorcount" [true == true]{
     enabled:false;
 }
+
+
+"viewFloorInfo" [selectedBldgUse == null]{
+    enabled:false;
+}
+
+
+"viewFloorInfo" [selectedBldgUse != null]{
+    enabled:true;
+}

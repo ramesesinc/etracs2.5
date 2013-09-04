@@ -268,6 +268,7 @@ public class FAASPage extends javax.swing.JPanel {
         xLookupField1.setRequired(true);
         formPanel4.add(xLookupField1);
 
+        xDateField3.setHint("Date Appraised");
         xDateField3.setName("appraiser.dtsigned");
         xDateField3.setPreferredSize(new java.awt.Dimension(90, 20));
         xDateField3.setShowCaption(false);
@@ -326,6 +327,7 @@ public class FAASPage extends javax.swing.JPanel {
         xLookupField4.setRequired(true);
         formPanel7.add(xLookupField4);
 
+        xDateField6.setHint("Date Approved");
         xDateField6.setName("approver.dtsigned");
         xDateField6.setPreferredSize(new java.awt.Dimension(90, 20));
         xDateField6.setShowCaption(false);

@@ -67,7 +67,7 @@ class MiscRPUService
         if (!rpu) {
             throw new Exception('Miscellaneous RPU does not exists or has been deleted.')
         }
-        rpu.actualuse = miscSettingSvc.lookupAssessLevelById(rpu.actualuse_objid)
+        rpu.actualuse = miscSettingSvc.lookupAssessLevelById(rpu.actualuse.objid)
         rpu.items  = getMiscRpuItems(rpu)
         return rpu 
     }

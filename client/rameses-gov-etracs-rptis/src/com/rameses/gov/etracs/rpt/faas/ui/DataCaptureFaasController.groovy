@@ -19,7 +19,7 @@ class DataCaptureController extends com.rameses.gov.etracs.rpt.faas.ui.AbstractF
     
 
     def initCapture(){
-        initinfo = [suffix:0, ry: svc.getCurrentRy(),]
+        initinfo = [suffix:0, ry: service.getCurrentRy(),]
         return super.signal('dcinit')
     }
 

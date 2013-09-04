@@ -2,7 +2,7 @@
 <workunit>
     <invokers>
         <invoker folderid="/menu/txn/rpt/util" action="init" caption="Modify PIN" target="popup" index="500"
-            role="ASSESSOR" permission="util.modifypin" />
+            role="APPRAISER" permission="util.modifypin" />
     </invokers>
     
     <code lang="groovy">
@@ -32,8 +32,8 @@ public class ModifyPINUtilityController {
     
     def faas
     def pintype
-    def municity
-    def district
+    def provcity
+    def munidistrict
     def barangay
     def section  = 0
     def parcel = 0
@@ -76,7 +76,7 @@ public class ModifyPINUtilityController {
     void clearInfo() {
         faas        = null
         pintype     = 'new' 
-        municity    = null
+        provcity    = null
         barangay    = null    
         section     = 0
         parcel      = 0
@@ -92,13 +92,13 @@ public class ModifyPINUtilityController {
         updateNewPin()
     }
     
-    void setMunicity( municity ) {
-        this.municity = municity
+    void setProvcity( provcity ) {
+        this.provcity = provcity
         updateNewPin()
     }
     
-    void setDistrict( district ) {
-        this.district = district
+    void setMunidistrict( munidistrict ) {
+        this.munidistrict = munidistrict
         updateNewPin()
     }
     
@@ -130,24 +130,24 @@ public class ModifyPINUtilityController {
     void updateNewPin() {
         newpin = new StringBuilder()
         
-        if( lgutype == 'city' || lgutype == 'CITY' ) {
-            if( municity ) {
-                newpin = municity.indexno + '-'
+        if( 'city'.equalsIgnoreCase(lgutype)) {
+            if( provcity ) {
+                newpin = provcity.indexno + '-'
             }
             else {
                 newpin = '000-'
             }
             
-            if( district ) {
-                newpin += district.indexno + '-'
+            if( munidistrict ) {
+                newpin += munidistrict.indexno + '-'
             }
             else {
                 newpin += '00-'
             }
         }
         else {
-            if( municity ) {
-                newpin = municity.pin + '-'
+            if( provcity ) {
+                newpin = provcity.pin + '-'
             }
             else {
                 newpin = '000-00-'
@@ -221,21 +221,25 @@ public class ModifyPINUtilityController {
         return ['new', 'old']
     }
     
-    List getMunicityList() {
-        if( !faas ) return []
-        
-        return faasSvc.getLgus()
+    def provcityList = null
+    
+    List getProvcityList() {
+        if (provcityList == null ) {
+            provcityList = lguSvc.lookupCities([:]);
+            provcityList += lguSvc.lookupMunicipalities([:]);
+        }
+        return provcityList;
     }
     
-    List getDistrictList() {
-        return lguSvc.lookupDistricts( [parentid:municity?.objid] )
+    List getMuniDistrictList() {
+        def list = []
+        list += lguSvc.lookupMunicipalities([:])
+        list += lguSvc.lookupDistricts([:])
+        return list;
     }
     
     List getBarangayList() {
-        if( lgutype == 'city' || lgutype == 'CITY' )
-            return faasSvc.getBarangays( [parentid:district?.objid] )
-        
-        return faasSvc.getBarangays( [parentid:municity?.objid] )
+        return lguSvc.getBarangaysByParentId(munidistrict?.objid);
     }
     
 }

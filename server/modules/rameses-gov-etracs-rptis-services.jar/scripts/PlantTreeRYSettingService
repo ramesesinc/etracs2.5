@@ -134,7 +134,7 @@ public class PlantTreeRYSettingService
     
     @ProxyMethod
     public def getPlantTrees() {
-        return ptSvc.getList(null)
+        return ptSvc.getList([:])
     }
     
 

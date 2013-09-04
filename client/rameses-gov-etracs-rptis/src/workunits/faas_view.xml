@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workunit extends="rpt_wtemplates/FaasController.xml">
+    <invokers>
+        <invoker type="faas:formActions" action="viewPreviousFaas" caption="View Previous FAAS" target="popup" visibleWhen="#{mode == 'read'}"/>
+        <invoker type="formActions" action="_close" caption="Close" mnemonic="c" immediate="true" icon="images/toolbars/cancel.png"/>
+    </invokers>
+        
+    <code>
+        
+    import com.rameses.rcp.annotations.* 
+    import com.rameses.rcp.common.* 
+    import com.rameses.osiris2.client.*
+    import com.rameses.osiris2.common.*
+
+    class ViewPreviousController extends com.rameses.gov.etracs.rpt.faas.ui.AbstractFaasController
+    {
+        @Service('FAASService')
+        def svc;
+        
+        def getService(){ return svc }
+        
+        def viewPreviousFaas(){
+            if ( !entity.previousfaases) throw new Exception('There is no previous FAAS record.')
+            entity.objid = entity.previousfaases[0].prevfaasid
+            return open();
+        }
+        
+    }        
+    
+    </code>
+</workunit>
+
+
