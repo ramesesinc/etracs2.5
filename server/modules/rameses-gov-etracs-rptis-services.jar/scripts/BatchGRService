@@ -6,8 +6,8 @@ import java.rmi.server.UID
 class BatchGRService
 {
 	
-	@PersistenceContext('main')
-	def em
+	@ActiveDB('batchgr')
+	def bgrDb
 
     @Env
 	def env
@@ -27,10 +27,7 @@ class BatchGRService
 	@ProxyMethod
 	public List getLandFaasIdForRevision( newry, barangayid ) {
 		barangayid = (barangayid ? barangayid : '%')
-
-		return em.sqlContext.createNamedQuery('batchgr:getLandFAASIdForRevision')
-				.setParameters([ newry:newry, barangayid:barangayid  ])
-				.resultList
+		return bgrDb.getLandFAASIdForRevision([ newry:newry, barangayid:barangayid ])
 	} 
 	
 
@@ -84,19 +81,19 @@ class BatchGRService
 	@ProxyMethod
 	public List getRyList( rputype ) {
 		if( !rputype || 'land'.equals( rputype ) ) {
-			return em.sqlContext.createNamedQuery('batchgr:getLandRYSetting').resultList 
+			return bgrDb.getLandRYSettings([:])
 		}
 		else if( 'bldg'.equals( rputype ) ) {
-			return em.sqlContext.createNamedQuery('batchgr:getBldgRYSetting').resultList 
+			return bgrDb.getBldgRYSettings([:])
 		}
 		else if( 'mach'.equals( rputype ) ) {
-			return em.sqlContext.createNamedQuery('batchgr:getMachRYSetting').resultList 
+			return bgrDb.getMachRYSettings([:])
 		}
 		else if( 'planttree'.equals( rputype ) ) {
-			return em.sqlContext.createNamedQuery('batchgr:getPlantTreeRYSetting').resultList 
+			return bgrDb.getPlantTreeRYSettings([:])
 		}
 		else if( 'misc'.equals( rputype ) ) {
-			return em.sqlContext.createNamedQuery('batchgr:getMiscRYSetting').resultList 
+			return bgrDb.getMiscRYSettings([:])
 		}
 		return []
 	}
@@ -109,16 +106,16 @@ class BatchGRService
 		def sw = null 
 		def pw = null 
 		try {
-			em.sqlContext.createNamedExecutor('batchgr:deleteBatchGRError').setParameter('faasid', faasid).execute()
+			bgrDb.deleteBatchGRError([faasid:faasid])
 			
 			sw = new StringWriter()
 			pw = new PrintWriter(sw)
 			e.printStackTrace( pw)
-			em.sqlContext.createNamedExecutor('batchgr:insertBatchGRError')
-					.setParameter('faasid', faasid)
-					.setParameter('ry', newry)
-					.setParameter('msg', sw.toString())
-					.execute()
+			bgrDb.insertBatchGRError([
+				faasid 	: faasid,
+				ry 		: newry,
+				msg 	: sw.toString(),
+			])
 		}
 		catch( ex ) {
 			println 'Unable to Log Error for ' + faasid 
@@ -139,45 +136,31 @@ class BatchGRService
 		barangayid = ( barangayid ? barangayid : '%')
 		//checkPendingFaasTransactions( newry, barangayid )
 		
-		def rptsetting = em.sqlContext.createNamedQuery('batchgr:getCurrentRY').singleResult 
-		if( !rptsetting ) {
-			throw new Exception('RPT Setting is not defined.')
-		}
-		if( rptsetting.ry >= newry ) {
+		if( var.current_ry >= newry ) {
 			throw new Exception('New Revision Year must be greater than current revision year ' + rptsetting.ry )
 		}
 		
 		//check landry setting 
-		def ry = em.sqlContext.createNamedQuery('batchgr:getRYSetting_land')
-						.setParameter('ry', newry)
-						.singleResult 
+		def ry = bgrDb.findRYSetting_land([ry:newry])
 		if( ! ry ) throw new Exception( "Land Revision Year Setting for $newry is not defined.")
 		
 		//check bldgry setting 
-		ry = em.sqlContext.createNamedQuery('batchgr:getRYSetting_bldg')
-						.setParameter('ry', newry)
-						.singleResult 
+		ry = bgrDb.findRYSetting_bldg([ry:newry])
 		if( ! ry ) throw new Exception( "Building Revision Year Setting for $newry is not defined.")
 		
 		//check machry setting 
-		ry = em.sqlContext.createNamedQuery('batchgr:getRYSetting_mach')
-						.setParameter('ry', newry)
-						.singleResult 
+		ry = bgrDb.findRYSetting_mach([ry:newry])
 		if( ! ry ) throw new Exception( "Machine Revision Year Setting for $newry is not defined.")
 		
 		//check planttreery setting 
 		if ( existSetting( 'planttreerysetting') ){
-			ry = em.sqlContext.createNamedQuery('batchgr:getRYSetting_planttree')
-							.setParameter('ry', newry)
-							.singleResult 
+			ry = bgrDb.findRYSetting_planttree([ry:newry])
 			if( ! ry ) throw new Exception( "Plant/Tree Revision Year Setting for $newry is not defined.")
 		}
 		
 		//check getRYSetting_misc setting 
 		if ( existSetting('miscrysetting') ) {
-			ry = em.sqlContext.createNamedQuery('batchgr:getRYSetting_misc')
-							.setParameter('ry', newry)
-							.singleResult 
+			ry = bgrDb.findRYSetting_misc([ry:newry])
 			if( ! ry ) throw new Exception( "Miscellaneous Revision Year Setting for $newry is not defined.")
 		}
 	}
@@ -244,79 +227,29 @@ class BatchGRService
 	
 	def getRySetting( rputype, newry ) {
 		if( rputype == 'land' ) {
-			return em.sqlContext.createNamedQuery('batchgr:getRYSetting_land')
-						.setParameter('ry', newry)
-						.singleResult 
+			return bgrDb.findRYSetting_land([ry:newry])
 		}
 		
 		if( rputype == 'bldg' ) {
-			return em.sqlContext.createNamedQuery('batchgr:getRYSetting_bldg')
-						.setParameter('ry', newry)
-						.singleResult 
+			return bgrDb.findRYSetting_bldg([ry:newry])
 		}
 		
 		if( rputype == 'mach' ) {
-			return em.sqlContext.createNamedQuery('batchgr:getRYSetting_mach')
-						.setParameter('ry', newry)
-						.singleResult 
+			return bgrDb.findRYSetting_mach([ry:newry])
 		}
 		
 		if( rputype == 'planttree' ) {
-			return em.sqlContext.createNamedQuery('batchgr:getRYSetting_planttree')
-						.setParameter('ry', newry)
-						.singleResult 
+			return bgrDb.findRYSetting_planttree([ry:newry])
 		}
 		
 		if( rputype == 'misc' ) {
-			return em.sqlContext.createNamedQuery('batchgr:getRYSetting_misc')
-						.setParameter('ry', newry)
-						.singleResult 
+			return bgrDb.findRYSetting_misc([ry:newry])
 		}
 		return null 
 	}
 	
 	boolean existSetting( setting ) {
-		def list = em.sqlContext.createNamedQuery('rysetting:getSetting')
-						.setVars([setting:setting])
-						.resultList 
-		return list.size() > 0	
-	}
-	
-	void checkPendingFaasTransactions( newry, barangayid ) {
-		//check if there are still pending faases, therefore, not current or cancelled
-		def pendinglist = em.sqlContext.createNamedQuery('batchgr:getPendingFaasList')
-					.setParameter('barangayid', barangayid)
-					.setParameter('ry', newry)
-					.setMaxResults(1)
-					.resultList 
-		if( pendinglist ){
-			throw new Exception("There are still pending FAASes for approval.\nApprove or cancel these records before processing the general revision.")
-		}
-		
-		//check pending subdivisions
-		pendinglist = em.sqlContext.createNamedQuery('batchgr:getPendingSubdivisions')
-					.setMaxResults(1)
-					.resultList 
-		if( pendinglist ){
-			throw new Exception("There are still pending subdivisions.\nApprove or cancel these records before processing the general revision.")
-		}
-		
-		//check pending consolidations
-		pendinglist = em.sqlContext.createNamedQuery('batchgr:getPendingConsolidations')
-					.setMaxResults(1)
-					.resultList 
-		if( pendinglist ){
-			throw new Exception("There are still pending consolidations.\nApprove or cancel these records before processing the general revision.")
-		}
-		
-		//check pending annotations
-		pendinglist = em.sqlContext.createNamedQuery('batchgr:getPendingAnnotations')
-					.setMaxResults(1)
-					.resultList 
-		if( pendinglist ){
-			throw new Exception("There are still pending annotations.\nApprove or cancel these records before processing the general revision.")
-		}
-		
+		return bgrDb.getRYSettings([setting:setting]).size() > 0
 	}
 	
 }

@@ -26,37 +26,40 @@ DELETE FROM batchgrerror WHERE faasid = $P{faasid}
 
 
 
-[getCurrentRY]
-SELECT ry FROM rptsetting  
-
-[getRYSetting_land]
+[findRYSetting_land]
 SELECT * FROM landrysetting  where ry = $P{ry}
 
-[getRYSetting_bldg]
+[findRYSetting_bldg]
 SELECT * FROM bldgrysetting  where ry = $P{ry}
 
-[getRYSetting_mach]
+[findRYSetting_mach]
 SELECT * FROM machrysetting  where ry = $P{ry}
 
-[getRYSetting_planttree]
+[findRYSetting_planttree]
 SELECT * FROM planttreerysetting  where ry = $P{ry}
 
-[getRYSetting_misc]
+[findRYSetting_misc]
 SELECT * FROM miscrysetting  where ry = $P{ry}
 
-[getLandRYSetting] 
+
+[getRYSettings]
+SELECT * FROM ${setting}
+
+
+
+[getLandRYSettings] 
 SELECT * FROM landrysetting ORDER BY ry 
 
-[getBldgRYSetting] 
+[getBldgRYSettings] 
 SELECT * FROM bldgrysetting ORDER BY ry 
 
-[getMachRYSetting] 
+[getMachRYSettings] 
 SELECT * FROM machrysetting ORDER BY ry 
 
-[getPlantTreeRYSetting] 
+[getPlantTreeRYSettings] 
 SELECT * FROM planttreerysetting ORDER BY ry 
 
-[getMiscRYSetting] 
+[getMiscRYSettings] 
 SELECT * FROM miscrysetting ORDER BY ry 
 
 

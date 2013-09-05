@@ -37,7 +37,7 @@ FROM miscrysetting s
 WHERE r.lguid = $P{lguid}
   AND s.ry > $P{ry}    
 
-[getRevisedLandRpu]
+[findRevisedLandRpu]
 SELECT rpu.objid, rpu.realpropertyid
 FROM rpu rpu
 	INNER JOIN landrpu lr ON rpu.objid = lr.objid 
