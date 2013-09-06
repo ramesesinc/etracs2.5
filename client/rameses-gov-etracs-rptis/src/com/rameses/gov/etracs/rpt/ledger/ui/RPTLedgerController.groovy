@@ -43,16 +43,6 @@ public class RPTLedgerController
         credits = svc.getLedgerCredits(ledger.objid)
     }
 
-
-    def getTotalBasic(){
-        return ledger.basic + ledger.basicint - ledger.basicdisc 
-    }
-
-    def getTotalSef(){
-        return ledger.sef + ledger.sefint - ledger.sefdisc 
-    }
-
-
     void cancel(){
         open()
         historyListHandler.load()
@@ -70,8 +60,7 @@ public class RPTLedgerController
 
     void approve(){
         if (MsgBox.confirm('Approve ledger?')) {
-            svc.approveLedger(ledger)
-            ledger.state = STATE_APPROVED
+            ledger = svc.approveLedger(ledger)
             debits   = svc.getLedgerItems(ledger.objid)
             debitListHandler.load()
         }
@@ -152,6 +141,61 @@ public class RPTLedgerController
         fetchList : { return credits }
     ] as BasicListModel
 
-        
+    
+    def getBasic(){
+        if (debits){
+            return debits.sum{ it.basic - it.basicpaid}
+        }
+        return 0.0; 
+    }
+    
+    def getBasicint(){
+        if (debits){
+            return debits.sum{ it.basicint }
+        }
+        return 0.0; 
+    }
+    
+    def getBasicdisc(){
+        if (debits){
+            return debits.sum{ it.basicdisc}
+        }
+        return 0.0; 
+    }
+    
+    def getTotalBasic(){
+        if (debits){
+            return debits.sum{ it.basic - it.basicpaid + it.basicint - it.basicdisc }
+        }
+        return 0.0; 
+    }
+    
+    def getSef(){
+        if (debits){
+            return debits.sum{ it.sef - it.sefpaid}
+        }
+        return 0.0; 
+    }
+    
+    def getSefint(){
+        if (debits){
+            return debits.sum{ it.sefint }
+        }
+        return 0.0; 
+    }
+    
+    def getSefdisc(){
+        if (debits){
+            return debits.sum{ it.sefdisc}
+        }
+        return 0.0; 
+    }
+    
+    def getTotalSef(){
+        if (debits){
+            return debits.sum{ it.sef - it.sefpaid + it.sefint - it.sefdisc }
+        }
+        return 0.0;
+    }
 }
 

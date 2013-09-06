@@ -1,0 +1,20 @@
+import com.rameses.annotations.*;
+import com.rameses.services.extended.*;
+
+class BusinessVariableLookupService extends AbstractListService {
+
+	@PersistenceContext("main")
+	def em;
+
+	String schemaName = 'businessvariable'
+	String listMethod = "getList";
+
+	@ProxyMethod
+	public def getColumns( def p ) {
+		return [
+			[name:'caption', caption:'Caption'],
+			[name:'datatype', caption:'Data Type']
+		]	
+	}
+
+}

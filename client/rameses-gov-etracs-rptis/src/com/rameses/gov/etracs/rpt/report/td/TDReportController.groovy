@@ -18,7 +18,7 @@ class TDReportController
     String title = 'Tax Declaration Report'
     
     
-    def faas 
+    def entity 
     def reportPath = 'com/rameses/gov/etracs/rpt/report/td/'
     
     
@@ -39,7 +39,7 @@ class TDReportController
                 new SubReport( 'TDReportAnnotation', reportPath + 'tdreportannotation.jasper'),
             ] as SubReport[]
         },
-        getReportData : { return svc.buildTaxDec(faas.objid) },
+        getReportData : { return svc.buildTaxDec(entity.objid) },
         getParameters : { paramSvc.getStandardParameter() },
     ] as ReportModel
     

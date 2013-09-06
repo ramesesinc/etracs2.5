@@ -6,6 +6,10 @@
         <invoker folderid="/menu/txn/rpt/faas" action="init"  caption="Resection" index="25"
             txntypeid="RS" txntype="Resection" newledger="false" newrpu="true" newrealproperpty="true" 
             role="APPRAISER" permission="resection.create" />
+            
+        <invoker folderid="/explorer/txn/rpt/txn" action="init"  caption="Resection" index="25"
+            txntypeid="RS" txntype="Resection" newledger="false" newrpu="true" newrealproperpty="true" 
+            role="APPRAISER" permission="resection.create" />
 
          <invoker type="quick_launcher" code="SD01" action="init"  caption="Resection" index="25"
             txntypeid="SD" txntype="Resection" newledger="false" newrpu="true" newrealproperpty="true" 

@@ -1,0 +1,11 @@
+{
+	name: "Lob",
+	title: "Lob",
+	package: "bpassessment", 
+	factclass: "Lob",
+	index:2,
+	agendagroup: ".*",
+	fields: [
+		{name: "objid", caption:"Lob", datatype:'lob', handler:'lob:lookup', itemKey:'objid', itemValue:'name' }
+	]
+}

@@ -1,0 +1,9 @@
+"listModel:item.*" [ item.qtr == 2 ] {
+    background-color: rgb(255,255,204);
+}
+"listModel:item.*" [ item.qtr == 3 ] {
+    background-color: rgb(237,246,191); 
+}
+"listModel:item.*" [ item.qtr == 4 ] {
+    background-color: rgb(247,255,222); 
+}

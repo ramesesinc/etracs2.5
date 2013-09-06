@@ -83,6 +83,7 @@ public class BldgRPUPage extends javax.swing.JPanel {
         xLookupField1.setCaptionWidth(125);
         xLookupField1.setExpression("#{rpu.bldgtype.code}");
         xLookupField1.setHandler("lookupBldgType");
+        xLookupField1.setIndex(-10);
         xLookupField1.setName("bldgtype");
         xLookupField1.setPreferredSize(new java.awt.Dimension(80, 20));
         xLookupField1.setRequired(true);
@@ -92,6 +93,7 @@ public class BldgRPUPage extends javax.swing.JPanel {
         xLookupField2.setCaptionWidth(125);
         xLookupField2.setExpression("#{rpu.bldgkindbucc.bldgkind.code}");
         xLookupField2.setHandler("lookupBldgKindBucc");
+        xLookupField2.setIndex(-9);
         xLookupField2.setName("bldgkindbucc");
         xLookupField2.setPreferredSize(new java.awt.Dimension(80, 20));
         xLookupField2.setRequired(true);
@@ -110,6 +112,7 @@ public class BldgRPUPage extends javax.swing.JPanel {
         xComboBox3.setDynamic(true);
         xComboBox3.setEmptyText("- NA -");
         xComboBox3.setImmediate(true);
+        xComboBox3.setIndex(-8);
         xComboBox3.setItems("classList");
         xComboBox3.setName("rpu.bldgtypeclass");
         xComboBox3.setPreferredSize(new java.awt.Dimension(120, 20));
@@ -117,6 +120,7 @@ public class BldgRPUPage extends javax.swing.JPanel {
 
         xIntegerField2.setCaption("Percent Completed");
         xIntegerField2.setCaptionWidth(125);
+        xIntegerField2.setIndex(-7);
         xIntegerField2.setName("percentcompleted");
         xIntegerField2.setPreferredSize(new java.awt.Dimension(120, 19));
         xIntegerField2.setRequired(true);
@@ -126,12 +130,14 @@ public class BldgRPUPage extends javax.swing.JPanel {
         formPanel12.setOpaque(true);
         xDateField5.setCaption("Date Completed");
         xDateField5.setCaptionWidth(125);
+        xDateField5.setIndex(-6);
         xDateField5.setName("dtcompleted");
         xDateField5.setPreferredSize(new java.awt.Dimension(150, 19));
         formPanel12.add(xDateField5);
 
         xDateField1.setCaption("Date Occupied");
         xDateField1.setCaptionWidth(125);
+        xDateField1.setIndex(-5);
         xDateField1.setName("dtoccupied");
         xDateField1.setPreferredSize(new java.awt.Dimension(150, 19));
         formPanel12.add(xDateField1);
@@ -203,25 +209,122 @@ public class BldgRPUPage extends javax.swing.JPanel {
         jPanel5.setLayout(new java.awt.BorderLayout());
 
         xDataTable2.setColumns(new com.rameses.rcp.common.Column[]{
-            new com.rameses.rcp.common.Column("actualuse", "Actual Use", 150, 0, 0, false, true, true, true, null, new com.rameses.rcp.common.LookupColumnHandler("#{item.actualuse.name}", "lookupBldgActualUse")),
-            new com.rameses.rcp.common.Column("area", "Area", 120, 0, 0, false, true, true, false, null, new com.rameses.rcp.common.DecimalColumnHandler("#,##0.00", -1.0, -1.0, false)),
-            new com.rameses.rcp.common.Column("basemarketvalue", "Base Market Value", 120, 0, 0, false, true, true, false, null, new com.rameses.rcp.common.DecimalColumnHandler("#,##0.00", -1.0, -1.0, false)),
-            new com.rameses.rcp.common.Column("depreciationvalue", "Depreciation", 120, 0, 0, false, true, true, false, null, new com.rameses.rcp.common.DecimalColumnHandler("#,##0.00", -1.0, -1.0, false)),
-            new com.rameses.rcp.common.Column("adjustment", "Adjustment", 100, 0, 0, false, true, true, false, null, new com.rameses.rcp.common.DecimalColumnHandler("#,##0.00", -1.0, -1.0, false)),
-            new com.rameses.rcp.common.Column("marketvalue", "Market Value", 120, 0, 0, false, true, true, false, null, new com.rameses.rcp.common.DecimalColumnHandler("#,##0.00", -1.0, -1.0, false)),
-            new com.rameses.rcp.common.Column("assesslevel", "Assess Level", 100, 0, 0, false, true, true, false, null, new com.rameses.rcp.common.DecimalColumnHandler("#,##0.00", -1.0, -1.0, false)),
-            new com.rameses.rcp.common.Column("assessedvalue", "Assessed Value", 120, 0, 0, false, true, true, false, null, new com.rameses.rcp.common.DecimalColumnHandler("#,##0.00", -1.0, -1.0, false))
+            new com.rameses.rcp.common.Column(new Object[]{
+                new Object[]{"name", "actualuse"}
+                , new Object[]{"caption", "Actual Use"}
+                , new Object[]{"width", 150}
+                , new Object[]{"minWidth", 0}
+                , new Object[]{"maxWidth", 0}
+                , new Object[]{"required", false}
+                , new Object[]{"resizable", true}
+                , new Object[]{"nullWhenEmpty", true}
+                , new Object[]{"editable", true}
+                , new Object[]{"editableWhen", null}
+                , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
+                , new Object[]{"typeHandler", new com.rameses.rcp.common.LookupColumnHandler("#{item.actualuse.name}", "lookupBldgActualUse")}
+            }),
+            new com.rameses.rcp.common.Column(new Object[]{
+                new Object[]{"name", "area"}
+                , new Object[]{"caption", "Area"}
+                , new Object[]{"width", 120}
+                , new Object[]{"minWidth", 0}
+                , new Object[]{"maxWidth", 0}
+                , new Object[]{"required", false}
+                , new Object[]{"resizable", true}
+                , new Object[]{"nullWhenEmpty", true}
+                , new Object[]{"editable", false}
+                , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
+                , new Object[]{"typeHandler", new com.rameses.rcp.common.DecimalColumnHandler("#,##0.00", -1.0, -1.0, false)}
+            }),
+            new com.rameses.rcp.common.Column(new Object[]{
+                new Object[]{"name", "basemarketvalue"}
+                , new Object[]{"caption", "Base Market Value"}
+                , new Object[]{"width", 120}
+                , new Object[]{"minWidth", 0}
+                , new Object[]{"maxWidth", 0}
+                , new Object[]{"required", false}
+                , new Object[]{"resizable", true}
+                , new Object[]{"nullWhenEmpty", true}
+                , new Object[]{"editable", false}
+                , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
+                , new Object[]{"typeHandler", new com.rameses.rcp.common.DecimalColumnHandler("#,##0.00", -1.0, -1.0, false)}
+            }),
+            new com.rameses.rcp.common.Column(new Object[]{
+                new Object[]{"name", "depreciationvalue"}
+                , new Object[]{"caption", "Depreciation"}
+                , new Object[]{"width", 120}
+                , new Object[]{"minWidth", 0}
+                , new Object[]{"maxWidth", 0}
+                , new Object[]{"required", false}
+                , new Object[]{"resizable", true}
+                , new Object[]{"nullWhenEmpty", true}
+                , new Object[]{"editable", false}
+                , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
+                , new Object[]{"typeHandler", new com.rameses.rcp.common.DecimalColumnHandler("#,##0.00", -1.0, -1.0, false)}
+            }),
+            new com.rameses.rcp.common.Column(new Object[]{
+                new Object[]{"name", "adjustment"}
+                , new Object[]{"caption", "Adjustment"}
+                , new Object[]{"width", 100}
+                , new Object[]{"minWidth", 0}
+                , new Object[]{"maxWidth", 0}
+                , new Object[]{"required", false}
+                , new Object[]{"resizable", true}
+                , new Object[]{"nullWhenEmpty", true}
+                , new Object[]{"editable", false}
+                , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
+                , new Object[]{"typeHandler", new com.rameses.rcp.common.DecimalColumnHandler("#,##0.00", -1.0, -1.0, false)}
+            }),
+            new com.rameses.rcp.common.Column(new Object[]{
+                new Object[]{"name", "marketvalue"}
+                , new Object[]{"caption", "Market Value"}
+                , new Object[]{"width", 120}
+                , new Object[]{"minWidth", 0}
+                , new Object[]{"maxWidth", 0}
+                , new Object[]{"required", false}
+                , new Object[]{"resizable", true}
+                , new Object[]{"nullWhenEmpty", true}
+                , new Object[]{"editable", false}
+                , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
+                , new Object[]{"typeHandler", new com.rameses.rcp.common.DecimalColumnHandler("#,##0.00", -1.0, -1.0, false)}
+            }),
+            new com.rameses.rcp.common.Column(new Object[]{
+                new Object[]{"name", "assesslevel"}
+                , new Object[]{"caption", "Assess Level"}
+                , new Object[]{"width", 100}
+                , new Object[]{"minWidth", 0}
+                , new Object[]{"maxWidth", 0}
+                , new Object[]{"required", false}
+                , new Object[]{"resizable", true}
+                , new Object[]{"nullWhenEmpty", true}
+                , new Object[]{"editable", false}
+                , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
+                , new Object[]{"typeHandler", new com.rameses.rcp.common.DecimalColumnHandler("#,##0.00", -1.0, -1.0, false)}
+            }),
+            new com.rameses.rcp.common.Column(new Object[]{
+                new Object[]{"name", "assessedvalue"}
+                , new Object[]{"caption", "Assessed Value"}
+                , new Object[]{"width", 120}
+                , new Object[]{"minWidth", 0}
+                , new Object[]{"maxWidth", 0}
+                , new Object[]{"required", false}
+                , new Object[]{"resizable", true}
+                , new Object[]{"nullWhenEmpty", true}
+                , new Object[]{"editable", false}
+                , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
+                , new Object[]{"typeHandler", new com.rameses.rcp.common.DecimalColumnHandler("#,##0.00", -1.0, -1.0, false)}
+            })
         });
         xDataTable2.setHandler("bldgUseListHandler");
         xDataTable2.setImmediate(true);
         xDataTable2.setName("selectedBldgUse");
-        xDataTable2.setShowRowHeader(true);
         jPanel5.add(xDataTable2, java.awt.BorderLayout.CENTER);
 
         formPanel2.setCaptionBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
         xComboBox4.setCaption("Classification");
         xComboBox4.setCaptionWidth(100);
         xComboBox4.setExpression("#{item.name}");
+        xComboBox4.setIndex(-4);
         xComboBox4.setItems("classifications");
         xComboBox4.setName("classification");
         xComboBox4.setPreferredSize(new java.awt.Dimension(200, 22));
@@ -238,12 +341,37 @@ public class BldgRPUPage extends javax.swing.JPanel {
         xTitledBorder2.setTitle("Structure Information");
         xDataTable3.setBorder(xTitledBorder2);
         xDataTable3.setColumns(new com.rameses.rcp.common.Column[]{
-            new com.rameses.rcp.common.Column("structure.name", "Structure", 150, 0, 0, false, true, true, false, null, new com.rameses.rcp.common.TextColumnHandler()),
-            new com.rameses.rcp.common.Column(null, "Material", 150, 0, 0, false, true, true, true, null, new com.rameses.rcp.common.LookupColumnHandler("#{item.material.name}", "lookupStructureMaterial"))
+            new com.rameses.rcp.common.Column(new Object[]{
+                new Object[]{"name", "structure.name"}
+                , new Object[]{"caption", "Structure"}
+                , new Object[]{"width", 150}
+                , new Object[]{"minWidth", 0}
+                , new Object[]{"maxWidth", 0}
+                , new Object[]{"required", false}
+                , new Object[]{"resizable", true}
+                , new Object[]{"nullWhenEmpty", true}
+                , new Object[]{"editable", false}
+                , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
+                , new Object[]{"typeHandler", new com.rameses.rcp.common.TextColumnHandler()}
+            }),
+            new com.rameses.rcp.common.Column(new Object[]{
+                new Object[]{"name", null}
+                , new Object[]{"caption", "Material"}
+                , new Object[]{"width", 150}
+                , new Object[]{"minWidth", 0}
+                , new Object[]{"maxWidth", 0}
+                , new Object[]{"required", false}
+                , new Object[]{"resizable", true}
+                , new Object[]{"nullWhenEmpty", true}
+                , new Object[]{"editable", true}
+                , new Object[]{"editableWhen", null}
+                , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
+                , new Object[]{"typeHandler", new com.rameses.rcp.common.LookupColumnHandler("#{item.material.name}", "lookupStructureMaterial")}
+            })
         });
         xDataTable3.setHandler("structureListHandler");
+        xDataTable3.setIndex(100);
         xDataTable3.setName("selectedStructure");
-        xDataTable3.setShowRowHeader(true);
         jPanel1.add(xDataTable3, java.awt.BorderLayout.CENTER);
 
         org.jdesktop.layout.GroupLayout jPanel6Layout = new org.jdesktop.layout.GroupLayout(jPanel6);

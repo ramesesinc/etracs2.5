@@ -17,12 +17,17 @@
 import com.rameses.rcp.annotations.*
 import com.rameses.rcp.common.*
 import com.rameses.osiris2.client.*
+import com.rameses.osiris2.common.*
 import java.rmi.server.UID
 
 public class BldgAdditionalItemController 
 {
     @Binding 
     def binding
+    
+    @Service('RPTParameterListService')
+    def paramSvc 
+    
     
     @Service('RPUService')
     def rpuSvc
@@ -66,6 +71,18 @@ public class BldgAdditionalItemController
     def createEntity() {
         return [ objid : 'BI' + new UID()]
     }
+    
+        
+    def selectedParameter;
+    
+    def paramListModel = [
+        fetchList : { return paramSvc.getVariableList()},
+        onOpenItem : { item, colname ->
+            entity.expr += '  ' + item.name 
+            binding.refresh('entity.expr')
+        }
+    ] as BasicListModel
+    
     
     /*------------------------------------------------------------------ */
     def openFormulaEditor() {

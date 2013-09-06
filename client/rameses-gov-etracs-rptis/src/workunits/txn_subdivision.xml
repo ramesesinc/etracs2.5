@@ -70,7 +70,7 @@
             <transition caption="Cancel" to="back-to-forapproval" action="cancelEdit" name="cancel"  mnemonic="c" icon="images/toolbars/cancel.png" visibleWhen="#{mode != 'read'}"/>
             <transition caption="Save"   to="back-to-forapproval" action="save" name="save" mnemonic="s" shortcut="ctrl S" icon="images/toolbars/save.png"  visibleWhen="#{mode != 'read'}" />
             <transition caption="Disapprove" to="default" action="disapproveSubdivision" mnemonic="d" visibleWhen="#{mode == 'read'}" confirm="Disapprove Subdivision?" role="APPROVER"/>
-            <transition caption="Approve" to="current" action="approveSubdivision" mnemonic="v" icon="images/toolbars/approve.png" visibleWhen="#{mode == 'read'}" confirm="Approve Subdivision?" role="APPROVER"/>
+            <transition caption="Approve" to="approved" action="approveSubdivision" mnemonic="v" icon="images/toolbars/approve.png" visibleWhen="#{mode == 'read'}" confirm="Approve Subdivision?" role="APPROVER"/>
         </page>
         
         <process name="back-to-forapproval">

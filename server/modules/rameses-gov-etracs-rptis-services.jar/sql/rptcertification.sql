@@ -89,7 +89,7 @@ ORDER BY r.fullpin
 
 
 [insertMultipleItems]
-INSERT INTO rptcertificationitem (rptcertificationid,faasid)
+INSERT INTO rptcertificationitem (rptcertificationid,refid)
 SELECT 
 	$P{rptcertificationid},
 	f.objid 
@@ -153,4 +153,4 @@ WHERE faasid = $P{faasid}
 
 
 [getProperties]
-SELECT objid FROM faas WHERE taxpayerid = $P{taxpayerid} AND state = 'CURRENT'
+SELECT objid FROM faas WHERE taxpayer_objid = $P{taxpayerid} AND state = 'CURRENT'

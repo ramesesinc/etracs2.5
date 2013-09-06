@@ -5,6 +5,9 @@
         
          <invoker folderid="/menu/txn/rpt/faas" action="initTxn"  caption="Change Depreciation" index="7"
             txntypeid="CD" txntype="Change Depreciation" newledger="false" newrpu="true"  role="APPRAISER" permission="faas.createChangeDepreciation"/>
+            
+        <invoker folderid="/explorer/txn/rpt/txn" action="initTxn"  caption="Change Depreciation" index="7"
+            txntypeid="CD" txntype="Change Depreciation" newledger="false" newrpu="true"  role="APPRAISER" permission="faas.createChangeDepreciation"/>
 
          <invoker type="quick_launcher" code="CD01" action="initTxn"  caption="Change Depreciation" index="7"
             txntypeid="CD" txntype="Change Depreciation" newledger="false" newrpu="true"  role="APPRAISER" permission="faas.createChangeDepreciation"/>

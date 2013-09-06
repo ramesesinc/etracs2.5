@@ -45,13 +45,13 @@
 	<field name="orno" class="java.lang.String"/>
 	<field name="ordate" class="java.util.Date"/>
 	<field name="oramount" class="java.math.BigDecimal"/>
-	<field name="taxpayername" class="java.lang.String"/>
+	<field name="taxpayer.name" class="java.lang.String"/>
 	<field name="issueday" class="java.lang.String"/>
 	<field name="issuemonth" class="java.lang.String"/>
 	<field name="issueyear" class="java.lang.String"/>
 	<field name="issueplace" class="java.lang.String"/>
 	<field name="clearedyear" class="java.lang.String"/>
-	<field name="taxpayeraddress" class="java.lang.String"/>
+	<field name="taxpayer.address" class="java.lang.String"/>
 	<field name="createdby" class="java.lang.String"/>
 	<field name="createdbytitle" class="java.lang.String"/>
 
@@ -98,7 +98,7 @@
 					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" isStyledText="true" lineSpacing="Single">
 						<font fontName="Tahoma" pdfFontName="Helvetica" size="10" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{taxpayername}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{taxpayer.name}]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement
@@ -138,7 +138,7 @@
 					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" isStyledText="true" lineSpacing="Single">
 						<font fontName="Tahoma" pdfFontName="Helvetica" size="10" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{taxpayeraddress}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{taxpayer.address}]]></textFieldExpression>
 				</textField>
 			</band>
 			</groupHeader>

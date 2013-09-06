@@ -1,6 +1,6 @@
 <workunit extends="wtemplates/ListController.xml">
     <invokers>
-        <invoker folderid="/explorer/txn/rpt" caption="Cancelled Faases"  target="window" index="112" role="ASSESSOR_SHARED" />
+        <invoker folderid="/explorer/txn/rpt/list" caption="Cancelled Faases"  target="window" index="112" role="ASSESSOR_SHARED" />
         <invoker type="quick_launcher" code="CF000" caption="Cancelled Faases " role="ASSESSOR_SHARED" />
     </invokers>
     <code>

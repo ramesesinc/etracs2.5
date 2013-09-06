@@ -120,6 +120,8 @@ class RPTLedgerService
             saveLedgerFaas(it)
             postLedgerItems(it)
         }
+        billingSvc.generateBillByLedgerId(ledger.objid)
+        return ledger;
     }
 
     @ProxyMethod
@@ -175,7 +177,9 @@ class RPTLedgerService
 
     @ProxyMethod
     public def getLedgerCredits(ledgerid) {
-        return []
+        return em.sqlContext.createNamedQuery('rptledger:getLedgerCredits')
+                .setParameter('rptledgerid', ledgerid)
+                .resultList
     }
 
 

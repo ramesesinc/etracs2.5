@@ -58,24 +58,25 @@
 	<field name="prevav" class="java.math.BigDecimal"/>
 	<field name="taxability" class="java.lang.String"/>
 	<field name="taxeffectivity" class="java.lang.String"/>
-	<field name="appraiser_name" class="java.lang.String"/>
-	<field name="recommender_name" class="java.lang.String"/>
-	<field name="approver_name" class="java.lang.String"/>
+	<field name="appraiser.name" class="java.lang.String"/>
+	<field name="recommender.name" class="java.lang.String"/>
+	<field name="approver.name" class="java.lang.String"/>
 	<field name="reviewedby" class="java.lang.String"/>
-	<field name="approver_dtsigned" class="java.util.Date"/>
+	<field name="approver.dtsigned" class="java.util.Date"/>
 	<field name="memoranda" class="java.lang.String"/>
 	<field name="prevpin" class="java.lang.String"/>
 	<field name="prevtdno" class="java.lang.String"/>
 	<field name="landadjustments" class="java.lang.Object"/>
 	<field name="propertyassessments" class="java.lang.Object"/>
-	<field name="appraiser_dtsigned" class="java.util.Date"/>
+	<field name="appraiser.dtsigned" class="java.util.Date"/>
 	<field name="recommender_dtsigned" class="java.util.Date"/>
 	<field name="ownercontactno" class="java.lang.String"/>
 	<field name="rpu.rp.purok" class="java.lang.String"/>
 	<field name="rpu.rp.houseno" class="java.lang.String"/>
 	<field name="annotations" class="java.lang.Object"/>
-	<field name="recommender_title" class="java.lang.String"/>
-	<field name="approver_title" class="java.lang.String"/>
+	<field name="recommender.title" class="java.lang.String"/>
+	<field name="approver.title" class="java.lang.String"/>
+	<field name="propertylocation" class="java.lang.String"/>
 
 
 		<group  name="Part1" isStartNewPage="true" >
@@ -521,7 +522,7 @@
 					<textElement verticalAlignment="Middle">
 						<font fontName="Tahoma" pdfFontName="Helvetica-Bold" size="8" isBold="true"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{munidistrict} + ", " + $F{provcity}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{propertylocation}]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement
@@ -1034,7 +1035,7 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font fontName="Tahoma" pdfFontName="Helvetica-Bold" size="8" isBold="true"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{appraiser_name}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{appraiser.name}]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement
@@ -1105,7 +1106,7 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font fontName="Tahoma" pdfFontName="Helvetica-Bold" size="8" isBold="true"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{recommender_name}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{recommender.name}]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement
@@ -1134,7 +1135,7 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font fontName="Tahoma" pdfFontName="Helvetica-Bold" size="8" isBold="true"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{approver_name}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{approver.name}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="yyyy-MM-dd" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -1149,7 +1150,7 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font fontName="Tahoma" pdfFontName="Helvetica-Bold" size="8" isBold="true"/>
 					</textElement>
-				<textFieldExpression   class="java.util.Date"><![CDATA[$F{approver_dtsigned}]]></textFieldExpression>
+				<textFieldExpression   class="java.util.Date"><![CDATA[$F{approver.dtsigned}]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement
@@ -1209,7 +1210,7 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font fontName="Tahoma" pdfFontName="Helvetica-Bold" size="8" isBold="true"/>
 					</textElement>
-				<textFieldExpression   class="java.util.Date"><![CDATA[$F{appraiser_dtsigned}]]></textFieldExpression>
+				<textFieldExpression   class="java.util.Date"><![CDATA[$F{appraiser.dtsigned}]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement
@@ -1679,7 +1680,7 @@ Clerk Initial]]></text>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font fontName="Tahoma" pdfFontName="Helvetica" size="7" isBold="false"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{recommender_title}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{recommender.title}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -1693,7 +1694,7 @@ Clerk Initial]]></text>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font fontName="Tahoma" pdfFontName="Helvetica" size="7" isBold="false"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{approver_title}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{approver.title}]]></textFieldExpression>
 				</textField>
 			</band>
 			</groupHeader>

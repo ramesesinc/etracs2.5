@@ -65,7 +65,7 @@ public class LobPage extends javax.swing.JPanel {
         xDataTable2.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 5, 5, 5));
         xDataTable2.setColumns(new com.rameses.rcp.common.Column[]{
             new com.rameses.rcp.common.Column(new Object[]{
-                new Object[]{"name", "attribute"}
+                new Object[]{"name", null}
                 , new Object[]{"caption", "Attribute"}
                 , new Object[]{"width", 100}
                 , new Object[]{"minWidth", 0}
@@ -76,7 +76,7 @@ public class LobPage extends javax.swing.JPanel {
                 , new Object[]{"editable", true}
                 , new Object[]{"editableWhen", null}
                 , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
-                , new Object[]{"typeHandler", new com.rameses.rcp.common.LookupColumnHandler("#{item.attribute.name}", "lobattribute:lookup")}
+                , new Object[]{"typeHandler", new com.rameses.rcp.common.LookupColumnHandler("#{item.name}", "lookupAttribute")}
             })
         });
         xDataTable2.setHandler("listHandler");

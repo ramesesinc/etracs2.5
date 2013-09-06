@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <workunit extends="rpt_wtemplates/CertificationController.xml">
     <invokers>
-        <invoker folderid="/txn/rpt/cert" action="init" caption="No Encumbrance" 
+        <invoker folderid="/explorer/txn/rpt/cert" action="init" caption="No Encumbrance" 
             opener="noencumbrance" index="7" role="CERTIFICATION_ISSUER" permission="certification.noencumbrance"/>    
             
         <invoker folderid="/menu/txn/rpt/cert" action="init" caption="No Encumbrance" 

@@ -6,6 +6,7 @@
 
 package etracs2.bpls.application;
 
+import com.rameses.gov.etracs.bpls.application.BusinessHeaderTemplate;
 import com.rameses.rcp.common.Column;
 import com.rameses.rcp.ui.annotations.Template;
 

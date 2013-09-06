@@ -1,6 +1,6 @@
 <workunit extends="wtemplates/ListController.xml">
     <invokers>
-        <invoker folderid="/explorer/txn/rpt" caption="Annotations"  target="window" index="150" role="ASSESSOR_SHARED" />
+        <invoker folderid="/explorer/txn/rpt/list" caption="Annotations"  target="window" index="150" role="ASSESSOR_SHARED" />
         <invoker type="quick_launcher" code="FA01" caption="Annotations" role="ASSESSOR_SHARED" />
         
         <invoker type="formActions" action="cancelAnnotation" caption="Cancel Annotation" visibleWhen="#{selectedEntity != null &amp;&amp; selectedEntity.state == 'APPROVED'}" /> 

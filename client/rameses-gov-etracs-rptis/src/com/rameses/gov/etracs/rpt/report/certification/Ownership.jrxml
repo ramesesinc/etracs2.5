@@ -44,7 +44,7 @@
 	<parameter name="MARKETVALUE" isForPrompting="false" class="java.lang.String"/>
 	<parameter name="ISSUEDBYTIN" isForPrompting="false" class="java.lang.String"/>
 
-	<field name="taxpayername" class="java.lang.String"/>
+	<field name="taxpayer.name" class="java.lang.String"/>
 	<field name="requestedby" class="java.lang.String"/>
 	<field name="purpose" class="java.lang.String"/>
 	<field name="txndate" class="java.util.Date"/>
@@ -89,7 +89,7 @@
 					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" isStyledText="true" lineSpacing="1_1_2">
 						<font fontName="Tahoma" pdfFontName="Helvetica" size="8" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA["             THIS IS TO CERTIFY that <style isBold=\"true\" isUnderline=\"true\"> " + $F{taxpayername}.replaceAll("&","&amp;") + "</style> is the declarant of a parcel of land under Tax Declaration No. <style isBold=\"true\"> " + $F{tdno} + ", PIN " + $F{fullpin} + " </style>, Cadastral Lot No. " + $F{cadastrallotno} + " with an area of <style isBold=\"true\">" + $F{areainwords} + "</style> " + $F{areatype} + "."]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA["             THIS IS TO CERTIFY that <style isBold=\"true\" isUnderline=\"true\"> " + $F{taxpayer.name}.replaceAll("&","&amp;") + "</style> is the declarant of a parcel of land under Tax Declaration No. <style isBold=\"true\"> " + $F{tdno} + ", PIN " + $F{fullpin} + " </style>, Cadastral Lot No. " + $F{cadastrallotno} + " with an area of <style isBold=\"true\">" + $F{areainwords} + "</style> " + $F{areatype} + "."]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement

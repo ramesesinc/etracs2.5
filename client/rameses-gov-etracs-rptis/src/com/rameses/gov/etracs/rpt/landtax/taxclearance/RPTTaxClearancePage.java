@@ -63,7 +63,7 @@ public class RPTTaxClearancePage extends javax.swing.JPanel {
         formPanel1.setPadding(new java.awt.Insets(5, 10, 5, 5));
         xLookupField2.setCaption("Taxpayer");
         xLookupField2.setCaptionWidth(110);
-        xLookupField2.setExpression("#{entity.taxpayername}");
+        xLookupField2.setExpression("#{entity.taxpayer.name}");
         xLookupField2.setHandler("lookupTaxpayer");
         xLookupField2.setPreferredSize(new java.awt.Dimension(350, 19));
         xLookupField2.setRequired(true);
@@ -74,7 +74,7 @@ public class RPTTaxClearancePage extends javax.swing.JPanel {
         xLabel1.setBorder(xLineBorder1);
         xLabel1.setCaption("Address");
         xLabel1.setCaptionWidth(110);
-        xLabel1.setExpression("#{entity.taxpayeraddress}");
+        xLabel1.setExpression("#{entity.taxpayer.address}");
         xLabel1.setPreferredSize(new java.awt.Dimension(350, 19));
         formPanel1.add(xLabel1);
 
@@ -141,20 +141,128 @@ public class RPTTaxClearancePage extends javax.swing.JPanel {
         xTitledBorder2.setTitle("List of Cleared Items");
         xPanel1.setBorder(xTitledBorder2);
         xDataTable1.setColumns(new com.rameses.rcp.common.Column[]{
-            new com.rameses.rcp.common.Column("included", "Include?", 70, 0, 0, false, true, true, true, null, new com.rameses.rcp.common.CheckBoxColumnHandler(java.lang.Boolean.class, true, false)),
-            new com.rameses.rcp.common.Column("tdno", "TD No.", 130, 0, 0, false, true, true, false, null, new com.rameses.rcp.common.TextColumnHandler()),
-            new com.rameses.rcp.common.Column("fullpin", "PIN", 150, 0, 0, false, true, true, false, null, new com.rameses.rcp.common.TextColumnHandler()),
-            new com.rameses.rcp.common.Column("rputype", "Type", 80, 0, 0, false, true, true, false, null, new com.rameses.rcp.common.TextColumnHandler()),
-            new com.rameses.rcp.common.Column("classcode", "Class", 60, 0, 0, false, true, true, false, null, new com.rameses.rcp.common.TextColumnHandler()),
-            new com.rameses.rcp.common.Column("totalmv", "Market Value", 100, 0, 0, false, true, true, false, null, new com.rameses.rcp.common.DecimalColumnHandler("#,##0.00", -1.0, -1.0, false)),
-            new com.rameses.rcp.common.Column("totalav", "Assessed Value", 100, 0, 0, false, true, true, false, null, new com.rameses.rcp.common.DecimalColumnHandler("#,##0.00", -1.0, -1.0, false)),
-            new com.rameses.rcp.common.Column("lastyearpaid", "Last Year Paid", 100, 0, 0, false, true, true, false, null, new com.rameses.rcp.common.IntegerColumnHandler("0000", -1, -1)),
-            new com.rameses.rcp.common.Column("lastqtrpaid", "Last Qtr Paid", 100, 0, 0, false, true, true, false, null, new com.rameses.rcp.common.IntegerColumnHandler("0", -1, -1))
+            new com.rameses.rcp.common.Column(new Object[]{
+                new Object[]{"name", "included"}
+                , new Object[]{"caption", "Include?"}
+                , new Object[]{"width", 70}
+                , new Object[]{"minWidth", 0}
+                , new Object[]{"maxWidth", 0}
+                , new Object[]{"required", false}
+                , new Object[]{"resizable", true}
+                , new Object[]{"nullWhenEmpty", true}
+                , new Object[]{"editable", true}
+                , new Object[]{"editableWhen", null}
+                , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
+                , new Object[]{"typeHandler", new com.rameses.rcp.common.CheckBoxColumnHandler(java.lang.Boolean.class, true, false)}
+            }),
+            new com.rameses.rcp.common.Column(new Object[]{
+                new Object[]{"name", "tdno"}
+                , new Object[]{"caption", "TD No."}
+                , new Object[]{"width", 130}
+                , new Object[]{"minWidth", 0}
+                , new Object[]{"maxWidth", 0}
+                , new Object[]{"required", false}
+                , new Object[]{"resizable", true}
+                , new Object[]{"nullWhenEmpty", true}
+                , new Object[]{"editable", false}
+                , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
+                , new Object[]{"typeHandler", new com.rameses.rcp.common.TextColumnHandler()}
+            }),
+            new com.rameses.rcp.common.Column(new Object[]{
+                new Object[]{"name", "fullpin"}
+                , new Object[]{"caption", "PIN"}
+                , new Object[]{"width", 150}
+                , new Object[]{"minWidth", 0}
+                , new Object[]{"maxWidth", 0}
+                , new Object[]{"required", false}
+                , new Object[]{"resizable", true}
+                , new Object[]{"nullWhenEmpty", true}
+                , new Object[]{"editable", false}
+                , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
+                , new Object[]{"typeHandler", new com.rameses.rcp.common.TextColumnHandler()}
+            }),
+            new com.rameses.rcp.common.Column(new Object[]{
+                new Object[]{"name", "rputype"}
+                , new Object[]{"caption", "Type"}
+                , new Object[]{"width", 80}
+                , new Object[]{"minWidth", 0}
+                , new Object[]{"maxWidth", 0}
+                , new Object[]{"required", false}
+                , new Object[]{"resizable", true}
+                , new Object[]{"nullWhenEmpty", true}
+                , new Object[]{"editable", false}
+                , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
+                , new Object[]{"typeHandler", new com.rameses.rcp.common.TextColumnHandler()}
+            }),
+            new com.rameses.rcp.common.Column(new Object[]{
+                new Object[]{"name", "classcode"}
+                , new Object[]{"caption", "Class"}
+                , new Object[]{"width", 60}
+                , new Object[]{"minWidth", 0}
+                , new Object[]{"maxWidth", 0}
+                , new Object[]{"required", false}
+                , new Object[]{"resizable", true}
+                , new Object[]{"nullWhenEmpty", true}
+                , new Object[]{"editable", false}
+                , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
+                , new Object[]{"typeHandler", new com.rameses.rcp.common.TextColumnHandler()}
+            }),
+            new com.rameses.rcp.common.Column(new Object[]{
+                new Object[]{"name", "totalmv"}
+                , new Object[]{"caption", "Market Value"}
+                , new Object[]{"width", 100}
+                , new Object[]{"minWidth", 0}
+                , new Object[]{"maxWidth", 0}
+                , new Object[]{"required", false}
+                , new Object[]{"resizable", true}
+                , new Object[]{"nullWhenEmpty", true}
+                , new Object[]{"editable", false}
+                , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
+                , new Object[]{"typeHandler", new com.rameses.rcp.common.DecimalColumnHandler("#,##0.00", -1.0, -1.0, false)}
+            }),
+            new com.rameses.rcp.common.Column(new Object[]{
+                new Object[]{"name", "totalav"}
+                , new Object[]{"caption", "Assessed Value"}
+                , new Object[]{"width", 100}
+                , new Object[]{"minWidth", 0}
+                , new Object[]{"maxWidth", 0}
+                , new Object[]{"required", false}
+                , new Object[]{"resizable", true}
+                , new Object[]{"nullWhenEmpty", true}
+                , new Object[]{"editable", false}
+                , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
+                , new Object[]{"typeHandler", new com.rameses.rcp.common.DecimalColumnHandler("#,##0.00", -1.0, -1.0, false)}
+            }),
+            new com.rameses.rcp.common.Column(new Object[]{
+                new Object[]{"name", "lastyearpaid"}
+                , new Object[]{"caption", "Last Year Paid"}
+                , new Object[]{"width", 100}
+                , new Object[]{"minWidth", 0}
+                , new Object[]{"maxWidth", 0}
+                , new Object[]{"required", false}
+                , new Object[]{"resizable", true}
+                , new Object[]{"nullWhenEmpty", true}
+                , new Object[]{"editable", false}
+                , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
+                , new Object[]{"typeHandler", new com.rameses.rcp.common.IntegerColumnHandler("0000", -1, -1)}
+            }),
+            new com.rameses.rcp.common.Column(new Object[]{
+                new Object[]{"name", "lastqtrpaid"}
+                , new Object[]{"caption", "Last Qtr Paid"}
+                , new Object[]{"width", 100}
+                , new Object[]{"minWidth", 0}
+                , new Object[]{"maxWidth", 0}
+                , new Object[]{"required", false}
+                , new Object[]{"resizable", true}
+                , new Object[]{"nullWhenEmpty", true}
+                , new Object[]{"editable", false}
+                , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
+                , new Object[]{"typeHandler", new com.rameses.rcp.common.IntegerColumnHandler("0", -1, -1)}
+            })
         });
         xDataTable1.setHandler("listHandler");
         xDataTable1.setImmediate(true);
         xDataTable1.setName("selectedItem");
-        xDataTable1.setShowRowHeader(true);
 
         formPanel6.setCellpadding(new java.awt.Insets(10, 0, 0, 5));
         formPanel6.setOrientation(com.rameses.rcp.constant.UIConstants.HORIZONTAL);

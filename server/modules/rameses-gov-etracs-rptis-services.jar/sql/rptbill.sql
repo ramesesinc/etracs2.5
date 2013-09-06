@@ -127,9 +127,9 @@ FROM faas f
 	INNER JOIN rptledgeritem rli ON rl.objid = rli.rptledgerid
 	INNER JOIN rptledgerfaas rlf ON rli.rptledgerfaasid = rlf.objid
 	INNER JOIN revenueitem revb ON rli.basicacctid = revb.objid
-	INNER JOIN revenueitem revbi ON rli.basicintacctid = revbi.objid
+	LEFT JOIN revenueitem revbi ON rli.basicintacctid = revbi.objid
 	INNER JOIN revenueitem revs ON rli.sefacctid = revs.objid
-	INNER JOIN revenueitem revsi ON rli.sefintacctid = revsi.objid
+	LEFT JOIN revenueitem revsi ON rli.sefintacctid = revsi.objid
 WHERE rl.objid = $P{ledgerid}
  AND rli.state = 'OPEN'
  AND ( rli.year < $P{billtoyear} OR ( rli.year = $P{billtoyear} AND rli.qtr <= $P{billtoqtr}))
@@ -226,3 +226,12 @@ WHERE f.objid = rl.faasid
 
  [getLedgersToRecalc]
  SELECT objid FROM rptledger WHERE nextbilldate <= $P{billdate} OR nextbilldate IS NULL
+
+
+ [getLedgerFaasAV]
+ SELECT assessedvalue
+FROM rptledgerfaas rlf
+WHERE rlf.rptledgerid = $P{rptledgerid}
+  AND $P{avyear} >= rlf.fromyear 
+  AND ( $P{avyear} <= rlf.toyear OR rlf.toyear = 0)
+  AND rlf.state = 'APPROVED'
