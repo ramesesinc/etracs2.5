@@ -1,0 +1,53 @@
+<workunit>
+    <invokers>
+        <invoker type="businessapplication:formActions" caption="Business Application"
+            action="viewReport" target="window" index="10" visibleWhen="#{ entity.state!='DRAFT' }" />
+    </invokers>
+    
+    <code>
+        <![CDATA[
+        import com.rameses.rcp.common.*;
+        import com.rameses.rcp.annotations.*;
+        import com.rameses.osiris2.client.*;
+        import com.rameses.osiris2.common.*
+        import com.rameses.osiris2.reports.*;
+        
+        class BPLSApplicationPrintOut extends ReportModel {
+        
+            
+            @Service('BusinessApplicationReportService')
+            def svc;
+            
+            def entity;
+            
+            public Map getParameters() {
+                //return svcParams.getStandardParameter( OsirisContext.env.USERNAME );
+                return;
+            }
+            
+            public Object getReportData() {
+                return svc.buildApplicationReportInfo( entity );
+            }
+            
+            public String getReportName() {
+                return 'com/rameses/gov/etracs2/bpls/reports/application/bppermitapplication.jasper';
+            }
+            
+            public SubReport[] getSubReports(){
+                return [
+                    new SubReport("APPINFO","com/rameses/gov/etracs2/bpls/reports/application/appinfo.jasper"),
+                    new SubReport("APPINFOITEM","com/rameses/gov/etracs2/bpls/reports/application/appinfoitem.jasper"),
+                    new SubReport("REQUIREMENT","com/rameses/gov/etracs2/bpls/reports/application/requirement.jasper"),
+                    new SubReport("SIGNATORIES","com/rameses/gov/etracs2/bpls/reports/application/signatories.jasper")
+                ] as SubReport[];    
+            }   
+        }
+        
+        ]]>
+    </code>
+    
+    <pages>
+        <page template="com.rameses.enterprise.treasury.report.PreviewPage" />
+    </pages>
+    
+</workunit>

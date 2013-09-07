@@ -122,7 +122,7 @@
         </antcall>
         <antcall target="deploy-shared-to-platform">
             <param name="sourcefile" value="rulemgmt"/>
-        </antcall>
+        </antcall>        
     </target>
     
     <target name="deploy-shared-to-platform">
@@ -141,12 +141,17 @@
             <param name="sourcefile" value="rameses-gov-etracs-rptis"/>
         </antcall>
         <antcall target="deploy-etracs-jars-to-platform">
+            <param name="sourcefile" value="rameses-gov-etracs-bpls"/>
+        </antcall>
+        <antcall target="deploy-etracs-jars-to-platform">
             <param name="sourcefile" value="rameses-gov-etracs-signatory-template"/>
         </antcall>
     </target>
     
+
     <target name="deploy-etracs-jars-to-platform">
         <property name="sourcejar" value="${etracs.project.dir}/client/${sourcefile}/dist/${sourcefile}.jar"/>
+
         <echo message="====> Copying ${sourcefile}" />
         <copy file="${sourcejar}" todir="${target.web.etracs25.dir}/downloads/modules" failonerror="false"/>
     </target>

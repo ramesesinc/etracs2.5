@@ -1,0 +1,15 @@
+<schema>
+	<element name="lob" tablename="lob">
+		<field name="objid" primary="true"/>
+		<field name="state" required="true"/>
+		<field name="name" required="true"/>
+		<field name="classification_objid" required="true"/>
+		<field name="psic"/>
+	</element>
+
+	<element name="lob_lobattribute" tablename="lob_lobattribute">
+		<field name="lobid" required="true"/>
+		<field name="lobattributeid" required="true"/>
+	</element>
+
+</schema>

@@ -1,0 +1,44 @@
+import com.rameses.annotations.*;
+import com.rameses.services.extended.*;
+
+class LobService extends AbstractCrudListService {
+
+	@PersistenceContext("main")
+	def em;
+
+	String schemaName = 'lob'
+
+	@ProxyMethod
+	public def getColumns( def p ) {
+		return [
+			[name:'name', caption:'Line of Business'],
+			[name:'classification.name', caption:'Classification']
+		]	
+	}
+
+	public void afterCreate( Object data ) {
+		insertAttributes(data)
+	}
+
+	public void afterUpdate( Object data ) {
+		insertAttributes(data)
+	}
+
+	private void insertAttributes( entity ) {
+		em.sqlContext.createNamedExecutor("lob:removeAttributes").setParameter("lobid", entity.objid).execute()
+		entity.attributes.each{li->
+			def m = [
+				lobid: entity.objid,
+				lobattributeid: li.objid
+			]
+			em.create("lob:lob_lobattribute", m)
+		}
+	}
+
+	public void afterOpen( Object data ) {
+		data.classification = em.read("lobclassification", data.classification)
+		data.attributes = em.sqlContext.createNamedQuery("lob:getAttributes")
+							.setParameter("lobid", data.objid)
+							.resultList
+	}	
+}

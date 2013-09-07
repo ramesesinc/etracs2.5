@@ -1,0 +1,77 @@
+<workunit >
+    <invokers>
+        <invoker type="businessapplication:create" caption="Business" action="create" target="window" index="10" />
+    </invokers>
+    
+    <code>
+        <![CDATA[
+        import com.rameses.rcp.common.*;
+        import com.rameses.rcp.annotations.*;
+        import com.rameses.osiris2.client.*;
+        import com.rameses.osiris2.common.*
+        import java.rmi.server.*;
+        
+        class BusinessApplication extends PageFlowController {
+            
+            @Service("BusinessApplicationService")
+            def service;
+            
+            def orgTypes = LOV.BUSINESS_ORG_TYPES;
+            def officeTypes = LOV.BUSINESS_OFFICE_TYPES;
+            def entityName = "businessapplication";
+            def entity;
+            
+            def create() {
+                entity = [lobs:[]];
+                entity.objid = "APP"+new UID();
+                entity.state = "DRAFT";
+                return start("initial");
+            }
+            
+            def getLookupLOB() {
+                return InvokerUtil.lookupOpener("lob:lookup",[
+                    onselect: { o->
+                        if( entity.lobs.find{ it.lobid ==  o.objid }!=null ) {
+                            throw new Exception("LOB Item already added");
+                        }    
+                        def m = [:];    
+                        m.objid = "APPLOB"+new UID();
+                        m.lobid = o.objid;
+                        m.name = o.name;
+                        entity.lobs << m;
+                        lobModel.reload();
+                    }
+                ]);
+            }
+            
+            def lobModel = [
+                fetchList: { o->return entity.lobs }
+            ] as BasicListModel;
+            
+        }
+        
+        ]]>
+    </code>
+    
+    <pageflow>
+        <start>
+            <transition to="initial"/>
+        </start>
+        <page name="initial" title="Business Application(Initial)">
+            <transition to="end" caption="Close"/>
+            <transition to="addinfo" caption="Next"/>
+        </page>    
+        <page name="addinfo" title="Business Application(Add Info)">
+            <transition to="initial" caption="Back"/>
+            <transition to="save" caption="Save"/>
+        </page>    
+        <end/>
+    </pageflow>
+    
+    <pages>
+        <page name="initial" template="com.rameses.gov.etracs.bpls.application.NewApplicationPage" />
+        <page name="addinfo" template="com.rameses.gov.etracs.bpls.application.AddInfoPage" />
+    </pages>
+    
+    
+</workunit>

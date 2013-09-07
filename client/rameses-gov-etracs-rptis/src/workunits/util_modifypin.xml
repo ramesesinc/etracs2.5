@@ -21,9 +21,6 @@ public class ModifyPINUtilityController {
     @Service('RPTUtilityService') 
     def svc 
     
-    @Service('FaasService')
-    def faasSvc
-    
     @Service('LGUService')
     def lguSvc
     
