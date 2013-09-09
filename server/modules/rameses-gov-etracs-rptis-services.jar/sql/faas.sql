@@ -21,6 +21,7 @@ FROM faas f
 	INNER JOIN rpu rpu ON f.rpuid = rpu.objid
 	LEFT JOIN realproperty rp ON rpu.realpropertyid = rp.objid
 	LEFT JOIN barangay b ON rp.barangayid = b.objid 
+WHERE 	
 ${filters}
 
 

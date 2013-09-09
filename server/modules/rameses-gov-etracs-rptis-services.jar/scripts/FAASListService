@@ -28,7 +28,7 @@ class FAASListService
         params.blockno = params.searchtext
         params.searchtext = (params.searchtext ? params.searchtext : '') + '%'
 
-        def whereclause = 'WHERE '
+        def whereclause = ''
         if (params.state){
             whereclause += ' f.state = $P{state} AND '
         }

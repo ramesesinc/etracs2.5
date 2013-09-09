@@ -8,6 +8,7 @@ class BldgKindService extends ActiveCrudListService
 	@ActiveDB('bldgkind')
 	def em
 	
+	String pagingKeys = 'objid'
 
 	void beforeList(params){
 		if (params == null) params = [:]

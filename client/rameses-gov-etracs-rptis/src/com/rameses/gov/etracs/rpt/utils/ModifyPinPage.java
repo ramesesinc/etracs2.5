@@ -31,7 +31,7 @@ public class ModifyPinPage extends javax.swing.JPanel {
         xComboBox3 = new com.rameses.rcp.control.XComboBox();
         xComboBox1 = new com.rameses.rcp.control.XComboBox();
         xComboBox4 = new com.rameses.rcp.control.XComboBox();
-        xComboBox5 = new com.rameses.rcp.control.XComboBox();
+        xComboBox2 = new com.rameses.rcp.control.XComboBox();
         xNumberField1 = new com.rameses.rcp.control.XNumberField();
         xNumberField2 = new com.rameses.rcp.control.XNumberField();
         xNumberField3 = new com.rameses.rcp.control.XNumberField();
@@ -58,6 +58,7 @@ public class ModifyPinPage extends javax.swing.JPanel {
         xLabel1.setCaption("Taxpayer Name");
         xLabel1.setCaptionWidth(120);
         xLabel1.setDepends(new String[] {"faas"});
+        xLabel1.setExpression("#{faas.owner.name}");
         xLabel1.setFont(new java.awt.Font("Arial", 1, 11));
         xLabel1.setName("faas.taxpayer.name");
         xLabel1.setPreferredSize(new java.awt.Dimension(0, 19));
@@ -67,6 +68,7 @@ public class ModifyPinPage extends javax.swing.JPanel {
         xLabel2.setCaption("Cadastral Lot No.");
         xLabel2.setCaptionWidth(120);
         xLabel2.setDepends(new String[] {"faas"});
+        xLabel2.setExpression("#{faas.rpu.rp.cadastrallotno}");
         xLabel2.setFont(new java.awt.Font("Arial", 1, 11));
         xLabel2.setName("faas.cadastrallotno");
         xLabel2.setPreferredSize(new java.awt.Dimension(0, 19));
@@ -76,6 +78,7 @@ public class ModifyPinPage extends javax.swing.JPanel {
         xLabel3.setCaption("PIN");
         xLabel3.setCaptionWidth(120);
         xLabel3.setDepends(new String[] {"faas"});
+        xLabel3.setExpression("#{faas.rpu.fullpin}");
         xLabel3.setFont(new java.awt.Font("Arial", 1, 11));
         xLabel3.setName("faas.fullpin");
         xLabel3.setPreferredSize(new java.awt.Dimension(0, 19));
@@ -98,7 +101,6 @@ public class ModifyPinPage extends javax.swing.JPanel {
         xComboBox1.setCaption("Province/City");
         xComboBox1.setCaptionWidth(120);
         xComboBox1.setDepends(new String[] {"faas"});
-        xComboBox1.setDynamic(true);
         xComboBox1.setExpression("#{item.name}");
         xComboBox1.setImmediate(true);
         xComboBox1.setItems("provcityList");
@@ -110,7 +112,6 @@ public class ModifyPinPage extends javax.swing.JPanel {
         xComboBox4.setCaption("Municipality/District");
         xComboBox4.setCaptionWidth(120);
         xComboBox4.setDepends(new String[] {"provcity"});
-        xComboBox4.setDynamic(true);
         xComboBox4.setExpression("#{item.name}");
         xComboBox4.setImmediate(true);
         xComboBox4.setItems("muniDistrictList");
@@ -119,14 +120,15 @@ public class ModifyPinPage extends javax.swing.JPanel {
         xComboBox4.setRequired(true);
         formPanel2.add(xComboBox4);
 
-        xComboBox5.setCaption("Barangay");
-        xComboBox5.setCaptionWidth(120);
-        xComboBox5.setExpression("#{item.name}");
-        xComboBox5.setItems("barangayList");
-        xComboBox5.setName("barangay");
-        xComboBox5.setPreferredSize(new java.awt.Dimension(0, 20));
-        xComboBox5.setRequired(true);
-        formPanel2.add(xComboBox5);
+        xComboBox2.setCaption("Barangay");
+        xComboBox2.setCaptionWidth(120);
+        xComboBox2.setDepends(new String[] {"munidistrict"});
+        xComboBox2.setExpression("#{item.name}");
+        xComboBox2.setItems("barangayList");
+        xComboBox2.setName("barangay");
+        xComboBox2.setPreferredSize(new java.awt.Dimension(0, 20));
+        xComboBox2.setRequired(true);
+        formPanel2.add(xComboBox2);
 
         xNumberField1.setCaption("Section");
         xNumberField1.setCaptionWidth(120);
@@ -235,9 +237,9 @@ public class ModifyPinPage extends javax.swing.JPanel {
     private com.rameses.rcp.control.XButton xButton2;
     private com.rameses.rcp.control.XCheckBox xCheckBox1;
     private com.rameses.rcp.control.XComboBox xComboBox1;
+    private com.rameses.rcp.control.XComboBox xComboBox2;
     private com.rameses.rcp.control.XComboBox xComboBox3;
     private com.rameses.rcp.control.XComboBox xComboBox4;
-    private com.rameses.rcp.control.XComboBox xComboBox5;
     private com.rameses.rcp.control.XLabel xLabel1;
     private com.rameses.rcp.control.XLabel xLabel2;
     private com.rameses.rcp.control.XLabel xLabel3;
