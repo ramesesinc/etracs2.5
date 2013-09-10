@@ -1,7 +1,7 @@
-"district" [lgutype == 'city' || lgutype == 'CITY'] {
-    visible: true;
+"faas|provcity|munidistrict|barangay" [mode != 'byfaas']{
+    enabled:true;
 }
 
-"district" [lgutype != 'city' && lgutype != 'CITY'] {
-    visible: false;
+"faas|provcity|munidistrict|barangay" [mode == 'byfaas']{
+    enabled:false;
 }

@@ -92,6 +92,7 @@
                 <StringItem index="0" value="faas"/>
               </StringArray>
             </Property>
+            <Property name="expression" type="java.lang.String" value="#{faas.owner.name}"/>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
               <Font name="Arial" size="11" style="1"/>
             </Property>
@@ -117,6 +118,7 @@
                 <StringItem index="0" value="faas"/>
               </StringArray>
             </Property>
+            <Property name="expression" type="java.lang.String" value="#{faas.rpu.rp.cadastrallotno}"/>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
               <Font name="Arial" size="11" style="1"/>
             </Property>
@@ -142,6 +144,7 @@
                 <StringItem index="0" value="faas"/>
               </StringArray>
             </Property>
+            <Property name="expression" type="java.lang.String" value="#{faas.rpu.fullpin}"/>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
               <Font name="Arial" size="11" style="1"/>
             </Property>
@@ -186,7 +189,6 @@
                 <StringItem index="0" value="faas"/>
               </StringArray>
             </Property>
-            <Property name="dynamic" type="boolean" value="true"/>
             <Property name="expression" type="java.lang.String" value="#{item.name}"/>
             <Property name="immediate" type="boolean" value="true"/>
             <Property name="items" type="java.lang.String" value="provcityList"/>
@@ -206,7 +208,6 @@
                 <StringItem index="0" value="provcity"/>
               </StringArray>
             </Property>
-            <Property name="dynamic" type="boolean" value="true"/>
             <Property name="expression" type="java.lang.String" value="#{item.name}"/>
             <Property name="immediate" type="boolean" value="true"/>
             <Property name="items" type="java.lang.String" value="muniDistrictList"/>
@@ -217,10 +218,15 @@
             <Property name="required" type="boolean" value="true"/>
           </Properties>
         </Component>
-        <Component class="com.rameses.rcp.control.XComboBox" name="xComboBox5">
+        <Component class="com.rameses.rcp.control.XComboBox" name="xComboBox2">
           <Properties>
             <Property name="caption" type="java.lang.String" value="Barangay"/>
             <Property name="captionWidth" type="int" value="120"/>
+            <Property name="depends" type="[Ljava.lang.String;" editor="org.netbeans.beaninfo.editors.StringArrayEditor">
+              <StringArray count="1">
+                <StringItem index="0" value="munidistrict"/>
+              </StringArray>
+            </Property>
             <Property name="expression" type="java.lang.String" value="#{item.name}"/>
             <Property name="items" type="java.lang.String" value="barangayList"/>
             <Property name="name" type="java.lang.String" value="barangay"/>

@@ -32,12 +32,6 @@ public class MachRYSettingController extends com.rameses.gov.etracs.rpt.rysettin
     def selectedForex 
     def forexes = []
     
-    def allowYearColumnEdit = { item ->
-        if( isFirstItem( forexes ) ) return true
-        return false 
-    } as Map
-
-
     def forexListHandler  = [
         createItem : { return createForex() },
         getRows    : { return 50 },
