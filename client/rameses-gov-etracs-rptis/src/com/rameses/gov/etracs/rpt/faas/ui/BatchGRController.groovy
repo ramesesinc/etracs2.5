@@ -23,13 +23,15 @@ public class BatchGRController
     
     
     def rylist;
-    def params = [:];
+    def params = [memoranda:'REVISED PURSUANT TO SECTION 219 OF RA 7160.'];
     def processing = false;
     def cancelled = false;
     def msg;
             
     String title = 'Batch General Revision'
     def counter = [success:0, error:0]
+            
+    def batchTask = null
             
     void init() {
         processing = false;
@@ -40,9 +42,9 @@ public class BatchGRController
     void revise() {
         if( !MsgBox.confirm("Revise all faas? ")) return;
         
-        def landfaasids = svc.getLandFaasIdForRevision(params.newry.ry, params.barangay?.objid)
-        
-        Thread t = new Thread(new BatchGRTask(svc:svc, params:params, items:landfaasids, cancelled:cancelled, oncomplete:oncomplete, onrevise:onrevise));
+        def landfaasids = svc.getFaasIdForRevision(params.newry.ry, params.barangay?.objid)
+        batchTask = new BatchGRTask(svc:svc, params:params, items:landfaasids, cancelled:cancelled, oncomplete:oncomplete, onrevise:onrevise);
+        Thread t = new Thread(batchTask);
         t.start();
         
         processing = true;
@@ -69,12 +71,13 @@ public class BatchGRController
     void cancel() {
         processing = false;
         cancelled = true;
+        batchTask.cancelled = true;
     }
     
 }
 
 public class BatchGRTask implements Runnable{
-    ExecutorService executor;
+    // ExecutorService executor;
 
     def svc;
     def params;
@@ -84,32 +87,18 @@ public class BatchGRTask implements Runnable{
     def onrevise;
 
     public void run(){
-        executor = Executors.newFixedThreadPool(1)
-
         for(int i=0; i<items.size(); i++) {
             if (cancelled) break;
-            params.objid= items[i].objid;
-            def task = new ReviseFaasTask(svc:svc, params:params, onrevise:onrevise)
-            executor.execute(task)
-        }
-
-        executor.shutdown()
-        while( ! executor.isTerminated()){
+            try{
+                params.objid= items[i].objid;
+                def retval = svc.reviseFaas(params);
+                onrevise(retval);
+            }
+            catch(err){
+                err.printStackTrace();
+            }
         }
         oncomplete()
     }
 }
-
-
-public class ReviseFaasTask implements Runnable {
-    def svc;
-    def params;
-    def onrevise;
-
-    public void run(){
-        def retval = svc.reviseLandFaas(params);
-        onrevise(retval);
-    }
-}        
-
 

@@ -195,7 +195,11 @@ class LandRPUService
 		}
 
 		landdetail.assesslevel 			= determineAssessLevel( landdetail, ry )
-		landdetail.assessedvalue 		= numberSvc.roundToTen(landdetail.marketvalue * landdetail.assesslevel / 100.0 )
+		if (util.toBoolean(var.rpt_round_to_ten_item_assessed_value, true) == true)
+			landdetail.assessedvalue = numberSvc.roundToTen(landdetail.marketvalue * landdetail.assesslevel / 100.0 )
+		else 
+			landdetail.assessedvalue = numberSvc.round(landdetail.marketvalue * landdetail.assesslevel / 100.0 )
+
         return landdetail 
     }
 
@@ -465,6 +469,10 @@ class LandRPUService
         rpu.totalbmv  = rpu.totallandbmv + rpu.totalplanttreebmv;
         rpu.totalmv   = rpu.totallandmv + rpu.totalplanttreemv;
         rpu.totalav   = rpu.totallandav + rpu.totalplanttreeav;
+
+        if (util.toBoolean(var.rpt_round_to_ten_item_assessed_value, true) == false){
+        	rpu.totalav = numberSvc.roundToTen(rpu.totalav)
+        }
 	}
 
 

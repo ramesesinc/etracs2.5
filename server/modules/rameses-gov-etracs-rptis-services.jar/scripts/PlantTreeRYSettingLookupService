@@ -14,7 +14,7 @@ public class PlantTreeRYSettingLookupService
 
     @ProxyMethod
     public def lookupAssessLevels(params){
-    	return lupSvc.lookup( 'planttreerysettinglookup:lookupAssessLevels', params )
+    	return lupSvc.lookup( 'planttreerysettinglookup:lookupAssessLevels', params, 'lal.objid' )
     }
 
 
@@ -27,7 +27,7 @@ public class PlantTreeRYSettingLookupService
 
     @ProxyMethod
     public def lookupUnitValues(params){
-    	return lupSvc.lookup( 'planttreerysettinglookup:lookupUnitValues', params )
+    	return lupSvc.lookup( 'planttreerysettinglookup:lookupUnitValues', params, 'puv.objid' )
     }
 
 

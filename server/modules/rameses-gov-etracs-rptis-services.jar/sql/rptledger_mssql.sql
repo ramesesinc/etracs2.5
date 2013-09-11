@@ -120,11 +120,11 @@ SELECT
 	cr.paidby, 
 	SUM(basic - basicdisc + basicint) AS basic,
 	SUM(sef - sefdisc + sefint) AS sef,
-	CONCAT(MIN(CONCAT(cri.qtr, 'Q,', cri.year)), '-', MAX(CONCAT(cri.qtr, 'Q,', cri.year))) AS period,
+	MIN(CONVERT(VARCHAR(1),cri.qtr) + 'Q,' + CONVERT(VARCHAR(4),cri.year)) + '-' + MAX(CONVERT(VARCHAR(1),cri.qtr) + 'Q,' + CONVERT(VARCHAR(4),cri.year)) AS period,
 	SUM(basic - basicdisc + basicint + sef - sefdisc + sefint) AS total
 FROM cashreceipt cr 
 	INNER JOIN cashreceipt_rpt_item cri ON cr.objid = cri.rptreceiptid
 	LEFT JOIN cashreceipt_void v ON cr.objid = v.receiptid 
 WHERE 	cri.rptledgerid = $P{rptledgerid}
  AND v.objid IS NULL 
-GROUP BY cr.objid  	
+GROUP BY cr.objid, cr.receiptno, cr.txndate, cr.txnmode, cr.paidby 	

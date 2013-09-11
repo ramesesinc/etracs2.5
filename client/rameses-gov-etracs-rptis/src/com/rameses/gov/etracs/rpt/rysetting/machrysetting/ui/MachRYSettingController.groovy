@@ -38,7 +38,7 @@ public class MachRYSettingController extends com.rameses.gov.etracs.rpt.rysettin
                 
         getColumns : { return [
             new Column(name:'year', caption:'Year*', type:'integer', format:'0000', editable:true ),
-            new Column(name:'forex', caption:'Rate*', type:'decimal', editable:true, format:'#,##0.0000'  ),
+            new Column(name:'forex', caption:'Rate*', type:'decimal', editable:true, pattern:'#,##0.0000', format:'#,##0.0000'  ),
         ]},
         
         validate : { li -> 

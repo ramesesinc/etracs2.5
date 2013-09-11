@@ -10,14 +10,6 @@
     enabled:false;
 }
 
-"conversionfactor" [ imported == false || imported == 0 ] {
-    enabled:true;
-}
-
-"conversionfactor" [ imported == true || imported == 1 ] {
-    enabled:false;
-}
-
 
 "machdetail.swornamount" [machdetail.useswornamount == true || machdetail.useswornamount == 1 ] {
     enabled:true;
@@ -39,7 +31,7 @@
     enabled:false;
 }
 
-"machdetail.ferac|machdetail.forex|machdetail.acquisitioncost|machdetail.replacementcost|machdetail.depreciationvalue" [ allowEdit == false] {
+"machdetail.ferac|machdetail.forex|machdetail.acquisitioncost|machdetail.replacementcost|machdetail.depreciationvalue" [ true == true] {
     enabled:false;
 }
 

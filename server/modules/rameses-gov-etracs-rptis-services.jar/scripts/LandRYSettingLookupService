@@ -15,7 +15,7 @@ public class LandRYSettingLookupService
 
     @ProxyMethod
     public def lookupAssessLevels(params){
-    	return lupSvc.lookup( 'landrysettinglookup:lookupAssessLevels', params )
+    	return lupSvc.lookup( 'landrysettinglookup:lookupAssessLevels', params, 'lal.objid' )
     }
 
 
@@ -27,7 +27,7 @@ public class LandRYSettingLookupService
 
     @ProxyMethod
     public def lookupSubclasses(params){
-    	return lupSvc.lookup( 'landrysettinglookup:lookupSubclasses', params )
+    	return lupSvc.lookup( 'landrysettinglookup:lookupSubclasses', params, 'sub.objid' )
     }
 
 
@@ -40,7 +40,7 @@ public class LandRYSettingLookupService
 
     @ProxyMethod
     public def lookupStrippings(params){
-    	return lupSvc.lookup( 'landrysettinglookup:lookupStrippings', params )
+    	return lupSvc.lookup( 'landrysettinglookup:lookupStrippings', params, 'st.objid' )
     }
 
 
@@ -53,7 +53,7 @@ public class LandRYSettingLookupService
 
     @ProxyMethod
     public def lookupAdjustmentTypes(params){
-    	return lupSvc.lookup( 'landrysettinglookup:lookupAdjustmentTypes', params ).each{
+    	return lupSvc.lookup( 'landrysettinglookup:lookupAdjustmentTypes', params, 'lat.objid' ).each{
             it.classifications = em.sqlContext.createNamedQuery('landrysetting:getAdjustmentTypeClassifications')
                                     .setParameter('landadjustmenttypeid', it.objid)
                                     .resultList

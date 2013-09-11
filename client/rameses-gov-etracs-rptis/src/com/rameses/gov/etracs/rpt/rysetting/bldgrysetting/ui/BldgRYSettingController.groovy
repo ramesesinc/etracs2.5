@@ -35,7 +35,7 @@ public class BldgRYSettingController extends com.rameses.gov.etracs.rpt.rysettin
     
     
     def additionalItemListHandler = [
-        getRows    : { return 50 },
+        getRows    : { return 200 },
         getColumns : { return [
             new Column(name:'code', caption:'Code', maxWidth:60),
             new Column(name:'name', caption:'Name'),
@@ -223,11 +223,11 @@ public class BldgRYSettingController extends com.rameses.gov.etracs.rpt.rysettin
 
     def depreciationListHandler = [
         createItem : { return createDepreciation() },
-        getRows    : { return 50 },
+        getRows    : { return 75 },
         getColumns : { return [
             new Column(name:'agefrom', caption:'Age From', type:'integer'),
             new Column(name:'ageto', caption:'Age To', type:'integer', editable:true, editableWhen:'#{allowDepreciationColumnEdit[item]}' ),
-            new Column(name:'rate', caption:'Rate*', type:'decimal', format:'0.000000', editable:true, editableWhen:'#{allowDepreciationColumnEdit[item]}' ),
+            new Column(name:'rate', caption:'Rate*', type:'decimal', format:'0.000000', editable:true ),
         ]},
                 
         validate     : { li -> 

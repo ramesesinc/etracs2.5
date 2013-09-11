@@ -33,7 +33,6 @@ public class FAASBatchReportPage extends javax.swing.JPanel {
         xActionBar1 = new com.rameses.rcp.control.XActionBar();
         formPanel1 = new com.rameses.rcp.util.FormPanel();
         xNumberField2 = new com.rameses.rcp.control.XNumberField();
-        xComboBox5 = new com.rameses.rcp.control.XComboBox();
         xComboBox1 = new com.rameses.rcp.control.XComboBox();
         xNumberField1 = new com.rameses.rcp.control.XNumberField();
         xLabel1 = new com.rameses.rcp.control.XLabel();
@@ -56,20 +55,7 @@ public class FAASBatchReportPage extends javax.swing.JPanel {
         xNumberField2.setRequired(true);
         formPanel1.add(xNumberField2);
 
-        xComboBox5.setAllowNull(false);
-        xComboBox5.setCaption("Municipality/District");
-        xComboBox5.setDynamic(true);
-        xComboBox5.setExpression("#{item.name}");
-        xComboBox5.setIndex(1);
-        xComboBox5.setItems("lgus");
-        xComboBox5.setName("lgu");
-        xComboBox5.setPreferredSize(new java.awt.Dimension(0, 22));
-        xComboBox5.setRequired(true);
-        formPanel1.add(xComboBox5);
-
         xComboBox1.setCaption("Barangay");
-        xComboBox1.setDepends(new String[] {"lgu"});
-        xComboBox1.setDynamic(true);
         xComboBox1.setExpression("#{item.name}");
         xComboBox1.setIndex(2);
         xComboBox1.setItems("barangays");
@@ -118,7 +104,6 @@ public class FAASBatchReportPage extends javax.swing.JPanel {
     private com.rameses.rcp.util.FormPanel formPanel1;
     private com.rameses.rcp.control.XActionBar xActionBar1;
     private com.rameses.rcp.control.XComboBox xComboBox1;
-    private com.rameses.rcp.control.XComboBox xComboBox5;
     private com.rameses.rcp.control.XLabel xLabel1;
     private com.rameses.rcp.control.XNumberField xNumberField1;
     private com.rameses.rcp.control.XNumberField xNumberField2;

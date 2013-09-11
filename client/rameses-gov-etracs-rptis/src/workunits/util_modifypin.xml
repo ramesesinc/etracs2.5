@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <workunit>
     <invokers>
-        <invoker folderid="/menu/txn/rpt/util" action="init" caption="Modify PIN" target="popup" index="500"
+        <invoker folderid="/explorer/txn/rpt/util" action="init" caption="Modify PIN" target="popup" index="500"
             role="APPRAISER" permission="util.modifypin" />
         <invoker type="faas:formActions" action="initFromFaas" caption="Modify PIN" target="popup" index="500"
-            role="APPRAISER" permission="util.modifypin" visibleWhen="#{mode=='edit'}"/>
+            role="APPRAISER" permission="util.modifypin" visibleWhen="#{mode=='edit' &amp;&amp; faas.rpu.rputype=='land'}"/>
     </invokers>
     
     <code lang="groovy">
@@ -71,12 +71,12 @@ public class ModifyPINUtilityController {
     
     def updatePin() {
         if( MsgBox.confirm('Update existing PIN with new information?') ) {
-            svc.updatePin([
+            def rp = svc.updatePin([
                 faasid      : faas.objid,
-                rpuid       : faas.rpuid,
-                rputype     : faas.rputype,
-                docstate    : faas.docstate, 
-                oldpin      : faas.fullpin,
+                rpuid       : (faas.rpuid ? faas.rpuid : faas.rpu.objid),
+                rputype     : (faas.rputype ? faas.rputype : faas.rpu.rputype),
+                docstate    : faas.state, 
+                oldpin      : (faas.fullpin ? faas.fullpin : faas.rpu.fullpin),
                 ry          : faas.ry,
                 pintype     : pintype,
                 lgutype     : lgutype,
@@ -89,6 +89,12 @@ public class ModifyPINUtilityController {
                 newpin      : newpin
             ])
             caller.faas.rpu.fullpin = newpin
+            if ( rp ) {
+                caller.faas.rpu.rp.pintype = rp.pintype 
+                caller.faas.rpu.rp.pin = rp.pin
+                caller.faas.rpu.rp.section = rp.section
+                caller.faas.rpu.rp.parcel = rp.parcel
+            }
             clearInfo()
             binding?.focus('faas')
         }

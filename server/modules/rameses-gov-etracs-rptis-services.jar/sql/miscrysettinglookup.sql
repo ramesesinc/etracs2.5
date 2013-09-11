@@ -42,7 +42,7 @@ SELECT *
 FROM miscassesslevelrange 
 WHERE miscassesslevelid = $P{miscassesslevelid}
   AND $P{mv} >= mvfrom 
-  AND ( $P{mv} < mvto OR mvto == 0 )
+  AND ( $P{mv} < mvto OR mvto = 0 )
 
 
 [lookupMiscItemValues]

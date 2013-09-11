@@ -45,7 +45,7 @@ DELETE FROM rysetting_lgu WHERE rysettingid = $P{rysettingid}
 [getAssessLevels]
 SELECT bal.*, pc.code AS classification_code, pc.name AS classification_name 
 FROM bldgassesslevel bal 
-	INNER JOIN propertyclassification pc ON bal.classification_objid = pc.objid
+	LEFT JOIN propertyclassification pc ON bal.classification_objid = pc.objid
 WHERE bal.bldgrysettingid = $P{bldgrysettingid}
 ORDER BY pc.orderno
 
@@ -62,7 +62,7 @@ DELETE FROM bldgassesslevelrange WHERE bldgassesslevelid = $P{bldgassesslevelid}
 # BLDGTYPE SUPPORT
 #=============================================================
 [getBldgTypes]
-SELECT * FROM bldgtype bt WHERE bldgrysettingid = $P{bldgrysettingid}
+SELECT * FROM bldgtype bt WHERE bldgrysettingid = $P{bldgrysettingid} ORDER BY code 
 
 
 
@@ -90,11 +90,11 @@ DELETE FROM bldgkindbucc WHERE bldgtypeid = $P{bldgtypeid}
 # DEPRECIATION SUPPORT
 #=============================================================
 [getDepreciations]
-SELECT * FROM bldgtype_depreciation WHERE bldgtypeid = $P{bldgtypeid}
+SELECT * FROM bldgtype_depreciation WHERE bldgtypeid = $P{bldgtypeid} ORDER BY agefrom
 
 
 [deleteDepreciationByTypeId]
-DELETE FROM bldgtype_depreciation WHERE bldgtypeid = $P{bldgtypeid}
+DELETE FROM bldgtype_depreciation WHERE bldgtypeid = $P{bldgtypeid} 
 
 
 
@@ -114,7 +114,7 @@ DELETE FROM bldgtype_storeyadjustment WHERE bldgtypeid = $P{bldgtypeid}
 # ADDITIONALITEM SUPPORT
 #=============================================================
 [getAdditionalItems]
-SELECT * FROM bldgadditionalitem WHERE bldgrysettingid = $P{bldgrysettingid}
+SELECT * FROM bldgadditionalitem WHERE bldgrysettingid = $P{bldgrysettingid} ORDER BY code 
 
 
 

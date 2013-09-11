@@ -1,11 +1,10 @@
-[getLandFAASIdForRevision]
+[getFAASIdForRevision]
 SELECT f.objid
 FROM faas f 
     INNER JOIN rpu r ON f.rpuid = r.objid 
     INNER JOIN realproperty rp ON r.realpropertyid = rp.objid
 WHERE rp.barangayid LIKE  $P{barangayid}
   AND r.ry < $P{newry}
-  AND r.rputype = 'land' 
   AND f.state = 'CURRENT'
   AND NOT EXISTS(
     SELECT * FROM faas fx 

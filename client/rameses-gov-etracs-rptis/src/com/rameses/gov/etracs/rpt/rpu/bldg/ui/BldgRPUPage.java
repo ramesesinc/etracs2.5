@@ -496,7 +496,9 @@ public class BldgRPUPage extends javax.swing.JPanel {
         );
         formPanel4.add(xSeparator3);
 
-        jScrollPane1.setPreferredSize(new java.awt.Dimension(0, 50));
+        jScrollPane1.setPreferredSize(new java.awt.Dimension(0, 100));
+        xTextArea1.setLineWrap(true);
+        xTextArea1.setWrapStyleWord(true);
         xTextArea1.setCaption("Additional Information");
         xTextArea1.setCaptionWidth(120);
         xTextArea1.setCellPadding(new java.awt.Insets(0, 10, 0, 0));
