@@ -81,6 +81,7 @@ public class BldgAdditionalItemController
             if ( !entity.expr ) entity.expr = '' 
             entity.expr += '  ' + item.name 
             binding.refresh('entity.expr')
+            binding.focus('entity.expr')
         }
     ] as BasicListModel
     
