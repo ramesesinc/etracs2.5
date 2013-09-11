@@ -45,18 +45,24 @@ class FaasReportService
 		loadSignatories(faas)
 		
 		if( faas.rpu.rputype == 'land' ) { 
+			LISTLIMITSIZE1 = 10
+			LISTLIMITSIZE2 = 7
 			faas.landappraisals = getLandDetails( faas.rpu )
 			faas.planttreesappraisals = getPlantTreeDetails( faas.rpu )
 			faas.landadjustments = getLandAdjustments( faas.rpu )
 			faas.propertyassessments = getPropertyAssessements( faas.rpu )
 		}
 		else if( faas.rpu.rputype == 'mach' ) {
+			LISTLIMITSIZE1 = 14
+			LISTLIMITSIZE2 = 7
 			getLandReference( faas )
 			faas.machdetails = getMachDetails( faas.rpu )
 			faas.propertyappraisals = getPropertyAppraisals( faas.rpu )
 			faas.propertyassessments = getMachPropertyAssessments( faas.rpu )
 		}
 		else if( faas.rpu.rputype == 'planttree' ) {
+			LISTLIMITSIZE1 = 10	
+			LISTLIMITSIZE2 = 7	
 			faas.landappraisals = getDummy()
 			faas.planttreesappraisals = getPlantTreeDetails( faas.rpu )
 			faas.landadjustments = getPlantTreeLandAdjustments( faas.rpu )
@@ -64,6 +70,7 @@ class FaasReportService
 		} 
 		else if( faas.rpu.rputype == 'misc' ) {
 			LISTLIMITSIZE1 = 25			
+			LISTLIMITSIZE2 = 7
 			faas.miscpropertyappraisals = getMiscPropertyAppraisals( faas.rpu )
 			faas.miscadjustments = getMiscAdjustments( faas.rpu )
 			faas.propertyassessments = getMiscPropertyAssessments( faas.rpu )

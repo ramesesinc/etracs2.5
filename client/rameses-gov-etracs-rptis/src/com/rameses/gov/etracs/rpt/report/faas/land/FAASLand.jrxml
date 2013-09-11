@@ -6,14 +6,14 @@
 		 columnCount="1"
 		 printOrder="Vertical"
 		 orientation="Portrait"
-		 pageWidth="595"
-		 pageHeight="842"
-		 columnWidth="535"
+		 pageWidth="612"
+		 pageHeight="936"
+		 columnWidth="552"
 		 columnSpacing="0"
 		 leftMargin="30"
 		 rightMargin="30"
-		 topMargin="20"
-		 bottomMargin="20"
+		 topMargin="72"
+		 bottomMargin="14"
 		 whenNoDataType="NoPages"
 		 isTitleNewPage="false"
 		 isSummaryNewPage="false">
@@ -77,6 +77,7 @@
 	<field name="recommender.title" class="java.lang.String"/>
 	<field name="approver.title" class="java.lang.String"/>
 	<field name="propertylocation" class="java.lang.String"/>
+	<field name="rpu.totalav" class="java.math.BigDecimal"/>
 
 
 		<group  name="Part1" isStartNewPage="true" >
@@ -101,7 +102,7 @@
 						x="0"
 						y="47"
 						width="62"
-						height="14"
+						height="19"
 						key="staticText-2"/>
 					<box leftPadding="3">					<topPen lineWidth="0.5" lineStyle="Solid"/>
 					<leftPen lineWidth="0.5" lineStyle="Solid"/>
@@ -116,13 +117,13 @@
 						x="62"
 						y="47"
 						width="205"
-						height="14"
+						height="19"
 						key="textField"/>
 					<box>					<topPen lineWidth="0.5" lineStyle="Solid"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid"/>
 </box>
 					<textElement verticalAlignment="Middle">
-						<font fontName="Tahoma" pdfFontName="Helvetica-Bold" size="8" isBold="true"/>
+						<font fontName="Tahoma" pdfFontName="Helvetica-Bold" size="11" isBold="true"/>
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[$F{tdno}]]></textFieldExpression>
 				</textField>
@@ -131,7 +132,7 @@
 						x="267"
 						y="47"
 						width="42"
-						height="14"
+						height="19"
 						key="staticText-3"/>
 					<box leftPadding="3">					<topPen lineWidth="0.5" lineStyle="Solid"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid"/>
@@ -146,21 +147,21 @@
 						x="309"
 						y="47"
 						width="226"
-						height="14"
+						height="19"
 						key="textField"/>
 					<box>					<topPen lineWidth="0.5" lineStyle="Solid"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid"/>
 					<rightPen lineWidth="0.5" lineStyle="Solid"/>
 </box>
 					<textElement verticalAlignment="Middle">
-						<font fontName="Tahoma" pdfFontName="Helvetica-Bold" size="8" isBold="true"/>
+						<font fontName="Tahoma" pdfFontName="Helvetica-Bold" size="11" isBold="true"/>
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[$F{rpu.fullpin}]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement
 						x="0"
-						y="61"
+						y="66"
 						width="62"
 						height="14"
 						key="staticText-4"/>
@@ -175,7 +176,7 @@
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="62"
-						y="61"
+						y="66"
 						width="71"
 						height="14"
 						key="textField"/>
@@ -190,7 +191,7 @@
 				<staticText>
 					<reportElement
 						x="133"
-						y="61"
+						y="66"
 						width="49"
 						height="14"
 						key="staticText-5"/>
@@ -205,7 +206,7 @@
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="181"
-						y="61"
+						y="66"
 						width="86"
 						height="14"
 						key="textField"/>
@@ -220,7 +221,7 @@
 				<staticText>
 					<reportElement
 						x="267"
-						y="61"
+						y="66"
 						width="42"
 						height="14"
 						key="staticText-6"/>
@@ -235,7 +236,7 @@
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="309"
-						y="61"
+						y="66"
 						width="91"
 						height="14"
 						key="textField"/>
@@ -250,7 +251,7 @@
 				<staticText>
 					<reportElement
 						x="400"
-						y="61"
+						y="66"
 						width="36"
 						height="14"
 						key="staticText-7"/>
@@ -265,7 +266,7 @@
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="436"
-						y="61"
+						y="66"
 						width="99"
 						height="14"
 						key="textField"/>
@@ -281,7 +282,7 @@
 				<staticText>
 					<reportElement
 						x="0"
-						y="75"
+						y="80"
 						width="267"
 						height="14"
 						key="staticText-8"/>
@@ -296,7 +297,7 @@
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="0"
-						y="89"
+						y="94"
 						width="267"
 						height="24"
 						key="textField"/>
@@ -311,7 +312,7 @@
 				<staticText>
 					<reportElement
 						x="267"
-						y="75"
+						y="80"
 						width="42"
 						height="24"
 						key="staticText-10"/>
@@ -326,7 +327,7 @@
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="309"
-						y="75"
+						y="80"
 						width="226"
 						height="24"
 						key="textField"/>
@@ -342,7 +343,7 @@
 				<staticText>
 					<reportElement
 						x="267"
-						y="99"
+						y="104"
 						width="42"
 						height="14"
 						key="staticText-11"/>
@@ -357,7 +358,7 @@
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="309"
-						y="99"
+						y="104"
 						width="226"
 						height="14"
 						key="textField"/>
@@ -388,7 +389,7 @@
 				<staticText>
 					<reportElement
 						x="267"
-						y="113"
+						y="118"
 						width="42"
 						height="24"
 						key="staticText-13"/>
@@ -403,7 +404,7 @@
 				<staticText>
 					<reportElement
 						x="267"
-						y="137"
+						y="142"
 						width="42"
 						height="14"
 						key="staticText-14"/>
@@ -419,7 +420,7 @@
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="0"
-						y="127"
+						y="132"
 						width="267"
 						height="24"
 						key="textField"/>
@@ -435,7 +436,7 @@
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="309"
-						y="113"
+						y="118"
 						width="226"
 						height="24"
 						key="textField"/>
@@ -814,7 +815,7 @@
 				<staticText>
 					<reportElement
 						x="309"
-						y="137"
+						y="142"
 						width="226"
 						height="14"
 						key="staticText-285"/>
@@ -885,6 +886,9 @@
 						height="14"
 						key="subreport-4"
 						positionType="Float"/>
+					<subreportParameter  name="TOTALAV">
+						<subreportParameterExpression><![CDATA[$F{rpu.totalav}]]></subreportParameterExpression>
+					</subreportParameter>
 					<dataSourceExpression><![CDATA[$F{propertyassessments}]]></dataSourceExpression>
 					<subreportExpression  class="net.sf.jasperreports.engine.JasperReport"><![CDATA[$P{PropertyAssessment}]]></subreportExpression>
 				</subreport>
@@ -1790,7 +1794,7 @@ Clerk Initial]]></text>
 					<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
 						<font fontName="Tahoma" pdfFontName="Helvetica" size="7" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA["GENERATED BY : ETRACS v2.0     PRINTED BY : " + $P{PRINTEDBY} + "  PRINT DATE : "  + (new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format($P{PRINTDATE}) )]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA["GENERATED BY : ETRACS v2.5     PRINTED BY : " + $P{PRINTEDBY} + "  PRINT DATE : "  + (new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format($P{PRINTDATE}) )]]></textFieldExpression>
 				</textField>
 			</band>
 		</pageFooter>
