@@ -6,6 +6,9 @@ class WorkflowStateService
 	@PersistenceContext('rpt')
 	def em
 
+	@Service('DateService')
+	def dtSvc
+
 	@Service('RPTUtil')
 	def util
 
@@ -21,6 +24,7 @@ class WorkflowStateService
 	public def insert(params) {
 		util.required('objid', params.objid)
 		util.required('state', params.state)
+		params.txndate = dtSvc.serverDate
 
 		try{
 			em.sqlContext.createNamedExecutor('workflowstate:insert').setParameters(params).execute()
