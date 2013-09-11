@@ -9,11 +9,13 @@ class RPTSettingService
 	@ProxyMethod
 	public def getSettings( params ) {
 		def start = (params.page - 1) * params.rowcount 
-		return em.sqlContext.createNamedQuery('rptsetting:getSettingsByCategory')
-				.setFirstResult(start)
-				.setMaxResults(params.rowcount)
-				.setParameter('category', params.category)
-				.resultList	
+		def qry =  em.sqlContext.createNamedQuery('rptsetting:getSettingsByCategory')
+
+		qry.setPagingKeys('name')
+		return qry.setFirstResult(start)
+					.setMaxResults(params.rowcount)
+					.setParameter('category', params.category)
+					.resultList	
 	}
 
 	@ProxyMethod
@@ -21,7 +23,7 @@ class RPTSettingService
 		settings.each{
 			em.sqlContext.createNamedExecutor('rptsetting:updateSetting')
 				.setParameter('name', it.name)
-				.setParameter('value', it.value)
+				.setParameter('value', it.value?.toString())
 				.execute()
 		}
 	}

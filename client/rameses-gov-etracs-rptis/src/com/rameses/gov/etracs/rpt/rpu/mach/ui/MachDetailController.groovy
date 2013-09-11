@@ -92,7 +92,7 @@ public class MachDetailController
     def conversionfactor = 1.0
     
     void setConversionfactor( conversionfactor ) {
-        if(!conversionfactor) {
+        if(conversionfactor == null || conversionfactor == 0.0) {
             conversionfactor = 1.0
         }
         this.conversionfactor = conversionfactor

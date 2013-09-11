@@ -70,7 +70,7 @@ UPDATE faas SET
 	state = 'CANCELLED',
 	cancelreason = $P{cancelreason},
 	canceldate   = $P{canceldate},
-	cancelledbytdnos = CONCAT(CASE WHEN cancelledbytdnos IS NULL OR LENGTH(TRIM(cancelledbytdnos)) = 0 THEN '' ELSE cancelledbytdnos END, ', ', $P{cancelledbytdnos}),
+	cancelledbytdnos = (CASE WHEN cancelledbytdnos IS NULL OR LEN(RTRIM(LTRIM(cancelledbytdnos))) = 0 THEN '' ELSE cancelledbytdnos END + ', ' + $P{cancelledbytdnos}),
 	cancelledtimestamp = $P{cancelledtimestamp}
 WHERE objid = $P{objid}
 

@@ -25,9 +25,9 @@ class BatchGRService
 	def var
 
 	@ProxyMethod
-	public List getLandFaasIdForRevision( newry, barangayid ) {
+	public List getFaasIdForRevision( newry, barangayid ) {
 		barangayid = (barangayid ? barangayid : '%')
-		return bgrDb.getLandFAASIdForRevision([ newry:newry, barangayid:barangayid ])
+		return bgrDb.getFAASIdForRevision([ newry:newry, barangayid:barangayid ])
 	} 
 	
 
@@ -45,9 +45,11 @@ class BatchGRService
 		def landfaas = reviseFaas( params, null, retval )
 		if( landfaas ) {
 			def improvements = faasSvc.getLandImprovements( params.objid )
+			println 'Processing Improvements -> ' + improvements.size()
 			improvements.each{ improvement ->
 				improvement.newry = params.newry 
 				improvement.memoranda = params.memoranda 
+				println 'improvement -> ' + improvement.objid 
 				def faas = reviseFaas( improvement, landfaas, retval)
 			}
 		}
@@ -55,10 +57,15 @@ class BatchGRService
 	}
 	
 	@ProxyMethod
-	public def reviseFaas( params, landfaas, retval  ) {
-		def faas = null 
+	public def reviseFaas( params ) {
+		util.required('Land FAAS ID', params.objid)
+		util.required('New RY', params.newry)
+		params.newry = params.newry.ry
+		if( ! params.memoranda ) params.memoranda = 'REVISED PURSUANT TO SECTION 219 OF R.A. 7160' 
+
+		def retval = [success:0, error:0]
 		try {
-			faas = faasSvc.openFaas( params.objid )
+			def faas = faasSvc.openFaas( params.objid )
 			def newrysetting = getRySetting( faas.rpu.rputype, params.newry ) 
 			faas.autonumber = util.toBoolean( var.gr_td_autonumber, false )
 
@@ -67,7 +74,6 @@ class BatchGRService
 			faas = faasSvc.createFaas( faas )
 			println 'Successfully revised -> ' + faas.prevtdno 
 			retval.success += 1
-			return faas 
 		}
 		catch ( e ) {
 			println '='*50
@@ -75,7 +81,7 @@ class BatchGRService
 			retval.error += 1
 			logError( params.objid, params.newry, e ) 
 		}
-		return null
+		return retval
 	}		
 
 	@ProxyMethod

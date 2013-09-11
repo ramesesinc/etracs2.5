@@ -73,7 +73,7 @@ public class LandRPUPage extends javax.swing.JPanel {
         formPanel16.setPadding(new java.awt.Insets(0, 0, 0, 0));
         formPanel16.setPreferredSize(new java.awt.Dimension(305, 23));
         formPanel16.setShowCaption(false);
-        xButton5.setMnemonic('v');
+        xButton5.setMnemonic('u');
         xButton5.setDepends(new String[] {"selectedLand"});
         xButton5.setName("openActualUseAdjustment");
         xButton5.setShowCaption(false);
@@ -180,7 +180,6 @@ public class LandRPUPage extends javax.swing.JPanel {
         xDataTable3.setDynamic(true);
         xDataTable3.setHandler("landListHandler");
         xDataTable3.setName("selectedLand");
-        xDataTable3.setShowRowHeader(true);
 
         jLabel3.setText("<html>Classification <font color=\"red\">*</font>:</html>");
 
@@ -278,7 +277,6 @@ public class LandRPUPage extends javax.swing.JPanel {
         xDataTable4.setDynamic(true);
         xDataTable4.setHandler("planttreeListHandler");
         xDataTable4.setName("selectedPlantTree");
-        xDataTable4.setShowRowHeader(true);
 
         org.jdesktop.layout.GroupLayout jPanel12Layout = new org.jdesktop.layout.GroupLayout(jPanel12);
         jPanel12.setLayout(jPanel12Layout);

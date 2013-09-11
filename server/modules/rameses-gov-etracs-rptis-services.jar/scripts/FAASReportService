@@ -246,7 +246,7 @@ class FaasReportService
 				actualuse 		: 'PLANT',
 				marketvalue		: rpu.totalplanttreemv,
 				assesslevel		: rpu.planttrees[0].assesslevel,
-				assessedvalue	: totalplanttreeav
+				assessedvalue	: rpu.totalplanttreeav
 			]
 			
 			list.add( item )

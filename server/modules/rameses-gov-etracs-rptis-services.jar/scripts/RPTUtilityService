@@ -21,9 +21,9 @@ class RPTUtilityService
 	 //info: faasid, oldpin, tdno, pintype, municipality, barangay, 
 	//section, parcel, suffix, newpin, ssection, sparcel 
 	@ProxyMethod
-	public void updatePin( info ) { 
+	public def updatePin( info ) { 
 		println "************************************"
-		println " updating pin $info.oldpin -> $info.newpin, lgutype: $info.lgutype "
+		println " updating pin $info"
 		println "************************************"
 		
 		validatePin( info )
@@ -44,19 +44,21 @@ class RPTUtilityService
 				//update improvements pin 
 				rpudb.getLandImprovementsRpuByRealPropertyId([realpropertyid: rpu.rp.objid]).each { 
 					def param = [
-						newpin:info.pin + '-' + it.suffix,
+						newpin:info.newpin + '-' + it.suffix,
 						suffix:it.suffix, 
 						rpuid: it.objid 
 					]
 					rpudb.modifyPin(param)
 				}
-				
 			}
+			println '='*50 
+			println 'rp -> ' + rpu.rp 
+			return rpu.rp 
 			
 		} else {
 			rpudb.modifyPin(info)
+			return null
 		}
-		
 		// logSvc.log('MODIFY_PIN', 'FAAS', info.faasid  )
 	}
 	
