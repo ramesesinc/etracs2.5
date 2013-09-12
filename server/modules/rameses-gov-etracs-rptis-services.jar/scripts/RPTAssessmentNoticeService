@@ -43,6 +43,7 @@ class RPTAssessmentNoticeService
 
 	@ProxyMethod
 	public Map createNotice( notice ) {
+		println 'notice -> ' + notice.taxpayer 
 		if (!notice.items)
 			throw new Exception('At least one property must be included.');
 
@@ -50,16 +51,19 @@ class RPTAssessmentNoticeService
 		notice.state  = STATE_OPEN
 		notice.txnno  = cy + seqSvc.getNextFormattedSeries('ASSESSMENT_NOTICE-' + cy)
 		notice.txndate  = dateSvc.serverDate
+		notice.taxpayerid = notice.taxpayer.objid
+		notice.taxpayername = notice.taxpayer.name
+		notice.taxpayeraddress = notice.taxpayer.address
 		
 		notice.createdbyid =  (env.USERID ? env.USERID : 'SYSTEM')
-		notice.createdbyname =  (env.USERNAME ? env.USERNAME : 'SYSTEM')
-		notice.createdbytitle =  (env.USERJOBTITLE ? env.USERJOBTITLE : 'SYSTEM')
+		notice.createdbyname =  (env.FULLNAME ? env.FULLNAME : 'SYSTEM')
+		notice.createdbytitle =  (env.JOBTITLE ? env.JOBTITLE : 'SYSTEM')
 
 		notice.approvedbyname = var.assessor_name
 		notice.approvedbytitle = var.assessor_title
 
 		em.validate(SCHEMA_NAME, notice )
-		em.create(SCHEMA_NAME,  notice)
+		em.create(SCHEMA_NAME,  notice) 
 
 		notice.items.each{
 			it.objid = util.generateId('ANI')

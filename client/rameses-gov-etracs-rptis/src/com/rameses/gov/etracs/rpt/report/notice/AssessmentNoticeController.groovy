@@ -62,7 +62,7 @@ class AssessmentNoticeController
     def getLookupTaxpayer(){
         return InvokerUtil.lookupOpener('entity:lookup',[
                 onselect : {
-                    it.taxpayer = it;
+                    entity.taxpayer = it;
                     loadProperties();
                 },
                 onempty : {
