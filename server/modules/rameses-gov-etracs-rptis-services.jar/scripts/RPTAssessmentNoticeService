@@ -33,9 +33,9 @@ class RPTAssessmentNoticeService
     public def getList( params ) {
     	params.searchtext = (params.searchtext ? params.searchtext : '') + '%'
         def filters = [
-            'WHERE txnno LIKE $P{searchtext}',
-            'WHERE taxpayername LIKE $P{searchtext}',
-            'WHERE receivedby LIKE $P{searchtext}',
+            ' and txnno LIKE $P{searchtext}',
+            ' and taxpayername LIKE $P{searchtext}',
+            ' and receivedby LIKE $P{searchtext}',
         ]
         return util.getListFromQuery( 'assessmentnotice:getList' , filters, params, 'objid' )
     }
