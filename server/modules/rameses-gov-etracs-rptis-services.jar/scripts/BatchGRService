@@ -68,11 +68,10 @@ class BatchGRService
 			def faas = faasSvc.openFaas( params.objid )
 			def newrysetting = getRySetting( faas.rpu.rputype, params.newry ) 
 			faas.autonumber = util.toBoolean( var.gr_td_autonumber, false )
-
 			faas = grSvc.initGeneralRevision([faas:faas, newrysetting:newrysetting, autonumber:faas.autonumber])
 			faas.memoranda = params.memoranda 
 			faas = faasSvc.createFaas( faas )
-			println 'Successfully revised -> ' + faas.prevtdno 
+			println 'Successfully revised -> ' + faas.rpu.rputype + ' : ' +  faas.prevtdno 
 			retval.success += 1
 		}
 		catch ( e ) {

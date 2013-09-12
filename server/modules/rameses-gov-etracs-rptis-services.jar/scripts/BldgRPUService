@@ -116,7 +116,10 @@ class BldgRPUService
 
 	@ProxyMethod
 	public void generateNewIds( rpu ) {
-		rpu.bldgstructures.each{bs -> bs.objid = util.generateId('BS')}
+		rpu.structures.each{bs -> 
+			bs.objid = util.generateId('BS') 
+			bs.bldgrpuid = rpu.objid 
+		}
 		
 		rpu.bldguses.each{ bu ->
 			bu.objid     = util.generateId('BU')

@@ -11,6 +11,7 @@ WHERE rp.barangayid LIKE  $P{barangayid}
     INNER JOIN rpu rx ON fx.rpuid = rx.objid 
     WHERE fx.prevtdno = f.tdno AND rx.ry = $P{newry}
   )  
+  AND NOT EXISTS(SELECT * FROM batchgrerror WHERE faasid = f.objid)
 ORDER BY fullpin 
 
 

@@ -23,9 +23,13 @@ class FAASListService
 
     @ProxyMethod
     public def getList( params ) {
+        if (params.advance != null && params.advance) {
+            return getListAdvance(params)
+        }
         params.tdno = params.searchtext
         params.barangay = params.searchtext
         params.blockno = params.searchtext
+        params.ry = params.searchtext
         params.searchtext = (params.searchtext ? params.searchtext : '') + '%'
 
         def whereclause = ''
@@ -35,7 +39,6 @@ class FAASListService
 
         def filters = [
             whereclause + 'f.tdno LIKE $P{searchtext}',
-            whereclause + 'f.prevtdno LIKE $P{searchtext}',
             whereclause + 'f.owner_name LIKE $P{searchtext}',
             whereclause + 'rpu.fullpin LIKE $P{searchtext}',
             whereclause + 'rp.surveyno LIKE $P{searchtext}',
@@ -44,6 +47,52 @@ class FAASListService
             whereclause + 'b.name = $P{blockno}',
         ]
         return util.getListFromQuery( 'faas:getList' , filters, params, 'f.objid' )
+    }
+
+    def getListAdvance(params){
+        def whereclause = ''
+        if (params.state ) {
+            if (whereclause) whereclause += ' AND '
+            whereclause += ' f.state = $P{state} '
+        }
+        if (params.ry != null ) {
+            if (whereclause) whereclause += ' AND '
+            whereclause += ' rpu.ry = $P{ry} '
+        }
+        if (params.ownername) {
+            params.ownername += '%'
+            if (whereclause) whereclause += ' AND '
+            whereclause += ' f.owner_name LIKE $P{ownername} '
+        }
+        if (params.fullpin) {
+            params.fullpin += '%'
+            if (whereclause) whereclause += ' AND '
+            whereclause += ' rpu.fullpin LIKE $P{fullpin} '
+        }
+        if (params.tdno ) {
+            if (whereclause) whereclause += ' AND '
+            whereclause += ' f.tdno = $P{tdno} '
+        }
+        if (params.prevtdno ) {
+            if (whereclause) whereclause += ' AND '
+            whereclause += ' f.prevtdno = $P{prevtdno} '
+        }
+        if (params.barangay){
+            params.barangayid = params.barangay.objid
+            if (whereclause) whereclause += ' AND '
+            whereclause += ' rp.barangayid LIKE $P{barangayid} '
+        }
+        params.filters = whereclause
+        def qry = em.sqlContext.createNamedQuery('faas:getList')
+
+        qry.setPagingKeys('f.objid') 
+
+        if ( params._start)
+            qry.setFirstResult(params._start)
+        if (params._limit)
+            qry.setMaxResults(params._limit) 
+
+        return qry.setVars(params).setParameters(params).resultList 
     }
 	
 
@@ -57,6 +106,7 @@ class FAASListService
             [name:"rputype", caption:"Type", width:80],
             [name:"tdno", caption:"TD No.", width:140],
             [name:"fullpin", caption:"PIN", width:200],
+            [name:"barangay.name", caption:"Barangay", width:200],
             [name:"owner.name", caption:"Owner Name", width:250],
             [name:"owner.address", caption:"Owner Address", width:250],
             [name:"cadastrallotno", caption:"Lot No.", width:100],
