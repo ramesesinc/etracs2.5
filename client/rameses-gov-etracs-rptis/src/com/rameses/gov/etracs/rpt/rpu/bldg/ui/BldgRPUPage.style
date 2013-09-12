@@ -40,7 +40,7 @@
     enabled:false;
 }
 
-"rpu.depreciationvalue|rpu.floorcount" [true == true]{
+"rpu.depreciationvalue" [true == true]{
     enabled:false;
 }
 

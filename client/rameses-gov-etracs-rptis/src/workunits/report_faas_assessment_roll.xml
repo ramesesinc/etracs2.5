@@ -37,7 +37,7 @@ class AssessmentRollController extends com.rameses.gov.etracs.rpt.report.ReportC
             return [
                 new FormControl( "combo", [caption:'Taxability', name:'entity.taxability', items:'taxabilities', required:true, immediate:true]),
                 new FormControl( "combo", [caption:'Barangay', name:'entity.barangay', required:true, items:'barangays', expression:'#{item.name}']),
-                new FormControl( "integer", [caption:'Section', name:'entity.section', preferredSize:'50,19']),
+                new FormControl( "text", [caption:'Section', name:'entity.section', preferredSize:'50,19']),
             ]    
         },
    ] as FormPanelModel;
