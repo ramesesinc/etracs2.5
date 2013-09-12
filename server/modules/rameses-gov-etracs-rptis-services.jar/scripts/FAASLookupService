@@ -20,12 +20,12 @@ class FAASLookupService
 		params.searchtext 	= (params.searchtext ? params.searchtext : '') + '%';
 		
 		def filters = [
-			' WHERE f.tdno = $P{tdno} AND f.state LIKE $P{state} AND f.taxpayer_objid LIKE $P{taxpayerid}',
-			' WHERE f.owner_name LIKE $P{searchtext} AND f.state LIKE $P{state} AND f.taxpayer_objid LIKE $P{taxpayerid}',
-			' WHERE r.fullpin LIKE $P{searchtext} AND f.state LIKE $P{state} AND f.taxpayer_objid LIKE $P{taxpayerid}',
-			' WHERE rp.cadastrallotno LIKE $P{searchtext} AND f.state LIKE $P{state} AND f.taxpayer_objid LIKE $P{taxpayerid}',
-			' WHERE rp.blockno = $P{blockno} AND f.state LIKE $P{state} AND f.taxpayer_objid LIKE $P{taxpayerid}',
-			' WHERE rp.surveyno LIKE $P{searchtext} AND f.state LIKE $P{state} AND f.taxpayer_objid LIKE $P{taxpayerid}',
+			' and f.tdno = $P{tdno} AND f.state LIKE $P{state} AND f.taxpayer_objid LIKE $P{taxpayerid}',
+			' and f.owner_name LIKE $P{searchtext} AND f.state LIKE $P{state} AND f.taxpayer_objid LIKE $P{taxpayerid}',
+			' and r.fullpin LIKE $P{searchtext} AND f.state LIKE $P{state} AND f.taxpayer_objid LIKE $P{taxpayerid}',
+			' and rp.cadastrallotno LIKE $P{searchtext} AND f.state LIKE $P{state} AND f.taxpayer_objid LIKE $P{taxpayerid}',
+			' and rp.blockno = $P{blockno} AND f.state LIKE $P{state} AND f.taxpayer_objid LIKE $P{taxpayerid}',
+			' and rp.surveyno LIKE $P{searchtext} AND f.state LIKE $P{state} AND f.taxpayer_objid LIKE $P{taxpayerid}',
 		]
 
 		return utilSvc.getListFromQuery('faas:lookupFaas', filters, params, 'f.objid');
