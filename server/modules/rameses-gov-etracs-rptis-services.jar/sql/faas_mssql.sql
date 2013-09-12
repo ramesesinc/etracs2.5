@@ -114,3 +114,15 @@ FROM faas fl
 WHERE fl.objid = $P{landfaasid}
   AND ri.rputype <> 'land' 
   AND fi.state = 'CURRENT'
+
+[getLguIndex]  
+SELECT
+	b.indexno as barangayindex,
+	case when c.objid is not null then c.indexno else p.indexno end as provcityindex,
+	case when d.objid is not null then d.indexno else m.indexno end as munidistrictindex
+FROM barangay b
+	left join district d on b.parentid = d.objid
+	left join city c on d.parentid = c.objid 
+	left join municipality m on b.parentid = m.objid 
+	left join province p on m.parentid = p.objid 
+where b.objid = $P{barangayid}	

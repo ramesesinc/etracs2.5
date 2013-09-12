@@ -416,7 +416,8 @@ class FAASService
 		newfaas.memoranda		= null
 
 		if (newfaas.autonumber){
-
+			newfaas.tdno = generateNextTdNo(newfaas)
+			newfaas.utdno = newfaas.tdno 
 		}
 
 		if (newfaas.txntype.newrpu){
@@ -438,16 +439,13 @@ class FAASService
         // M - municipality index 
         // D - district index 
         // B - barangay index 
-		def seqcount		= utilSvc.toInteger( var.td_autonumber_sequence_count, 5 )
-        def ry              = faas.rpu.ry +''
-        def provindex       = faas.rp.provcityindex 
-        def cityindex       = faas.rp.provcityindex 
-        def muniindex       = faas.rp.munidistrictindex
-        def districtindex   = faas.rp.munidistrictindex
-        def barangayindex   = faas.rp.barangayindex
+        def lguindex      = em.sqlContext.createNamedQuery('faas:getLguIndex').setParameter('barangayid', faas.rpu.rp.barangayid).singleResult
+		def seqcount		= utilSvc.toInteger2( var.td_autonumber_sequence_count, 5 )
+        def ry              = (faas.rpu.ry +'')[-2..-1]
         
-        def values = [Y:ry, P:provindex, C:cityindex, M:muniindex, D:districtindex, B:barangayindex]
+        def values = [Y:ry, P:lguindex.provcityindex, C:lguindex.provcityindex, M:lguindex.munidistrictindex, D:lguindex.munidistrictindex, B:lguindex.barangayindex]
         def tdno   = var.td_format 
+        if (!tdno) tdno = 'Y-M-B'
         values.keySet().each {
             tdno = tdno.replace( it, values[it] )
         }
