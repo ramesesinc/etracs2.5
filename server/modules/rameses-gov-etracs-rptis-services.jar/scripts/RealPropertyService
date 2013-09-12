@@ -39,8 +39,7 @@ class RealPropertyService
 
 	@ProxyMethod
 	public def initRealProperty( info, rputype ) {
-		if (!info.barangay) 
-		throw new Exception('Barangay is required.')
+		if (!info.barangay)  throw new Exception('Barangay is required.')
 
 		def rp 			= [ry:info.ry, claimno:info.claimno]
 		rp.barangay 	= info.barangay 
@@ -196,14 +195,17 @@ class RealPropertyService
 		
 		def maxsectionlen = null
 		def maxparcellen = null
+		def pin = null
 		
 		if (info.pintype.toLowerCase() == 'new'){
 			maxsectionlen = SECTION_NEW_MAX
 			maxparcellen  = PARCEL_NEW_MAX
+			pin = info.barangay.pin
 		}
 		else {
 			maxsectionlen = SECTION_OLD_MAX
 			maxparcellen  = PARCEL_OLD_MAX
+			pin = info.barangay.oldpin
 		}
 		
 		validateLength('Section', info.section.toString().length(), maxsectionlen)
@@ -211,7 +213,7 @@ class RealPropertyService
 
 		def section = info.section.toString().padLeft(maxsectionlen,'0')
 		def parcel  = info.parcel.toString().padLeft(maxparcellen,'0')
-		def pin = info.barangay.pin + '-' + section + '-' + parcel 
+		pin = pin + '-' + section + '-' + parcel 
 
 		if (info.claimno) {
 			pin += '-' + info.claimno
