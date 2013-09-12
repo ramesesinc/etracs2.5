@@ -20,9 +20,15 @@
             
             @PropertyChangeListener
             def listener = [
-                'query.state' : { 
+                'query.searchtext':{
                     query.advance = false;
-                    search(); 
+                    def text = query.searchtext
+                    query = [:]
+                    query.searchtext = text 
+                    search();
+                },
+                'query.state' :{
+                    search();
                 }
             ]
             
@@ -39,20 +45,23 @@
                 return 'faas_' + txntype
             }
             
-            int getRows() { return 50 }
+            int getRows() { return 25 }
                         
             List getStates(){
                 if (!states) states = svc.getStates();
                 return states
             }
             
+            def onsearch = {
+                query.putAll(it)
+                search();
+            }
             
             def showAdvanceSearch(){
                 return InvokerUtil.lookupOpener('faas:search', [
                     query    : query,
-                    onsearch : {search(); },
+                    onsearch : onsearch,
                     states    : states,
-                
                 ])
             }
         }

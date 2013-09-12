@@ -587,6 +587,7 @@ public class FAASPage extends javax.swing.JPanel {
         xTextArea1.setName("faas.memoranda");
         xTextArea1.setPreferredSize(new java.awt.Dimension(100, 65));
         xTextArea1.setShowCaption(false);
+        xTextArea1.setTextCase(com.rameses.rcp.constant.TextCase.UPPER);
         jScrollPane1.setViewportView(xTextArea1);
 
         formPanel3.add(jScrollPane1);

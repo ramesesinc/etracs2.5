@@ -25,24 +25,17 @@
               <EmptySpace max="-2" attributes="0"/>
               <Component id="xActionTextField1" min="-2" pref="248" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="jLabel2" min="-2" pref="50" max="-2" attributes="0"/>
-              <EmptySpace max="-2" attributes="0"/>
-              <Component id="xComboBox1" min="-2" pref="203" max="-2" attributes="0"/>
-              <EmptySpace pref="259" max="32767" attributes="0"/>
+              <Component id="xComboBox1" min="-2" max="-2" attributes="0"/>
+              <EmptySpace pref="314" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
     <DimensionLayout dim="1">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Group type="103" groupAlignment="1" attributes="0">
-              <Group type="103" alignment="1" groupAlignment="0" attributes="0">
-                  <Component id="xComboBox1" alignment="0" min="-2" max="-2" attributes="0"/>
-                  <Component id="jLabel2" alignment="0" min="-2" pref="23" max="-2" attributes="1"/>
-              </Group>
-              <Group type="103" alignment="1" groupAlignment="3" attributes="0">
-                  <Component id="xActionTextField1" alignment="3" min="-2" max="-2" attributes="1"/>
-                  <Component id="xButton1" alignment="3" min="-2" max="-2" attributes="0"/>
-              </Group>
+          <Group type="103" alignment="0" groupAlignment="3" attributes="0">
+              <Component id="xActionTextField1" alignment="3" min="-2" max="-2" attributes="1"/>
+              <Component id="xButton1" alignment="3" min="-2" max="-2" attributes="0"/>
+              <Component id="xComboBox1" alignment="3" min="-2" max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -58,28 +51,23 @@
         </Property>
       </Properties>
     </Component>
-    <Component class="com.rameses.rcp.control.XComboBox" name="xComboBox1">
-      <Properties>
-        <Property name="items" type="java.lang.String" value="states"/>
-        <Property name="name" type="java.lang.String" value="query.state"/>
-        <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-          <Dimension value="[82, 22]"/>
-        </Property>
-      </Properties>
-    </Component>
-    <Component class="javax.swing.JLabel" name="jLabel2">
-      <Properties>
-        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-          <Font name="Tahoma" size="11" style="1"/>
-        </Property>
-        <Property name="text" type="java.lang.String" value="State :"/>
-      </Properties>
-    </Component>
     <Component class="com.rameses.rcp.control.XButton" name="xButton1">
       <Properties>
         <Property name="mnemonic" type="int" value="104"/>
         <Property name="name" type="java.lang.String" value="showAdvanceSearch"/>
         <Property name="text" type="java.lang.String" value="Search"/>
+      </Properties>
+    </Component>
+    <Component class="com.rameses.rcp.control.XComboBox" name="xComboBox1">
+      <Properties>
+        <Property name="allowNull" type="boolean" value="false"/>
+        <Property name="emptyText" type="java.lang.String" value="ALL STATES"/>
+        <Property name="immediate" type="boolean" value="true"/>
+        <Property name="items" type="java.lang.String" value="states"/>
+        <Property name="name" type="java.lang.String" value="query.state"/>
+        <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+          <Dimension value="[200, 22]"/>
+        </Property>
       </Properties>
     </Component>
   </SubComponents>

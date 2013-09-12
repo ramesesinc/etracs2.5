@@ -51,6 +51,7 @@ class StructureService extends ActiveCrudListService
 
 	@ProxyMethod
 	public def getMaterials( params ) {
+		beforeList(params)
 		return em.getMaterials(params)
 	}
 
