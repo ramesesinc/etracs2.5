@@ -68,10 +68,10 @@ class ConsolidationService
     public def getList( params ) {
     	params.searchtext = (params.searchtext ? params.searchtext : '') + '%'
         def filters = [
-            'WHERE c.newtdno LIKE $P{searchtext}',
-            'WHERE c.owner_name LIKE $P{searchtext}',
-            'WHERE c.txnno LIKE $P{searchtext}',
-            'WHERE r.fullpin LIKE $P{searchtext}',
+            ' and c.newtdno LIKE $P{searchtext}',
+            ' and c.owner_name LIKE $P{searchtext}',
+            ' and c.txnno LIKE $P{searchtext}',
+            ' and r.fullpin LIKE $P{searchtext}',
         ]
         return util.getListFromQuery( 'consolidation:getList' , filters, params, 'c.objid' )
     }

@@ -4,7 +4,7 @@ SELECT
 	b.name AS barangay 
 FROM resection r 
 	INNER JOIN barangay b ON r.barangayid = b.objid 
-${filters}	
+where 1=1 ${filters}	
 ORDER BY r.txnno DESC 
 
 

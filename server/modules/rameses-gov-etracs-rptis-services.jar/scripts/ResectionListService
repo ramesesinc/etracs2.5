@@ -14,10 +14,10 @@ class ResectionListService
     public def getList( params ) {
     	params.searchtext = (params.searchtext ? params.searchtext : '') + '%'
         def filters = [
-            'WHERE r.txnno LIKE $P{searchtext}',
-            'WHERE r.sectionno LIKE $P{searchtext}',
-            'WHERE b.name LIKE $P{searchtext}',
-            'WHERE r.appraiser_name LIKE $P{searchtext}',
+            ' and r.txnno LIKE $P{searchtext}',
+            ' and r.sectionno LIKE $P{searchtext}',
+            ' and b.name LIKE $P{searchtext}',
+            ' and r.appraiser_name LIKE $P{searchtext}',
         ]
         return util.getListFromQuery( 'resection:getList' , filters, params, 'r.objid' )
     }
