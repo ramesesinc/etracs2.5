@@ -55,6 +55,9 @@ public class LandRPUController extends com.rameses.gov.etracs.rpt.rpu.ui.Abstrac
     def getLookupSubclass(){
         return InvokerUtil.lookupOpener('lcuvsubclass:lookup', [lguid:lguid, ry:rpu.ry, onselect:{
             selectedLand.subclass = it;
+            selectedLand.unitvalue = it.unitvalue;
+            selectedLand.basevalue = it.basevalue;
+            selectedLand.actualuse = null;
             selectedLand.specificclass = it.specificclass;
         }] )
     }

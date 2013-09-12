@@ -16,9 +16,14 @@
             @Service('FAASListService')
             def svc 
             
+            def states 
+            
             @PropertyChangeListener
             def listener = [
-                'query.state' : { search(); }
+                'query.state' : { 
+                    query.advance = false;
+                    search(); 
+                }
             ]
             
             String formTarget = 'window'
@@ -37,7 +42,18 @@
             int getRows() { return 50 }
                         
             List getStates(){
-                return svc.getStates();
+                if (!states) states = svc.getStates();
+                return states
+            }
+            
+            
+            def showAdvanceSearch(){
+                return InvokerUtil.lookupOpener('faas:search', [
+                    query    : query,
+                    onsearch : {search(); },
+                    states    : states,
+                
+                ])
             }
         }
     </code>

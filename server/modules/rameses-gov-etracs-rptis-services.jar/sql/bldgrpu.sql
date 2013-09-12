@@ -6,7 +6,7 @@ SELECT
   m.code AS material_code,
   m.name AS material_name 
 FROM bldgstructure bs 
-  INNER JOIN structure s ON bs.structure_objid = s.objid 
+  LEFT JOIN structure s ON bs.structure_objid = s.objid 
   LEFT JOIN material m ON bs.material_objid = m.objid 
 WHERE bs.bldgrpuid = $P{objid}  
 

@@ -41,7 +41,8 @@ public class BatchGRController
             
     void revise() {
         if( !MsgBox.confirm("Revise all faas? ")) return;
-        
+        counter = [success:0, error:0];
+        msg = 'Loading properties to revise.'
         def landfaasids = svc.getFaasIdForRevision(params.newry.ry, params.barangay?.objid)
         batchTask = new BatchGRTask(svc:svc, params:params, items:landfaasids, cancelled:cancelled, oncomplete:oncomplete, onrevise:onrevise);
         Thread t = new Thread(batchTask);
