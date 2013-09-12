@@ -27,7 +27,7 @@ class RPTAssessmentNoticeService
 	
 	def STATE_OPEN 		= 'OPEN' 
 	def STATE_RECEIVED 	= 'RECEIVED' 
-	
+
 	
 	@ProxyMethod
     public def getList( params ) {
@@ -49,7 +49,7 @@ class RPTAssessmentNoticeService
 
 		def cy = dateSvc.serverYear 
 		notice.state  = STATE_OPEN
-		notice.txnno  = cy + seqSvc.getNextFormattedSeries('ASSESSMENT_NOTICE-' + cy)
+		notice.txnno  = var.lgu_objid + seqSvc.getNextFormattedSeries('ASSESSMENT_NOTICE-' + cy)
 		notice.txndate  = dateSvc.serverDate
 		notice.taxpayerid = notice.taxpayer.objid
 		notice.taxpayername = notice.taxpayer.name
@@ -81,6 +81,8 @@ class RPTAssessmentNoticeService
 		notice.items = em.sqlContext.createNamedQuery('assessmentnotice:getItems')
 							.setParameter('assessmentnoticeid', notice.objid)
 							.resultList 
+		notice.dtassessed = dateSvc.getServerYear() 
+		if( notice.items && notice.items[0].dtsigned )	notice.dtassessed = new java.text.SimpleDateFormat( notice.items[0].dtsigned)
 		return notice
 	}
 
