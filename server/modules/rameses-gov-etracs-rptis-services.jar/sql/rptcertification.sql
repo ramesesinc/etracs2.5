@@ -1,7 +1,7 @@
 [getList]
 SELECT * 
 FROM rptcertification
-${filters}
+where 1=1 ${filters}
 ORDER BY txnno DESC
 
 

@@ -101,7 +101,7 @@ FROM faas f
 	INNER JOIN realproperty rp ON r.realpropertyid = rp.objid 
 	INNER JOIN propertyclassification pc ON r.classification_objid = pc.objid 
 	INNER JOIN barangay b ON rp.barangayid = b.objid 
-${filters}	
+where 1=1 ${filters}	
 ORDER BY f.tdno 
 
 

@@ -40,9 +40,9 @@ class TDReportService
 
 		td.location = td.lguname
 		if (td.parentlguname) {
-			td.location += ', ' + td.parentlguname
+			td.location +=  (td.location ? ', ' : '') + td.parentlguname
 		}
-
+		
 		td.avinwords = numberSvc.convertDouble( td.totalav ).toUpperCase() + ' AND 00/100'
 
 		if (util.isFalse(var.td_report_display_appraisedby)) {
