@@ -698,7 +698,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 </box>
 					<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
-						<font fontName="Lucida Console" pdfFontName="Helvetica" size="9" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
+						<font fontName="Lucida Console" pdfFontName="Helvetica" size="10" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 					</textElement>
 				<text><![CDATA[T]]></text>
 				</staticText>
@@ -1538,19 +1538,6 @@
 					<pen lineWidth="0.5"/>
 </graphicElement>
 				</line>
-				<staticText>
-					<reportElement
-						x="0"
-						y="-1"
-						width="8"
-						height="13"
-						key="staticText-151"/>
-					<box></box>
-					<textElement>
-						<font/>
-					</textElement>
-				<text><![CDATA[.]]></text>
-				</staticText>
 			</band>
 			</groupHeader>
 			<groupFooter>
@@ -3182,6 +3169,19 @@ TRUE COPY]]></text>
 						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="8" isBold="true" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 					</textElement>
 				<text><![CDATA[N]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="168"
+						y="39"
+						width="8"
+						height="13"
+						key="staticText-151"/>
+					<box></box>
+					<textElement>
+						<font pdfFontName="Helvetica" isBold="false"/>
+					</textElement>
+				<text><![CDATA[.]]></text>
 				</staticText>
 			</band>
 		</title>
