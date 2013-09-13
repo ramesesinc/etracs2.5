@@ -31,7 +31,7 @@ SELECT
 	pc.code AS classcode
 FROM assessmentnoticeitem ni 
 	INNER JOIN faas f ON ni.faasid = f.objid 
-	INNER JOIN txnsignatory ts on ts.refid = f.objid and ts.type='APPROVER'
+	LEFT JOIN txnsignatory ts on ts.refid = f.objid and ts.type='APPROVER'
 	INNER JOIN rpu rpu ON f.rpuid = rpu.objid
 	INNER JOIN propertyclassification pc ON rpu.classification_objid = pc.objid
 	LEFT JOIN realproperty rp ON rpu.realpropertyid = rp.objid

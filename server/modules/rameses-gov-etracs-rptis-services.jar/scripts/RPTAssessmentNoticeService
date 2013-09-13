@@ -43,7 +43,6 @@ class RPTAssessmentNoticeService
 
 	@ProxyMethod
 	public Map createNotice( notice ) {
-		println 'notice -> ' + notice.taxpayer 
 		if (!notice.items)
 			throw new Exception('At least one property must be included.');
 
@@ -81,7 +80,7 @@ class RPTAssessmentNoticeService
 		notice.items = em.sqlContext.createNamedQuery('assessmentnotice:getItems')
 							.setParameter('assessmentnoticeid', notice.objid)
 							.resultList 
-		notice.dtassessed = dateSvc.getServerYear() 
+		notice.dtassessed = dateSvc.getServerYear()+""
 		if( notice.items && notice.items[0].dtsigned )	notice.dtassessed = new java.text.SimpleDateFormat("yyyy").format(notice.items[0].dtsigned)
 		return notice
 	}
