@@ -65,7 +65,8 @@ class ReportParameterService{
 		def params = [
 			SANGGUNIAN_NAME 			: var.sanggunian_name, 
             LOGOLGU     				: var.url_logo_lgu,                    
-            LOGOBLGF    				: var.url_logo_blgf,                    
+            LOGOBLGF    				: var.url_logo_blgf,   
+            LOGOASSESSOR				: var.url_logo_assessor,                 
             LGUNAME     				: org.lgu_name, 
 			LGUFORMALNAME 				: org.lgu_fullname, 
 			LGUTYPE		  				: org.orgclass?.toLowerCase(), 
@@ -90,7 +91,6 @@ class ReportParameterService{
 			ASSESSORNAME 				: org.assessor?.name,
 			ASSESSORTITLE 				: org.assessor?.title,
 			ASSESSOROFFICENAME			: org.assessor?.office,
-			
 
 			MAYOROFFICENAME 			: org.mayor?.office,
 			MAYORNAME   				: org.mayor?.name,
