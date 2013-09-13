@@ -1,6 +1,6 @@
 [insert]
-INSERT INTO workflowstate (objid, state, txndate)
-VALUES ($P{objid}, $P{state}, $P{txndate})
+INSERT INTO workflowstate (objid, state, txndate, userid, username)
+VALUES ($P{objid}, $P{state}, $P{txndate}, $P{userid}, $P{username})
 
 [delete]
 DELETE FROM workflowstate WHERE objid = $P{objid} AND state = $P{state}
