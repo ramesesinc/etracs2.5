@@ -47,6 +47,7 @@ public class AssessmentNoticeCreatePage extends javax.swing.JPanel {
         xLookupField1.setCaptionWidth(125);
         xLookupField1.setExpression("#{entity.taxpayer.name}");
         xLookupField1.setHandler("lookupTaxpayer");
+        xLookupField1.setIndex(-10);
         xLookupField1.setPreferredSize(new java.awt.Dimension(300, 20));
         xLookupField1.setRequired(true);
         formPanel1.add(xLookupField1);

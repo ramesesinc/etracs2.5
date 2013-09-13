@@ -1,267 +1,224 @@
-[getRPTSetting]  
-SELECT * FROM rptsetting 
-
-[getBarangayList]
-SELECT objid, lguname AS barangay FROM lgu 
-WHERE lgutype = 'BARANGAY'
-ORDER BY lguname 
-
-[getClassificationList] 
-SELECT objid, objid AS classid, propertydesc AS classname, special   
-FROM propertyclassification  ORDER BY orderno  
-
-[getExemptionList]
-SELECT objid, objid AS exemptid, exemptdesc AS classname, 0 AS special 
-FROM exemptiontype ORDER BY orderno  
- 
-[getDelinquentLedger] 
-SELECT  
-	objid, tdno,  
-	CASE WHEN lastyearpaid + 1 = $P{currentyr} THEN 'I. CURRENT DELINQUENCY' ELSE 'II. DELINQUENT' END AS delinquenttype, 
-	$P{currentyr} - lastyearpaid AS yearsdelinquent,
-	taxpayerid, taxpayername, taxpayeraddress
-FROM rptledger  
-WHERE barangay = $P{barangay} 
-  AND docstate = 'APPROVED' AND taxable = 1  
-  AND ( lastyearpaid < $P{currentyr} OR (lastyearpaid = $P{currentyr} AND lastqtrpaid < 4 ) )  
-  AND undercompromised = 0 
-ORDER BY lastyearpaid desc, taxpayername, tdno     
- 
-
-[getNoticeItemsByTaxpayerId]
+[getApproveFaasListing]
 SELECT 
-	objid, tdno, fullpin, barangay, classcode, 
-	totalareasqm, totalareaha, totalmv, totalav, 
-	cadastrallotno, txntype, rputype, effectivityyear, 
-	administratorname, administratoraddress 
-FROM faaslist 
-WHERE taxpayerid = $P{taxpayerid}
-  AND docstate = 'CURRENT' 
-ORDER BY fullpin   
-  
-[getNoticeItemsByFaasid]
-SELECT 
-	objid, tdno, fullpin, barangay, classcode, 
-	totalareasqm, totalareaha, totalmv, totalav, 
-	cadastrallotno, txntype, rputype, effectivityyear,  
-	administratorname, administratoraddress, taxpayerid, 
-	taxpayerno, taxpayername, taxpayeraddress 
-FROM faaslist 
-WHERE objid = $P{objid} 
-  AND docstate = 'CURRENT'  
-ORDER BY fullpin   
+	f.state,
+	f.tdno,
+	f.owner_name,
+	f.titleno,
+	f.prevtdno,
+	f.prevowner,
+	f.effectivityyear,
+	cancelledbytdnos,
+	canceldate,
+	cancelreason,
+	r.rputype,
+	r.fullpin,
+	r.totalareasqm,
+	r.totalareaha,
+	r.totalmv,
+	r.totalav,
+	rp.cadastrallotno,
+	rp.surveyno,
+	pc.code AS classcode
+FROM faas f 
+	INNER JOIN rpu r ON f.rpuid = r.objid
+	INNER JOIN realproperty rp ON r.realpropertyid = rp.objid 
+	INNER JOIN propertyclassification pc ON r.classification_objid = pc.objid 
+	INNER JOIN txnsignatory s ON f.objid = s.refid AND s.type = 'approver'
+WHERE f.state IN ('CURRENT', 'CANCELLED')
+	AND rp.barangayid LIKE $P{barangayid}
+	AND YEAR(s.dtsigned) = $P{year}  
+	AND DATEPART(q, s.dtsigned) = $P{quarter}      
+	AND MONTH(s.dtsigned) LIKE $P{month} 
+
+ORDER BY r.fullpin 	
 
 
-[getNoticeItems]
-SELECT 
-	f.objid, f.tdno, f.fullpin, f.barangay, f.classcode, 
-	f.totalmv, f.totalav, f.effectivityyear, 
-	f.administrator_name, f.administrator_address 
-FROM noticeofassessmentitem n 
-INNER JOIN faaslist f on f.objid=n.faasid 
-WHERE n.noticeid = $P{noticeid} 
-  AND f.docstate = 'CURRENT'  
-ORDER BY f.fullpin   
+[getMasterListing]
+SELECT t.* FROM (  
+	SELECT 
+		f.state, f.owner_name, r.fullpin, f.tdno, f.titleno, rp.cadastrallotno,  
+		r.rputype, pc.code AS classcode, r.totalareaha, r.totalareasqm, r.totalmv, r.totalav, f.effectivityyear, 
+		f.prevtdno, f.prevowner, f.prevmv, f.prevav, 
+		NULL AS cancelledbytdnos, NULL AS cancelreason, canceldate 
+	FROM faas f
+		INNER JOIN rpu r ON f.rpuid = r.objid 
+		INNER JOIN realproperty rp ON r.realpropertyid = rp.objid 
+		INNER JOIN propertyclassification pc ON r.classification_objid = pc.objid 
+	WHERE f.state = 'CURRENT'  
+	  ${classidfilter}
 
+	UNION 
 
-[getNoticeList]
-SELECT 
-	objid, docstate, docno, issuedate, 
-	taxpayername, taxpayeraddress, 
-	preparedby, approvedby, 
-	receivedby, dtdelivered, remarks 
-FROM noticeofassessment 
-WHERE docstate LIKE $P{docstate} 
-ORDER BY docno DESC 
+	SELECT 
+		f.state, f.owner_name, r.fullpin, f.tdno, f.titleno, rp.cadastrallotno,  
+		r.rputype, pc.code AS classcode, r.totalareaha, r.totalareasqm, r.totalmv, r.totalav, f.effectivityyear, 
+		f.prevtdno, f.prevowner, f.prevmv, f.prevav, 
+		cancelledbytdnos, cancelreason, canceldate 
+	FROM faas f
+		INNER JOIN rpu r ON f.rpuid = r.objid 
+		INNER JOIN realproperty rp ON r.realpropertyid = rp.objid 
+		INNER JOIN propertyclassification pc ON r.classification_objid = pc.objid 
+	WHERE f.state = 'CANCELLED'  
+	  AND YEAR(f.canceldate) = $P{currentyear}  
+	  ${classidfilter}
+) t 
+${orderby} 
 
-
-[getNoticeListByNo]
-SELECT 
-	objid, docstate, docno, issuedate, 
-	taxpayername, taxpayeraddress, 
-	preparedby, approvedby, 
-	receivedby, dtdelivered, remarks 
-FROM noticeofassessment 
-WHERE docstate LIKE $P{docstate} AND docno LIKE $P{noticeno}
-ORDER BY docno DESC 
-
-
-[getNoticeListByTaxpayer]
-SELECT 
-	objid, docstate, docno, issuedate, 
-	taxpayername, taxpayeraddress, 
-	preparedby, approvedby, 
-	receivedby, dtdelivered, remarks 
-FROM noticeofassessment 
-WHERE docstate LIKE $P{docstate} AND taxpayername LIKE $P{taxpayername}
-ORDER BY docno DESC 
-
-
-[updateNotice]
-UPDATE noticeofassessment 
-SET docstate = $P{docstate}, dtdelivered = $P{dtdelivered}, 
-	receivedby = $P{receivedby}, remarks = $P{remarks} 
-WHERE objid = $P{objid} 
 
 
 [getAssessmentRollTaxable]
 SELECT
-	ry, section,  
-	provcity AS parentlguname, provcityindex AS parentlguindex,   
-	munidistrict AS lguname, munidistrictindex AS lguindex,  
-	barangay, barangayindex, 
-	ownername, owneraddress, tdno, effectivityyear, 
-	cadastrallotno, classcode, rputype, totalav, 
-	fullpin, 
-	prevtdno, memoranda, barangayid 
-FROM faaslist   
-WHERE barangayid = $P{barangayid} 
-  AND docstate = 'CURRENT'  
-  AND section LIKE $P{section} 
-  AND taxable = 1 
+	r.ry, rp.section,  
+	CASE WHEN p.objid IS NOT NULL THEN p.name ELSE c.name END AS parentlguname, 
+	CASE WHEN p.objid IS NOT NULL THEN p.indexno ELSE c.indexno END AS parentlguindex,   
+	CASE WHEN m.objid IS NOT NULL THEN m.name ELSE d.name END AS lguname, 
+	CASE WHEN m.objid IS NOT NULL THEN m.indexno ELSE d.indexno END AS lguindex,  
+	
+	b.name AS barangay, b.indexno AS barangayindex, 
+	f.owner_name, f.owner_address, f.tdno, f.effectivityyear, 
+	rp.cadastrallotno, pc.code AS classcode, r.rputype, r.totalav, 
+	r.fullpin, f.prevtdno, f.memoranda, rp.barangayid 
+FROM faas f
+	INNER JOIN rpu r ON f.rpuid = r.objid 
+	INNER JOIN realproperty rp ON r.realpropertyid = rp.objid
+	INNER JOIN propertyclassification pc ON r.classification_objid = pc.objid 
+	INNER JOIN barangay b ON rp.barangayid = b.objid 
+	LEFT JOIN municipality m ON b.parentid = m.objid  
+	LEFT JOIN district d ON b.parentid = d.objid 
+	LEFT JOIN province p ON m.parentid = p.objid 
+	LEFT JOIN city c ON d.parentid = c.objid 
+WHERE rp.barangayid = $P{barangayid} 
+  AND rp.section LIKE $P{section} 
+  AND f.state = 'CURRENT'  
+  AND r.taxable = 1 
 ORDER BY fullpin   
-  
+
+
 [getAssessmentRollExempt]
 SELECT
-	ry, section,  
-	provcity AS parentlguname, provcityindex AS parentlguindex,   
-	munidistrict AS lguname, munidistrictindex AS lguindex,  
-	barangay, barangayindex, 
-	ownername, owneraddress, tdno, effectivityyear, 
-	cadastrallotno, classcode, rputype, totalav, 
-	fullpin,  
-	memoranda, barangayid, exemptcode AS legalbasis  
-FROM faaslist   
-WHERE barangayid = $P{barangayid} 
-  AND docstate = 'CURRENT'   
-  AND section LIKE $P{section}  
-  AND taxable = 0  
-ORDER BY fullpin     
-
-
-[getTmcrList]
-SELECT
-	barangay, cadastrallotno, classcode, docstate,  
-	fullpin, 
-	memoranda, ownername, owneraddress, rputype, section, surveyno, 
-	tdno, titleno, totalareasqm, totalareasqm, totalav, totalmv 
-FROM faaslist   
-WHERE barangayid = $P{barangayid} 
-  AND docstate IN ('CURRENT', 'CANCELLED')
-  AND section LIKE $P{section} 
+	r.ry, rp.section,  
+	CASE WHEN p.objid IS NOT NULL THEN p.name ELSE c.name END AS parentlguname, 
+	CASE WHEN p.objid IS NOT NULL THEN p.indexno ELSE c.indexno END AS parentlguindex,   
+	CASE WHEN m.objid IS NOT NULL THEN m.name ELSE d.name END AS lguname, 
+	CASE WHEN m.objid IS NOT NULL THEN m.indexno ELSE d.indexno END AS lguindex,  
+	
+	b.name AS barangay, b.indexno AS barangayindex, 
+	f.owner_name, f.owner_address, f.tdno, f.effectivityyear, 
+	rp.cadastrallotno, pc.code AS classcode, r.rputype, r.totalav, 
+	r.fullpin, f.memoranda, rp.barangayid,
+	f.memoranda, et.code AS legalbasis  
+FROM faas f
+	INNER JOIN rpu r ON f.rpuid = r.objid 
+	INNER JOIN realproperty rp ON r.realpropertyid = rp.objid
+	INNER JOIN propertyclassification pc ON r.classification_objid = pc.objid 
+	INNER JOIN barangay b ON rp.barangayid = b.objid 
+	LEFT JOIN exemptiontype et ON r.exemptiontype_objid = et.objid 
+	LEFT JOIN municipality m ON b.parentid = m.objid  
+	LEFT JOIN district d ON b.parentid = d.objid 
+	LEFT JOIN province p ON m.parentid = p.objid 
+	LEFT JOIN city c ON d.parentid = c.objid 
+WHERE rp.barangayid = $P{barangayid} 
+  AND rp.section LIKE $P{section} 
+  AND f.state = 'CURRENT'  
+  AND r.taxable = 0 
 ORDER BY fullpin   
 
-  
-[getORF]  
+ 
+[getTmcrList]
 SELECT
-	barangay, cadastrallotno, classcode, 
-	fullpin, 
-	prevtdno, taxpayeraddress, taxpayername, tdno, 
-	totalareasqm, totalareaha, totalav, txntype 
-FROM faaslist   
-WHERE taxpayerid = $P{taxpayerid} 
-  AND docstate = 'CURRENT'  
+	b.name AS barangay, pc.code AS classcode, 
+	f.state,  f.memoranda, f.owner_name, f.owner_address, r.rputype, f.tdno, f.titleno, 
+	rp.cadastrallotno, rp.section, rp.surveyno, 
+	r.fullpin, r.totalareasqm, r.totalareasqm, r.totalav, r.totalmv 
+FROM faas f
+	INNER JOIN rpu r ON f.rpuid = r.objid 
+	INNER JOIN realproperty rp ON r.realpropertyid = rp.objid
+	INNER JOIN propertyclassification pc ON r.classification_objid = pc.objid 
+	INNER JOIN barangay b ON rp.barangayid = b.objid 
+WHERE rp.barangayid = $P{barangayid} 
+  AND f.state IN ('CURRENT', 'CANCELLED')
+  AND rp.section LIKE $P{section} 
 ORDER BY fullpin   
 
 
 [getJAT]
 SELECT 
-	barangay, issuedate, tdno, fullpin, 
-	txntype, ownername, rputype, classcode, 
-	totalareaha, totalmv, totalav, docstate 
-FROM faaslist  
-WHERE barangayid = $P{barangayid} 
- AND docstate IN ( 'CURRENT', 'CANCELLED' ) 
-ORDER BY issuedate, tdno
+	b.name AS barangay, s.dtsigned AS issuedate, f.tdno, r.fullpin, 
+	f.txntype_objid AS txntype, f.owner_name, r.rputype, pc.code AS classcode, 
+	r.totalareaha, r.totalmv, r.totalav, f.state 
+FROM faas f
+	INNER JOIN rpu r ON f.rpuid = r.objid 
+	INNER JOIN realproperty rp ON r.realpropertyid = rp.objid
+	INNER JOIN propertyclassification pc ON r.classification_objid = pc.objid 
+	INNER JOIN barangay b ON rp.barangayid = b.objid 
+	INNER JOIN txnsignatory s ON f.objid = s.refid AND s.type = 'approver'
+WHERE rp.barangayid = $P{barangayid} 
+  AND f.state IN ('CURRENT', 'CANCELLED')
+ORDER BY s.dtsigned, tdno 
+
 
 [getAnnotationListing]
-SELECT  
-	fl.tdno, fl.titleno, fl.titledate, fl.titletype, fl.ownername, fl.owneraddress, 
-	fl.fullpin, fl.cadastrallotno, fl.rputype, fl.barangay, fl.classcode, fl.totalmv, fl.totalav, 
-	fl.totalareaha,	fl.totalareasqm, UPPER(fa.doctype) as annotationtype, fa.memoranda 
-FROM faaslist fl 
-	INNER JOIN faasannotation fa ON fl.objid = fa.faasid  
-WHERE fl.annotated = 1  
-  AND fl.docstate = 'CURRENT'  
-  AND fa.docstate = 'APPROVED'  
+SELECT 
+	f.tdno, f.titleno, f.titledate, f.titletype, f.owner_name, f.owner_address, 
+	r.fullpin, rp.cadastrallotno, r.rputype, b.name AS barangay, pc.code AS classcode, r.totalmv, r.totalav, 
+	r.totalareaha,	r.totalareasqm, fat.type AS annotationtype, fa.memoranda 
+FROM faasannotation fa 
+	INNER JOIN faasannotationtype fat ON fa.annotationtype_objid = fat.objid 
+	INNER JOIN faas f ON fa.faasid = f.objid 
+	INNER JOIN rpu r ON f.rpuid = r.objid 
+	INNER JOIN realproperty rp ON r.realpropertyid = rp.objid
+	INNER JOIN propertyclassification pc ON r.classification_objid = pc.objid 
+	INNER JOIN barangay b ON rp.barangayid = b.objid 
+WHERE fa.state = 'APPROVED'  
+  AND f.state = 'CURRENT'  
 ${orderby} 
 
-#----------------------------------------------------------------------
-#
-# Report on Real Property Assessments  
-#
-#----------------------------------------------------------------------
-[getReportOnRPATaxable]
+
+
+[getRDAP-RPTA-100]
 SELECT 
-	pc.objid AS classid,
-	pc.orderno, 
-	pc.propertydesc AS classname, 
-	CONVERT(int, COUNT( 1) ) AS rpucount, 
-	SUM( fl.totalareasqm ) AS areasqm, 
-	SUM( fl.totalareaha) AS areaha,
+	b.pin,
+	b.name AS barangay,
+	b.indexno, 
+	SUM( CASE WHEN r.taxable = 1 THEN 1.0 ELSE 0.0 END ) AS landtaxablecount,
+	SUM( CASE WHEN r.taxable = 0 THEN 1.0 ELSE 0.0 END ) AS landexemptcount,
+	SUM( CASE WHEN r.taxable = 1 THEN r.totalareaha ELSE 0.0 END ) AS landareataxable,
+	SUM( CASE WHEN r.taxable = 0 THEN r.totalareaha ELSE 0.0 END ) AS landareaexempt,
+	SUM( r.totalareaha ) AS landareatotal,
+	SUM( CASE WHEN r.taxable = 1 THEN 1 ELSE 0.0 END ) AS tdtaxablecount,
+	SUM( CASE WHEN r.taxable = 0 THEN 1 ELSE 0.0 END ) AS tdexemptcount,
+	SUM( CASE WHEN f.objid IS NULL THEN 0 ELSE 1 END ) AS tdcount,
+	SUM( CASE WHEN r.rputype = 'land' THEN r.totalav ELSE 0.0 END ) AS landavtotal,
+	SUM( CASE WHEN r.rputype <> 'land' THEN r.totalav ELSE 0.0 END ) AS improvavtotal,
+	SUM( r.totalav ) AS avtotal,
+	SUM( CASE WHEN r.taxable = 1 THEN r.totalav ELSE 0.0 END ) AS avtaxable,
+	SUM( CASE WHEN r.taxable = 0 THEN r.totalav ELSE 0.0 END ) AS avexempt
+FROM barangay b
+	LEFT JOIN realproperty rp ON b.objid = rp.barangayid 
+	LEFT JOIN rpu r ON rp.objid = r.realpropertyid 
+	LEFT JOIN faas f ON r.objid = f.rpuid 
+WHERE f.objid IS NULL
+  OR (f.state = 'CURRENT' 	AND f.txntimestamp <= $P{txntimestamp})
+  AND r.rputype = 'land' 
+GROUP BY b.pin, b.indexno, b.name 
+ORDER BY b.pin 
 
-	SUM( CASE WHEN rputype = 'land' THEN fl.totalmv ELSE 0.0 END ) AS landmv,
-	SUM( CASE WHEN rputype = 'bldg' AND fl.totalmv <= 150000 THEN fl.totalmv ELSE 0.0 END ) AS bldgmv150less,
-	SUM( CASE WHEN rputype = 'bldg' AND fl.totalmv > 150000 THEN fl.totalmv ELSE 0.0 END ) AS bldgmvover150,
-	SUM( CASE WHEN rputype = 'mach' THEN fl.totalmv ELSE 0.0 END ) AS machmv,
-	SUM( CASE WHEN rputype NOT IN( 'land', 'bldg', 'mach') THEN fl.totalmv ELSE 0.0 END ) AS othermv, 
-	SUM( fl.totalmv ) AS totalmv,
-	
-	SUM( CASE WHEN rputype = 'land' THEN fl.totalav ELSE 0.0 END ) AS landav,
-	SUM( CASE WHEN rputype = 'bldg' AND fl.totalav <= 150000 THEN fl.totalav ELSE 0.0 END ) AS bldgav150less,
-	SUM( CASE WHEN rputype = 'bldg' AND fl.totalav > 150000 THEN fl.totalav ELSE 0.0 END ) AS bldgavover150,
-	SUM( CASE WHEN rputype = 'mach' THEN fl.totalav ELSE 0.0 END ) AS machav,
-	SUM( CASE WHEN rputype NOT IN( 'land', 'bldg', 'mach') THEN fl.totalav ELSE 0.0 END ) AS otherav, 
-	SUM( fl.totalav ) AS totalav,
-	
-	SUM( CASE WHEN fl.restriction = 'CARP' THEN fl.totalav ELSE 0.0 END ) AS carpav,
-	SUM( CASE WHEN fl.restriction = 'UNDER_LITIGATION' THEN fl.totalav ELSE 0.0 END ) AS litigationav,
-	SUM( CASE WHEN fl.restriction = 'OTHER' THEN fl.totalav ELSE 0.0 END ) AS otherrestrictionav,
-	SUM( CASE WHEN fl.restriction IS NOT NULL THEN fl.totalav ELSE 0.0 END ) AS totalrestriction 
 
-FROM faaslist fl 
-	INNER JOIN propertyclassification pc ON fl.classid = pc.objid 
-WHERE fl.txntimestamp <= $P{txntimestamp} 
-  AND fl.docstate = 'CURRENT' 
-  AND fl.taxable = 1 
-GROUP BY pc.objid, pc.orderno, pc.propertydesc  
-ORDER BY pc.orderno  
+  
+[getORF]  
+SELECT
+	b.name AS barangay, rp.cadastrallotno, pc.code AS classcode, r.fullpin, 
+	f.prevtdno, f.taxpayer_address, f.taxpayer_name, f.tdno, 
+	r.totalareasqm, r.totalareaha, r.totalav, f.txntype_objid AS txntype
+FROM faas f
+	INNER JOIN rpu r ON f.rpuid = r.objid 
+	INNER JOIN realproperty rp ON r.realpropertyid = rp.objid
+	INNER JOIN propertyclassification pc ON r.classification_objid = pc.objid 
+	INNER JOIN barangay b ON rp.barangayid = b.objid 
+WHERE f.taxpayer_objid = $P{taxpayerid} 
+  AND f.state = 'CURRENT'  
+ORDER BY r.fullpin   
 
-[getReportOnRPAExempt]
-SELECT 
-	et.objid AS classid,
-	et.orderno, 
-	et.exemptdesc AS classname, 
-	CONVERT(int, COUNT( 1 )) AS rpucount,
-	SUM( fl.totalareasqm ) AS areasqm, 
-	SUM( fl.totalareaha) AS areaha,
-
-	SUM( CASE WHEN rputype = 'land' THEN fl.totalmv ELSE 0.0 END ) AS landmv,
-	SUM( CASE WHEN rputype = 'bldg' AND fl.totalmv <= 150000 THEN fl.totalmv ELSE 0.0 END ) AS bldgmv150less,
-	SUM( CASE WHEN rputype = 'bldg' AND fl.totalmv > 150000 THEN fl.totalmv ELSE 0.0 END ) AS bldgmvover150,
-	SUM( CASE WHEN rputype = 'mach' THEN fl.totalmv ELSE 0.0 END ) AS machmv,
-	SUM( CASE WHEN rputype NOT IN( 'land', 'bldg', 'mach') THEN fl.totalmv ELSE 0.0 END ) AS othermv, 
-	SUM( fl.totalmv ) AS totalmv,
-	
-	SUM( CASE WHEN rputype = 'land' THEN fl.totalav ELSE 0.0 END ) AS landav,
-	SUM( CASE WHEN rputype = 'bldg' AND fl.totalav <= 150000 THEN fl.totalav ELSE 0.0 END ) AS bldgav150less,
-	SUM( CASE WHEN rputype = 'bldg' AND fl.totalav > 150000 THEN fl.totalav ELSE 0.0 END ) AS bldgavover150,
-	SUM( CASE WHEN rputype = 'mach' THEN fl.totalav ELSE 0.0 END ) AS machav,
-	SUM( CASE WHEN rputype NOT IN( 'land', 'bldg', 'mach') THEN fl.totalav ELSE 0.0 END ) AS otherav, 
-	SUM( fl.totalav ) AS totalav,
-	
-	SUM( CASE WHEN fl.restriction = 'CARP' THEN fl.totalav ELSE 0.0 END ) AS carpav,
-	SUM( CASE WHEN fl.restriction = 'UNDER_LITIGATION' THEN fl.totalav ELSE 0.0 END ) AS litigationav,
-	SUM( CASE WHEN fl.restriction = 'OTHER' THEN fl.totalav ELSE 0.0 END ) AS otherrestrictionav,
-	SUM( CASE WHEN fl.restriction IS NOT NULL THEN fl.totalav ELSE 0.0 END ) AS totalrestriction 
-
-FROM faaslist fl 
-	INNER JOIN exemptiontype et ON fl.exemptid = et.objid  
-WHERE fl.txntimestamp <= $P{txntimestamp} 
-  AND fl.docstate = 'CURRENT' 
-  AND fl.taxable = 0 
-GROUP BY et.objid, et.orderno,  et.exemptdesc  
-ORDER BY et.orderno  
 
 
 
@@ -273,67 +230,81 @@ ORDER BY et.orderno
 #----------------------------------------------------------------------
 [getPreceedingRPAAccomplishment]
 SELECT  
-	l.objid AS barangayid, 
-	l.lguname AS barangay, 
-	SUM( CASE WHEN f.taxable = 1 THEN 1 ELSE 0 END ) AS preceedingtaxablecount, 
-	SUM( CASE WHEN f.taxable = 1 THEN f.totalav ELSE 0 END ) AS preceedingtaxableav, 
-	SUM( CASE WHEN f.taxable = 0 THEN 1 ELSE 0 END ) AS preceedingexemptcount, 
-	SUM( CASE WHEN f.taxable = 0 THEN f.totalav ELSE 0 END ) AS preceedingexemptav 
-FROM faaslist f 
-	LEFT JOIN lgu l ON l.objid = f.barangayid 
+	b.objid AS barangayid, 
+	b.name AS barangay, 
+	SUM( CASE WHEN r.taxable = 1 THEN 1 ELSE 0.0 END ) AS preceedingtaxablecount, 
+	SUM( CASE WHEN r.taxable = 1 THEN r.totalav ELSE 0.0 END ) AS preceedingtaxableav, 
+	SUM( CASE WHEN r.taxable = 0 THEN 1 ELSE 0.0 END ) AS preceedingexemptcount, 
+	SUM( CASE WHEN r.taxable = 0 THEN r.totalav ELSE 0.0 END ) AS preceedingexemptav 
+FROM faas f
+	INNER JOIN rpu r ON f.rpuid = r.objid 
+	INNER JOIN realproperty rp ON r.realpropertyid = rp.objid
+	INNER JOIN propertyclassification pc ON r.classification_objid = pc.objid 
+	INNER JOIN barangay b ON rp.barangayid = b.objid 
 WHERE f.txntimestamp < $P{currenttimestamp} 
-  AND f.docstate = 'CURRENT' 
-  AND l.parentid LIKE $P{lguindex} 
-GROUP BY l.objid, l.lguname  
-ORDER BY MIN(l.indexno)
+  AND f.state = 'CURRENT' 
+GROUP BY b.objid, b.name , b.indexno 	 
+ORDER BY b.indexno 	 
+
 
 [getCurrentRPAAccomplishment]
 SELECT  
-	l.objid AS barangayid, 
-	l.lguname AS barangay, 
-	SUM( ISNULL(CASE WHEN f.taxable = 1 THEN 1 ELSE 0 END,0) ) AS currenttaxablecount, 
-	SUM( CASE WHEN f.taxable = 1 THEN f.totalav ELSE 0 END ) AS currenttaxableav, 
-	SUM( CASE WHEN f.taxable = 0 THEN 1 ELSE 0 END ) AS currentexemptcount, 
-	SUM( CASE WHEN f.taxable = 0 THEN f.totalav ELSE 0 END ) AS currentexemptav 
-FROM faaslist f 
-	LEFT JOIN lgu l ON l.objid = f.barangayid 
+	b.objid AS barangayid, 
+	b.name AS barangay, 
+	SUM( ISNULL(CASE WHEN r.taxable = 1 THEN 1 ELSE 0.0 END,0) ) AS currenttaxablecount, 
+	SUM( CASE WHEN r.taxable = 1 THEN r.totalav ELSE 0.0 END ) AS currenttaxableav, 
+	SUM( CASE WHEN r.taxable = 0 THEN 1 ELSE 0.0 END ) AS currentexemptcount, 
+	SUM( CASE WHEN r.taxable = 0 THEN r.totalav ELSE 0.0 END ) AS currentexemptav 
+FROM faas f
+	INNER JOIN rpu r ON f.rpuid = r.objid 
+	INNER JOIN realproperty rp ON r.realpropertyid = rp.objid
+	INNER JOIN propertyclassification pc ON r.classification_objid = pc.objid 
+	INNER JOIN barangay b ON rp.barangayid = b.objid 
 WHERE f.txntimestamp LIKE $P{currenttimestamp} 
-  AND f.docstate = 'CURRENT' 
-  AND l.parentid LIKE $P{lguindex}  
-GROUP BY l.objid, l.lguname  
-ORDER BY MIN(l.indexno)
+  AND f.state = 'CURRENT' 
+GROUP BY b.objid, b.name , b.indexno 	 
+ORDER BY b.indexno 	 
+
 
 [getCancelledRPAAccomplishment]
 SELECT  
-	l.objid AS barangayid, 
-	l.lguname AS barangay, 
-	SUM( CASE WHEN f.taxable = 1 THEN 1 ELSE 0 END ) AS cancelledtaxablecount, 
-	SUM( CASE WHEN f.taxable = 1 THEN f.totalav ELSE 0 END ) AS cancelledtaxableav, 
-	SUM( CASE WHEN f.taxable = 0 THEN 1 ELSE 0 END ) AS cancelledexemptcount, 
-	SUM( CASE WHEN f.taxable = 0 THEN f.totalav ELSE 0 END ) AS cancelledexemptav 
-FROM faaslist f 
-	LEFT JOIN lgu l ON l.objid = f.barangayid 
-WHERE f.txntimestamp LIKE $P{currenttimestamp}  
-  AND f.docstate = 'CANCELLED' 
-  AND l.parentid LIKE $P{lguindex} 
-GROUP BY l.objid, l.lguname  
-ORDER BY MIN(l.indexno) 	 
+	b.objid AS barangayid, 
+	b.name AS barangay, 
+	SUM( ISNULL(CASE WHEN r.taxable = 1 THEN 1 ELSE 0.0 END,0) ) AS cancelledtaxablecount, 
+	SUM( CASE WHEN r.taxable = 1 THEN r.totalav ELSE 0.0 END ) AS cancelledtaxableav, 
+	SUM( CASE WHEN r.taxable = 0 THEN 1 ELSE 0.0 END ) AS cancelledexemptcount, 
+	SUM( CASE WHEN r.taxable = 0 THEN r.totalav ELSE 0.0 END ) AS cancelledexemptav 
+FROM faas f
+	INNER JOIN rpu r ON f.rpuid = r.objid 
+	INNER JOIN realproperty rp ON r.realpropertyid = rp.objid
+	INNER JOIN propertyclassification pc ON r.classification_objid = pc.objid 
+	INNER JOIN barangay b ON rp.barangayid = b.objid 
+WHERE f.cancelledtimestamp LIKE $P{currenttimestamp} 
+  AND f.state = 'CANCELLED' 
+GROUP BY b.objid, b.name , b.indexno 	 
+ORDER BY b.indexno 	 
+
 
 [getEndingRPAAccomplishment]
 SELECT  
-	l.objid AS barangayid, 
-	l.lguname AS barangay, 
-	SUM( CASE WHEN f.taxable = 1 THEN 1 ELSE 0 END ) AS endingtaxablecount, 
-	SUM( CASE WHEN f.taxable = 1 THEN f.totalav ELSE 0 END ) AS endingtaxableav, 
-	SUM( CASE WHEN f.taxable = 0 THEN 1 ELSE 0 END ) AS endingexemptcount, 
-	SUM( CASE WHEN f.taxable = 0 THEN f.totalav ELSE 0 END ) AS endingexemptav 
-FROM faaslist f 
-	LEFT JOIN lgu l ON l.objid = f.barangayid  
+	b.objid AS barangayid, 
+	b.name AS barangay, 
+	SUM( ISNULL(CASE WHEN r.taxable = 1 THEN 1 ELSE 0.0 END,0) ) AS endingtaxablecount, 
+	SUM( CASE WHEN r.taxable = 1 THEN r.totalav ELSE 0.0 END ) AS endingtaxableav, 
+	SUM( CASE WHEN r.taxable = 0 THEN 1 ELSE 0.0 END ) AS endingexemptcount, 
+	SUM( CASE WHEN r.taxable = 0 THEN r.totalav ELSE 0.0 END ) AS endingexemptav 
+FROM faas f
+	INNER JOIN rpu r ON f.rpuid = r.objid 
+	INNER JOIN realproperty rp ON r.realpropertyid = rp.objid
+	INNER JOIN propertyclassification pc ON r.classification_objid = pc.objid 
+	INNER JOIN barangay b ON rp.barangayid = b.objid 
 WHERE f.txntimestamp < $P{endingtimestamp} 
-  AND f.docstate = 'CURRENT' 
-  AND l.parentid LIKE $P{lguindex} 
-GROUP BY l.objid, l.lguname  
-ORDER BY MIN(l.indexno) 	 
+  AND f.state = 'CURRENT' 
+GROUP BY b.objid, b.name , b.indexno 	 
+ORDER BY b.indexno 	 
+
+
+
 
 
 
@@ -345,73 +316,77 @@ ORDER BY MIN(l.indexno)
 [getPreceedingComparativeAV]
 SELECT
 	'TAXABLE' AS taxability, 
-	c.objid AS classid, 
-	c.propertydesc AS classname, 
-	c.special AS special, 
-	SUM( CASE WHEN f.rputype = 'land' THEN totalav ELSE 0.0 END ) AS preceedinglandav, 
-	SUM( CASE WHEN f.rputype <> 'land' THEN totalav ELSE 0.0 END ) AS preceedingimpav, 
-	SUM( f.totalav ) AS preceedingtotal 
-FROM faaslist f 
-	INNER JOIN propertyclassification c ON f.classid = c.objid  
-WHERE f.txntimestamp < $P{currenttimestamp}   
-  AND f.docstate = 'CURRENT'  
-  AND f.taxable = 1 
-GROUP BY c.objid, c.propertydesc, c.special 
-ORDER BY MIN(c.orderno) 
+	pc.objid AS classid, 
+	pc.name AS classname, 
+	pc.special AS special, 
+	SUM( CASE WHEN r.rputype = 'land' THEN totalav ELSE 0.0 END ) AS preceedinglandav, 
+	SUM( CASE WHEN r.rputype <> 'land' THEN totalav ELSE 0.0 END ) AS preceedingimpav, 
+	SUM( r.totalav ) AS preceedingtotal 
+FROM faas f
+	INNER JOIN rpu r ON f.rpuid = r.objid 
+	INNER JOIN propertyclassification pc ON r.classification_objid = pc.objid 
+WHERE f.txntimestamp < $P{currenttimestamp}
+  AND f.state = 'CURRENT'  
+  AND r.taxable = 1 
+GROUP BY pc.objid, pc.name, pc.special , pc.orderno 
+ORDER BY pc.orderno 
 
 
 [getCurrentComparativeAV]
-SELECT 
+SELECT
 	'TAXABLE' AS taxability, 
-	c.objid AS classid, 
-	c.propertydesc AS classname, 
-	c.special AS special, 
-	SUM( CASE WHEN f.rputype = 'land' THEN totalav ELSE 0.0 END ) AS currentlandav, 
-	SUM( CASE WHEN f.rputype <> 'land' THEN totalav ELSE 0.0 END ) AS currentimpav, 
-	SUM( f.totalav ) AS currenttotal 
-FROM faaslist f 
-	INNER JOIN propertyclassification c ON f.classid = c.objid  
+	pc.objid AS classid, 
+	pc.name AS classname, 
+	pc.special AS special, 
+	SUM( CASE WHEN r.rputype = 'land' THEN totalav ELSE 0.0 END ) AS currentlandav, 
+	SUM( CASE WHEN r.rputype <> 'land' THEN totalav ELSE 0.0 END ) AS currentimpav, 
+	SUM( r.totalav ) AS currenttotal 
+FROM faas f
+	INNER JOIN rpu r ON f.rpuid = r.objid 
+	INNER JOIN propertyclassification pc ON r.classification_objid = pc.objid 
 WHERE f.txntimestamp LIKE $P{currenttimestamp}    
-  AND f.docstate = 'CURRENT'  
-  AND f.taxable = 1 
-GROUP BY c.objid, c.propertydesc, c.special 
-ORDER BY MIN(c.orderno) 
+  AND f.state = 'CURRENT'  
+  AND r.taxable = 1 
+GROUP BY pc.objid, pc.name, pc.special , pc.orderno 
+ORDER BY pc.orderno 
 
 
 [getCancelledComparativeAV]
-SELECT 
+SELECT
 	'TAXABLE' AS taxability, 
-	c.objid AS classid, 
-	c.propertydesc AS classname, 
-	c.special AS special, 
-	SUM( CASE WHEN f.rputype = 'land' THEN totalav ELSE 0.0 END ) AS cancelledlandav, 
-	SUM( CASE WHEN f.rputype <> 'land' THEN totalav ELSE 0.0 END ) AS cancelledimpav,  
-	SUM( f.totalav ) AS cancelledtotal  
-FROM faaslist f 
-	INNER JOIN propertyclassification c ON f.classid = c.objid  
-WHERE f.txntimestamp LIKE $P{currenttimestamp}    
-  AND f.docstate = 'CANCELLED'  
-  AND f.taxable = 1 
-GROUP BY c.objid, c.propertydesc, c.special 
-ORDER BY MIN(c.orderno) 
+	pc.objid AS classid, 
+	pc.name AS classname, 
+	pc.special AS special, 
+	SUM( CASE WHEN r.rputype = 'land' THEN totalav ELSE 0.0 END ) AS cancelledlandav, 
+	SUM( CASE WHEN r.rputype <> 'land' THEN totalav ELSE 0.0 END ) AS cancelledimpav, 
+	SUM( r.totalav ) AS cancelledtotal 
+FROM faas f
+	INNER JOIN rpu r ON f.rpuid = r.objid 
+	INNER JOIN propertyclassification pc ON r.classification_objid = pc.objid 
+WHERE f.cancelledtimestamp LIKE $P{currenttimestamp}    
+  AND f.state = 'CANCELLED'  
+  AND r.taxable = 1 
+GROUP BY pc.objid, pc.name, pc.special , pc.orderno 
+ORDER BY pc.orderno 
 
 
 [getEndingComparativeAV]
-SELECT  
+SELECT
 	'TAXABLE' AS taxability, 
-	c.objid AS classid, 
-	c.propertydesc AS classname, 
-	c.special AS special, 
-	SUM( CASE WHEN f.rputype = 'land' THEN totalav ELSE 0.0 END ) AS endinglandav, 
-	SUM( CASE WHEN f.rputype <> 'land' THEN totalav ELSE 0.0 END ) AS endingimpav, 
-	SUM( f.totalav ) AS endingtotal 
-FROM faaslist f 
-	INNER JOIN propertyclassification c ON f.classid = c.objid  
-WHERE f.txntimestamp < $P{endingtimestamp}   
-  AND f.docstate = 'CURRENT'   
-  AND f.taxable = 1 
-GROUP BY c.objid, c.propertydesc, c.special 
-ORDER BY MIN(c.orderno) 
+	pc.objid AS classid, 
+	pc.name AS classname, 
+	pc.special AS special, 
+	SUM( CASE WHEN r.rputype = 'land' THEN totalav ELSE 0.0 END ) AS endinglandav, 
+	SUM( CASE WHEN r.rputype <> 'land' THEN totalav ELSE 0.0 END ) AS endingimpav, 
+	SUM( r.totalav ) AS endingtotal 
+FROM faas f
+	INNER JOIN rpu r ON f.rpuid = r.objid 
+	INNER JOIN propertyclassification pc ON r.classification_objid = pc.objid 
+WHERE f.txntimestamp < $P{endingtimestamp} 
+  AND f.state = 'CURRENT'  
+  AND r.taxable = 1 
+GROUP BY pc.objid, pc.name, pc.special , pc.orderno 
+ORDER BY pc.orderno 
 
 
 
@@ -419,71 +394,77 @@ ORDER BY MIN(c.orderno)
 SELECT 
 	'EXEMPT' AS taxability,  
 	e.objid AS classid,  
-	e.exemptdesc AS classname,  
+	e.name AS classname,  
 	0 AS special,  
-	SUM( CASE WHEN f.rputype = 'land' THEN totalav ELSE 0.0 END ) AS preceedinglandav,  
-	SUM( CASE WHEN f.rputype <> 'land' THEN totalav ELSE 0.0 END ) AS preceedingimpav,  
-	SUM( f.totalav ) AS preceedingtotal  
-FROM faaslist f  
-	INNER JOIN exemptiontype e ON f.exemptid = e.objid   
-WHERE f.txntimestamp < $P{currenttimestamp}    
-  AND f.docstate = 'CURRENT'   
-  AND f.taxable = 0 
-GROUP BY e.objid, e.exemptdesc 
-ORDER BY MIN(e.orderno)  
+	SUM( CASE WHEN r.rputype = 'land' THEN r.totalav ELSE 0.0 END ) AS preceedinglandav,  
+	SUM( CASE WHEN r.rputype <> 'land' THEN r.totalav ELSE 0.0 END ) AS preceedingimpav,  
+	SUM( r.totalav ) AS preceedingtotal  
+FROM faas f
+	INNER JOIN rpu r ON f.rpuid = r.objid 
+	INNER JOIN exemptiontype e ON r.exemptiontype_objid = e.objid 
+WHERE f.txntimestamp < $P{currenttimestamp}  
+  AND f.state = 'CURRENT'   
+  AND r.taxable = 0 
+GROUP BY e.objid, e.name , e.orderno
+ORDER BY e.orderno
+
 
 [getCurrentComparativeAVExempt]
 SELECT 
 	'EXEMPT' AS taxability,  
 	e.objid AS classid,  
-	e.exemptdesc AS classname,  
+	e.name AS classname,  
 	0 AS special,  
-	SUM( CASE WHEN f.rputype = 'land' THEN totalav ELSE 0.0 END ) AS currentlandav,  
-	SUM( CASE WHEN f.rputype <> 'land' THEN totalav ELSE 0.0 END ) AS currentimpav,  
-	SUM( f.totalav ) AS currenttotal  
-FROM faaslist f  
-	INNER JOIN exemptiontype e ON f.exemptid = e.objid   
-WHERE f.txntimestamp LIKE $P{currenttimestamp}    
-  AND f.docstate = 'CURRENT'   
-  AND f.taxable = 0 
-GROUP BY e.objid, e.exemptdesc 
-ORDER BY MIN(e.orderno)  
+	SUM( CASE WHEN r.rputype = 'land' THEN r.totalav ELSE 0.0 END ) AS currentlandav,  
+	SUM( CASE WHEN r.rputype <> 'land' THEN r.totalav ELSE 0.0 END ) AS currentimpav,  
+	SUM( r.totalav ) AS currenttotal  
+FROM faas f
+	INNER JOIN rpu r ON f.rpuid = r.objid 
+	INNER JOIN exemptiontype e ON r.exemptiontype_objid = e.objid 
+WHERE f.txntimestamp LIKE $P{currenttimestamp}  
+  AND f.state = 'CURRENT'   
+  AND r.taxable = 0 
+GROUP BY e.objid, e.name , e.orderno
+ORDER BY e.orderno
 
 
 [getCancelledComparativeAVExempt]
 SELECT 
 	'EXEMPT' AS taxability,  
 	e.objid AS classid,  
-	e.exemptdesc AS classname,  
+	e.name AS classname,  
 	0 AS special,  
-	SUM( CASE WHEN f.rputype = 'land' THEN totalav ELSE 0.0 END ) AS cancelledlandav,  
-	SUM( CASE WHEN f.rputype <> 'land' THEN totalav ELSE 0.0 END ) AS cancelledimpav,  
-	SUM( f.totalav ) AS cancelledtotal  
-FROM faaslist f  
-	INNER JOIN exemptiontype e ON f.exemptid = e.objid   
-WHERE f.txntimestamp LIKE $P{currenttimestamp}    
-  AND f.docstate = 'CANCELLED'   
-  AND f.taxable = 0 
-GROUP BY e.objid, e.exemptdesc 
-ORDER BY MIN(e.orderno)  
+	SUM( CASE WHEN r.rputype = 'land' THEN r.totalav ELSE 0.0 END ) AS cancelledlandav,  
+	SUM( CASE WHEN r.rputype <> 'land' THEN r.totalav ELSE 0.0 END ) AS cancelledimpav,  
+	SUM( r.totalav ) AS cancelledtotal  
+FROM faas f
+	INNER JOIN rpu r ON f.rpuid = r.objid 
+	INNER JOIN exemptiontype e ON r.exemptiontype_objid = e.objid 
+WHERE f.cancelledtimestamp LIKE $P{currenttimestamp}  
+  AND f.state = 'CANCELLED'   
+  AND r.taxable = 0 
+GROUP BY e.objid, e.name , e.orderno
+ORDER BY e.orderno
 
 
 [getEndingComparativeAVExempt]
 SELECT 
 	'EXEMPT' AS taxability,  
 	e.objid AS classid,  
-	e.exemptdesc AS classname,  
+	e.name AS classname,  
 	0 AS special,  
-	SUM( CASE WHEN f.rputype = 'land' THEN totalav ELSE 0.0 END ) AS endinglandav,  
-	SUM( CASE WHEN f.rputype <> 'land' THEN totalav ELSE 0.0 END ) AS endingimpav,  
-	SUM( f.totalav ) AS endingtotal  
-FROM faaslist f  
-	INNER JOIN exemptiontype e ON f.exemptid = e.objid   
-WHERE f.txntimestamp < $P{endingtimestamp}    
-  AND f.docstate = 'CURRENT'   
-  AND f.taxable = 0 
-GROUP BY e.objid, e.exemptdesc 
-ORDER BY MIN(e.orderno)  
+	SUM( CASE WHEN r.rputype = 'land' THEN r.totalav ELSE 0.0 END ) AS endinglandav,  
+	SUM( CASE WHEN r.rputype <> 'land' THEN r.totalav ELSE 0.0 END ) AS endingimpav,  
+	SUM( r.totalav ) AS endingtotal  
+FROM faas f
+	INNER JOIN rpu r ON f.rpuid = r.objid 
+	INNER JOIN exemptiontype e ON r.exemptiontype_objid = e.objid 
+WHERE f.txntimestamp < $P{endingtimestamp}  
+  AND f.state = 'CURRENT'   
+  AND r.taxable = 0 
+GROUP BY e.objid, e.name , e.orderno
+ORDER BY e.orderno
+
 
 
 
@@ -496,74 +477,78 @@ ORDER BY MIN(e.orderno)
 [getPreceedingComparativeRpuCount]
 SELECT
 	'TAXABLE' AS taxability, 
-	c.objid AS classid, 
-	c.propertydesc AS classname, 
-	c.special AS special, 
-	SUM( CASE WHEN f.rputype = 'land' THEN 1.0 ELSE 0.0 END ) AS preceedinglandcount, 
-	SUM( CASE WHEN f.rputype <> 'land' THEN 1.0 ELSE 0.0 END ) AS preceedingimpcount, 
+	pc.objid AS classid, 
+	pc.name AS classname, 
+	pc.special AS special, 
+	SUM( CASE WHEN r.rputype = 'land' THEN 1.0 ELSE 0.0 END ) AS preceedinglandcount, 
+	SUM( CASE WHEN r.rputype <> 'land' THEN 1.0 ELSE 0.0 END ) AS preceedingimpcount, 
 	SUM( 1.0 ) AS preceedingtotal 
-FROM faaslist f 
-	INNER JOIN propertyclassification c ON f.classid = c.objid  
-WHERE f.txntimestamp < $P{currenttimestamp}   
-  AND f.docstate = 'CURRENT'  
-  AND f.taxable = 1 
-GROUP BY c.objid, c.propertydesc, c.special 
-ORDER BY MIN(c.orderno) 
+FROM faas f
+	INNER JOIN rpu r ON f.rpuid = r.objid 
+	INNER JOIN propertyclassification pc ON r.classification_objid = pc.objid 
+WHERE f.txntimestamp < $P{currenttimestamp}
+  AND f.state = 'CURRENT'  
+  AND r.taxable = 1 
+GROUP BY pc.objid, pc.name, pc.special , pc.orderno 
+ORDER BY pc.orderno 
 
 
 [getNewDiscoveryComparativeRpuCount]
 SELECT
 	'TAXABLE' AS taxability, 
-	c.objid AS classid, 
-	c.propertydesc AS classname, 
-	c.special AS special, 
-	SUM( CASE WHEN f.rputype = 'land' THEN 1.0 ELSE 0.0 END ) AS newdiscoverylandcount, 
-	SUM( CASE WHEN f.rputype <> 'land' THEN 1.0 ELSE 0.0 END ) AS newdiscoveryimpcount, 
-	SUM( 1 ) AS newdiscoverytotal  
-FROM faaslist f 
-	INNER JOIN propertyclassification c ON f.classid = c.objid  
+	pc.objid AS classid, 
+	pc.name AS classname, 
+	pc.special AS special, 
+	SUM( CASE WHEN r.rputype = 'land' THEN 1.0 ELSE 0.0 END ) AS newdiscoverylandcount, 
+	SUM( CASE WHEN r.rputype <> 'land' THEN 1.0 ELSE 0.0 END ) AS newdiscoveryimpcount, 
+	SUM( 1.0 ) AS newdiscoverytotal 
+FROM faas f
+	INNER JOIN rpu r ON f.rpuid = r.objid 
+	INNER JOIN propertyclassification pc ON r.classification_objid = pc.objid 
 WHERE f.txntimestamp LIKE $P{currenttimestamp}    
-  AND f.docstate = 'CURRENT'  
-  AND f.taxable = 1 
-  AND f.txntype = 'ND' 
-GROUP BY c.objid, c.propertydesc, c.special 
-ORDER BY MIN(c.orderno) 
+  AND f.state = 'CURRENT'  
+  AND r.taxable = 1 
+  AND f.txntype_objid = 'ND'
+GROUP BY pc.objid, pc.name, pc.special , pc.orderno 
+ORDER BY pc.orderno 
 
 
 [getCancelledComparativeRpuCount]
 SELECT
 	'TAXABLE' AS taxability, 
-	c.objid AS classid, 
-	c.propertydesc AS classname, 
-	c.special AS special, 
-	SUM( CASE WHEN f.rputype = 'land' THEN 1.0 ELSE 0.0 END ) AS cancelledlandcount, 
-	SUM( CASE WHEN f.rputype <> 'land' THEN 1.0 ELSE 0.0 END ) AS cancelledimpcount,  
-	SUM( 1 ) AS cancelledtotal  
-FROM faaslist f 
-	INNER JOIN propertyclassification c ON f.classid = c.objid   
-WHERE f.txntimestamp LIKE $P{currenttimestamp}    
-  AND f.docstate = 'CANCELLED'  
-  AND f.taxable = 1 
-GROUP BY c.objid, c.propertydesc, c.special 
-ORDER BY MIN(c.orderno) 
+	pc.objid AS classid, 
+	pc.name AS classname, 
+	pc.special AS special, 
+	SUM( CASE WHEN r.rputype = 'land' THEN 1.0 ELSE 0.0 END ) AS cancelledlandcount, 
+	SUM( CASE WHEN r.rputype <> 'land' THEN 1.0 ELSE 0.0 END ) AS cancelledimpcount, 
+	SUM( 1.0 ) AS cancelledtotal 
+FROM faas f
+	INNER JOIN rpu r ON f.rpuid = r.objid 
+	INNER JOIN propertyclassification pc ON r.classification_objid = pc.objid 
+WHERE f.cancelledtimestamp LIKE $P{currenttimestamp} 
+  AND f.state = 'CANCELLED'  
+  AND r.taxable = 1 
+GROUP BY pc.objid, pc.name, pc.special , pc.orderno 
+ORDER BY pc.orderno 
 
 
 [getEndingComparativeRpuCount]
 SELECT
 	'TAXABLE' AS taxability, 
-	c.objid AS classid, 
-	c.propertydesc AS classname, 
-	c.special AS special, 
-	SUM( CASE WHEN f.rputype = 'land' THEN 1.0 ELSE 0.0 END ) AS endinglandcount, 
-	SUM( CASE WHEN f.rputype <> 'land' THEN 1.0 ELSE 0.0 END ) AS endingimpcount, 
+	pc.objid AS classid, 
+	pc.name AS classname, 
+	pc.special AS special, 
+	SUM( CASE WHEN r.rputype = 'land' THEN 1.0 ELSE 0.0 END ) AS endinglandcount, 
+	SUM( CASE WHEN r.rputype <> 'land' THEN 1.0 ELSE 0.0 END ) AS endingimpcount, 
 	SUM( 1.0 ) AS endingtotal 
-FROM faaslist f 
-	INNER JOIN propertyclassification c ON f.classid = c.objid  
-WHERE f.txntimestamp < $P{endingtimestamp}   
-  AND f.docstate = 'CURRENT'   
-  AND f.taxable = 1 
-GROUP BY c.objid, c.propertydesc, c.special 
-ORDER BY MIN(c.orderno) 
+FROM faas f
+	INNER JOIN rpu r ON f.rpuid = r.objid 
+	INNER JOIN propertyclassification pc ON r.classification_objid = pc.objid 
+WHERE f.txntimestamp < $P{endingtimestamp}
+  AND f.state = 'CURRENT'  
+  AND r.taxable = 1 
+GROUP BY pc.objid, pc.name, pc.special , pc.orderno 
+ORDER BY pc.orderno 
 
 
 
@@ -571,73 +556,77 @@ ORDER BY MIN(c.orderno)
 SELECT 
 	'EXEMPT' AS taxability,  
 	e.objid AS classid,  
-	e.exemptdesc AS classname,  
+	e.name AS classname,  
 	0 AS special,  
-	SUM( CASE WHEN f.rputype = 'land' THEN 1.0 ELSE 0.0 END ) AS preceedinglandcount,  
-	SUM( CASE WHEN f.rputype <> 'land' THEN 1.0 ELSE 0.0 END ) AS preceedingimpcount,  
+	SUM( CASE WHEN r.rputype = 'land' THEN 1.0 ELSE 0.0 END ) AS preceedinglandcount,  
+	SUM( CASE WHEN r.rputype <> 'land' THEN 1.0 ELSE 0.0 END ) AS preceedingimpcount,  
 	SUM( 1.0 ) AS preceedingtotal     
-FROM faaslist f  
-	INNER JOIN exemptiontype e ON f.exemptid = e.objid   
-WHERE f.txntimestamp < $P{currenttimestamp}    
-  AND f.docstate = 'CURRENT'   
-  AND f.taxable = 0 
-GROUP BY e.objid, e.exemptdesc 
-ORDER BY MIN(e.orderno)  
+FROM faas f
+	INNER JOIN rpu r ON f.rpuid = r.objid 
+	INNER JOIN exemptiontype e ON r.exemptiontype_objid = e.objid   
+WHERE f.txntimestamp < $P{currenttimestamp} 
+  AND f.state = 'CURRENT'  
+  AND r.taxable = 0
+GROUP BY e.objid, e.name , e.orderno  
+ORDER BY e.orderno  
+
 
 [getNewDiscoveryComparativeRpuCountExempt]
 SELECT 
 	'EXEMPT' AS taxability,  
 	e.objid AS classid,  
-	e.exemptdesc AS classname,  
+	e.name AS classname,  
 	0 AS special,  
-	SUM( CASE WHEN f.rputype = 'land' THEN 1.0 ELSE 0.0 END ) AS newdiscoverylandcount,   
-	SUM( CASE WHEN f.rputype <> 'land' THEN 1.0 ELSE 0.0 END ) AS newdiscoveryimpcount,  
+	SUM( CASE WHEN r.rputype = 'land' THEN 1.0 ELSE 0.0 END ) AS newdiscoverylandcount,  
+	SUM( CASE WHEN r.rputype <> 'land' THEN 1.0 ELSE 0.0 END ) AS newdiscoveryimpcount,  
 	SUM( 1.0 ) AS newdiscoverytotal     
-FROM faaslist f  
-	INNER JOIN exemptiontype e ON f.exemptid = e.objid   
-WHERE f.txntimestamp LIKE $P{currenttimestamp}    
-  AND f.docstate = 'CURRENT'   
-  AND f.txntype = 'ND' 
-  AND f.taxable = 0 
-GROUP BY e.objid, e.exemptdesc 
-ORDER BY MIN(e.orderno)  
+FROM faas f
+	INNER JOIN rpu r ON f.rpuid = r.objid 
+	INNER JOIN exemptiontype e ON r.exemptiontype_objid = e.objid   
+WHERE f.txntimestamp LIKE $P{currenttimestamp}
+  AND f.state = 'CURRENT'  
+  AND f.txntype_objid = 'ND'
+  AND r.taxable = 0
+GROUP BY e.objid, e.name , e.orderno  
+ORDER BY e.orderno  
 
 
 [getCancelledComparativeRpuCountExempt]
 SELECT 
 	'EXEMPT' AS taxability,  
 	e.objid AS classid,  
-	e.exemptdesc AS classname,  
+	e.name AS classname,  
 	0 AS special,  
-	SUM( CASE WHEN f.rputype = 'land' THEN 1.0 ELSE 0.0 END ) AS cancelledlandcount,  
-	SUM( CASE WHEN f.rputype <> 'land' THEN 1.0 ELSE 0.0 END ) AS cancelledimpcount,  
+	SUM( CASE WHEN r.rputype = 'land' THEN 1.0 ELSE 0.0 END ) AS cancelledlandcount,  
+	SUM( CASE WHEN r.rputype <> 'land' THEN 1.0 ELSE 0.0 END ) AS cancelledimpcount,  
 	SUM( 1.0 ) AS cancelledtotal     
-FROM faaslist f  
-	INNER JOIN exemptiontype e ON f.exemptid = e.objid   
-WHERE f.txntimestamp LIKE $P{currenttimestamp}    
-  AND f.docstate = 'CANCELLED'   
-  AND f.taxable = 0 
-GROUP BY e.objid, e.exemptdesc 
-ORDER BY MIN(e.orderno)  
+FROM faas f
+	INNER JOIN rpu r ON f.rpuid = r.objid 
+	INNER JOIN exemptiontype e ON r.exemptiontype_objid = e.objid   
+WHERE f.cancelledtimestamp LIKE $P{currenttimestamp} 
+  AND f.state = 'CANCELLED'  
+  AND r.taxable = 0
+GROUP BY e.objid, e.name , e.orderno  
+ORDER BY e.orderno  
 
 
 [getEndingComparativeRpuCountExempt]
 SELECT 
 	'EXEMPT' AS taxability,  
 	e.objid AS classid,  
-	e.exemptdesc AS classname,  
+	e.name AS classname,  
 	0 AS special,  
-	SUM( CASE WHEN f.rputype = 'land' THEN 1.0 ELSE 0.0 END ) AS endinglandcount,  
-	SUM( CASE WHEN f.rputype <> 'land' THEN 1.0 ELSE 0.0 END ) AS endingimpcount,  
-	SUM( 1.0 ) AS endingtotal     
-FROM faaslist f  
-	INNER JOIN exemptiontype e ON f.exemptid = e.objid   
-WHERE f.txntimestamp < $P{endingtimestamp}    
-  AND f.docstate = 'CURRENT'   
-  AND f.taxable = 0 
-GROUP BY e.objid, e.exemptdesc 
-ORDER BY MIN(e.orderno)  
-
+	SUM( CASE WHEN r.rputype = 'land' THEN 1.0 ELSE 0.0 END ) AS preceedinglandcount,  
+	SUM( CASE WHEN r.rputype <> 'land' THEN 1.0 ELSE 0.0 END ) AS preceedingimpcount,  
+	SUM( 1.0 ) AS preceedingtotal     
+FROM faas f
+	INNER JOIN rpu r ON f.rpuid = r.objid 
+	INNER JOIN exemptiontype e ON r.exemptiontype_objid = e.objid   
+WHERE f.txntimestamp < $P{endingtimestamp}  
+  AND f.state = 'CURRENT'  
+  AND r.taxable = 0
+GROUP BY e.objid, e.name , e.orderno  
+ORDER BY e.orderno  
 
 
 
@@ -651,157 +640,212 @@ ORDER BY MIN(e.orderno)
 [getStartComparativeMV]
 SELECT
 	'TAXABLE' AS taxability, 
-	c.objid AS classid, 
-	c.propertydesc AS classname, 
-	c.special AS special, 
-	SUM( CASE WHEN f.rputype = 'land' THEN totalmv ELSE 0.0 END ) AS startlandmv, 
-	SUM( CASE WHEN f.rputype <> 'land' THEN totalmv ELSE 0.0 END ) AS startimpmv, 
-	SUM( f.totalmv ) AS starttotal  
-FROM faaslist f  
-	INNER JOIN propertyclassification c ON f.classid = c.objid   
+	pc.objid AS classid, 
+	pc.name AS classname, 
+	pc.special AS special, 
+	SUM( CASE WHEN r.rputype = 'land' THEN r.totalmv ELSE 0.0 END ) AS startlandmv, 
+	SUM( CASE WHEN r.rputype <> 'land' THEN r.totalmv ELSE 0.0 END ) AS startimpmv, 
+	SUM( r.totalmv ) AS starttotal  
+FROM faas f
+	INNER JOIN rpu r ON f.rpuid = r.objid 
+	INNER JOIN propertyclassification pc ON r.classification_objid = pc.objid 
 WHERE f.txntimestamp < $P{currenttimestamp}  
-  AND f.docstate = 'CURRENT'   
-  AND f.taxable = 1  
-GROUP BY c.objid, c.propertydesc, c.special  
-ORDER BY MIN(c.orderno)  
+  AND f.state = 'CURRENT'   
+  AND r.taxable = 1  
+GROUP BY pc.objid, pc.name, pc.special  , pc.orderno  
+ORDER BY pc.orderno  
+
 
 [getEndComparativeMV]
-SELECT 
-	'TAXABLE' AS taxability,  
-	c.objid AS classid,  
-	c.propertydesc AS classname,  
-	c.special AS special,  
-	SUM( CASE WHEN f.rputype = 'land' THEN totalmv ELSE 0.0 END ) AS endlandmv,  
-	SUM( CASE WHEN f.rputype <> 'land' THEN totalmv ELSE 0.0 END ) AS endimpmv,  
-	SUM( f.totalmv ) AS endtotal 
-FROM faaslist f  
-	INNER JOIN propertyclassification c ON f.classid = c.objid   
-WHERE f.txntimestamp < $P{endingtimestamp}  
-  AND f.docstate = 'CURRENT'   
-  AND f.taxable = 1  
-GROUP BY c.objid, c.propertydesc, c.special  
-ORDER BY MIN(c.orderno)  
+SELECT
+	'TAXABLE' AS taxability, 
+	pc.objid AS classid, 
+	pc.name AS classname, 
+	pc.special AS special, 
+	SUM( CASE WHEN r.rputype = 'land' THEN r.totalmv ELSE 0.0 END ) AS endlandmv, 
+	SUM( CASE WHEN r.rputype <> 'land' THEN r.totalmv ELSE 0.0 END ) AS endimpmv, 
+	SUM( r.totalmv ) AS endtotal  
+FROM faas f
+	INNER JOIN rpu r ON f.rpuid = r.objid 
+	INNER JOIN propertyclassification pc ON r.classification_objid = pc.objid 
+WHERE f.txntimestamp < $P{endingtimestamp}   
+  AND f.state = 'CURRENT'   
+  AND r.taxable = 1  
+GROUP BY pc.objid, pc.name, pc.special , pc.orderno  
+ORDER BY pc.orderno  
 
 
 [getStartComparativeMVExempt]
 SELECT 
 	'EXEMPT' AS taxability,  
 	e.objid AS classid,  
-	e.exemptdesc AS classname,  
+	e.name AS classname,  
 	0 AS special,  
-	SUM( CASE WHEN f.rputype = 'land' THEN totalmv ELSE 0.0 END ) AS startlandmv,  
-	SUM( CASE WHEN f.rputype <> 'land' THEN totalmv ELSE 0.0 END ) AS startimpmv,  
-	SUM( f.totalmv ) AS starttotal  
-FROM faaslist f  
-	INNER JOIN exemptiontype e ON f.exemptid = e.objid    
+	SUM( CASE WHEN r.rputype = 'land' THEN r.totalmv ELSE 0.0 END ) AS startlandmv,  
+	SUM( CASE WHEN r.rputype <> 'land' THEN r.totalmv ELSE 0.0 END ) AS startimpmv,  
+	SUM( r.totalmv ) AS starttotal  
+FROM faas f
+	INNER JOIN rpu r ON f.rpuid = r.objid 
+	INNER JOIN exemptiontype e ON r.exemptiontype_objid = e.objid    
 WHERE f.txntimestamp < $P{currenttimestamp}  
-  AND f.docstate = 'CURRENT'   
-  AND f.taxable = 0   
-GROUP BY e.objid, e.exemptdesc 
-ORDER BY MIN(e.orderno)  
-
+  AND f.state = 'CURRENT'   
+  AND r.taxable = 0   
+GROUP BY e.objid, e.name, e.orderno  
+ORDER BY e.orderno  
 
 
 [getEndComparativeMVExempt]
 SELECT 
 	'EXEMPT' AS taxability,  
 	e.objid AS classid,  
-	e.exemptdesc AS classname,  
+	e.name AS classname,  
 	0 AS special,  
-	SUM( CASE WHEN f.rputype = 'land' THEN totalmv ELSE 0.0 END ) AS endlandmv,  
-	SUM( CASE WHEN f.rputype <> 'land' THEN totalmv ELSE 0.0 END ) AS endimpmv,  
-	SUM( f.totalmv ) AS endtotal  
-FROM faaslist f  
-	INNER JOIN exemptiontype e ON f.exemptid = e.objid    
-WHERE f.txntimestamp < $P{endingtimestamp}  
-  AND f.docstate = 'CURRENT'   
-  AND f.taxable = 0   
-GROUP BY e.objid, e.exemptdesc 
-ORDER BY MIN(e.orderno)  
+	SUM( CASE WHEN r.rputype = 'land' THEN r.totalmv ELSE 0.0 END ) AS endlandmv,  
+	SUM( CASE WHEN r.rputype <> 'land' THEN r.totalmv ELSE 0.0 END ) AS endimpmv,  
+	SUM( r.totalmv ) AS endtotal  
+FROM faas f
+	INNER JOIN rpu r ON f.rpuid = r.objid 
+	INNER JOIN exemptiontype e ON r.exemptiontype_objid = e.objid    
+WHERE f.txntimestamp < $P{endingtimestamp} 
+  AND f.state = 'CURRENT'   
+  AND r.taxable = 0   
+GROUP BY e.objid, e.name, e.orderno  
+ORDER BY e.orderno  
 
-[getMasterList]
-SELECT t.* FROM (   
-	SELECT 
-		docstate, ownername, fullpin, tdno, titleno, cadastrallotno,  
-		rputype, classcode, totalareaha, totalareasqm, totalmv, totalav, effectivityyear, 
-		prevtdno, prevowner, prevmv, prevav, 
-		null as cancelledbytdnos, null as cancelreason, canceldate 
-	FROM faaslist 
-	WHERE docstate = 'CURRENT'  
-		${classidfilter}
-	  
 
-	UNION 
 
-	SELECT 
-		docstate, ownername, fullpin, tdno, titleno, cadastrallotno,   
-		rputype, classcode, totalareaha, totalareasqm, totalmv, totalav, effectivityyear,  
-		prevtdno, prevowner, prevmv, prevav, 
-		cancelledbytdnos, cancelreason, canceldate 
-	FROM faaslist  
-	WHERE docstate = 'CANCELLED'   
-	  AND YEAR(canceldate) = $P{currentyear}  
-	  ${classidfilter}
-) t 
-${orderby} 
 
-[getRDAP-RPTA-100]
+#----------------------------------------------------------------------
+#
+# Report on Real Property Assessments  
+#
+#----------------------------------------------------------------------
+[getReportOnRPATaxable]
 SELECT 
-	l.pin, 
-	l.indexno, 
-	SUM( CASE WHEN fl.rputype = 'land' AND fl.taxable = 1 THEN 1.0 ELSE 0 END ) AS landtaxablecount,
-	SUM( CASE WHEN fl.rputype = 'land' AND fl.taxable = 0 THEN 1.0 ELSE 0 END ) AS landexemptcount,
-	SUM( CASE WHEN fl.rputype = 'land' AND fl.taxable = 1 THEN fl.totalareaha ELSE 0 END ) AS landareataxable,
-	SUM( CASE WHEN fl.rputype = 'land' AND fl.taxable = 0 THEN fl.totalareaha ELSE 0 END ) AS landareaexempt,
-	SUM( fl.totalareaha ) AS landareatotal,
-	SUM( CASE WHEN fl.taxable = 1 THEN 1 ELSE 0 END ) AS tdtaxablecount,
-	SUM( CASE WHEN fl.taxable = 0 THEN 1 ELSE 0 END ) AS tdexemptcount,
-	COUNT( 1 ) AS tdcount,
-	SUM( CASE WHEN fl.rputype = 'land' THEN fl.totalav ELSE 0 END ) AS landavtotal,
-	SUM( CASE WHEN fl.rputype <> 'land' THEN fl.totalav ELSE 0 END ) AS improvavtotal,
-	SUM( fl.totalav ) AS avtotal,
-	SUM( CASE WHEN fl.taxable = 1 THEN fl.totalav ELSE 0 END ) AS avtaxable,
-	SUM( CASE WHEN fl.taxable = 0 THEN fl.totalav ELSE 0 END ) AS avexempt
-FROM lgu l 
-	LEFT JOIN faaslist fl ON fl.barangayid = l.objid 
-	 
-WHERE l.lgutype = 'BARANGAY' 
-  AND fl.objid IS NULL 
-   OR (fl.docstate = 'CURRENT' 	AND fl.txntimestamp <= $P{txntimestamp})
-GROUP BY l.pin, l.indexno
-ORDER BY l.pin  
+	pc.objid AS classid,
+	pc.name AS classname, 
+	COUNT( 1 ) AS rpucount,
+	SUM( r.totalareasqm ) AS areasqm, 
+	SUM( r.totalareaha) AS areaha,
+
+	SUM( CASE WHEN r.rputype = 'land' THEN r.totalmv ELSE 0.0 END ) AS landmv,
+	SUM( CASE WHEN r.rputype = 'bldg' AND r.totalmv <= 175000 THEN r.totalmv ELSE 0.0 END ) AS bldgmv150less,
+	SUM( CASE WHEN r.rputype = 'bldg' AND r.totalmv > 175000 THEN r.totalmv ELSE 0.0 END ) AS bldgmvover150,
+	SUM( CASE WHEN r.rputype = 'mach' THEN r.totalmv ELSE 0.0 END ) AS machmv,
+	SUM( CASE WHEN rputype NOT IN( 'land', 'bldg', 'mach') THEN r.totalmv ELSE 0.0 END ) AS othermv, 
+	SUM( r.totalmv ) AS totalmv,
+	
+	SUM( CASE WHEN r.rputype = 'land' THEN r.totalav ELSE 0.0 END ) AS landav,
+	SUM( CASE WHEN r.rputype = 'bldg' AND r.totalav <= 175000 THEN r.totalav ELSE 0.0 END ) AS bldgav150less,
+	SUM( CASE WHEN r.rputype = 'bldg' AND r.totalav > 175000 THEN r.totalav ELSE 0.0 END ) AS bldgavover150,
+	SUM( CASE WHEN r.rputype = 'mach' THEN r.totalav ELSE 0.0 END ) AS machav,
+	SUM( CASE WHEN rputype NOT IN( 'land', 'bldg', 'mach') THEN r.totalav ELSE 0.0 END ) AS otherav, 
+	SUM( r.totalav ) AS totalav,
+	
+	SUM( CASE WHEN f.restrictionid = 'CARP' THEN r.totalav ELSE 0.0 END ) AS carpav,
+	SUM( CASE WHEN f.restrictionid = 'UNDER_LITIGATION' THEN r.totalav ELSE 0.0 END ) AS litigationav,
+	SUM( CASE WHEN f.restrictionid = 'OTHER' THEN r.totalav ELSE 0.0 END ) AS otherrestrictionav,
+	SUM( CASE WHEN f.restrictionid IS NOT NULL THEN r.totalav ELSE 0.0 END ) AS totalrestriction 
+
+FROM faas f
+	INNER JOIN rpu r ON f.rpuid = r.objid 
+	INNER JOIN realproperty rp ON r.realpropertyid = rp.objid
+	INNER JOIN propertyclassification pc ON r.classification_objid = pc.objid 
+WHERE f.txntimestamp <= $P{txntimestamp} 
+  AND f.state = 'CURRENT' 
+  AND r.taxable = 1 
+GROUP BY pc.objid, pc.name, pc.orderno
+ORDER BY pc.orderno  
 
 
-[getApproveFaasList]
+[getReportOnRPAExempt]
+SELECT 
+	e.objid AS classid,
+	e.name AS classname, 
+	COUNT( 1 ) AS rpucount,
+	SUM( r.totalareasqm ) AS areasqm, 
+	SUM( r.totalareaha) AS areaha,
+
+	SUM( CASE WHEN r.rputype = 'land' THEN r.totalmv ELSE 0.0 END ) AS landmv,
+	SUM( CASE WHEN r.rputype = 'bldg' AND r.totalmv <= 175000 THEN r.totalmv ELSE 0.0 END ) AS bldgmv150less,
+	SUM( CASE WHEN r.rputype = 'bldg' AND r.totalmv > 175000 THEN r.totalmv ELSE 0.0 END ) AS bldgmvover150,
+	SUM( CASE WHEN r.rputype = 'mach' THEN r.totalmv ELSE 0.0 END ) AS machmv,
+	SUM( CASE WHEN rputype NOT IN( 'land', 'bldg', 'mach') THEN r.totalmv ELSE 0.0 END ) AS othermv, 
+	SUM( r.totalmv ) AS totalmv,
+	
+	SUM( CASE WHEN r.rputype = 'land' THEN r.totalav ELSE 0.0 END ) AS landav,
+	SUM( CASE WHEN r.rputype = 'bldg' AND r.totalav <= 175000 THEN r.totalav ELSE 0.0 END ) AS bldgav150less,
+	SUM( CASE WHEN r.rputype = 'bldg' AND r.totalav > 175000 THEN r.totalav ELSE 0.0 END ) AS bldgavover150,
+	SUM( CASE WHEN r.rputype = 'mach' THEN r.totalav ELSE 0.0 END ) AS machav,
+	SUM( CASE WHEN rputype NOT IN( 'land', 'bldg', 'mach') THEN r.totalav ELSE 0.0 END ) AS otherav, 
+	SUM( r.totalav ) AS totalav,
+	
+	SUM( CASE WHEN f.restrictionid = 'CARP' THEN r.totalav ELSE 0.0 END ) AS carpav,
+	SUM( CASE WHEN f.restrictionid = 'UNDER_LITIGATION' THEN r.totalav ELSE 0.0 END ) AS litigationav,
+	SUM( CASE WHEN f.restrictionid = 'OTHER' THEN r.totalav ELSE 0.0 END ) AS otherrestrictionav,
+	SUM( CASE WHEN f.restrictionid IS NOT NULL THEN r.totalav ELSE 0.0 END ) AS totalrestriction 
+
+FROM faas f
+	INNER JOIN rpu r ON f.rpuid = r.objid 
+	INNER JOIN realproperty rp ON r.realpropertyid = rp.objid
+	INNER JOIN exemptiontype e ON r.exemptiontype_objid = e.objid 
+WHERE f.txntimestamp <= $P{txntimestamp} 
+  AND f.state = 'CURRENT' 
+  AND r.taxable = 0
+GROUP BY e.objid, e.name, e.orderno 
+ORDER BY e.orderno  
+
+
+
+
+[generateTopNDelinquentProperty]
 SELECT
-	docstate, ownername, fullpin, tdno, titleno, cadastrallotno,   
-	rputype, classcode, totalareaha, totalareasqm, totalmv, totalav, effectivityyear,  
-	prevtdno, prevowner, prevmv, prevav, 
-	cancelledbytdnos, cancelreason, canceldate    
-FROM faaslist  
-WHERE docstate = 'CURRENT'      
- AND DATENAME(YEAR, issuedate) = $P{year}  
- AND DATENAME(QUARTER, issuedate) = $P{quarter}      
- AND lguid LIKE $P{lguid}  
- AND barangayid LIKE $P{barangayid} 
- AND MONTH(issuedate) LIKE $P{month} 
- 
-[getLGUList]
-SELECT 
-	* 
-FROM lgu  
-WHERE objid LIKE $P{id} 
- AND lgutype LIKE $P{lgutype}  
- 
-[getBarangayListByParentId]
-SELECT objid, lguname AS barangay FROM lgu 
-WHERE lgutype = 'BARANGAY'
-AND parentid = $P{parentid} 
-ORDER BY lguname 
+	f.owner_name,
+	f.tdno,
+	r.totalav,
+	MIN(ri.year) AS minyear, 
+	SUM( ri.basic + ri.basicint - ri.basicdisc - ri.basicpaid + 
+		 ri.sef + ri.sefint - ri.sefdisc - ri.sefpaid 
+	) AS amount
+FROM rptledger rl
+	INNER JOIN rptledgeritem ri ON rl.objid = ri.rptledgerid 
+	INNER JOIN faas f ON rl.faasid = f.objid 
+	INNER JOIN rpu r ON f.rpuid = r.objid 
+WHERE rl.state = 'APPROVED'
+  AND ri.state = 'OPEN' 
+  AND ri.year <= $P{cy}
+GROUP BY f.owner_name, f.tdno, r.totalav, ri.rptledgerid
+ORDER BY 
+	SUM( ri.basic + ri.basicint - ri.basicdisc - ri.basicpaid + 
+		 ri.sef + ri.sefint - ri.sefdisc - ri.sefpaid 
+	) DESC 
+LIMIT $P{topn}
 
-[getLastPaymentInfo]
-SELECT TOP 1 receiptno AS orno, receiptdate AS ordate FROM rptpayment 
-WHERE rptledgerid = $P{rptledgerid}
-  AND voided = 0
-ORDER BY receiptdate DESC 
+
+[generateTopNDelinquentTaxpayer]
+SELECT 
+	tmp.owner_name AS ownername,
+	COUNT(tmp.objid) AS rpucount,
+	SUM(tmp.totalav) AS totalav,
+	SUM(tmp.amount) AS amount
+FROM (
+	SELECT
+		f.owner_name,
+		rl.objid, 
+		r.totalav,
+		SUM( ri.basic + ri.basicint - ri.basicdisc - ri.basicpaid + 
+			 ri.sef + ri.sefint - ri.sefdisc - ri.sefpaid 
+		) AS amount
+	FROM rptledger rl
+		INNER JOIN rptledgeritem ri ON rl.objid = ri.rptledgerid 
+		INNER JOIN faas f ON rl.faasid = f.objid 
+		INNER JOIN rpu r ON f.rpuid = r.objid 
+	WHERE rl.state = 'APPROVED' 
+	  AND ri.state = 'OPEN' 
+	  AND ri.year <= $P{cy}
+	GROUP BY f.owner_name, rl.objid 
+	ORDER BY amount DESC
+	LIMIT $P{topn}
+) tmp	
+GROUP BY tmp.owner_name 
 

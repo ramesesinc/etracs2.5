@@ -82,7 +82,7 @@ class RPTAssessmentNoticeService
 							.setParameter('assessmentnoticeid', notice.objid)
 							.resultList 
 		notice.dtassessed = dateSvc.getServerYear() 
-		if( notice.items && notice.items[0].dtsigned )	notice.dtassessed = new java.text.SimpleDateFormat( notice.items[0].dtsigned)
+		if( notice.items && notice.items[0].dtsigned )	notice.dtassessed = new java.text.SimpleDateFormat("yyyy").format(notice.items[0].dtsigned)
 		return notice
 	}
 
