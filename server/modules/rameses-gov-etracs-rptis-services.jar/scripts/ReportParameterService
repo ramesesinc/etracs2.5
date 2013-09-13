@@ -65,6 +65,7 @@ class ReportParameterService{
 		org.address = lgu?.address 
 
 		def params = [
+			LGUREGION					: var.lgu_region, 
 			SANGGUNIAN_NAME 			: var.sanggunian_name, 
             LOGOLGU     				: var.url_logo_lgu,                    
             LOGOBLGF    				: var.url_logo_blgf,   
