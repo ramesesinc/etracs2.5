@@ -55,6 +55,7 @@
             def onsearch = {
                 query.putAll(it)
                 search();
+                binding.refresh('query.state')
             }
             
             def showAdvanceSearch(){

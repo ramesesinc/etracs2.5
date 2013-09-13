@@ -28,7 +28,8 @@ class FAASAdvanceSearch
         getFormControls: {
             return [
                 new FormControl( "integer", [captionWidth:100, caption:'RY', name:'query.ry']),
-                new FormControl( "combo", [captionWidth:100, caption:'State', name:'query.state', items:'states', allowNull:false]),
+                new FormControl( "combo", [captionWidth:100, caption:'State', name:'query.state', items:'states']),
+                new FormControl( "combo", [captionWidth:100, caption:'RPU Type', name:'query.rputype', items:'rputypes']),
                 new FormControl( "text", [captionWidth:100, caption:'TD No.', name:'query.tdno']),
                 new FormControl( "text", [captionWidth:100, caption:'Previous TD No.', name:'query.prevtdno']),
                 new FormControl( "text", [captionWidth:100, caption:'Owner Name', name:'query.ownername']),
@@ -50,6 +51,10 @@ class FAASAdvanceSearch
    
    def getBarangays(){
        return lguSvc.getBarangaysByParentId(null);
+   }
+   
+   def getRputypes(){
+       return ['land', 'bldg', 'mach', 'planttree', 'misc' ]
    }
    
    void clear(){

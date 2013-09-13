@@ -60,7 +60,6 @@
     </Component>
     <Component class="com.rameses.rcp.control.XComboBox" name="xComboBox1">
       <Properties>
-        <Property name="allowNull" type="boolean" value="false"/>
         <Property name="emptyText" type="java.lang.String" value="ALL STATES"/>
         <Property name="immediate" type="boolean" value="true"/>
         <Property name="items" type="java.lang.String" value="states"/>

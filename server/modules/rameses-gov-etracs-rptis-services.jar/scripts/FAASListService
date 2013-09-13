@@ -82,6 +82,10 @@ class FAASListService
             if (whereclause) whereclause += ' AND '
             whereclause += ' rp.barangayid LIKE $P{barangayid} '
         }
+        if (params.rputype){
+            if (whereclause) whereclause += ' AND '
+            whereclause += ' rpu.rputype = $P{rputype} '
+        }
         params.filters = whereclause
         def qry = em.sqlContext.createNamedQuery('faas:getList')
 

@@ -38,7 +38,6 @@ public class StateQueryPanel extends javax.swing.JPanel {
         xButton1.setName("showAdvanceSearch");
         xButton1.setText("Search");
 
-        xComboBox1.setAllowNull(false);
         xComboBox1.setEmptyText("ALL STATES");
         xComboBox1.setImmediate(true);
         xComboBox1.setItems("states");
