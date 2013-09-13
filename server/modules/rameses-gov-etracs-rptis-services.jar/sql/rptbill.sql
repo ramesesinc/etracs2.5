@@ -4,7 +4,7 @@ FROM rptledger rl
 	INNER JOIN faas f ON rl.faasid = f.objid 
 WHERE f.taxpayer_objid = $P{taxpayerid}
  AND rl.state = 'APPROVED'
- AND (rl.nextbilldate IS NULL OR rl.nextbilldate <= NOW() OR rl.lastitemyear < $P{billtoyear})
+ AND (rl.nextbilldate IS NULL OR rl.nextbilldate <= $P{currdate} OR rl.lastitemyear < $P{billtoyear})
 
 
 [getOpenLedgerItemByLedgerId]

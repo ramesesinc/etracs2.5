@@ -436,6 +436,7 @@ public class RPTBillingService
 		ledgers +=  em.sqlContext.createNamedQuery('rptbill:getOpenLedgerByTaxpayerId')
 							.setParameter('taxpayerid', bill.taxpayerid)
 							.setParameter('billtoyear', bill.billtoyear)
+							.setParameter('currdate', dtSvc.serverDate)
 							.resultList
 		ledgers += getOpenLedgerItemByPropertyPayer(bill)
 		return ledgers 
