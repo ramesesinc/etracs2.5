@@ -8,7 +8,7 @@ SELECT
 	CASE WHEN p.objid IS NOT NULL THEN p.indexno ELSE c.indexno END AS parentlguindex,   
 	CASE WHEN m.objid IS NOT NULL THEN m.name ELSE '' END AS lguname, 
 	CASE WHEN m.objid IS NOT NULL THEN m.indexno ELSE d.indexno END AS lguindex,  
-	b.name AS barangay, 
+	b.name AS barangay,  
 	b.indexno AS barangayindex, 
 	et.code AS legalbasis, 
 	ry.ordinanceno, ry.ordinancedate, ry.sangguniangname   

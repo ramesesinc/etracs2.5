@@ -83,11 +83,6 @@ FROM rptcertificationitem rci
 WHERE rci.rptcertificationid = $P{rptcertificationid}
 ORDER BY r.fullpin
 
-
-
-
-
-
 [insertMultipleItems]
 INSERT INTO rptcertificationitem (rptcertificationid,refid)
 SELECT 
@@ -154,3 +149,92 @@ WHERE faasid = $P{faasid}
 
 [getProperties]
 SELECT objid FROM faas WHERE taxpayer_objid = $P{taxpayerid} AND state = 'CURRENT'
+
+
+[findImprovementCount]
+SELECT 
+	COUNT(*) AS improvcount
+FROM faas f
+	INNER JOIN rpu r ON f.rpuid = r.objid 
+	INNER JOIN realproperty rp ON r.realpropertyid = rp.objid 
+WHERE f.objid = $P{faasid}
+  AND f.state = 'CURRENT' 
+  AND r.rputype = 'land'
+  AND EXISTS( SELECT * FROM rpu 
+  			  WHERE realpropertyid = r.realpropertyid 
+  			    AND state = 'CURRENT' 
+  			    AND rputype <> 'land'
+  			)
+
+
+[getLandItems]
+SELECT 
+	f.tdno,
+	f.taxpayer_name, 
+	f.owner_name, 
+	f.titleno,	
+	pc.code AS classcode, 
+	pc.name AS classname,
+	rp.cadastrallotno,
+	b.name AS barangay, 
+	r.totalareaha AS totalareaha,
+	r.totalareasqm AS totalareasqm,
+	r.totalav,
+	r.totalmv, 
+	rp.surveyno
+FROM rptcertificationitem rci 
+	INNER JOIN faas f ON rci.refid = f.objid 
+	INNER JOIN rpu r ON f.rpuid = r.objid 
+	INNER JOIN realproperty rp ON r.realpropertyid = rp.objid 
+	INNER JOIN propertyclassification pc ON r.classification_objid = pc.objid 
+	INNER JOIN barangay b ON rp.barangayid = b.objid 
+WHERE rci.rptcertificationid = $P{rptcertificationid}
+ORDER BY r.fullpin
+
+
+
+
+
+[insertLandWithNoImprovement]
+INSERT INTO rptcertificationitem (rptcertificationid,refid)
+SELECT 
+	$P{rptcertificationid},
+	f.objid 
+FROM faas f
+	INNER JOIN rpu r ON f.rpuid = r.objid 
+	INNER JOIN realproperty rp ON r.realpropertyid = rp.objid 
+	INNER JOIN propertyclassification pc ON r.classification_objid = pc.objid 
+	INNER JOIN barangay b ON rp.barangayid = b.objid 
+WHERE f.objid = $P{faasid} 
+
+
+[insertLandImprovement]
+INSERT INTO rptcertificationitem (rptcertificationid,refid)
+SELECT 
+	$P{rptcertificationid},
+	f.objid 
+FROM faas f 
+	INNER JOIN rpu r ON f.rpuid = r.objid 
+	INNER JOIN realproperty rp ON r.realpropertyid = rp.objid 
+	INNER JOIN propertyclassification pc ON r.classification_objid = pc.objid 
+	INNER JOIN barangay b ON rp.barangayid = b.objid 
+WHERE f.state = 'CURRENT'
+  AND r.rputype <> 'land' 
+  AND EXISTS(
+	SELECT xf.objid FROM faas xf 
+		INNER JOIN rpu xr ON xf.rpuid = xr.objid 
+	WHERE xf.objid = $P{faasid}
+	  AND xr.realpropertyid = r.realpropertyid 
+  )
+
+
+[findFaasById]
+SELECT 
+	f.tdno,
+	f.owner_name,
+	b.name AS barangay
+FROM faas f 
+	INNER JOIN rpu r ON f.rpuid = r.objid 
+	INNER JOIN realproperty rp ON r.realpropertyid = rp.objid 
+	INNER JOIN barangay b ON rp.barangayid = b.objid 
+WHERE f.objid = $P{faasid}

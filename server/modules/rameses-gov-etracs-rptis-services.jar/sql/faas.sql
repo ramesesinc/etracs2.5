@@ -92,7 +92,7 @@ SELECT
 	f.*,
 	pc.code AS classification_code, 
 	pc.name AS classification_name, 
-	r.ry, r.realpropertyid, r.rputype, r.fullpin, r.totalmv, r.totalav,
+	r.ry, r.realpropertyid, r.rputype, r.fullpin, r.totalmv, r.totalav, r.rputype, 
 	r.totalareasqm, r.totalareaha,
 	rp.barangayid, rp.cadastrallotno, rp.blockno, rp.surveyno,
 	b.name AS barangay_name

@@ -20,12 +20,12 @@ class FAASLookupService
 		params.searchtext 	= (params.searchtext ? params.searchtext : '') + '%';
 		
 		def filters = [
-			' and f.tdno = $P{tdno} AND f.state LIKE $P{state} AND f.taxpayer_objid LIKE $P{taxpayerid}',
-			' and f.owner_name LIKE $P{searchtext} AND f.state LIKE $P{state} AND f.taxpayer_objid LIKE $P{taxpayerid}',
-			' and r.fullpin LIKE $P{searchtext} AND f.state LIKE $P{state} AND f.taxpayer_objid LIKE $P{taxpayerid}',
-			' and rp.cadastrallotno LIKE $P{searchtext} AND f.state LIKE $P{state} AND f.taxpayer_objid LIKE $P{taxpayerid}',
-			' and rp.blockno = $P{blockno} AND f.state LIKE $P{state} AND f.taxpayer_objid LIKE $P{taxpayerid}',
-			' and rp.surveyno LIKE $P{searchtext} AND f.state LIKE $P{state} AND f.taxpayer_objid LIKE $P{taxpayerid}',
+			' and f.tdno = $P{tdno} ',
+			' and f.owner_name LIKE $P{searchtext} ',
+			' and r.fullpin LIKE $P{searchtext} ',
+			' and rp.cadastrallotno LIKE $P{searchtext} ',
+			' and rp.blockno = $P{blockno} ',
+			' and rp.surveyno LIKE $P{searchtext}',
 		]
 
 		return utilSvc.getListFromQuery('faas:lookupFaas', filters, params, 'f.objid');
