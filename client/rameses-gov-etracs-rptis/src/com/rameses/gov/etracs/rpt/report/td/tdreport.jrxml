@@ -48,6 +48,7 @@
 	<parameter name="CERTIFIEDBY" isForPrompting="false" class="java.lang.String"/>
 	<parameter name="AUTHORITY" isForPrompting="false" class="java.lang.String"/>
 	<parameter name="TXNNO" isForPrompting="false" class="java.lang.String"/>
+	<parameter name="LOGOASSESSOR" isForPrompting="false" class="java.lang.String"/>
 
 	<field name="lands" class="java.lang.Object"/>
 	<field name="tdno" class="java.lang.String"/>
@@ -118,12 +119,12 @@
 		<group  name="TAXPAYER" >
 			<groupExpression><![CDATA[]]></groupExpression>
 			<groupHeader>
-			<band height="11"  isSplitAllowed="true" >
+			<band height="14"  isSplitAllowed="true" >
 				<staticText>
 					<reportElement
 						mode="Transparent"
 						x="0"
-						y="0"
+						y="1"
 						width="38"
 						height="11"
 						forecolor="#000000"
@@ -143,7 +144,7 @@
 					<reportElement
 						mode="Transparent"
 						x="394"
-						y="0"
+						y="1"
 						width="21"
 						height="11"
 						forecolor="#000000"
@@ -163,7 +164,7 @@
 					<reportElement
 						mode="Transparent"
 						x="39"
-						y="0"
+						y="1"
 						width="347"
 						height="11"
 						forecolor="#000000"
@@ -183,7 +184,7 @@
 					<reportElement
 						mode="Transparent"
 						x="415"
-						y="0"
+						y="1"
 						width="126"
 						height="11"
 						forecolor="#000000"
@@ -214,7 +215,7 @@
 					<reportElement
 						mode="Transparent"
 						x="0"
-						y="2"
+						y="3"
 						width="38"
 						height="11"
 						forecolor="#000000"
@@ -234,7 +235,7 @@
 					<reportElement
 						mode="Transparent"
 						x="394"
-						y="2"
+						y="3"
 						width="59"
 						height="11"
 						forecolor="#000000"
@@ -254,7 +255,7 @@
 					<reportElement
 						mode="Transparent"
 						x="0"
-						y="14"
+						y="15"
 						width="108"
 						height="11"
 						forecolor="#000000"
@@ -274,7 +275,7 @@
 					<reportElement
 						mode="Transparent"
 						x="394"
-						y="14"
+						y="15"
 						width="19"
 						height="11"
 						forecolor="#000000"
@@ -294,7 +295,7 @@
 					<reportElement
 						mode="Transparent"
 						x="0"
-						y="26"
+						y="27"
 						width="38"
 						height="11"
 						forecolor="#000000"
@@ -314,7 +315,7 @@
 					<reportElement
 						mode="Transparent"
 						x="394"
-						y="26"
+						y="27"
 						width="58"
 						height="11"
 						forecolor="#000000"
@@ -414,7 +415,7 @@
 					<reportElement
 						mode="Transparent"
 						x="39"
-						y="2"
+						y="3"
 						width="347"
 						height="11"
 						forecolor="#000000"
@@ -434,7 +435,7 @@
 					<reportElement
 						mode="Transparent"
 						x="452"
-						y="2"
+						y="3"
 						width="89"
 						height="11"
 						forecolor="#000000"
@@ -454,7 +455,7 @@
 					<reportElement
 						mode="Transparent"
 						x="109"
-						y="14"
+						y="15"
 						width="277"
 						height="11"
 						forecolor="#000000"
@@ -474,7 +475,7 @@
 					<reportElement
 						mode="Transparent"
 						x="415"
-						y="14"
+						y="15"
 						width="126"
 						height="11"
 						forecolor="#000000"
@@ -494,7 +495,7 @@
 					<reportElement
 						mode="Transparent"
 						x="39"
-						y="26"
+						y="27"
 						width="347"
 						height="11"
 						forecolor="#000000"
@@ -514,7 +515,7 @@
 					<reportElement
 						mode="Transparent"
 						x="450"
-						y="26"
+						y="27"
 						width="91"
 						height="11"
 						forecolor="#000000"
@@ -619,7 +620,7 @@
 					<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
 						<font fontName="Tahoma" pdfFontName="Helvetica" size="8" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 					</textElement>
-				<text><![CDATA[OCT/TCT/CLOA No. :]]></text>
+				<text><![CDATA[OCT/TC  /CLOA No. :]]></text>
 				</staticText>
 				<staticText>
 					<reportElement
@@ -681,6 +682,26 @@
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[$F{surveyno}]]></textFieldExpression>
 				</textField>
+				<staticText>
+					<reportElement
+						mode="Transparent"
+						x="28"
+						y="0"
+						width="8"
+						height="11"
+						forecolor="#000000"
+						backcolor="#FFFFFF"
+						key="staticText-150"/>
+					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
+						<font fontName="Lucida Console" pdfFontName="Helvetica" size="10" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
+					</textElement>
+				<text><![CDATA[T]]></text>
+				</staticText>
 			</band>
 			</groupHeader>
 			<groupFooter>
@@ -1506,6 +1527,17 @@
 					</textElement>
 				<textFieldExpression   class="java.lang.Integer"><![CDATA[$F{floorcount}]]></textFieldExpression>
 				</textField>
+				<line direction="TopDown">
+					<reportElement
+						x="332"
+						y="108"
+						width="2"
+						height="1"
+						key="line-2"/>
+					<graphicElement stretchType="NoStretch">
+					<pen lineWidth="0.5"/>
+</graphicElement>
+				</line>
 			</band>
 			</groupHeader>
 			<groupFooter>
@@ -2898,7 +2930,18 @@ TRUE COPY]]></text>
 			</band>
 		</background>
 		<title>
-			<band height="83"  isSplitAllowed="true" >
+			<band height="84"  isSplitAllowed="true" >
+				<image  evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="421"
+						y="0"
+						width="60"
+						height="60"
+						key="image-2"/>
+					<box></box>
+					<graphicElement stretchType="NoStretch"/>
+					<imageExpression class="java.lang.String"><![CDATA[$P{LOGOASSESSOR}]]></imageExpression>
+				</image>
 				<staticText>
 					<reportElement
 						mode="Transparent"
@@ -2923,7 +2966,7 @@ TRUE COPY]]></text>
 					<reportElement
 						mode="Transparent"
 						x="0"
-						y="69"
+						y="71"
 						width="38"
 						height="12"
 						forecolor="#000000"
@@ -2943,7 +2986,7 @@ TRUE COPY]]></text>
 					<reportElement
 						mode="Transparent"
 						x="235"
-						y="69"
+						y="71"
 						width="122"
 						height="12"
 						forecolor="#000000"
@@ -2957,13 +3000,13 @@ TRUE COPY]]></text>
 					<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
 						<font fontName="Tahoma" pdfFontName="Helvetica-Bold" size="8" isBold="true" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 					</textElement>
-				<text><![CDATA[Property Identification No. :]]></text>
+				<text><![CDATA[Property Identification   o. :]]></text>
 				</staticText>
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						mode="Transparent"
 						x="40"
-						y="65"
+						y="67"
 						width="190"
 						height="16"
 						forecolor="#000000"
@@ -2983,7 +3026,7 @@ TRUE COPY]]></text>
 					<reportElement
 						mode="Transparent"
 						x="358"
-						y="65"
+						y="68"
 						width="182"
 						height="16"
 						forecolor="#000000"
@@ -3066,7 +3109,7 @@ TRUE COPY]]></text>
 					<reportElement
 						mode="Transparent"
 						x="394"
-						y="56"
+						y="59"
 						width="63"
 						height="11"
 						forecolor="#000000"
@@ -3088,7 +3131,7 @@ TRUE COPY]]></text>
 					<reportElement
 						mode="Transparent"
 						x="457"
-						y="56"
+						y="59"
 						width="84"
 						height="11"
 						forecolor="#000000"
@@ -3107,6 +3150,39 @@ TRUE COPY]]></text>
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[$P{TXNNO}]]></textFieldExpression>
 				</textField>
+				<staticText>
+					<reportElement
+						mode="Transparent"
+						x="329"
+						y="71"
+						width="8"
+						height="12"
+						forecolor="#000000"
+						backcolor="#FFFFFF"
+						key="staticText-148"/>
+					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
+						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="8" isBold="true" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
+					</textElement>
+				<text><![CDATA[N]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="168"
+						y="39"
+						width="8"
+						height="13"
+						key="staticText-151"/>
+					<box></box>
+					<textElement>
+						<font pdfFontName="Helvetica" isBold="false"/>
+					</textElement>
+				<text><![CDATA[.]]></text>
+				</staticText>
 			</band>
 		</title>
 		<pageHeader>
@@ -3195,6 +3271,19 @@ TRUE COPY]]></text>
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA["This declaration is for real property taxation purposes only and the valuation indicated herein are based on the schedule of unit market values prepared for the purpose and duly enacted into an Ordinance by the " + $F{sangguniangname} + " under Ordinance No. " + ($F{ordinanceno} == null ? "__________" : $F{ordinanceno}) + " dated " + ($F{ordinancedate} == null ? "_____________" : (new SimpleDateFormat("yyyy-MM-dd")).format($F{ordinancedate})) + ".  It does not and cannot by itself alone confer any ownership or legal title to the property. "]]></textFieldExpression>
 				</textField>
+				<staticText>
+					<reportElement
+						x="16"
+						y="3"
+						width="8"
+						height="13"
+						key="staticText-149"/>
+					<box></box>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[.]]></text>
+				</staticText>
 			</band>
 		</summary>
 </jasperReport>

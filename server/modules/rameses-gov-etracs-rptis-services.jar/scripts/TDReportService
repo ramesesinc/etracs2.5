@@ -64,7 +64,7 @@ class TDReportService
 			println e.message 
 		}
 
-		td.sangguniangname = var.sangguniang_name
+		td.sangguniangname = var.sangguinan_name
 
 
 		if( td.state == 'CURRENT' || td.state == 'CANCELLED' ) {
