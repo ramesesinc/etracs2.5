@@ -56,6 +56,8 @@ class ReportParameterService{
 				org.provinceassessor = province.assessor 
 			}
 		}
+
+		println 'lgu -> ' + lgu 
 		org.treasurer = lgu?.treasurer 
 		org.assessor = lgu?.assessor 
 		org.mayor = lgu?.mayor 

@@ -39,7 +39,7 @@ public abstract class BaseValueTypeController
     
     def listHandler = [
         createItem   : { return createEntity() },
-        getRows      : { return 50 },
+        getRows      : { return 100 },
         getColumns   : { return getColumns()},
                 
         validate     : { li -> 
@@ -53,7 +53,6 @@ public abstract class BaseValueTypeController
             if( MsgBox.confirm('Remove item?' ) ) {
                 svc.deleteBldgKindBucc( item )
                 list.remove( item )
-                println 'list size -> ' + list.size()
                 return true;
             }
             return false;

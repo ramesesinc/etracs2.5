@@ -6,6 +6,41 @@ class RPTMigrationUtilService
 	@PersistenceContext('main')
 	def em 
 
+
+	@ProxyMethod
+	public List getFaasNoTDByBarangay(barangayid){
+		return em.sqlContext.createQuery('''
+			select f.objid
+			from iligan..faas f 
+				inner join iligan..rpu r on f.rpuid = r.objid 
+				inner join iligan..realproperty rp on r.realpropertyid = rp.objid 
+			where rp.barangayid = $P{barangayid}
+			  and f.tdno is null 
+			  and r.ry = 2014
+			 ORDER BY r.fullpin 
+		''')
+		.setParameter('barangayid', barangayid)
+		.resultList
+	}
+
+
+	@ProxyMethod
+	public void updateTDNo(faasid, tdno){
+		em.sqlContext.createExecutor('''
+			UPDATE iligan..faas SET 
+				tdno = $P{tdno},
+				utdno = $P{tdno},
+				autonumber = 1
+			WHERE objid =$P{faasid}
+		''')
+		.setParameter('faasid', faasid)
+		.setParameter('tdno', tdno)
+		.execute()
+		println 'Updated TD No. ' + tdno 
+	}
+
+
+
 	@ProxyMethod
 	public def getBarangayIds(  ) {
 		return em.sqlContext.createQuery('select objid from iligan..barangay').resultList

@@ -13,11 +13,16 @@ class RPTCertificationNoPropertyService
     
 	@ProxyMethod
 	public def createCertification( cert ) {
-		def prop = em.sqlContext.createNamedQuery('rptcertification:getProperties')
-						.setParameter('taxpayerid', cert.taxpayer.objid).singleResult
-		if (prop)
-			throw new Exception('Requester ' + cert.requestedby + ' has existing properties.')
+		checkExistingProperties(cert.taxpayer.objid)
 		return certSvc.createCertification(cert)
+	}
+
+	@ProxyMethod
+	public void checkExistingProperties( taxpayerid ) {
+		def prop = em.sqlContext.createNamedQuery('rptcertification:getProperties')
+						.setParameter('taxpayerid', taxpayerid).singleResult
+		if (prop)
+			throw new Exception('Selected taxpayer has existing properties.')
 	}
 
 	@ProxyMethod
