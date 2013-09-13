@@ -17,6 +17,23 @@ class FaasServiceInterceptor
 	@Service('Var')
 	def var
 
+	@Service('LogService')
+	def logSvc 
+
+
+	@After(pattern="FAASService.createFaas.*") 
+	public void logCreate( evt ) {
+		def faas = evt.result 
+		logSvc.log( 'CREATE', 'FAAS', faas.objid)
+	}
+
+	@After(pattern="FAASService.updateFaas.*") 
+	public void logUpdate( evt ) {
+		def faas = evt.result 
+		logSvc.log( 'UPDATE', 'FAAS', faas.objid)
+	}
+
+
 	@Before(pattern="FAASService.initFaasTransaction")  
 	public void interceptInitFaasTransaction( evt ) {
 		def info = evt.args[0]
