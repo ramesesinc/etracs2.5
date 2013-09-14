@@ -21,7 +21,7 @@ WHERE bu.bldgrpuid = $P{bldgrpuid}
 
 
 [getFloors]
-SELECT * FROM bldgfloor WHERE bldguseid = $P{bldguseid} 
+SELECT * FROM bldgfloor WHERE bldguseid = $P{bldguseid}  ORDER BY floorno 
 
 [getAdditionalItems]
 SELECT bfa.*,

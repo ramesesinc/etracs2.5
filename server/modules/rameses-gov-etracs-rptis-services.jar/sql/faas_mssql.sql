@@ -16,11 +16,13 @@ SELECT
 	rp.cadastrallotno,
 	rp.blockno,
 	rp.claimno,
-	b.name AS barangay_name
+	b.name AS barangay_name,
+	pc.code AS classification_code
 FROM faas f
 	INNER JOIN rpu rpu ON f.rpuid = rpu.objid
 	INNER  JOIN realproperty rp ON rpu.realpropertyid = rp.objid
 	INNER JOIN barangay b ON rp.barangayid = b.objid 
+	INNER JOIN propertyclassification pc ON rpu.classification_objid = pc.objid 
 WHERE 
 ${filters}
 

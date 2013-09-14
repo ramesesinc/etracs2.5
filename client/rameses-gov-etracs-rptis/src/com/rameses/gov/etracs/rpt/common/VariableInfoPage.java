@@ -29,6 +29,7 @@ public class VariableInfoPage extends javax.swing.JPanel {
         xDataTable1 = new com.rameses.rcp.control.XDataTable();
 
         setPreferredSize(new java.awt.Dimension(488, 306));
+        xButton2.setMnemonic('o');
         xButton2.setDefaultCommand(true);
         xButton2.setIndex(-10);
         xButton2.setName("okInfo");
@@ -38,8 +39,33 @@ public class VariableInfoPage extends javax.swing.JPanel {
         jLabel1.setText("Enter Variable value:");
 
         xDataTable1.setColumns(new com.rameses.rcp.common.Column[]{
-            new com.rameses.rcp.common.Column("param.caption", "Parameter", 100, 0, 0, false, true, true, false, null, new com.rameses.rcp.common.TextColumnHandler()),
-            new com.rameses.rcp.common.Column("value", "Value", 100, 0, 0, false, true, true, true, null, new com.rameses.rcp.common.TextColumnHandler())
+            new com.rameses.rcp.common.Column(new Object[]{
+                new Object[]{"name", "param.caption"}
+                , new Object[]{"caption", "Parameter"}
+                , new Object[]{"width", 100}
+                , new Object[]{"minWidth", 0}
+                , new Object[]{"maxWidth", 0}
+                , new Object[]{"required", false}
+                , new Object[]{"resizable", true}
+                , new Object[]{"nullWhenEmpty", true}
+                , new Object[]{"editable", false}
+                , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
+                , new Object[]{"typeHandler", new com.rameses.rcp.common.TextColumnHandler()}
+            }),
+            new com.rameses.rcp.common.Column(new Object[]{
+                new Object[]{"name", "value"}
+                , new Object[]{"caption", "Value"}
+                , new Object[]{"width", 100}
+                , new Object[]{"minWidth", 0}
+                , new Object[]{"maxWidth", 0}
+                , new Object[]{"required", false}
+                , new Object[]{"resizable", true}
+                , new Object[]{"nullWhenEmpty", true}
+                , new Object[]{"editable", true}
+                , new Object[]{"editableWhen", null}
+                , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
+                , new Object[]{"typeHandler", new com.rameses.rcp.common.TextColumnHandler()}
+            })
         });
         xDataTable1.setHandler("infoListHandler");
 

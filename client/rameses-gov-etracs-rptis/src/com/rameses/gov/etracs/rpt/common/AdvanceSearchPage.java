@@ -45,6 +45,7 @@ public class AdvanceSearchPage extends javax.swing.JPanel {
         xButton2.setText("OK");
 
         xButton3.setMnemonic('c');
+        xButton3.setFocusable(false);
         xButton3.setName("clear");
         xButton3.setText("Clear");
 
