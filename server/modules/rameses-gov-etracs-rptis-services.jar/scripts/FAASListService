@@ -89,7 +89,7 @@ class FAASListService
         params.filters = whereclause
         def qry = em.sqlContext.createNamedQuery('faas:getList')
 
-        qry.setPagingKeys('f.objid') 
+        qry.setPagingKeys('f.objid')  
 
         if ( params._start)
             qry.setFirstResult(params._start)
@@ -106,13 +106,13 @@ class FAASListService
         return [
             [name:"state", caption:"State", width:100],
             [name:"ry", caption:"RY", width:50, type:'integer', format:'0000'],
+            [name:"tdno", caption:"TD No.", width:140],
             [name:"txntype.objid", caption:"Txn", width:50],
             [name:"rputype", caption:"Type", width:80],
-            [name:"tdno", caption:"TD No.", width:140],
+            [name:"classification.code", caption:"Class", width:50], 
             [name:"fullpin", caption:"PIN", width:200],
             [name:"barangay.name", caption:"Barangay", width:200],
             [name:"owner.name", caption:"Owner Name", width:250],
-            [name:"owner.address", caption:"Owner Address", width:250],
             [name:"cadastrallotno", caption:"Lot No.", width:100],
             [name:"totalareasqm", caption:"Area (sqm)", width:120, type:'decimal', format:'#,##0.00'],
             [name:"totalmv", caption:"Market Value", width:100, type:'decimal', format:'#,##0.00'],

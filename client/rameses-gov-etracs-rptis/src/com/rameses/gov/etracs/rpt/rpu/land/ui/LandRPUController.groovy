@@ -57,8 +57,8 @@ public class LandRPUController extends com.rameses.gov.etracs.rpt.rpu.ui.Abstrac
             selectedLand.subclass = it;
             selectedLand.unitvalue = it.unitvalue;
             selectedLand.basevalue = it.basevalue;
-            selectedLand.actualuse = null;
             selectedLand.specificclass = it.specificclass;
+            selectedLand.putAll( svc.calculateLandDetailAssessment(selectedLand, rpu.ry) )
         }] )
     }
     
@@ -83,9 +83,9 @@ public class LandRPUController extends com.rameses.gov.etracs.rpt.rpu.ui.Abstrac
             new Column(caption:'SubClass*', type:'lookup', handler:'lookupSubclass',  expression:'#{item.subclass.code}', maxWidth:100, editable:true ),
             new Column(name:'specificclass.name', caption:'Specific Class', maxWidth:100 ),
             new Column(name:'taxable', caption:'Tax?', type:'boolean', maxWidth:50, editable:true ),
-            new Column(name:'actualuse', caption:'Actual Use*', type:'lookup', handler:'lookupAssessLevel', expression:'#{item.actualuse.code}', maxWidth:100, editable:true ),
+            new Column(name:'actualuse', caption:'Actual Use*', type:'lookup', handler:'lookupAssessLevel', expression:'#{item.actualuse.code}', maxWidth:100, editable:true, required:true ),
             new Column(name:'stripping', caption:'Strip', type:'lookup', handler:'lookupStripping', expression:'#{item.stripping.striplevel}', maxWidth:50, editable:true ),
-            new Column(name:'area', caption:'Area*', type:'decimal', format:'#,##0.000000',editable:true, maxWidth:100 ),
+            new Column(name:'area', caption:'Area*', type:'decimal', format:'#,##0.000000',editable:true, maxWidth:100, scale:6 ),
             new Column(name:'unitvalue', caption:'Unit Value', type:'decimal', maxWidth:100),
             new Column(name:'basemarketvalue', caption:'Base Market Value', type:'decimal', maxWidth:100),
             new Column(name:'adjustment', caption:'Adjustment', type:'decimal', maxWidth:100),
@@ -135,6 +135,8 @@ public class LandRPUController extends com.rameses.gov.etracs.rpt.rpu.ui.Abstrac
                 updateStrippingInfo( item )
             else if ( colName == 'assessedvalue' ) 
                 updateav = true 
+            else if ( colName == 'actualuse' )
+                item.putAll( svc.calculateLandDetailAssessment(selectedLand, rpu.ry) )
         },
                 
         fetchList : { 

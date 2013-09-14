@@ -73,6 +73,7 @@
     <Component class="com.rameses.rcp.control.XButton" name="xButton3">
       <Properties>
         <Property name="mnemonic" type="int" value="99"/>
+        <Property name="focusable" type="boolean" value="false"/>
         <Property name="name" type="java.lang.String" value="clear"/>
         <Property name="text" type="java.lang.String" value="Clear"/>
       </Properties>
