@@ -150,7 +150,7 @@
             <param name="sourcefile" value="rameses-gov-etracs-signatory-template"/>
         </antcall>
         <antcall target="deploy-etracs-jars-to-platform">
-            <param name="sourcefile" value="gov-iligan-treasury"/>
+            <param name="sourcefile" value="gov-lgu-iligan"/>
         </antcall>
     </target>
     
