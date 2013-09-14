@@ -89,9 +89,11 @@ class FaasReportService
 			faas.subtotal = faas.rpu.totalbmv
 			
 			def setting = bldgrySvc.open( [objid: faas.rpu.bldgtype.bldgrysettingid ] )
+			faas.rpu.predominant = setting ? setting.predominant : true;
+			faas.rpu.formattedassesslevel = numberSvc.format("#,##0", faas.rpu.assesslevel ) + ' %'
+
 			if( setting && !setting.depreciatecoreanditemseparately ) {
 				if( faas.additionalitems && faas.additionalitems[0].amount) {
-					println faas.additionalitems
 					def addlitmtotalamt = faas.additionalitems.findAll{it.amount != null}.amount.sum()
 					faas.subtotal = faas.subtotal.add( addlitmtotalamt )
 				}
@@ -536,11 +538,11 @@ class FaasReportService
 		return data
 	}
 	
-	private def getBldgPropertyAssessment( rpu ) {
+	private def getBldgPropertyAssessment( rpu  ) {
 		def data = []
-		
+
 		rpu.bldguses?.each {
-			def assesslevel = numberSvc.format("#,##0", (rpu.useswornamount ? rpu.info.assesslevel : it.assesslevel)) + ' %'
+			def assesslevel = numberSvc.format("#,##0", ( rpu.useswornamount ? rpu.assesslevel : it.assesslevel)) + ' %'
 			
 			def item = [
 				actualuse	 : it.actualuse.name,
@@ -548,7 +550,7 @@ class FaasReportService
 				assesslevel	 : assesslevel,
 				assessedvalue: (rpu.useswornamount ? rpu.totalav : it.assessedvalue ),
 			]
-			
+
 			data.add( item )
 		}
 		

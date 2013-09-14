@@ -86,6 +86,8 @@
 	<field name="recommender.title" class="java.lang.String"/>
 	<field name="propertylocation" class="java.lang.String"/>
 	<field name="rpu.totalav" class="java.math.BigDecimal"/>
+	<field name="rpu.formattedassesslevel" class="java.lang.String"/>
+	<field name="rpu.predominant" class="java.lang.Boolean"/>
 
 
 		<group  name="Part1" isStartNewPage="true" >
@@ -1061,6 +1063,12 @@
 						positionType="Float"/>
 					<subreportParameter  name="TOTALAV">
 						<subreportParameterExpression><![CDATA[$F{rpu.totalav}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="ASSESSLEVEL">
+						<subreportParameterExpression><![CDATA[$F{rpu.formattedassesslevel}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="PREDOMINANT">
+						<subreportParameterExpression><![CDATA[$F{rpu.predominant}]]></subreportParameterExpression>
 					</subreportParameter>
 					<dataSourceExpression><![CDATA[$F{propertyassessments}]]></dataSourceExpression>
 					<subreportExpression  class="net.sf.jasperreports.engine.JasperReport"><![CDATA[$P{PropertyAssessment}]]></subreportExpression>
