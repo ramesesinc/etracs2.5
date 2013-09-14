@@ -37,10 +37,10 @@
 	<parameter name="ASSESSORTITLE" isForPrompting="false" class="java.lang.String"/>
 
 	<field name="taxpayername" class="java.lang.String"/>
-	<field name="issuedate" class="java.util.Date"/>
+	<field name="txndate" class="java.util.Date"/>
 	<field name="items" class="java.lang.Object"/>
 	<field name="taxpayeraddress" class="java.lang.String"/>
-	<field name="docno" class="java.lang.String"/>
+	<field name="txnno" class="java.lang.String"/>
 	<field name="createdbyname" class="java.lang.String"/>
 	<field name="createdbytitle" class="java.lang.String"/>
 	<field name="approvedbyname" class="java.lang.String"/>
@@ -213,10 +213,10 @@
 					<bottomPen lineWidth="0.0" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 </box>
-					<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
+					<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
 						<font fontName="Tahoma" pdfFontName="Helvetica" size="8" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{docno}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{txnno}]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement
@@ -259,25 +259,25 @@
 					</textElement>
 				<text><![CDATA[NOTICE OF ASSESSMENT]]></text>
 				</staticText>
-				<textField isStretchWithOverflow="false" pattern="dd MMM yyyy" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+				<textField isStretchWithOverflow="false" pattern="dd/MM/yyyy" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						mode="Transparent"
 						x="593"
 						y="108"
-						width="112"
+						width="119"
 						height="11"
 						forecolor="#000000"
 						backcolor="#FFFFFF"
 						key="textField-27"/>
 					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 </box>
 					<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
 						<font fontName="Tahoma" pdfFontName="Helvetica" size="8" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 					</textElement>
-				<textFieldExpression   class="java.util.Date"><![CDATA[$F{issuedate}]]></textFieldExpression>
+				<textFieldExpression   class="java.util.Date"><![CDATA[$F{txndate}]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement
@@ -311,7 +311,7 @@
 						backcolor="#FFFFFF"
 						key="staticText-62"
 						positionType="Float"/>
-					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<box>					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="0.0" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -335,7 +335,7 @@
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 </box>
-					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single">
+					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" isStyledText="true" lineSpacing="Single">
 						<font fontName="Tahoma" pdfFontName="Helvetica" size="8" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA["        This is to inform you that the real property(ies) indicated is (are) assessed fro the year <style isUnderline='true'>  " + $F{dtassessed} + "  </style> in this City/Municipality and ownership of which is/are stated in your name for taxation purposes, (as well as for subsequent years until you are informed of any charges)"]]></textFieldExpression>
