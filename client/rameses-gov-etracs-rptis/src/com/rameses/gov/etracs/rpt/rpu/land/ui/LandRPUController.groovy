@@ -85,7 +85,7 @@ public class LandRPUController extends com.rameses.gov.etracs.rpt.rpu.ui.Abstrac
             new Column(name:'taxable', caption:'Tax?', type:'boolean', maxWidth:50, editable:true ),
             new Column(name:'actualuse', caption:'Actual Use*', type:'lookup', handler:'lookupAssessLevel', expression:'#{item.actualuse.code}', maxWidth:100, editable:true, required:true ),
             new Column(name:'stripping', caption:'Strip', type:'lookup', handler:'lookupStripping', expression:'#{item.stripping.striplevel}', maxWidth:50, editable:true ),
-            new Column(name:'area', caption:'Area*', type:'decimal', format:'#,##0.000000',editable:true, maxWidth:100, scale:6 ),
+            new Column(name:'area', caption:'Area*', type:'decimal', editable:true, maxWidth:100, typeHandler:new DecimalColumnHandler(scale:6, format:'#,##0.000000')),
             new Column(name:'unitvalue', caption:'Unit Value', type:'decimal', maxWidth:100),
             new Column(name:'basemarketvalue', caption:'Base Market Value', type:'decimal', maxWidth:100),
             new Column(name:'adjustment', caption:'Adjustment', type:'decimal', maxWidth:100),
