@@ -24,6 +24,10 @@ class MiscRPUService
     @Service('MiscRYSettingLookupService')
     def miscSettingSvc 
 
+
+    @Service('Var')
+    def var
+
     
     def SCHEMA_RPU     = 'miscrpu'
     def SCHEMA_ITEM    = 'miscrpu:item'
