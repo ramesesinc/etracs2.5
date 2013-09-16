@@ -1,6 +1,6 @@
 <workunit >
     <invokers>
-        <invoker folderid="/explorer/txn/rpt/report" action="init" caption="FAAS Batch Printing" target="window" index="100" 
+        <invoker folderid="/explorer/txn/rpt/report" action="init" caption="Tax Declaration Batch Printing" target="window" index="102" 
             role="ASSESSOR_REPORT" />
         
         <invoker type="formActions" action="_close" caption="Close" mnemonic="c" icon="images/toolbars/cancel.png" immediate="true" visibleWhen="#{mode == 'init'}"/>
@@ -15,7 +15,7 @@
         import com.rameses.osiris2.reports.*;
         import com.rameses.rcp.framework.TaskManager;
 
-        class FAASBatchReportController
+        class TaxDecBatchReportController
         {
             @Binding
             def binding
@@ -23,7 +23,7 @@
             @Service("ReportParameterService")
             def svcParams
 
-            @Service("FAASReportService")
+            @Service("TDReportService")
             def svc
 
             @Service('LGUService')
@@ -108,13 +108,13 @@
             def onFinish;
             boolean interrupt 
             
-             def reportPath = 'com/rameses/gov/etracs/rpt/report/faas/'
+            def reportPath = 'com/rameses/gov/etracs/rpt/report/td/'
 
             public void run() {
                 try { 
                     while(!interrupt && !faaslist.isEmpty() ) {
                         def o = faaslist.remove(0);
-                        reportdata = svc.getReportData( o.objid )
+                        reportdata = svc.buildTaxDec( o.objid )
 
                         report.viewReport()
                         ReportUtil.print( report.report, false) ;
@@ -129,62 +129,23 @@
                     onError( e );
                }
             }
-
-             def report =[
-                getReportName : { return getFaasReportName() },
-                getSubReports : { return getFaasSubReports() },
+            
+            
+            def report = [
+                getReportName : { return reportPath + 'tdreport.jasper'},
+                getSubReports : { 
+                    return [
+                        new SubReport( 'TDReportLand',  reportPath + 'tdreportland.jasper'),
+                        new SubReport( 'TDReportBldg',  reportPath + 'tdreportbldg.jasper'),
+                        new SubReport( 'TDReportMach',  reportPath + 'tdreportimprovement.jasper'),
+                        new SubReport( 'TDReportPlant', reportPath + 'tdreportimprovement.jasper'),
+                        new SubReport( 'TDReportMisc',  reportPath + 'tdreportimprovement.jasper'),
+                        new SubReport( 'TDReportAnnotation', reportPath + 'tdreportannotation.jasper'),
+                    ] as SubReport[]
+                },
                 getReportData : { return reportdata },
-                getParameters : { svcParams.getStandardParameter(); }
-            ] as ReportModel
-
-
-            def getFaasReportName() {
-                def rputype = reportdata.rpu.rputype.toLowerCase()
-                if( rputype == 'mach' )
-                    return reportPath + 'mach/FAASMach.jasper'
-                if( rputype == 'bldg' )
-                    return reportPath + 'bldg/FAASBldg.jasper'
-                if( rputype == 'misc' )
-                    return reportPath + 'misc/FAASMisc.jasper'
-                return reportPath + 'land/FAASLand.jasper'
-            }
-
-            def getFaasSubReports() {
-                def rputype = reportdata.rpu.rputype.toLowerCase()
-                
-                if( rputype == 'bldg' ) {
-                    return [
-                        new SubReport( 'BuildingStructure', reportPath + 'bldg/BuildingStructure.jasper'),
-                        new SubReport( 'AdditionalItem', reportPath + 'bldg/AdditionalItem.jasper'),
-                        new SubReport( 'PropertyAssessment', reportPath + 'bldg/PropertyAssessment.jasper'),
-                        new SubReport( 'AnnotationList', reportPath + 'bldg/FAASAnnotationList.jasper'),
-                    ] as SubReport[]
-                }
-                if( rputype == 'mach' ) {
-                    return [
-                        new SubReport( 'MachDetail', reportPath + 'mach/MachDetail.jasper'),
-                        new SubReport( 'PropertyAppraisal', reportPath + 'mach/PropertyAppraisal.jasper'),
-                        new SubReport( 'PropertyAssessment', reportPath + 'mach/PropertyAssessment.jasper'),
-                        new SubReport( 'AnnotationList', reportPath + 'mach/FAASAnnotationList.jasper'),
-                    ] as SubReport[]
-                }
-                if( rputype == 'misc' ) {
-                    return [
-                        new SubReport( 'MiscPropertyAppraisal', reportPath + 'misc/MiscPropertyAppraisal.jasper'),
-                        new SubReport( 'MiscAdjustment', reportPath + 'misc/MiscAdjustment.jasper'),
-                        new SubReport( 'PropertyAssessment', reportPath + 'misc/PropertyAssessment.jasper'),
-                        new SubReport( 'AnnotationList', reportPath + 'misc/FAASAnnotationList.jasper'),
-                    ] as SubReport[]
-                }
-
-                return [
-                    new SubReport( 'LandAppraisal', reportPath + 'land/LandAppraisal.jasper'),
-                    new SubReport( 'PlantTreesAppraisal', reportPath + 'land/PlantTreesAppraisal.jasper'),
-                    new SubReport( 'LandAdjustment', reportPath + 'land/LandAdjustment.jasper'),
-                    new SubReport( 'PropertyAssessment', reportPath + 'land/PropertyAssessment.jasper'),
-                    new SubReport( 'AnnotationList', reportPath + 'land/FAASAnnotationList.jasper'),
-                ] as SubReport[]
-            }
+                getParameters : { paramSvc.getStandardParameter() },
+            ] as ReportModel 
 
         }
         

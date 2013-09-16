@@ -24,6 +24,12 @@ class TDReportService
 	@Service('TxnSignatoryService')
 	def signatorySvc 
 
+	@ProxyMethod 
+	public def getFaasIds(params) {
+		params.section = params.section ? params.section : '%'
+		return em.sqlContext.createNamedQuery('faas:getFaasIds').setParameters( params).resultList;
+	}
+	
 
 	@ProxyMethod
 	public def buildTaxDec(faasid){
