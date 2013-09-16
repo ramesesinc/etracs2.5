@@ -49,6 +49,7 @@ class GeneralRevisionService
 		}
 		else {
 			def landrpu = grdb.findRevisedLandRpu([previd:faas.rpu.landrpuid, ry:info.newrysetting.ry])
+			if (!landrpu) landrpu = grdb.findRevisedLandByRealPropertyId([realpropertyid:faas.rpu.realpropertyid, ry:info.newrysetting.ry])
 			if (!landrpu) throw new Exception('Land RPU is not yet revised for Revision Year ' + info.newrysetting.ry + '.')
 			faas.rpu.rp = rpSvc.openRealProperty(landrpu.realpropertyid)
 			faas.rpu.realpropertyid = faas.rpu.rp.objid 

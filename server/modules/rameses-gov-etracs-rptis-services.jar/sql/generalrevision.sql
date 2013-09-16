@@ -43,3 +43,18 @@ FROM rpu rpu
 	INNER JOIN landrpu lr ON rpu.objid = lr.objid 
 WHERE rpu.previd = $P{previd}
  AND rpu.ry = $P{ry}  
+
+[findRevisedLandRpu]
+SELECT rpu.objid, rpu.realpropertyid
+FROM rpu rpu
+	INNER JOIN landrpu lr ON rpu.objid = lr.objid 
+WHERE rpu.previd = $P{previd}
+ AND rpu.ry = $P{ry}   
+
+
+[findRevisedLandByRealPropertyId]
+SELECT rpu.objid, rpu.realpropertyid
+FROM rpu rpu
+	INNER JOIN landrpu lr ON rpu.objid = lr.objid 
+WHERE rpu.realpropertyid = $P{realpropertyid}
+ AND rpu.ry = $P{ry}
