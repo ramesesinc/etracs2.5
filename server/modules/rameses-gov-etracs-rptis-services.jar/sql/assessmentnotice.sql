@@ -67,3 +67,10 @@ FROM faas f
 	LEFT JOIN barangay b ON rp.barangayid = b.objid 
 WHERE f.taxpayer_objid = $P{taxpayerid}
   AND f.state = 'CURRENT'
+
+
+[getTaxpayerList]  
+select distinct f.taxpayer_objid as taxpayerid 
+from faas f 
+ inner join rpu r on f.rpuid = r.objid 
+where r.ry=$P{revisionyear} and f.state='CURRENT'
