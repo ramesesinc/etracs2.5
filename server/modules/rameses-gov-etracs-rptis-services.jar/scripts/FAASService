@@ -559,6 +559,9 @@ class FAASService
 			datacapture     : 0,
 			txntype 		: info.txntype,
 			lguid			: var.lgu_objid,
+			taxpayer		: [:],
+			owner 			: [:],
+			administrator   : [:],
 		]
 		signatorySvc.initSignatories(faas, signatories)
 		return faas 
