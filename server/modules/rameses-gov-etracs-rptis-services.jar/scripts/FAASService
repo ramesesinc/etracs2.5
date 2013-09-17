@@ -239,6 +239,7 @@ class FAASService
 		}
 		cancelPreviousFaases(faas)
 		txnRef.delete(faas.objid)
+		updateTDNo(faas)
 		return updateFaas(faas)
 	}
 
@@ -275,6 +276,7 @@ class FAASService
 		}
 		cancelPreviousFaases(faas)
 		txnRef.delete(faas.objid)
+		updateTDNo(faas)
 		return updateFaas(faas)
 	}
 
@@ -301,6 +303,7 @@ class FAASService
 		}
 		cancelPreviousFaases(faas)
 		txnRef.delete(faas.objid)
+		updateTDNo(faas)
 		return updateFaas(faas)
 	}
 
@@ -395,7 +398,7 @@ class FAASService
 		newfaas.state 			= STATE_INTERIM
 		newfaas.txntype 		= getTxnType( info.txntype.objid )
 		newfaas.datacapture 	= false
-		newfaas.autonumber 	    = (info.autonumber != null ? info.autonumber : false )
+		newfaas.autonumber 	    = (info.autonumber != null ? info.autonumber : utilSvc.toBoolean(var.td_autonumber, false) )
 		newfaas.backtaxyrs   	= 0
 		newfaas.backtaxes 		= []
 		newfaas.effectivityyear = pdate.year + 1
@@ -415,10 +418,12 @@ class FAASService
 		newfaas.titledate		= null
 		newfaas.memoranda		= null
 
+		/*
 		if (newfaas.autonumber){
 			newfaas.tdno = generateNextTdNo(newfaas)
 			newfaas.utdno = newfaas.tdno 
 		}
+		*/
 
 		if (newfaas.txntype.newrpu){
 			newfaas.rpu.previd = newfaas.rpu.objid 
@@ -450,6 +455,15 @@ class FAASService
             tdno = tdno.replace( it, values[it] )
         }
         return tdno + '-' + seqSvc.getNextFormattedSeriesA( tdno, seqcount )
+    }
+
+
+    void updateTDNo(faas){
+    	println 'faas.autonumber -> ' + faas.autonumber
+    	if (utilSvc.isTrue(faas.autonumber)){
+			faas.tdno = generateNextTdNo(faas)
+			faas.utdno = faas.tdno 
+		}
     }
 
 	void clearOwnerInfo(faas){

@@ -3,7 +3,7 @@
     <invokers>
         <invoker folderid="/explorer/txn/rpt/util" action="init" caption="Modify PIN" target="popup" index="500"
             role="APPRAISER" permission="util.modifypin" />
-        <invoker type="faas:formActions" action="initFromFaas" caption="Modify PIN" target="popup" index="500"
+        <invoker type="faas:formActions" action="initFromFaas" caption="Modify PIN" target="popup" index="500" mnemonic="m" 
             role="APPRAISER" permission="util.modifypin" visibleWhen="#{mode=='edit' &amp;&amp; faas.rpu.rputype=='land'}"/>
     </invokers>
     
@@ -88,18 +88,20 @@ public class ModifyPINUtilityController {
                 sparcel     : sparcel,
                 newpin      : newpin
             ])
-            caller.faas.rpu.fullpin = newpin
-            if ( rp ) {
-                caller.faas.rpu.rp.pintype = rp.pintype 
-                caller.faas.rpu.rp.pin = rp.pin
-                caller.faas.rpu.rp.section = rp.section
-                caller.faas.rpu.rp.parcel = rp.parcel
+            if (caller?.faas){
+                caller.faas.rpu.fullpin = newpin
+                if ( rp ) {
+                    caller.faas.rpu.rp.pintype = rp.pintype 
+                    caller.faas.rpu.rp.pin = rp.pin
+                    caller.faas.rpu.rp.section = rp.section
+                    caller.faas.rpu.rp.parcel = rp.parcel
+                }
             }
             clearInfo()
             binding?.focus('faas')
         }
         if ( mode == 'byfaas') {
-            caller.binding.refresh('faas.rpu.*')
+            caller?.binding.refresh('faas.rpu.*')
             return '_close'
         }
     }
