@@ -32,12 +32,18 @@
             @Service('Var')
             def var 
             
+            @Service('FAASListService')
+            def faasListSvc
+            
+            def title='FAAS Batch Printing'
 
             def lgu;
             def barangays;
             def barangay;
             def section;
             def revisionyear
+            def state
+            def states
 
             def msg 
             def mode 
@@ -47,6 +53,11 @@
                 revisionyear = var.current_ry 
                 barangays = lguSvc.getBarangaysByParentId(null);
                 mode='init';
+            }
+            
+            List getStates(){
+                if (!states) states = faasListSvc.getStates();
+                return states
             }
             
             def updateMessage = { msg ->
@@ -77,9 +88,11 @@
                 mode = 'printing';
                 def params = [barangayid: barangay.objid, revisionyear: revisionyear];
                 if( section )  {
-                    def sectionlen = var.pin_section_length ? var.pin_section_length.toInt() : 2  
+                    def sectionlen = var.pin_section_length ? Integer.parseInt(var.pin_section_length) : 2  
                     params.section = section.toString().padLeft(sectionlen, '0')
                 }
+                params.state = state ? state : '%'
+                
                 faasTask = new FaasBatchTask([
                         updateMessage:updateMessage,
                         onError: onError,
