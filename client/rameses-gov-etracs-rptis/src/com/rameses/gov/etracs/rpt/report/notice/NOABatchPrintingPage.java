@@ -6,7 +6,9 @@
 
 package com.rameses.gov.etracs.rpt.report.notice;
 
+import com.rameses.osiris2.themes.FormPage;
 import com.rameses.rcp.ui.annotations.StyleSheet;
+import com.rameses.rcp.ui.annotations.Template;
 
 
 /**
@@ -14,6 +16,7 @@ import com.rameses.rcp.ui.annotations.StyleSheet;
  * @author  arnel
  */
 @StyleSheet("etracs2/rpt/report/ui/FAASBatchReportPage.style")
+@Template(FormPage.class)
 public class NOABatchPrintingPage extends javax.swing.JPanel {
     
     /**
@@ -34,6 +37,12 @@ public class NOABatchPrintingPage extends javax.swing.JPanel {
         xPanel1 = new com.rameses.rcp.control.XPanel();
         xNumberField2 = new com.rameses.rcp.control.XNumberField();
         jLabel1 = new javax.swing.JLabel();
+        xRadio1 = new com.rameses.rcp.control.XRadio();
+        xRadio2 = new com.rameses.rcp.control.XRadio();
+        xComboBox1 = new com.rameses.rcp.control.XComboBox();
+        xNumberField1 = new com.rameses.rcp.control.XNumberField();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
 
         setPreferredSize(new java.awt.Dimension(603, 291));
         xLabel1.setFont(new java.awt.Font("Arial", 1, 11));
@@ -58,6 +67,48 @@ public class NOABatchPrintingPage extends javax.swing.JPanel {
         xPanel1.add(jLabel1);
         jLabel1.setBounds(30, 40, 100, 20);
 
+        xRadio1.setName("option");
+        xRadio1.setOpaque(false);
+        xRadio1.setOptionValue("all");
+        xRadio1.setText("All Properties");
+        xPanel1.add(xRadio1);
+        xRadio1.setBounds(30, 70, 200, 23);
+
+        xRadio2.setName("option");
+        xRadio2.setOpaque(false);
+        xRadio2.setOptionValue("bybarangay");
+        xRadio2.setText("Barangay");
+        xPanel1.add(xRadio2);
+        xRadio2.setBounds(30, 90, 200, 23);
+
+        xComboBox1.setCaption("Barangay");
+        xComboBox1.setExpression("#{item.name}");
+        xComboBox1.setIndex(2);
+        xComboBox1.setItems("barangays");
+        xComboBox1.setName("barangay");
+        xComboBox1.setPreferredSize(new java.awt.Dimension(0, 19));
+        xComboBox1.setRequired(true);
+        xPanel1.add(xComboBox1);
+        xComboBox1.setBounds(120, 90, 230, 19);
+
+        xNumberField1.setCaption("Section");
+        xNumberField1.setFieldType(Integer.class);
+        xNumberField1.setIndex(3);
+        xNumberField1.setName("section");
+        xNumberField1.setPreferredSize(new java.awt.Dimension(120, 19));
+        xPanel1.add(xNumberField1);
+        xNumberField1.setBounds(350, 90, 70, 19);
+
+        jLabel2.setFont(new java.awt.Font("Tahoma", 2, 10));
+        jLabel2.setText("(section)");
+        xPanel1.add(jLabel2);
+        jLabel2.setBounds(360, 110, 50, 10);
+
+        jLabel3.setFont(new java.awt.Font("Tahoma", 2, 10));
+        jLabel3.setText("(barangay)");
+        xPanel1.add(jLabel3);
+        jLabel3.setBounds(170, 110, 90, 10);
+
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -65,27 +116,33 @@ public class NOABatchPrintingPage extends javax.swing.JPanel {
             .add(layout.createSequentialGroup()
                 .addContainerGap()
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(xPanel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 407, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(xPanel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 507, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(xLabel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 471, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(122, Short.MAX_VALUE))
+                .addContainerGap(86, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(layout.createSequentialGroup()
                 .addContainerGap()
-                .add(xPanel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 135, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .add(23, 23, 23)
+                .add(xPanel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 174, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(xLabel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 16, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(106, Short.MAX_VALUE))
+                .addContainerGap(84, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
     
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private com.rameses.rcp.control.XComboBox xComboBox1;
     private com.rameses.rcp.control.XLabel xLabel1;
+    private com.rameses.rcp.control.XNumberField xNumberField1;
     private com.rameses.rcp.control.XNumberField xNumberField2;
     private com.rameses.rcp.control.XPanel xPanel1;
+    private com.rameses.rcp.control.XRadio xRadio1;
+    private com.rameses.rcp.control.XRadio xRadio2;
     // End of variables declaration//GEN-END:variables
     
 }

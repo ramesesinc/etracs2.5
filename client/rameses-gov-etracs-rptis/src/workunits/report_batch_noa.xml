@@ -70,7 +70,7 @@
 
             public void print() {
                 mode = 'printing';
-                def params = [barangayid: barangay.objid, revisionyear: revisionyear];
+                def params = [barangayid: barangay.objid, revisionyear: revisionyear ];
                 
                 faasTask = new FaasBatchTask([
                         updateMessage:updateMessage,
