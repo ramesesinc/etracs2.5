@@ -34,7 +34,7 @@ public class MachRYSettingController extends com.rameses.gov.etracs.rpt.rysettin
     
     def forexListHandler  = [
         createItem : { return createForex() },
-        getRows    : { return 50 },
+        getRows    : { return 100 },
                 
         getColumns : { return [
             new Column(name:'year', caption:'Year*', type:'integer', format:'0000', editable:true ),
