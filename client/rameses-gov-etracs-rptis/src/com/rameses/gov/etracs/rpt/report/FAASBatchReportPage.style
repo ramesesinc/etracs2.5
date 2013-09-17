@@ -1,7 +1,7 @@
-"lgu|barangay|section" [ mode == 'init' ] {
+"lgu|barangay|section|state" [ mode == 'init' ] {
     enabled:true;
 }
 
-"lgu|barangay|section" [ mode != 'init' ] {
+"lgu|barangay|section|state" [ mode != 'init' ] {
     enabled:false;
 }
