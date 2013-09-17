@@ -60,7 +60,8 @@ class TDReportService
 			td.fullpin += ' M' + td.claimno
 		}
 
-		if( td.state == 'CURRENT' || td.state == 'CANCELLED' ) {
+		td.released = false
+		if( td.released ) {
 			td.appraiser?.name = ( td.appraiser?.name ? '(SGD.) ' + td.appraiser?.name : null )
 			td.recommender?.name = ( td.recommender?.name ? '(SGD.) ' + td.recommender?.name : null )
 			td.approver?.name = ( td.approver?.name ? '(SGD.) ' + td.approver?.name : null )
