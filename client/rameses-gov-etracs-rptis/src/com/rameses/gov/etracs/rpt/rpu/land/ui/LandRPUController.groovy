@@ -27,7 +27,7 @@ public class LandRPUController extends com.rameses.gov.etracs.rpt.rpu.ui.Abstrac
      *
      ---------------------------------------------- */
     def onupdateLandAdjustment = { 
-        refreshAssessment();
+        calculateAssessment();
     }
 
     def openLandValueAdjustments() {
@@ -38,11 +38,7 @@ public class LandRPUController extends com.rameses.gov.etracs.rpt.rpu.ui.Abstrac
         return InvokerUtil.lookupOpener('landactualuseadjustment:open', [ lguid:lguid, rpu:rpu, landdetail:selectedLand, onupdate:onupdateLandAdjustment  ])
     }
    
-    void refreshAssessment(){
-        landListHandler.load();
-    }
-
-
+    
     
     /*---------------------------------------------------------------
     *
