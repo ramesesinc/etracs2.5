@@ -20,4 +20,22 @@ public class NoPropertyController extends com.rameses.gov.etracs.rpt.report.cert
     Map getParameters(){
         return [REPORTTITLE:'No Property']
     }
+    
+    
+        
+    def getLookupTaxpayer(){
+        return InvokerUtil.lookupOpener('entity:lookup',[
+            onselect : { 
+                svc.checkExistingProperties(it.objid)
+                entity.taxpayer = it;
+                entity.requestedby = it.name;
+                entity.requestedbyaddress = it.address;
+            },
+            onempty  : { 
+                entity.taxpayer = null;
+                entity.requestedby = null;
+                entity.requestedbyaddress = null;
+            },
+        ])
+    }
 }

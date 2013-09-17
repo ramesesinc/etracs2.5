@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workunit>
+    <invokers>
+        <invoker folderid="/menu/txn/rpt/util" caption="Test" target="popup" index="500"
+            role="APPRAISER" />
+    </invokers>
+    
+    <code lang="groovy">
+
+<![CDATA[        
+
+import com.rameses.rcp.common.*
+import com.rameses.rcp.annotations.*
+import com.rameses.osiris2.client.*
+
+public class TestController {
+    
+    @Binding
+    def binding;
+    
+    def amount = 0.0;
+    
+    void fire(){
+        MsgBox.alert('Amount -> ' + amount );
+    }
+        
+}
+
+]]>
+</code>
+    
+    <pages>
+        <page template="test.TestPage" />
+    </pages>
+</workunit>
+

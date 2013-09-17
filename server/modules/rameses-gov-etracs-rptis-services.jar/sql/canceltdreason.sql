@@ -5,11 +5,14 @@ WHERE code LIKE $P{searchtext} OR name LIKE $P{searchtext}
 ORDER BY code
 
 
-[lookupCancelTDReasons]
+[getCancelTDReasons]
 SELECT *
 FROM canceltdreason
 WHERE state LIKE 'APPROVED'
   AND code LIKE $P{searchtext} OR name LIKE $P{searchtext} 
 ORDER BY code
+
+[approve]
+UPDATE canceltdreason SET state = 'APPROVED' WHERE objid = $P{objid}
 
 

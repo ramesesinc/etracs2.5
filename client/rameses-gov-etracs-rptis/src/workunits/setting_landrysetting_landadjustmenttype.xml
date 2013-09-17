@@ -26,7 +26,7 @@ public class LandAdjustmentTypeController
     @Binding 
     def binding
     
-    @Service('RPTParameterListService')
+    @Service('RPTParameterService')
     def paramSvc 
     
     @Service('RPUService')
@@ -129,8 +129,10 @@ public class LandAdjustmentTypeController
     def paramListModel = [
         fetchList : { return paramSvc.getVariableList()},
         onOpenItem : { item, colname ->
+            if ( !entity.expr ) entity.expr = '' 
             entity.expr += '  ' + item.name 
             binding.refresh('entity.expr')
+            binding.focus('entity.expr')
         }
     ] as BasicListModel
 

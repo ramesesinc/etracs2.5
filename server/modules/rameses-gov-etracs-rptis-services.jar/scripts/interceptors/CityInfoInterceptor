@@ -39,7 +39,8 @@ class CityInfoInterceptor
 	@After(pattern="RPUService.getLgus", eval="#{'city'.equals(args[0])}")
 	public void getLgus(evt){
 		def list = evt.result 
-		list += citySvc.lookupCities([:])
+		list += citySvc.getList([:])
+		println 'getLgus -> ' + list 
 	}
 }
 

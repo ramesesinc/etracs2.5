@@ -7,7 +7,7 @@ public class LandRYSettingService
     @PersistenceContext('rpt')
     def em
      
-    @Service('PropertyClassificationLookupService')
+    @Service('PropertyClassificationService')
     def pcSvc
 
     @Service('LandRYSettingListService')
@@ -45,7 +45,7 @@ public class LandRYSettingService
     
     @ProxyMethod
     public List getPropertyClassifications() {
-        return pcSvc.lookupClassifications(null)
+        return pcSvc.getClassifications([:])
     }
     
     

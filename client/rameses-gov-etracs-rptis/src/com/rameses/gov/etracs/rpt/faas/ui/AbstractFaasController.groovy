@@ -41,10 +41,6 @@ public abstract class AbstractFaasController extends PageFlowController
     def taxmapper = [:];
     def approver = [:];
     
-    def getEntity() {
-        return faas
-    }
-    
     @FormId
     public String getFormId(){
         return 'FAAS : ' + faas?.tdno
@@ -119,6 +115,7 @@ public abstract class AbstractFaasController extends PageFlowController
     
     def open(){
         faas = service.openFaas( entity.objid );
+        entity = faas;
         annotations = svc.getAnnotations(faas.objid)
         initOpen();
         initSignatoryVars()
@@ -202,9 +199,7 @@ public abstract class AbstractFaasController extends PageFlowController
         return InvokerUtil.lookupOpener('faasannotionlisting:open', [annotations:annotations])
     }
     
-    def previewFaas(){
-        return InvokerUtil.lookupOpener('faasreport:view', [faas:faas])
-    }
+
     /*-----------------------------------------------------
      * 
      * WORKFLOW ACTIONS
@@ -466,6 +461,11 @@ public abstract class AbstractFaasController extends PageFlowController
      
      List getQuarters() { 
          return [1,2,3,4];
+     }
+     
+     
+     def closeForm(){
+         return '_close'
      }
      
 }

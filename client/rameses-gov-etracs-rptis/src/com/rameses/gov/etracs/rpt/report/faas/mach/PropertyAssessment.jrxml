@@ -23,6 +23,7 @@
 	<import value="net.sf.jasperreports.engine.*" />
 	<import value="net.sf.jasperreports.engine.data.*" />
 
+	<parameter name="TOTALAV" isForPrompting="false" class="java.math.BigDecimal"/>
 
 	<field name="marketvalue" class="java.math.BigDecimal"/>
 	<field name="assesslevel" class="java.lang.String"/>
@@ -267,7 +268,7 @@
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font fontName="Tahoma" pdfFontName="Helvetica-Bold" size="8" isBold="true"/>
 					</textElement>
-				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$V{TOTALASSESSEDVALUE}]]></textFieldExpression>
+				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$P{TOTALAV}]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement

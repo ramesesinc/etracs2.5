@@ -7,7 +7,7 @@ public class BldgRYSettingService
 	@PersistenceContext('main')
 	def em
 
-    @Service('PropertyClassificationListService')
+    @Service('PropertyClassificationService')
     def pcSvc
 
     @Service('BldgRYSettingListService')
@@ -365,7 +365,7 @@ public class BldgRYSettingService
 
 
     void loadInitialAssessesLevels(entity){
-        pcSvc.getList(null).each{
+        pcSvc.getList([:]).each{
             saveAssessLevel([
                 objid               : it.objid,
                 bldgrysettingid     : entity.objid,

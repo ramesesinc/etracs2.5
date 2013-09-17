@@ -25,7 +25,7 @@ class CancelledFAASService
     @Service('RPTUtil')
     def util 
     
-    @Service('CancelTDReasonListService')
+    @Service('CancelTDReasonService')
     def reasonSvc
 
     @Service('FAASService')
@@ -42,9 +42,9 @@ class CancelledFAASService
     public def getList( params ) {
     	params.searchtext = (params.searchtext ? params.searchtext : '') + '%'
         def filters = [
-            'WHERE f.tdno LIKE $P{searchtext}',
-            'WHERE f.owner_name LIKE $P{searchtext}',
-            'WHERE r.fullpin LIKE $P{searchtext}',
+            ' and f.tdno LIKE $P{searchtext}',
+            ' and f.owner_name LIKE $P{searchtext}',
+            ' and r.fullpin LIKE $P{searchtext}',
         ]
         return util.getListFromQuery( 'cancelledfaas:getList' , filters, params, 'cf.objid' )
     }

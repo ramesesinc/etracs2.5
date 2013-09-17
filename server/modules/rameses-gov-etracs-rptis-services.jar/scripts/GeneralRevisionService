@@ -1,10 +1,14 @@
 import com.rameses.annotations.*
 import com.rameses.common.*;
+import com.rameses.services.extended.*;
 import com.rameses.util.*;
 
 class GeneralRevisionService
 {
 	
+	@ActiveDB('generalrevision')
+	def grdb 
+
 	@PersistenceContext('rpt')
 	def em
     
@@ -44,7 +48,8 @@ class GeneralRevisionService
 			faas.rpu.realpropertyid = faas.rpu.rp.objid
 		}
 		else {
-			def landrpu = getRevisedLandRpu(faas.rpu, info.newrysetting.ry)
+			def landrpu = grdb.findRevisedLandRpu([previd:faas.rpu.landrpuid, ry:info.newrysetting.ry])
+			if (!landrpu) landrpu = grdb.findRevisedLandByRealPropertyId([realpropertyid:faas.rpu.realpropertyid, ry:info.newrysetting.ry])
 			if (!landrpu) throw new Exception('Land RPU is not yet revised for Revision Year ' + info.newrysetting.ry + '.')
 			faas.rpu.rp = rpSvc.openRealProperty(landrpu.realpropertyid)
 			faas.rpu.realpropertyid = faas.rpu.rp.objid 
@@ -74,19 +79,5 @@ class GeneralRevisionService
 		return em.sqlContext.createNamedQuery('generalrevision:getRyList' + rputype.toUpperCase())
 				.setParameters([lguid:lguid, ry:ry]).resultList 
 	}
-
-
-	/*--------------------------------------------------------
-	*
-	* Helper Methods
-	*
-	* --------------------------------------------------------*/
-	def getRevisedLandRpu(rpu, ry){
-		return em.sqlContext.createNamedQuery('generalrevision:getRevisedLandRpu')
-				.setParameter('previd', rpu.landrpuid )
-				.setParameter('ry', ry)
-				.singleResult
-	}
-
 }
 

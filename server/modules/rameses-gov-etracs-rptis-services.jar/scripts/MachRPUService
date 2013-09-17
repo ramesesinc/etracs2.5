@@ -24,7 +24,7 @@ class MachRPUService
     @Service('MachRYSettingLookupService')
     def machSettingSvc 
 
-    @Service('MachineLookupService')
+    @Service('MachineService')
     def machSvc 
 
     @Service('Var')
@@ -235,9 +235,8 @@ class MachRPUService
         
         if( util.isTrue(machine.imported) && machine.ferac > 0.0) {
             cost = numberSvc.round( cost * machine.forex / machine.ferac ) 
-            machine.conversionfactor = 1.0
         }
-        else if( machine.conversionfactor > 0.0) {
+        if( machine.conversionfactor > 0.0) {
             cost = numberSvc.round( cost * machine.conversionfactor )
         }
               
@@ -261,7 +260,8 @@ class MachRPUService
         if (util.isTrue(machine.imported)) {
             def dtappraised  = dateSvc.parseDate(rpu.dtappraised, null)
             //forex 
-            def forex = machSettingSvc.lookupForex([ry:rpu.ry, year:dtappraised.year])
+            def currforexyr = ( dtappraised.year >= dateSvc.serverYear ? dtappraised.year - 1 : dtappraised.year )
+            def forex = machSettingSvc.lookupForex([ry:rpu.ry, year:currforexyr])
             if(forex ) {
                 machine.forexid  = forex.objid 
                 machine.forex    = forex.forex 

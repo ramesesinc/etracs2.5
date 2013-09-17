@@ -56,6 +56,7 @@ class ReportParameterService{
 				org.provinceassessor = province.assessor 
 			}
 		}
+
 		org.treasurer = lgu?.treasurer 
 		org.assessor = lgu?.assessor 
 		org.mayor = lgu?.mayor 
@@ -63,9 +64,11 @@ class ReportParameterService{
 		org.address = lgu?.address 
 
 		def params = [
+			LGUREGION					: var.lgu_region, 
 			SANGGUNIAN_NAME 			: var.sanggunian_name, 
             LOGOLGU     				: var.url_logo_lgu,                    
-            LOGOBLGF    				: var.url_logo_blgf,                    
+            LOGOBLGF    				: var.url_logo_blgf,   
+            LOGOASSESSOR				: var.url_logo_assessor,                 
             LGUNAME     				: org.lgu_name, 
 			LGUFORMALNAME 				: org.lgu_fullname, 
 			LGUTYPE		  				: org.orgclass?.toLowerCase(), 
@@ -90,7 +93,6 @@ class ReportParameterService{
 			ASSESSORNAME 				: org.assessor?.name,
 			ASSESSORTITLE 				: org.assessor?.title,
 			ASSESSOROFFICENAME			: org.assessor?.office,
-			
 
 			MAYOROFFICENAME 			: org.mayor?.office,
 			MAYORNAME   				: org.mayor?.name,

@@ -7,7 +7,7 @@ public class MachRYSettingService
     @PersistenceContext('main')
     def em
      
-    @Service('PropertyClassificationListService')
+    @Service('PropertyClassificationService')
     def pcSvc
 
     @Service('MachRYSettingListService')
@@ -265,7 +265,7 @@ public class MachRYSettingService
 
 
     void loadInitialAssessesLevels(entity){
-        pcSvc.getList(null).each{
+        pcSvc.getList([:]).each{
             saveAssessLevel([
                 objid               : it.objid,
                 machrysettingid     : entity.objid,

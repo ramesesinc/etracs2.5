@@ -25,7 +25,7 @@ public class BldgAdditionalItemController
     @Binding 
     def binding
     
-    @Service('RPTParameterListService')
+    @Service('RPTParameterService')
     def paramSvc 
     
     
@@ -78,8 +78,10 @@ public class BldgAdditionalItemController
     def paramListModel = [
         fetchList : { return paramSvc.getVariableList()},
         onOpenItem : { item, colname ->
+            if ( !entity.expr ) entity.expr = '' 
             entity.expr += '  ' + item.name 
             binding.refresh('entity.expr')
+            binding.focus('entity.expr')
         }
     ] as BasicListModel
     

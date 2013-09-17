@@ -40,7 +40,7 @@ class MunicipalityInfoInterceptor
 	@After(pattern="RPUService.getLgus", eval="#{'municipality'.equals(args[0])}")
 	public void getLgus(evt){
 		def list = evt.result 
-		list.addAll( muniSvc.lookupMunicipalities([:]) )
+		list.addAll( muniSvc.getList([:]) )
 	}
 }
 

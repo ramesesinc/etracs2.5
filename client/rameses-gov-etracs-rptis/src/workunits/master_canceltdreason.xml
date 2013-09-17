@@ -15,7 +15,7 @@
         
         public class CancelTDReasonsController  extends CRUDController
         {
-            String serviceName = "CancelTDReasonMasterService"
+            String serviceName = "CancelTDReasonService"
             String entityName  = 'canceltdreason'
             String prefixId    = 'CTDR'
         }

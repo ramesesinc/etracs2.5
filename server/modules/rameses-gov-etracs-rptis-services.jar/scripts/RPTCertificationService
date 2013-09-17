@@ -32,9 +32,9 @@ class RPTCertificationService
 	public def getList( params ) {
     	params.searchtext = (params.searchtext ? params.searchtext : '') + '%'
         def filters = [
-            'WHERE txnno LIKE $P{searchtext}',
-            'WHERE requestedby LIKE $P{searchtext}',
-            'WHERE opener LIKE $P{searchtext}',
+            ' and txnno LIKE $P{searchtext}',
+            ' and requestedby LIKE $P{searchtext}',
+            ' and opener LIKE $P{searchtext}',
         ]
         return util.getListFromQuery( 'rptcertification:getList' , filters, params, 'objid' )
 	}
@@ -69,7 +69,6 @@ class RPTCertificationService
 		def cert = em.read(SCHEMA_NAME, [objid:objid])
 		if (!cert) throw new Exception('Record does not exist or has already been deleted.')
 		cert.official = util.toBoolean(cert.official, false)
-		println 'cert -> ' + cert 
 		return cert 
 	}
 

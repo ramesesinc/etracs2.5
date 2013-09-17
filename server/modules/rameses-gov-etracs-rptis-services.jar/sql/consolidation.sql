@@ -1,21 +1,21 @@
 [getList]
 SELECT 
 	c.*,
-	r.`fullpin` AS newrpu_fullpin,
-	r.`totalareaha` AS newrpu_totalareaha,
-	r.`totalareasqm` AS newrpu_totalareasqm
+	r.fullpin AS newrpu_fullpin,
+	r.totalareaha AS newrpu_totalareaha,
+	r.totalareasqm AS newrpu_totalareasqm
 FROM consolidation c
 	INNER JOIN rpu r ON c.newrpuid = r.objid 
-${filters}	
+where 1=1 ${filters}	
 ORDER BY c.txnno DESC 
 
 
 [open]
 SELECT 
 	c.*,
-	r.`fullpin` AS newrpu_fullpin,
-	r.`totalareaha` AS newrpu_totalareaha,
-	r.`totalareasqm` AS newrpu_totalareasqm
+	r.fullpin AS newrpu_fullpin,
+	r.totalareaha AS newrpu_totalareaha,
+	r.totalareasqm AS newrpu_totalareasqm
 FROM consolidation c 
 	INNER JOIN rpu r ON c.newrpuid = r.objid 
 WHERE c.objid = $P{objid}
@@ -79,7 +79,7 @@ FROM faas f
 	INNER JOIN rpu r ON f.rpuid = r.objid 
 	INNER JOIN rpu rl ON r.realpropertyid = rl.realpropertyid
 	INNER JOIN faas fl ON rl.objid = fl.rpuid 	
-WHERE r.`realpropertyid` = $P{realpropertyid}
+WHERE r.realpropertyid = $P{realpropertyid}
   AND r.rputype <> 'land' 
   AND rl.rputype = 'land'
   AND f.state <> 'CANCELLED' 
@@ -99,7 +99,7 @@ SELECT
 	r.rputype,
 	fl.objid AS landfaasid
 FROM consolidatedland cl
-	INNER JOIN rpu r ON cl.rpid = r.`realpropertyid`
+	INNER JOIN rpu r ON cl.rpid = r.realpropertyid
 	INNER JOIN faas f ON  r.objid = f.rpuid 
 	INNER JOIN rpu rl ON cl.rpid = rl.realpropertyid
 	INNER JOIN faas fl ON rl.objid = fl.rpuid 

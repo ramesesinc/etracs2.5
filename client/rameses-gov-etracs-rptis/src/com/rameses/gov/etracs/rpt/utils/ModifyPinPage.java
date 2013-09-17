@@ -46,6 +46,7 @@ public class ModifyPinPage extends javax.swing.JPanel {
         formPanel1.setBorder(xTitledBorder1);
         formPanel1.setCaptionWidth(105);
         xLookupField1.setCaption("TD No.");
+        xLookupField1.setCaptionWidth(120);
         xLookupField1.setExpression("#{item.tdno}");
         xLookupField1.setHandler("lookupFaas");
         xLookupField1.setIndex(-100);
@@ -55,7 +56,9 @@ public class ModifyPinPage extends javax.swing.JPanel {
 
         xLabel1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(153, 153, 153)));
         xLabel1.setCaption("Taxpayer Name");
+        xLabel1.setCaptionWidth(120);
         xLabel1.setDepends(new String[] {"faas"});
+        xLabel1.setExpression("#{faas.owner.name}");
         xLabel1.setFont(new java.awt.Font("Arial", 1, 11));
         xLabel1.setName("faas.taxpayer.name");
         xLabel1.setPreferredSize(new java.awt.Dimension(0, 19));
@@ -63,7 +66,9 @@ public class ModifyPinPage extends javax.swing.JPanel {
 
         xLabel2.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(153, 153, 153)));
         xLabel2.setCaption("Cadastral Lot No.");
+        xLabel2.setCaptionWidth(120);
         xLabel2.setDepends(new String[] {"faas"});
+        xLabel2.setExpression("#{faas.rpu.rp.cadastrallotno}");
         xLabel2.setFont(new java.awt.Font("Arial", 1, 11));
         xLabel2.setName("faas.cadastrallotno");
         xLabel2.setPreferredSize(new java.awt.Dimension(0, 19));
@@ -71,7 +76,9 @@ public class ModifyPinPage extends javax.swing.JPanel {
 
         xLabel3.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(153, 153, 153)));
         xLabel3.setCaption("PIN");
+        xLabel3.setCaptionWidth(120);
         xLabel3.setDepends(new String[] {"faas"});
+        xLabel3.setExpression("#{faas.rpu.fullpin}");
         xLabel3.setFont(new java.awt.Font("Arial", 1, 11));
         xLabel3.setName("faas.fullpin");
         xLabel3.setPreferredSize(new java.awt.Dimension(0, 19));
@@ -83,6 +90,7 @@ public class ModifyPinPage extends javax.swing.JPanel {
         formPanel2.setCaptionWidth(105);
         xComboBox3.setAllowNull(false);
         xComboBox3.setCaption("PIN Type");
+        xComboBox3.setCaptionWidth(120);
         xComboBox3.setImmediate(true);
         xComboBox3.setItems("pinTypeList");
         xComboBox3.setName("pintype");
@@ -90,40 +98,40 @@ public class ModifyPinPage extends javax.swing.JPanel {
         xComboBox3.setRequired(true);
         formPanel2.add(xComboBox3);
 
-        xComboBox1.setCaption("Municipality/City");
+        xComboBox1.setCaption("Province/City");
+        xComboBox1.setCaptionWidth(120);
         xComboBox1.setDepends(new String[] {"faas"});
-        xComboBox1.setDynamic(true);
         xComboBox1.setExpression("#{item.name}");
         xComboBox1.setImmediate(true);
-        xComboBox1.setItems("municityList");
-        xComboBox1.setName("municity");
+        xComboBox1.setItems("provcityList");
+        xComboBox1.setName("provcity");
         xComboBox1.setPreferredSize(new java.awt.Dimension(0, 22));
         xComboBox1.setRequired(true);
         formPanel2.add(xComboBox1);
 
-        xComboBox4.setCaption("District");
-        xComboBox4.setDepends(new String[] {"municity"});
-        xComboBox4.setDynamic(true);
+        xComboBox4.setCaption("Municipality/District");
+        xComboBox4.setCaptionWidth(120);
+        xComboBox4.setDepends(new String[] {"provcity"});
         xComboBox4.setExpression("#{item.name}");
         xComboBox4.setImmediate(true);
-        xComboBox4.setItems("districtList");
-        xComboBox4.setName("district");
+        xComboBox4.setItems("muniDistrictList");
+        xComboBox4.setName("munidistrict");
         xComboBox4.setPreferredSize(new java.awt.Dimension(0, 22));
         xComboBox4.setRequired(true);
         formPanel2.add(xComboBox4);
 
         xComboBox2.setCaption("Barangay");
-        xComboBox2.setDepends(new String[] {"municity", "district"});
-        xComboBox2.setDynamic(true);
+        xComboBox2.setCaptionWidth(120);
+        xComboBox2.setDepends(new String[] {"munidistrict"});
         xComboBox2.setExpression("#{item.name}");
-        xComboBox2.setImmediate(true);
         xComboBox2.setItems("barangayList");
         xComboBox2.setName("barangay");
-        xComboBox2.setPreferredSize(new java.awt.Dimension(0, 22));
+        xComboBox2.setPreferredSize(new java.awt.Dimension(0, 20));
         xComboBox2.setRequired(true);
         formPanel2.add(xComboBox2);
 
         xNumberField1.setCaption("Section");
+        xNumberField1.setCaptionWidth(120);
         xNumberField1.setFieldType(Integer.class);
         xNumberField1.setName("section");
         xNumberField1.setPreferredSize(new java.awt.Dimension(80, 19));
@@ -131,6 +139,7 @@ public class ModifyPinPage extends javax.swing.JPanel {
         formPanel2.add(xNumberField1);
 
         xNumberField2.setCaption("Parcel");
+        xNumberField2.setCaptionWidth(120);
         xNumberField2.setFieldType(Integer.class);
         xNumberField2.setName("parcel");
         xNumberField2.setPreferredSize(new java.awt.Dimension(80, 19));
@@ -138,6 +147,7 @@ public class ModifyPinPage extends javax.swing.JPanel {
         formPanel2.add(xNumberField2);
 
         xNumberField3.setCaption("Suffix");
+        xNumberField3.setCaptionWidth(120);
         xNumberField3.setDepends(new String[] {"faas"});
         xNumberField3.setFieldType(Integer.class);
         xNumberField3.setName("suffix");
@@ -147,6 +157,7 @@ public class ModifyPinPage extends javax.swing.JPanel {
 
         xCheckBox1.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
         xCheckBox1.setCaption("");
+        xCheckBox1.setCaptionWidth(120);
         xCheckBox1.setMargin(new java.awt.Insets(0, 0, 0, 0));
         xCheckBox1.setName("useoldpin");
         xCheckBox1.setText(" Use old Index No.?");

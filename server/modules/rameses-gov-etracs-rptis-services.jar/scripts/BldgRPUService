@@ -15,7 +15,7 @@ class BldgRPUService
 	@Service('BldgRYSettingLookupService')
 	def bldgSettingSvc 
 
-	@Service('StructureListService')
+	@Service('StructureService')
 	def structSvc
 	
 	@Service('Var')
@@ -116,7 +116,10 @@ class BldgRPUService
 
 	@ProxyMethod
 	public void generateNewIds( rpu ) {
-		rpu.bldgstructures.each{bs -> bs.objid = util.generateId('BS')}
+		rpu.structures.each{bs -> 
+			bs.objid = util.generateId('BS') 
+			bs.bldgrpuid = rpu.objid 
+		}
 		
 		rpu.bldguses.each{ bu ->
 			bu.objid     = util.generateId('BU')
@@ -229,9 +232,20 @@ class BldgRPUService
         rpu.bldguses.each { bu ->
         	def al = bldgSettingSvc.lookupBldgAssessLevelById(bu.actualuse.objid)
             bu.assesslevel      = calculateAssessLevel(bu.marketvalue, al)
-            bu.assessedvalue    = numberSvc.roundToTen( bu.marketvalue * bu.assesslevel / 100 )
+            
+            if (util.toBoolean(var.rpt_round_to_ten_item_assessed_value, true) == true)
+				bu.assessedvalue = numberSvc.roundToTen( bu.marketvalue * bu.assesslevel / 100 )
+			else 
+				bu.assessedvalue = numberSvc.round( bu.marketvalue * bu.assesslevel / 100 )
+				
+
         }
+
         rpu.totalav = rpu.bldguses.assessedvalue.sum()
+        if (util.toBoolean(var.rpt_round_to_ten_item_assessed_value, true) == false){
+        	rpu.totalav = numberSvc.roundToTen( rpu.totalav )
+        }
+        
     }
 
 	void calculatePredominantAssessment( rpu ) {

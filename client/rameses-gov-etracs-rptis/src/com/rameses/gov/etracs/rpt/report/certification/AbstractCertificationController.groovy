@@ -14,7 +14,7 @@ public abstract class AbstractCertificationController
 
     @Service('DateService')
     def dtSvc;
-
+    
     @Binding 
     def binding;
     

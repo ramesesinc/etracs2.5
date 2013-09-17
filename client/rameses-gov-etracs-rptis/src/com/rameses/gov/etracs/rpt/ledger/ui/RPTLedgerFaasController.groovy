@@ -64,7 +64,7 @@ public class RPTLedgerFaasController
     }
     
     List getClassifications() {
-        return svc.lookupClassifications()
+        return svc.getClassifications()
     }
     
     List getQuarters(){

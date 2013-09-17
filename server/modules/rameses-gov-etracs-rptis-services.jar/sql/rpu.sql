@@ -1,3 +1,10 @@
+[createRpuMaster]
+INSERT INTO rpumaster(objid) VALUES($P{objid})
+
+[deleteRpuMaster]
+DELETE FROM rpumaster WHERE objid = $P{objid}
+
+
 [checkDuplicateFullPin]
 SELECT objid 
 FROM rpu

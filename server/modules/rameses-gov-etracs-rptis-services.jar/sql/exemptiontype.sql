@@ -5,7 +5,7 @@ WHERE (code LIKE $P{seachtext} OR name LIKE $P{searchtext})
 ORDER BY orderno
 
 
-[lookupExemptionTypes]
+[getExemptionTypes]
 SELECT *
 FROM exemptiontype
 WHERE state LIKE 'APPROVED'
@@ -13,5 +13,8 @@ WHERE state LIKE 'APPROVED'
 ORDER BY orderno
 
 
-[lookupById]
+[findById]
 SELECT * FROM exemptiontype WHERE objid = $P{objid}
+
+[approve]
+UPDATE exemptiontype SET state = 'APPROVED' WHERE objid = $P{objid}

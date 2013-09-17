@@ -1,6 +1,6 @@
 <workunit extends="rpt_wtemplates/ReportController.xml" >
     <invokers>
-        <invoker folderid="/menu/report/rpt" action="init" caption="Assessment Roll" target="window" index="3" 
+        <invoker folderid="/explorer/txn/rpt/report" action="init" caption="Assessment Roll" target="window" index="3" 
             role="ASSESSOR_REPORT" />
     </invokers>
     <code>
@@ -37,7 +37,7 @@ class AssessmentRollController extends com.rameses.gov.etracs.rpt.report.ReportC
             return [
                 new FormControl( "combo", [caption:'Taxability', name:'entity.taxability', items:'taxabilities', required:true, immediate:true]),
                 new FormControl( "combo", [caption:'Barangay', name:'entity.barangay', required:true, items:'barangays', expression:'#{item.name}']),
-                new FormControl( "integer", [caption:'Section', name:'entity.section', preferredSize:'50,19']),
+                new FormControl( "text", [caption:'Section', name:'entity.section', preferredSize:'50,19']),
             ]    
         },
    ] as FormPanelModel;

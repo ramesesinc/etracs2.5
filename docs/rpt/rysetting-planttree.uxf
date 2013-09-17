@@ -2,85 +2,39 @@
 <diagram program="umlet" version="12.0">
   <zoom_level>10</zoom_level>
   <element>
-    <type>com.umlet.element.Relation</type>
-    <coordinates>
-      <x>370</x>
-      <y>170</y>
-      <w>100</w>
-      <h>140</h>
-    </coordinates>
-    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
-    <additional_attributes>30;30;80;120</additional_attributes>
-  </element>
-  <element>
     <type>com.umlet.element.Class</type>
     <coordinates>
-      <x>280</x>
-      <y>60</y>
-      <w>170</w>
-      <h>140</h>
+      <x>40</x>
+      <y>70</y>
+      <w>130</w>
+      <h>110</h>
     </coordinates>
-    <panel_attributes>planttreerysetting
+    <panel_attributes>bg=green
+rysetting_lgu
 --
-objid
-state
-ry
-applyagriadjustment
-appliedto
-previd</panel_attributes>
+rysettingid
+lguid
+lguname
+settingtype</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
-    <type>com.umlet.element.Relation</type>
-    <coordinates>
-      <x>210</x>
-      <y>170</y>
-      <w>130</w>
-      <h>140</h>
-    </coordinates>
-    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
-    <additional_attributes>110;30;30;120</additional_attributes>
-  </element>
-  <element>
     <type>com.umlet.element.Class</type>
     <coordinates>
-      <x>390</x>
+      <x>180</x>
       <y>290</y>
-      <w>140</w>
+      <w>150</w>
       <h>160</h>
     </coordinates>
-    <panel_attributes>planttreeunitvalue
+    <panel_attributes>bg=green
+planttreeassesslevel
 --
 objid
 planttreerysettingid
-planttree_objid
 code
 name
-unitvalue
+rate
 previd</panel_attributes>
-    <additional_attributes/>
-  </element>
-  <element>
-    <type>com.umlet.element.Relation</type>
-    <coordinates>
-      <x>500</x>
-      <y>300</y>
-      <w>150</w>
-      <h>70</h>
-    </coordinates>
-    <panel_attributes>lt=&lt;&lt;&lt;&lt;-
-planttree</panel_attributes>
-    <additional_attributes>30;50;130;50</additional_attributes>
-  </element>
-  <element>
-    <type>com.umlet.element.Class</type>
-    <coordinates>
-      <x>630</x>
-      <y>340</y>
-      <w>100</w>
-      <h>30</h>
-    </coordinates>
-    <panel_attributes>planttree</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
@@ -97,34 +51,84 @@ planttree</panel_attributes>
   <element>
     <type>com.umlet.element.Class</type>
     <coordinates>
-      <x>40</x>
-      <y>70</y>
-      <w>130</w>
-      <h>110</h>
+      <x>390</x>
+      <y>290</y>
+      <w>140</w>
+      <h>160</h>
     </coordinates>
-    <panel_attributes>rysetting_lgu
+    <panel_attributes>bg=green
+planttreeunitvalue
 --
-rysettingid
-lguid
-lguname
-settingtype</panel_attributes>
+objid
+planttreerysettingid
+planttree_objid
+code
+name
+unitvalue
+previd</panel_attributes>
     <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>370</x>
+      <y>170</y>
+      <w>100</w>
+      <h>140</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>30;30;80;120</additional_attributes>
   </element>
   <element>
     <type>com.umlet.element.Class</type>
     <coordinates>
-      <x>180</x>
-      <y>290</y>
-      <w>150</w>
-      <h>160</h>
+      <x>630</x>
+      <y>340</y>
+      <w>100</w>
+      <h>30</h>
     </coordinates>
-    <panel_attributes>planttreeassesslevel
+    <panel_attributes>planttree</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>500</x>
+      <y>300</y>
+      <w>150</w>
+      <h>70</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;-
+planttree</panel_attributes>
+    <additional_attributes>30;50;130;50</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>210</x>
+      <y>170</y>
+      <w>130</w>
+      <h>140</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>110;30;30;120</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>280</x>
+      <y>60</y>
+      <w>170</w>
+      <h>140</h>
+    </coordinates>
+    <panel_attributes>bg=green
+planttreerysetting
 --
 objid
-planttreerysettingid
-code
-name
-rate
+state
+ry
+applyagriadjustment
+appliedto
 previd</panel_attributes>
     <additional_attributes/>
   </element>

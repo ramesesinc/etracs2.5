@@ -16,7 +16,7 @@
         
         public class BldgKindController  extends CRUDController
         {
-            String serviceName = "BldgkindMasterService"
+            String serviceName = "BldgKindService"
             String entityName  = 'bldgkind'
             String prefixId    = 'BK'
         }

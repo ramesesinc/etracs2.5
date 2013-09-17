@@ -32,19 +32,13 @@ public class MachRYSettingController extends com.rameses.gov.etracs.rpt.rysettin
     def selectedForex 
     def forexes = []
     
-    def allowYearColumnEdit = { item ->
-        if( isFirstItem( forexes ) ) return true
-        return false 
-    } as Map
-
-
     def forexListHandler  = [
         createItem : { return createForex() },
-        getRows    : { return 50 },
+        getRows    : { return 100 },
                 
         getColumns : { return [
             new Column(name:'year', caption:'Year*', type:'integer', format:'0000', editable:true ),
-            new Column(name:'forex', caption:'Rate*', type:'decimal', editable:true, format:'#,##0.0000'  ),
+            new Column(name:'forex', caption:'Rate*', type:'decimal', editable:true, typeHandler:new DecimalColumnHandler(scale:4, format:'#,##0.0000')  ),
         ]},
         
         validate : { li -> 

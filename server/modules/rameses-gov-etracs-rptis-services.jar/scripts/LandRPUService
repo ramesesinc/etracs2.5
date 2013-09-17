@@ -155,13 +155,16 @@ class LandRPUService
 
 	@ProxyMethod
     public Map calculateLandDetailAssessment( landdetail, ry ) {
+		if (!landdetail.actualuse) return landdetail 
+
 		def rptsetting = getRPTSetting()
-		
+
 		landdetail.basevalue = landdetail.subclass.unitvalue
 		landdetail.unitvalue = landdetail.subclass.unitvalue
 		landdetail.areatype  = landdetail.specificclass.areatype 
 
 		//calculate areas 
+		if (landdetail.area == null) landdetail.area = 0.0
         if( landdetail.areatype == 'SQM' ) {
             landdetail.areasqm = landdetail.area 
             landdetail.areaha  = landdetail.area / 10000.0
@@ -195,7 +198,11 @@ class LandRPUService
 		}
 
 		landdetail.assesslevel 			= determineAssessLevel( landdetail, ry )
-		landdetail.assessedvalue 		= numberSvc.roundToTen(landdetail.marketvalue * landdetail.assesslevel / 100.0 )
+		if (util.toBoolean(var.rpt_round_to_ten_item_assessed_value, true) == true)
+			landdetail.assessedvalue = numberSvc.roundToTen(landdetail.marketvalue * landdetail.assesslevel / 100.0 )
+		else 
+			landdetail.assessedvalue = numberSvc.round(landdetail.marketvalue * landdetail.assesslevel / 100.0 )
+
         return landdetail 
     }
 
@@ -465,6 +472,10 @@ class LandRPUService
         rpu.totalbmv  = rpu.totallandbmv + rpu.totalplanttreebmv;
         rpu.totalmv   = rpu.totallandmv + rpu.totalplanttreemv;
         rpu.totalav   = rpu.totallandav + rpu.totalplanttreeav;
+
+        if (util.toBoolean(var.rpt_round_to_ten_item_assessed_value, true) == false){
+        	rpu.totalav = numberSvc.roundToTen(rpu.totalav)
+        }
 	}
 
 

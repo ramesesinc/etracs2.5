@@ -38,7 +38,7 @@ class MiscRPUGRService
                 item.assesslevel = rpu.actualuse.rate 
             }
             else {
-                deletedItems.add( miscitem )
+                deletedItems.add( miv )
             }
         }
         rpu.items.removeAll( deletedItems )

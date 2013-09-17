@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <workunit>
     <invokers>
-        <invoker folderid="/menu/txn/rpt/util" action="init" caption="Modify PIN" target="popup" index="500"
-            role="ASSESSOR" permission="util.modifypin" />
+        <invoker folderid="/explorer/txn/rpt/util" action="init" caption="Modify PIN" target="popup" index="500"
+            role="APPRAISER" permission="util.modifypin" />
+        <invoker type="faas:formActions" action="initFromFaas" caption="Modify PIN" target="popup" index="500" mnemonic="m" 
+            role="APPRAISER" permission="util.modifypin" visibleWhen="#{mode=='edit' &amp;&amp; faas.rpu.rputype=='land'}"/>
     </invokers>
     
     <code lang="groovy">
@@ -18,6 +20,9 @@ public class ModifyPINUtilityController {
     @Binding
     def binding
     
+    @Caller
+    def caller
+    
     @Service('RPTUtilityService') 
     def svc 
     
@@ -27,10 +32,11 @@ public class ModifyPINUtilityController {
     @Service('Var')
     def sysVar
     
+    def entity
     def faas
     def pintype
-    def municity
-    def district
+    def provcity
+    def munidistrict
     def barangay
     def section  = 0
     def parcel = 0
@@ -39,21 +45,38 @@ public class ModifyPINUtilityController {
     def sparcel
     def newpin
     def useoldpin = false
+    def mode  = 'update'
     
     def lgutype
+    
+    void initFromFaas(){
+        mode = 'byfaas'
+        lgutype = sysVar.lgu_type
+        faas = entity;
+        barangay = lguSvc.lookupBarangayById(faas.rpu.rp.barangayid)
+        munidistrict = lguSvc.lookupMunicipalityById( barangay.parentid )
+        if (! munidistrict) munidistrict = lguSvc.lookupDistrictById( barangay.parentid)
+        provcity = lguSvc.lookupProvinceById(munidistrict.parentid)
+        if (!provcity) provcity = lguSvc.lookupCityById(munidistrict.parentid)
+        
+        provcity = provcityList.find{it.objid == provcity.objid}
+        munidistrict = muniDistrictList.find{it.objid == munidistrict.objid}
+        barangay = barangayList.find{it.objid == barangay.objid}
+    }
+    
     
     void init(){
         lgutype = sysVar.lgu_type
     }
     
-    void updatePin() {
+    def updatePin() {
         if( MsgBox.confirm('Update existing PIN with new information?') ) {
-            svc.updatePin([
+            def rp = svc.updatePin([
                 faasid      : faas.objid,
-                rpuid       : faas.rpuid,
-                rputype     : faas.rputype,
-                docstate    : faas.docstate, 
-                oldpin      : faas.fullpin,
+                rpuid       : (faas.rpuid ? faas.rpuid : faas.rpu.objid),
+                rputype     : (faas.rputype ? faas.rputype : faas.rpu.rputype),
+                docstate    : faas.state, 
+                oldpin      : (faas.fullpin ? faas.fullpin : faas.rpu.fullpin),
                 ry          : faas.ry,
                 pintype     : pintype,
                 lgutype     : lgutype,
@@ -65,15 +88,28 @@ public class ModifyPINUtilityController {
                 sparcel     : sparcel,
                 newpin      : newpin
             ])
+            if (caller?.faas){
+                caller.faas.rpu.fullpin = newpin
+                if ( rp ) {
+                    caller.faas.rpu.rp.pintype = rp.pintype 
+                    caller.faas.rpu.rp.pin = rp.pin
+                    caller.faas.rpu.rp.section = rp.section
+                    caller.faas.rpu.rp.parcel = rp.parcel
+                }
+            }
             clearInfo()
             binding?.focus('faas')
+        }
+        if ( mode == 'byfaas') {
+            caller?.binding.refresh('faas.rpu.*')
+            return '_close'
         }
     }
     
     void clearInfo() {
         faas        = null
         pintype     = 'new' 
-        municity    = null
+        provcity    = null
         barangay    = null    
         section     = 0
         parcel      = 0
@@ -89,13 +125,13 @@ public class ModifyPINUtilityController {
         updateNewPin()
     }
     
-    void setMunicity( municity ) {
-        this.municity = municity
+    void setProvcity( provcity ) {
+        this.provcity = provcity
         updateNewPin()
     }
     
-    void setDistrict( district ) {
-        this.district = district
+    void setMunidistrict( munidistrict ) {
+        this.munidistrict = munidistrict
         updateNewPin()
     }
     
@@ -127,24 +163,24 @@ public class ModifyPINUtilityController {
     void updateNewPin() {
         newpin = new StringBuilder()
         
-        if( lgutype == 'city' || lgutype == 'CITY' ) {
-            if( municity ) {
-                newpin = municity.indexno + '-'
+        if( 'city'.equalsIgnoreCase(lgutype)) {
+            if( provcity ) {
+                newpin = provcity.indexno + '-'
             }
             else {
                 newpin = '000-'
             }
             
-            if( district ) {
-                newpin += district.indexno + '-'
+            if( munidistrict ) {
+                newpin += munidistrict.indexno + '-'
             }
             else {
                 newpin += '00-'
             }
         }
         else {
-            if( municity ) {
-                newpin = municity.pin + '-'
+            if( provcity ) {
+                newpin = provcity.pin + '-'
             }
             else {
                 newpin = '000-00-'
@@ -218,23 +254,23 @@ public class ModifyPINUtilityController {
         return ['new', 'old']
     }
     
-    List getMunicityList() {
-        if( !faas ) return []
-        if( lgutype == 'city' || lgutype == 'CITY' )
-            return lguSvc.lookupCities([:]);
-        
-        return lguSvc.lookupMunicipalities([:]);
+    
+    List getProvcityList() {
+        def list = []
+        list += lguSvc.lookupCities([:]);
+        list += lguSvc.lookupProvinces([:]);
+        return list;
     }
     
-    List getDistrictList() {
-        return lguSvc.lookupDistrictsByParentid( municity?.objid )
+    List getMuniDistrictList() {
+        def list = []
+        list += lguSvc.lookupMunicipalities([:])
+        list += lguSvc.lookupDistricts([:])
+        return list;
     }
     
     List getBarangayList() {
-        if( lgutype == 'city' || lgutype == 'CITY' )
-            return lguSvc.lookupBarangaysByParentid( district?.objid )
-        
-        return lguSvc.lookupBarangaysByParentid( municity?.objid )
+        return lguSvc.lookupBarangaysByParentid(munidistrict?.objid);
     }
     
 }

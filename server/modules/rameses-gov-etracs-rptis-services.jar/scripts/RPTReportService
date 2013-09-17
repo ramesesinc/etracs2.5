@@ -15,10 +15,10 @@ class RPTReportService
     @Service('LGUService')
     def lguSvc 
 
-    @Service('PropertyClassificationLookupService')
+    @Service('PropertyClassificationService')
     def pcSvc 
 
-    @Service('ExemptionTypeLookupService')
+    @Service('ExemptionTypeService')
     def etSvc
 
     @Service('DateService')
@@ -31,7 +31,6 @@ class RPTReportService
 
     @ProxyMethod
     public def getApproveFaasListing(params){
-    	println 'params -> ' + params 
     	params.lguid = (params.lguid ? params.lguid : '%')
     	params.barangayid = (params.barangayid ? params.barangayid : '%')
     	params.month = (params.month ? params.month.index : '%')
@@ -66,7 +65,6 @@ class RPTReportService
 
     @ProxyMethod
     public def generateAssessmentRollTaxable( params ){
-    	resolveSection( params )
     	params.barangayid = params.barangay?.objid
 		def list = em.sqlContext.createNamedQuery('rptreport:getAssessmentRollTaxable')
 						.setParameters( params )
@@ -78,7 +76,6 @@ class RPTReportService
 
     @ProxyMethod
     public def generateAssessmentRollExempt( params ){
-    	resolveSection( params )
     	params.barangayid = params.barangay?.objid
 		def list = em.sqlContext.createNamedQuery('rptreport:getAssessmentRollExempt')
 						.setParameters( params )
@@ -90,7 +87,6 @@ class RPTReportService
 
     @ProxyMethod
 	public def generateTMCR( params )  {
-		resolveSection( params )
 		params.barangayid = params.barangay?.objid
 		def list = em.sqlContext.createNamedQuery('rptreport:getTmcrList').setParameters( params ).resultList
 		if( ! list ) throw new Exception('Records not found.')
@@ -653,13 +649,13 @@ class RPTReportService
     }
     @ProxyMethod
     public def getClassifications(){
-    	return pcSvc.lookupClassifications([:])
+    	return pcSvc.getClassifications([:])
     }
 
     
     @ProxyMethod
     public def getExemptionTypes(  ) {
-    	return 	etSvc.lookupExemptionTypes([:])
+    	return 	etSvc.getExemptionTypes([:])
     }
 
 
@@ -676,7 +672,7 @@ class RPTReportService
 
 
 	void resolveSection( params ) {
-		if( ! params.section || params.section == 0 ) {
+		if( params.section == null || params.section == 0 ) {
 			params.section = '%' 
 		}
 		else {

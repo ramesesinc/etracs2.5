@@ -16,9 +16,20 @@
             @Service('FAASListService')
             def svc 
             
+            def states 
+            
             @PropertyChangeListener
             def listener = [
-                'query.state' : { search(); }
+                'query.searchtext':{
+                    query.advance = false;
+                    def text = query.searchtext
+                    query = [:]
+                    query.searchtext = text 
+                    search();
+                },
+                'query.state' :{
+                    search();
+                }
             ]
             
             String formTarget = 'window'
@@ -34,30 +45,25 @@
                 return 'faas_' + txntype
             }
             
-            int getRows() { return 50 }
-            
-            Column[] getColumns(){
-                return [
-                    new Column(name:"state", caption:"State", width:100),
-                    new Column(name:"ry", caption:"RY", width:50, type:'integer', format:'0000'),
-                    new Column(name:"txntype.objid", caption:"Txn", width:50),
-                    new Column(name:"rputype", caption:"Type", width:60),
-                    new Column(name:"tdno", caption:"TD No.", width:100),
-                    new Column(name:"fullpin", caption:"PIN", width:180),
-                    new Column(name:"claimno", caption:"Claim No.", width:70),
-                    new Column(name:"owner.name", caption:"Owner Name", width:250),
-                    new Column(name:"owner.address", caption:"Owner Address", width:250),
-                    new Column(name:"cadastrallotno", caption:"Lot No.", width:100),
-                    new Column(name:"surveyno", caption:"Survey No.", width:100),
-                    new Column(name:"totalareasqm", caption:"Area (sqm)", width:120, type:'decimal', format:'#,##0.00'),
-                    new Column(name:"totalmv", caption:"Market Value", width:100, type:'decimal', format:'#,##0.00'),
-                    new Column(name:"totalav", caption:"Assessed Value", width:100, type:'decimal', format:'#,##0.00'),
-                ]
+            int getRows() { return 25 }
+                        
+            List getStates(){
+                if (!states) states = svc.getStates();
+                return states
             }
             
+            def onsearch = {
+                query.putAll(it)
+                search();
+                binding.refresh('query.state')
+            }
             
-            List getStates(){
-                return svc.getStates();
+            def showAdvanceSearch(){
+                return InvokerUtil.lookupOpener('faas:search', [
+                    query    : query,
+                    onsearch : onsearch,
+                    states    : states,
+                ])
             }
         }
     </code>

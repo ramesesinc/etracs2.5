@@ -13,7 +13,7 @@ FROM cancelannotation ca
 	INNER JOIN faasannotationtype fat ON fa.annotationtype_objid = fat.objid 
 	INNER JOIN faas f ON fa.faasid = f.objid 
 	INNER JOIN rpu r ON f.rpuid = r.objid 
-${filters}
+where 1=1 ${filters}
 ORDER BY ca.txnno DESC 
 
 

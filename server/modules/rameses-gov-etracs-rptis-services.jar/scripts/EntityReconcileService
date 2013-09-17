@@ -1,0 +1,101 @@
+import com.rameses.annotations.*;
+import com.rameses.common.*
+import java.rmi.server.UID;
+
+
+class EntityReconcileService 
+{
+	@PersistenceContext("main")
+	def em;
+	
+	@Service('LogService')
+	def logService
+	
+	@ProxyMethod
+	public def getListForReconcile( search, entityid ){
+		def list =  em.sqlContext.createNamedQuery('entityreconcile:getListForReconcile')
+					.setParameter('entityname', search+'%')
+					.setParameter('entityid', entityid )
+					.resultList
+		
+		return list;
+	}
+	
+	@ProxyMethod
+	public def reconcile( args ) {
+		def retval = [status:'ok']
+		try {
+			def entity = args.entity 
+			def reconciledList = args.reconciledList 
+			if( ! entity ) throw new Exception('Entity is required ')
+			if( ! reconciledList ) throw new Exception('At least one reconciled entity is required.')
+			
+			reconcileFaas( entity, reconciledList )
+			deleteReconciledEntities( entity, reconciledList )
+		}
+		catch( e ) {
+			retval.status = 'error'
+			retval.msg = e.message 
+		}
+		return retval
+	}
+
+	@ProxyMethod 
+	public def getAffectedFaasByTaxpayerId( taxpayerid){
+		return em.sqlContext.createNamedQuery('entityreconcile:getFaasListByTaxpayer') 
+					.setParameter('taxpayerid', taxpayerid )
+					.resultList 
+
+	}
+	
+	void deleteReconciledEntities( entity, reconciledList ){
+		reconciledList.each{
+			em.sqlContext.createNamedExecutor('entityreconcile:deleteEntityContact')
+					.setParameter('objid', it.objid )
+					.execute()
+			em.sqlContext.createNamedExecutor('entityreconcile:deleteEntityIDCard')
+					.setParameter('objid', it.objid )
+					.execute()
+			em.sqlContext.createNamedExecutor('entityreconcile:deleteEntityMember')
+					.setParameter('objid', it.objid )
+					.execute()
+			em.sqlContext.createNamedExecutor('entityreconcile:deleteMultiple')
+					.setParameter('objid', it.objid )
+					.execute()
+			em.sqlContext.createNamedExecutor('entityreconcile:deleteJuridical')
+					.setParameter('objid', it.objid )
+					.execute()
+			em.sqlContext.createNamedExecutor('entityreconcile:deleteIndividual')
+					.setParameter('objid', it.objid )
+					.execute()
+			em.sqlContext.createNamedExecutor('entityreconcile:deleteEntity')
+					.setParameter('objid', it.objid )
+					.execute()								
+
+		}
+	}
+	
+	
+	void reconcileFaas( entity, reconciledList ) {
+		def params = [
+			taxpayerid 		: entity.objid,
+			taxpayername 	: entity.name,
+			taxpayeraddress	: entity.address
+		]
+		
+		reconciledList.each { reconciledEntity ->
+			def faaslist = em.sqlContext.createNamedQuery('entityreconcile:getFaasListByTaxpayer')
+								.setParameter('taxpayerid', reconciledEntity.objid )
+								.resultList
+								
+			faaslist.each{ 
+				params.objid = it.objid 
+				em.sqlContext.createNamedExecutor('entityreconcile:updateFaasListTaxpayerInfo')
+								.setParameters( params )
+								.execute()
+			}
+		}
+	}
+
+	
+}

@@ -12,7 +12,7 @@ import com.rameses.osiris2.client.*
 
 class LookupStructureMaterialController extends LookupController
 {
-    @Service("StructureLookupService")
+    @Service("StructureService")
     def svc
     
     def structureid
@@ -26,7 +26,7 @@ class LookupStructureMaterialController extends LookupController
     
     List fetchList( Map params ) { 
         params.structure_objid = structureid
-        return svc.lookupStructureMaterials(params)
+        return svc.getMaterials(params)
     }
 }  
 

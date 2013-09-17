@@ -15,7 +15,7 @@
         
         public class MiscellaneousItemController  extends CRUDController 
         {
-            String serviceName = "MiscItemMasterService"
+            String serviceName = "MiscItemService"
             String entityName  = 'miscitem'
             String prefixId    = 'MISC'
         }

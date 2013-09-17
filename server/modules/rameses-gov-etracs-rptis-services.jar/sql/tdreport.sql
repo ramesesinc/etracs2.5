@@ -6,21 +6,23 @@ SELECT
 	r.*,
 	CASE WHEN p.objid IS NOT NULL THEN p.name ELSE c.name END AS parentlguname, 
 	CASE WHEN p.objid IS NOT NULL THEN p.indexno ELSE c.indexno END AS parentlguindex,   
-	CASE WHEN m.objid IS NOT NULL THEN m.name ELSE d.name END AS lguname, 
+	CASE WHEN m.objid IS NOT NULL THEN m.name ELSE '' END AS lguname, 
 	CASE WHEN m.objid IS NOT NULL THEN m.indexno ELSE d.indexno END AS lguindex,  
 	b.name AS barangay, 
 	b.indexno AS barangayindex, 
-	et.code AS legalbasis  
+	et.code AS legalbasis, 
+	ry.ordinanceno, ry.ordinancedate, ry.sangguniangname 
 FROM faas f
 	INNER JOIN rpu r ON f.rpuid = r.objid 
 	INNER JOIN realproperty rp ON r.realpropertyid = rp.objid
-	INNER JOIN propertyclassification pc ON r.classification_objid = pc.objid 
+	INNER JOIN propertyclassification pc ON r.classification_objid = pc.objid  
 	INNER JOIN barangay b ON rp.barangayid = b.objid 
 	LEFT JOIN exemptiontype et ON r.exemptiontype_objid = et.objid 
 	LEFT JOIN municipality m ON b.parentid = m.objid  
 	LEFT JOIN district d ON b.parentid = d.objid 
 	LEFT JOIN province p ON m.parentid = p.objid 
 	LEFT JOIN city c ON d.parentid = c.objid 
+	LEFT JOIN rysettinginfo ry on ry.ry = r.ry 
 WHERE f.objid = $P{faasid}
 
 

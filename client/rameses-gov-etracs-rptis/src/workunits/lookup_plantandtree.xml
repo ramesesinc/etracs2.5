@@ -12,7 +12,7 @@ import com.rameses.osiris2.common.*
 
 class PlantTreeLookupController extends LookupController
 {
-    @Service("PlantTreeLookupService")
+    @Service("PlantTreeService")
     def svc;
     
     def state;
@@ -25,7 +25,7 @@ class PlantTreeLookupController extends LookupController
     
     List fetchList( Map params ) { 
         params.state = ( state ? state : '%')
-        return svc.lookupPlantTrees(params)
+        return svc.getPlantTrees(params)
     }
 }  
 

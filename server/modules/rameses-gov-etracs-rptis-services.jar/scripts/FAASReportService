@@ -45,18 +45,24 @@ class FaasReportService
 		loadSignatories(faas)
 		
 		if( faas.rpu.rputype == 'land' ) { 
+			LISTLIMITSIZE1 = 10
+			LISTLIMITSIZE2 = 7
 			faas.landappraisals = getLandDetails( faas.rpu )
 			faas.planttreesappraisals = getPlantTreeDetails( faas.rpu )
 			faas.landadjustments = getLandAdjustments( faas.rpu )
 			faas.propertyassessments = getPropertyAssessements( faas.rpu )
 		}
 		else if( faas.rpu.rputype == 'mach' ) {
+			LISTLIMITSIZE1 = 14
+			LISTLIMITSIZE2 = 7
 			getLandReference( faas )
 			faas.machdetails = getMachDetails( faas.rpu )
 			faas.propertyappraisals = getPropertyAppraisals( faas.rpu )
 			faas.propertyassessments = getMachPropertyAssessments( faas.rpu )
 		}
 		else if( faas.rpu.rputype == 'planttree' ) {
+			LISTLIMITSIZE1 = 10	
+			LISTLIMITSIZE2 = 7	
 			faas.landappraisals = getDummy()
 			faas.planttreesappraisals = getPlantTreeDetails( faas.rpu )
 			faas.landadjustments = getPlantTreeLandAdjustments( faas.rpu )
@@ -64,6 +70,7 @@ class FaasReportService
 		} 
 		else if( faas.rpu.rputype == 'misc' ) {
 			LISTLIMITSIZE1 = 25			
+			LISTLIMITSIZE2 = 7
 			faas.miscpropertyappraisals = getMiscPropertyAppraisals( faas.rpu )
 			faas.miscadjustments = getMiscAdjustments( faas.rpu )
 			faas.propertyassessments = getMiscPropertyAssessments( faas.rpu )
@@ -82,9 +89,11 @@ class FaasReportService
 			faas.subtotal = faas.rpu.totalbmv
 			
 			def setting = bldgrySvc.open( [objid: faas.rpu.bldgtype.bldgrysettingid ] )
+			faas.rpu.predominant = setting ? setting.predominant : true;
+			faas.rpu.formattedassesslevel = numberSvc.format("#,##0", faas.rpu.assesslevel ) + ' %'
+
 			if( setting && !setting.depreciatecoreanditemseparately ) {
 				if( faas.additionalitems && faas.additionalitems[0].amount) {
-					println faas.additionalitems
 					def addlitmtotalamt = faas.additionalitems.findAll{it.amount != null}.amount.sum()
 					faas.subtotal = faas.subtotal.add( addlitmtotalamt )
 				}
@@ -246,7 +255,7 @@ class FaasReportService
 				actualuse 		: 'PLANT',
 				marketvalue		: rpu.totalplanttreemv,
 				assesslevel		: rpu.planttrees[0].assesslevel,
-				assessedvalue	: totalplanttreeav
+				assessedvalue	: rpu.totalplanttreeav
 			]
 			
 			list.add( item )
@@ -529,11 +538,11 @@ class FaasReportService
 		return data
 	}
 	
-	private def getBldgPropertyAssessment( rpu ) {
+	private def getBldgPropertyAssessment( rpu  ) {
 		def data = []
-		
+
 		rpu.bldguses?.each {
-			def assesslevel = numberSvc.format("#,##0", (rpu.useswornamount ? rpu.info.assesslevel : it.assesslevel)) + ' %'
+			def assesslevel = numberSvc.format("#,##0", ( rpu.useswornamount ? rpu.assesslevel : it.assesslevel)) + ' %'
 			
 			def item = [
 				actualuse	 : it.actualuse.name,
@@ -541,7 +550,7 @@ class FaasReportService
 				assesslevel	 : assesslevel,
 				assessedvalue: (rpu.useswornamount ? rpu.totalav : it.assessedvalue ),
 			]
-			
+
 			data.add( item )
 		}
 		

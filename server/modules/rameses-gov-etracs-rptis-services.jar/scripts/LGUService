@@ -27,6 +27,11 @@ class LGUService
     	return brgySvc.getList(params)
     }
 
+    @ProxyMethod
+    public def getBarangaysByParentId( parentid ) {
+        return brgySvc.getListByParentid(parentid)
+    }
+
 
     @ProxyMethod
     public def lookupBarangayById( objid ) {

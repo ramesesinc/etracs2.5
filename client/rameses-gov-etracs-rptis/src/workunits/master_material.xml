@@ -16,7 +16,7 @@
         
         public class MaterialController  extends CRUDController
         {
-            String serviceName = "MaterialMasterService"
+            String serviceName = "MaterialService"
             String entityName  = 'material'
             String prefixId    = 'MAT'
         }

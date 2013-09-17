@@ -23,11 +23,15 @@
 	<import value="net.sf.jasperreports.engine.*" />
 	<import value="net.sf.jasperreports.engine.data.*" />
 
+	<parameter name="TOTALAV" isForPrompting="false" class="java.math.BigDecimal"/>
+	<parameter name="ASSESSLEVEL" isForPrompting="false" class="java.lang.String"/>
+	<parameter name="PREDOMINANT" isForPrompting="false" class="java.lang.Boolean"/>
 
 	<field name="marketvalue" class="java.math.BigDecimal"/>
 	<field name="assesslevel" class="java.lang.String"/>
 	<field name="assessedvalue" class="java.math.BigDecimal"/>
 	<field name="actualuse" class="java.lang.String"/>
+	<field name="predominant" class="java.lang.Boolean"/>
 
 	<variable name="TOTALMV" class="java.math.BigDecimal" resetType="Report" calculation="Sum">
 		<variableExpression><![CDATA[$F{marketvalue}]]></variableExpression>
@@ -146,7 +150,9 @@
 						y="0"
 						width="77"
 						height="14"
-						key="textField"/>
+						key="textField">
+							<printWhenExpression><![CDATA[new Boolean($P{PREDOMINANT}.booleanValue() == false)]]></printWhenExpression>
+						</reportElement>
 					<box rightPadding="2">					<leftPen lineWidth="0.5" lineStyle="Solid"/>
 					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
 </box>
@@ -161,7 +167,9 @@
 						y="0"
 						width="111"
 						height="14"
-						key="textField"/>
+						key="textField">
+							<printWhenExpression><![CDATA[new Boolean($P{PREDOMINANT}.booleanValue() == false)]]></printWhenExpression>
+						</reportElement>
 					<box rightPadding="2">					<leftPen lineWidth="0.5" lineStyle="Solid"/>
 					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
 					<rightPen lineWidth="0.5" lineStyle="Solid"/>
@@ -186,6 +194,45 @@
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[$F{actualuse}]]></textFieldExpression>
 				</textField>
+				<staticText>
+					<reportElement
+						x="347"
+						y="0"
+						width="77"
+						height="14"
+						key="staticText-13">
+							<printWhenExpression><![CDATA[new Boolean($P{PREDOMINANT}.booleanValue() == true)]]></printWhenExpression>
+						</reportElement>
+					<box rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid"/>
+</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Tahoma"/>
+					</textElement>
+				<text><![CDATA[]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="424"
+						y="0"
+						width="111"
+						height="14"
+						key="staticText-14"
+						positionType="Float">
+							<printWhenExpression><![CDATA[new Boolean($P{PREDOMINANT}.booleanValue() == true)]]></printWhenExpression>
+						</reportElement>
+					<box>					<topPen lineWidth="0.0" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Tahoma"/>
+					</textElement>
+				<text><![CDATA[]]></text>
+				</staticText>
 			</band>
 		</detail>
 		<columnFooter>
@@ -223,7 +270,9 @@
 						y="0"
 						width="77"
 						height="14"
-						key="staticText-3"/>
+						key="staticText-3">
+							<printWhenExpression><![CDATA[new Boolean($P{PREDOMINANT}.booleanValue() == false)]]></printWhenExpression>
+						</reportElement>
 					<box>					<topPen lineWidth="0.0" lineStyle="Solid"/>
 					<leftPen lineWidth="0.5" lineStyle="Solid"/>
 					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
@@ -267,7 +316,7 @@
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font fontName="Tahoma" pdfFontName="Helvetica-Bold" size="8" isBold="true"/>
 					</textElement>
-				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$V{TOTALASSESSEDVALUE}]]></textFieldExpression>
+				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$P{TOTALAV}]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement
@@ -329,6 +378,23 @@
 					</textElement>
 				<text><![CDATA[]]></text>
 				</staticText>
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="347"
+						y="0"
+						width="77"
+						height="14"
+						key="textField-1">
+							<printWhenExpression><![CDATA[new Boolean($P{PREDOMINANT}.booleanValue() == true)]]></printWhenExpression>
+						</reportElement>
+					<box rightPadding="2">					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Tahoma" pdfFontName="Helvetica-Bold" size="8" isBold="true"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$P{ASSESSLEVEL}]]></textFieldExpression>
+				</textField>
 			</band>
 		</summary>
 </jasperReport>

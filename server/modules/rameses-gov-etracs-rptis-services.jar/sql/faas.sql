@@ -1,5 +1,5 @@
 [getList]
-SELECT 
+SELECT  
 	f.*,
 	rpu.rputype,
 	rpu.ry,
@@ -16,11 +16,14 @@ SELECT
 	rp.cadastrallotno,
 	rp.blockno,
 	rp.claimno,
-	b.name AS barangay_name
+	b.name AS barangay_name,
+	pc.code AS classification_code
 FROM faas f
 	INNER JOIN rpu rpu ON f.rpuid = rpu.objid
-	LEFT JOIN realproperty rp ON rpu.realpropertyid = rp.objid
-	LEFT JOIN barangay b ON rp.barangayid = b.objid 
+	INNER  JOIN realproperty rp ON rpu.realpropertyid = rp.objid
+	INNER JOIN barangay b ON rp.barangayid = b.objid 
+	INNER JOIN propertyclassification pc ON rpu.classification_objid = pc.objid 
+WHERE 
 ${filters}
 
 
@@ -30,10 +33,11 @@ select
 from faas f  
   inner join rpu r on r.objid = f.rpuid 
   inner join realproperty rp on rp.objid = r.realpropertyid 
-where f.state = 'CURRENT' 
+where f.state like $P{state}
 	and r.ry = $P{revisionyear} 
 	and rp.barangayid = $P{barangayid}
 	and rp.section like $P{section} 
+order by r.fullpin 
 
 [openFaas]
 SELECT * FROM faas WHERE objid = $P{objid}
@@ -91,7 +95,7 @@ SELECT
 	f.*,
 	pc.code AS classification_code, 
 	pc.name AS classification_name, 
-	r.ry, r.realpropertyid, r.rputype, r.fullpin, r.totalmv, r.totalav,
+	r.ry, r.realpropertyid, r.rputype, r.fullpin, r.totalmv, r.totalav, r.rputype, 
 	r.totalareasqm, r.totalareaha,
 	rp.barangayid, rp.cadastrallotno, rp.blockno, rp.surveyno,
 	b.name AS barangay_name
@@ -100,7 +104,7 @@ FROM faas f
 	INNER JOIN realproperty rp ON r.realpropertyid = rp.objid 
 	INNER JOIN propertyclassification pc ON r.classification_objid = pc.objid 
 	INNER JOIN barangay b ON rp.barangayid = b.objid 
-${filters}	
+where 1=1 ${filters}	
 ORDER BY f.tdno 
 
 
@@ -113,3 +117,15 @@ FROM faas fl
 WHERE fl.objid = $P{landfaasid}
   AND ri.rputype <> 'land' 
   AND fi.state = 'CURRENT'
+
+[getLguIndex]  
+SELECT
+	b.indexno as barangayindex,
+	case when c.objid is not null then c.indexno else p.indexno end as provcityindex,
+	case when d.objid is not null then d.indexno else m.indexno end as munidistrictindex
+FROM barangay b
+	left join district d on b.parentid = d.objid
+	left join city c on d.parentid = c.objid 
+	left join municipality m on b.parentid = m.objid 
+	left join province p on m.parentid = p.objid 
+where b.objid = $P{barangayid}	  

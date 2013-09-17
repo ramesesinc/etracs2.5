@@ -6,7 +6,9 @@
 
 package com.rameses.gov.etracs.rpt.report;
 
+import com.rameses.osiris2.themes.FormPage;
 import com.rameses.rcp.ui.annotations.StyleSheet;
+import com.rameses.rcp.ui.annotations.Template;
 
 
 /**
@@ -14,6 +16,7 @@ import com.rameses.rcp.ui.annotations.StyleSheet;
  * @author  arnel
  */
 @StyleSheet("etracs2/rpt/report/ui/FAASBatchReportPage.style")
+@Template(FormPage.class)
 public class FAASBatchReportPage extends javax.swing.JPanel {
     
     /**
@@ -30,21 +33,17 @@ public class FAASBatchReportPage extends javax.swing.JPanel {
      */
     // <editor-fold defaultstate="collapsed" desc=" Generated Code ">//GEN-BEGIN:initComponents
     private void initComponents() {
-        xActionBar1 = new com.rameses.rcp.control.XActionBar();
         formPanel1 = new com.rameses.rcp.util.FormPanel();
         xNumberField2 = new com.rameses.rcp.control.XNumberField();
-        xComboBox5 = new com.rameses.rcp.control.XComboBox();
         xComboBox1 = new com.rameses.rcp.control.XComboBox();
+        xComboBox2 = new com.rameses.rcp.control.XComboBox();
         xNumberField1 = new com.rameses.rcp.control.XNumberField();
         xLabel1 = new com.rameses.rcp.control.XLabel();
 
         setPreferredSize(new java.awt.Dimension(603, 291));
-        xActionBar1.setBorder(new com.rameses.rcp.control.border.XUnderlineBorder());
-        xActionBar1.setName("formActions");
-        xActionBar1.setPadding(new java.awt.Insets(0, 5, 0, 0));
 
         com.rameses.rcp.control.border.XTitledBorder xTitledBorder1 = new com.rameses.rcp.control.border.XTitledBorder();
-        xTitledBorder1.setTitle("FAAS Batch Printing");
+        xTitledBorder1.setTitle(" Batch Printing Information");
         formPanel1.setBorder(xTitledBorder1);
         formPanel1.setCaptionWidth(120);
         formPanel1.setPadding(new java.awt.Insets(5, 10, 5, 25));
@@ -56,20 +55,7 @@ public class FAASBatchReportPage extends javax.swing.JPanel {
         xNumberField2.setRequired(true);
         formPanel1.add(xNumberField2);
 
-        xComboBox5.setAllowNull(false);
-        xComboBox5.setCaption("Municipality/District");
-        xComboBox5.setDynamic(true);
-        xComboBox5.setExpression("#{item.name}");
-        xComboBox5.setIndex(1);
-        xComboBox5.setItems("lgus");
-        xComboBox5.setName("lgu");
-        xComboBox5.setPreferredSize(new java.awt.Dimension(0, 22));
-        xComboBox5.setRequired(true);
-        formPanel1.add(xComboBox5);
-
         xComboBox1.setCaption("Barangay");
-        xComboBox1.setDepends(new String[] {"lgu"});
-        xComboBox1.setDynamic(true);
         xComboBox1.setExpression("#{item.name}");
         xComboBox1.setIndex(2);
         xComboBox1.setItems("barangays");
@@ -77,6 +63,13 @@ public class FAASBatchReportPage extends javax.swing.JPanel {
         xComboBox1.setPreferredSize(new java.awt.Dimension(0, 19));
         xComboBox1.setRequired(true);
         formPanel1.add(xComboBox1);
+
+        xComboBox2.setCaption("State");
+        xComboBox2.setEmptyText("ALL STATES");
+        xComboBox2.setItems("states");
+        xComboBox2.setName("state");
+        xComboBox2.setPreferredSize(new java.awt.Dimension(0, 22));
+        formPanel1.add(xComboBox2);
 
         xNumberField1.setCaption("Section");
         xNumberField1.setFieldType(Integer.class);
@@ -93,32 +86,29 @@ public class FAASBatchReportPage extends javax.swing.JPanel {
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(org.jdesktop.layout.GroupLayout.TRAILING, xActionBar1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 603, Short.MAX_VALUE)
             .add(layout.createSequentialGroup()
                 .addContainerGap()
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
-                    .add(formPanel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 406, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(xLabel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 369, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(xLabel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 369, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(formPanel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 406, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(187, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(layout.createSequentialGroup()
-                .add(xActionBar1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .addContainerGap()
                 .add(formPanel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 187, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(31, 31, 31)
                 .add(xLabel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(64, Short.MAX_VALUE))
+                .addContainerGap(60, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
     
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private com.rameses.rcp.util.FormPanel formPanel1;
-    private com.rameses.rcp.control.XActionBar xActionBar1;
     private com.rameses.rcp.control.XComboBox xComboBox1;
-    private com.rameses.rcp.control.XComboBox xComboBox5;
+    private com.rameses.rcp.control.XComboBox xComboBox2;
     private com.rameses.rcp.control.XLabel xLabel1;
     private com.rameses.rcp.control.XNumberField xNumberField1;
     private com.rameses.rcp.control.XNumberField xNumberField2;

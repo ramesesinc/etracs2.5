@@ -1,4 +1,4 @@
-"rpu.*|classification|rpu.exemptiontype|viewMachines" [ allowEdit == true ] {
+"rpu.*|classification|rpu.exemptiontype" [ allowEdit == true ] {
     enabled:true;
 }
 
@@ -6,6 +6,11 @@
     readonly:false;
 }
 
+
+
+"viewMachines" [selectedItem != null] {
+    enabled:true;
+}
 
 "viewMachines" [selectedItem == null] {
     enabled:false;

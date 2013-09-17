@@ -10,7 +10,7 @@ public class BldgRYSettingLookupService
     @Service('LookupUtilService')
 	def lupSvc 
 
-    @Service('RPTParameterLookupService')
+    @Service('RPTParameterService')
     def paramSvc
 	
 
@@ -23,7 +23,7 @@ public class BldgRYSettingLookupService
 
 	@ProxyMethod
     public def lookupAssessLevels(params){
-    	return lupSvc.lookup( 'bldgrysettinglookup:lookupAssessLevels', params )
+    	return lupSvc.lookup( 'bldgrysettinglookup:lookupAssessLevels', params, 'bal.objid' )
     }
 
 
@@ -38,7 +38,7 @@ public class BldgRYSettingLookupService
 
 	@ProxyMethod
     public def lookupBldgTypes(params){
-    	return lupSvc.lookup( 'bldgrysettinglookup:lookupBldgTypes', params )
+    	return lupSvc.lookup( 'bldgrysettinglookup:lookupBldgTypes', params, 'bt.objid' )
     }
 
 
@@ -60,7 +60,7 @@ public class BldgRYSettingLookupService
 
     @ProxyMethod
     public def lookupBldgKindBuccs(params){
-    	return lupSvc.lookup( 'bldgrysettinglookup:lookupBldgKindBuccs', params )
+    	return lupSvc.lookup( 'bldgrysettinglookup:lookupBldgKindBuccs', params, 'bucc.objid' )
     }
 
 
@@ -127,7 +127,7 @@ public class BldgRYSettingLookupService
 
     @ProxyMethod
     public def getVariables() {
-        return paramSvc.lookupRPTParameters([:])    
+        return paramSvc.getRPTParameters([:])    
     }
 
 

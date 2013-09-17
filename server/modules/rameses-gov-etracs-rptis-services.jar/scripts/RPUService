@@ -11,10 +11,10 @@ class RPUService
     @Service('RealPropertyService')
     def rpSvc
 
-    @Service('PropertyClassificationLookupService')
+    @Service('PropertyClassificationService')
     def classSvc 
 
-    @Service('ExemptionTypeLookupService')
+    @Service('ExemptionTypeService')
     def exemptSvc 
 
     @Service('RPTUtil')
@@ -61,7 +61,7 @@ class RPUService
             useswornamount  : false,
             rp              : rp,
         ]
-
+        rpu.rpumasterid = rpu.objid 
         rpu.fullpin = buildFullPin(rpu)
         checkDuplicateFullPin( rpu )
         return rpu
@@ -89,6 +89,7 @@ class RPUService
     @ProxyMethod
     public def createRpu( rpu, txntype ) {
         rpu.txntype = txntype 
+        createRpuMaster(rpu)
         if (txntype.newrpu) {
             createRealProperty(rpu, txntype)
             checkDuplicateFullPin(rpu)
@@ -111,8 +112,8 @@ class RPUService
     public def openRpu( rpuid ) {
         def rpu             = em.read(SCHEMA_RPU, [objid:rpuid])
         if (!rpu) throw new Exception('Cannot open RPU. The record does not exist or has already been deleted.')
-        rpu.classification  = classSvc.lookupById(rpu.classification.objid)
-        rpu.exemptiontype   = exemptSvc.lookupById(rpu.exemptiontype.objid)
+        rpu.classification  = classSvc.findById(rpu.classification.objid)
+        rpu.exemptiontype   = exemptSvc.findById(rpu.exemptiontype.objid)
         rpu.taxable  = util.toBoolean(rpu.taxable, true)
         rpu.hasswornamount  = util.toBoolean(rpu.hasswornamount, false)
         rpu.useswornamount  = util.toBoolean(rpu.useswornamount, false)
@@ -132,11 +133,13 @@ class RPUService
         if (rpu.rputype == RPUTYPE_LAND) {
             rpSvc.deleteRealProperty([objid:rpu.realpropertyid])
         }
+        deleteRpuMaster(rpu)
     }
 
     @ProxyMethod
     public def deleteRpuOnly( rpu ) {
         em.delete(SCHEMA_RPU, rpu)    
+        deleteRpuMaster(rpu)
     }
 
 
@@ -278,13 +281,13 @@ class RPUService
 
     @ProxyMethod
     public List getClassifications(  ) {
-        return classSvc.lookupClassifications([:])    
+        return classSvc.getClassifications([:])    
     }
 
 
     @ProxyMethod
     public List getExemptionTypes(){
-        return exemptSvc.lookupExemptionTypes([:])
+        return exemptSvc.getExemptionTypes([:])
     }
 
 
@@ -340,6 +343,30 @@ class RPUService
         }
         return fullpin 
     }
+
+    void createRpuMaster(rpu){
+        try {
+            if (rpu.rpumasterid == null ){
+                rpu.rpumasterid = rpu.objid 
+            }
+            em.sqlContext.createNamedExecutor('rpu:createRpuMaster')
+                    .setParameter('objid',rpu.rpumasterid ).execute()
+        }
+        catch(e){
+            //ignore possible duplicate when there are multiple assessments
+        }
+    }
+
+    void deleteRpuMaster(rpu){
+        try{
+            em.sqlContext.createNamedExecutor('rpu:deleteRpuMaster').setParameter('objid',rpu.rpumasterid).execute()
+        }
+        catch(e){
+            //ignore: possible references when there are multiple assessments
+        }
+    }
+
+
 
     /*------------------------------------------
     * 

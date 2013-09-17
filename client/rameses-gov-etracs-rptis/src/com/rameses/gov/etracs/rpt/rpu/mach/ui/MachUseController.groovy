@@ -83,6 +83,7 @@ public class MachUseController
             machuse     : machuse,
             machdetail  : selectedItem, 
             onupdate    : onupdateMachine,
+            allowEdit   : allowEdit,
         ])
     }
     

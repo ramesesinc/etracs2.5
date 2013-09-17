@@ -1,10 +1,16 @@
 import com.rameses.annotations.*
-import java.rmi.server.UID
+import com.rameses.services.extended.*
 
 class RPTUtilityService
 {
 	@PersistenceContext('main')
 	def em
+
+	@ActiveDB('rpu')
+	def rpudb
+
+	@ActiveDB('pin')
+	def pindb 
     
 	@Service('RPUService')
 	def rpuSvc 
@@ -15,9 +21,9 @@ class RPTUtilityService
 	 //info: faasid, oldpin, tdno, pintype, municipality, barangay, 
 	//section, parcel, suffix, newpin, ssection, sparcel 
 	@ProxyMethod
-	public void updatePin( info ) { 
+	public def updatePin( info ) { 
 		println "************************************"
-		println " updating pin $info.oldpin -> $info.newpin, lgutype: $info.lgutype "
+		println " updating pin $info"
 		println "************************************"
 		
 		validatePin( info )
@@ -31,26 +37,28 @@ class RPTUtilityService
 				rpu.rp.barangayid = info.barangay.objid 
 				rpu.rp.parcel = info.sparcel 
 				rpSvc.updateRealProperty( rpu.rp )
-				em.sqlContext.createNamedExecutor('pin:updateBarangayid').setParameters( rpu.rp ).execute() 
-				em.sqlContext.createNamedExecutor('rpu:modifyPin').setParameters(info ).execute() 
+
+				pindb.updateBarangayid(rpu.rp)
+				rpudb.modifyPin(info)
+
 				//update improvements pin 
-				em.sqlContext.createNamedQuery('rpu:getLandImprovementsRpuByRealPropertyId')
-				.setParameters( [realpropertyid: rpu.rp.objid])
-				.resultList.each { 
+				rpudb.getLandImprovementsRpuByRealPropertyId([realpropertyid: rpu.rp.objid]).each { 
 					def param = [
-						newpin:info.pin + '-' + it.suffix,
+						newpin:info.newpin + '-' + it.suffix,
 						suffix:it.suffix, 
 						rpuid: it.objid 
 					]
-					em.sqlContext.createNamedExecutor('rpu:modifyPin').setParameters( param ).execute() 
+					rpudb.modifyPin(param)
 				}
-				
 			}
+			println '='*50 
+			println 'rp -> ' + rpu.rp 
+			return rpu.rp 
 			
 		} else {
-			em.sqlContext.createNamedExecutor('rpu:modifyPin').setParameters( info ).execute() 
+			rpudb.modifyPin(info)
+			return null
 		}
-		
 		// logSvc.log('MODIFY_PIN', 'FAAS', info.faasid  )
 	}
 	

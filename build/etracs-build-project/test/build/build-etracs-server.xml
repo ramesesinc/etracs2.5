@@ -43,6 +43,42 @@
     
     
     <!--=====================================================
+    = DEPLOY INCUBATION JARS TO DEVLIBS
+    =======================================================-->
+    <target name="copy-incubation-jars-to-devlibs">
+        <antcall target="do-copy-incubation-jars-to-devlibs">
+            <param name="sourcefile" value="osiris2-client-themes"/>
+        </antcall>
+        <antcall target="do-copy-incubation-jars-to-devlibs">
+            <param name="sourcefile" value="osiris2-client-ui"/>
+        </antcall>
+        <antcall target="do-copy-incubation-jars-to-devlibs">
+            <param name="sourcefile" value="osiris2-framework"/>
+        </antcall>
+        <antcall target="do-copy-incubation-jars-to-devlibs">
+            <param name="sourcefile" value="osiris2-report"/>
+        </antcall>
+        <antcall target="do-copy-incubation-jars-to-devlibs">
+            <param name="sourcefile" value="rameses-client-ui"/>
+        </antcall>
+        <antcall target="do-copy-incubation-jars-to-devlibs">
+            <param name="sourcefile" value="rameses-common2"/>
+        </antcall>
+        <antcall target="do-copy-incubation-jars-to-devlibs">
+            <param name="sourcefile" value="rameses-custom-impl"/>
+        </antcall>
+        <antcall target="do-copy-incubation-jars-to-devlibs">
+            <param name="sourcefile" value="db-dialect"/>
+        </antcall>
+    </target>
+    
+    <target name="do-copy-incubation-jars-to-devlibs">
+        <echo message="====> Copying ${sourcefile}" />
+        <property name="sourcejar" value="${incubation.dir}/${sourcefile}/dist/${sourcefile}.jar"/>
+        <copy file="${sourcejar}" todir="${devlib.projects.dir}" failonerror="false"/>
+    </target>
+    
+    <!--=====================================================
     = DEPLOY SHARED  
     =======================================================-->
     <target name="deploy-project-shared">
@@ -119,6 +155,9 @@
         <antcall target="deploy-etracs-jars-to-platform">
             <param name="sourcefile" value="rameses-gov-etracs-signatory-template"/>
         </antcall>
+        <antcall target="deploy-etracs-jars-to-platform">
+            <param name="sourcefile" value="gov-lgu-iligan"/>
+        </antcall>
     </target>
     
 
@@ -143,6 +182,7 @@
         <copy file="${devlib.projects.dir}/rameses-client-ui.jar" todir="${target.downloads.core.dir}" failonerror="false"/>
         <copy file="${devlib.projects.dir}/rameses-common2.jar" todir="${target.downloads.core.dir}" failonerror="false"/>
         <copy file="${devlib.projects.dir}/rameses-custom-impl.jar" todir="${target.downloads.core.dir}" failonerror="false"/>
+        <copy file="${devlib.projects.dir}/db-dialect.jar" todir="${target.downloads.core.dir}" failonerror="false"/>
     </target>
     
     <!--=====================================================
@@ -155,9 +195,7 @@
         </copy>
     </target>
     
-
-    <target name="build-server" depends="init,cleanup,copy-osiris3-server,copy-etracs-platform,deploy-etracs-server,deploy-project-shared, deploy-etracs-client-jars, deploy-devlibs">
-
+    <target name="build-server" depends="init,cleanup,copy-osiris3-server,copy-etracs-platform,deploy-etracs-server,deploy-project-shared, deploy-etracs-client-jars, copy-incubation-jars-to-devlibs, deploy-devlibs">
     </target>
 
 </project>

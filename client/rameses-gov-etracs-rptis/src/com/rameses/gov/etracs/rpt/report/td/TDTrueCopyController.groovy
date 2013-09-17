@@ -43,6 +43,7 @@ public class TDTrueCopyController extends com.rameses.gov.etracs.rpt.report.cert
         info.CERTIFICATIONORAMOUNT = entity.oramount;
         info.CERTIFICATIONORDATE   = entity.ordate;
         info.CERTIFICATIONORNO     = entity.orno;
+        info.PLAINTRUECOPY         = false;
         return info;
     }
 }

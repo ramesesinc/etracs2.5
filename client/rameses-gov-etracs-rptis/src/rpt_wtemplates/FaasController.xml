@@ -11,6 +11,7 @@
             <transition name="mcinit" to="mcinit"/>
             <transition name="grinit" to="grinit"/>
             <transition name="open" to="open"/>
+            <transition name="previous" to="previous"/>
         </start>
         
         <process name="open">
@@ -59,7 +60,7 @@
             <transition caption="Cancel" to="back-to-default" action="cancelEdit" name="cancel" mnemonic="c" icon="images/toolbars/cancel.png" visibleWhen="#{mode != 'read'}"/>
             <transition caption="Save"   to="back-to-default" action="save" name="save" mnemonic="s" shortcut="ctrl S" icon="images/toolbars/save.png"  visibleWhen="#{mode != 'read'}" />
             <transition caption="Delete" to="delete"  action="delete" confirm="Delete record?"    mnemonic="d" icon="images/toolbars/trash.png"  visibleWhen="#{mode == 'read'}" role="APPRAISER" permission="faas.delete"/>
-            <transition caption="Submit" to="submit" action="submitFaasForApproval"  mnemonic="m"  visibleWhen="#{mode == 'read'}" confirm="Submit FAAS for approval?"/>
+            <transition caption="Submit" to="submit" action="submitFaasForApproval"  mnemonic="m"  visibleWhen="#{mode == 'read'}" confirm="Submit FAAS for approval?" role="APPRAISER" permission="faas.submit"/>
         </page>
         
         <process name="back-to-default">
@@ -139,6 +140,10 @@
             <transition caption="Close" to="end" mnemonic="c" icon="images/toolbars/cancel.png"/>
         </page>
         
+        <page name="previous" title="FAAS #{faas.txntype.name}">
+            <transition caption="Close" to="closeForm" mnemonic="c" icon="images/toolbars/cancel.png"/>
+        </page>
+        
         
         <end />
         
@@ -155,6 +160,7 @@
         <page name="forprovapproval" template="com.rameses.gov.etracs.rpt.faas.ui.FAASPage"/>
         <page name="current" template="com.rameses.gov.etracs.rpt.faas.ui.FAASPage"/>
         <page name="cancelled" template="com.rameses.gov.etracs.rpt.faas.ui.FAASPage"/>
+        <page name="previous" template="com.rameses.gov.etracs.rpt.faas.ui.FAASPage"/>
         <page name="readonly" template="com.rameses.gov.etracs.rpt.faas.ui.FAASPage"/>
         <page name="preview" template="com.rameses.gov.etracs.rpt.report.common.PreviewPage" />
     </pages>

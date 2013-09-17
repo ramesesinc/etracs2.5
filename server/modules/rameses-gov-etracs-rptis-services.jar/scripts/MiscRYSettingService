@@ -8,10 +8,10 @@ public class MiscRYSettingService
     @PersistenceContext('main')
     def em
      
-    @Service('PropertyClassificationListService')
+    @Service('PropertyClassificationService')
     def pcSvc
 
-    @Service('MiscItemListService')
+    @Service('MiscItemService')
     def miscItemSvc
 
     @Service('MiscRYSettingListService')
@@ -20,7 +20,7 @@ public class MiscRYSettingService
     @Service('RYSettingService')
     def rysettingSvc
     
-    @Service('RPTParameterListService')
+    @Service('RPTParameterService')
     def paramSvc
 
     @Service('Var')
@@ -49,7 +49,7 @@ public class MiscRYSettingService
     
     @ProxyMethod
     public List getPropertyClassifications() {
-        return pcSvc.getList(null)
+        return pcSvc.getList([:])
     }
     
     

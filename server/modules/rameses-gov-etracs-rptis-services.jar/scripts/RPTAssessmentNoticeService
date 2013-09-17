@@ -27,15 +27,15 @@ class RPTAssessmentNoticeService
 	
 	def STATE_OPEN 		= 'OPEN' 
 	def STATE_RECEIVED 	= 'RECEIVED' 
-	
+
 	
 	@ProxyMethod
     public def getList( params ) {
     	params.searchtext = (params.searchtext ? params.searchtext : '') + '%'
         def filters = [
-            'WHERE txnno LIKE $P{searchtext}',
-            'WHERE taxpayername LIKE $P{searchtext}',
-            'WHERE receivedby LIKE $P{searchtext}',
+            ' and txnno LIKE $P{searchtext}',
+            ' and taxpayername LIKE $P{searchtext}',
+            ' and receivedby LIKE $P{searchtext}',
         ]
         return util.getListFromQuery( 'assessmentnotice:getList' , filters, params, 'objid' )
     }
@@ -48,18 +48,21 @@ class RPTAssessmentNoticeService
 
 		def cy = dateSvc.serverYear 
 		notice.state  = STATE_OPEN
-		notice.txnno  = cy + seqSvc.getNextFormattedSeries('ASSESSMENT_NOTICE-' + cy)
+		notice.txnno  = var.lgu_objid + seqSvc.getNextFormattedSeries('ASSESSMENT_NOTICE-' + cy)
 		notice.txndate  = dateSvc.serverDate
+		notice.taxpayerid = notice.taxpayer.objid
+		notice.taxpayername = notice.taxpayer.name
+		notice.taxpayeraddress = notice.taxpayer.address
 		
 		notice.createdbyid =  (env.USERID ? env.USERID : 'SYSTEM')
-		notice.createdbyname =  (env.USERNAME ? env.USERNAME : 'SYSTEM')
-		notice.createdbytitle =  (env.USERJOBTITLE ? env.USERJOBTITLE : 'SYSTEM')
+		notice.createdbyname =  (env.FULLNAME ? env.FULLNAME : 'SYSTEM')
+		notice.createdbytitle =  (env.JOBTITLE ? env.JOBTITLE : 'SYSTEM')
 
 		notice.approvedbyname = var.assessor_name
 		notice.approvedbytitle = var.assessor_title
 
 		em.validate(SCHEMA_NAME, notice )
-		em.create(SCHEMA_NAME,  notice)
+		em.create(SCHEMA_NAME,  notice) 
 
 		notice.items.each{
 			it.objid = util.generateId('ANI')
@@ -77,6 +80,8 @@ class RPTAssessmentNoticeService
 		notice.items = em.sqlContext.createNamedQuery('assessmentnotice:getItems')
 							.setParameter('assessmentnoticeid', notice.objid)
 							.resultList 
+		notice.dtassessed = dateSvc.getServerYear()+""
+		if( notice.items && notice.items[0].dtsigned )	notice.dtassessed = new java.text.SimpleDateFormat("yyyy").format(notice.items[0].dtsigned)
 		return notice
 	}
 

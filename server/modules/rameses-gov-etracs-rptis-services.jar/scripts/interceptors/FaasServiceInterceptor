@@ -17,6 +17,75 @@ class FaasServiceInterceptor
 	@Service('Var')
 	def var
 
+	@Service('LogService')
+	def logSvc 
+
+
+	@After(pattern="FAASService.createFaas.*") 
+	public void logCreate( evt ) {
+		def faas = evt.result 
+		logSvc.log( 'create', 'FAAS', faas.objid)
+	}
+
+	@After(pattern="FAASService.updateFaas.*") 
+	public void logUpdate( evt ) {
+		def faas = evt.result 
+		logSvc.log( 'update', 'FAAS', faas.objid)
+	}
+
+	@After(pattern="FAASService.submitFaasForApproval") 
+	public void logSubmitFaasForApproval( evt ) {
+		def faas = evt.result 
+		logSvc.log( 'submitFaasForApproval', 'FAAS', faas.objid)
+	}
+
+	@After(pattern="FAASService.approveFaas") 
+	public void logApproveFaas( evt ) {
+		def faas = evt.result 
+		logSvc.log( 'approveFaas', 'FAAS', faas.objid)
+	}
+
+	@After(pattern="FAASService.disapproveFaas") 
+	public void logDisapproveFaas( evt ) {
+		def faas = evt.result 
+		logSvc.log( 'disapproveFaas', 'FAAS', faas.objid)
+	}
+
+	@After(pattern="FAASService.submitFaasToProvince") 
+	public void logSubmitFaasToProvince( evt ) {
+		def faas = evt.result 
+		logSvc.log( 'submitFaasToProvince', 'FAAS', faas.objid)
+	}
+
+	@After(pattern="FAASService.approveFaasSubmissionToProvince") 
+	public void logApproveFaasSubmissionToProvince( evt ) {
+		def faas = evt.result 
+		logSvc.log( 'approveFaasSubmissionToProvince', 'FAAS', faas.objid)
+	}
+
+	@After(pattern="FAASService.disapproveFaasSubmissionToProvince") 
+	public void logDisapproveFaasSubmissionToProvince( evt ) {
+		def faas = evt.result 
+		logSvc.log( 'disapproveFaasSubmissionToProvince', 'FAAS', faas.objid)
+	}
+
+	@After(pattern="FAASService.approveFaasByProvince") 
+	public void logApproveFaasByProvince( evt ) {
+		def faas = evt.result 
+		logSvc.log( 'approveFaasByProvince', 'FAAS', faas.objid)
+	}
+
+	@After(pattern="FAASService.disapproveFaasByProvince") 
+	public void logDisapproveFaasByProvince( evt ) {
+		def faas = evt.result 
+		logSvc.log( 'disapproveFaasByProvince', 'FAAS', faas.objid)
+	}
+
+
+
+
+
+
 	@Before(pattern="FAASService.initFaasTransaction")  
 	public void interceptInitFaasTransaction( evt ) {
 		def info = evt.args[0]

@@ -4,6 +4,8 @@ FROM structure
 WHERE code LIKE $P{searchtext} OR name LIKE $P{searchtext}
 ORDER BY indexno
 
+[approve]
+UPDATE structure SET state = 'APPROVED' WHERE objid = $P{objid}
 
 [insertStructureMaterial]
 INSERT INTO structurematerial 
@@ -32,13 +34,14 @@ WHERE sm.structure_objid = $P{structure_objid}
 ORDER BY m.code 
 
 
+
 #----------------------------------------------------------
 #
 # LOOKUP SUPPORT 
 #
 #----------------------------------------------------------
 
-[lookupStructures]
+[getStructures]
 SELECT *
 FROM structure
 WHERE state = 'APPROVED'
@@ -46,7 +49,7 @@ WHERE state = 'APPROVED'
 ORDER BY indexno
 
 
-[lookupStructureMaterials]
+[getMaterials]
 SELECT 
 	m.*
 FROM structurematerial sm

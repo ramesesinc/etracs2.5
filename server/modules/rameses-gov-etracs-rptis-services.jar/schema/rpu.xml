@@ -20,5 +20,6 @@
         <field name="swornamount" required="true" type="decimal" />
         <field name="useswornamount" required="true" type="boolean" />
         <field name="previd" />
+        <field name="rpumasterid"  required="true"/>
     </element>
 </schema>

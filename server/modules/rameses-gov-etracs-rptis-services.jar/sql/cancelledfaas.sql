@@ -15,7 +15,7 @@ FROM cancelledfaas cf
 	INNER JOIN faas f ON cf.faasid = f.objid 
 	INNER JOIN rpu r ON f.rpuid = r.objid 
 	INNER JOIN canceltdreason ctr ON cf.reason_objid = ctr.objid 
-${filters}	
+where 1=1 ${filters}	
 ORDER BY txndate DESC 
 
 [open]
