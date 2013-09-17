@@ -159,12 +159,12 @@
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[$P{ASSESSOROFFICENAME}]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						mode="Transparent"
 						x="0"
 						y="91"
-						width="371"
+						width="323"
 						height="11"
 						forecolor="#000000"
 						backcolor="#FFFFFF"
@@ -178,12 +178,12 @@
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[$F{taxpayername}]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						mode="Transparent"
 						x="0"
-						y="102"
-						width="371"
+						y="104"
+						width="323"
 						height="11"
 						forecolor="#000000"
 						backcolor="#FFFFFF"
@@ -202,7 +202,7 @@
 					<reportElement
 						mode="Transparent"
 						x="591"
-						y="82"
+						y="79"
 						width="121"
 						height="11"
 						forecolor="#000000"
@@ -214,7 +214,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 </box>
 					<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
-						<font fontName="Tahoma" pdfFontName="Helvetica" size="8" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
+						<font fontName="Tahoma" pdfFontName="Helvetica" size="9" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[$F{txnno}]]></textFieldExpression>
 				</textField>
@@ -259,7 +259,7 @@
 					</textElement>
 				<text><![CDATA[NOTICE OF ASSESSMENT]]></text>
 				</staticText>
-				<textField isStretchWithOverflow="false" pattern="dd/MM/yyyy" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+				<textField isStretchWithOverflow="false" pattern="MM/dd/yyyy" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						mode="Transparent"
 						x="593"
@@ -338,7 +338,7 @@
 					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" isStyledText="true" lineSpacing="Single">
 						<font fontName="Tahoma" pdfFontName="Helvetica" size="8" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA["        This is to inform you that the real property(ies) indicated is (are) assessed fro the year <style isUnderline='true'>  " + $F{dtassessed} + "  </style> in this City/Municipality and ownership of which is/are stated in your name for taxation purposes, (as well as for subsequent years until you are informed of any charges)"]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA["        This is to inform you that the real property(ies) indicated is (are) assessed for the year <style isUnderline='true'>  " + $F{dtassessed} + "  </style> in this City/Municipality and ownership of which is/are stated in your name for taxation purposes, (as well as for subsequent years until you are informed of any changes)"]]></textFieldExpression>
 				</textField>
 			</band>
 		</title>
@@ -585,7 +585,7 @@
 					<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
 						<font fontName="Tahoma" pdfFontName="Helvetica" size="8" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 					</textElement>
-				<text><![CDATA[This is to certify that the Notice of Assessment was server on ]]></text>
+				<text><![CDATA[This is to certify that the Notice of Assessment was serve on ]]></text>
 				</staticText>
 				<textField isStretchWithOverflow="false" pattern="dd MMM yyyy" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
