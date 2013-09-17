@@ -155,13 +155,16 @@ class LandRPUService
 
 	@ProxyMethod
     public Map calculateLandDetailAssessment( landdetail, ry ) {
+		if (!landdetail.actualuse) return landdetail 
+
 		def rptsetting = getRPTSetting()
-		
+
 		landdetail.basevalue = landdetail.subclass.unitvalue
 		landdetail.unitvalue = landdetail.subclass.unitvalue
 		landdetail.areatype  = landdetail.specificclass.areatype 
 
 		//calculate areas 
+		if (landdetail.area == null) landdetail.area = 0.0
         if( landdetail.areatype == 'SQM' ) {
             landdetail.areasqm = landdetail.area 
             landdetail.areaha  = landdetail.area / 10000.0
