@@ -1,6 +1,6 @@
 <workunit >
     <invokers>
-        <invoker folderid="/explorer/txn/rpt/report" action="init" caption="FAAS Batch Printing" target="window" index="100" 
+        <invoker folderid="/explorer/txn/rpt/report" action="init" caption="FAAS Batch Printing" target="window" index="600" 
             role="ASSESSOR_REPORT" />
         
         <invoker type="formActions" action="_close" caption="Close" mnemonic="c" icon="images/toolbars/cancel.png" immediate="true" visibleWhen="#{mode == 'init'}"/>
@@ -86,13 +86,11 @@
 
             public void print() {
                 mode = 'printing';
-                def params = [barangayid: barangay.objid, revisionyear: revisionyear];
-                if( section )  {
-                    def sectionlen = var.pin_section_length ? Integer.parseInt(var.pin_section_length) : 2  
-                    params.section = section.toString().padLeft(sectionlen, '0')
-                }
+                def params = [barangayid: barangay.objid, revisionyear: revisionyear, section:section];
                 params.state = state ? state : '%'
                 
+                def list = svc.getFaasIds(params) 
+                if( !list) throw new Exception("No record(s) found.     ")
                 faasTask = new FaasBatchTask([
                         updateMessage:updateMessage,
                         onError: onError,
@@ -100,7 +98,7 @@
                         interrupt: false, 
                         svcParams: svcParams,
                         svc: svc, 
-                        faaslist: svc.getFaasIds(params) 
+                        faaslist: list 
                      ]);
                 Thread t = new Thread( faasTask);
                 t.start();
@@ -133,6 +131,7 @@
                         ReportUtil.print( report.report, false) ;
 
                         updateMessage("Processing TD No. ${o.tdno} "  );
+                        Thread.sleep(100)
                     }    
                     def msg = "Finished..... " 
                     if(interrupt) 
