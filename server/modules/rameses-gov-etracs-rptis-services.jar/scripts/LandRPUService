@@ -197,12 +197,16 @@ class LandRPUService
 			landdetail.marketvalue 		= numberSvc.roundToTen(landdetail.marketvalue)
 		}
 
-		landdetail.assesslevel 			= determineAssessLevel( landdetail, ry )
-		if (util.toBoolean(var.rpt_round_to_ten_item_assessed_value, true) == true)
-			landdetail.assessedvalue = numberSvc.roundToTen(landdetail.marketvalue * landdetail.assesslevel / 100.0 )
-		else 
-			landdetail.assessedvalue = numberSvc.round(landdetail.marketvalue * landdetail.assesslevel / 100.0 )
-
+		landdetail.assesslevel = 0.0 
+		landdetail.assessedvalue = 0.0 
+		println 'landdetail.taxable -> ' + landdetail.taxable
+		if (util.isTrue(landdetail.taxable)) {
+			landdetail.assesslevel 			= determineAssessLevel( landdetail, ry )
+			if (util.toBoolean(var.rpt_round_to_ten_item_assessed_value, true) == true)
+				landdetail.assessedvalue = numberSvc.roundToTen(landdetail.marketvalue * landdetail.assesslevel / 100.0 )
+			else 
+				landdetail.assessedvalue = numberSvc.round(landdetail.marketvalue * landdetail.assesslevel / 100.0 )	
+		}
         return landdetail 
     }
 

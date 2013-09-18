@@ -131,7 +131,7 @@ public class LandRPUController extends com.rameses.gov.etracs.rpt.rpu.ui.Abstrac
                 updateStrippingInfo( item )
             else if ( colName == 'assessedvalue' ) 
                 updateav = true 
-            else if ( colName == 'actualuse' )
+            else if ( colName == 'actualuse' || colName == 'taxable' )
                 item.putAll( svc.calculateLandDetailAssessment(selectedLand, rpu.ry) )
         },
                 
