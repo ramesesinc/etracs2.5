@@ -292,5 +292,21 @@ class RPTUtil
         else return snum + 'TH' 
     }
 
+    @ProxyMethod
+    public def formalizeDate( date,  format ){
+        def dt = new java.text.SimpleDateFormat( format ).format(dtSvc.parse('yyyy-MM-dd', date)).toString();
+        
+        if( 'd'.equals(format) || 'dd'.equals(format)){
+            if( dt.matches('01|1|21|31') )
+                return dt + 'st';
+            else if( dt.matches('02|2|22') )
+                return dt + 'nd';
+            else if(dt.matches('03|3|23')) 
+                return dt + 'rd';
+            else return dt + 'th';
+        }
+        return dt;
+    } 
+
 
 }

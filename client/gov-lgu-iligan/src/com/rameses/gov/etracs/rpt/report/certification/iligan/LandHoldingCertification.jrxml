@@ -46,6 +46,7 @@
 	<parameter name="ASSESSORTIN" isForPrompting="false" class="java.lang.String"/>
 	<parameter name="ISSUEDBYTIN" isForPrompting="false" class="java.lang.String"/>
 	<parameter name="REPORTTITLE" isForPrompting="false" class="java.lang.String"/>
+	<parameter name="LOGOASSESSOR" isForPrompting="false" class="java.lang.String"/>
 
 	<field name="taxpayer.name" class="java.lang.String"/>
 	<field name="requestedby" class="java.lang.String"/>
@@ -65,6 +66,9 @@
 	<field name="byauthoritytitle" class="java.lang.String"/>
 	<field name="requestedbyaddress" class="java.lang.String"/>
 	<field name="official" class="java.lang.Boolean"/>
+	<field name="givenyear" class="java.lang.String"/>
+	<field name="givenmonth" class="java.lang.String"/>
+	<field name="givenday" class="java.lang.String"/>
 
 
 		<group  name="GRP_LANDHOLDING" >
@@ -206,10 +210,10 @@
 				<image  scaleImage="FillFrame" vAlign="Top" hAlign="Left" isUsingCache="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						mode="Opaque"
-						x="77"
-						y="0"
-						width="50"
-						height="50"
+						x="67"
+						y="1"
+						width="60"
+						height="60"
 						forecolor="#000000"
 						backcolor="#FFFFFF"
 						key="image-1"/>
@@ -310,6 +314,20 @@
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[$P{REPORTTITLE}]]></textFieldExpression>
 				</textField>
+				<image  scaleImage="FillFrame" vAlign="Top" hAlign="Left" isUsingCache="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						mode="Opaque"
+						x="417"
+						y="1"
+						width="60"
+						height="60"
+						forecolor="#FFFFFF"
+						backcolor="#FFFFFF"
+						key="image-2"/>
+					<box></box>
+					<graphicElement stretchType="NoStretch" fill="Solid" />
+					<imageExpression class="java.lang.String"><![CDATA[$P{LOGOASSESSOR}]]></imageExpression>
+				</image>
 			</band>
 		</title>
 		<pageHeader>
@@ -600,7 +618,7 @@
 					<textElement textAlignment="Justified" verticalAlignment="Top" rotation="None" isStyledText="true" lineSpacing="1_1_2">
 						<font fontName="Arial" pdfFontName="Helvetica" size="9" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA["                   Given this <style isBold=\"true\">" + $P{DATE} + " day of " + $P{MONTH} + ", " + $P{YEAR} + "</style> in the " + $P{GIVENAT} + " ."]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA["                   Given this <style isBold=\"true\">" + $F{givenday} + " day of " + $F{givenmonth} + ", " + $F{givenyear} + "</style> in " + $P{GIVENAT} + " ."]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement

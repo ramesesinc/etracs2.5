@@ -98,7 +98,7 @@ class ReportParameterService{
 			MAYORNAME   				: org.mayor?.name,
 			MAYORTITLE  				: org.mayor?.title,
 
-			GIVENAT 					: org.address,
+			GIVENAT 					: org.address, 
 			USERNAME	 				: env.NAME,
 			USERFULLNAME	 			: env.FULLNAME,
 			USERJOBTITLE 				: env.JOBTITLE, 

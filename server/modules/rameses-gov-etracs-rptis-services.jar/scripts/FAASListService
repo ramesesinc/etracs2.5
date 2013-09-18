@@ -23,9 +23,9 @@ class FAASListService
 
     @ProxyMethod
     public def getList( params ) {
-        if (params.advance != null && params.advance) {
-            return getListAdvance(params)
-        }
+        return getListAdvance(params)
+        
+        /*
         params.tdno = params.searchtext
         params.barangay = params.searchtext
         params.blockno = params.searchtext
@@ -47,6 +47,7 @@ class FAASListService
             whereclause + 'b.name = $P{blockno}',
         ]
         return util.getListFromQuery( 'faas:getList' , filters, params, 'f.objid' )
+        */
     }
 
     def getListAdvance(params){
@@ -86,6 +87,8 @@ class FAASListService
             if (whereclause) whereclause += ' AND '
             whereclause += ' rpu.rputype = $P{rputype} '
         }
+
+        if (whereclause) whereclause = ' AND ' + whereclause
         params.filters = whereclause
         def qry = em.sqlContext.createNamedQuery('faas:getList')
 

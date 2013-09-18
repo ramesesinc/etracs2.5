@@ -23,7 +23,7 @@ FROM faas f
 	INNER  JOIN realproperty rp ON rpu.realpropertyid = rp.objid
 	INNER JOIN barangay b ON rp.barangayid = b.objid 
 	INNER JOIN propertyclassification pc ON rpu.classification_objid = pc.objid 
-WHERE 
+WHERE 1=1
 ${filters}
 
 
