@@ -59,7 +59,7 @@ class FAASAdvanceSearch
    
    void clear(){
        def state = query.state
-       query = [:];
+       query.clear()
        query.state = state;
        binding.refresh('.*');
        

@@ -53,7 +53,7 @@
             }
             
             def onsearch = {
-                query.putAll(it)
+                //query.putAll(it)
                 search();
                 binding.refresh('query.state')
             }
