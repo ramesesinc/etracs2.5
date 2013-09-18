@@ -459,8 +459,7 @@ class FAASService
 
 
     void updateTDNo(faas){
-    	println 'faas.autonumber -> ' + faas.autonumber
-    	if (utilSvc.isTrue(faas.autonumber)){
+    	if ( faas.tdno == null && utilSvc.isTrue(faas.autonumber) ){
 			faas.tdno = generateNextTdNo(faas)
 			faas.utdno = faas.tdno 
 		}
