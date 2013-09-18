@@ -33,10 +33,11 @@ select
 from faas f  
   inner join rpu r on r.objid = f.rpuid 
   inner join realproperty rp on rp.objid = r.realpropertyid 
-where f.state = $P{state}
+where f.state like $P{state}
 	and r.ry = $P{revisionyear} 
 	and rp.barangayid = $P{barangayid}
 	and rp.section like $P{section} 
+order by r.fullpin 
 
 [openFaas]
 SELECT * FROM faas WHERE objid = $P{objid}

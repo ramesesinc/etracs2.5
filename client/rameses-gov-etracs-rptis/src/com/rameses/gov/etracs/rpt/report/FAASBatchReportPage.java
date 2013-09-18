@@ -37,7 +37,7 @@ public class FAASBatchReportPage extends javax.swing.JPanel {
         xNumberField2 = new com.rameses.rcp.control.XNumberField();
         xComboBox1 = new com.rameses.rcp.control.XComboBox();
         xComboBox2 = new com.rameses.rcp.control.XComboBox();
-        xNumberField1 = new com.rameses.rcp.control.XNumberField();
+        xTextField1 = new com.rameses.rcp.control.XTextField();
         xLabel1 = new com.rameses.rcp.control.XLabel();
 
         setPreferredSize(new java.awt.Dimension(603, 291));
@@ -71,12 +71,10 @@ public class FAASBatchReportPage extends javax.swing.JPanel {
         xComboBox2.setPreferredSize(new java.awt.Dimension(0, 22));
         formPanel1.add(xComboBox2);
 
-        xNumberField1.setCaption("Section");
-        xNumberField1.setFieldType(Integer.class);
-        xNumberField1.setIndex(3);
-        xNumberField1.setName("section");
-        xNumberField1.setPreferredSize(new java.awt.Dimension(120, 19));
-        formPanel1.add(xNumberField1);
+        xTextField1.setCaption("Section");
+        xTextField1.setName("section");
+        xTextField1.setPreferredSize(new java.awt.Dimension(120, 20));
+        formPanel1.add(xTextField1);
 
         xLabel1.setFont(new java.awt.Font("Arial", 1, 11));
         xLabel1.setForeground(new java.awt.Color(153, 0, 0));
@@ -110,8 +108,8 @@ public class FAASBatchReportPage extends javax.swing.JPanel {
     private com.rameses.rcp.control.XComboBox xComboBox1;
     private com.rameses.rcp.control.XComboBox xComboBox2;
     private com.rameses.rcp.control.XLabel xLabel1;
-    private com.rameses.rcp.control.XNumberField xNumberField1;
     private com.rameses.rcp.control.XNumberField xNumberField2;
+    private com.rameses.rcp.control.XTextField xTextField1;
     // End of variables declaration//GEN-END:variables
     
 }
