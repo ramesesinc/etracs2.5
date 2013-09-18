@@ -88,6 +88,7 @@
 	<field name="rpu.totalav" class="java.math.BigDecimal"/>
 	<field name="rpu.formattedassesslevel" class="java.lang.String"/>
 	<field name="rpu.predominant" class="java.lang.Boolean"/>
+	<field name="appraiser.title" class="java.lang.String"/>
 
 
 		<group  name="Part1" isStartNewPage="true" >
@@ -1238,20 +1239,6 @@
 				</staticText>
 				<staticText>
 					<reportElement
-						x="0"
-						y="297"
-						width="176"
-						height="14"
-						key="staticText-233"
-						positionType="Float"/>
-					<box></box>
-					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font fontName="Tahoma" pdfFontName="Helvetica" size="8" isBold="false"/>
-					</textElement>
-				<text><![CDATA[Name]]></text>
-				</staticText>
-				<staticText>
-					<reportElement
 						x="288"
 						y="297"
 						width="176"
@@ -1262,7 +1249,7 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font fontName="Tahoma" pdfFontName="Helvetica" size="8" isBold="false"/>
 					</textElement>
-				<text><![CDATA[Name]]></text>
+				<text><![CDATA[]]></text>
 				</staticText>
 				<staticText>
 					<reportElement
@@ -2155,6 +2142,20 @@ Clerk Initial]]></text>
 					<dataSourceExpression><![CDATA[$F{annotations}]]></dataSourceExpression>
 					<subreportExpression  class="net.sf.jasperreports.engine.JasperReport"><![CDATA[$P{AnnotationList}]]></subreportExpression>
 				</subreport>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="0"
+						y="297"
+						width="176"
+						height="14"
+						key="textField-12"
+						positionType="Float"/>
+					<box></box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Tahoma" pdfFontName="Helvetica" size="7" isBold="false"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{appraiser.title}]]></textFieldExpression>
+				</textField>
 			</band>
 			</groupHeader>
 			<groupFooter>
