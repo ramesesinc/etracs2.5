@@ -109,6 +109,9 @@
             <param name="sourcefile" value="rameses-enterprise-entity"/>
         </antcall>
         <antcall target="deploy-shared-to-platform">
+            <param name="sourcefile" value="rameses-enterprise-inventory"/>
+        </antcall>        
+        <antcall target="deploy-shared-to-platform">
             <param name="sourcefile" value="rameses-enterprise-treasury"/>
         </antcall>
         <antcall target="deploy-shared-to-platform">
@@ -123,10 +126,13 @@
         <antcall target="deploy-shared-to-platform">
             <param name="sourcefile" value="rameses-rules-developer"/>
         </antcall>
+        <!--
         <antcall target="deploy-shared-to-platform">
             <param name="sourcefile" value="rulemgmt"/>
         </antcall>        
+        -->
     </target>
+    
     
     <target name="deploy-shared-to-platform">
         <echo message="====> Copying ${sourcefile}" />
