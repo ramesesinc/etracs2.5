@@ -32,6 +32,7 @@ class FAASAdvanceSearch
                 new FormControl( "combo", [captionWidth:100, caption:'RPU Type', name:'query.rputype', items:'rputypes']),
                 new FormControl( "text", [captionWidth:100, caption:'TD No.', name:'query.tdno']),
                 new FormControl( "text", [captionWidth:100, caption:'Previous TD No.', name:'query.prevtdno']),
+                new FormControl( "text", [captionWidth:100, caption:'Title No.', name:'query.titleno']),
                 new FormControl( "text", [captionWidth:100, caption:'Owner Name', name:'query.ownername']),
                 new FormControl( "text", [captionWidth:100, caption:'PIN', name:'query.fullpin']),
                 new FormControl( "text", [captionWidth:100, caption:'Cadastral Lot No.', name:'query.cadastrallotno']),
