@@ -48,7 +48,7 @@ class RPTAssessmentNoticeService
 
 		def cy = dateSvc.serverYear 
 		notice.state  = STATE_OPEN
-		notice.txnno  = var.lgu_objid + seqSvc.getNextFormattedSeries('ASSESSMENT_NOTICE-' + cy)
+		notice.txnno  = var.lgu_objid + '-' + seqSvc.getNextFormattedSeries('ASSESSMENT_NOTICE-' + cy)
 		notice.txndate  = dateSvc.serverDate
 		notice.taxpayerid = notice.taxpayer.objid
 		notice.taxpayername = notice.taxpayer.name
