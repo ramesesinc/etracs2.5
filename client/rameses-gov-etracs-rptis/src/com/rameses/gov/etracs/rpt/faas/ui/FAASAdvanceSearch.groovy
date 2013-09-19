@@ -34,6 +34,8 @@ class FAASAdvanceSearch
                 new FormControl( "text", [captionWidth:100, caption:'Previous TD No.', name:'query.prevtdno']),
                 new FormControl( "text", [captionWidth:100, caption:'Owner Name', name:'query.ownername']),
                 new FormControl( "text", [captionWidth:100, caption:'PIN', name:'query.fullpin']),
+                new FormControl( "text", [captionWidth:100, caption:'Cadastral Lot No.', name:'query.cadastrallotno']),
+                new FormControl( "text", [captionWidth:100, caption:'Survey No.', name:'query.surveyno']),
                 new FormControl( "combo", [captionWidth:100, caption:'Barangay', name:'query.barangay', items:'barangays', expression:'#{item.name}']),
             ]    
         },

@@ -87,6 +87,14 @@ class FAASListService
             if (whereclause) whereclause += ' AND '
             whereclause += ' rpu.rputype = $P{rputype} '
         }
+        if (params.surveyno){ 
+            if (whereclause) whereclause += ' AND '
+            whereclause += ' rp.surveyno = $P{surveyno} '
+        }
+        if (params.cadastrallotno){
+            if (whereclause) whereclause += ' AND '
+            whereclause += ' rp.cadastrallotno = $P{cadastrallotno} '
+        }
 
         if (whereclause) whereclause = ' AND ' + whereclause
         params.filters = whereclause
