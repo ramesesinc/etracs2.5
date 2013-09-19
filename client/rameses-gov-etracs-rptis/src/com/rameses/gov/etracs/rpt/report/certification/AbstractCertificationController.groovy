@@ -101,8 +101,8 @@ public abstract class AbstractCertificationController
     def getLookupFaas(){
         return InvokerUtil.lookupOpener('faas:lookup',[
             onselect : { 
-                if (it.state != 'CURRENT'){
-                    throw new Exception('FAAS is not current.')
+                if (it.state != 'CURRENT' && it.state != 'CANCELLED'){
+                    throw new Exception('FAAS is not current or cancelled.')
                 }
                 entity.faasid = it.objid;
                 entity.tdno= it.tdno;
