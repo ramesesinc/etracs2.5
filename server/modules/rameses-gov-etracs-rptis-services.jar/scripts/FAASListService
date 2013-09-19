@@ -100,6 +100,11 @@ class FAASListService
             if (whereclause) whereclause += ' AND ' 
             whereclause += ' f.titleno LIKE $P{titleno} '
         }
+        if (params.taxpayer){
+            params.taxpayerid = params.taxpayer.objid 
+            if (whereclause) whereclause += ' AND ' 
+            whereclause += ' f.taxpayer_objid LIKE $P{taxpayerid} '
+        }
 
         if (whereclause) whereclause = ' AND ' + whereclause
         params.filters = whereclause

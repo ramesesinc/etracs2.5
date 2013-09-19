@@ -106,7 +106,7 @@
                 if( ! entity ) throw new Exception('Entity to Reconcile is required.')
                 def search = ''
                 def index = entity.name.indexOf(',')
-                if( entity.entitytype == 'individual' && index >= 0 ) {
+                if( entity.type == 'individual' && index >= 0 ) {
                     def lastname = entity.name.substring(0, index)
                     def firstname = entity.name.substring(index, entity.name.length())
                     firstname = firstname.replaceAll(/[^a-zA-Z]/, '')

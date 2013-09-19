@@ -4,6 +4,16 @@ WHERE name LIKE $P{entityname}
   AND objid <> $P{entityid} 
 ORDER BY name 
 
+[reconcileTaxpayerId]
+update faas set
+	taxpayer_objid=$P{taxpayerid},
+	taxpayer_name=$P{taxpayername},
+	taxpayer_address=$P{taxpayeraddress}
+where taxpayer_objid = $P{reconciledid}
+
+
+
+
 [deleteIndividual]
 DELETE FROM entityindividual WHERE objid = $P{objid}
 
@@ -33,12 +43,6 @@ DELETE FROM entity WHERE objid = $P{objid}
 # FAAS 
 #----------------------------------
 
-[updateFaasListTaxpayerInfo]
-update faas set
-	taxpayer_objid=$P{taxpayerid},
-	taxpayer_name=$P{taxpayername},
-	taxpayer_address=$P{taxpayeraddress}
-where objid=$P{objid}
 
 [getFaasListByTaxpayer]
 select 
