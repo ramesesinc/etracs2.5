@@ -54,7 +54,7 @@ public class LandRPUController extends com.rameses.gov.etracs.rpt.rpu.ui.Abstrac
             selectedLand.unitvalue = it.unitvalue;
             selectedLand.basevalue = it.basevalue;
             selectedLand.specificclass = it.specificclass;
-            selectedLand.putAll( svc.calculateLandDetailAssessment(selectedLand, rpu.ry) )
+            selectedLand.actualuse = null;
         }] )
     }
     
@@ -103,12 +103,7 @@ public class LandRPUController extends com.rameses.gov.etracs.rpt.rpu.ui.Abstrac
         createItem     : { return createLandDetail() },
         getColumns     : { return getLandRpuColumns() },
                 
-        validate       : { li ->
-            RPTUtil.required( 'Subclass', li.item.subclass)
-            RPTUtil.required( 'Actual Use', li.item.actualuse)
-            RPTUtil.required( 'Area', li.item.area )
-            if (li.item.area <= 0.0 ) throw new Exception('Area must be greater than zero.')
-        },
+        validate       : { li -> validateSelectedLand()},
                 
         onAddItem      : { item -> 
             item.objid = 'LD' + new java.rmi.server.UID()
@@ -145,6 +140,13 @@ public class LandRPUController extends com.rameses.gov.etracs.rpt.rpu.ui.Abstrac
         
     ] as EditorListModel
     
+            
+    void validateSelectedLand(){
+        RPTUtil.required( 'Subclass', selectedLand.subclass)
+        RPTUtil.required( 'Actual Use', selectedLand.actualuse)
+        RPTUtil.required( 'Area', selectedLand.area )
+        if (selectedLand.area <= 0.0 ) throw new Exception('Area must be greater than zero.')
+    }
     
     
     /*---------------------------------------------------------------

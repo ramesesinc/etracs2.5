@@ -15,6 +15,17 @@ public class BldgRPUController extends com.rameses.gov.etracs.rpt.rpu.ui.Abstrac
     def loading;
     def setting;
     
+    
+    @PropertyChangeListener
+    def listener = [
+        'rpu.hasswornamount':{
+            calculateAssessment();
+        },
+        'rpu.swornamount':{
+            calculateAssessment();
+        },
+    ]
+    
     public def getService(){
         return svc 
     }

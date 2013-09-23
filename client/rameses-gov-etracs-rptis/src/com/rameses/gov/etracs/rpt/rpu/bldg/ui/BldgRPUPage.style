@@ -11,11 +11,11 @@
     enabled:true;
 }
 
-"rpu.swornamount|rpu.useswornamount" [ rpu.hasswornstatement == true ] {
+"rpu.swornamount|rpu.useswornamount" [ rpu.hasswornamount == true ] {
     enabled:true;
 }
 
-"rpu.swornamount|rpu.useswornamount" [ rpu.hasswornstatement != true ] {
+"rpu.swornamount|rpu.useswornamount" [ rpu.hasswornamount != true ] {
     enabled:false;
 }
 
