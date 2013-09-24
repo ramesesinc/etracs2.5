@@ -1,0 +1,88 @@
+<workunit>
+    <invokers>
+        <invoker type="cashreceipt:batch:misc:open" caption="Batch Item Information" action="init" target="popup"/>
+    </invokers>
+    
+    <code>
+        <![CDATA[    
+        import com.rameses.rcp.annotations.*
+        import com.rameses.rcp.common.*
+        import com.rameses.osiris2.client.*
+        import com.rameses.osiris2.common.*
+        import java.rmi.server.*;
+        import com.rameses.gov.treasury.controllers.*
+        import com.rameses.osiris2.reports.*;
+        
+        class BatchCaptureItemController  {
+            
+            //to be feed by the caller
+            def entity, callerListModel, calculateHandler;
+            
+            def selectedItem;
+            
+            void init(){
+            }
+
+            def getLookupPayer() {
+                return InvokerUtil.lookupOpener("entity:lookup", [
+                    onselect: { o->
+                        entity.payer = o;
+                        entity.paidby = o.name;
+                        entity.paidbyaddress = o.address;
+                    }
+                ]);
+            }
+            
+            def getLookupAccount() {
+                return InvokerUtil.lookupOpener("revenueitem:lookup", [ 
+                    onselect: {o-> 
+                        selectedItem.account = o;
+                    }
+                ]);
+            }
+            
+            def listModel = [
+                fetchList: { o->
+                    if (entity.items == null) entity.items = []; 
+                    
+                    return entity.items;
+                },
+                
+                onAddItem: {o-> 
+                    entity.items << o;
+                },
+                
+                onCommitItem:{o-> 
+                    entity.amount = 0.0;
+                    entity.items.each{ 
+                        entity.amount += (it.amount? it.amount: 0.0); 
+                    }
+                }
+            ] as EditorListModel;
+            
+            
+            def doOk() {
+                if (entity.items && entity.items.size() > 1) { 
+                    entity.acctinfo = '( Multiple Accounts )'; 
+                } else { 
+                    entity.acctinfo = entity.items[0].title;
+                }
+                if (callerListModel) callerListModel.refreshSelectedItem(); 
+                if (calculateHandler) calculateHandler(); 
+                
+                return "_close"; 
+            }
+
+            def doCancel() {
+                return "_close";
+            }
+        }
+        ]]>
+        
+    </code>
+    
+    <pages>
+        <page template="com.rameses.gov.treasury.cashreceipt.BatchCollectionItemPage"/>
+    </pages>
+    
+</workunit>

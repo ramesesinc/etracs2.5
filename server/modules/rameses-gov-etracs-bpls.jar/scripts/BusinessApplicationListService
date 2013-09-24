@@ -3,12 +3,10 @@ import com.rameses.util.*;
 import java.rmi.server.*;
 import com.rameses.services.extended.*;
 
-public class BusinessApplicationListService extends AbstractCrudListService {
+public class BusinessApplicationListService extends ActiveCrudListService {
 
-	@PersistenceContext("main")
+	@ActiveDB("businessapplication")
 	def em;
-
-	String schemaName = "businessapplication";
 
 	@ProxyMethod
 	public def getNodes(o) {
