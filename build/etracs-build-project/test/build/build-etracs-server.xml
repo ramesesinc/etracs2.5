@@ -115,15 +115,6 @@
             <param name="sourcefile" value="rameses-enterprise-treasury"/>
         </antcall>
         <antcall target="deploy-shared-to-platform">
-            <param name="sourcefile" value="rameses-gov-lgu"/>
-        </antcall>
-        <antcall target="deploy-shared-to-platform">
-            <param name="sourcefile" value="rameses-gov-lgu-treasury"/>
-        </antcall>
-        <antcall target="deploy-shared-to-platform">
-            <param name="sourcefile" value="rameses-gov-treasury"/>
-        </antcall>
-        <antcall target="deploy-shared-to-platform">
             <param name="sourcefile" value="rameses-rules-developer"/>
         </antcall>
         <!--
@@ -158,9 +149,17 @@
         <antcall target="deploy-etracs-jars-to-platform">
             <param name="sourcefile" value="gov-lgu-iligan"/>
         </antcall>
+        <antcall target="deploy-etracs-jars-to-platform">
+            <param name="sourcefile" value="rameses-gov-lgu"/>
+        </antcall>
+        <antcall target="deploy-etracs-jars-to-platform">
+            <param name="sourcefile" value="rameses-gov-lgu-treasury"/>
+        </antcall>
+        <antcall target="deploy-etracs-jars-to-platform">
+            <param name="sourcefile" value="rameses-gov-treasury"/>
+        </antcall>
     </target>
     
-
     <target name="deploy-etracs-jars-to-platform">
         <property name="sourcejar" value="${etracs.project.dir}/client/${sourcefile}/dist/${sourcefile}.jar"/>
 
@@ -195,10 +194,10 @@
         </copy>
     </target>
     
-    <target name="build-server" depends="init,cleanup,deploy-etracs-server,deploy-project-shared, deploy-etracs-client-jars, copy-incubation-jars-to-devlibs, deploy-devlibs">
+    <target name="xxbuild-server" depends="init,cleanup,deploy-etracs-server,deploy-project-shared, deploy-etracs-client-jars, copy-incubation-jars-to-devlibs, deploy-devlibs">
     </target>
     
-    <target name="xbuild-server" depends="init,cleanup,copy-osiris3-server,copy-etracs-platform,deploy-etracs-server,deploy-project-shared, deploy-etracs-client-jars, copy-incubation-jars-to-devlibs, deploy-devlibs">
+    <target name="build-server" depends="init,cleanup,copy-osiris3-server,copy-etracs-platform,deploy-etracs-server,deploy-project-shared, deploy-etracs-client-jars, copy-incubation-jars-to-devlibs, deploy-devlibs">
     </target>
 
 </project>

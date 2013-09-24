@@ -1,7 +1,7 @@
 <workunit>
     <invokers>
-        <invoker type="cashreceipt:select-afcontrol" caption="Select Accountable Form" target="popup"/>
-        <invoker type="cashreceipt-initial:formActions" caption="Select AF" target="popup" action="init"/>
+        <!--<invoker type="cashreceipt:select-afcontrol" caption="Select Accountable Form" target="popup"/>-->
+        <invoker type="cashreceipt-initial:formActions" caption="Accountable Forms" target="popup" action="init" role="COLLECTOR"/>
         
         <!-- OWN TOOLBARS -->
         <invoker type="formActions" caption="Close" action="_close"/>

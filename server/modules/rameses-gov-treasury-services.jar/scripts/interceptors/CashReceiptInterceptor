@@ -26,7 +26,7 @@ class CashReceiptInterceptor {
 	* SERIAL RECEIPTS
 	**********************************************************************/
 	@After(pattern="CashReceiptService.init", eval="#{result.collectiontype.formtype.toLowerCase()=='serial'}")
-	public def loadNextAFSeries(def evt) { 
+	public def loadNextAFSeries(def evt) {
 		def result = evt.result;
 		def params = [afid:result.formno, userid: result.collector.objid, txnmode:result.txnmode]; 
 		def m = em.findActiveControlForCashReceipt( params );
