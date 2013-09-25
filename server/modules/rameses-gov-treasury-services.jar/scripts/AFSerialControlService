@@ -28,7 +28,6 @@ class AFSerialStockReceiptService {
 			m.userid = env.USERID;
 		else	
 			m.userid = p.collector.objid
-
 		return em.getAssigneeIssuanceList(m);
 	}
 
@@ -45,7 +44,9 @@ class AFSerialStockReceiptService {
 			m.userid = env.USERID;
 		else	
 			m.userid = p.collector.objid
-
+			
+		println m;
+			
 		def z = em.findActiveControlForActivation(m);
 		if(z) {
 			throw new Exception("A stub is currently active. Deactivate first existing stub");
