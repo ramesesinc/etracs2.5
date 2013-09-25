@@ -1,35 +1,21 @@
 [getOpenIssuanceList]
 SELECT a.* FROM 
-(SELECT 
-ai.objid AS objid,	
-ai.startstub AS stub,
-ai.currentseries AS startseries,
-ai.endseries AS endseries,
-NULL AS txnmode,
-0 AS active,
-0 AS open
-FROM afserial_inventory ai
-WHERE  ai.afid = $P{af}
-AND ai.respcenter_objid = $P{userid}
-AND NOT EXISTS (SELECT ac.controlid FROM afserial_control ac WHERE ac.controlid=ai.objid)
-UNION ALL
-	SELECT 
+(	SELECT 
 	ai.objid AS objid,	
 	ai.startstub AS stub,
-	ac.currentseries AS startseries,
+	CASE WHEN ac.currentseries IS NULL THEN ai.currentseries ELSE ac.currentseries END AS startseries,
 	ai.endseries AS endseries,
-	ac.txnmode,
-	ac.active AS active,
-	CASE WHEN ac.currentseries = ai.currentseries
-	THEN 0 ELSE 1 END AS open
+	ac.txnmode AS txnmode,
+	CASE WHEN ac.active IS NULL THEN 0 ELSE ac.active END  AS active,
+	CASE WHEN ac.currentseries > ai.currentseries THEN 1 ELSE 0 END AS open,
+	ac.controlid,
+	CASE WHEN ac.assignee_objid IS NULL THEN ai.respcenter_objid ELSE ac.assignee_objid END AS ownerid,
+	CASE WHEN ac.assignee_objid IS NULL THEN 'COLLECTOR' ELSE 'SUBCOLLECTOR' END AS ownerrole
 	FROM afserial_inventory ai
-	INNER JOIN afserial_control ac ON ai.objid=ac.controlid
-	WHERE  ai.afid = $P{af} 
-	AND ac.assignee_objid IS NULL 
-	AND ai.respcenter_objid = $P{userid}
-) a
-WHERE a.startseries <= a.endseries
-ORDER BY a.startseries
+	LEFT JOIN afserial_control ac ON ac.controlid=ai.objid
+	WHERE  ai.afid =  $P{af}
+	AND ai.currentseries <= ai.endseries ) a
+WHERE a.ownerid =  $P{userid}
 
 [getAssigneeIssuanceList]
 SELECT 
@@ -40,8 +26,7 @@ ac.currentseries AS startseries,
 ai.endseries AS endseries,
 ac.txnmode,
 ac.active AS active,
-CASE WHEN ac.currentseries = ai.currentseries
-THEN 0 ELSE 1 END AS open
+CASE WHEN ac.currentseries = ai.currentseries THEN 0 ELSE 1 END AS open
 FROM afserial_inventory ai
 INNER JOIN afserial_control ac ON ai.objid=ac.controlid
 WHERE  ai.afid = $P{af} 
@@ -49,19 +34,39 @@ AND NOT(ac.assignee_objid IS NULL)
 AND ai.respcenter_objid = $P{userid}
 
 [findActiveControlForCashReceipt]
-SELECT ac.currentseries, ai.currentstub, ai.objid AS controlid, ai.prefix, ai.suffix 
-FROM afserial_control ac
-INNER JOIN afserial_inventory ai ON ai.objid=ac.controlid
-WHERE ai.afid = $P{afid}
-AND ai.respcenter_objid = $P{userid}
-AND ac.txnmode = $P{txnmode}
-AND ac.currentseries <= ai.endseries
+SELECT a.* 
+FROM 
+(	SELECT DISTINCT 
+	ai.objid AS controlid,	
+	ai.prefix, 
+	ai.suffix, 
+	ai.currentstub,
+	ac.currentseries,
+	CASE WHEN ac.assignee_objid IS NULL THEN ai.respcenter_objid ELSE ac.assignee_objid END AS ownerid,
+	ai.respcenter_objid AS collector_objid,
+	ai.respcenter_name AS collector_name,
+	col.jobtitle AS collector_title,
+	ac.assignee_objid AS subcollector_objid,
+	ac.assignee_name AS subcollector_name,
+	scol.jobtitle AS subcollector_title
+	FROM afserial_control ac 
+	INNER JOIN  afserial_inventory ai ON ac.controlid=ai.objid
+	INNER JOIN sys_usergroup_member col ON col.user_objid=ai.respcenter_objid 
+	LEFT JOIN sys_usergroup_member scol ON scol.user_objid=ac.assignee_objid 
+	WHERE  ai.afid =  $P{afid}
+	AND ac.active = 1
+	AND ac.txnmode = $P{txnmode}
+	AND ac.currentseries <= ai.endseries ) a
+WHERE a.ownerid =  $P{userid}
 
 [findActiveControlForActivation]
 SELECT ac.controlid 
 FROM afserial_control ac
 INNER JOIN afserial_inventory ai ON ai.objid=ac.controlid
-WHERE ai.respcenter_objid=$P{userid}
+WHERE 
+	(ac.assignee_objid =$P{userid} 
+		OR (ai.respcenter_objid=$P{userid} AND ac.assignee_objid IS NULL )
+     )
 AND ac.txnmode = $P{txnmode}
 AND ac.active=1
 

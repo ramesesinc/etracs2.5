@@ -1,15 +1,15 @@
 <workunit>
     <invokers>
-        <!--<invoker type="cashreceipt:select-afcontrol" caption="Select Accountable Form" target="popup"/>-->
-        <invoker type="cashreceipt-initial:formActions" caption="Accountable Forms" target="popup" action="init" role="COLLECTOR"/>
+        <invoker type="cashreceipt:select-afcontrol" caption="Select Accountable Form" target="popup"/>
+        <invoker type="cashreceipt-initial:formActions" caption="Accountable Forms" target="popup" action="init" />
         
         <!-- OWN TOOLBARS -->
-        <invoker type="formActions" caption="Close" action="_close"/>
-        <invoker type="formActions" caption="Activate" action="activate" xvisibleWhen="#{selectedItem!=null &amp;&amp; selectedItem.active==0}"/>
-        <invoker type="formActions" caption="Assign" action="assign"  xvisibleWhen="#{selectedItem!=null &amp;&amp; selectedItem.active==0}"/>
-        <invoker type="formActions" caption="Deactivate" action="deactivate" xvisibleWhen="#{selectedItem!=null &amp;&amp; selectedItem.active==1}"/>
-        <invoker type="formActions" caption="View Assign To" action="_assignTo" />
-        <invoker type="formActions" caption="Change Mode" action="changeMode" />
+        <invoker type="formActions" caption="Close" action="_close" />
+        <invoker type="formActions" caption="Activate" action="activate"/>
+        <invoker type="formActions" caption="Assign" action="assign" role="COLLECTOR" />
+        <invoker type="formActions" caption="Deactivate" action="deactivate" />
+        <invoker type="formActions" caption="Change Mode" action="changeMode" role="COLLECTOR"/>
+
     </invokers>
     
     <code>
@@ -24,11 +24,10 @@
             
             @Service("AFSerialControlService")
             def svc;
-            
-            def handler;
-            def selectedItem;
-            def selectedAssignee;
+
             def entity;
+            def selectedItem;
+            String entityName = "cashreceipt:selectaf"
             def list;
             
             String title = "Manage Accountable Forms";
@@ -36,6 +35,8 @@
             void init() {
                 if(!entity.formno)
                     throw new Exception("Please select an accountable form first");
+                if(entity.formtype != 'serial')
+                    throw new Exception("Accountable form type must be serial");
             }
             
             void activate() {
@@ -107,27 +108,6 @@
             ] as BasicListModel;
             
             
-            def assigneeListModel = [
-                fetchList: { o->
-                    list = svc.getAssigneeIssuanceList( entity );
-                    return list;
-                },
-                getContextMenu: { o,colName->
-                    def list = [];
-                    if(o.active==0) list.add( [value:'Activate',id:'activate'] );
-                    if(o.active==1) list.add([value:'Deactivate',id:'deactivate']);                    
-                    list.add([value:'Assign',id:'assign']);
-                    return list;
-                },
-                callContextMenu: { o,m->
-                    listModel.reload();
-                }
-            ] as BasicListModel;
-            
-            
-            def doClose() {
-                return "_close";
-            }
         }
         ]]>
         
@@ -135,7 +115,6 @@
     
     <pages>
         <page template="com.rameses.gov.treasury.cashreceipt.SelectAFPage"/>
-        <page name="assignTo" template="com.rameses.gov.treasury.cashreceipt.AFAssignToPage"/>
     </pages>
     
 </workunit>

@@ -25,11 +25,14 @@ class CashReceiptInterceptor {
 	/**********************************************************************
 	* SERIAL RECEIPTS
 	**********************************************************************/
-	@After(pattern="CashReceiptService.init", eval="#{result.collectiontype.formtype.toLowerCase()=='serial'}")
+	@After(pattern="CashReceiptService.init", eval="#{result.formtype == 'serial'}")
 	public def loadNextAFSeries(def evt) {
+	
 		def result = evt.result;
-		def params = [afid:result.formno, userid: result.collector.objid, txnmode:result.txnmode]; 
+		def params = [afid:result.formno, userid: result.user.objid, txnmode:result.txnmode]; 
+		
 		def m = em.findActiveControlForCashReceipt( params );
+
 		if( !m) {
 			throw new Warning("select-afcontrol");
 		}
@@ -39,6 +42,9 @@ class CashReceiptInterceptor {
 		//if(test)
 		//	throw new Exception("An open batch exists that hos not yet been posted.");
 
+		result.collector = m.collector;
+		result.subcollector = m.subcollector;
+		
 		result.stub = m.stub;
 		result.receiptno = ((m.prefix)?m.prefix:'') + m.currentseries + ((m.suffix)?m.suffix:'');
 		result.controlid = m.controlid;
@@ -65,7 +71,7 @@ class CashReceiptInterceptor {
 		}
 	}
 
-	@After(pattern="CashReceiptService.post", eval="#{args[0].series != 0}")
+	@After(pattern="CashReceiptService.post", eval="#{result.formtype=='serial'}")
 	public def postAFControl(def evt) { 
 		def result = evt.result;
 		em.updateNextSeries([controlid:result.controlid]);
@@ -74,16 +80,18 @@ class CashReceiptInterceptor {
 	/**********************************************************************
 	* CASH TICKET RECEIPTS
 	**********************************************************************/
-	@After(pattern="CashReceiptService.init", eval="#{result.collectiontype.formtype.toLowerCase()=='cashticket'}")
+	@After(pattern="CashReceiptService.init", eval="#{result.formtype=='cashticket'}")
 	public def handleCashTicket(def evt) { 
 		//check if there is still inventory
 		def result = evt.result;
-		def params = [afid:result.formno, collectorid: result.collector.objid]
+		def params = [afid:result.formno, ownerid: env.USERID]
 		def m = cashTicketControl.findAvailableForCollector( params );
 		if(!m) {
 			throw new Exception("Not enough stock in inventory");
 		}
 		//download also the denomination so we can use it to calculate qty
+		result.collector = m.collector;
+		result.subcollector = m.subcollector;
 		result.controlid = m.controlid;
 		result.issuanceid = m.issuanceid;	
 		result.qtyissued = 0;
@@ -94,12 +102,13 @@ class CashReceiptInterceptor {
 		result.series = 0;
 	}
 
-	@Before(pattern="CashReceiptService.post", eval="#{args[0].series == 0}")
+	//This is called prior to posting
+	@Before(pattern="CashReceiptService.post", eval="#{args[0].formtype=='cashticket'}")
 	public def postCashTicket(def evt) { 
 		def result = evt.args[0];
 		if(!result.qtyissued)
 			throw new Exception("Qty issued must be specified");
-		def params = [afid:result.formno, collectorid: result.collector.objid]
+		def params = [afid:result.formno, ownerid: result.collector.objid]
 		def test = cashTicketControl.findAvailableForCollector( params );
 		if(!test || test.qtybalance < result.qtyissued) {
 			throw new Exception("Not enough stock for qty specified");
@@ -108,7 +117,7 @@ class CashReceiptInterceptor {
 		result.totalcash = result.amount;
 	}
 
-	@After(pattern="CashReceiptService.post", eval="#{args[0].series == 0}")
+	@After(pattern="CashReceiptService.post", eval="#{result.formtype=='cashticket'}")
 	public def postCashTicketInfo(def evt) { 
 		def result = evt.result;
 		def m = [objid: result.objid, qtyissued: result.qtyissued];

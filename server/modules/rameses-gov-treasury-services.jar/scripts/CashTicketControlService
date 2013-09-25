@@ -1,0 +1,24 @@
+import com.rameses.annotations.*;
+import com.rameses.util.*;
+import java.rmi.server.*;
+import com.rameses.services.extended.*;
+
+class CashTicketControlService {
+
+	@ActiveDB("cashticket_control")
+	def em;
+
+	@Env
+	def env;
+
+	@ProxyMethod
+	public def getControl(def p) {
+		def c = [afid: p.formno , collectorid: env.USERID];
+		def z = em.findByCollector(c);
+		if(!z)
+			throw new Exception("Cash ticket not available");
+		return z;	
+	}
+
+}
+
