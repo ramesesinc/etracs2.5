@@ -128,7 +128,7 @@
     <target name="deploy-shared-to-platform">
         <echo message="====> Copying ${sourcefile}" />
         <property name="sourcejar" value="${shared.projects.dir}/client/${sourcefile}/dist/${sourcefile}.jar"/>
-        <copy file="${sourcejar}" todir="${target.web.etracs25.dir}/downloads/modules/shared" failonerror="false"/>
+        <copy file="${sourcejar}" todir="${target.web.resources.dir}/downloads/modules/shared" failonerror="false"/>
     </target>
     
     
@@ -164,7 +164,7 @@
         <property name="sourcejar" value="${etracs.project.dir}/client/${sourcefile}/dist/${sourcefile}.jar"/>
 
         <echo message="====> Copying ${sourcefile}" />
-        <copy file="${sourcejar}" todir="${target.web.etracs25.dir}/downloads/modules" failonerror="false"/>
+        <copy file="${sourcejar}" todir="${target.web.resources.dir}/downloads/modules" failonerror="false"/>
     </target>
     
     
@@ -173,7 +173,7 @@
     = DEPLOY DEVLIB JAR 
     =======================================================-->
     <target name="deploy-devlibs">
-        <property name="target.downloads.core.dir" value="${target.web.etracs25.dir}/downloads/modules/core"/>
+        <property name="target.downloads.core.dir" value="${target.web.resources.dir}/downloads/modules/core"/>
         <copy file="${devlib.projects.dir}/osiris2-client-themes.jar" todir="${target.downloads.core.dir}" failonerror="false"/>
         <copy file="${devlib.projects.dir}/osiris2-client-ui.jar" todir="${target.downloads.core.dir}" failonerror="false"/>
         <copy file="${devlib.projects.dir}/osiris2-framework.jar" todir="${target.downloads.core.dir}" failonerror="false"/>
