@@ -86,6 +86,7 @@
         <copy todir="${target.server.shared25.modules.dir}">
             <fileset dir="${shared.projects.dir}/server"/>
         </copy>
+        
         <!-- copy jars to platform -->
         <antcall target="deploy-shared-to-platform">
             <param name="sourcefile" value="client-system"/>
@@ -117,11 +118,6 @@
         <antcall target="deploy-shared-to-platform">
             <param name="sourcefile" value="rameses-rules-developer"/>
         </antcall>
-        <!--
-        <antcall target="deploy-shared-to-platform">
-            <param name="sourcefile" value="rulemgmt"/>
-        </antcall>        
-        -->
     </target>
     
     
@@ -181,7 +177,6 @@
         <copy file="${devlib.projects.dir}/rameses-client-ui.jar" todir="${target.downloads.core.dir}" failonerror="false"/>
         <copy file="${devlib.projects.dir}/rameses-common2.jar" todir="${target.downloads.core.dir}" failonerror="false"/>
         <copy file="${devlib.projects.dir}/rameses-custom-impl.jar" todir="${target.downloads.core.dir}" failonerror="false"/>
-        <copy file="${devlib.projects.dir}/db-dialect.jar" todir="${target.downloads.core.dir}" failonerror="false"/>
     </target>
     
     <!--=====================================================
