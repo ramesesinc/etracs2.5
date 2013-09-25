@@ -95,8 +95,6 @@ class BldgRPUService
 		rpu.bldgkindbucc	= bldgSettingSvc.lookupBldgKindBuccById(rpu.bldgkindbucc.objid)
 		rpu.bldgassesslevel = bldgSettingSvc.lookupBldgAssessLevelById(rpu.bldgassesslevel?.objid)
 		rpu.condominium		= util.toBoolean(rpu.condominium, false)
-		rpu.swornstatement	= util.toBoolean(rpu.swornstatement, false)
-		rpu.useswornamount	= util.toBoolean(rpu.useswornamount, false)
 		rpu.structures 		= getStructures(rpu)
 		rpu.bldguses 		= getBldgUses(rpu)
 		return rpu 
@@ -181,6 +179,11 @@ class BldgRPUService
 
 		rpu.bldguses.each{ bu ->
 			calculateBldgUseAssessment(bu, rpu)
+		}
+
+		if (util.toBoolean(rpu.hasswornamount, false) == false ) {
+			rpu.useswornamount = false 
+			rpu.swornamount = 0.0
 		}
 
 		if (util.isTrue(rpu.useswornamount)) {

@@ -8,6 +8,9 @@ class FaasReportService
 	
 	@Service('NumberService')
 	def numberSvc
+
+	@Service('RPTUtil')
+	def util
 	
 	def LISTLIMITSIZE1 = 10
 	def LISTLIMITSIZE2 = 7
@@ -546,14 +549,14 @@ class FaasReportService
 			
 			def item = [
 				actualuse	 : it.actualuse.name,
-				marketvalue	 : (rpu.useswornamount ? rpu.totalmv : it.marketvalue),
+				marketvalue	 : (util.isTrue(rpu.useswornamount) ? rpu.totalmv : it.marketvalue),
 				assesslevel	 : assesslevel,
-				assessedvalue: (rpu.useswornamount ? rpu.totalav : it.assessedvalue ),
+				assessedvalue: (util.isTrue(rpu.useswornamount) ? rpu.totalav : it.assessedvalue ),
 			]
 
 			data.add( item )
 		}
-		
+
 		LISTLIMITSIZE2 = buildEmptyRows( data, LISTLIMITSIZE2, false )
 		
 		return data
