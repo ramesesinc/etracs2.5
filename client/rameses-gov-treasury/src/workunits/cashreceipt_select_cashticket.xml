@@ -1,0 +1,41 @@
+<workunit>
+    <invokers>
+        <invoker type="cashreceipt-initial:formActions" caption="Cash Tickets" role="COLLECTOR" target="popup" action="init" />
+    </invokers>
+    
+    <code>
+        <![CDATA[    
+        import com.rameses.rcp.annotations.*
+        import com.rameses.rcp.common.*
+        import com.rameses.osiris2.client.*
+        import com.rameses.osiris2.common.*
+        import com.rameses.enterprise.treasury.cashreceipt.*
+        
+        class  CashTicketController  {
+        
+            @Service("CashTicketControlService")
+            def controlSvc;
+        
+            def entity;
+            
+            void init() {
+                if(!entity.formno)
+                    throw new Exception("Please select an accountable form first");
+                if(entity.formtype != 'cashticket')
+                    throw new Exception("Accountable form type must be cashticket");   
+                entity = controlSvc.getControl( [formno: entity.formno] );    
+            }
+        
+            def doClose() {
+                return "_close";
+            }
+        }
+        ]]>
+        
+    </code>
+    
+    <pages>
+        <page template="com.rameses.gov.treasury.cashreceipt.CashTicketAFPage"/>
+    </pages>
+    
+</workunit>

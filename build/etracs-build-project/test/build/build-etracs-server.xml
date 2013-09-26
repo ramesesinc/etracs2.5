@@ -86,6 +86,7 @@
         <copy todir="${target.server.shared25.modules.dir}">
             <fileset dir="${shared.projects.dir}/server"/>
         </copy>
+        
         <!-- copy jars to platform -->
         <antcall target="deploy-shared-to-platform">
             <param name="sourcefile" value="client-system"/>
@@ -115,29 +116,15 @@
             <param name="sourcefile" value="rameses-enterprise-treasury"/>
         </antcall>
         <antcall target="deploy-shared-to-platform">
-            <param name="sourcefile" value="rameses-gov-lgu"/>
-        </antcall>
-        <antcall target="deploy-shared-to-platform">
-            <param name="sourcefile" value="rameses-gov-lgu-treasury"/>
-        </antcall>
-        <antcall target="deploy-shared-to-platform">
-            <param name="sourcefile" value="rameses-gov-treasury"/>
-        </antcall>
-        <antcall target="deploy-shared-to-platform">
             <param name="sourcefile" value="rameses-rules-developer"/>
         </antcall>
-        <!--
-        <antcall target="deploy-shared-to-platform">
-            <param name="sourcefile" value="rulemgmt"/>
-        </antcall>        
-        -->
     </target>
     
     
     <target name="deploy-shared-to-platform">
         <echo message="====> Copying ${sourcefile}" />
         <property name="sourcejar" value="${shared.projects.dir}/client/${sourcefile}/dist/${sourcefile}.jar"/>
-        <copy file="${sourcejar}" todir="${target.web.etracs25.dir}/downloads/modules/shared" failonerror="false"/>
+        <copy file="${sourcejar}" todir="${target.web.resources.dir}/downloads/modules/shared" failonerror="false"/>
     </target>
     
     
@@ -158,14 +145,22 @@
         <antcall target="deploy-etracs-jars-to-platform">
             <param name="sourcefile" value="gov-lgu-iligan"/>
         </antcall>
+        <antcall target="deploy-etracs-jars-to-platform">
+            <param name="sourcefile" value="rameses-gov-lgu"/>
+        </antcall>
+        <antcall target="deploy-etracs-jars-to-platform">
+            <param name="sourcefile" value="rameses-gov-lgu-treasury"/>
+        </antcall>
+        <antcall target="deploy-etracs-jars-to-platform">
+            <param name="sourcefile" value="rameses-gov-treasury"/>
+        </antcall>
     </target>
     
-
     <target name="deploy-etracs-jars-to-platform">
         <property name="sourcejar" value="${etracs.project.dir}/client/${sourcefile}/dist/${sourcefile}.jar"/>
 
         <echo message="====> Copying ${sourcefile}" />
-        <copy file="${sourcejar}" todir="${target.web.etracs25.dir}/downloads/modules" failonerror="false"/>
+        <copy file="${sourcejar}" todir="${target.web.resources.dir}/downloads/modules" failonerror="false"/>
     </target>
     
     
@@ -174,7 +169,7 @@
     = DEPLOY DEVLIB JAR 
     =======================================================-->
     <target name="deploy-devlibs">
-        <property name="target.downloads.core.dir" value="${target.web.etracs25.dir}/downloads/modules/core"/>
+        <property name="target.downloads.core.dir" value="${target.web.resources.dir}/downloads/modules/core"/>
         <copy file="${devlib.projects.dir}/osiris2-client-themes.jar" todir="${target.downloads.core.dir}" failonerror="false"/>
         <copy file="${devlib.projects.dir}/osiris2-client-ui.jar" todir="${target.downloads.core.dir}" failonerror="false"/>
         <copy file="${devlib.projects.dir}/osiris2-framework.jar" todir="${target.downloads.core.dir}" failonerror="false"/>
@@ -182,7 +177,6 @@
         <copy file="${devlib.projects.dir}/rameses-client-ui.jar" todir="${target.downloads.core.dir}" failonerror="false"/>
         <copy file="${devlib.projects.dir}/rameses-common2.jar" todir="${target.downloads.core.dir}" failonerror="false"/>
         <copy file="${devlib.projects.dir}/rameses-custom-impl.jar" todir="${target.downloads.core.dir}" failonerror="false"/>
-        <copy file="${devlib.projects.dir}/db-dialect.jar" todir="${target.downloads.core.dir}" failonerror="false"/>
     </target>
     
     <!--=====================================================
@@ -195,10 +189,10 @@
         </copy>
     </target>
     
-    <target name="build-server" depends="init,cleanup,deploy-etracs-server,deploy-project-shared, deploy-etracs-client-jars, copy-incubation-jars-to-devlibs, deploy-devlibs">
+    <target name="xxbuild-server" depends="init,cleanup,deploy-etracs-server,deploy-project-shared, deploy-etracs-client-jars, copy-incubation-jars-to-devlibs, deploy-devlibs">
     </target>
     
-    <target name="xbuild-server" depends="init,cleanup,copy-osiris3-server,copy-etracs-platform,deploy-etracs-server,deploy-project-shared, deploy-etracs-client-jars, copy-incubation-jars-to-devlibs, deploy-devlibs">
+    <target name="build-server" depends="init,cleanup,copy-osiris3-server,copy-etracs-platform,deploy-etracs-server,deploy-project-shared, deploy-etracs-client-jars, copy-incubation-jars-to-devlibs, deploy-devlibs">
     </target>
 
 </project>

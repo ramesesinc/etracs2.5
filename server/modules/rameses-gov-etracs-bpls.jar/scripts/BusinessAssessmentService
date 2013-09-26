@@ -12,27 +12,36 @@ public class BusinessAssessmentService {
 	@Resource("RuleService")
 	def ruleSvc;
 
+	@Service("RuleSupportService")
+	def ruleSupport;
+
 	String ruleset = "bpassessment";
 
 
 	private def buildFacts(def entity) {
 		def findLob = em.sqlContext.createNamedQuery("lob:findInfo");
 		def findLobAttr = em.sqlContext.createNamedQuery("lob:findAttr");
-			
+		def lobMap = [:];	
+
 		def facts = [];
-		def app = ruleSvc.createFact( ruleset, "com.rameses.rules.bpassessment.Application", entity );		
+		def app = ruleSvc.createFact( ruleset, "bpassessment.Application", entity );		
 		app.barangayid = entity.barangay.objid;
 
 		facts << app;
 		entity.lobs.each { l->
 			def lb = findLob.setParameters(l).singleResult;
-			def lobFact = ruleSvc.createFact( ruleset, "com.rameses.rules.bpassessment.Lob", lb);		 
+			def lobFact = ruleSvc.createFact( ruleset, "bpassessment.Lob", lb);		 
+			lobMap.put( lb.objid, lobFact );
 			facts << lobFact;
 			def attrs = findLobAttr.setParameters(l).resultList;
 			attrs.each { att->
 				att.lob = lobFact;
-				facts <<  ruleSvc.createFact( ruleset, "com.rameses.rules.bpassessment.LobAttribute", att);
+				facts <<  ruleSvc.createFact( ruleset, "bpassessment.LobAttribute", att);
 			}
+		}
+		entity.infos.each { i->
+			//def info = ruleSvc.createFact( ruleset, "bpassessment.Info", lb);		 
+
 		}
 		return facts;
 	}
