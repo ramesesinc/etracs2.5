@@ -1,8 +1,6 @@
 <workunit>
     <invokers>
-        <invoker type="remittance:formActions" caption="View AF" 
-            visibleWhen="#{mode == 'read' }" immediate="true" index="6"/>
-            
+        <invoker type="remittance:formActions" caption="View AF" immediate="true" action="init" index="6"/>
         <invoker type="formActions" caption="Back" action="_close" />
     </invokers>
     
@@ -21,18 +19,28 @@
             @Service("AFRemittanceService")
             def service;
             
-            String title = "Remittance";
-            
+            def title;
             def entity;
+            
+            void init() {
+                title = (entity.txnno) ? "Remittance" : "Unremitted (Current AF Inventory)";
+            }
+            
             def receiptsListModel = [
                 fetchList: {
-                    return service.getRemittedAFSerial( [objid:entity.objid] );
+                    if( entity.txnno )
+                        return service.getRemittedAFSerial( [objid:entity.objid] );
+                    else
+                        return service.getUnremittedAFSerial( [:] );
                 }
             ] as BasicListModel;
             
             def cashTicketsListModel = [
                 fetchList: {
-                    return service.getRemittedCashTickets( [objid:entity.objid] );
+                    if( entity.txnno)
+                        return service.getRemittedCashTickets( [objid:entity.objid] );
+                    else    
+                        return service.getUnremittedCashTickets( [:] );
                 }
             ] as BasicListModel;
         }      

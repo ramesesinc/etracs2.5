@@ -13,12 +13,33 @@ class CashTicketControlService {
 
 	@ProxyMethod
 	public def getControl(def p) {
-		def c = [afid: p.formno , collectorid: env.USERID];
-		def z = em.findByCollector(c);
+		def c = [afid: p.formno , ownerid: env.USERID];
+		def z = em.findOwnCashTicket(c);
 		if(!z)
 			throw new Exception("Cash ticket not available");
 		return z;	
 	}
 
+	@ProxyMethod
+	public def getIssuances(def p) {
+		return  em.getSubcollectorIssuances([controlid: p.controlid]);	
+	}
+
+	@ProxyMethod
+	public def addSubCollector(def o) {
+		def p = [objid:'SCTCRL'+new UID()];
+		p.qtyin = 0;
+		p.controlid = o.controlid;
+		p.qtyissued = 0;
+		p.qtybalance = 0;
+		p.assignee = o.subcollector;
+		em.create(p);
+	}	
+
+	@ProxyMethod
+	public void assignAF(def o) {
+		em.updateQtyIn( [objid: o.toid, qty: o.qty ] );
+		em.updateQtyIssued( [objid: o.fromid, qty: o.qty ] );
+	}	
 }
 

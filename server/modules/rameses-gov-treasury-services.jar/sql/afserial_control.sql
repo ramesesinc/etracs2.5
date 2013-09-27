@@ -42,6 +42,7 @@ FROM
 	ai.suffix, 
 	ai.currentstub,
 	ac.currentseries,
+	ai.currentstub AS stub,
 	CASE WHEN ac.assignee_objid IS NULL THEN ai.respcenter_objid ELSE ac.assignee_objid END AS ownerid,
 	ai.respcenter_objid AS collector_objid,
 	ai.respcenter_name AS collector_name,
