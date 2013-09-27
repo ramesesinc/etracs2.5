@@ -52,16 +52,22 @@ GROUP BY ai.afid, ad.controlid) a
 
 [getRemittedCashTickets]
 SELECT a.*, 
-    a.qtyreceived+a.qtybegin-a.qtyissued-a.qtycancelled AS qtyending
+    a.qtyreceived+a.qtybegin-a.qtyissued-a.qtycancelled AS qtyending,
+    a.receivedamt+a.beginamt-a.issuedamt-a.cancelledamt AS endingamt
 FROM
 (SELECT 
    ai.afid AS formno,   
    SUM( ad.qtyreceived ) AS qtyreceived,
+   sum( ad.qtyreceived * ch.denomination) as receivedamt,
    SUM( ad.qtybegin ) AS qtybegin,
+   sum( ad.qtybegin * ch.denomination) as beginamt,
    SUM( ad.qtyissued ) AS qtyissued,
-   SUM( ad.qtycancelled ) AS qtycancelled
+   sum( ad.qtyissued * ch.denomination) as issuedamt,
+   SUM( ad.qtycancelled ) AS qtycancelled,  
+   sum( ad.qtycancelled * ch.denomination) as cancelledamt
 FROM cashticket_inventory_detail ad 
-INNER JOIN cashticket_inventory ai ON ad.controlid=ai.objid
+INNER JOIN cashticket_inventory ai ON ad.controlid=ai.objid 
+INNER join cashticket ch on ch.objid = ai.afid 
 WHERE ad.remittanceid = $P{objid}
 GROUP BY ai.afid) a
 

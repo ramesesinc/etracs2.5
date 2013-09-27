@@ -1,0 +1,2 @@
+[getList]
+select * from collectionform 

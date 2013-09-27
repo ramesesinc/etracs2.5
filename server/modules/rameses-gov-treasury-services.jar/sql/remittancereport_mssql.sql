@@ -1,8 +1,8 @@
 [getRCDCollectionType]
 select  
-  cr.formno,
-  case when ch.objid is null then max( cr.receiptno) else null end as fromseries, 
-  case when ch.objid is null then max(cr.receiptno) else null end as toseries, 
+  min(cr.formno) as formno,
+  case when min(ch.objid) is null then max( cr.receiptno) else null end as fromseries, 
+  case when min(ch.objid) is null then max(cr.receiptno) else null end as toseries, 
   sum( case when crv.objid is null then cr.amount else 0.0 end ) as amount 
 from remittance_cashreceipt rc 
    inner join cashreceipt cr on rc.objid = cr.objid 
@@ -26,7 +26,7 @@ from remittance_cashreceipt rc
    inner join cashreceiptitem cri on cri.receiptid = cr.objid
    inner join revenueitem ri on ri.objid = cri.item_objid 
 where remittanceid=$P{remittanceid}
-group by a.objid, ri.fund_objid 
+group by a.objid, ri.fund_title, a.formtype, a.title   
 
 
 [getRCDOtherPayment]
@@ -52,7 +52,7 @@ ORDER BY cc.bank, cc.checkno
 [getReceiptsByRemittanceCollectionType]
 select 
   cr.formno as afid, cr.receiptno as serialno, cr.txndate, paidby,
-  case when cv.objid is null then IFNULL( ct.title, cr.collectiontype_name) else '***VOIDED***' END AS collectiontype, 
+  case when cv.objid is null then ISNULL( ct.title, cr.collectiontype_name) else '***VOIDED***' END AS collectiontype, 
   case when cv.objid is null then cr.amount else 0.0 END AS amount
 from remittance_cashreceipt rem 
    inner join cashreceipt cr on cr.objid = rem.objid 
@@ -63,13 +63,16 @@ ORDER BY afid, serialno
 
 [getReceiptsByRemittanceFund]
 select 
-  cr.formno as afid, cr.receiptno as serialno, cr.txndate, ri.fund_title as fundname, cr.remarks as remarks, 
+  cr.formno as afid, 
+  cr.txndate, ri.fund_title as fundname, cr.remarks as remarks, 
+  case when ch.objid is null then cr.receiptno else null end as serialno, 
   case when cv.objid is null then cr.paidby else '***VOIDED***' END AS payer,
   case when cv.objid is null then cri.item_title else '***VOIDED***' END AS particulars,
   case when cv.objid is null then cr.paidbyaddress else '' END AS payeraddress,
   case when cv.objid is null then cri.amount else 0.0 END AS amount
 from remittance_cashreceipt rem 
    inner join cashreceipt cr on cr.objid = rem.objid 
+   left join cashticket ch on ch.objid = cr.formno 
    left join cashreceipt_void cv on cv.receiptid = cr.objid 
    inner join cashreceiptitem cri on cri.receiptid = cr.objid 
    inner join revenueitem ri on ri.objid = cri.item_objid
@@ -91,7 +94,6 @@ where rem.remittanceid=$P{remittanceid}
   and ri.fund_objid like $P{fundid} 
   and a.formtype='serial'
 ORDER BY afid, particulars, serialno 
-
 
 [getNonSerialReceiptDetailsByFund]
 select 
@@ -121,8 +123,8 @@ from remittance_cashreceipt rem
    inner join revenueitem ri on ri.objid = cri.item_objid
 where rem.remittanceid=$P{remittanceid} 
   and ri.fund_objid like $P{fundid} and cv.objid is null 
-group by fundname, acctid, acctname 
-order by fundname, acctname 
+group by ri.fund_title, cri.item_objid , cri.item_title 
+order by ri.fund_title, cri.item_title 
 
 [getDistinctAccountSRE]
 select 
@@ -140,7 +142,7 @@ ORDER BY acctcode
 select 
   cr.formno as afid, case when min(ch.objid) is null then cr.receiptno else null end as serialno, 
   case when crv.objid is null then cr.paidby else '*** VOIDED ***' end as paidby, 
-  cr.txndate, ${columnsql} 
+  min(cr.txndate) as txndate, ${columnsql} 
   case when crv.objid is null then 0 else 1 end as voided 
 from remittance_cashreceipt rem 
    inner join cashreceipt cr on cr.objid = rem.objid 
@@ -150,9 +152,10 @@ from remittance_cashreceipt rem
    inner join revenueitem ri on ri.objid = cri.item_objid 
    left join revenueitem_sreaccount rs on rs.objid = ri.objid 
    left join sreaccount a on a.objid = rs.acctid 
-where rem.remittanceid=$P{remittanceid}
-GROUP BY afid, serialno, paidby,paidby, voided 
+where rem.remittanceid=$P{remittanceid} 
+GROUP BY cr.formno, cr.receiptno, cr.paidby, crv.objid
 ORDER BY afid, serialno 
+
 
 [getDistinctAccountNGAS]
 select 
@@ -170,7 +173,7 @@ ORDER BY acctcode
 select 
   cr.formno as afid, case when min(ch.objid) is null then cr.receiptno else null end as serialno, 
   case when crv.objid is null then cr.paidby else '*** VOIDED ***' end as paidby, 
-  cr.txndate, ${columnsql}
+  min(cr.txndate) as txndate, ${columnsql}
   case when crv.objid is null then 0 else 1 end as voided 
 from remittance_cashreceipt rem 
    inner join cashreceipt cr on cr.objid = rem.objid 
@@ -181,7 +184,7 @@ from remittance_cashreceipt rem
    left join revenueitem_account rs on rs.objid = ri.objid 
    left join account a on a.objid = rs.acctid 
 where rem.remittanceid=$P{remittanceid}
-GROUP BY afid, serialno, paidby,paidby, voided 
+GROUP BY cr.formno, cr.receiptno, cr.paidby, crv.objid
 ORDER BY afid, serialno 
 
 [getFundlist]
