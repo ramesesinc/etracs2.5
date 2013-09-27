@@ -18,45 +18,65 @@ AND af.objid IS NULL
 
 
 [getUnremittedAFSerial]
-SELECT a.*, 
-    (a.receivedendseries-a.receivedstartseries+1) AS qtyreceived,
-    (a.beginendseries-a.beginstartseries+1) AS qtybegin,
-    (a.issuedendseries-a.issuedstartseries+1) AS qtyissued,
-    (a.endingendseries-a.endingstartseries+1) AS qtyending
+SELECT b.*, 
+    (b.receivedendseries-b.receivedstartseries+1) AS qtyreceived,
+    (b.beginendseries-b.beginstartseries+1) AS qtybegin,
+    (b.issuedendseries-b.issuedstartseries+1) AS qtyissued,
+    (b.endingendseries-b.endingstartseries+1) AS qtyending
 FROM
+
+(SELECT 
+   a.formno,
+   a.controlid,
+   MIN( a.receivedstartseries ) AS receivedstartseries,
+   MAX( a.receivedendseries ) AS receivedendseries,
+   MAX( a.beginstartseries ) AS beginstartseries,
+   MAX( a.beginendseries ) AS beginendseries,
+   MIN( a.issuedstartseries ) AS issuedstartseries, 
+   MIN( a.issuedendseries ) AS  issuedendseries,  
+   MAX( a.endingstartseries ) AS endingstartseries,
+   MAX( a.endingendseries ) AS endingendseries
+
+FROM 
+   
 (SELECT 
    ai.afid AS formno,   
+   ad.controlid,
    MIN( ad.receivedstartseries ) AS receivedstartseries,
    MAX( ad.receivedendseries ) AS receivedendseries,
    MAX( ad.beginstartseries ) AS beginstartseries,
    MAX( ad.beginendseries ) AS beginendseries,
-   CASE 
-      WHEN (ac.currentseries IS NULL OR ac.currentseries=ai.currentseries) THEN NULL 
-      ELSE ai.currentseries 
-   END  AS issuedstartseries,
-   CASE 
-      WHEN (ac.currentseries IS NULL OR ac.currentseries=ai.currentseries) THEN NULL 
-      ELSE ac.currentseries 
-   END AS issuedendseries,
-   CASE 
-      WHEN (ac.currentseries IS NULL) THEN ai.currentseries
-      WHEN (ac.currentseries=ai.currentseries) THEN ai.currentseries
-      WHEN (ac.currentseries < ai.endseries ) THEN ac.currentseries + 1
-      ELSE NULL 
-   END AS endingstartseries,
-   CASE
-      WHEN (ac.currentseries IS NULL) THEN ai.endseries
-      WHEN (ac.currentseries < ai.endseries) THEN ai.endseries
-      ELSE NULL
-   END AS endingendseries
-   
+   NULL AS issuedstartseries, 
+   NULL AS  issuedendseries,  
+   MAX( ad.endingstartseries ) AS endingstartseries,
+   MAX( ad.endingendseries ) AS endingendseries
 FROM afserial_inventory_detail ad 
 INNER JOIN afserial_inventory ai ON ad.controlid=ai.objid
 LEFT JOIN remittance_afserial r ON r.objid=ad.objid
-LEFT JOIN afserial_control ac ON ac.controlid=ai.objid 
 WHERE r.remittanceid IS NULL
-AND ai.respcenter_objid = $P{collectorid}
-GROUP BY ai.afid, ad.controlid) a
+AND ai.respcenter_objid =  $P{collectorid}
+GROUP BY ai.afid, ad.controlid
+UNION ALL
+SELECT 
+    c.formno,
+    c.controlid,  
+    NULL AS receivedstartseries,
+    NULL AS receivedendseries,
+    NULL AS beginstartseries,
+    NULL AS beginendseries,
+    MIN(c.series) AS issuedstartseries,
+    MAX(c.series) AS issuedendseries,
+    MAX(c.series)+1 AS endingstartseries,
+    NULL AS endingendseries
+FROM cashreceipt c
+INNER JOIN afserial_inventory 
+LEFT JOIN remittance_cashreceipt r ON r.objid=c.objid
+WHERE r.objid IS NULL 
+AND c.state = 'POSTED'   
+AND c.collector_objid =  $P{collectorid}
+AND c.formtype = 'serial'
+GROUP BY c.formno, c.controlid) a
+GROUP BY a.formno, a.controlid) b
 
 [getUnremittedCashTickets]
 SELECT b.*,  
