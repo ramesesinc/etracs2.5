@@ -1,6 +1,6 @@
 <workunit>
     <invokers>
-        <invoker type="cashreceipt-initial:formActions" caption="Cash Tickets" role="COLLECTOR" target="popup" action="init" />
+        <invoker type="cashreceipt-initial:formActions" caption="Cash Tickets" target="popup" action="init" />
     </invokers>
     
     <code>
@@ -12,23 +12,22 @@
         import com.rameses.enterprise.treasury.cashreceipt.*
         
         class  CashTicketController  {
-        
-            @Service("CashTicketControlService")
-            def controlSvc;
-        
-            def entity;
             
+            @Service("CashTicketControlService")
+            def service;
+        
+            String title = "Cash Ticket Info"    
+            def entity;
+            String entityName = "cashreceipt:selectcashticket";
+                        
             void init() {
                 if(!entity.formno)
                     throw new Exception("Please select an accountable form first");
                 if(entity.formtype != 'cashticket')
                     throw new Exception("Accountable form type must be cashticket");   
-                entity = controlSvc.getControl( [formno: entity.formno] );    
+                entity = service.getControl( [formno: entity.formno] );    
             }
         
-            def doClose() {
-                return "_close";
-            }
         }
         ]]>
         

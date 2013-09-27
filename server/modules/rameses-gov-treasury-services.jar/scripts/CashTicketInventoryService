@@ -32,11 +32,13 @@ class CashTicketInventoryService {
 
 	@ProxyMethod
 	public def postReceipt(def o)	{
-		//if a startstub is specified, create new head, else find resp. center for the head
+		//if a startstub is specified(like in the case of AFO), create new head, else find resp. center for the head
 		def head = null;
-		if(o.starstub) {
+
+		if(!o.startstub) {
 			head = cashTicketInventory.findControlByResponsibilityCenter([afid:o.afid, respcenterid: o.respcenter.objid]);
 		}
+
 		if(head==null) {
 			head = [:];
 			head.objid = "CTINVTRY"+new UID();

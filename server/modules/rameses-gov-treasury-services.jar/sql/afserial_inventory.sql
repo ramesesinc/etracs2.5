@@ -32,5 +32,3 @@ ORDER BY ac.currentseries
 
 
 
-
-

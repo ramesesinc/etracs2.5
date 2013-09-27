@@ -33,7 +33,6 @@
 		<field name="qtyending" required="true" />
 		<field name="qtycancelled" required="true" />
 		<field name="remarks" />
-		<field name="remittanceid" />
 	</element>
 		
 

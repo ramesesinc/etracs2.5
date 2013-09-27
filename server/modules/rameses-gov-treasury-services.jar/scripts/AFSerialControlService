@@ -2,7 +2,7 @@ import com.rameses.annotations.*;
 import com.rameses.util.*;
 import java.rmi.server.*;
 
-class AFSerialStockReceiptService {
+class AFSerialControlService {
 
 	@ActiveDB("afserial_control")
 	def em;

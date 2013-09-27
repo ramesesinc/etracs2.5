@@ -9,6 +9,8 @@
 		<field name="currentseries" required="true" />
 		<field name="qtyissued" required="true" />
 		<field name="active" required="true" />
+		<field name="org_objid"  />
+		<field name="org_name"  />
 	</element>
 
 </schema>

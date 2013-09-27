@@ -5,7 +5,7 @@ import com.rameses.common.*
 import com.rameses.services.extended.*
 
 /** This posts transaction to the af accountability */
-class CashTicketInventoryInterceptor {
+class CashTicketStockReceiptInterceptor {
 
 	@Service("CashTicketInventoryService")
 	def cashTicketSvc;

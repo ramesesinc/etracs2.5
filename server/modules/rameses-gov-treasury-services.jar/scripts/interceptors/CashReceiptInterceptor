@@ -95,6 +95,7 @@ class CashReceiptInterceptor {
 		result.controlid = m.controlid;
 		result.issuanceid = m.issuanceid;	
 		result.qtyissued = 0;
+		result.stub = result.formno;
 		result.denomination = m.denomination;
 		result.payer = [:];
 		result.paidby = result.collector.name;
@@ -108,12 +109,15 @@ class CashReceiptInterceptor {
 		def result = evt.args[0];
 		if(!result.qtyissued)
 			throw new Exception("Qty issued must be specified");
-		def params = [afid:result.formno, ownerid: result.collector.objid]
+
+		def ownerid = (result.subcollector?.objid) ? result.subcollector.objid : result.collector.objid;
+
+		def params = [afid:result.formno, ownerid: ownerid]
 		def test = cashTicketControl.findAvailableForCollector( params );
 		if(!test || test.qtybalance < result.qtyissued) {
 			throw new Exception("Not enough stock for qty specified");
 		}
-		result.receiptno = "CSHTKT" + seqSvc.getNextFormattedSeries("CSHTKT");
+		result.receiptno = result.formno + seqSvc.getNextFormattedSeries(result.formno);
 		result.totalcash = result.amount;
 	}
 
