@@ -1,3 +1,9 @@
+[findByCollectorAF]
+SELECT cc.*
+FROM cashticket_inventory ci
+INNER JOIN cashticket_control cc ON cc.controlid=ci.objid
+WHERE ci.respcenter_objid=$P{respcenterid} AND ci.afid=$P{afid}
+
 [findOwnCashTicket]
 SELECT * FROM
 (SELECT 
@@ -15,6 +21,13 @@ INNER JOIN cashticket ct ON ct.objid=ac.afid
 WHERE ac.afid = $P{afid}
 AND cc.qtybalance > 0) a
 WHERE a.ownerid = $P{ownerid}
+
+[findIssuancesForCollector]
+SELECT COUNT(*) AS count
+FROM cashticket_control cc
+INNER JOIN cashticket_inventory ac ON cc.controlid=ac.objid
+WHERE ac.afid =  $P{afid}
+AND cc.assignee_objid = $P{assigneeid}
 
 [getSubcollectorIssuances]
 SELECT  

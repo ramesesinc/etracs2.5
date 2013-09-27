@@ -27,6 +27,11 @@ class CashTicketControlService {
 
 	@ProxyMethod
 	public def addSubCollector(def o) {
+		def m = [assigneeid: o.subcollector.objid, afid: o.formno];
+		def z = em.findIssuancesForCollector(m);
+		if(z.count>0)
+			throw new Exception("Subcollector is already assigned");
+
 		def p = [objid:'SCTCRL'+new UID()];
 		p.qtyin = 0;
 		p.controlid = o.controlid;
@@ -40,6 +45,12 @@ class CashTicketControlService {
 	public void assignAF(def o) {
 		em.updateQtyIn( [objid: o.toid, qty: o.qty ] );
 		em.updateQtyIssued( [objid: o.fromid, qty: o.qty ] );
+	}	
+
+	@ProxyMethod
+	public def removeAssignee(def o) {
+		em.updateQtyIn( [objid: o.toid, qty: o.qty ] );
+		em.delete([objid: o.fromid]);
 	}	
 }
 

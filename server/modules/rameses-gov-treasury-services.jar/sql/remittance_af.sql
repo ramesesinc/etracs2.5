@@ -59,21 +59,44 @@ AND ai.respcenter_objid = $P{collectorid}
 GROUP BY ai.afid, ad.controlid) a
 
 [getUnremittedCashTickets]
-SELECT a.*, 
-    a.qtyreceived+a.qtybegin-a.qtyissued-a.qtycancelled AS qtyending
+SELECT b.*,  
+     b.qtyreceived+b.qtybegin-b.qtyissued-b.qtycancelled AS qtyending
 FROM
+(SELECT a.formno, 
+   SUM(a.qtyreceived) AS qtyreceived,
+    SUM(a.qtybegin) AS qtybegin,
+    SUM(a.qtyissued) AS qtyissued,
+    SUM(a.qtycancelled) AS qtycancelled
+FROM 
+
 (SELECT 
    ai.afid AS formno,   
    SUM( ad.qtyreceived ) AS qtyreceived,
-   SUM( ad.qtybegin ) AS qtybegin,
-   SUM( ad.qtyissued ) AS qtyissued,
-   SUM( ad.qtycancelled ) AS qtycancelled
+   SUM( ad.qtybegin) AS qtybegin,
+   0 AS qtyissued,
+   0 AS qtycancelled
 FROM cashticket_inventory_detail ad 
 INNER JOIN cashticket_inventory ai ON ad.controlid=ai.objid
-LEFT JOIN remittance_cashticket r ON r.objid = ad.objid
-WHERE r.remittanceid IS NULL
-AND ai.respcenter_objid = $P{collectorid}
-GROUP BY ai.afid) a
+LEFT JOIN remittance_cashticket rc ON rc.objid=ad.objid
+WHERE  rc.objid IS NULL 
+AND ai.respcenter_objid =  $P{collectorid}
+GROUP BY ai.afid
+UNION ALL
+  SELECT 
+    c.formno,
+    0 AS qtyreceived,
+    0 AS qtybegin,
+    SUM(CASE WHEN cct.qtyissued is NULL THEN 0 ELSE cct.qtyissued END ) AS qtyissued,
+    0 AS qtycancelled
+  FROM cashreceipt c 
+  INNER JOIN cashreceipt_cashticket cct ON c.objid=cct.objid
+  LEFT JOIN remittance_cashreceipt rc ON rc.objid=c.objid
+  WHERE rc.objid IS NULL 
+  AND c.state = 'POSTED'
+  AND c.collector_objid =  $P{collectorid}
+  GROUP BY c.formno
+) a
+GROUP BY a.formno) b
 
 
 [getRemittanceForBalanceForward]
@@ -88,8 +111,9 @@ GROUP BY ad.controlid
 
 [getCashTicketRemittanceForBalanceForward]
 SELECT DISTINCT
-  cti.objid,
-  cti.qtybalance 
+  ct.controlid,
+  cti.qtybalance,
+  cti.afid 
 FROM cashticket_inventory_detail ct 
 INNER JOIN cashticket_inventory cti ON ct.controlid=cti.objid 
 INNER JOIN remittance_cashticket rc ON ct.objid=rc.objid

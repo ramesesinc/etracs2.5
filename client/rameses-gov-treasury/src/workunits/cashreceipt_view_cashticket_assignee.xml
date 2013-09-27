@@ -4,6 +4,7 @@
         
         <invoker type="formActions" caption="Back" action="_close"/>
         <invoker type="formActions" caption="Add Subcollector" action="addSubCollector"/>
+        <invoker type="formActions" caption="Remove Subcollector" action="removeAssignee"/>
         <invoker type="formActions" caption="Assign" action="assignAF"/>
     </invokers>
     
@@ -35,7 +36,7 @@
             def addSubCollector() {
                 return InvokerUtil.lookupOpener("subcollector:lookup", [
                     onselect: { o->
-                        def p = [controlid:entity.controlid, subcollector: o];
+                        def p = [controlid:entity.controlid, subcollector: o, formno:entity.formno];
                         service.addSubCollector(p);
                         listModel.reload();
                     }
@@ -58,6 +59,19 @@
                     def p = [fromid: entity.objid, toid: selectedItem.objid, qty: iqty];
                     service.assignAF( p );
                     entity.qtybalance -= iqty;
+                    entity.amtbalance = entity.qtybalance * entity.denomination;
+                    listModel.reload();
+                    binding.refresh("entity.(amtbalance|qtybalance)")
+                }
+            }
+            
+            void removeAssignee() {
+                if(!selectedItem) return;
+                if( MsgBox.confirm("You are about to remove this entry. Continue?")) {
+                    int iqty = selectedItem.qtybalance;
+                    def p = [fromid: selectedItem.objid, toid: entity.objid, qty: iqty];
+                    service.removeAssignee(p);
+                    entity.qtybalance += iqty;
                     entity.amtbalance = entity.qtybalance * entity.denomination;
                     listModel.reload();
                     binding.refresh("entity.(amtbalance|qtybalance)")

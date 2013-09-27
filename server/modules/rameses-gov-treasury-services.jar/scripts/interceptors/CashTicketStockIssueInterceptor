@@ -5,7 +5,7 @@ import com.rameses.common.*
 import com.rameses.services.extended.*
 
 /** This posts transaction to the af accountability */
-class CashTicketInventoryInterceptor {
+class CashTicketStockIssueInterceptor {
 
 	@Service("CashTicketInventoryService")
 	def cashTicketSvc;
@@ -60,13 +60,22 @@ class CashTicketInventoryInterceptor {
 			x.remarks = "RECEIVED FROM AFO STUBS " + stubs.join(",");
 			def r = cashTicketSvc.postReceipt(x);
 
-			def m = [objid:"CTCTRL"+new UID()];
-			m.controlid = r.objid;
-			m.assignee = [:];
-			m.qtyin = qty;
-			m.qtyissued = 0;
-			m.qtybalance = qty;
-			cashTicketControl.create( m );
+			//find the associated cash ticket control for issuee
+			def m = cashTicketControl.findByCollectorAF( [respcenterid: x.respcenter.objid, afid: x.afid] )
+			if(!m) {
+				m = [objid:"CTCTRL"+new UID()];
+				m.controlid = r.objid;
+				m.assignee = [:];
+				m.qtyin = qty;
+				m.qtyissued = 0;
+				m.qtybalance = qty;
+				cashTicketControl.create( m );
+			}
+			else {
+				m.qtyin+= qty;
+				m.qtybalance += qty;
+				cashTicketControl.update( m );
+			}
 		}
 	}
 
