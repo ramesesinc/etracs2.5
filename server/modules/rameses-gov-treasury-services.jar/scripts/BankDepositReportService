@@ -31,7 +31,7 @@ class BankDepositReportService  {
 		data.remittedforms=[]
 		if('SEF'.equals(fund.title)) {
 			params.afid = '56'
-			data.remittedforms = em.sqlContext.createNamedQuery('bankdepositreport:getRemittedForms').setParameters(params ).resultList
+			data.remittedforms = em.sqlContext.createNamedQuery('bankdepositreport:getSerialRemittedForms').setParameters(params ).resultList
 		}
 		data.nonserialremittances = [[:],[:]]
 		return data;

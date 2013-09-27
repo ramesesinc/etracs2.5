@@ -8,7 +8,7 @@ where bd.objid = $P{bankdepositid}
 
 [getBackAccountList]
 select 
-     ba.objid, concat( ba.bank_code, ' ( ', ba.code, ' )'  ) as title 
+     ba.objid, ( ba.bank_code + ' ( ' + ba.code + ' )'  ) as title 
 from bankdeposit_entry be 
  inner join bankaccount ba on ba.objid = be.bankaccount_objid 
 where parentid=$P{bankdepositid}
@@ -16,8 +16,8 @@ where parentid=$P{bankdepositid}
 [getCollectionSummaryByAFAndFund]
 select  
   case 
-      when a.objid in ( '51', '56') and a.formtype='serial' then CONCAT( 'AF#', a.objid, ': ', lcf.fund_title ) 
-      ELSE CONCAT( 'AF#',a.objid, ': ', a.title,' - ', lcf.fund_title ) 
+      when min(a.objid) in ( '51', '56') and min(a.formtype)='serial' then ( 'AF#' + min(a.objid) + ': ' + min(lcf.fund_title) ) 
+      ELSE ( 'AF#'+ min(a.objid) + ': ' + min(a.title) +' - ' + min(lcf.fund_title) ) 
   end as particulars, 
   sum( case when crv.objid is null then cri.amount else 0.0 end ) as amount 
 from bankdeposit_liquidation bl  
@@ -34,7 +34,7 @@ group by a.objid, lcf.fund_objid
 [getCashFundSummary]
 select 
     bd.cashier_name as cashier, 
-    concat(ba.bank_code, ' - Cash D/S: Account ' , be.bankaccount_code ) as depositref, 
+    (ba.bank_code + ' - Cash D/S: Account ' + be.bankaccount_code ) as depositref, 
     be.totalcash as depositamt 
 from bankdeposit bd 
  inner join bankdeposit_entry be on bd.objid = be.parentid 
@@ -46,7 +46,7 @@ where bd.objid=$P{bankdepositid} and ba.fund_objid=$P{fundname}
 [getCheckFundSummary]
 select 
     bd.cashier_name as cashier, 
-    concat(ba.bank_code, ' - Check D/S: Account ' , be.bankaccount_code ) as depositref, 
+    (ba.bank_code + ' - Check D/S: Account ' + be.bankaccount_code ) as depositref, 
     be.totalnoncash as depositamt 
 from bankdeposit bd 
  inner join bankdeposit_entry be on bd.objid = be.parentid 
@@ -106,6 +106,7 @@ where bl.bankdepositid=$P{bankdepositid}
      and lcf.fund_objid=$P{fundname}
      and afc.af=$P{afid}
 GROUP BY ai.afid, ad.controlid) a
+
 
 [getDepositAmount]
 select 

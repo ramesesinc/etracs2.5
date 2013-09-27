@@ -22,12 +22,10 @@ class LiquidationReportService  {
 
 		liquidation.remittances = em.sqlContext.createNamedQuery('liquidationreport:getRCDRemittances').setParameters(params ).resultList
 		liquidation.collectionsummaries = em.sqlContext.createNamedQuery('liquidationreport:getRCDCollectionSummary').setParameters(params ).resultList
-		liquidation.remittedforms = em.sqlContext.createNamedQuery('liquidationreport:getRCDRemittedForms').setParameters(params ).resultList
+		liquidation.remittedforms = em.sqlContext.createNamedQuery('liquidationreport:getRCDSerialRemittedForms').setParameters(params ).resultList
 		liquidation.otherpayments = em.sqlContext.createNamedQuery('liquidationreport:getRCDOtherPayments').setParameters(params ).resultList
-
-		//not yet implemented : waiting for sir elmo's db structure 
-		liquidation.nonserialremittances = []
-		liquidation.nonserialsummary = []
+		liquidation.nonserialremittances = em.sqlContext.createNamedQuery('liquidationreport:getRCDNonSerialRemittedForms').setParameters(params ).resultList
+		liquidation.nonserialsummary = em.sqlContext.createNamedQuery('liquidationreport:getRCDNonSerialRemittedForms').setParameters(params ).resultList
 		liquidation.amountinwords = numSvc.doubleToWords( liquidation.amount )
 		return liquidation;
 	}

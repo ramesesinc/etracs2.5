@@ -14,7 +14,7 @@ class SubdivisionListService
 	public List getList( Map params ) {
 		params.state = (params.state ? params.state : '%')
 		params.searchtext = (params.searchtext ? params.searchtext : '%')
-		return listSvc.getList( 'subdivision:getList', params )
+		return listSvc.getList( 'subdivision:getList', params, "s.objid" )
 	}
 
 }
