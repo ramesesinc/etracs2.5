@@ -24,19 +24,19 @@
 	<import value="net.sf.jasperreports.engine.data.*" />
 
 
-	<field name="beginqty" class="java.lang.String"/>
-	<field name="beginfrom" class="java.lang.String"/>
-	<field name="af" class="java.lang.String"/>
-	<field name="beginto" class="java.lang.String"/>
-	<field name="receivedqty" class="java.lang.String"/>
-	<field name="receivedfrom" class="java.lang.String"/>
-	<field name="receivedto" class="java.lang.String"/>
-	<field name="issuedqty" class="java.lang.String"/>
-	<field name="issuedfrom" class="java.lang.String"/>
-	<field name="issuedto" class="java.lang.String"/>
-	<field name="endingqty" class="java.lang.String"/>
-	<field name="endingfrom" class="java.lang.String"/>
-	<field name="endingto" class="java.lang.String"/>
+	<field name="qtybegin" class="java.lang.Integer"/>
+	<field name="beginstartseries" class="java.lang.Integer"/>
+	<field name="formno" class="java.lang.String"/>
+	<field name="beginendseries" class="java.lang.Integer"/>
+	<field name="qtyreceived" class="java.lang.Integer"/>
+	<field name="receivedstartseries" class="java.lang.Integer"/>
+	<field name="receivedendseries" class="java.lang.Integer"/>
+	<field name="qtyissued" class="java.lang.Integer"/>
+	<field name="issuedstartseries" class="java.lang.Integer"/>
+	<field name="issuedendseries" class="java.lang.Integer"/>
+	<field name="qtyending" class="java.lang.Integer"/>
+	<field name="endingstartseries" class="java.lang.Integer"/>
+	<field name="endingendseries" class="java.lang.Integer"/>
 
 		<background>
 			<band height="0"  isSplitAllowed="true" >
@@ -515,7 +515,7 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
 						<font fontName="SansSerif" pdfFontName="Helvetica" size="8" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{beginqty}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.Integer"><![CDATA[$F{qtybegin}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -536,7 +536,7 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
 						<font fontName="SansSerif" pdfFontName="Helvetica" size="8" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{af}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{formno}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -557,7 +557,7 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
 						<font fontName="SansSerif" pdfFontName="Helvetica" size="8" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{beginfrom}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.Integer"><![CDATA[$F{beginstartseries}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -578,7 +578,7 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
 						<font fontName="SansSerif" pdfFontName="Helvetica" size="8" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{receivedfrom}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.Integer"><![CDATA[$F{receivedstartseries}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -599,7 +599,7 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
 						<font fontName="SansSerif" pdfFontName="Helvetica" size="8" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{issuedfrom}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.Integer"><![CDATA[$F{issuedstartseries}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -620,7 +620,7 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
 						<font fontName="SansSerif" pdfFontName="Helvetica" size="8" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{receivedqty}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.Integer"><![CDATA[$F{qtyreceived}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -641,7 +641,7 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
 						<font fontName="SansSerif" pdfFontName="Helvetica" size="8" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{issuedqty}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.Integer"><![CDATA[$F{qtyissued}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -662,7 +662,7 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
 						<font fontName="SansSerif" pdfFontName="Helvetica" size="8" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{endingqty}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.Integer"><![CDATA[$F{qtyending}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -683,7 +683,7 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
 						<font fontName="SansSerif" pdfFontName="Helvetica" size="8" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{endingfrom}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.Integer"><![CDATA[$F{endingstartseries}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -704,7 +704,7 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
 						<font fontName="SansSerif" pdfFontName="Helvetica" size="8" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{beginto}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.Integer"><![CDATA[$F{beginendseries}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -725,7 +725,7 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
 						<font fontName="SansSerif" pdfFontName="Helvetica" size="8" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{receivedto}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.Integer"><![CDATA[$F{receivedendseries}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -746,7 +746,7 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
 						<font fontName="SansSerif" pdfFontName="Helvetica" size="8" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{issuedto}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.Integer"><![CDATA[$F{issuedendseries}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -767,7 +767,7 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
 						<font fontName="SansSerif" pdfFontName="Helvetica" size="8" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{endingto}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.Integer"><![CDATA[$F{endingendseries}]]></textFieldExpression>
 				</textField>
 			</band>
 		</detail>
