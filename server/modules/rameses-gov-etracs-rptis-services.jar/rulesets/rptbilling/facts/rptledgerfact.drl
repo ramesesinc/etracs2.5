@@ -24,16 +24,22 @@ declare RPTLedgerFact
     basicint                : Double
     basicdisc               : Double
     basiccredit             : Double
+    basicamnesty            : Double
+    basicintamnesty         : Double
     sef                     : Double
     sefint                  : Double
     sefdisc                 : Double
     sefcredit               : Double
+    sefamnesty              : Double
+    sefintamnesty           : Double
+    firecode                : Double
 
     basicacctid           : String 
     basicintacctid        : String 
     sefacctid             : String 
     sefintacctid          : String 
+    firecodeacctid        : String 
     expr                  : String 
     paidyear              : Integer
-    revtype             : String
+    revtype               : String
 end

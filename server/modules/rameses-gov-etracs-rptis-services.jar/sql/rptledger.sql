@@ -19,7 +19,7 @@ ${filters}
 ORDER BY rl.state, f.tdno 
 
 
-[openLedger]
+[findById]
 SELECT 
 	rl.*,
 	f.tdno, f.txntype_objid,
@@ -39,11 +39,11 @@ WHERE rl.objid = $P{objid}
 ORDER BY rl.state, f.tdno 
 
 	
-[getLedgerByFaasId]
+[findApprovedLedgerByFaasId]
 SELECT * FROM rptledger WHERE faasid = $P{faasid} AND state = 'APPROVED' 
 
 
-[getLedgerByFaas]	
+[findLedgerByFaasId]	
 SELECT * FROM rptledger WHERE faasid = $P{faasid} 
 
 
@@ -59,7 +59,7 @@ FROM rptledgerfaas rlf
 WHERE rlf.rptledgerid = $P{rptledgerid} 
 ORDER BY rlf.fromyear DESC 
 
-[getLedgerFaasByFaasId]
+[findLedgerFaasByFaasId]
 SELECT rlf.*,
 	pc.code AS classification_code,
 	pc.name AS classification_name,
@@ -73,11 +73,7 @@ WHERE rlf.rptledgerid = $P{rptledgerid}
 ORDER BY rlf.fromyear DESC 
 
 [getLedgerItems]
-SELECT 
-	rli.objid, rli.year, rli.qtr,
-	rli.basic, rli.basicint, rli.basicdisc,	rli.basicpaid,  
-	rli.sef, rli.sefpaid, rli.sefint, rli.sefdisc, 
-	rli.assessedvalue, rli.qtrlyav,
+SELECT rli.*,
 	rlf.tdno 
 FROM rptledgeritem rli
 	INNER JOIN rptledgerfaas rlf ON rli.rptledgerfaasid = rlf.objid 
@@ -128,3 +124,7 @@ FROM cashreceipt cr
 WHERE 	cri.rptledgerid = $P{rptledgerid}
  AND v.objid IS NULL 
 GROUP BY cr.objid  	
+
+
+[approveLedgerFaas]
+UPDATE rptledgerfaas SET state = 'APPROVED' WHERE objid = $P{objid}

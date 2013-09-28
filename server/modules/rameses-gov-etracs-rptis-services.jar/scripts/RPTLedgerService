@@ -1,10 +1,12 @@
 import com.rameses.annotations.*
 import com.rameses.common.*;
 import com.rameses.util.*
+import com.rameses.services.extended.*
+
 
 class RPTLedgerService
 {
-    @PersistenceContext('rpt') 
+    @ActiveDB('rptledger') 
     def em
 
     @Service('RPTUtil')
@@ -30,8 +32,8 @@ class RPTLedgerService
 
 
     def SCHEMA_LEDGER   = 'rptledger'
-    def SCHEMA_FAAS     = 'rptledger:faas'
-    def SCHEMA_ITEM     = 'rptledger:item'
+    def SCHEMA_FAAS     = 'ledgerfaas'
+    def SCHEMA_ITEM     = 'item'
 
     def STATE_PENDING   = 'PENDING'
     def STATE_APPROVED  = 'APPROVED'
@@ -42,24 +44,19 @@ class RPTLedgerService
 
     @ProxyMethod
     public def openLedger( ledger ) {
-        ledger = em.sqlContext.createNamedQuery('rptledger:openLedger').setParameters(ledger).singleResult
+        ledger = em.findById(ledger)
         if (!ledger) throw new Exception('Ledger does not exists.')
         ledger.firstqtrpaidontime = util.toBoolean(ledger.firstqtrpaidontime, true)
         ledger.qtrlypaymentavailed = util.toBoolean(ledger.qtrlypaymentavailed, true)
         ledger.qtrlypaymentpaidontime = util.toBoolean(ledger.qtrlypaymentpaidontime, true)
-        ledger.systemcreated = util.toBoolean(ledger.systemcreated, true)
 
-        ledger.faases = getLedgerFaases(ledger.objid).each{
-            it.taxable = util.toBoolean(it.taxable, true)
-            it.backtax = util.toBoolean(it.backtax, true)
-        }
+        ledger.faases = getLedgerFaases(ledger.objid)
         return ledger 
     }
 
     @ProxyMethod
     public def createLedger( ledger ) {
-        em.validate(SCHEMA_LEDGER, ledger)
-        em.create(SCHEMA_LEDGER, ledger)
+        em.create(ledger)
         ledger.faases.each{ ledgerfaas ->
             saveLedgerFaas(ledgerfaas)
         }
@@ -68,35 +65,32 @@ class RPTLedgerService
 
     @ProxyMethod
     public def updateLedger( ledger ) {
-        em.validate(SCHEMA_LEDGER, ledger)    
-        em.update(SCHEMA_LEDGER, ledger)    
+        em.update(ledger)    
+        return ledger 
     }
 
     
     @ProxyMethod
     public def saveLedgerFaas(ledgerfaas){
-        def xledgerfaas =  EntityUtil.mapToField(ledgerfaas)
-        em.validate(SCHEMA_FAAS, xledgerfaas)
-        em.save(SCHEMA_FAAS, xledgerfaas)
+        em.save(ledgerfaas, SCHEMA_FAAS)
         return ledgerfaas 
     }
 
     @ProxyMethod
     public def removeLedgerFaas( ledgerfaas ) {
-        em.delete(SCHEMA_FAAS, ledgerfaas)    
+        em.delete(ledgerfaas, SCHEMA_FAAS)    
     }
 
 
     @ProxyMethod
     public def createLedgerItem( item ) {
-        em.validate(SCHEMA_ITEM, item)
-        em.create(SCHEMA_ITEM, item)
+        em.create(item, SCHEMA_ITEM)
+        return item 
     }
 
     @ProxyMethod
     public def updateLedgerItem( item ) {
-        em.validate(SCHEMA_ITEM, item)
-        em.update(SCHEMA_ITEM, item)
+        em.update(item, SCHEMA_ITEM)
     }
 
     @ProxyMethod
@@ -111,23 +105,22 @@ class RPTLedgerService
         ledger.state            =  STATE_APPROVED
         ledger.lastyearpaid     = (lastfaas.fromqtr == 1 ? lastfaas.fromyear - 1 : lastfaas.fromyear)
         ledger.lastqtrpaid      = (lastfaas.fromqtr == 1 ?  4 : lastfaas.fromqtr - 1)
-        ledger.lastitemyear     = dtSvc.serverYear 
+        ledger.lastitemyear     = (lastfaas.toyear == 0 ? dtSvc.serverYear  : lastfaas.toyear )
         ledger.nextbilldate     = null
-        em.update(SCHEMA_LEDGER, ledger)
-        //approve ledgerfaases
+        em.update(ledger)
+        
         ledger.faases.each{
             it.state = ledger.state 
-            saveLedgerFaas(it)
+            em.approveLedgerFaas(it)
             postLedgerItems(it)
         }
-        billingSvc.generateBillByLedgerId(ledger.objid)
+        // billingSvc.generateBillByLedgerId(ledger.objid)
         return ledger;
     }
 
     @ProxyMethod
     public void checkLedgerBalance(faasid){
-        def ledger = em.sqlContext.createNamedQuery('rptledger:getLedgerByFaasId')
-                            .setParameter('faasid', faasid).singleResult
+        def ledger = em.findApprovedLedgerByFaasId([faasid:faasid])
         if (!ledger)
             throw new Exception('Ledger does not exist or has already been deleted.')
             
@@ -137,18 +130,18 @@ class RPTLedgerService
 
     @ProxyMethod
     public void clearNextBillDateByLedger( ledgerid ) {
-        em.sqlContext.createNamedExecutor('rptledger:clearNextBillDateByLedger').setParameter('objid', ledgerid).execute() 
+        em.clearNextBillDateByLedger([objid:ledgerid])
     }
 
     @ProxyMethod
     public void clearNextBillDate() {
-        em.sqlContext.createNamedExecutor('rptledger:clearNextBillDate').execute() 
+        em.clearNextBillDate([:])
     }
 
 
     @ProxyMethod
     public def getLedgerByFaasId( faasid ) {
-        def ledger = em.sqlContext.createNamedQuery('rptledger:getLedgerByFaas').setParameter('faasid', faasid).singleResult
+        def ledger = em.findLedgerByFaasId([faasid:faasid])
         if (!ledger) throw new Exception('Ledger does not exist or has already been deleted.')
         ledger.firstqtrpaidontime = util.toBoolean(ledger.firstqtrpaidontime, false)
         ledger.qtrlypaymentavailed = util.toBoolean(ledger.qtrlypaymentavailed, false)
@@ -159,9 +152,7 @@ class RPTLedgerService
 
     @ProxyMethod
     public def getLedgerFaases(ledgerid){
-        return em.sqlContext.createNamedQuery('rptledger:getLedgerFaases')
-                    .setParameter('rptledgerid', ledgerid)
-                    .resultList.each{
+        return em.getLedgerFaases([rptledgerid:ledgerid]).each {
                         it.taxable = util.toBoolean(it.taxable, true)
                         it.backtax = util.toBoolean(it.backtax, false)
                         it.systemcreated = util.toBoolean(it.systemcreated, true)
@@ -171,15 +162,13 @@ class RPTLedgerService
 
     @ProxyMethod
     public def getLedgerItems(ledgerid){
-        return em.sqlContext.createNamedQuery('rptledger:getLedgerItems').setParameter('rptledgerid', ledgerid).resultList
+        return em.getLedgerItems([rptledgerid:ledgerid])
     }
 
 
     @ProxyMethod
     public def getLedgerCredits(ledgerid) {
-        return em.sqlContext.createNamedQuery('rptledger:getLedgerCredits')
-                .setParameter('rptledgerid', ledgerid)
-                .resultList
+        return em.getLedgerCredits([rptledgerid:ledgerid])
     }
 
 
@@ -210,50 +199,11 @@ class RPTLedgerService
     void postLedgerItems(ledgerfaas){
         def pdate = dtSvc.parseCurrentDate()
         ledgerfaas.toyear  = (ledgerfaas.toyear == 0 ? pdate.year : ledgerfaas.toyear)
-        ledgerfaas.toqtr   = (ledgerfaas.toqtr == 0 ? 4 : ledgerfaas.toqtr )
-        def qtrlyPrevYears = util.toBoolean(var.rptledger_previous_year_computed_as_quarterly, false)
-
-        if (ledgerfaas.fromyear <= ledgerfaas.toyear ){
-            ledgerfaas.fromyear.upto(ledgerfaas.toyear){ yr ->
-                postQuarterlyItems(ledgerfaas, yr)
-                /*
-                if ( yr < pdate.year && qtrlyPrevYears) {
-                    //previous year qtrly
-                    postQuarterlyItems(ledgerfaas, yr)
-                }
-                else if ( yr < pdate.year ) {
-                    //previous year annual
-                    postYearlyItems(ledgerfaas, yr)
-                }
-                else {
-                    //current and advance years 
-                    postQuarterlyItems(ledgerfaas, yr)
-                }
-                */
-            }
+        // def qtrlyPrevYears = util.toBoolean(var.rptledger_previous_year_computed_as_quarterly, false)
+        ledgerfaas.fromyear.upto(ledgerfaas.toyear){ yr ->
+            postQuarterlyItems(ledgerfaas, yr)
         }
     }
-
-    @ProxyMethod
-    public def insertLedgerItems(ledger, fromyear, toyear){
-        if( fromyear <= toyear) {
-            fromyear.upto(toyear){yr -> 
-                def ledgerfaas = em.sqlContext.createNamedQuery('rptledger:getLedgerFaasByFaasId')
-                        .setParameter('rptledgerid', ledger.objid )
-                        .setParameter('faasid', ledger.faasid)
-                        .singleResult
-                if( ledgerfaas ){
-                    ledgerfaas.toqtr = 4;
-                    postQuarterlyItems(ledgerfaas, yr)
-                    em.sqlContext.createNamedExecutor('rptledger:updateLedgerLastItemYear')
-                            .setParameter('objid', ledger.objid)
-                            .setParameter('lastitemyear', toyear)
-                            .execute()
-                }
-            }
-        }
-    }
-
 
 
     void postQuarterlyItems(ledgerfaas, yr){
@@ -267,9 +217,19 @@ class RPTLedgerService
         }
     }
 
-    void postYearlyItems(ledgerfaas, yr){
-        def item = doCreateLedgerItem(ledgerfaas, yr, 0)
-        createLedgerItem(item)
+
+
+    @ProxyMethod
+    public def insertLedgerItems(ledger, fromyear, toyear){
+        if( fromyear <= toyear) {
+            fromyear.upto(toyear){yr -> 
+                def ledgerfaas = em.findLedgerFaasByFaasId([rptledgerid:ledger.objid, faasid:ledger.faasid])
+                if( ledgerfaas ){
+                    postQuarterlyItems(ledgerfaas, yr)
+                    em.updateLedgerLastItemYear([objid:ledger.objid, lastitemyear:toyear])
+                }
+            }
+        }
     }
 
 
@@ -282,19 +242,29 @@ class RPTLedgerService
             year                : yr, 
             qtr                 : qtr, 
             assessedvalue       : ledgerfaas.assessedvalue,
-            qtrlyav             : 0.0,
             basic               : 0.0,
-            basicint            : 0.0,
-            basicdisc           : 0.0,
-            basiccredit         : 0.0,
             basicpaid           : 0.0,
+            basicint            : 0.0,
+            basicintpaid        : 0.0,
             basicintpartial     : 0.0,
+            basicdisc           : 0.0,
+            basicdisctaken      : 0.0,
+            basicamnesty        : 0.0,
+            basicintamnesty     : 0.0,
+            basiccredit         : 0.0,
             sef                 : 0.0,
-            sefint              : 0.0,
-            sefdisc             : 0.0,
-            sefcredit           : 0.0,
             sefpaid             : 0.0,
+            sefint              : 0.0,
+            sefintpaid          : 0.0,
             sefintpartial       : 0.0,
+            sefdisc             : 0.0,
+            sefdisctaken        : 0.0,
+            sefamnesty          : 0.0,
+            sefintamnesty       : 0.0,
+            sefcredit           : 0.0,
+            firecode            : 0.0,
+            firecodepaid        : 0.0,
+            forpayment          : 0,
         ]
     }
 
