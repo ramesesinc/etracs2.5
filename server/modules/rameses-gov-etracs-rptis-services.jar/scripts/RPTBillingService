@@ -266,7 +266,6 @@ public class RPTBillingService
 			phases.each{phase ->
 				ruleSvc.execute( RULESET, data.facts, data.globals, phase );
 			}
-
 			updateLedgerItemInfo(bill, data)
 			em.updateLedgerNextBillDate(buildParams(bill))
 		}
@@ -352,9 +351,14 @@ public class RPTBillingService
 
 	void loadBillItems(bill){
 		def params = buildParams(bill)
+
+		resetUnpaidQuarterlyItems(params)
+		
 		bill.ledgers = em.getBilledLedgers(params)
 		bill.ledgers.each{ ledger ->
-			params.ledgerid = ledger.objid
+			insertQtrlyLedgerItems(bill, ledger)
+
+			params.rptledgerid = ledger.objid
 			ledger.items = em.getPreviousBillItems(params).each{ 
 								it.total = it.basicnet + it.sefnet + it.firecode 
 							}
@@ -364,6 +368,20 @@ public class RPTBillingService
 			summarizeLedgerInfo(ledger)
 		}
 		calcBillTotals(bill)
+	}
+
+	void resetUnpaidQuarterlyItems(params){
+		//delete rptledgeritem_qtrly with ledgeritem.qtrly = 1 and lastqtrpaid = 0
+		em.deleteQtrlyLedgerItems(params)
+		em.resetLedgerItemQtrlyFlag(params)
+	}
+
+	void insertQtrlyLedgerItems(bill, ledger){
+		if (bill.billtoyear >= dtSvc.serverYear || bill.billtoqtr !=  4){
+			em.insertQtrlyLedgerItems([rptledgerid:ledger.objid, billtoyear: bill.billtoyear])	
+			em.setLedgerItemQtrlyFlag([rptledgerid:ledger.objid, billtoyear: bill.billtoyear])	
+		}
+		
 	}
 
 	void summarizeLedgerInfo(ledger){
@@ -398,13 +416,16 @@ public class RPTBillingService
 	def getOpenLedgers(bill){
 		def ledgers = em.getOpenLedgers(buildParams(bill))
 		ledgers.each{ledger ->
-			ledger.items = em.getOpenLedgerItemsByLedgerId([ledgerid:ledger.objid])
+			ledger.items = em.getOpenLedgerItemsByLedgerId([ledgerid:ledger.objid]).each{
+					it.qtrly = util.toBoolean(it.qtrly, false)
+				}
 		}
 		return ledgers 
 	}
 
 
 	int calculateNoOfMonthsFromQtr(pdate, year, qtr) {
+		if (qtr == null) qtr = 1 
 		int currYear = pdate.year
 		int currMonth = pdate.month
 		qtr = ( qtr == 0 ? 1 : qtr )

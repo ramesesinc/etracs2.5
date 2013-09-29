@@ -39,9 +39,7 @@
         <field name="rptledgerid" required="true" />
         <field name="rptledgerfaasid" required="true" />
         <field name="year" required="true" type="integer" />
-        <field name="qtr" required="true" type="integer" />
         <field name="assessedvalue" required="true" type="decimal" />
-        <field name="qtrlyav" required="true" type="decimal" />
         <field name="basic" type="decimal" required="true" />
         <field name="basicpaid" type="decimal" required="true" />
         <field name="basicint" type="decimal" required="true" />
@@ -72,5 +70,43 @@
         <field name="revtype" />
         <field name="amnestyref" />
         <field name="forpayment" type="integer" required="true" />
+        <field name="lastqtrpaid" type="integer" required="true" />
+        <field name="qtrly" type="boolean" required="true" />
+    </element>
+
+    <element name="qtrlyitem" tablename="rptledgeritem_qtrly">
+        <field name="objid" primary="true" />
+        <field name="state" required="true" />
+        <field name="rptledgerid" required="true" />
+        <field name="rptledgeritem" required="true" />
+        <field name="year" required="true" type="integer" />
+        <field name="qtr" required="true" type="integer" />
+        <field name="assessedvalue" required="true" type="decimal" />
+        <field name="qtrlyav" required="true" type="decimal" />
+        <field name="basic" required="true" type="decimal" />
+        <field name="basicpaid" required="true" type="decimal" />
+        <field name="basicint" required="true" type="decimal" />
+        <field name="basicintpaid" required="true" type="decimal" />
+        <field name="basicintpartial" required="true" type="decimal" />
+        <field name="basicdisc" required="true" type="decimal" />
+        <field name="basicdisctaken" required="true" type="decimal" />
+        <field name="basicamnesty" required="true" type="decimal" />
+        <field name="basicintamnesty" required="true" type="decimal" />
+        <field name="basiccredit" required="true" type="decimal" />
+        <field name="sef" required="true" type="decimal" />
+        <field name="sefpaid" required="true" type="decimal" />
+        <field name="sefint" required="true" type="decimal" />
+        <field name="sefintpaid" required="true" type="decimal" />
+        <field name="sefintpartial" required="true" type="decimal" />
+        <field name="sefdisc" required="true" type="decimal" />
+        <field name="sefdisctaken" required="true" type="decimal" />
+        <field name="sefamnesty" required="true" type="decimal" />
+        <field name="sefintamnesty" required="true" type="decimal" />
+        <field name="sefcredit" required="true" type="decimal" />
+        <field name="firecode" required="true" type="decimal" />
+        <field name="firecodepaid" required="true" type="decimal" />
+        <field name="revtype" required="true" />
+        <field name="amnestyref" required="true" />
+        <field name="forpayment" required="true" type="boolean" />
     </element>
 </schema>

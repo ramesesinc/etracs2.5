@@ -201,9 +201,14 @@ class RPTLedgerService
         ledgerfaas.toyear  = (ledgerfaas.toyear == 0 ? pdate.year : ledgerfaas.toyear)
         // def qtrlyPrevYears = util.toBoolean(var.rptledger_previous_year_computed_as_quarterly, false)
         ledgerfaas.fromyear.upto(ledgerfaas.toyear){ yr ->
-            postQuarterlyItems(ledgerfaas, yr)
+            postYearlyItems(ledgerfaas, yr)
         }
     }
+
+    void postYearlyItems(ledgerfaas, yr){
+        createLedgerItem(doCreateLedgerItem(ledgerfaas, yr, 0))
+    }
+
 
 
     void postQuarterlyItems(ledgerfaas, yr){
@@ -225,7 +230,7 @@ class RPTLedgerService
             fromyear.upto(toyear){yr -> 
                 def ledgerfaas = em.findLedgerFaasByFaasId([rptledgerid:ledger.objid, faasid:ledger.faasid])
                 if( ledgerfaas ){
-                    postQuarterlyItems(ledgerfaas, yr)
+                    postYearlyItems(ledgerfaas, yr)
                     em.updateLedgerLastItemYear([objid:ledger.objid, lastitemyear:toyear])
                 }
             }
@@ -265,6 +270,8 @@ class RPTLedgerService
             firecode            : 0.0,
             firecodepaid        : 0.0,
             forpayment          : 0,
+            lastqtrpaid         : 0,
+            qtrly               : false,
         ]
     }
 
