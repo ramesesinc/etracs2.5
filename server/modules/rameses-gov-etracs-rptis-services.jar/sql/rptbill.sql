@@ -268,12 +268,11 @@ WHERE ${filters}
   AND rl.faasid = f.objid 
   AND rl.state = 'APPROVED'
  AND rli.state = 'OPEN' 
- AND rli.qtrly = 1 
- AND rl.lastqtrpaid > 0 
+ AND rli.lastqtrpaid = 0 
 
 
 [insertQtrlyLedgerItems] 
-INSERT INTO etracs25.rptledgeritem_qtrly(
+INSERT INTO rptledgeritem_qtrly(
     objid,
     state,
     rptledgerid,
@@ -381,6 +380,7 @@ FROM rptledger rl
         sys_quarter q
 WHERE rl.objid = $P{rptledgerid}
   AND rli.year = ${billtoyear}
+  AND rli.qtrly = 0 
 
 
 
