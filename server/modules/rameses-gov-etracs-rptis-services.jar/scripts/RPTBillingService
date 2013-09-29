@@ -97,8 +97,8 @@ public class RPTBillingService
         recalcBillItems(bill)
 		loadBillItems(bill)
 	
-		// if (!bill.ledgers) 
-		//	throw new Exception('There are no unpaid ledgers for payment.')
+		if (!bill.ledgers) 
+			throw new Exception('There are no unpaid ledgers for payment.')
 
 		return bill
 	}
@@ -349,15 +349,20 @@ public class RPTBillingService
 		}
 	}
 
-	void loadBillItems(bill){
-		def params = buildParams(bill)
 
+	void rebuildLedgerItems(bill){
+		def params = buildParams(bill)
 		resetUnpaidQuarterlyItems(params)
-		
 		bill.ledgers = em.getBilledLedgers(params)
 		bill.ledgers.each{ ledger ->
 			insertQtrlyLedgerItems(bill, ledger)
+		}
+	}
 
+	void loadBillItems(bill){
+		rebuildLedgerItems(bill)
+		def params = buildParams(bill)
+		bill.ledgers.each{ ledger ->
 			params.rptledgerid = ledger.objid
 			ledger.items = em.getPreviousBillItems(params).each{ 
 								it.total = it.basicnet + it.sefnet + it.firecode 
