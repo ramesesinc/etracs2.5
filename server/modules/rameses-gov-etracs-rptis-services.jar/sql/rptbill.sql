@@ -30,7 +30,7 @@ FROM faas f
 	INNER JOIN rptledger rl ON f.objid = rl.faasid
 WHERE ${filters}
  AND rl.state = 'APPROVED'
- AND (rl.nextbilldate IS NULL OR rl.nextbilldate <= $P{currdate})
+ AND (rl.nextbilldate IS NULL OR rl.nextbilldate <= $P{billdate})
 
 
 [getOpenLedgerItemsByLedgerId]
@@ -39,25 +39,58 @@ SELECT
 	rli.rptledgerid,
 	rli.assessedvalue, 
 	rli.assessedvalue AS av,
+	rli.qtrly,
+	rli.revtype,
 	rlf.tdno, 
 	rli.year,
+	0 AS qtr,
 	rlf.txntype_objid,
 	r.rputype,
-	CASE WHEN lr.objid IS NULL THEN r.classification_objid ELSE lr.classification_objid END AS classification_objid,
-	CASE WHEN lr.objid IS NULL THEN r.classification_objid ELSE lr.classification_objid END AS actualuse_objid,
+	r.classification_objid,
+	r.classification_objid AS actualuse_objid,
 	rl.barangayid
 FROM rptledger rl
 	INNER JOIN faas f ON rl.faasid = f.objid 
 	INNER JOIN rpu r ON f.rpuid = r.objid 
 	INNER JOIN rptledgeritem rli ON rl.objid = rli.rptledgerid
 	INNER JOIN rptledgerfaas rlf ON rli.rptledgerfaasid = rlf.objid 
-	LEFT JOIN faas lf ON rlf.faasid = lf.objid 
-	LEFT JOIN rpu lr ON lf.rpuid = lr.objid 
 WHERE rl.objid = $P{ledgerid}
  AND rl.state = 'APPROVED'
- AND (rl.nextbilldate IS NULL OR rl.nextbilldate <= NOW() )
+ AND (rl.nextbilldate IS NULL OR rl.nextbilldate <= $P{billdate} )
  AND rli.state = 'OPEN'  
-ORDER BY rli.year
+ AND rli.qtrly = 0
+
+UNION ALL 
+
+SELECT 
+	rliq.objid,
+	rliq.rptledgerid,
+	rli.assessedvalue, 
+	rliq.qtrlyav AS av,
+	rli.qtrly,
+	rli.revtype,
+	rlf.tdno, 
+	rli.year,
+	rliq.qtr,
+	rlf.txntype_objid,
+	r.rputype,
+	r.classification_objid,
+	r.classification_objid AS actualuse_objid,
+	rl.barangayid
+FROM rptledger rl
+	INNER JOIN faas f ON rl.faasid = f.objid 
+	INNER JOIN rpu r ON f.rpuid = r.objid 
+	INNER JOIN rptledgeritem rli ON rl.objid = rli.rptledgerid
+	INNER JOIN rptledgeritem_qtrly rliq ON rli.objid = rliq.rptledgeritemid 
+	INNER JOIN rptledgerfaas rlf ON rli.rptledgerfaasid = rlf.objid 
+WHERE rl.objid = $P{ledgerid}
+ AND rl.state = 'APPROVED'
+ AND (rl.nextbilldate IS NULL OR rl.nextbilldate <= $P{billdate} )
+ AND rliq.state = 'OPEN'  
+ AND rli.qtrly = 1
+
+
+
 
 [getLedgerWithUnpostedItems]
 SELECT rl.objid, rl.faasid, rl.lastitemyear
@@ -65,7 +98,7 @@ FROM rptledger rl
 	INNER JOIN faas f ON rl.faasid = f.objid 
 WHERE ${filters}
  AND rl.state = 'APPROVED'
- AND (rl.nextbilldate IS NULL OR rl.nextbilldate <= $P{currdate} OR rl.lastitemyear < $P{billtoyear})
+ AND (rl.nextbilldate IS NULL OR rl.nextbilldate <= $P{billdate} OR rl.lastitemyear < $P{billtoyear})
 
 
 
@@ -167,7 +200,7 @@ FROM (
 	WHERE rl.objid = $P{rptledgerid}
 	 AND rli.state = 'OPEN'
 	 AND rli.year <= $P{billtoyear}
-	 AND rli.year < ${currentyr}
+	 AND rli.year < $P{currentyr}
 	 AND rli.qtrly = 0
 	GROUP BY rli.year
 	
@@ -200,7 +233,7 @@ FROM (
 		INNER JOIN rptledgeritem_qtrly rliq ON rli.objid = rliq.rptledgeritemid 
 		INNER JOIN rptledgerfaas rlf ON rli.rptledgerfaasid = rlf.objid
 	WHERE rl.objid = $P{rptledgerid}
-	 AND rli.year <= ${billtoyear}
+	 AND rli.year <= $P{billtoyear}
 	 AND rli.year < $P{currentyr}
 	 AND rli.qtrly = 1 
 	 AND rliq.state = 'OPEN'
@@ -254,6 +287,7 @@ WHERE rptledgeritemid IN (
 		INNER JOIN faas f ON rl.faasid = f.objid 
 	WHERE ${filters}
 	 AND rl.state = 'APPROVED'
+	 AND rli.year < $P{currentyr}
 	 AND rli.state = 'OPEN' 
 	 AND rli.qtrly = 1 
 	 AND rli.lastqtrpaid = 0 
@@ -267,6 +301,7 @@ WHERE ${filters}
   AND rli.rptledgerid = rl.objid 
   AND rl.faasid = f.objid 
   AND rl.state = 'APPROVED'
+  AND rli.year < $P{currentyr}
  AND rli.state = 'OPEN' 
  AND rli.lastqtrpaid = 0 
 
@@ -388,3 +423,15 @@ WHERE rl.objid = $P{rptledgerid}
 UPDATE rptledgeritem SET 
 	qtrly = 1
 WHERE rptledgerid = $P{rptledgerid}  AND year = $P{billtoyear}
+
+
+
+[resetAdvanceBillFlag]
+UPDATE rptledger rl, faas f SET
+	rl.advancebill = 0, 
+	rl.nextbilldate = null 
+WHERE ${filters}
+ AND rl.faasid = f.objid
+ AND rl.state = 'APPROVED'
+ AND rl.advancebill = 1
+ 

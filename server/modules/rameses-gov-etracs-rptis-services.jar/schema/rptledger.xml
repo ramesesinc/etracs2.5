@@ -12,6 +12,7 @@
         <field name="lastitemyear" required="true" type="integer"/>
         <field name="lastreceiptid"/>
         <field name="barangayid" required="true" />
+        <field name="advancebill" required="true" type="boolean"/>
     </element>
 
     <element name="ledgerfaas" tablename="rptledgerfaas">
@@ -69,7 +70,7 @@
         <field name="firecodeacctid"  />
         <field name="revtype" />
         <field name="amnestyref" />
-        <field name="forpayment" type="integer" required="true" />
+        <field name="forpayment" type="boolean" required="true" />
         <field name="lastqtrpaid" type="integer" required="true" />
         <field name="qtrly" type="boolean" required="true" />
     </element>
@@ -78,7 +79,7 @@
         <field name="objid" primary="true" />
         <field name="state" required="true" />
         <field name="rptledgerid" required="true" />
-        <field name="rptledgeritem" required="true" />
+        <field name="rptledgeritemid" required="true" />
         <field name="year" required="true" type="integer" />
         <field name="qtr" required="true" type="integer" />
         <field name="assessedvalue" required="true" type="decimal" />
@@ -105,8 +106,8 @@
         <field name="sefcredit" required="true" type="decimal" />
         <field name="firecode" required="true" type="decimal" />
         <field name="firecodepaid" required="true" type="decimal" />
-        <field name="revtype" required="true" />
-        <field name="amnestyref" required="true" />
+        <field name="revtype" />
+        <field name="amnestyref" />
         <field name="forpayment" required="true" type="boolean" />
     </element>
 </schema>

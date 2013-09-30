@@ -75,17 +75,20 @@ public class RPTBillingService
 		util.required('Bill To Year', bill.billtoyear)
 		util.required('Bill To Qtr', bill.billtoqtr)
 
+		if (bill.billdate == null) 
+			bill.billdate = dtSvc.serverDate
+		else
+			bill.billdate = dtSvc.parse('yyyy-MM-dd', bill.billdate)
+
 		if (bill.advancepayment){
 			if (bill.billtoyear < dtSvc.serverYear )
 				throw new Exception('Advance Year must be greater than current year.')
-			bill.billdate = (bill.billdate ? dtSvc.parse('yyyy-MM-dd', bill.billdate) : dtSvc.serverDate)
 		}
-		else {
-			bill.billdate = dtSvc.serverDate 
+		else if (bill.advancebill){
+			if ( bill.billdate < bill.currentdate )
+				throw new Exception('Advance Billing Date must be greater than current date.')
 		}
-
-		bill.expirydate = getExpiryDate(bill)
-
+		
 		bill.taxpayerid = bill.taxpayer?.objid 
 		if (! bill.taxpayerid && ! bill.ledgerids)
 			throw new Exception('Either a Taxpayer or Ledger to bill is required.')
@@ -117,15 +120,19 @@ public class RPTBillingService
 		else set filters using taxpayerid 
 	*/
 	def buildParams(bill){
-		def pdate = dtSvc.parseCurrentDate();
+		def cdate = dtSvc.parseCurrentDate()
+		def pdate = dtSvc.parseDate(bill.billdate, null)
 		def params = [
 			taxpayerid 	: bill.taxpayerid, 
 			billtoyear  : bill.billtoyear, 
 			billtoqtr   : bill.billtoqtr, 
-			currdate    : pdate.date,
-			currentyr   : pdate.year,
-			currentqtr  : pdate.qtr,
+			currdate    : cdate.date,
+			currentyr   : cdate.year,
+			currentqtr  : cdate.qtr,
 			nextbilldate : bill.expirydate,
+			billdate   : pdate.date,
+			billyear   : pdate.year,
+			billqtr    : pdate.qtr,
 		]
 
 		if (bill.ledgerids) {
@@ -156,7 +163,7 @@ public class RPTBillingService
 			]
 		}
 
-		expirydate = qtr_deadline.expirydate;
+		expirydate = dtSvc.add(qtr_deadline.expirydate, '1d');
 		expirytype = qtr_deadline.expirytype;
 
 		//check discount first
@@ -267,7 +274,9 @@ public class RPTBillingService
 				ruleSvc.execute( RULESET, data.facts, data.globals, phase );
 			}
 			updateLedgerItemInfo(bill, data)
+			bill.expirydate = getExpiryDate(bill)
 			em.updateLedgerNextBillDate(buildParams(bill))
+
 		}
 	}
 
@@ -278,7 +287,7 @@ public class RPTBillingService
 	}
 
 	def createFacts(bill){
-		def pdate = dtSvc.parseCurrentDate()
+		def pdate = dtSvc.parseDate(bill.billdate, null)
 
 		def map = [facts:[], globals:[:], ledgers:[]]
 		map.facts << new DateBean(dtSvc.serverDate)
@@ -419,9 +428,11 @@ public class RPTBillingService
 
 
 	def getOpenLedgers(bill){
-		def ledgers = em.getOpenLedgers(buildParams(bill))
+		def params = buildParams(bill)
+		em.resetAdvanceBillFlag(params)
+		def ledgers = em.getOpenLedgers(params)
 		ledgers.each{ledger ->
-			ledger.items = em.getOpenLedgerItemsByLedgerId([ledgerid:ledger.objid]).each{
+			ledger.items = em.getOpenLedgerItemsByLedgerId([ledgerid:ledger.objid, billdate:bill.billdate]).each{
 					it.qtrly = util.toBoolean(it.qtrly, false)
 				}
 		}
@@ -430,7 +441,7 @@ public class RPTBillingService
 
 
 	int calculateNoOfMonthsFromQtr(pdate, year, qtr) {
-		if (qtr == null) qtr = 1 
+		if (qtr == null || qtr == 0) qtr = 1 
 		int currYear = pdate.year
 		int currMonth = pdate.month
 		qtr = ( qtr == 0 ? 1 : qtr )
@@ -446,12 +457,14 @@ public class RPTBillingService
 	int calculateNoOfMonthsFromJan(pdate, year, qtr) {
 		int currYear = pdate.year
 		int currMonth = pdate.month
+		int nmon = 0;
 		if(year < currYear) {
-			return ( currYear - year ) * 12 + currMonth
+			nmon = ( currYear - year ) * 12 + currMonth
 		}
 		else {
-			return currMonth
+			nmon = currMonth
 		}
+		return nmon 
 	}
 
 	boolean determineFirstQtrPaidOnTime( pdate, bill, item ) {
@@ -491,7 +504,12 @@ public class RPTBillingService
 					item.sefintacctid = ledger.sefintacctid
 					item.firecodeacctid = ledger.firecodeacctid
 					item.revtype = ledger.revtype 
-					ledgerSvc.updateLedgerItem(item)
+					if (item.qtrly) {
+						ledgerSvc.updateLedgerItemQuarterly(item)
+					}
+					else{
+						ledgerSvc.updateLedgerItem(item)
+					}
 				}
 			}
 		}
