@@ -12,16 +12,23 @@ class RPTReceiptInterceptor
 
 	@After(pattern="CashReceiptService.post", eval="#{result.formno=='56'}") 
 	public void interceptPostReceipt( evt ) {
+		println 'Posting RPT Receipt...'
 		def receipt = evt.result
-
 		svc.createReceipt(receipt)
 
 		//add formatted items for printing
+		/*
 		receipt._items = em.sqlContext.createNamedQuery('cashreceiptrpt:getReceiptItemsForPrinting')
 				.setParameter('rptreceiptid', receipt.objid).resultList
-
+		*/
 		//do not return rptitems to client
 		receipt.rptitems = null
+	}
+
+	@After(pattern="CashReceiptVoidService.post", eval="#{result.formno=='56'}") 
+	public void interceptVoidReceipt( evt ) {
+		println 'Voiding RPT Receipt...'
+		svc.voidReceipt(evt.result)
 	}
 
 }

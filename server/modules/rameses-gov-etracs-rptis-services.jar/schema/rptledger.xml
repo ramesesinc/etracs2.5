@@ -48,9 +48,9 @@
         <field name="basicintpartial" type="decimal" required="true" />
         <field name="basicdisc" type="decimal" required="true" />
         <field name="basicdisctaken" type="decimal" required="true" />
+        <field name="basiccredit" type="decimal" required="true" />
         <field name="basicamnesty" type="decimal" required="true" />
         <field name="basicintamnesty" type="decimal" required="true" />
-        <field name="basiccredit" type="decimal" required="true" />
         <field name="sef" type="decimal" required="true" />
         <field name="sefpaid" type="decimal" required="true" />
         <field name="sefint" type="decimal" required="true" />
@@ -58,18 +58,18 @@
         <field name="sefintpartial" type="decimal" required="true" />
         <field name="sefdisc" type="decimal" required="true" />
         <field name="sefdisctaken" type="decimal" required="true" />
+        <field name="sefcredit" type="decimal" required="true" />
         <field name="sefamnesty" type="decimal" required="true" />
         <field name="sefintamnesty" type="decimal" required="true" />
-        <field name="sefcredit" type="decimal" required="true" />
-        <field name="basicacctid"  />
-        <field name="basicintacctid"  />
-        <field name="sefacctid"  />
-        <field name="sefintacctid"  />
+        <field name="basicacct_objid"  />
+        <field name="basicintacct_objid"  />
+        <field name="sefacct_objid"  />
+        <field name="sefintacct_objid"  />
         <field name="firecode" type="decimal" required="true" />
         <field name="firecodepaid" type="decimal" required="true" />
-        <field name="firecodeacctid"  />
+        <field name="firecodeacct_objid"  />
         <field name="revtype" />
-        <field name="amnestyref" />
+        <field name="amnestyinfo" />
         <field name="forpayment" type="boolean" required="true" />
         <field name="lastqtrpaid" type="integer" required="true" />
         <field name="qtrly" type="boolean" required="true" />
@@ -107,7 +107,7 @@
         <field name="firecode" required="true" type="decimal" />
         <field name="firecodepaid" required="true" type="decimal" />
         <field name="revtype" />
-        <field name="amnestyref" />
+        <field name="amnestyinfo" />
         <field name="forpayment" required="true" type="boolean" />
     </element>
 </schema>

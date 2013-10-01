@@ -339,7 +339,7 @@ INSERT INTO rptledgeritem_qtrly(
     firecode,
     firecodepaid,
     revtype,
-    amnestyref,
+    amnestyinfo,
     forpayment
 )
 SELECT
@@ -407,7 +407,7 @@ SELECT
         CASE WHEN qtrid = 1 THEN firecode ELSE 0 END AS firecode,
         0.0 AS firecodepaid,
         rli.revtype,
-        rli.amnestyref,
+        rli.amnestyinfo,
         0 AS forpayment
 FROM rptledger rl
         INNER JOIN rptledgeritem rli ON rl.objid = rli.rptledgerid

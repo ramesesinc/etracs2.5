@@ -95,14 +95,17 @@ public class RPTBillingService
 
 		if (bill.advancebill && bill.billdate <= (dtSvc.serverDate - 1 ))
             throw new Exception('Advance Billing Date must be greater than current date.')
-		
+
         insertUnpostedItems(bill)
         recalcBillItems(bill)
-		loadBillItems(bill)
+        rebuildLedgerItems(bill)
+        
+        if (util.toBoolean(bill.loadbillitems, true) ){
+			loadBillItems(bill)
+			if (!bill.ledgers) 
+				throw new Exception('There are no unpaid ledgers for payment.')
+        }
 	
-		if (!bill.ledgers) 
-			throw new Exception('There are no unpaid ledgers for payment.')
-
 		return bill
 	}
 
@@ -119,7 +122,8 @@ public class RPTBillingService
 		if ledgerids are specified set filters using IN 
 		else set filters using taxpayerid 
 	*/
-	def buildParams(bill){
+	@ProxyMethod
+	public def buildParams(bill){
 		def cdate = dtSvc.parseCurrentDate()
 		def pdate = dtSvc.parseDate(bill.billdate, null)
 		def params = [
@@ -358,8 +362,8 @@ public class RPTBillingService
 		}
 	}
 
-
-	void rebuildLedgerItems(bill){
+	@ProxyMethod
+	public void rebuildLedgerItems(bill){
 		def params = buildParams(bill)
 		resetUnpaidQuarterlyItems(params)
 		bill.ledgers = em.getBilledLedgers(params)
@@ -369,7 +373,6 @@ public class RPTBillingService
 	}
 
 	void loadBillItems(bill){
-		rebuildLedgerItems(bill)
 		def params = buildParams(bill)
 		bill.ledgers.each{ ledger ->
 			params.rptledgerid = ledger.objid
@@ -498,11 +501,11 @@ public class RPTBillingService
 					item.sefcredit = numSvc.round(ledger.sefcredit)
 					item.firecode = numSvc.round(ledger.firecode)
 					item.paidyear = ledger.paidyear 
-					item.basicacctid = ledger.basicacctid
-					item.basicintacctid = ledger.basicintacctid
-					item.sefacctid = ledger.sefacctid
-					item.sefintacctid = ledger.sefintacctid
-					item.firecodeacctid = ledger.firecodeacctid
+					item.basicacct = [objid:ledger.basicacctid]
+					item.basicintacct = [objid:ledger.basicintacctid]
+					item.sefacct = [objid:ledger.sefacctid]
+					item.sefintacct = [objid:ledger.sefintacctid]
+					item.firecodeacct = [objid:ledger.firecodeacctid]
 					item.revtype = ledger.revtype 
 					if (item.qtrly) {
 						ledgerSvc.updateLedgerItemQuarterly(item)
