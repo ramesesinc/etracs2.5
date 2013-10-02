@@ -78,13 +78,13 @@ class RemittanceInterceptor {
 			def m = [:];
 			m.txntype = "FORWARD";
 			m.remarks = "FORWARD BALANCE FROM REMITTANCE";
-			m.qty= it.qty;
+			m.qty= it.qtybalance;
 			m.controlid = it.controlid;
 			m.refid = o.objid;
 			m.reftype = "remittance";	
 			m.refno = o.txnno;
 			m.refdate = o.dtposted;
-			m.afid = it.formno;
+			m.afid = it.afid;
 			cashTicketSvc.postBegin(m);
 		}
 	}

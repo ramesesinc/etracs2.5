@@ -15,18 +15,18 @@ class RemittanceReportService  {
 	@Service("DateService")
 	def dtsvc;
 
+	@Service("AFRemittanceService")
+	def afremSvc
+
 	@ProxyMethod 
 	def getRCDReportData( rem  ) {
 		def remittance = rem.clone()
 		remittance.collectiontype = em.sqlContext.createNamedQuery('remittancereport:getRCDCollectionType').setParameter('remittanceid', remittance.objid ).resultList
 		remittance.collectionsummaries = em.sqlContext.createNamedQuery('remittancereport:getRCDCollectionSummaries').setParameter('remittanceid', remittance.objid ).resultList
-		remittance.remittedforms = em.sqlContext.createNamedQuery('remittancereport:getRCDRemittedForms').setParameter('remittanceid', remittance.objid ).resultList
+		remittance.remittedforms = afremSvc.getRemittedAFSerial( remittance)
 		remittance.otherpayments = em.sqlContext.createNamedQuery('remittancereport:getRCDOtherPayment').setParameter('remittanceid', remittance.objid ).resultList
-
-		//not yet implemented : waiting for sir elmo's db structure 
-		remittance.nonserialremittances = []
-		remittance.nonserialsummary = []
-
+		remittance.nonserialremittances = afremSvc.getRemittedCashTickets( remittance)
+		remittance.nonserialsummary = afremSvc.getRemittedCashTickets( remittance)
 		remittance.amountinwords = numSvc.doubleToWords( remittance.amount).toUpperCase()
 
 		return remittance 	
@@ -46,9 +46,6 @@ class RemittanceReportService  {
 		return data;
 	}
 
-	/***
-		still waiting for non serial to be finish
-	**/
 	@ProxyMethod 
 	def generateReportByFund( rem, fund ) {
 		def data = rem.clone();
@@ -65,7 +62,7 @@ class RemittanceReportService  {
 		def data = rem.clone() 
 		def params = [ remittanceid: data.objid,  fundid : fund ? fund.objid : '%']
 		data.serials = em.sqlContext.createNamedQuery('remittancereport:getSerialReceiptsByRemittanceFund').setParameters(params ).resultList
-		data.nonserial = []
+		data.nonserial = em.sqlContext.createNamedQuery('remittancereport:getNonSerialReceiptDetailsByFund').setParameters(params ).resultList
 		return data;
 	}
 
@@ -140,6 +137,7 @@ class RemittanceReportService  {
 	def generateReportByCashTicket( entity ) {
 		def data = entity.clone()
 		data.cashticketsummaries = []
+		def ctamount = data.cashticketsummaries.amount.sum();
 		if( ctamount <= 0.0 ) throw new Exception('There are no cash ticket collections.')
 		data.amount = ( data.cashticketsummaries ? cashticketsummaries.amount.sum() : 0.0 )
 		data.amountInWords = numSvc.doubleToWords( data.amount )

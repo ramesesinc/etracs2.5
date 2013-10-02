@@ -1,48 +1,33 @@
 [getRCDCollectionType]
 select  
-	formno, min( receiptno) as fromseries, max(receiptno) as toseries, 
-	sum( case when crv.objid is null then cr.amount else 0.0 end ) as amount 
+  cr.formno,
+  case when ch.objid is null then max( cr.receiptno) else null end as fromseries, 
+  case when ch.objid is null then max(cr.receiptno) else null end as toseries, 
+  sum( case when crv.objid is null then cr.amount else 0.0 end ) as amount 
 from remittance_cashreceipt rc 
    inner join cashreceipt cr on rc.objid = cr.objid 
    left join cashreceipt_void crv on crv.receiptid = cr.objid 
+   left join cashticket ch on ch.objid = cr.formno 
 where remittanceid=$P{remittanceid}
 group by cr.controlid 
 
 
 [getRCDCollectionSummaries]
 select  
-	case 
-	    when a.objid in ( '51', '56') and aftype='serial' then CONCAT( 'AF#', a.objid, ': ', ri.fund_title ) 
-	    ELSE CONCAT( 'AF#',a.objid, ': ', a.description,' - ', ri.fund_title ) 
-	end as particulars, 
-	sum( case when crv.objid is null then cri.amount else 0.0 end ) as amount 
+  case 
+      when a.objid in ( '51', '56') and a.formtype='serial' then concat( 'AF#' , a.objid ,  ': ' , ri.fund_title ) 
+      ELSE concat( 'AF#' , a.objid + ': ' , a.title +' - ' , ri.fund_title ) 
+  end as particulars, 
+  sum( case when crv.objid is null then cri.amount else 0.0 end ) as amount 
 from remittance_cashreceipt rc 
    inner join cashreceipt cr on rc.objid = cr.objid 
    left join cashreceipt_void crv on crv.receiptid = cr.objid 
-   inner join af a on a.objid = cr.formno 
+   inner join collectionform a on a.objid = cr.formno 
    inner join cashreceiptitem cri on cri.receiptid = cr.objid
    inner join revenueitem ri on ri.objid = cri.item_objid 
 where remittanceid=$P{remittanceid}
 group by a.objid, ri.fund_objid 
 
-[getRCDRemittedForms]
-select 
-  afc.af, 
-  case when ad.qtybegin > 0 then concat(ad.qtybegin, '') else '' end as beginqty,
-  case when ad.qtybegin > 0 then concat(ad.startseries, '') else '' end as beginfrom,  
-  case when ad.qtybegin > 0 then concat(ad.endseries, '') else '' end as beginto,
-  case when ad.qtyissued > 0 then concat(ad.startseries, '')   else '' end as issuedfrom, 
-  case when ad.qtyissued > 0 then concat(ad.currentseries - 1, '') else '' end as issuedto, 
-  case when ad.qtyissued > 0 then concat(ad.qtyissued ,'') else '' end as issuedqty, 
-  case when ad.qtyreceived > 0 then concat(ad.startseries, '')   else '' end as receivedfrom, 
-  case when ad.qtyreceived > 0 then concat(ad.endseries, '') else '' end as receivedto, 
-  case when ad.qtyreceived > 0 then concat(ad.qtyreceived ,'') else '' end as receivedqty, 
-  case when ad.qtybalance = 50 then concat(ad.startseries,'')  else concat(ad.currentseries, '') end as endingfrom,
-  concat(ad.qtybalance,'') as endingqty,  concat(ad.endseries,'') as endingto 
-from remittance_af ra 
-   inner join afcontrol_detail ad on ad.objid = ra.objid 
-   inner join afcontrol afc on afc.objid = ad.controlid 
-where ra.remittanceid=$P{remittanceid}
 
 [getRCDOtherPayment]
 select  pc.particulars, pc.amount 
@@ -99,13 +84,31 @@ select
 from remittance_cashreceipt rem 
    inner join cashreceipt cr on cr.objid = rem.objid 
    left join cashreceipt_void cv on cv.receiptid = cr.objid 
-   inner join af a on a.objid = cr.formno 
+   inner join collectionform a on a.objid = cr.formno 
    inner join cashreceiptitem cri on cri.receiptid = cr.objid 
    inner join revenueitem ri on ri.objid = cri.item_objid
-where rem.remittanceid=$P{remittanceid}
-  and ri.fund_objid like $P{fundid}
-  and a.aftype='serial'
+where rem.remittanceid=$P{remittanceid} 
+  and ri.fund_objid like $P{fundid} 
+  and a.formtype='serial'
 ORDER BY afid, particulars, serialno 
+
+
+[getNonSerialReceiptDetailsByFund]
+select 
+  cr.formno as afid, null as serialno, cr.txndate, ri.fund_title as fundname, 
+  cr.paidby as payer, cri.item_title as particulars, 
+  case when cv.objid is null then cri.amount else 0.0 end as amount 
+from remittance_cashreceipt rem 
+   inner join cashreceipt cr on cr.objid = rem.objid 
+   left join cashreceipt_void cv on cv.receiptid = cr.objid 
+   inner join collectionform a on a.objid = cr.formno 
+   inner join cashreceiptitem cri on cri.receiptid = cr.objid 
+   inner join revenueitem ri on ri.objid = cri.item_objid
+where rem.remittanceid=$P{remittanceid} 
+  and ri.fund_objid like $P{fundid} 
+  and a.formtype='cashticket'
+ORDER BY afid, particulars, serialno 
+
 
 [getRevenueItemSummaryByFund]
 select 
@@ -135,12 +138,13 @@ ORDER BY acctcode
 
 [getSummaryOfCollectionSRE]
 select 
-  cr.formno as afid, cr.receiptno as serialno, 
+  cr.formno as afid, case when min(ch.objid) is null then cr.receiptno else null end as serialno, 
   case when crv.objid is null then cr.paidby else '*** VOIDED ***' end as paidby, 
   cr.txndate, ${columnsql} 
   case when crv.objid is null then 0 else 1 end as voided 
 from remittance_cashreceipt rem 
    inner join cashreceipt cr on cr.objid = rem.objid 
+   left join cashticket ch on ch.objid = cr.formno 
    left join cashreceipt_void crv on crv.receiptid = cr.objid 
    inner join cashreceiptitem cri on cri.receiptid = cr.objid 
    inner join revenueitem ri on ri.objid = cri.item_objid 
@@ -164,12 +168,13 @@ ORDER BY acctcode
 
 [getSummaryOfCollectionNGAS]
 select 
-  cr.formno as afid, cr.receiptno as serialno, 
+  cr.formno as afid, case when min(ch.objid) is null then cr.receiptno else null end as serialno, 
   case when crv.objid is null then cr.paidby else '*** VOIDED ***' end as paidby, 
   cr.txndate, ${columnsql}
   case when crv.objid is null then 0 else 1 end as voided 
 from remittance_cashreceipt rem 
    inner join cashreceipt cr on cr.objid = rem.objid 
+   left join cashticket ch on ch.objid = cr.formno 
    left join cashreceipt_void crv on crv.receiptid = cr.objid 
    inner join cashreceiptitem cri on cri.receiptid = cr.objid 
    inner join revenueitem ri on ri.objid = cri.item_objid 

@@ -1,18 +1,46 @@
-[findByCollector]
-SELECT 
-   cc.objid AS issuanceid,	
-   cc.controlid,	
+[findByCollectorAF]
+SELECT cc.*
+FROM cashticket_inventory ci
+INNER JOIN cashticket_control cc ON cc.controlid=ci.objid
+WHERE ci.respcenter_objid=$P{respcenterid} AND ci.afid=$P{afid}
+
+[findOwnCashTicket]
+SELECT * FROM
+(SELECT 
+   cc.objid AS issuanceid, 
+   cc.objid,
+   cc.controlid,  
    ac.afid AS formno,
    cc.qtybalance,
    ct.denomination,
-   cc.qtybalance * ct.denomination AS amtbalance
+   cc.qtybalance * ct.denomination AS amtbalance,
+   CASE WHEN  cc.assignee_objid IS NULL THEN ac.respcenter_objid ELSE cc.assignee_objid END AS ownerid
 FROM cashticket_control cc 
 INNER JOIN cashticket_inventory ac ON cc.controlid=ac.objid
-INNER JOIN cashticket ct ON ct.objid=ac.afid 
-WHERE ac.afid =$P{afid} 
-AND ac.respcenter_objid=$P{collectorid}
-AND cc.qtybalance > 0
+INNER JOIN cashticket ct ON ct.objid=ac.afid
+WHERE ac.afid = $P{afid}
+AND cc.qtybalance > 0) a
+WHERE a.ownerid = $P{ownerid}
 
+[findIssuancesForCollector]
+SELECT COUNT(*) AS count
+FROM cashticket_control cc
+INNER JOIN cashticket_inventory ac ON cc.controlid=ac.objid
+WHERE ac.afid =  $P{afid}
+AND cc.assignee_objid = $P{assigneeid}
+
+[getSubcollectorIssuances]
+SELECT  
+   objid,
+   controlid,
+   assignee_objid AS subcollector_objid,
+   assignee_name AS subcollector_name,
+   qtyin,
+   qtyissued,
+   qtybalance
+FROM cashticket_control
+WHERE controlid = $P{controlid}
+AND NOT(assignee_objid IS NULL)
 
 [findAvailableForCollector]
 SELECT a.* FROM 
@@ -44,3 +72,15 @@ UPDATE cashticket_control
 SET qtyissued = qtyissued + $P{qtyissued},
 qtybalance = qtybalance - $P{qtyissued}
 WHERE objid = $P{issuanceid}
+
+[updateQtyIn]
+UPDATE cashticket_control 
+SET qtyin = qtyin+$P{qty}, 
+    qtybalance = qtybalance+$P{qty}
+WHERE objid = $P{objid}
+
+[updateQtyIssued]
+UPDATE cashticket_control 
+SET qtyissued = qtyissued+$P{qty}, 
+    qtybalance = qtybalance-$P{qty}
+WHERE objid = $P{objid}

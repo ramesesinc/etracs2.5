@@ -1,0 +1,15 @@
+import com.rameses.annotations.*;
+import com.rameses.util.*;
+import java.rmi.server.*;
+import com.rameses.common.*
+
+class CollectionFormService {
+	
+	@PersistenceContext("main")
+	def em
+
+	@ProxyMethod
+	public def getList() {
+		return em.sqlContext.createNamedQuery("collectionform:getList").resultList;
+	} 
+}

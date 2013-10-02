@@ -16,8 +16,8 @@ where parentid=$P{bankdepositid}
 [getCollectionSummaryByAFAndFund]
 select  
   case 
-      when a.objid in ( '51', '56') and aftype='serial' then CONCAT( 'AF#', a.objid, ': ', lcf.fund_title ) 
-      ELSE CONCAT( 'AF#',a.objid, ': ', a.description,' - ', lcf.fund_title ) 
+      when a.objid in ( '51', '56') and a.formtype='serial' then CONCAT( 'AF#', a.objid, ': ', lcf.fund_title ) 
+      ELSE CONCAT( 'AF#',a.objid, ': ', a.title,' - ', lcf.fund_title ) 
   end as particulars, 
   sum( case when crv.objid is null then cri.amount else 0.0 end ) as amount 
 from bankdeposit_liquidation bl  
@@ -26,7 +26,7 @@ from bankdeposit_liquidation bl
    inner join remittance_cashreceipt rc on rc.remittanceid = lr.objid 
    inner join cashreceipt cr on rc.objid = cr.objid 
    left join cashreceipt_void crv on crv.receiptid = cr.objid 
-   inner join af a on a.objid = cr.formno 
+   inner join collectionform a on a.objid = cr.formno 
    inner join cashreceiptitem cri on cri.receiptid = cr.objid 
 where bl.bankdepositid=$P{bankdepositid}  and lcf.fund_objid = $P{fundname}
 group by a.objid, lcf.fund_objid 
@@ -54,29 +54,58 @@ from bankdeposit bd
 where bd.objid=$P{bankdepositid} and ba.fund_objid=$P{fundname}
   and be.totalnoncash > 0.0 
 
-[getRemittedForms]
-select 
-  afc.af, 
-  case when ad.qtybegin > 0 then concat(ad.qtybegin, '') else '' end as beginqty,
-  case when ad.qtybegin > 0 then concat(ad.startseries, '') else '' end as beginfrom,  
-  case when ad.qtybegin > 0 then concat(ad.endseries, '') else '' end as beginto,
-  case when ad.qtyissued > 0 then concat(ad.startseries, '')   else '' end as issuedfrom, 
-  case when ad.qtyissued > 0 then concat(ad.currentseries - 1, '') else '' end as issuedto, 
-  case when ad.qtyissued > 0 then concat(ad.qtyissued ,'') else '' end as issuedqty, 
-  case when ad.qtyreceived > 0 then concat(ad.startseries, '')   else '' end as receivedfrom, 
-  case when ad.qtyreceived > 0 then concat(ad.endseries, '') else '' end as receivedto, 
-  case when ad.qtyreceived > 0 then concat(ad.qtyreceived ,'') else '' end as receivedqty, 
-  case when ad.qtybalance = 50 then concat(ad.startseries,'')  else concat(ad.currentseries, '') end as endingfrom,
-  concat(ad.qtybalance,'') as endingqty,  concat(ad.endseries,'') as endingto 
-from bankdeposit_liquidation bl  
-   inner join liquidation_cashier_fund lcf on lcf.objid = bl.objid
-   inner join liquidation_remittance lr on lr.liquidationid = lcf.liquidationid 
-   inner join remittance_af ra on ra.remittanceid = lr.objid 
-   inner join afcontrol_detail ad on ad.objid = ra.objid 
-   inner join afcontrol afc on afc.objid = ad.controlid 
+[getSerialRemittedForms]
+SELECT a.*, 
+    (a.receivedendseries-a.receivedstartseries+1) AS qtyreceived,
+    (a.beginendseries-a.beginstartseries+1) AS qtybegin,
+    (a.issuedendseries-a.issuedstartseries+1) AS qtyissued,
+    (a.endingendseries-a.endingstartseries+1) AS qtyending
+FROM
+(SELECT 
+   ai.afid AS formno,   
+   MIN( ad.receivedstartseries ) AS receivedstartseries,
+   MAX( ad.receivedendseries ) AS receivedendseries,
+   MAX( ad.beginstartseries ) AS beginstartseries,
+   MAX( ad.beginendseries ) AS beginendseries,
+   MAX( ad.issuedstartseries ) AS issuedstartseries,
+   MAX( ad.issuedendseries ) AS issuedendseries,
+   MAX( ad.endingstartseries ) AS endingstartseries,
+   MAX( ad.endingendseries ) AS endingendseries
+FROM afserial_inventory_detail ad 
+INNER JOIN afserial_inventory ai ON ad.controlid=ai.objid
+INNER join liquidation_remittance lr on lr.objid=ad.remittanceid 
+INNER JOIN liquidation_cashier_fund lcf on lcf.liquidationid = lr.liquidationid
+INNER JOIN bankdeposit_liquidation bl on bl.objid = lcf.objid 
 where bl.bankdepositid=$P{bankdepositid} 
      and lcf.fund_objid=$P{fundname}
      and afc.af=$P{afid}
+GROUP BY ai.afid, ad.controlid) a    
+
+[getNonSerialRemittedForms]
+SELECT a.*, 
+    a.qtyreceived+a.qtybegin-a.qtyissued-a.qtycancelled AS qtyending,
+    a.receivedamt+a.beginamt-a.issuedamt-a.cancelledamt AS endingamt
+FROM
+(SELECT 
+   ai.afid AS formno,   
+   SUM( ad.qtyreceived ) AS qtyreceived,
+   sum( ad.qtyreceived * ch.denomination) as receivedamt,
+   SUM( ad.qtybegin ) AS qtybegin,
+   sum( ad.qtybegin * ch.denomination) as beginamt,
+   SUM( ad.qtyissued ) AS qtyissued,
+   sum( ad.qtyissued * ch.denomination) as issuedamt,
+   SUM( ad.qtycancelled ) AS qtycancelled,  
+   sum( ad.qtycancelled * ch.denomination) as cancelledamt
+FROM cashticket_inventory_detail ad 
+INNER JOIN cashticket_inventory ai ON ad.controlid=ai.objid 
+INNER join cashticket ch on ch.objid = ai.afid 
+INNER join liquidation_remittance lr on lr.objid=ad.remittanceid 
+INNER JOIN liquidation_cashier_fund lcf on lcf.liquidationid = lr.liquidationid
+INNER JOIN bankdeposit_liquidation bl on bl.objid = lcf.objid 
+where bl.bankdepositid=$P{bankdepositid} 
+     and lcf.fund_objid=$P{fundname}
+     and afc.af=$P{afid}
+GROUP BY ai.afid, ad.controlid) a
 
 [getDepositAmount]
 select 
