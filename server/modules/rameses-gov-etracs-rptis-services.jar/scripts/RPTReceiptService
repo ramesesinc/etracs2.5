@@ -74,6 +74,22 @@ class RPTReceiptService
 		}
 	}
 
+
+	@ProxyMethod
+	public def getSummarizedCashReceiptItems( receipt ) {
+		def ledgerids = receipt.rptitems.collect{ "'" + it.rptledgerid + "'"}.join(',')
+		def filter = "rl.objid  IN (${ledgerids})"
+		def items = []
+		em.getSummarizedCashReceiptItems([filter:filter]).each{
+			it.objid = 'CI' + new java.rmi.server.UID()
+			it.receiptid = receipt.objid
+			items += it
+		}
+		return items
+	}
+
+
+
 	@ProxyMethod
 	public void voidReceipt( receipt ) {
 		def params = [
@@ -91,6 +107,14 @@ class RPTReceiptService
 			em.updateLedgerYearQtrPaid(it)
 		}
 		em.voidReceiptItems(params)
+	}
+
+	@ProxyMethod
+	public def open( receipt ) {
+		def rct = em.read(receipt)	
+		if (rct){
+			receipt.putAll(rct)
+		}
 	}
 
 

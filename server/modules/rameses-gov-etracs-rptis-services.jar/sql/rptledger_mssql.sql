@@ -127,3 +127,14 @@ GROUP BY cr.objid, cr.receiptno, cr.txndate, cr.txnmode, cr.paidby
 
 [approveLedgerFaas]
 UPDATE rptledgerfaas SET state = 'APPROVED' WHERE objid = $P{objid}
+
+
+
+[updateLedgerItemAccountInfo]
+UPDATE rptledgeritem SET 
+	basicacct_objid = $P{basicacctid},
+	basicintacct_objid = CASE WHEN basicintacct_objid IS NULL THEN $P{basicintacctid} ELSE basicintacct_objid END,
+	sefacct_objid = $P{sefacctid},
+	sefintacct_objid = CASE WHEN sefintacct_objid IS NULL THEN $P{sefintacctid} ELSE sefintacct_objid END,
+	firecodeacct_objid = CASE WHEN firecodeacct_objid IS NULL THEN $P{firecodeacctid} ELSE firecodeacct_objid END
+WHERE objid = $P{rptledgeritemid}	

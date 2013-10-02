@@ -10,9 +10,21 @@ class RPTReceiptInterceptor
 	@Service('RPTReceiptService')
 	def svc 
 
-	@After(pattern="CashReceiptService.post", eval="#{result.formno=='56'}") 
+	@After(pattern="CashReceiptService.open", eval="#{result.formno=='56'}") 
+	public void interceptOpenReceipt( evt ) {
+		def receipt = evt.result
+		svc.open(receipt)
+	}
+
+
+	@Before(pattern="CashReceiptService.post", eval="#{args[0].formno=='56' && args[0].txntype == 'rptonline'}") 
+	public void interceptBeforePostReceipt( evt ) {
+		def receipt = evt.args[0]
+		receipt.items = svc.getSummarizedCashReceiptItems(receipt); 
+	}
+
+	@After(pattern="CashReceiptService.post", eval="#{result.formno=='56' && args[0].txntype == 'rptonline'}") 
 	public void interceptPostReceipt( evt ) {
-		println 'Posting RPT Receipt...'
 		def receipt = evt.result
 		svc.createReceipt(receipt)
 
@@ -25,10 +37,9 @@ class RPTReceiptInterceptor
 		receipt.rptitems = null
 	}
 
-	@After(pattern="CashReceiptVoidService.post", eval="#{result.formno=='56'}") 
+	@After(pattern="CashReceiptVoidService.post", eval="#{result.receipt.formno=='56' && args[0].receipt.txntype == 'rptonline'}") 
 	public void interceptVoidReceipt( evt ) {
-		println 'Voiding RPT Receipt...'
-		svc.voidReceipt(evt.result)
+		svc.voidReceipt(evt.result.receipt)
 	}
 
 }

@@ -381,3 +381,159 @@ UPDATE cashreceiptitem_rpt SET
 	rptledgeritemid = null, 
 	rptledgeritemqtrlyid = null 
 WHERE rptreceiptid = $P{rptreceiptid}	
+
+
+
+[getSummarizedCashReceiptItems]
+SELECT 
+	t.item_objid, t.item_code, t.item_title,
+	t.item_fund_objid, t.item_fund_code, t.item_fund_title,
+	SUM(t.amount) AS amount
+FROM (
+	SELECT
+		rli.basicacct_objid AS item_objid,
+		rb.code AS item_code, 
+		rb.title AS item_title,
+		rb.fund_objid AS item_fund_objid, rb.fund_code AS item_fund_code, rb.fund_title AS item_fund_title,
+		rli.basic - rli.basicpaid - rli.basicamnesty AS amount
+	FROM rptledger rl
+		INNER JOIN rptledgeritem rli ON rl.objid = rli.rptledgerid
+		INNER JOIN revenueitem rb ON rli.basicacct_objid = rb.objid 
+	WHERE ${filter}
+	  AND rli.forpayment = 1
+	  
+	UNION ALL
+
+	SELECT
+		rli.basicintacct_objid AS item_objid,
+		rb.code AS item_code,
+		rb.title AS item_title,
+		rb.fund_objid AS item_fund_objid, rb.fund_code AS item_fund_code, rb.fund_title AS item_fund_title,
+		rli.basicint - rli.basicintpaid - rli.basicintamnesty AS amount
+	FROM rptledger rl
+		INNER JOIN rptledgeritem rli ON rl.objid = rli.rptledgerid
+		INNER JOIN revenueitem rb ON rli.basicintacct_objid = rb.objid 
+	WHERE ${filter}
+	  AND rli.forpayment = 1
+	  
+	UNION ALL
+	
+	SELECT
+		rli.sefacct_objid AS item_objid,
+		rb.code AS item_code,
+		rb.title AS item_title,
+		rb.fund_objid AS item_fund_objid, rb.fund_code AS item_fund_code, rb.fund_title AS item_fund_title,
+		rli.sef - rli.sefpaid - rli.sefamnesty AS amount
+	FROM rptledger rl
+		INNER JOIN rptledgeritem rli ON rl.objid = rli.rptledgerid
+		INNER JOIN revenueitem rb ON rli.sefacct_objid = rb.objid 
+	WHERE ${filter}
+	  AND rli.forpayment = 1
+	  
+	UNION ALL
+
+	SELECT
+		rli.sefintacct_objid AS item_objid,
+		rb.code AS item_code,
+		rb.title AS item_title,
+		rb.fund_objid AS item_fund_objid, rb.fund_code AS item_fund_code, rb.fund_title AS item_fund_title,
+		rli.sefint - rli.sefintpaid - rli.sefintamnesty AS amount
+	FROM rptledger rl
+		INNER JOIN rptledgeritem rli ON rl.objid = rli.rptledgerid
+		INNER JOIN revenueitem rb ON rli.sefintacct_objid = rb.objid 
+	WHERE ${filter}
+	  AND rli.forpayment = 1	
+	  
+	UNION ALL
+	
+	SELECT
+		rli.firecodeacct_objid AS item_objid,
+		rb.code AS item_code,
+		rb.title AS item_title,
+		rb.fund_objid AS item_fund_objid, rb.fund_code AS item_fund_code, rb.fund_title AS item_fund_title,
+		rli.firecode AS amount
+	FROM rptledger rl
+		INNER JOIN rptledgeritem rli ON rl.objid = rli.rptledgerid
+		INNER JOIN revenueitem rb ON rli.firecodeacct_objid = rb.objid 
+	WHERE ${filter}
+	  AND rli.forpayment = 1	
+	  
+	UNION ALL
+	
+	SELECT
+		rli.basicacct_objid AS item_objid,
+		rb.code AS item_code,
+		rb.title AS item_title,
+		rb.fund_objid AS item_fund_objid, rb.fund_code AS item_fund_code, rb.fund_title AS item_fund_title,
+		rliq.basic - rliq.basicpaid - rliq.basicamnesty AS amount
+	FROM rptledger rl
+		INNER JOIN rptledgeritem rli ON rl.objid = rli.rptledgerid
+		INNER JOIN rptledgeritem_qtrly rliq ON rli.objid = rliq.rptledgeritemid
+		INNER JOIN revenueitem rb ON rli.basicacct_objid = rb.objid 
+	WHERE ${filter}
+	  AND rliq.forpayment = 1
+	  
+	UNION ALL
+
+	SELECT
+		rli.basicintacct_objid AS item_objid,
+		rb.code AS item_code,
+		rb.title AS item_title,
+		rb.fund_objid AS item_fund_objid, rb.fund_code AS item_fund_code, rb.fund_title AS item_fund_title,
+		rliq.basicint - rliq.basicintpaid - rliq.basicintamnesty AS amount
+	FROM rptledger rl
+		INNER JOIN rptledgeritem rli ON rl.objid = rli.rptledgerid
+		INNER JOIN rptledgeritem_qtrly rliq ON rli.objid = rliq.rptledgeritemid
+		INNER JOIN revenueitem rb ON rli.basicintacct_objid = rb.objid 
+	WHERE ${filter}
+	  AND rliq.forpayment = 1
+	  
+	UNION ALL
+	
+	SELECT
+		rli.sefacct_objid AS item_objid,
+		rb.code AS item_code,
+		rb.title AS item_title,
+		rb.fund_objid AS item_fund_objid, rb.fund_code AS item_fund_code, rb.fund_title AS item_fund_title,
+		rliq.sef - rliq.sefpaid - rliq.sefamnesty AS amount
+	FROM rptledger rl
+		INNER JOIN rptledgeritem rli ON rl.objid = rli.rptledgerid
+		INNER JOIN rptledgeritem_qtrly rliq ON rli.objid = rliq.rptledgeritemid
+		INNER JOIN revenueitem rb ON rli.sefacct_objid = rb.objid 
+	WHERE ${filter}
+	  AND rliq.forpayment = 1
+	  
+	UNION ALL
+
+	SELECT
+		rli.sefintacct_objid AS item_objid,
+		rb.code AS item_code,
+		rb.title AS item_title,
+		rb.fund_objid AS item_fund_objid, rb.fund_code AS item_fund_code, rb.fund_title AS item_fund_title,
+		rliq.sefint - rliq.sefintpaid - rliq.sefintamnesty AS amount
+	FROM rptledger rl
+		INNER JOIN rptledgeritem rli ON rl.objid = rli.rptledgerid
+		INNER JOIN rptledgeritem_qtrly rliq ON rli.objid = rliq.rptledgeritemid
+		INNER JOIN revenueitem rb ON rli.sefintacct_objid = rb.objid 
+	WHERE ${filter}
+	  AND rliq.forpayment = 1
+	  
+	UNION ALL
+	
+	SELECT
+		rli.firecodeacct_objid AS item_objid,
+		rb.code AS item_code,
+		rb.title AS item_title,
+		rb.fund_objid AS item_fund_objid, rb.fund_code AS item_fund_code, rb.fund_title AS item_fund_title,
+		rliq.firecode AS amount
+	FROM rptledger rl
+		INNER JOIN rptledgeritem rli ON rl.objid = rli.rptledgerid
+		INNER JOIN rptledgeritem_qtrly rliq ON rli.objid = rliq.rptledgeritemid
+		INNER JOIN revenueitem rb ON rli.firecodeacct_objid = rb.objid 
+	WHERE ${filter}
+	  AND rliq.forpayment = 1	
+  
+) t	  
+  
+GROUP BY t.item_objid, t.item_code, t.item_title, t.item_fund_objid, t.item_fund_code, t.item_fund_title
+	

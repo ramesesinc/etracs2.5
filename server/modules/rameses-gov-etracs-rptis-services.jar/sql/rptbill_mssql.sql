@@ -37,6 +37,7 @@ WHERE ${filters}
 SELECT 
 	rli.objid,
 	rli.rptledgerid,
+	rli.objid AS rptledgeritemid,
 	rli.assessedvalue, 
 	rli.assessedvalue AS av,
 	rli.qtrly,
@@ -65,6 +66,7 @@ UNION ALL
 SELECT 
 	rliq.objid,
 	rliq.rptledgerid,
+	rliq.rptledgeritemid,
 	rli.assessedvalue, 
 	rliq.qtrlyav AS av,
 	rli.qtrly,

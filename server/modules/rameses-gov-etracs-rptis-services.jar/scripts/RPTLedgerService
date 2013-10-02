@@ -109,6 +109,19 @@ class RPTLedgerService
     }
 
     @ProxyMethod
+    public def updateLedgerItemAccountInfo( item ) {
+        def params =[
+            rptledgeritemid     : item.rptledgeritemid,
+            basicacctid         : item.basicacct.objid,
+            basicintacctid      : item.basicintacct.objid,
+            sefacctid           : item.sefacct.objid,
+            sefintacctid        : item.sefintacct.objid,
+            firecodeacctid      : item.firecodeacct.objid,
+        ]
+        em.updateLedgerItemAccountInfo(params)
+    }
+
+    @ProxyMethod
     public def approveLedger( ledger) {
         ledger = openLedger(ledger)
         if (ledger.state == STATE_APPROVED )

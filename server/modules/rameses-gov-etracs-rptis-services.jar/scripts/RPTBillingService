@@ -508,6 +508,7 @@ public class RPTBillingService
 					item.firecodeacct = [objid:ledger.firecodeacctid]
 					item.revtype = ledger.revtype 
 					if (item.qtrly) {
+						ledgerSvc.updateLedgerItemAccountInfo(item)
 						ledgerSvc.updateLedgerItemQuarterly(item)
 					}
 					else{
