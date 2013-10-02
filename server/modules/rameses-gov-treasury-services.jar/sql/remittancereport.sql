@@ -15,8 +15,8 @@ group by cr.controlid
 [getRCDCollectionSummaries]
 select  
   case 
-      when a.objid in ( '51', '56') and a.formtype='serial' then ( 'AF#' + a.objid +  ': ' + ri.fund_title ) 
-      ELSE ( 'AF#' + a.objid + ': ' + a.title +' - ' + ri.fund_title ) 
+      when a.objid in ( '51', '56') and a.formtype='serial' then concat( 'AF#' , a.objid ,  ': ' , ri.fund_title ) 
+      ELSE concat( 'AF#' , a.objid + ': ' , a.title +' - ' , ri.fund_title ) 
   end as particulars, 
   sum( case when crv.objid is null then cri.amount else 0.0 end ) as amount 
 from remittance_cashreceipt rc 
