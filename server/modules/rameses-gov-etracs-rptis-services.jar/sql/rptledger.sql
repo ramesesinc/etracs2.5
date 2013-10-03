@@ -14,9 +14,8 @@ FROM faas f
 	INNER JOIN realproperty rp ON rpu.realpropertyid = rp.objid
 	INNER JOIN barangay b ON rp.barangayid = b.objid 
 	INNER JOIN rptledger rl ON rl.faasid = f.objid 
-WHERE 1=1 	
+WHERE 1=1
 ${filters}	
-ORDER BY rl.state, f.tdno 
 
 
 [findById]

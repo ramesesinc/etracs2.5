@@ -1,5 +1,6 @@
 "ledger" [mode == 'create']{
     visible:true;
+    requestFocus:true;
 }
 
 "ledger" [payoption != 'byledger']{

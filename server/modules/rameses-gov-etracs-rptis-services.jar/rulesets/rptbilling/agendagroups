@@ -1,3 +1,5 @@
 TAX=Tax Computation
 PENALTY=Penalty Computation
 DISCOUNT=Discount Computation
+AMNESTY=Amnesty Computation
+SUMMARY=Summary

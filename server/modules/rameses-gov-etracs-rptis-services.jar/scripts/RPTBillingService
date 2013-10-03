@@ -273,7 +273,7 @@ public class RPTBillingService
 	}
 
 
-	def phases = ['TAX', 'PENALTY', 'DISCOUNT']
+	def phases = ['TAX', 'PENALTY', 'DISCOUNT', 'AMNESTY', 'SUMMARY']
 
 	@ProxyMethod
 	public void recalcBillItems(bill){
@@ -512,7 +512,7 @@ public class RPTBillingService
 					item.sefacct = [objid:ledger.sefacctid]
 					item.sefintacct = [objid:ledger.sefintacctid]
 					item.firecodeacct = [objid:ledger.firecodeacctid]
-					item.revtype = ledger.revtype 
+					item.revtype = (ledger.revtype ? ledger.revtype : item.revtype)
 					if (item.qtrly) {
 						ledgerSvc.updateLedgerItemAccountInfo(item)
 						ledgerSvc.updateLedgerItemQuarterly(item)

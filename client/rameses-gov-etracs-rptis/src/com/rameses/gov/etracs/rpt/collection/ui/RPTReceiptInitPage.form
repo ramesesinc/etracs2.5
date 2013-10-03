@@ -37,6 +37,7 @@
       <SubComponents>
         <Component class="com.rameses.rcp.control.XRadio" name="xRadio1">
           <Properties>
+            <Property name="mnemonic" type="int" value="97"/>
             <Property name="caption" type="java.lang.String" value="Pay all properties"/>
             <Property name="captionMnemonic" type="char" value="a"/>
             <Property name="captionWidth" type="int" value="200"/>
@@ -57,6 +58,7 @@
         </Component>
         <Component class="com.rameses.rcp.control.XRadio" name="xRadio2">
           <Properties>
+            <Property name="mnemonic" type="int" value="108"/>
             <Property name="caption" type="java.lang.String" value="Pay by ledger"/>
             <Property name="captionMnemonic" type="char" value="l"/>
             <Property name="captionWidth" type="int" value="200"/>
@@ -92,6 +94,7 @@
           <SubComponents>
             <Component class="com.rameses.rcp.control.XRadio" name="xRadio3">
               <Properties>
+                <Property name="mnemonic" type="int" value="118"/>
                 <Property name="caption" type="java.lang.String" value="Advance Payment"/>
                 <Property name="captionMnemonic" type="char" value="v"/>
                 <Property name="captionWidth" type="int" value="200"/>

@@ -20,13 +20,13 @@ class RPTLedgerLookupService
         params.searchtext = (params.searchtext ? params.searchtext : '') + '%'
 
         def filters = [
-            'WHERE f.tdno = $P{tdno} AND rl.state = $P{state}',
-            'WHERE f.owner_name LIKE $P{searchtext} AND rl.state = $P{state}',
-            'WHERE rpu.fullpin LIKE $P{searchtext} AND rl.state = $P{state}',
-            'WHERE rp.cadastrallotno LIKE $P{searchtext} AND rl.state = $P{state}',
-            'WHERE rp.surveyno LIKE $P{searchtext} AND rl.state = $P{state}',
-            'WHERE f.prevtdno = $P{prevtdno} AND rl.state = $P{state}',
-            'WHERE f.prevowner LIKE $P{searchtext} AND rl.state = $P{state}',
+            ' AND f.tdno = $P{tdno} AND rl.state = $P{state}',
+            ' AND f.owner_name LIKE $P{searchtext} AND rl.state = $P{state}',
+            ' AND rpu.fullpin LIKE $P{searchtext} AND rl.state = $P{state}',
+            ' AND rp.cadastrallotno LIKE $P{searchtext} AND rl.state = $P{state}',
+            ' AND rp.surveyno LIKE $P{searchtext} AND rl.state = $P{state}',
+            ' AND f.prevtdno = $P{prevtdno} AND rl.state = $P{state}',
+            ' AND f.prevowner LIKE $P{searchtext} AND rl.state = $P{state}',
         ]
         return util.getListFromQuery('rptledger:getList', filters, params, 'rl.objid')
     }
