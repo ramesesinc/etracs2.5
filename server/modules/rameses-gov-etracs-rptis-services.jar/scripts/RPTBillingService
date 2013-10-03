@@ -30,7 +30,8 @@ public class RPTBillingService
 
 	def RULESET = 'rptbilling'
 	def FACT_PACKAGE = 'rptbilling.'
-
+	def MAX_ADVANCE_YEARS = 3 
+	
 
 	@ProxyMethod
 	public def initBill(){
@@ -74,6 +75,11 @@ public class RPTBillingService
 	public def generateBill( bill ) {
 		util.required('Bill To Year', bill.billtoyear)
 		util.required('Bill To Qtr', bill.billtoqtr)
+
+		def maxbilltoyear = dtSvc.serverYear + MAX_ADVANCE_YEARS
+		if (bill.billtoyear > maxbilltoyear){
+			throw new Exception('Bill To Year must not exceed year ' +  maxbilltoyear + '.')
+		}
 
 		if (bill.billdate == null) 
 			bill.billdate = dtSvc.serverDate
