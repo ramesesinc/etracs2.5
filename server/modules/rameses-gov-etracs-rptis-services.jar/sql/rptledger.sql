@@ -19,7 +19,7 @@ ${filters}
 ORDER BY rl.state, f.tdno 
 
 
-[openLedger]
+[findById]
 SELECT 
 	rl.*,
 	f.tdno, f.txntype_objid,
@@ -39,11 +39,11 @@ WHERE rl.objid = $P{objid}
 ORDER BY rl.state, f.tdno 
 
 	
-[getLedgerByFaasId]
+[findApprovedLedgerByFaasId]
 SELECT * FROM rptledger WHERE faasid = $P{faasid} AND state = 'APPROVED' 
 
 
-[getLedgerByFaas]	
+[findLedgerByFaasId]	
 SELECT * FROM rptledger WHERE faasid = $P{faasid} 
 
 
@@ -57,9 +57,9 @@ FROM rptledgerfaas rlf
 	INNER JOIN propertyclassification pc ON rlf.classification_objid = pc.objid 
 	LEFT JOIN propertyclassification pc1 ON rlf.actualuse_objid = pc1.objid 
 WHERE rlf.rptledgerid = $P{rptledgerid} 
-ORDER BY rlf.fromyear DESC 
+ORDER BY rlf.fromyear  
 
-[getLedgerFaasByFaasId]
+[findLedgerFaasByFaasId]
 SELECT rlf.*,
 	pc.code AS classification_code,
 	pc.name AS classification_name,
@@ -73,11 +73,7 @@ WHERE rlf.rptledgerid = $P{rptledgerid}
 ORDER BY rlf.fromyear DESC 
 
 [getLedgerItems]
-SELECT 
-	rli.objid, rli.year, rli.qtr,
-	rli.basic, rli.basicint, rli.basicdisc,	rli.basicpaid,  
-	rli.sef, rli.sefpaid, rli.sefint, rli.sefdisc, 
-	rli.assessedvalue, rli.qtrlyav,
+SELECT rli.*,
 	rlf.tdno 
 FROM rptledgeritem rli
 	INNER JOIN rptledgerfaas rlf ON rli.rptledgerfaasid = rlf.objid 
@@ -128,3 +124,17 @@ FROM cashreceipt cr
 WHERE 	cri.rptledgerid = $P{rptledgerid}
  AND v.objid IS NULL 
 GROUP BY cr.objid  	
+
+
+[approveLedgerFaas]
+UPDATE rptledgerfaas SET state = 'APPROVED' WHERE objid = $P{objid}
+
+
+[updateLedgerItemAccountInfo]
+UPDATE rptledgeritem SET 
+	basicacct_objid = $P{basicacctid},
+	basicintacct_objid = CASE WHEN basicintacct_objid IS NULL THEN $P{basicintacctid} ELSE basicintacct_objid END,
+	sefacct_objid = $P{sefacctid},
+	sefintacct_objid = CASE WHEN sefintacct_objid IS NULL THEN $P{sefintacctid} ELSE sefintacct_objid END,
+	firecodeacct_objid = CASE WHEN firecodeacct_objid IS NULL THEN $P{firecodeacctid} ELSE firecodeacct_objid END
+WHERE objid = $P{rptledgeritemid}	

@@ -9,7 +9,7 @@ import com.rameses.osiris2.reports.*;
 import com.rameses.gov.etracs.rpt.common.*;
 
 
-class RPTReceiptController extends com.rameses.enterprise.treasury.controllers.AbstractCashReceipt
+class RPTReceiptController extends com.rameses.enterprise.treasury.cashreceipt.AbstractCashReceipt
 {
     @Binding
     def binding;
@@ -17,30 +17,34 @@ class RPTReceiptController extends com.rameses.enterprise.treasury.controllers.A
     @Service('RPTReceiptService')
     def svc;
     
+    @Service('RPTBillingService')
+    def billSvc;
+    
     @Service('ReportParameterService')
     def paramSvc 
     
-    @Service('RPTBillingService')
-    def billSvc
+    def MODE_INIT           = 'init';
+    def MODE_CREATE         = 'create';
+    def MODE_READ           = 'read';
     
-    def MODE_INIT = 'init';
-    def MODE_CREATE = 'create';
-    def MODE_READ   = 'read';
-    
-    def PAY_OPTION_ALL = 'all';
+    def PAY_OPTION_ALL      = 'all';
     def PAY_OPTION_BYLEDGER = 'byledger';
+    def PAY_OPTION_ADVANCE  = 'advance';
     
     def mode;
     def payoption;
     def bill;
     def advanceyear;
+    def openledgers;
+    def itemsforpayment;
             
     
     
     void init(){
         super.init();
-        clearAllPayments();
+        entity.txntype = 'rptonline';
         entity.amount = 0.0;
+        clearAllPayments();
         bill = billSvc.initBill();
         mode = MODE_INIT;
         payoption = PAY_OPTION_ALL;
@@ -56,18 +60,14 @@ class RPTReceiptController extends com.rameses.enterprise.treasury.controllers.A
     def process(){
         RPTUtil.required("Payer", entity.payer);
         bill.taxpayer = entity.payer;
-        if (bill.advancepayment){
+        if (payoption == PAY_OPTION_ADVANCE){
             bill.billtoyear = advanceyear;
         }
         
-        //bill.putAll(bill.taxpayer)
-        def openledgercount = billSvc.getOpenLedgerCount(bill)
-        
-        payoption = PAY_OPTION_BYLEDGER;
-        if (openledgercount <= 5){
-            payoption = PAY_OPTION_ALL;
-            generateBill();
-        }            
+        if (payoption == PAY_OPTION_ALL){
+            bill.ledgerids.clear();
+            loadItems();
+        }
             
         mode = MODE_CREATE;
         return 'main'
@@ -82,73 +82,19 @@ class RPTReceiptController extends com.rameses.enterprise.treasury.controllers.A
                     throw new Exception('Only approve ledger is allowed.')
                 if (bill.ledgers.find{it.objid == ledger.objid})
                     throw new Exception('Ledger has already been added.')
-                
-                def xbill = billSvc.generateBillByLedgerId(ledger.objid);
-                bill.ledgers.addAll( xbill.ledgers )
-                listHandler.load();
+                loadItemByLedger(ledger.objid)
             },
         ])
     }
     
     public void validateBeforePost() {
-        buildRptItems();
-        createReceiptItems();
-    }
-    
-    void createReceiptItems(receipt){
-        entity.items = []
-        entity.rptitems.each{ item ->
-            entity.items += createItem(entity.objid, item.objid, item.basicacct, item.basic - item.basicdisc, buildRemarks(item))
-            if (item.basicint > 0.0){
-                    entity.items += createItem(entity.objid, item.objid, item.basicintacct, item.basicint, buildRemarks(item))
-            }
-            entity.items += createItem(entity.objid, item.objid, item.sefacct, item.sef - item.sefdisc, buildRemarks(item))
-            if (item.sefint > 0.0){
-                    entity.items += createItem(entity.objid, item.objid, item.sefintacct, item.sefint, buildRemarks(item))
-            }
-        }
-    }
-    
-    def createItem(receiptid, itemid, acct, amount, remarks){
-        return [
-            objid 	: RPTUtil.generateId('RI'),
-            receiptid	: receiptid,
-            item        : acct,
-            amount      : amount,
-            remarks     : remarks,
-        ]
-    }
-    
-    def buildRemarks(item){
-        if ( item.qtr == 0)
-                return item.year 
-        return item.qtr +'qtr, ' + item.year 
-    }
-    
-    void buildRptItems(){
-        entity.rptitems = []
-        bill.ledgers.each{ ledger ->
-            if (ledger.pay) {
-                ledger.items.each{ item ->
-                    def oldid = item.objid;
-                    item.objid = RPTUtil.generateId('RI');
-                    item.rptledgeritemid = oldid;
-                    item.rptreceiptid = entity.objid;
-                    item.rptledgerid = ledger.objid;
-                    item.partial = false;
-                }
-                entity.rptitems += ledger.items
-            }
-        }
-        
-        if (!entity.rptitems)
-            throw new Exception('There are no items selected for payment.')
+        entity.rptitems = itemsforpayment.findAll{it.pay == true}
     }
     
     def selectedItem;
     
     def listHandler = [
-        fetchList : { return bill.ledgers },
+        fetchList : { return itemsforpayment },
         
         onColumnUpdate : { item,colname ->
             if (colname == 'pay' && item.pay == false){
@@ -166,7 +112,8 @@ class RPTReceiptController extends com.rameses.enterprise.treasury.controllers.A
 
                 if (item.fromyear == item.toyear && item.toqtr < item.fromqtr)
                     item.toqtr = item.fromqtr 
-                generateBill()
+                            
+                updateItemDue(item)
             }
             
         },
@@ -178,11 +125,33 @@ class RPTReceiptController extends com.rameses.enterprise.treasury.controllers.A
     ] as EditorListModel
                 
                 
-    void generateBill(){
-        bill = billSvc.generateBill(bill);
+    void loadItems(){
+        bill.ledgerids.clear();
+        itemsforpayment = svc.getItemsForPayment(bill);
         listHandler.load();
         calcReceiptAmount();
     }
+        
+            
+    void loadItemByLedger(rptledgerid){
+        bill.ledgerids.clear();
+        bill.ledgerids.add(rptledgerid);
+        itemsforpayment += svc.loadItemsForPayment(bill);
+        listHandler.load();
+        calcReceiptAmount();
+    }
+
+    void updateItemDue(item){
+        bill.ledgerids.clear();
+        bill.ledgerids.add(item.rptledgerid);
+        def items = svc.getItemsForPayment(bill);
+        if (items){
+            item.putAll(items[0]);
+        }
+        listHandler.load();
+        calcReceiptAmount();
+    }
+    
         
     void validateToYear(item){
         if (item.toyear < item.fromyear)
@@ -198,31 +167,32 @@ class RPTReceiptController extends com.rameses.enterprise.treasury.controllers.A
     
     
     void selectAll(){
-        bill.ledgers.each{
+        itemsforpayment.each{
             it.pay = true;
             it.partialled = false;
+            if (payoption != PAY_OPTION_ALL){
+                updateItemDue(it);
+            }
         }
-        generateBill();
+        if (payoption == PAY_OPTION_ALL) {
+            loadItems();
+        }
     }
     
     void deselectAll(){
-        bill.ledgers.each{
+        itemsforpayment.each{
             it.pay = false;
             it.partialled = false;
             it.total = 0.0;
         }
         listHandler.load();
-        calcReceiptAmount();
     }
     
     
     
     
     void fullPayment(){
-        def xbill = billSvc.generateBillByLedgerId(selectedItem.objid);
-        selectedItem.putAll(xbill.ledger[0])
-        listHandler.load();
-        calcReceiptAmount();
+        updateItemDue(selectedItem);
     }
     
     def partialPayment(){
@@ -231,7 +201,7 @@ class RPTReceiptController extends com.rameses.enterprise.treasury.controllers.A
             amount : selectedItem.total,
                 
             onpartial : { partial ->
-                selectedItem.putAll( billSvc.computePartialPayment(selectedItem, partial) );
+                selectedItem.putAll( svc.computePartialPayment(selectedItem, partial) );
                 listHandler.load();
                 calcReceiptAmount();
             },
@@ -240,14 +210,13 @@ class RPTReceiptController extends com.rameses.enterprise.treasury.controllers.A
     
     
     void calcReceiptAmount(){
-        def paiditems = bill.ledgers.findAll{it.pay == true};
+        def paiditems = itemsforpayment.findAll{it.pay == true};
         entity.amount = 0.0;
         if (paiditems){
-            entity.amount = paiditems.total.sum();
+            entity.amount = paiditems.amount.sum();
             updateBalances();
         }
     }
-    
     
             
 }

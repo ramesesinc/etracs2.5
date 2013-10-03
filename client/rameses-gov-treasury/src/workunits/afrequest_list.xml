@@ -1,4 +1,4 @@
-<workunit extends="wtemplates/ListController.xml" serviceName="AFRequestListService" tag="list">
+<workunit extends="wtemplates/ListController.xml" serviceName="AFRequestListService" tag="list" entityName="afrequest">
     <invokers>
         <invoker folderid="/explorer/txn/treasury" caption="AF Requests" role="AFO,COLLECTOR"/>
     </invokers>

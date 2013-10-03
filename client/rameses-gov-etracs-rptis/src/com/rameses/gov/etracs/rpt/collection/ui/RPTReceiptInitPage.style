@@ -1,8 +1,8 @@
-"advanceyear" [bill.advancepayment == true]{
+"advanceyear" [payoption == 'advance']{
     enabled:true;
     required:true;
 }
 
-"advanceyear" [bill.advancepayment != true]{
+"advanceyear" [payoption != 'advance']{
     enabled:false;
 }

@@ -1,0 +1,62 @@
+<workunit extends="wtemplates/ListController.xml" >
+    <invokers>
+        <invoker folderid="/explorer/txn/treasury" caption="AF Issuances" role="AFO"/>
+    </invokers>
+    
+    <code>
+        import com.rameses.rcp.common.*;
+        import com.rameses.rcp.annotations.*;
+        import com.rameses.osiris2.client.*;
+        import com.rameses.osiris2.common.*;
+        
+        class AFIssuancesController extends ListController {
+                
+            String serviceName = 'AFIssuanceListService'
+            String entityName = 'afissuance'
+            String formTarget = 'window'
+            String tag = 'list'
+            
+            boolean allowOpen  = false;
+            boolean allowCreate = false;
+            
+            def collector
+            def collectorlist;
+            def subcollector
+            def subcollectorlist
+            
+            @Service("UsergroupMemberLookupService")
+            def ugmSvc;
+            
+            @PropertyChangeListener
+            def listener = [
+                "collector" : {
+                    search();
+                }, 
+                "subcollector" : {
+                    search();
+                }
+            ]   
+            
+            List getCollectorlist( ) {
+                if(! collectorlist) collectorlist =  ugmSvc.getList(['_tag':'COLLECTOR']);
+                return collectorlist;
+            }
+            
+            List getSubcollectorlist() {
+                if(! subcollectorlist) subcollectorlist = ugmSvc.getList(['_tag':'SUBCOLLECTOR'])
+                return subcollectorlist;
+            }
+            
+            protected void onbeforeFetchList(Map m) {
+                m.collectorid = collector ? collector.objid : '%';
+                m.subcollectorid = subcollector ? subcollector.objid : '%';
+            }
+            
+        }
+        
+    </code>
+    <pages>
+        <page name='queryform' template='com.rameses.gov.treasury.af.CollectorQueryPanel'/>
+    </pages>
+    
+</workunit>

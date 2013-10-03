@@ -49,9 +49,11 @@ FROM
 	col.jobtitle AS collector_title,
 	ac.assignee_objid AS subcollector_objid,
 	ac.assignee_name AS subcollector_name,
-	scol.jobtitle AS subcollector_title
+	scol.jobtitle AS subcollector_title,
+	af.serieslength 
 	FROM afserial_control ac 
 	INNER JOIN  afserial_inventory ai ON ac.controlid=ai.objid
+	INNER JOIN  afserial af on af.objid = ai.afid  
 	INNER JOIN sys_usergroup_member col ON col.user_objid=ai.respcenter_objid 
 	LEFT JOIN sys_usergroup_member scol ON scol.user_objid=ac.assignee_objid 
 	WHERE  ai.afid =  $P{afid}
@@ -70,6 +72,11 @@ WHERE
      )
 AND ac.txnmode = $P{txnmode}
 AND ac.active=1
+
+[createControl]
+INSERT INTO afserial_control (controlid, txnmode,assignee_objid, assignee_name, currentseries,qtyissued,active)
+SELECT objid, 'ONLINE', NULL, NULL, currentseries, 0,0
+FROM afserial_inventory WHERE objid=$P{objid}
 
 [activateControl]
 INSERT INTO afserial_control (controlid, txnmode,assignee_objid, assignee_name, currentseries,qtyissued,active)

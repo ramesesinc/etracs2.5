@@ -5,49 +5,40 @@
 		<field name="qtr" type="integer" required="true" />
 		<field name="month" type="integer" required="true" />
 		<field name="day" type="integer" required="true" />
-		<field name="type" required="true" />
+		<!-- type: online, capture, noledger etc -->
+		<field name="txntype" required="true" />
 	</element>
 
-	<element name="cashreceiptrptitem" tablename="cashreceipt_rpt_item">
+	<element name="cashreceiptrptitem" tablename="cashreceiptitem_rpt">
 		<field name="objid" primary="true" />
-		<field name="rptreceiptid" required="true" />
-		<field name="rptledgerid"  />
-		<field name="rptledgeritemid"  />
-		<field name="barangayid"  required="true"/>
-		<field name="year" type="integer" required="true" />
-		<field name="qtr" type="integer" required="true" />
-		<field name="basic" type="decimal" required="true" />
-		<field name="basicint" type="decimal" required="true" />
-		<field name="basicdisc" type="decimal" required="true" />
-		<field name="basiccredit" type="decimal" required="true" />
-		<field name="basicacct_objid" required="true" />
-		<field name="basicintacct_objid" />
-		<field name="sef" type="decimal" required="true" />
-		<field name="sefint" type="decimal" required="true" />
-		<field name="sefdisc" type="decimal" required="true" />
-		<field name="sefcredit" type="decimal" required="true" />
-		<field name="sefacct_objid" required="true" />
-		<field name="sefintacct_objid" />
-		<field name="partial" type="boolean" required="true" />
-		<field name="revtype" required="true" />
-		<field name="citybasic" type="decimal" required="true"/>
-		<field name="citybasicint" type="decimal" required="true"/>
-		<field name="citysef" type="decimal" required="true"/>
-		<field name="citysefint" type="decimal" required="true"/>
-		<field name="provbasic" type="decimal" required="true"/>
-		<field name="provbasicint" type="decimal" required="true"/>
-		<field name="provsef" type="decimal" required="true"/>
-		<field name="provsefint" type="decimal" required="true"/>
-		<field name="munibasic" type="decimal" required="true"/>
-		<field name="munibasicint" type="decimal" required="true"/>
-		<field name="munisef" type="decimal" required="true"/>
-		<field name="munisefint" type="decimal" required="true"/>
-		<field name="brgybasic" type="decimal" required="true"/>
-		<field name="brgybasicint" type="decimal" required="true"/>
-	</element>
+		<field name="rptreceiptid" required="true"  />
+		<field name="rptledgerid"   />
+		<field name="rptledgeritemid"   />
+		<field name="rptledgeritemqtrlyid"   />
+		<field name="barangayid" required="true"  />
+		<field name="year" required="true" type="integer" />
+		<field name="qtr" required="true" type="integer" />
+		<field name="basic" required="true" type="decimal" />
+		<field name="basicint" required="true" type="decimal" />
+		<field name="basicdisc" required="true" type="decimal" />
+		<field name="basiccredit" required="true" type="decimal" />
+		<field name="basicamnesty" required="true" type="decimal" />
+		<field name="basicintamnesty" required="true" type="decimal" />
+		<field name="basicacct_objid" required="true"  />
+		<field name="basicintacct_objid" required="true"  />
 
-	<element name="mapping" tablename="receiptitem_rptreceiptitem">
-		<field name="receiptitemid" primary="true" />
-		<field name="rptreceiptitemid" primary="true" />
+		<field name="sef" required="true" type="decimal" />
+		<field name="sefint" required="true" type="decimal" />
+		<field name="sefdisc" required="true" type="decimal" />
+		<field name="sefcredit" required="true" type="decimal" />
+		<field name="sefamnesty" required="true" type="decimal" />
+		<field name="sefintamnesty" required="true" type="decimal" />
+		<field name="sefacct_objid" required="true"  />
+		<field name="sefintacct_objid" required="true"  />
+
+		<field name="firecode" required="true" type="decimal" />
+		<field name="firecodeacct_objid" />
+		<field name="revtype" required="true" type="decimal" />
+		<field name="qtrly" required="true" type="decimal" />
 	</element>
 </schema>
