@@ -73,6 +73,11 @@ WHERE
 AND ac.txnmode = $P{txnmode}
 AND ac.active=1
 
+[createControl]
+INSERT INTO afserial_control (controlid, txnmode,assignee_objid, assignee_name, currentseries,qtyissued,active)
+SELECT objid, 'ONLINE', NULL, NULL, currentseries, 0,0
+FROM afserial_inventory WHERE objid=$P{objid}
+
 [activateControl]
 INSERT INTO afserial_control (controlid, txnmode,assignee_objid, assignee_name, currentseries,qtyissued,active)
 SELECT objid, $P{txnmode}, NULL, NULL, currentseries, 0,1

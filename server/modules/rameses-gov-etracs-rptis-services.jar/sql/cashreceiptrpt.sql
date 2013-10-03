@@ -1,88 +1,631 @@
-[updateLedgerItemPaidInfo]
-UPDATE rptledgeritem SET
-	state = CASE WHEN basicpaid + $P{basicpaid} = basic AND sefpaid + $P{sefpaid} = sef 
-				THEN 'PAID' ELSE 'OPEN' 
-			END,
-	basicpaid = basicpaid + $P{basicpaid},
-	basicint  = basicint - $P{basicintpaid},
-	basicdisc  = basicdisc - $P{basicdisctaken},
-	sefpaid = sefpaid + $P{sefpaid},
-	sefint  = sefint - $P{sefintpaid},
-	sefdisc  = sefdisc - $P{sefdisctaken}
-WHERE objid = $P{objid}
+[resetItemForPaymentFlag]
+UPDATE rptledgeritem rli, rptledger rl, faas f SET
+	rli.forpayment = 0
+WHERE rli.rptledgerid = rl.objid 
+  AND rl.faasid = f.objid 
+  AND ${filters}
+  AND rl.state = 'APPROVED'
+  AND rli.state = 'OPEN' 
+  AND rli.forpayment = 1
 
 
-[updateLedgerLastYearQtrPaid]
-UPDATE rptledger SET
-	lastyearpaid = $P{lastyearpaid},
-	lastqtrpaid = $P{lastqtrpaid},
-	lastreceiptid = $P{lastreceiptid}
-WHERE objid = $P{objid}	
+[resetQuarterlyItemForPaymentFlag]
+UPDATE rptledgeritem_qtrly rliq, rptledgeritem rli, rptledger rl, faas f SET
+	rliq.forpayment = 0 
+WHERE rli.rptledgerid = rl.objid 
+  AND rli.objid = rliq.rptledgeritemid 
+  AND rl.faasid = f.objid 
+  AND ${filters}
+  AND rl.state = 'APPROVED'
+  AND rliq.state = 'OPEN' 
+  AND rliq.forpayment = 1
 
 
-[getPaidLedgers]
-SELECT DISTINCT rptledgerid FROM cashreceipt_rpt_item WHERE rptreceiptid = $P{rptreceiptid}
+[setItemForPaymentFlag]
+UPDATE rptledgeritem rli, rptledger rl, faas f SET
+	rli.forpayment = 1
+WHERE ${filters}
+  AND rli.rptledgerid = rl.objid 
+  AND rl.faasid = f.objid 
+  AND rl.state = 'APPROVED'
+  AND rli.year <= $P{billtoyear}
+  AND rli.state = 'OPEN' 
+  AND rli.qtrly = 0 
 
-[getFirstPaidLedgerItem]
+
+[setQuarterlyItemForPaymentFlag]
+UPDATE rptledgeritem_qtrly rliq, rptledgeritem rli, rptledger rl, faas f SET
+	rliq.forpayment = 1
+WHERE rli.rptledgerid = rl.objid 
+  AND rli.objid = rliq.rptledgeritemid 
+  AND rl.faasid = f.objid 
+  AND ${filters}
+  AND rl.state = 'APPROVED'
+  AND rliq.state = 'OPEN' 
+  AND ( rliq.year < $P{billtoyear} OR (rliq.year = $P{billtoyear} AND rliq.qtr <= $P{billtoqtr} ) )
+
+
+
+[getItemsForPayment]
 SELECT 
-	rci.rptledgerid, rci.year, rci.qtr, 
-	CASE WHEN rci.basic < rli.basic THEN 1 ELSE 0 END AS partialled
-FROM cashreceipt_rpt_item rci
-	INNER JOIN rptledgeritem rli ON rci.rptledgeritemid = rli.objid 
-WHERE rci.rptreceiptid = $P{rptreceiptid}
-ORDER BY rci.year, rci.qtr 
+	t.rptledgerid, t.tdno, 
+	MIN(t.fromyear) AS fromyear, MIN(t.fromqtr) AS fromqtr, 
+	$P{billtoyear} AS toyear, $P{billtoqtr} AS toqtr,  
+	SUM(t.amount) AS amount,
+	CASE
+		WHEN MIN(t.fromyear) = $P{billtoyear} AND MIN(t.fromqtr) = 1 AND $P{billtoqtr} = 4 
+			THEN CONCAT('FULL ', $P{billtoyear})
+		WHEN MIN(t.fromyear) = $P{billtoyear} AND MIN(t.fromqtr) = $P{billtoqtr}
+			THEN CONCAT($P{billtoqtr}, 'Q, ', $P{billtoyear})
+		WHEN MIN(t.fromyear) = $P{billtoyear} 
+			THEN CONCAT(MIN(t.fromqtr), $P{billtoqtr}, 'Q, ', $P{billtoyear})
+
+		WHEN MIN(t.fromqtr) = 1 AND $P{billtoqtr} = 4
+			THEN CONCAT('FULL ', MIN(t.fromyear), '-', $P{billtoyear})
+		WHEN MIN(t.fromqtr) = 1 AND $P{billtoqtr} <> 4
+			THEN CONCAT(MIN(t.fromyear), '-', $P{billtoqtr}, 'Q,', $P{billtoyear})
+		WHEN MIN(t.fromqtr) <> 1 AND $P{billtoqtr} = 4
+			THEN CONCAT(MIN(t.fromqtr), 'Q,', MIN(t.fromyear), '-',$P{billtoyear})
+		ELSE
+			CONCAT(MIN(t.fromqtr), 'Q,', MIN(t.fromyear), '-', $P{billtoqtr}, 'Q,', $P{billtoyear})
+	END AS period
+FROM (
+	SELECT
+		rl.objid AS rptledgerid, f.tdno, 
+		CASE WHEN rl.lastqtrpaid = 4 THEN rl.lastyearpaid + 1 ELSE rl.lastyearpaid END AS fromyear,
+		CASE WHEN rl.lastqtrpaid = 4 THEN 1 ELSE rl.lastqtrpaid + 1 END AS fromqtr,
+		rli.year, 0 AS qtr,
+		rli.basic - rli.basicpaid - rli.basicamnesty - rli.basicdisc + 
+		rli.basicint - rli.basicintpaid - rli.basicintamnesty + 
+		rli.sef - rli.sefpaid - rli.sefamnesty - rli.sefdisc + 
+		rli.sefint - rli.sefintpaid - rli.sefintamnesty  +
+		rli.firecode - rli.firecodepaid AS amount
+	FROM rptledger rl
+		INNER JOIN faas f ON rl.faasid = f.objid 
+		INNER JOIN rptledgeritem rli ON rl.objid = rli.rptledgerid
+	WHERE ${filters}
+	  AND rli.forpayment = 1
+
+	UNION
+
+	SELECT
+		rl.objid AS rptledgerid, f.tdno, 
+		CASE WHEN rl.lastqtrpaid = 4 THEN rl.lastyearpaid + 1 ELSE rl.lastyearpaid END AS fromyear,
+		CASE WHEN rl.lastqtrpaid = 4 THEN 1 ELSE rl.lastqtrpaid + 1 END AS fromqtr,
+		rliq.year, rliq.qtr, 
+		rliq.basic - rliq.basicpaid - rliq.basicamnesty - rliq.basicdisc +
+		rliq.basicint - rliq.basicintpaid - rliq.basicintamnesty + 
+		rliq.sef - rliq.sefpaid - rliq.sefamnesty - rliq.sefdisc + 
+		rliq.sefint - rliq.sefintpaid - rliq.sefintamnesty  +
+		rliq.firecode - rliq.firecodepaid AS amount
+	FROM rptledger rl
+		INNER JOIN faas f ON rl.faasid = f.objid 
+		INNER JOIN rptledgeritem rli ON rl.objid = rli.rptledgerid
+		INNER JOIN rptledgeritem_qtrly rliq ON rli.objid = rliq.rptledgeritemid 
+	WHERE ${filters}
+	  AND rliq.forpayment = 1
+) t
+GROUP BY t.rptledgerid, t.tdno
+
+
+
+
+[insertPaidItemByLedgerId]
+INSERT INTO `cashreceiptitem_rpt`
+            (`objid`,
+             `rptreceiptid`,
+             `rptledgerid`,
+             `rptledgeritemid`,
+             `rptledgeritemqtrlyid`,
+             `barangayid`,
+             `year`,
+             `qtr`,
+             `basic`,
+             `basicint`,
+             `basicdisc`,
+             `basiccredit`,
+             `basicamnesty`,
+             `basicintamnesty`,
+             `basicacct_objid`,
+             `basicintacct_objid`,
+             `sef`,
+             `sefint`,
+             `sefdisc`,
+             `sefcredit`,
+             `sefamnesty`,
+             `sefintamnesty`,
+             `sefacct_objid`,
+             `sefintacct_objid`,
+             `firecode`,
+             `firecodeacct_objid`,
+             `revtype`,
+             `qtrly`)
+SELECT 
+	CONCAT($P{objid},'-', rli.year) AS objid,
+	$P{rptreceiptid} AS rptreceiptid,
+	rl.objid AS rptledgerid,
+	rli.objid AS rptledgeritemid,
+	NULL AS rptledgeritemqtrlyid,
+	rl.barangayid,
+	rli.year,
+	0 AS qtr,
+	rli.basic - rli.basicpaid - rli.basicamnesty AS basic,
+	rli.basicint - rli.basicintpaid - rli.basicintamnesty AS basicint,
+	rli.basicdisc,
+	rli.basiccredit,
+	rli.basicamnesty,
+	rli.basicintamnesty,
+	rli.basicacct_objid,
+	rli.basicintacct_objid,
+	rli.sef - rli.sefpaid - rli.sefamnesty AS sef,
+	rli.sefint - rli.sefintpaid - rli.sefintamnesty AS  sefint,
+	rli.sefdisc,
+	rli.sefcredit,
+	rli.sefamnesty,
+	rli.sefintamnesty,
+	rli.sefacct_objid,
+	rli.sefintacct_objid,
+	rli.firecode - rli.firecodepaid AS firecode,
+	rli.firecodeacct_objid,
+	rli.revtype,
+	rli.qtrly
+FROM rptledger rl
+		INNER JOIN rptledgeritem rli ON rl.objid = rli.rptledgerid
+WHERE rl.objid = $P{rptledgerid}
+  AND rli.state = 'OPEN'
+  AND rli.forpayment = 1 
+
+UNION ALL
+
+SELECT 
+	CONCAT($P{objid},$P{rptreceiptid},'-',rliq.qtr) AS objid,
+	$P{rptreceiptid} AS rptreceiptid,
+	rl.objid AS rptledgerid,
+	rli.objid AS rptledgeritemid,
+	rliq.objid AS rptledgeritemqtrlyid,
+	rl.barangayid,
+	rliq.year,
+	rliq.qtr,
+	rliq.basic - rliq.basicpaid - rliq.basicamnesty AS basic,
+	rliq.basicint - rliq.basicintpaid - rliq.basicintamnesty AS basicint,
+	rliq.basicdisc,
+	rliq.basiccredit,
+	rliq.basicamnesty,
+	rliq.basicintamnesty,
+	rli.basicacct_objid,
+	rli.basicintacct_objid,
+	rliq.sef - rliq.sefpaid - rliq.sefamnesty AS sef,
+	rliq.sefint - rliq.sefintpaid - rliq.sefintamnesty AS  sefint,
+	rliq.sefdisc,
+	rliq.sefcredit,
+	rliq.sefamnesty,
+	rliq.sefintamnesty,
+	rli.sefacct_objid,
+	rli.sefintacct_objid,
+	rliq.firecode - rliq.firecodepaid AS firecode,
+	rli.firecodeacct_objid,
+	rliq.revtype,
+	rli.qtrly
+FROM rptledger rl
+		INNER JOIN rptledgeritem rli ON rl.objid = rli.rptledgerid
+		INNER JOIN rptledgeritem_qtrly rliq ON rli.objid = rliq.rptledgeritemid 
+WHERE rl.objid = $P{rptledgerid}
+  AND rliq.state = 'OPEN'
+  AND rliq.forpayment = 1   
+
+
+
+[postPaymentToLedgerItem]
+UPDATE rptledgeritem rli, cashreceiptitem_rpt cr SET
+	rli.state = CASE WHEN rli.basicpaid + cr.basic >= rli.basic THEN 'CLOSED' ELSE rli.state END,
+	rli.lastqtrpaid = CASE WHEN rli.basicpaid + cr.basic >= rli.basic THEN 4 ELSE 0 END,
+	rli.basicpaid = rli.basicpaid + cr.basic,
+	rli.basicintpaid = rli.basicintpaid + cr.basicint,
+	rli.basicdisctaken = rli.basicdisctaken + cr.basicdisc,
+	rli.basiccredit = rli.basiccredit + cr.basiccredit,
+	
+	rli.sefpaid = rli.sefpaid + cr.sef,
+	rli.sefintpaid = rli.sefintpaid + cr.sefint,
+	rli.sefdisctaken = rli.sefdisctaken + cr.sefdisc,
+	rli.sefcredit = rli.sefcredit + cr.sefcredit,
+	
+	rli.firecodepaid = rli.firecodepaid + cr.firecode,
+	rli.forpayment = 0
+WHERE rli.rptledgerid = $P{rptledgerid}
+  AND cr.rptreceiptid = $P{rptreceiptid}
+  AND rli.objid = cr.rptledgeritemid 
+  AND rli.qtrly = 0 
+  
+
+
+[postPaymentToQuarterlyLedgerItem]  
+UPDATE rptledgeritem_qtrly rliq, cashreceiptitem_rpt cr SET
+	rliq.state = CASE WHEN rliq.basicpaid + cr.basic >= rliq.basic THEN 'CLOSED' ELSE rliq.state END,
+	rliq.basicpaid = rliq.basicpaid + cr.basic,
+	rliq.basicintpaid = rliq.basicintpaid + cr.basicint,
+	rliq.basicdisctaken = rliq.basicdisctaken + cr.basicdisc,
+	rliq.basiccredit = rliq.basiccredit + cr.basiccredit,
+	
+	rliq.sefpaid = rliq.sefpaid + cr.sef,
+	rliq.sefintpaid = rliq.sefintpaid + cr.sefint,
+	rliq.sefdisctaken = rliq.sefdisctaken + cr.sefdisc,
+	rliq.sefcredit = rliq.sefcredit + cr.sefcredit,
+	
+	rliq.firecodepaid = rliq.firecodepaid + cr.firecode,
+	rliq.forpayment = 0
+WHERE rliq.rptledgerid = $P{rptledgerid}
+  AND cr.rptreceiptid = $P{rptreceiptid}
+  AND rliq.objid = cr.rptledgeritemqtrlyid 
+
+
+[getQuarterlyPaymentsforLedgerItem]
+SELECT cr.objid, cr.rptledgeritemid, cr.qtr  
+FROM cashreceiptitem_rpt cr 
+WHERE cr.rptreceiptid = $P{rptreceiptid} 
+  AND cr.rptledgeritemqtrlyid IS NOT NULL
+
+
+[applyQuarterlyPaymentToLedgerItem]  
+UPDATE rptledgeritem_qtrly rliq, rptledgeritem rli, cashreceiptitem_rpt cr SET
+	rli.basicpaid = rli.basicpaid + cr.basic,
+	rli.basicintpaid = rli.basicintpaid + cr.basicint,
+	rli.basicdisctaken = rli.basicdisctaken + cr.basicdisc,
+	rli.basiccredit = rli.basiccredit + cr.basiccredit,
+	
+	rli.sefpaid = rli.sefpaid + cr.sef,
+	rli.sefintpaid = rli.sefintpaid + cr.sefint,
+	rli.sefdisctaken = rli.sefdisctaken + cr.sefdisc,
+	rli.sefcredit = rli.sefcredit + cr.sefcredit,
+	
+	rli.firecodepaid = rli.firecodepaid + cr.firecode
+WHERE cr.objid = $P{objid}
+  AND cr.rptledgeritemqtrlyid = rliq.objid
+  AND rliq.rptledgeritemid = rli.objid 
+
+
+[updateLedgerItemQuarterlyPaidInfo]
+UPDATE rptledgeritem rli SET
+	rli.state = CASE WHEN NOT EXISTS (
+				  		SELECT *
+				  		FROM rptledgeritem_qtrly 
+				  		WHERE rptledgeritemid = rli.objid AND state = 'OPEN'
+				  	) 
+					THEN 'CLOSED' ELSE 'OPEN' END,					
+	rli.lastqtrpaid = IFNULL((SELECT MAX(qtr) FROM rptledgeritem_qtrly WHERE rptledgeritemid = rli.objid AND (basicpaid > 0  OR state = 'CLOSED')),0)
+WHERE rli.rptledgerid = $P{rptledgerid} 
+  AND rli.qtrly = 1 
+
+
+[updateLedgerYearQtrPaid]
+UPDATE rptledger SET 
+	lastyearpaid = $P{toyear},
+	lastqtrpaid = $P{toqtr}
+WHERE objid = $P{rptledgerid}	
+
+
 
 
 [voidLedgerItemPayment]
-UPDATE cashreceipt_rpt_item rci, rptledgeritem rli SET
-	rli.state = 'OPEN', 
-	rli.basicpaid = rli.basicpaid - rci.basic,
-	rli.sefpaid = rli.sefpaid - rci.sef 
-WHERE rci.rptreceiptid = $P{rptreceiptid}
-  AND rci.rptledgeritemid = rli.objid 
+UPDATE rptledgeritem rli, cashreceiptitem_rpt cr SET
+	rli.state = 'OPEN',
+	rli.lastqtrpaid = 0,
+	rli.basicpaid = rli.basicpaid - cr.basic,
+	rli.basicintpaid = rli.basicintpaid - cr.basicint,
+	rli.basicdisctaken = rli.basicdisctaken - cr.basicdisc,
+	rli.basiccredit = rli.basiccredit - cr.basiccredit,
+	
+	rli.sefpaid = rli.sefpaid - cr.sef,
+	rli.sefintpaid = rli.sefintpaid - cr.sefint,
+	rli.sefdisctaken = rli.sefdisctaken - cr.sefdisc,
+	rli.sefcredit = rli.sefcredit - cr.sefcredit,
+	
+	rli.firecodepaid = rli.firecodepaid - cr.firecode,
+	rli.forpayment = 0
+WHERE cr.rptreceiptid = $P{rptreceiptid}
+  AND rli.objid = cr.rptledgeritemid
+  AND cr.rptledgeritemqtrlyid IS NULL 
 
 
-[voidLedgerPayment]
-UPDATE rptledger SET
-	lastyearpaid = $P{lastyearpaid},
-	lastqtrpaid = $P{lastqtrpaid},
-	nextbilldate = null 
-WHERE objid = $P{objid}	  
+[voidQuarterlyItemPayment]  
+UPDATE rptledgeritem_qtrly rliq, cashreceiptitem_rpt cr SET
+	rliq.state = 'OPEN',
+	rliq.basicpaid = rliq.basicpaid - cr.basic,
+	rliq.basicintpaid = rliq.basicintpaid - cr.basicint,
+	rliq.basicdisctaken = rliq.basicdisctaken - cr.basicdisc,
+	rliq.basiccredit = rliq.basiccredit - cr.basiccredit,
+	
+	rliq.sefpaid = rliq.sefpaid - cr.sef,
+	rliq.sefintpaid = rliq.sefintpaid - cr.sefint,
+	rliq.sefdisctaken = rliq.sefdisctaken - cr.sefdisc,
+	rliq.sefcredit = rliq.sefcredit - cr.sefcredit,
+	
+	rliq.firecodepaid = rliq.firecodepaid - cr.firecode,
+	rliq.forpayment = 0
+WHERE cr.rptreceiptid = $P{rptreceiptid}
+  AND rliq.objid = cr.rptledgeritemqtrlyid 
 
 
-[getReceiptItemsForPrinting]
+
+
+[getAppliedQuarterlyPaymentsOnLedgerItem]
+SELECT cr.objid, cr.rptledgeritemid, cr.qtr  
+FROM cashreceiptitem_rpt cr 
+WHERE cr.rptreceiptid = $P{rptreceiptid} 
+  AND cr.rptledgeritemqtrlyid IS NOT NULL
+ORDER BY cr.year DESC, cr.qtr DESC 
+
+
+[voidAppliedQuarterlyPaymentsOnLedgerItem]  
+UPDATE rptledgeritem rli, cashreceiptitem_rpt cr SET
+	rli.state = 'OPEN',
+	rli.basicpaid = rli.basicpaid - cr.basic,
+	rli.basicintpaid = rli.basicintpaid - cr.basicint,
+	rli.basicdisctaken = rli.basicdisctaken - cr.basicdisc,
+	
+	rli.sefpaid = rli.sefpaid - cr.sef,
+	rli.sefintpaid = rli.sefintpaid - cr.sefint,
+	rli.sefdisctaken = rli.sefdisctaken - cr.sefdisc,
+	
+	rli.firecodepaid = rli.firecodepaid - cr.firecode,
+	rli.lastqtrpaid = $P{qtr} - 1
+WHERE cr.objid = $P{objid}
+  AND cr.rptledgeritemid = rli.objid 
+
+
+[getLedgersMinPaidYearAndQtr]
+SELECT cr.rptledgerid, cr.year AS minyear, MIN(cr.qtr) AS minqtr 
+FROM cashreceiptitem_rpt cr 
+WHERE cr.rptreceiptid = $P{rptreceiptid} 
+GROUP BY cr.rptledgerid, cr.year 
+ORDER BY cr.rptledgerid, cr.year DESC 
+
+
+[voidReceiptItems]
+UPDATE cashreceiptitem_rpt SET
+	rptledgeritemid = null, 
+	rptledgeritemqtrlyid = null 
+WHERE rptreceiptid = $P{rptreceiptid}	
+
+
+
+[getSummarizedCashReceiptItems]
+SELECT 
+	t.item_objid, t.item_code, t.item_title,
+	t.item_fund_objid, t.item_fund_code, t.item_fund_title,
+	SUM(t.amount) AS amount
+FROM (
+	SELECT
+		rli.basicacct_objid AS item_objid,
+		rb.code AS item_code, 
+		rb.title AS item_title,
+		rb.fund_objid AS item_fund_objid, rb.fund_code AS item_fund_code, rb.fund_title AS item_fund_title,
+		rli.basic - rli.basicpaid - rli.basicamnesty - rli.basicdisc AS amount
+	FROM rptledger rl
+		INNER JOIN rptledgeritem rli ON rl.objid = rli.rptledgerid
+		INNER JOIN revenueitem rb ON rli.basicacct_objid = rb.objid 
+	WHERE ${filter}
+	  AND rli.forpayment = 1
+	  
+	UNION ALL
+
+	SELECT
+		rli.basicintacct_objid AS item_objid,
+		rb.code AS item_code,
+		rb.title AS item_title,
+		rb.fund_objid AS item_fund_objid, rb.fund_code AS item_fund_code, rb.fund_title AS item_fund_title,
+		rli.basicint - rli.basicintpaid - rli.basicintamnesty AS amount
+	FROM rptledger rl
+		INNER JOIN rptledgeritem rli ON rl.objid = rli.rptledgerid
+		INNER JOIN revenueitem rb ON rli.basicintacct_objid = rb.objid 
+	WHERE ${filter}
+	  AND rli.forpayment = 1
+	  
+	UNION ALL
+	
+	SELECT
+		rli.sefacct_objid AS item_objid,
+		rb.code AS item_code,
+		rb.title AS item_title,
+		rb.fund_objid AS item_fund_objid, rb.fund_code AS item_fund_code, rb.fund_title AS item_fund_title,
+		rli.sef - rli.sefpaid - rli.sefamnesty - rli.sefdisc AS amount
+	FROM rptledger rl
+		INNER JOIN rptledgeritem rli ON rl.objid = rli.rptledgerid
+		INNER JOIN revenueitem rb ON rli.sefacct_objid = rb.objid 
+	WHERE ${filter}
+	  AND rli.forpayment = 1
+	  
+	UNION ALL
+
+	SELECT
+		rli.sefintacct_objid AS item_objid,
+		rb.code AS item_code,
+		rb.title AS item_title,
+		rb.fund_objid AS item_fund_objid, rb.fund_code AS item_fund_code, rb.fund_title AS item_fund_title,
+		rli.sefint - rli.sefintpaid - rli.sefintamnesty AS amount
+	FROM rptledger rl
+		INNER JOIN rptledgeritem rli ON rl.objid = rli.rptledgerid
+		INNER JOIN revenueitem rb ON rli.sefintacct_objid = rb.objid 
+	WHERE ${filter}
+	  AND rli.forpayment = 1	
+	  
+	UNION ALL
+	
+	SELECT
+		rli.firecodeacct_objid AS item_objid,
+		rb.code AS item_code,
+		rb.title AS item_title,
+		rb.fund_objid AS item_fund_objid, rb.fund_code AS item_fund_code, rb.fund_title AS item_fund_title,
+		rli.firecode AS amount
+	FROM rptledger rl
+		INNER JOIN rptledgeritem rli ON rl.objid = rli.rptledgerid
+		INNER JOIN revenueitem rb ON rli.firecodeacct_objid = rb.objid 
+	WHERE ${filter}
+	  AND rli.forpayment = 1	
+	  
+	UNION ALL
+	
+	SELECT
+		rli.basicacct_objid AS item_objid,
+		rb.code AS item_code,
+		rb.title AS item_title,
+		rb.fund_objid AS item_fund_objid, rb.fund_code AS item_fund_code, rb.fund_title AS item_fund_title,
+		rliq.basic - rliq.basicpaid - rliq.basicamnesty - rliq.basicdisc  AS amount
+	FROM rptledger rl
+		INNER JOIN rptledgeritem rli ON rl.objid = rli.rptledgerid
+		INNER JOIN rptledgeritem_qtrly rliq ON rli.objid = rliq.rptledgeritemid
+		INNER JOIN revenueitem rb ON rli.basicacct_objid = rb.objid 
+	WHERE ${filter}
+	  AND rliq.forpayment = 1
+	  
+	UNION ALL
+
+	SELECT
+		rli.basicintacct_objid AS item_objid,
+		rb.code AS item_code,
+		rb.title AS item_title,
+		rb.fund_objid AS item_fund_objid, rb.fund_code AS item_fund_code, rb.fund_title AS item_fund_title,
+		rliq.basicint - rliq.basicintpaid - rliq.basicintamnesty AS amount
+	FROM rptledger rl
+		INNER JOIN rptledgeritem rli ON rl.objid = rli.rptledgerid
+		INNER JOIN rptledgeritem_qtrly rliq ON rli.objid = rliq.rptledgeritemid
+		INNER JOIN revenueitem rb ON rli.basicintacct_objid = rb.objid 
+	WHERE ${filter}
+	  AND rliq.forpayment = 1
+	  
+	UNION ALL
+	
+	SELECT
+		rli.sefacct_objid AS item_objid,
+		rb.code AS item_code,
+		rb.title AS item_title,
+		rb.fund_objid AS item_fund_objid, rb.fund_code AS item_fund_code, rb.fund_title AS item_fund_title,
+		rliq.sef - rliq.sefpaid - rliq.sefamnesty - rliq.sefdisc  AS amount
+	FROM rptledger rl
+		INNER JOIN rptledgeritem rli ON rl.objid = rli.rptledgerid
+		INNER JOIN rptledgeritem_qtrly rliq ON rli.objid = rliq.rptledgeritemid
+		INNER JOIN revenueitem rb ON rli.sefacct_objid = rb.objid 
+	WHERE ${filter}
+	  AND rliq.forpayment = 1
+	  
+	UNION ALL
+
+	SELECT
+		rli.sefintacct_objid AS item_objid,
+		rb.code AS item_code,
+		rb.title AS item_title,
+		rb.fund_objid AS item_fund_objid, rb.fund_code AS item_fund_code, rb.fund_title AS item_fund_title,
+		rliq.sefint - rliq.sefintpaid - rliq.sefintamnesty AS amount
+	FROM rptledger rl
+		INNER JOIN rptledgeritem rli ON rl.objid = rli.rptledgerid
+		INNER JOIN rptledgeritem_qtrly rliq ON rli.objid = rliq.rptledgeritemid
+		INNER JOIN revenueitem rb ON rli.sefintacct_objid = rb.objid 
+	WHERE ${filter}
+	  AND rliq.forpayment = 1
+	  
+	UNION ALL
+	
+	SELECT
+		rli.firecodeacct_objid AS item_objid,
+		rb.code AS item_code,
+		rb.title AS item_title,
+		rb.fund_objid AS item_fund_objid, rb.fund_code AS item_fund_code, rb.fund_title AS item_fund_title,
+		rliq.firecode AS amount
+	FROM rptledger rl
+		INNER JOIN rptledgeritem rli ON rl.objid = rli.rptledgerid
+		INNER JOIN rptledgeritem_qtrly rliq ON rli.objid = rliq.rptledgeritemid
+		INNER JOIN revenueitem rb ON rli.firecodeacct_objid = rb.objid 
+	WHERE ${filter}
+	  AND rliq.forpayment = 1	
+  
+) t	  
+GROUP BY t.item_objid, t.item_code, t.item_title, t.item_fund_objid, t.item_fund_code, t.item_fund_title
+	
+
+
+
+[getItemsForPrinting]	
 SELECT
-	f.tdno,
-	f.taxpayer_name,
-	r.rputype,
-	r.totalav,
-	r.fullpin,
-	rp.cadastrallotno,
-	pc.code AS classcode,
-	b.name AS barangay,
-	CASE 
-		WHEN MIN(ri.year) = MAX(ri.year) AND MIN(ri.qtr) = 1 AND MAX(ri.qtr) = 4
-			THEN CONCAT('FULL ', MIN(ri.year))
-		WHEN MIN(ri.year) = MAX(ri.year) AND MIN(ri.qtr) = MAX(ri.qtr)
-			THEN CONCAT('FULL ', MIN(ri.qtr), 'Q,', MIN(ri.year))
-		WHEN MIN(ri.year) = MAX(ri.year)
-			THEN CONCAT(MIN(ri.qtr), 'Q-', MAX(ri.qtr), 'Q, ', MIN(ri.year) )
-		ELSE 
-			CONCAT(  MIN(CONCAT(ri.qtr, 'Q,', ri.year)), ' - ', MAX(CONCAT(ri.qtr, 'Q,', ri.year)) )
+	t.rptledgerid,
+	t.tdno,
+	t.owner_name, t.rputype,
+	t.totalav, t.fullpin,
+	t.cadastrallotno,
+	t.classcode,
+	t.barangay,
+	CASE
+		WHEN MIN(t.fromyear) = MAX(t.toyear) AND MIN(t.fromqtr) = 1 AND MAX(t.toqtr) = 4 
+			THEN CONCAT('FULL ', MAX(t.toyear))
+		WHEN MIN(t.fromyear) = MAX(t.toyear) AND MIN(t.fromqtr) = MAX(t.toqtr)
+			THEN CONCAT(MAX(t.toqtr), 'Q, ', MAX(t.toyear))
+		WHEN MIN(t.fromyear) = MAX(t.toyear) 
+			THEN CONCAT(MIN(t.fromqtr), MAX(t.toqtr), 'Q, ', MAX(t.toyear))
+
+		WHEN MIN(t.fromqtr) = 1 AND MAX(t.toqtr) = 4
+			THEN CONCAT('FULL ', MIN(t.fromyear), '-', MAX(t.toyear))
+		WHEN MIN(t.fromqtr) = 1 AND MAX(t.toqtr) <> 4
+			THEN CONCAT(MIN(t.fromyear), '-', MAX(t.toqtr), 'Q,', MAX(t.toyear))
+		WHEN MIN(t.fromqtr) <> 1 AND MAX(t.toqtr) = 4
+			THEN CONCAT(MIN(t.fromqtr), 'Q,', MIN(t.fromyear), '-',MAX(t.toyear))
+		ELSE
+			CONCAT(MIN(t.fromqtr), 'Q,', MIN(t.fromyear), '-', MAX(t.toqtr), 'Q,', MAX(t.toyear))
 	END AS period,
-	SUM(basic) AS basic,
-	SUM(basicint - basicdisc) AS basicdp,
-	SUM(sef) AS sef,
-	SUM(sefint - sefdisc) AS sefdp,
-	SUM(basic + basicint - basicdisc + sef + sefint - sefdisc) AS amount 
-FROM cashreceipt_rpt_item ri
-		INNER JOIN rptledger rl ON ri.rptledgerid = rl.objid 
+	SUM(t.basic) AS basic, 
+	SUM(t.basicdisc) AS basicdisc, 
+	SUM(t.basicint) AS basicint, 
+	SUM(t.basicdp) AS basicdp, 
+	SUM(t.basicnet) AS basicnet,
+	SUM(t.sef) AS sef,  
+	SUM(t.sefdisc) AS sefdisc, 
+	SUM(t.sefint) AS sefint, 
+	SUM(t.sefdp) AS sefdp, 
+	SUM(t.sefnet) AS sefnet,
+	SUM(t.firecode) AS firecode,
+	SUM(t.amount) AS amount
+FROM ( 
+	SELECT
+		cri.rptledgerid,
+		f.tdno,
+		f.owner_name, r.rputype,
+		r.totalav, r.fullpin,
+		rp.cadastrallotno,
+		pc.code AS classcode,
+		b.name AS barangay,
+		MIN(cri.year) AS fromyear,
+		MIN(CASE WHEN cri.qtr = 0 THEN 1 ELSE cri.qtr END) AS fromqtr,
+		MAX(cri.year) AS toyear,
+		MAX(CASE WHEN cri.qtr = 0 THEN 4 ELSE cri.qtr END) AS toqtr,
+		SUM(basic) AS basic,
+		SUM(basicint) AS basicint,
+		SUM(basicdisc) AS basicdisc,
+		SUM(basicint - basicdisc) AS basicdp,
+		SUM(basic + basicint - basicdisc) AS basicnet,
+		SUM(sef) AS sef,
+		SUM(sefint) AS sefint,
+		SUM(sefdisc) AS sefdisc,
+		SUM(sefint - sefdisc) AS sefdp,
+		SUM(sef + sefint - sefdisc) AS sefnet,
+		SUM(firecode) AS firecode,
+		SUM(basic + basicint - basicdisc + sef + sefint - sefdisc + firecode) AS amount 
+	FROM cashreceiptitem_rpt cri
+		INNER JOIN rptledger rl ON cri.rptledgerid = rl.objid 
 		INNER JOIN faas f ON rl.faasid = f.objid 
 		INNER JOIN rpu r ON f.rpuid = r.objid 
 		INNER JOIN propertyclassification pc ON r.classification_objid = pc.objid 
 		INNER JOIN realproperty rp ON r.realpropertyid = rp.objid 
 		INNER JOIN barangay b ON rp.barangayid = b.objid 
-WHERE ri.rptreceiptid = $P{rptreceiptid}
-GROUP BY ri.rptledgerid, f.tdno, f.taxpayer_name, r.rputype, r.totalav, r.fullpin, rp.cadastrallotno, pc.code, b.name
-ORDER BY f.tdno 
-
+	WHERE cri.rptreceiptid = $P{rptreceiptid}
+	GROUP BY 
+		cri.rptledgerid, cri.year,
+		f.tdno, f.owner_name, 
+		r.rputype, r.totalav, r.fullpin,
+		rp.cadastrallotno,
+		pc.code, b.name
+	) t
+GROUP BY 
+		t.rptledgerid,
+		t.tdno,
+		t.owner_name, t.rputype,
+		t.totalav, t.fullpin,
+		t.cadastrallotno,
+		t.classcode,
+		t.barangay

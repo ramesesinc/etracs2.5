@@ -15,6 +15,9 @@ class AFSerialStockIssueInterceptor {
 	@ActiveDB("stockitem")
 	def stockitem;
 
+	@ActiveDB("afserial_control")
+	def afControl;
+
 	@After(pattern="StockIssueService.create", eval="#{args[0].itemclass == 'AF'}")
 	public void postReceipt( def evt ) { 
 		def o = evt.result;
@@ -68,7 +71,8 @@ class AFSerialStockIssueInterceptor {
 					head.respcenter = o.issueto;
 					if(!head.respcenter.type) head.respcenter.type = 'COLLECTOR';
 					head.txntype = o.reqtype + "-RECEIPT";
-					afSerialSvc.postReceipt(head);
+					def q = afSerialSvc.postReceipt(head);
+					afControl.createControl( [objid: q.objid] );
 					j = i;
 					stub+=1;
 				}
