@@ -49,9 +49,11 @@ FROM
 	col.jobtitle AS collector_title,
 	ac.assignee_objid AS subcollector_objid,
 	ac.assignee_name AS subcollector_name,
-	scol.jobtitle AS subcollector_title
+	scol.jobtitle AS subcollector_title,
+	af.serieslength 
 	FROM afserial_control ac 
 	INNER JOIN  afserial_inventory ai ON ac.controlid=ai.objid
+	INNER JOIN  afserial af on af.objid = ai.afid  
 	INNER JOIN sys_usergroup_member col ON col.user_objid=ai.respcenter_objid 
 	LEFT JOIN sys_usergroup_member scol ON scol.user_objid=ac.assignee_objid 
 	WHERE  ai.afid =  $P{afid}
