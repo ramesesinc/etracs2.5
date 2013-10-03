@@ -30,6 +30,15 @@ class RPTReceiptService
 
 
 	@ProxyMethod
+	public def open( receipt ) {
+		def rct = em.read(receipt)	
+		if (rct){
+			receipt.putAll(rct)
+		}
+	}
+
+
+	@ProxyMethod
 	public def getItemsForPayment( bill ) {
 		bill.loadbillitems = false
 		billingSvc.generateBill(bill)
@@ -41,6 +50,7 @@ class RPTReceiptService
 		em.setQuarterlyItemForPaymentFlag(params)
 		return em.getItemsForPayment(params).each{ it.pay = true }	
 	}
+
 
 	@ProxyMethod
 	public def createReceipt( receipt ) {
@@ -109,12 +119,10 @@ class RPTReceiptService
 		em.voidReceiptItems(params)
 	}
 
+
 	@ProxyMethod
-	public def open( receipt ) {
-		def rct = em.read(receipt)	
-		if (rct){
-			receipt.putAll(rct)
-		}
+	public def getItemsForPrinting(receipt) {
+		return em.getItemsForPrinting([rptreceiptid:receipt.objid])
 	}
 
 

@@ -14,6 +14,7 @@ class RPTReceiptInterceptor
 	public void interceptOpenReceipt( evt ) {
 		def receipt = evt.result
 		svc.open(receipt)
+		receipt._items = svc.getItemsForPrinting(receipt)
 	}
 
 
@@ -27,13 +28,7 @@ class RPTReceiptInterceptor
 	public void interceptPostReceipt( evt ) {
 		def receipt = evt.result
 		svc.createReceipt(receipt)
-
-		//add formatted items for printing
-		/*
-		receipt._items = em.sqlContext.createNamedQuery('cashreceiptrpt:getReceiptItemsForPrinting')
-				.setParameter('rptreceiptid', receipt.objid).resultList
-		*/
-		//do not return rptitems to client
+		receipt._items = svc.getItemsForPrinting(receipt)
 		receipt.rptitems = null
 	}
 

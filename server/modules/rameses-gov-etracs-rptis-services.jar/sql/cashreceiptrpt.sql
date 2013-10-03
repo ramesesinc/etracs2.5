@@ -75,8 +75,10 @@ FROM (
 		CASE WHEN rl.lastqtrpaid = 4 THEN rl.lastyearpaid + 1 ELSE rl.lastyearpaid END AS fromyear,
 		CASE WHEN rl.lastqtrpaid = 4 THEN 1 ELSE rl.lastqtrpaid + 1 END AS fromqtr,
 		rli.year, 0 AS qtr,
-		rli.basic - rli.basicpaid - rli.basicamnesty + rli.basicint - rli.basicintpaid - rli.basicintamnesty + 
-		rli.sef - rli.sefpaid - rli.sefamnesty + rli.sefint - rli.sefintpaid - rli.sefintamnesty  +
+		rli.basic - rli.basicpaid - rli.basicamnesty - rli.basicdisc + 
+		rli.basicint - rli.basicintpaid - rli.basicintamnesty + 
+		rli.sef - rli.sefpaid - rli.sefamnesty - rli.sefdisc + 
+		rli.sefint - rli.sefintpaid - rli.sefintamnesty  +
 		rli.firecode - rli.firecodepaid AS amount
 	FROM rptledger rl
 		INNER JOIN faas f ON rl.faasid = f.objid 
@@ -91,8 +93,10 @@ FROM (
 		CASE WHEN rl.lastqtrpaid = 4 THEN rl.lastyearpaid + 1 ELSE rl.lastyearpaid END AS fromyear,
 		CASE WHEN rl.lastqtrpaid = 4 THEN 1 ELSE rl.lastqtrpaid + 1 END AS fromqtr,
 		rliq.year, rliq.qtr, 
-		rliq.basic - rliq.basicpaid - rliq.basicamnesty + rliq.basicint - rliq.basicintpaid - rliq.basicintamnesty + 
-		rliq.sef - rliq.sefpaid - rliq.sefamnesty + rliq.sefint - rliq.sefintpaid - rliq.sefintamnesty  +
+		rliq.basic - rliq.basicpaid - rliq.basicamnesty - rliq.basicdisc +
+		rliq.basicint - rliq.basicintpaid - rliq.basicintamnesty + 
+		rliq.sef - rliq.sefpaid - rliq.sefamnesty - rliq.sefdisc + 
+		rliq.sefint - rliq.sefintpaid - rliq.sefintamnesty  +
 		rliq.firecode - rliq.firecodepaid AS amount
 	FROM rptledger rl
 		INNER JOIN faas f ON rl.faasid = f.objid 
@@ -395,7 +399,7 @@ FROM (
 		rb.code AS item_code, 
 		rb.title AS item_title,
 		rb.fund_objid AS item_fund_objid, rb.fund_code AS item_fund_code, rb.fund_title AS item_fund_title,
-		rli.basic - rli.basicpaid - rli.basicamnesty AS amount
+		rli.basic - rli.basicpaid - rli.basicamnesty - rli.basicdisc AS amount
 	FROM rptledger rl
 		INNER JOIN rptledgeritem rli ON rl.objid = rli.rptledgerid
 		INNER JOIN revenueitem rb ON rli.basicacct_objid = rb.objid 
@@ -423,7 +427,7 @@ FROM (
 		rb.code AS item_code,
 		rb.title AS item_title,
 		rb.fund_objid AS item_fund_objid, rb.fund_code AS item_fund_code, rb.fund_title AS item_fund_title,
-		rli.sef - rli.sefpaid - rli.sefamnesty AS amount
+		rli.sef - rli.sefpaid - rli.sefamnesty - rli.sefdisc AS amount
 	FROM rptledger rl
 		INNER JOIN rptledgeritem rli ON rl.objid = rli.rptledgerid
 		INNER JOIN revenueitem rb ON rli.sefacct_objid = rb.objid 
@@ -465,7 +469,7 @@ FROM (
 		rb.code AS item_code,
 		rb.title AS item_title,
 		rb.fund_objid AS item_fund_objid, rb.fund_code AS item_fund_code, rb.fund_title AS item_fund_title,
-		rliq.basic - rliq.basicpaid - rliq.basicamnesty AS amount
+		rliq.basic - rliq.basicpaid - rliq.basicamnesty - rliq.basicdisc  AS amount
 	FROM rptledger rl
 		INNER JOIN rptledgeritem rli ON rl.objid = rli.rptledgerid
 		INNER JOIN rptledgeritem_qtrly rliq ON rli.objid = rliq.rptledgeritemid
@@ -495,7 +499,7 @@ FROM (
 		rb.code AS item_code,
 		rb.title AS item_title,
 		rb.fund_objid AS item_fund_objid, rb.fund_code AS item_fund_code, rb.fund_title AS item_fund_title,
-		rliq.sef - rliq.sefpaid - rliq.sefamnesty AS amount
+		rliq.sef - rliq.sefpaid - rliq.sefamnesty - rliq.sefdisc  AS amount
 	FROM rptledger rl
 		INNER JOIN rptledgeritem rli ON rl.objid = rli.rptledgerid
 		INNER JOIN rptledgeritem_qtrly rliq ON rli.objid = rliq.rptledgeritemid
@@ -534,6 +538,94 @@ FROM (
 	  AND rliq.forpayment = 1	
   
 ) t	  
-  
 GROUP BY t.item_objid, t.item_code, t.item_title, t.item_fund_objid, t.item_fund_code, t.item_fund_title
 	
+
+
+
+[getItemsForPrinting]	
+SELECT
+	t.rptledgerid,
+	t.tdno,
+	t.owner_name, t.rputype,
+	t.totalav, t.fullpin,
+	t.cadastrallotno,
+	t.classcode,
+	t.barangay,
+	CASE
+		WHEN MIN(t.fromyear) = MAX(t.toyear) AND MIN(t.fromqtr) = 1 AND MAX(t.toqtr) = 4 
+			THEN CONCAT('FULL ', MAX(t.toyear))
+		WHEN MIN(t.fromyear) = MAX(t.toyear) AND MIN(t.fromqtr) = MAX(t.toqtr)
+			THEN CONCAT(MAX(t.toqtr), 'Q, ', MAX(t.toyear))
+		WHEN MIN(t.fromyear) = MAX(t.toyear) 
+			THEN CONCAT(MIN(t.fromqtr), MAX(t.toqtr), 'Q, ', MAX(t.toyear))
+
+		WHEN MIN(t.fromqtr) = 1 AND MAX(t.toqtr) = 4
+			THEN CONCAT('FULL ', MIN(t.fromyear), '-', MAX(t.toyear))
+		WHEN MIN(t.fromqtr) = 1 AND MAX(t.toqtr) <> 4
+			THEN CONCAT(MIN(t.fromyear), '-', MAX(t.toqtr), 'Q,', MAX(t.toyear))
+		WHEN MIN(t.fromqtr) <> 1 AND MAX(t.toqtr) = 4
+			THEN CONCAT(MIN(t.fromqtr), 'Q,', MIN(t.fromyear), '-',MAX(t.toyear))
+		ELSE
+			CONCAT(MIN(t.fromqtr), 'Q,', MIN(t.fromyear), '-', MAX(t.toqtr), 'Q,', MAX(t.toyear))
+	END AS period,
+	SUM(t.basic) AS basic, 
+	SUM(t.basicdisc) AS basicdisc, 
+	SUM(t.basicint) AS basicint, 
+	SUM(t.basicdp) AS basicdp, 
+	SUM(t.basicnet) AS basicnet,
+	SUM(t.sef) AS sef,  
+	SUM(t.sefdisc) AS sefdisc, 
+	SUM(t.sefint) AS sefint, 
+	SUM(t.sefdp) AS sefdp, 
+	SUM(t.sefnet) AS sefnet,
+	SUM(t.firecode) AS firecode,
+	SUM(t.amount) AS amount
+FROM ( 
+	SELECT
+		cri.rptledgerid,
+		f.tdno,
+		f.owner_name, r.rputype,
+		r.totalav, r.fullpin,
+		rp.cadastrallotno,
+		pc.code AS classcode,
+		b.name AS barangay,
+		MIN(cri.year) AS fromyear,
+		MIN(CASE WHEN cri.qtr = 0 THEN 1 ELSE cri.qtr END) AS fromqtr,
+		MAX(cri.year) AS toyear,
+		MAX(CASE WHEN cri.qtr = 0 THEN 4 ELSE cri.qtr END) AS toqtr,
+		SUM(basic) AS basic,
+		SUM(basicint) AS basicint,
+		SUM(basicdisc) AS basicdisc,
+		SUM(basicint - basicdisc) AS basicdp,
+		SUM(basic + basicint - basicdisc) AS basicnet,
+		SUM(sef) AS sef,
+		SUM(sefint) AS sefint,
+		SUM(sefdisc) AS sefdisc,
+		SUM(sefint - sefdisc) AS sefdp,
+		SUM(sef + sefint - sefdisc) AS sefnet,
+		SUM(firecode) AS firecode,
+		SUM(basic + basicint - basicdisc + sef + sefint - sefdisc + firecode) AS amount 
+	FROM cashreceiptitem_rpt cri
+		INNER JOIN rptledger rl ON cri.rptledgerid = rl.objid 
+		INNER JOIN faas f ON rl.faasid = f.objid 
+		INNER JOIN rpu r ON f.rpuid = r.objid 
+		INNER JOIN propertyclassification pc ON r.classification_objid = pc.objid 
+		INNER JOIN realproperty rp ON r.realpropertyid = rp.objid 
+		INNER JOIN barangay b ON rp.barangayid = b.objid 
+	WHERE cri.rptreceiptid = $P{rptreceiptid}
+	GROUP BY 
+		cri.rptledgerid, cri.year,
+		f.tdno, f.owner_name, 
+		r.rputype, r.totalav, r.fullpin,
+		rp.cadastrallotno,
+		pc.code, b.name
+	) t
+GROUP BY 
+		t.rptledgerid,
+		t.tdno,
+		t.owner_name, t.rputype,
+		t.totalav, t.fullpin,
+		t.cadastrallotno,
+		t.classcode,
+		t.barangay
