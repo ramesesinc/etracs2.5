@@ -64,8 +64,8 @@ public class NBPlatform implements Platform {
                 }
                 
                 startupWindow.removeAll();
-                SwingUtilities.updateComponentTreeUI( startupWindow );
                 startupWindow.add(content);
+                SwingUtilities.updateComponentTreeUI( startupWindow );
             }
         });
     }
