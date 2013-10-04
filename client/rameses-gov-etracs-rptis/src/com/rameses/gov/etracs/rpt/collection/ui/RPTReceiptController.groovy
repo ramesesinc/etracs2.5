@@ -145,6 +145,8 @@ class RPTReceiptController extends com.rameses.enterprise.treasury.cashreceipt.A
     }
 
     void updateItemDue(item){
+        item.partialled = false;
+        bill.recalc = true;
         bill.ledgerids.clear();
         bill.ledgerids.add(item.rptledgerid);
         def items = svc.getItemsForPayment(bill);
@@ -201,10 +203,11 @@ class RPTReceiptController extends com.rameses.enterprise.treasury.cashreceipt.A
     def partialPayment(){
         return InvokerUtil.lookupOpener('rptpartialpayment:open', [
                 
-            amount : selectedItem.total,
+            amount : selectedItem.amount,
                 
             onpartial : { partial ->
-                selectedItem.putAll( svc.computePartialPayment(selectedItem, partial) );
+                selectedItem.putAll( billSvc.computePartialPayment(selectedItem, partial) );
+                selectedItem.amount = partial
                 listHandler.load();
                 calcReceiptAmount();
             },

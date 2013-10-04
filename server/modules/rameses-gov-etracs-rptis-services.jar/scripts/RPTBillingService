@@ -102,6 +102,11 @@ public class RPTBillingService
 		if (bill.advancebill && bill.billdate <= (dtSvc.serverDate - 1 ))
             throw new Exception('Advance Billing Date must be greater than current date.')
 
+        if (bill.recalc){
+        	em.clearLedgerBillingInfoFlags(buildParams(bill))
+        	bill.recalc = false
+        }
+
         insertUnpostedItems(bill)
         recalcBillItems(bill)
         rebuildLedgerItems(bill)
@@ -202,71 +207,6 @@ public class RPTBillingService
 
 
 	@ProxyMethod
-	public def computePartialPayment(ledger, payment ) {
-		if (!ledger.items)
-			throw new Exception('Items for payment are required.')
-		if (payment == null || payment == 0)
-			throw new Exception('Payment is required.')
-
-		def paiditems = [] 
-
-		ledger.items.each{
-			if (payment > 0.0) {
-				def amtdue = it.total
-				if ( payment >= amtdue){
-					payment -= amtdue 
-				}
-				else {
-					it.firecodepaid  = it.firecode 
-					payment -= it.firecode 
-
-					//apply proportionally
-					def basicpaymentrate  = numSvc.round(it.basicnet / (it.basicnet + it.sefnet))
-					def basicpayment 	= numSvc.round(payment * basicpaymentrate)
-					def sefpayment 		= payment - basicpayment 
-
-					def basicintrate    = numSvc.round(it.basicint / it.basic)
-					def basic           = numSvc.round(basicpayment / (1 + basicintrate))
-					it.basicint         = basicpayment - basic 
-					if (it.basicdisc == 0.0) {
-						it.basic = basic 
-					}
-					else{
-						it.basicdisc = numSvc.round(basic * basicdiscrate)
-						it.basic     = basic + it.basicdisc 
-					}
-					it.basicdp 			= it.basicint - it.basicdisc 
-					it.basicnet 		= it.basic + it.basicdp
-
-					def sefintrate    = numSvc.round(it.sefint / it.sef)
-					def sef           = numSvc.round(sefpayment / (1 + sefintrate))
-					it.sefint         = sefpayment - sef 
-					if (it.sefdisc == 0.0) {
-						it.sef = sef 
-					}
-					else{
-						it.sefdisc = numSvc.round(sef * sefdiscrate)
-						it.sef     = sef + it.sefdisc 
-					}
-					it.sefdp 			= it.sefint - it.sefdisc 
-					it.sefnet 		= it.sef + it.sefdp
-
-					it.total 		= it.basicnet + it.sefnet 
-					it.partialled 	= true
-					payment = 0.0
-				}
-				paiditems += it 
-			}
-		}
-		ledger.items = paiditems 
-		summarizeLedgerInfo(ledger)
-		ledger.partialled = true
-		return ledger 
-	}
-
-
-
-	@ProxyMethod
 	public def getLedgersToRecalc(count){
 		def params = [billdate:dtSvc.serverDate, _limit : count]
 		return em.getLedgersToRecalc(params)
@@ -294,6 +234,113 @@ public class RPTBillingService
 	@ProxyMethod
 	public def recalcBillItemsAsync( bill ) {
 		recalcBillItems(bill)	
+	}
+
+
+	@ProxyMethod
+	public def computePartialPayment( ledger, payment  ) {
+		if (payment == null || payment == 0)
+			throw new Exception('Partial Payment is required.')
+
+		def paiditems = em.getFullyPaidItems(['rptledgerid':ledger.rptledgerid])
+		def idx = 0;
+		def pitem;
+		for(; idx < paiditems.size(); idx++)
+		{
+			if (payment == 0.0 ) break;
+
+			pitem = paiditems[idx]
+			def amtdue = pitem.total 
+			if ( payment >= amtdue){
+				payment -= amtdue 
+			}
+			else 
+			{
+				pitem.partial = true;
+
+				if (payment > pitem.firecode){
+					payment -= pitem.firecode 
+				}
+				else{
+					pitem.firecode = payment 
+					payment = 0.0 
+				}
+
+				if (payment > 0.0){
+					//apply proportionally
+					def basicpaymentrate  = numSvc.round(pitem.basic / (pitem.basic + pitem.sef))
+					def basicpayment 	= numSvc.round(payment * basicpaymentrate)
+					def sefpayment 		= payment - basicpayment 
+
+					def basicintrate    = numSvc.round(pitem.basicint / pitem.basic)
+					def partialbasic    = numSvc.round(basicpayment / (1 + basicintrate))
+					def partialbasicint = basicpayment - partialbasic 
+
+					def partialbasicdisc 		= 0.0
+					if (pitem.basicdisc > 0.0) {
+						def basicdiscrate = numSvc.round(pitem.basicdisc / pitem.basic)
+						partialbasicdisc = numSvc.round(partialbasic * basicdiscrate)
+					}
+
+					def partialbasicamnesty 	= 0.0 
+					if (pitem.basicamnesty > 0.0) {
+						def basicamnestyrate = numSvc.round(pitem.basicamnesty / pitem.basic)
+						partialbasicamnesty = numSvc.round(partialbasic * basicamnestyrate)
+					}
+
+					def partialbasicintamnesty 	= 0.0 
+					if (pitem.basicintamnesty > 0.0) {
+						def basicintamnestyrate = numSvc.round(pitem.basicintamnesty / pitem.basicint)
+						partialbasicintamnesty = numSvc.round(partialbasicint * basicintamnestyrate)
+					}
+
+					def sefintrate    	= numSvc.round(pitem.sefint / pitem.sef)
+					def partialsef    	= numSvc.round(sefpayment / (1 + sefintrate))
+					def partialsefint 	= sefpayment - partialsef 
+
+					def partialsefdisc 	= 0.0
+					if (pitem.sefdisc > 0.0) {
+						def sefdiscrate = numSvc.round(pitem.sefdisc / pitem.sef)
+						partialsefdisc = numSvc.round(partialsef * sefdiscrate)
+					}
+
+					def partialsefamnesty 	= 0.0 
+					if (pitem.sefamnesty > 0.0) {
+						def sefamnestyrate = numSvc.round(pitem.sefamnesty / pitem.sef)
+						partialsefamnesty = numSvc.round(partialsef * sefamnestyrate)
+					}
+
+					def partialsefintamnesty 	= 0.0 
+					if (pitem.sefintamnesty > 0.0) {
+						def sefintamnestyrate = numSvc.round(pitem.sefintamnesty / pitem.sefint)
+						partialsefintamnesty = numSvc.round(partialsefint * sefintamnestyrate)
+					}
+
+					def partialinfo = [
+						rptledgeritemqtrlyid : pitem.rptledgeritemqtrlyid,
+						partialbasic 		: partialbasic,
+						partialbasicint 	: partialbasicint,
+						partialbasicdisc 	: partialbasicdisc,
+						partialbasicamnesty	: partialbasicamnesty,
+						partialbasicintamnesty	: partialbasicintamnesty,
+						partialsef 			: partialsef,
+						partialsefint 		: partialsefint,
+						partialsefdisc 		: partialsefdisc,
+						partialsefamnesty	: partialsefamnesty,
+						partialsefintamnesty	: partialsefintamnesty,
+					]
+					em.updatePartialInfo(partialinfo)
+					payment = 0.0
+					break;
+				}
+			}
+		}
+		if (pitem) {
+			//clear forpayment flag for items not included in the partial payment
+			em.resetLedgerItemForPaymentFlag(pitem)
+			em.resetQuarterlyLedgerItemForPaymentFlag(pitem)
+		}
+		return pitem 
 	}
 
 	def createFacts(bill){
@@ -513,6 +560,17 @@ public class RPTBillingService
 					item.sefintacct = [objid:ledger.sefintacctid]
 					item.firecodeacct = [objid:ledger.firecodeacctid]
 					item.revtype = (ledger.revtype ? ledger.revtype : item.revtype)
+					item.partial = false
+					item.partialbasic = 0.0
+					item.partialbasicint = 0.0
+					item.partialbasicdisc = 0.0
+					item.partialbasicamnesty = 0.0
+					item.partialbasicintamnesty = 0.0
+					item.partialsef = 0.0
+					item.partialsefint = 0.0
+					item.partialsefdisc = 0.0
+					item.partialsefamnesty = 0.0
+					item.partialsefintamnesty = 0.0
 					if (item.qtrly) {
 						ledgerSvc.updateLedgerItemAccountInfo(item)
 						ledgerSvc.updateLedgerItemQuarterly(item)

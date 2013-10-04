@@ -95,7 +95,7 @@ class RPTReceiptService
 			it.receiptid = receipt.objid
 			items += it
 		}
-		return items.findAll{it.amount > 0.0}
+		return items.findAll{it.amount > 0.0} 
 	}
 
 
