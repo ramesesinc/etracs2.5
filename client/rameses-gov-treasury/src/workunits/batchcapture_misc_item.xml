@@ -1,6 +1,6 @@
 <workunit>
     <invokers>
-        <invoker type="cashreceipt:batch:misc:open" caption="Batch Item Information" action="init" target="popup"/>
+        <invoker type="batchcapture:misc:open" caption="Batch Item Information" action="init" target="popup"/>
     </invokers>
     
     <code>
@@ -21,6 +21,7 @@
             def selectedItem;
             
             void init(){
+                println "entity ->" +  entity;
             }
 
             def getLookupPayer() {
@@ -34,9 +35,10 @@
             }
             
             def getLookupAccount() {
-                return InvokerUtil.lookupOpener("revenueitem:lookup", [ 
-                    onselect: {o-> 
-                        selectedItem.account = o;
+                return InvokerUtil.lookupOpener("cashreceiptitem:lookup", [ 
+                    "query.collectorid": entity.collector.objid,
+                    onselect: { o->
+                        selectedItem.item = o;
                     }
                 ]);
             }
@@ -82,7 +84,7 @@
     </code>
     
     <pages>
-        <page template="com.rameses.gov.treasury.cashreceipt.BatchCollectionItemPage"/>
+        <page template="com.rameses.gov.treasury.batchcapture.BatchCollectionItemPage"/>
     </pages>
     
 </workunit>
