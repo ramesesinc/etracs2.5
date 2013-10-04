@@ -1,6 +1,8 @@
 <workunit extends="wtemplates/ListController.xml" >
     <invokers>
         <invoker folderid="/explorer/txn/treasury" caption="AF Issuances" role="AFO"/>
+        
+        <invoker type="formActions" caption="Change Mode" action="changeMode" mnemonic="h" shortcut="ctrl H" visibleWhen="#{selectedItem != null &amp;&amp; selectedItem.item.aftype=='SERIAL'}"/>
     </invokers>
     
     <code>
@@ -27,6 +29,10 @@
             @Service("UsergroupMemberLookupService")
             def ugmSvc;
             
+            @Service("AFSerialControlService")
+            def svc;
+
+            
             @PropertyChangeListener
             def listener = [
                 "collector" : {
@@ -51,6 +57,16 @@
                 m.collectorid = collector ? collector.objid : '%';
                 m.subcollectorid = subcollector ? subcollector.objid : '%';
             }
+            
+             def changeMode() {
+                if(!selectedItem) throw new Exception("Select an item");
+                println selectedItem.item
+                return InvokerUtil.lookupOpener("afserial:changemode", 
+                    [entity:selectedItem.item, saveHandler: { search() }] 
+                );
+            }
+            
+            
             
         }
         

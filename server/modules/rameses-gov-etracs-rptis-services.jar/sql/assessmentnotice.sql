@@ -70,7 +70,23 @@ WHERE f.taxpayer_objid = $P{taxpayerid}
 
 
 [getTaxpayerList]  
-select distinct f.taxpayer_objid as taxpayerid 
+select distinct f.taxpayer_objid as objid,
+	 f.taxpayer_name as name, 
+	f.taxpayer_address as address 
 from faas f 
  inner join rpu r on f.rpuid = r.objid 
-where r.ry=$P{revisionyear} and f.state='CURRENT'
+ inner join realproperty rp on rp.objid = r.realpropertyid 
+where f.state='CURRENT' 
+	and r.ry=$P{revisionyear}
+	and rp.barangayid like $P{barangayid}
+	and rp.section like $P{section}  
+
+[getTaxpayerPropertyListForBatch]  
+select f.objid 
+from faas f 
+ inner join rpu r on f.rpuid = r.objid 
+ inner join realproperty rp on rp.objid = r.realpropertyid 
+where f.state='CURRENT' 
+	and r.ry=$P{revisionyear}
+	and rp.barangayid like $P{barangayid}
+	and rp.section like $P{section}

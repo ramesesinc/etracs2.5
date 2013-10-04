@@ -33,6 +33,38 @@ WHERE  ai.afid = $P{af}
 AND NOT(ac.assignee_objid IS NULL) 
 AND ai.respcenter_objid = $P{userid}
 
+[getAssigneeControlForBatchList]
+SELECT a.* 
+FROM 
+(	SELECT DISTINCT 
+	ai.objid AS controlid,	
+	ai.prefix, 
+	ai.suffix, 
+	ai.currentstub,
+	ac.currentseries,
+	ac.currentseries as startseries,
+	ai.endseries, 
+	ai.currentstub AS stub,
+	ac.assignee_objid AS ownerid,
+	ai.respcenter_objid AS collector_objid,
+	ai.respcenter_name AS collector_name,
+	col.jobtitle AS collector_title,
+	ac.assignee_objid AS subcollector_objid,
+	ac.assignee_name AS subcollector_name,
+	scol.jobtitle AS subcollector_title,
+	af.serieslength
+	FROM afserial_control ac 
+	INNER JOIN  afserial_inventory ai ON ac.controlid=ai.objid
+	INNER JOIN  afserial af on af.objid = ai.afid  
+	INNER JOIN sys_usergroup_member col ON col.user_objid=ai.respcenter_objid 
+	LEFT JOIN sys_usergroup_member scol ON scol.user_objid=ac.assignee_objid 
+	WHERE  ai.afid =  $P{formno}
+	AND ac.txnmode = 'CAPTURE'
+	AND ac.currentseries <= ai.endseries ) a
+WHERE a.ownerid = $P{userid} and 
+		( a.currentstub like $P{searchtext} or a.startseries like $P{searchtext} )
+
+
 [findActiveControlForCashReceipt]
 SELECT a.* 
 FROM 
