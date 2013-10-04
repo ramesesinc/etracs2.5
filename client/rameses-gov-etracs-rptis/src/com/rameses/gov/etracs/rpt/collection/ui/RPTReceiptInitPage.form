@@ -35,62 +35,89 @@
         <Property name="showCaption" type="boolean" value="false"/>
       </Properties>
       <SubComponents>
+        <Component class="com.rameses.rcp.control.XRadio" name="xRadio1">
+          <Properties>
+            <Property name="caption" type="java.lang.String" value="Pay all properties"/>
+            <Property name="captionMnemonic" type="char" value="a"/>
+            <Property name="captionWidth" type="int" value="200"/>
+            <Property name="cellPadding" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
+              <Insets value="[10, 10, 0, 0]"/>
+            </Property>
+            <Property name="name" type="java.lang.String" value="payoption"/>
+            <Property name="opaque" type="boolean" value="false"/>
+            <Property name="optionValue" type="java.lang.Object" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+              <Connection code="&quot;all&quot;" type="code"/>
+            </Property>
+            <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+              <Dimension value="[111, 24]"/>
+            </Property>
+            <Property name="showCaption" type="boolean" value="false"/>
+            <Property name="text" type="java.lang.String" value=" Pay all properties"/>
+          </Properties>
+        </Component>
+        <Component class="com.rameses.rcp.control.XRadio" name="xRadio2">
+          <Properties>
+            <Property name="caption" type="java.lang.String" value="Pay by ledger"/>
+            <Property name="captionMnemonic" type="char" value="l"/>
+            <Property name="captionWidth" type="int" value="200"/>
+            <Property name="cellPadding" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
+              <Insets value="[0, 10, 0, 0]"/>
+            </Property>
+            <Property name="name" type="java.lang.String" value="payoption"/>
+            <Property name="opaque" type="boolean" value="false"/>
+            <Property name="optionValue" type="java.lang.Object" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+              <Connection code="&quot;byledger&quot;" type="code"/>
+            </Property>
+            <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+              <Dimension value="[89, 24]"/>
+            </Property>
+            <Property name="showCaption" type="boolean" value="false"/>
+            <Property name="text" type="java.lang.String" value=" Pay by leder"/>
+          </Properties>
+        </Component>
         <Container class="com.rameses.rcp.util.FormPanel" name="formPanel3">
           <Properties>
-            <Property name="captionBorder" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
-              <Border info="null"/>
-            </Property>
-            <Property name="captionPadding" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
-              <Insets value="[0, 0, 0, 0]"/>
+            <Property name="cellpadding" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
+              <Insets value="[10, 10, 0, 0]"/>
             </Property>
             <Property name="orientation" type="java.lang.String" value="HORIZONTAL"/>
             <Property name="padding" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
               <Insets value="[0, 0, 0, 0]"/>
             </Property>
             <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-              <Dimension value="[0, 50]"/>
+              <Dimension value="[0, 22]"/>
             </Property>
             <Property name="showCaption" type="boolean" value="false"/>
           </Properties>
           <SubComponents>
-            <Component class="com.rameses.rcp.control.XCheckBox" name="xCheckBox1">
+            <Component class="com.rameses.rcp.control.XRadio" name="xRadio3">
               <Properties>
-                <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
-                  <Border info="org.netbeans.modules.form.compat2.border.EmptyBorderInfo">
-                    <EmptyBorder bottom="0" left="0" right="0" top="0"/>
-                  </Border>
+                <Property name="caption" type="java.lang.String" value="Advance Payment"/>
+                <Property name="captionMnemonic" type="char" value="v"/>
+                <Property name="captionWidth" type="int" value="200"/>
+                <Property name="name" type="java.lang.String" value="payoption"/>
+                <Property name="opaque" type="boolean" value="false"/>
+                <Property name="optionValue" type="java.lang.Object" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                  <Connection code="&quot;advance&quot;" type="code"/>
                 </Property>
-                <Property name="cellPadding" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
-                  <Insets value="[10, 5, 0, 0]"/>
-                </Property>
-                <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
-                  <Insets value="[0, 0, 0, 0]"/>
-                </Property>
-                <Property name="name" type="java.lang.String" value="bill.advancepayment"/>
                 <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                  <Dimension value="[150, 15]"/>
+                  <Dimension value="[150, 24]"/>
                 </Property>
                 <Property name="showCaption" type="boolean" value="false"/>
-                <Property name="text" type="java.lang.String" value=" Advance Payment "/>
+                <Property name="text" type="java.lang.String" value=" Advance Payment"/>
               </Properties>
             </Component>
             <Component class="com.rameses.rcp.control.XIntegerField" name="xIntegerField1">
               <Properties>
                 <Property name="caption" type="java.lang.String" value="Year"/>
                 <Property name="captionWidth" type="int" value="40"/>
-                <Property name="cellPadding" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
-                  <Insets value="[10, 0, 0, 0]"/>
-                </Property>
                 <Property name="depends" type="[Ljava.lang.String;" editor="org.netbeans.beaninfo.editors.StringArrayEditor">
                   <StringArray count="1">
-                    <StringItem index="0" value="bill.advancepayment"/>
+                    <StringItem index="0" value="payoption"/>
                   </StringArray>
                 </Property>
                 <Property name="enabled" type="boolean" value="false"/>
                 <Property name="name" type="java.lang.String" value="advanceyear"/>
-                <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                  <Dimension value="[60, 20]"/>
-                </Property>
               </Properties>
             </Component>
           </SubComponents>
@@ -118,6 +145,9 @@
         <Component class="com.rameses.rcp.control.XButton" name="xButton1">
           <Properties>
             <Property name="mnemonic" type="int" value="112"/>
+            <Property name="cellPadding" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
+              <Insets value="[0, 10, 0, 0]"/>
+            </Property>
             <Property name="defaultCommand" type="boolean" value="true"/>
             <Property name="name" type="java.lang.String" value="process"/>
             <Property name="showCaption" type="boolean" value="false"/>

@@ -1,8 +1,8 @@
-<workunit>
+<workunit >
     <invokers>
-       <invoker type="stockrequest:reports" caption="RIS Report" action="viewRIS" visibleWhen="#{entity.reqtype == 'ISSUANCE'}"/>
-       <invoker type="stockrequest:reports" caption="RIV Report" action="viewRIV" visibleWhen="#{entity.reqtype == 'PURCHASE'}"/>
-       <invoker type="formActions" caption="Back" action="_close" />
+       <invoker type="stockrequest:ris" caption="RIS Report" action="viewReport" />
+       
+       <invoker type="formActions" caption="Back" action="_close" mnemonic="b" shortcut="ctrl B" /> 
     </invokers>
     
     <code>
@@ -18,40 +18,20 @@
         
             def entity;
         
-            def reportData;
             def reportPath = "com/rameses/gov/treasury/ris/report/"
-            def reportname 
-            def subreport  
-         
-            void viewRIS() {
-                MsgBox.alert("RIS " + entity.reqtype);
-                reportData = entity;
-                /*
-                if(! risid ) risid = caller.entity.objid
-                reportData = svc.getRISData( risid )
-                reportname = reportPath + "ris.jasper";
-                subreport = new SubReport("ReportRISItem", reportPath + "risitem.jasper")
-                report.viewReport();
-                */
-            } 
             
-            void viewRIV() {
-                MsgBox.alert("RIV " + entity.reqtype);
-                reportData = entity;
-                /*
-                if(! risid ) risid = caller.entity.objid
-                reportData =  svc.getRIVData( risid)
-                reportname = reportPath + "riv.jasper";
-                subreport = new SubReport("ReportRIVItem", reportPath + "rivitem.jasper")
+            @Service("ReportParameterService") 
+            def paramsvc
+         
+            void viewReport() {
                 report.viewReport();
-                */
             } 
             
             def report = [
-                getReportName : { return reportname },
-                getReportData : { return  reportData },
+                getReportName : { return reportPath + "ris.jasper" },
+                getReportData : { return  entity },
                 getParameters : { return paramsvc.getStandardParameter() },
-                getSubReports : {return [ subreport ] as SubReport[];    }
+                getSubReports : { return [  new SubReport("ReportRISItem", reportPath + "risitem.jasper") ] as SubReport[]; }
             ] as ReportModel
            
         }
@@ -60,7 +40,7 @@
     </code>
     
     <pages>
-        <page template="com.rameses.gov.treasury.report.PreviewPage"/>
+        <page template="com.rameses.osiris2.common.ui.ReportPreviewPage"/>
     </pages>
     
 </workunit>
