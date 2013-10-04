@@ -213,7 +213,7 @@ public class RPTBillingService
 	}
 
 
-	def phases = ['TAX', 'PENALTY', 'DISCOUNT', 'AMNESTY', 'SUMMARY']
+	def phases = ['TAX', 'AFTER_TAX', 'PENALTY', 'AFTER_PENALTY', 'DISCOUNT', 'AFTER_DISCOUNT', 'SUMMARY']
 
 	@ProxyMethod
 	public void recalcBillItems(bill){
@@ -282,18 +282,6 @@ public class RPTBillingService
 						partialbasicdisc = numSvc.round(partialbasic * basicdiscrate)
 					}
 
-					def partialbasicamnesty 	= 0.0 
-					if (pitem.basicamnesty > 0.0) {
-						def basicamnestyrate = numSvc.round(pitem.basicamnesty / pitem.basic)
-						partialbasicamnesty = numSvc.round(partialbasic * basicamnestyrate)
-					}
-
-					def partialbasicintamnesty 	= 0.0 
-					if (pitem.basicintamnesty > 0.0) {
-						def basicintamnestyrate = numSvc.round(pitem.basicintamnesty / pitem.basicint)
-						partialbasicintamnesty = numSvc.round(partialbasicint * basicintamnestyrate)
-					}
-
 					def sefintrate    	= numSvc.round(pitem.sefint / pitem.sef)
 					def partialsef    	= numSvc.round(sefpayment / (1 + sefintrate))
 					def partialsefint 	= sefpayment - partialsef 
@@ -304,30 +292,14 @@ public class RPTBillingService
 						partialsefdisc = numSvc.round(partialsef * sefdiscrate)
 					}
 
-					def partialsefamnesty 	= 0.0 
-					if (pitem.sefamnesty > 0.0) {
-						def sefamnestyrate = numSvc.round(pitem.sefamnesty / pitem.sef)
-						partialsefamnesty = numSvc.round(partialsef * sefamnestyrate)
-					}
-
-					def partialsefintamnesty 	= 0.0 
-					if (pitem.sefintamnesty > 0.0) {
-						def sefintamnestyrate = numSvc.round(pitem.sefintamnesty / pitem.sefint)
-						partialsefintamnesty = numSvc.round(partialsefint * sefintamnestyrate)
-					}
-
 					def partialinfo = [
 						rptledgeritemqtrlyid : pitem.rptledgeritemqtrlyid,
 						partialbasic 		: partialbasic,
 						partialbasicint 	: partialbasicint,
 						partialbasicdisc 	: partialbasicdisc,
-						partialbasicamnesty	: partialbasicamnesty,
-						partialbasicintamnesty	: partialbasicintamnesty,
 						partialsef 			: partialsef,
 						partialsefint 		: partialsefint,
 						partialsefdisc 		: partialsefdisc,
-						partialsefamnesty	: partialsefamnesty,
-						partialsefintamnesty	: partialsefintamnesty,
 					]
 					em.updatePartialInfo(partialinfo)
 					payment = 0.0
@@ -448,8 +420,11 @@ public class RPTBillingService
 
 	void insertQtrlyLedgerItems(bill, ledger){
 		if (bill.billtoyear >= dtSvc.serverYear || bill.billtoqtr !=  4){
-			em.insertQtrlyLedgerItems([rptledgerid:ledger.objid, billtoyear: bill.billtoyear])	
-			em.setLedgerItemQtrlyFlag([rptledgerid:ledger.objid, billtoyear: bill.billtoyear])	
+			def params = [rptledgerid:ledger.objid, billtoyear: bill.billtoyear]
+			em.insertQtrlyLedgerItems(params)	
+			em.setLedgerItemQtrlyFlag(params)	
+			params.totalfirecode = em.findTotalFireCode(params).totalfirecode
+			em.chargeFireCodeOnFirstQtr(params)
 		}
 		
 	}

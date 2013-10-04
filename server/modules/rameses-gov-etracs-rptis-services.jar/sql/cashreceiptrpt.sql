@@ -79,10 +79,10 @@ FROM (
 		MIN(rliq.qtr) AS fromqtr,
 		MAX(rliq.year) AS toyear,
 		MAX(rliq.qtr) AS toqtr,
-		SUM(rliq.basic - rliq.basicpaid - rliq.basicamnesty - rliq.basicdisc +
-		rliq.basicint - rliq.basicintpaid - rliq.basicintamnesty + 
-		rliq.sef - rliq.sefpaid - rliq.sefamnesty - rliq.sefdisc + 
-		rliq.sefint - rliq.sefintpaid - rliq.sefintamnesty  +
+		SUM(rliq.basic - rliq.basicpaid - rliq.basicdisc +
+		rliq.basicint - rliq.basicintpaid + 
+		rliq.sef - rliq.sefpaid - rliq.sefdisc + 
+		rliq.sefint - rliq.sefintpaid  +
 		rliq.firecode - rliq.firecodepaid) AS amount
 	FROM rptledger rl
 		INNER JOIN faas f ON rl.faasid = f.objid 
@@ -175,16 +175,16 @@ SELECT
 	CASE WHEN rliq.partial = 1 THEN rliq.partialbasicint ELSE rliq.basicint - rliq.basicintpaid END AS basicint,
 	CASE WHEN rliq.partial = 1 THEN rliq.partialbasicdisc ELSE rliq.basicdisc END  AS basicdisc,
 	rliq.basiccredit,
-	CASE WHEN rliq.partial = 1 THEN rliq.partialbasicamnesty ELSE rliq.basicamnesty END basicamnesty,
-	CASE WHEN rliq.partial = 1 THEN rliq.partialbasicintamnesty ELSE rliq.basicintamnesty END basicintamnesty,
+	rliq.basicamnesty,
+	rliq.basicintamnesty,
 	rli.basicacct_objid,
 	rli.basicintacct_objid,
 	CASE WHEN rliq.partial = 1 THEN rliq.partialsef ELSE rliq.sef - rliq.sefpaid END AS sef,
 	CASE WHEN rliq.partial = 1 THEN rliq.partialsefint ELSE rliq.sefint - rliq.sefintpaid END AS sefint,
 	CASE WHEN rliq.partial = 1 THEN rliq.partialsefdisc ELSE rliq.sefdisc END  AS sefdisc,
 	rliq.sefcredit,
-	CASE WHEN rliq.partial = 1 THEN rliq.partialsefamnesty ELSE rliq.sefamnesty END sefamnesty,
-	CASE WHEN rliq.partial = 1 THEN rliq.partialsefintamnesty ELSE rliq.sefintamnesty END sefintamnesty,
+	rliq.sefamnesty,
+	rliq.sefintamnesty,
 	rli.sefacct_objid,
 	rli.sefintacct_objid,
 	rliq.firecode - rliq.firecodepaid AS firecode,
@@ -230,15 +230,11 @@ UPDATE rptledgeritem_qtrly rliq, cashreceiptitem_rpt cr SET
 	rliq.basicintpaid = rliq.basicintpaid + cr.basicint,
 	rliq.basicdisctaken = rliq.basicdisctaken + cr.basicdisc,
 	rliq.basiccredit = rliq.basiccredit + cr.basiccredit,
-	rliq.basicamnestyapplied = rliq.basicamnestyapplied + cr.basicamnesty,
-	rliq.basicintamnestyapplied = rliq.basicintamnestyapplied + cr.basicintamnesty,
 	
 	rliq.sefpaid = rliq.sefpaid + cr.sef,
 	rliq.sefintpaid = rliq.sefintpaid + cr.sefint,
 	rliq.sefdisctaken = rliq.sefdisctaken + cr.sefdisc,
 	rliq.sefcredit = rliq.sefcredit + cr.sefcredit,
-	rliq.sefamnestyapplied = rliq.sefamnestyapplied + cr.sefamnesty,
-	rliq.sefintamnestyapplied = rliq.sefintamnestyapplied + cr.sefintamnesty,
 	
 	rliq.firecodepaid = rliq.firecodepaid + cr.firecode,
 	rliq.forpayment = 0,
@@ -246,13 +242,9 @@ UPDATE rptledgeritem_qtrly rliq, cashreceiptitem_rpt cr SET
 	rliq.partialbasic = 0,
 	rliq.partialbasicint = 0,
 	rliq.partialbasicdisc = 0,
-	rliq.partialbasicamnesty = 0,
-	rliq.partialbasicintamnesty = 0,
 	rliq.partialsef = 0,
 	rliq.partialsefint = 0,
-	rliq.partialsefdisc = 0,
-	rliq.partialsefamnesty = 0,
-	rliq.partialsefintamnesty = 0
+	rliq.partialsefdisc = 0
 WHERE rliq.rptledgerid = $P{rptledgerid}
   AND cr.rptreceiptid = $P{rptreceiptid}
   AND rliq.objid = cr.rptledgeritemqtrlyid 
@@ -399,7 +391,7 @@ FROM (
 		rb.code AS item_code, 
 		rb.title AS item_title,
 		rb.fund_objid AS item_fund_objid, rb.fund_code AS item_fund_code, rb.fund_title AS item_fund_title,
-		rli.basic - rli.basicpaid - rli.basicamnesty - rli.basicdisc AS amount
+		rli.basic - rli.basicpaid - rli.basicdisc AS amount
 	FROM rptledger rl
 		INNER JOIN rptledgeritem rli ON rl.objid = rli.rptledgerid
 		INNER JOIN revenueitem rb ON rli.basicacct_objid = rb.objid 
@@ -413,7 +405,7 @@ FROM (
 		rb.code AS item_code,
 		rb.title AS item_title,
 		rb.fund_objid AS item_fund_objid, rb.fund_code AS item_fund_code, rb.fund_title AS item_fund_title,
-		rli.basicint - rli.basicintpaid - rli.basicintamnesty AS amount
+		rli.basicint - rli.basicintpaid  AS amount
 	FROM rptledger rl
 		INNER JOIN rptledgeritem rli ON rl.objid = rli.rptledgerid
 		INNER JOIN revenueitem rb ON rli.basicintacct_objid = rb.objid 
@@ -427,7 +419,7 @@ FROM (
 		rb.code AS item_code,
 		rb.title AS item_title,
 		rb.fund_objid AS item_fund_objid, rb.fund_code AS item_fund_code, rb.fund_title AS item_fund_title,
-		rli.sef - rli.sefpaid - rli.sefamnesty - rli.sefdisc AS amount
+		rli.sef - rli.sefpaid - rli.sefdisc AS amount
 	FROM rptledger rl
 		INNER JOIN rptledgeritem rli ON rl.objid = rli.rptledgerid
 		INNER JOIN revenueitem rb ON rli.sefacct_objid = rb.objid 
@@ -441,7 +433,7 @@ FROM (
 		rb.code AS item_code,
 		rb.title AS item_title,
 		rb.fund_objid AS item_fund_objid, rb.fund_code AS item_fund_code, rb.fund_title AS item_fund_title,
-		rli.sefint - rli.sefintpaid - rli.sefintamnesty AS amount
+		rli.sefint - rli.sefintpaid  AS amount
 	FROM rptledger rl
 		INNER JOIN rptledgeritem rli ON rl.objid = rli.rptledgerid
 		INNER JOIN revenueitem rb ON rli.sefintacct_objid = rb.objid 
@@ -455,7 +447,7 @@ FROM (
 		rb.code AS item_code,
 		rb.title AS item_title,
 		rb.fund_objid AS item_fund_objid, rb.fund_code AS item_fund_code, rb.fund_title AS item_fund_title,
-		rli.firecode AS amount
+		rli.firecode - rli.firecodepaid AS amount
 	FROM rptledger rl
 		INNER JOIN rptledgeritem rli ON rl.objid = rli.rptledgerid
 		INNER JOIN revenueitem rb ON rli.firecodeacct_objid = rb.objid 
@@ -471,7 +463,7 @@ FROM (
 		rb.fund_objid AS item_fund_objid, rb.fund_code AS item_fund_code, rb.fund_title AS item_fund_title,
 		CASE 
 			WHEN rliq.partial = 0 THEN
-				rliq.basic - rliq.basicpaid - rliq.basicamnesty - rliq.basicdisc  
+				rliq.basic - rliq.basicpaid - rliq.basicdisc  
 			ELSE
 				rliq.partialbasic
 		END AS amount
@@ -491,7 +483,7 @@ FROM (
 		rb.fund_objid AS item_fund_objid, rb.fund_code AS item_fund_code, rb.fund_title AS item_fund_title,
 		CASE 
 			WHEN rliq.partial = 0 THEN
-				rliq.basicint - rliq.basicintpaid - rliq.basicintamnesty 
+				rliq.basicint - rliq.basicintpaid 
 			ELSE
 				rliq.partialbasicint
 		END AS amount
@@ -511,7 +503,7 @@ FROM (
 		rb.fund_objid AS item_fund_objid, rb.fund_code AS item_fund_code, rb.fund_title AS item_fund_title,
 		CASE 
 			WHEN rliq.partial = 0 THEN
-				rliq.sef - rliq.sefpaid - rliq.sefamnesty - rliq.sefdisc
+				rliq.sef - rliq.sefpaid - rliq.sefdisc
 			ELSE
 				rliq.partialsef
 		END AS amount
@@ -531,7 +523,7 @@ FROM (
 		rb.fund_objid AS item_fund_objid, rb.fund_code AS item_fund_code, rb.fund_title AS item_fund_title,
 		CASE 
 			WHEN rliq.partial = 0 THEN
-				rliq.sefint - rliq.sefintpaid - rliq.sefintamnesty
+				rliq.sefint - rliq.sefintpaid 
 			ELSE
 				rliq.partialsefint
 		END AS amount
@@ -549,7 +541,7 @@ FROM (
 		rb.code AS item_code,
 		rb.title AS item_title,
 		rb.fund_objid AS item_fund_objid, rb.fund_code AS item_fund_code, rb.fund_title AS item_fund_title,
-		rliq.firecode AS amount
+		rliq.firecode - rli.firecodepaid AS amount
 	FROM rptledger rl
 		INNER JOIN rptledgeritem rli ON rl.objid = rli.rptledgerid
 		INNER JOIN rptledgeritem_qtrly rliq ON rli.objid = rliq.rptledgeritemid

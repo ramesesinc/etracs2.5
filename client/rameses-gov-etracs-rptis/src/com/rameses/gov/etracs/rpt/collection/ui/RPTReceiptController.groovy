@@ -146,7 +146,6 @@ class RPTReceiptController extends com.rameses.enterprise.treasury.cashreceipt.A
 
     void updateItemDue(item){
         item.partialled = false;
-        bill.recalc = true;
         bill.ledgerids.clear();
         bill.ledgerids.add(item.rptledgerid);
         def items = svc.getItemsForPayment(bill);

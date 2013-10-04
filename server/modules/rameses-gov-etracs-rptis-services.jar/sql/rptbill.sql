@@ -179,18 +179,18 @@ FROM (
 		rlf.assessedvalue,
 		rlf.assessedvalue AS originalav,
 		CONCAT(rli.year,'') AS period,
-		rli.basic - rli.basicpaid - rli.basicamnesty AS basic, 
-		rli.basicint - rli.basicintpaid - rli.basicintamnesty AS basicint, 
+		rli.basic - rli.basicpaid AS basic, 
+		rli.basicint - rli.basicintpaid AS basicint, 
 		rli.basicdisc - rli.basicdisctaken AS basicdisc, 
 		rli.basiccredit AS basiccredit,
-		rli.basicint - rli.basicintpaid - rli.basicintamnesty - rli.basicdisc - rli.basicdisctaken  AS  basicdp,
-		rli.basic + rli.basicint - rli.basicdisc - rli.basicdisctaken - rli.basicpaid - rli.basicamnesty - rli.basicintpaid - rli.basicintamnesty AS basicnet,
-		rli.sef - rli.sefpaid - rli.sefamnesty AS sef, 
-		rli.sefint - rli.sefintpaid - rli.sefintamnesty AS sefint, 
+		rli.basicint - rli.basicintpaid - rli.basicdisc - rli.basicdisctaken  AS  basicdp,
+		rli.basic + rli.basicint - rli.basicdisc - rli.basicdisctaken - rli.basicpaid - rli.basicintpaid AS basicnet,
+		rli.sef - rli.sefpaid AS sef, 
+		rli.sefint - rli.sefintpaid AS sefint, 
 		rli.sefdisc - rli.sefdisctaken AS sefdisc, 
 		rli.sefcredit AS sefcredit,
-		rli.sefint - rli.sefintpaid - rli.sefintamnesty - rli.sefdisc - rli.sefdisctaken  AS  sefdp,
-		rli.sef + rli.sefint - rli.sefdisc - rli.sefdisctaken - rli.sefpaid - rli.sefamnesty - rli.sefintpaid - rli.sefintamnesty AS sefnet,
+		rli.sefint - rli.sefintpaid - rli.sefdisc - rli.sefdisctaken  AS  sefdp,
+		rli.sef + rli.sefint - rli.sefdisc - rli.sefdisctaken - rli.sefpaid - rli.sefintpaid AS sefnet,
 		rli.firecode - rli.firecodepaid AS firecode,
 		rl.barangayid
 	FROM faas f
@@ -213,18 +213,18 @@ FROM (
 		rlf.assessedvalue,
 		rliq.qtrlyav AS originalav,
 		CONCAT(rli.year,'-', CASE WHEN MIN(rliq.qtr) = MAX(rliq.qtr) THEN MIN(rliq.qtr) ELSE CONCAT(MIN(rliq.qtr), MAX(rliq.qtr)) END ) AS period,
-		SUM(rliq.basic - rliq.basicpaid - rliq.basicamnesty) AS basic, 
-		SUM(rliq.basicint - rliq.basicintpaid - rliq.basicintamnesty) AS basicint, 
+		SUM(rliq.basic - rliq.basicpaid) AS basic, 
+		SUM(rliq.basicint - rliq.basicintpaid) AS basicint, 
 		SUM(rliq.basicdisc - rliq.basicdisctaken) AS basicdisc, 
 		SUM(rliq.basiccredit) AS basiccredit,
-		SUM(rliq.basicint - rliq.basicintpaid - rliq.basicintamnesty - rliq.basicdisc - rliq.basicdisctaken ) AS  basicdp,
-		SUM(rliq.basic + rliq.basicint - rliq.basicdisc - rliq.basicdisctaken - rliq.basicpaid - rliq.basicamnesty - rliq.basicintpaid - rliq.basicintamnesty) AS basicnet,
-		SUM(rliq.sef - rliq.sefpaid - rliq.sefamnesty) AS sef, 
-		SUM(rliq.sefint - rliq.sefintpaid - rliq.sefintamnesty) AS sefint, 
+		SUM(rliq.basicint - rliq.basicintpaid - rliq.basicdisc - rliq.basicdisctaken ) AS  basicdp,
+		SUM(rliq.basic + rliq.basicint - rliq.basicdisc - rliq.basicdisctaken - rliq.basicpaid - rliq.basicintpaid) AS basicnet,
+		SUM(rliq.sef - rliq.sefpaid) AS sef, 
+		SUM(rliq.sefint - rliq.sefintpaid) AS sefint, 
 		SUM(rliq.sefdisc - rliq.sefdisctaken) AS sefdisc, 
 		SUM(rliq.sefcredit) AS sefcredit,
-		SUM(rliq.sefint - rliq.sefintpaid - rliq.sefintamnesty - rliq.sefdisc - rliq.sefdisctaken ) AS  sefdp,
-		SUM(rliq.sef + rliq.sefint - rliq.sefdisc - rliq.sefdisctaken - rliq.sefpaid - rliq.sefamnesty - rliq.sefintpaid - rliq.sefintamnesty) AS sefnet,
+		SUM(rliq.sefint - rliq.sefintpaid - rliq.sefdisc - rliq.sefdisctaken ) AS  sefdp,
+		SUM(rliq.sef + rliq.sefint - rliq.sefdisc - rliq.sefdisctaken - rliq.sefpaid - rliq.sefintpaid) AS sefnet,
 		SUM(rliq.firecode - rliq.firecodepaid) AS firecode,
 		rl.barangayid
 	FROM faas f
@@ -252,18 +252,18 @@ SELECT
 	rlf.assessedvalue,
 	rliq.qtrlyav AS originalav,
 	CONCAT(rli.year,'-', rliq.qtr) AS period,
-	SUM(rliq.basic - rliq.basicpaid - rliq.basicamnestyapplied) AS basic, 
-	SUM(rliq.basicint - rliq.basicintpaid - rliq.basicintamnestyapplied) AS basicint, 
+	SUM(rliq.basic - rliq.basicpaid) AS basic, 
+	SUM(rliq.basicint - rliq.basicintpaid) AS basicint, 
 	SUM(rliq.basicdisc - rliq.basicdisctaken) AS basicdisc, 
 	SUM(rliq.basiccredit) AS basiccredit,
-	SUM(rliq.basicint - rliq.basicintpaid - rliq.basicintamnestyapplied - rliq.basicdisc - rliq.basicdisctaken ) AS  basicdp,
-	SUM(rliq.basic + rliq.basicint - rliq.basicdisc - rliq.basicdisctaken - rliq.basicpaid - rliq.basicamnestyapplied - rliq.basicintpaid - rliq.basicintamnestyapplied) AS basicnet,
-	SUM(rliq.sef - rliq.sefpaid - rliq.sefamnestyapplied) AS sef, 
-	SUM(rliq.sefint - rliq.sefintpaid - rliq.sefintamnestyapplied) AS sefint, 
+	SUM(rliq.basicint - rliq.basicintpaid - rliq.basicdisc - rliq.basicdisctaken ) AS  basicdp,
+	SUM(rliq.basic + rliq.basicint - rliq.basicdisc - rliq.basicdisctaken - rliq.basicpaid - rliq.basicintpaid) AS basicnet,
+	SUM(rliq.sef - rliq.sefpaid) AS sef, 
+	SUM(rliq.sefint - rliq.sefintpaid) AS sefint, 
 	SUM(rliq.sefdisc - rliq.sefdisctaken) AS sefdisc, 
 	SUM(rliq.sefcredit) AS sefcredit,
-	SUM(rliq.sefint - rliq.sefintpaid - rliq.sefintamnestyapplied - rliq.sefdisc - rliq.sefdisctaken ) AS  sefdp,
-	SUM(rliq.sef + rliq.sefint - rliq.sefdisc - rliq.sefdisctaken - rliq.sefpaid - rliq.sefamnestyapplied - rliq.sefintpaid - rliq.sefintamnestyapplied) AS sefnet,
+	SUM(rliq.sefint - rliq.sefintpaid - rliq.sefdisc - rliq.sefdisctaken ) AS  sefdp,
+	SUM(rliq.sef + rliq.sefint - rliq.sefdisc - rliq.sefdisctaken - rliq.sefpaid - rliq.sefintpaid) AS sefnet,
 	SUM(rliq.firecode - rliq.firecodepaid) AS firecode,
 	rl.barangayid
 FROM faas f
@@ -328,9 +328,7 @@ INSERT INTO rptledgeritem_qtrly(
     basicdisc,
     basicdisctaken,
     basicamnesty,
-    basicamnestyapplied,
     basicintamnesty,
-    basicintamnestyapplied,
     basiccredit,
     sef,
     sefpaid,
@@ -340,9 +338,7 @@ INSERT INTO rptledgeritem_qtrly(
     sefdisc,
     sefdisctaken,
     sefamnesty,
-    sefamnestyapplied,
     sefintamnesty,
-    sefintamnestyapplied,
     sefcredit,
     firecode,
     firecodepaid,
@@ -383,12 +379,10 @@ SELECT
                 WHEN qtrid < 4 THEN ROUND(rli.basicamnesty / 4.0, 2) 
                 ELSE rli.basicamnesty - ROUND(rli.basicamnesty / 4.0, 2) * 3.0
         END AS basicamnesty,
-        0.0 AS basicintamnestyapplied,
         CASE 
                 WHEN qtrid < 4 THEN ROUND(rli.basicintamnesty / 4.0, 2) 
                 ELSE rli.basicintamnesty - ROUND(rli.basicintamnesty / 4.0, 2) * 3.0
         END AS basicintamnesty,
-        0.0 AS basicintamnestyapplied,
         0.0 AS basiccredit,
         CASE 
                 WHEN qtrid < 4 THEN ROUND(rli.sef / 4.0, 2) 
@@ -410,14 +404,15 @@ SELECT
                 WHEN qtrid < 4 THEN ROUND(rli.sefamnesty / 4.0, 2) 
                 ELSE rli.sefamnesty - ROUND(rli.sefamnesty / 4.0, 2) * 3.0
         END AS sefamnesty,
-        0.0 AS sefamnestyapplied,
         CASE 
                 WHEN qtrid < 4 THEN ROUND(rli.sefintamnesty / 4.0, 2) 
                 ELSE rli.sefintamnesty - ROUND(rli.sefintamnesty / 4.0, 2) * 3.0
         END AS sefintamnesty,
-        0.0 AS sefintamnestyapplied,
         0.0 AS sefcredit,
-        CASE WHEN qtrid = 1 THEN firecode ELSE 0 END AS firecode,
+        CASE 
+                WHEN qtrid < 4 THEN ROUND(rli.firecode / 4.0, 2) 
+                ELSE rli.firecode - ROUND(rli.firecode / 4.0, 2) * 3.0
+        END AS firecode,
         0.0 AS firecodepaid,
         rli.revtype,
         rli.amnestyinfo,
@@ -431,6 +426,20 @@ WHERE rl.objid = $P{rptledgerid}
   AND rli.year = ${billtoyear}
   AND rli.qtrly = 0 
 
+
+[findTotalFireCode]
+SELECT SUM(firecode) AS totalfirecode 
+FROM rptledgeritem_qtrly 
+WHERE rptledgerid = $P{rptledgerid}	
+  AND year = $P{billtoyear}
+
+
+[chargeFireCodeOnFirstQtr]
+UPDATE rptledgeritem_qtrly rliq SET 
+	rliq.firecode = CASE WHEN rliq.qtr = 1 THEN $P{totalfirecode} ELSE 0.0 END 
+WHERE rliq.rptledgerid = $P{rptledgerid}	
+  AND rliq.year = $P{billtoyear}
+ 
 
 
 [setLedgerItemQtrlyFlag]
@@ -478,11 +487,11 @@ FROM (
 		rli.sefint - rli.sefintpaid AS  sefint,
 		rli.sefintamnesty,
 		rli.firecode - rli.firecodepaid AS firecode,
-		rli.basic - rli.basicpaid - rli.basicamnesty - rli.basicdisc + 
-		rli.basicint - rli.basicintpaid - rli.basicintamnesty + 
-		rli.sef - rli.sefpaid - rli.sefamnesty - rli.sefdisc + 
-		rli.sefint - rli.sefintpaid - rli.sefintamnesty  +
-		rli.firecode - rli.firecodepaid AS total
+		( 
+			rli.basic - rli.basicpaid - rli.basicdisc + rli.basicint - rli.basicintpaid + 
+			rli.sef - rli.sefpaid - rli.sefdisc +  rli.sefint - rli.sefintpaid  +
+			rli.firecode - rli.firecodepaid
+		) AS total
 	FROM rptledger rl
 			INNER JOIN rptledgeritem rli ON rl.objid = rli.rptledgerid
 	WHERE rl.objid = $P{rptledgerid}
@@ -506,11 +515,11 @@ FROM (
 		rliq.sefint - rliq.sefintpaid  AS  sefint,
 		rliq.sefintamnesty AS sefintamnesty,
 		rliq.firecode - rliq.firecodepaid AS firecode,
-		rliq.basic - rliq.basicpaid - rliq.basicamnesty - rliq.basicdisc + 
-		rliq.basicint - rliq.basicintpaid - rliq.basicintamnesty + 
-		rliq.sef - rliq.sefpaid - rliq.sefamnesty - rliq.sefdisc + 
-		rliq.sefint - rliq.sefintpaid - rliq.sefintamnesty  +
-		rliq.firecode - rliq.firecodepaid AS total
+		(
+			rliq.basic - rliq.basicpaid - rliq.basicdisc + 	rliq.basicint - rliq.basicintpaid + 
+			rliq.sef - rliq.sefpaid - rliq.sefdisc + rliq.sefint - rliq.sefintpaid  +
+			rliq.firecode - rliq.firecodepaid 
+		) AS total
 	FROM rptledger rl
 			INNER JOIN rptledgeritem rli ON rl.objid = rli.rptledgerid
 			INNER JOIN rptledgeritem_qtrly rliq ON rli.objid = rliq.rptledgeritemid 
@@ -542,9 +551,6 @@ UPDATE rptledgeritem_qtrly SET
 	partialsef = $P{partialsef},
 	partialsefint = $P{partialsefint},
 	partialsefdisc = $P{partialsefdisc},
-	partialbasicamnesty = $P{partialbasicamnesty},
-	partialbasicintamnesty = $P{partialbasicintamnesty},
-	partialsefamnesty = $P{partialsefamnesty},
-	partialsefintamnesty = $P{partialsefintamnesty},
 	partial = 1
 WHERE objid = $P{rptledgeritemqtrlyid}	
+

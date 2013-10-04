@@ -95,8 +95,6 @@
         <field name="basicamnesty" required="true" type="decimal" />
         <field name="basicintamnesty" required="true" type="decimal" />
         <field name="basiccredit" required="true" type="decimal" />
-        <field name="basicamnestyapplied" required="true" type="decimal" />
-        <field name="basicintamnestyapplied" required="true" type="decimal" />
         <field name="sef" required="true" type="decimal" />
         <field name="sefpaid" required="true" type="decimal" /> 
         <field name="sefint" required="true" type="decimal" />
@@ -107,8 +105,6 @@
         <field name="sefamnesty" required="true" type="decimal" />
         <field name="sefintamnesty" required="true" type="decimal" />
         <field name="sefcredit" required="true" type="decimal" />
-        <field name="sefamnestyapplied" required="true" type="decimal" />
-        <field name="sefintamnestyapplied" required="true" type="decimal" />
         <field name="firecode" required="true" type="decimal" />
         <field name="firecodepaid" required="true" type="decimal" />
         <field name="revtype" />
@@ -118,12 +114,8 @@
         <field name="partialbasic" type="decimal" />
         <field name="partialbasicint" type="decimal" />
         <field name="partialbasicdisc" type="decimal" />
-        <field name="partialbasicamnesty" type="decimal" />
-        <field name="partialbasicintamnesty" type="decimal" />
         <field name="partialsef" type="decimal" />
         <field name="partialsefint" type="decimal" />
         <field name="partialsefdisc" type="decimal" />
-        <field name="partialsefamnesty" type="decimal" />
-        <field name="partialsefintamnesty" type="decimal" />
     </element>
 </schema>
