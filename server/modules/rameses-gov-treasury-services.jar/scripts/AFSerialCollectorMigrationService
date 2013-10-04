@@ -10,6 +10,7 @@ import com.rameses.common.*
 *****************************************************/
 class AFSerialCollectorMigrationService  { 
 
+
 	@Service("AFSerialInventoryService")
 	def afSerialSvc;
 
