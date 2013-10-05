@@ -107,9 +107,13 @@ public class RPTBillingService
         	bill.recalc = false
         }
 
+        println '1 -> ' + dtSvc.serverDate
         insertUnpostedItems(bill)
+        println '2 -> ' + dtSvc.serverDate
         recalcBillItems(bill)
+        println '3 -> ' + dtSvc.serverDate
         rebuildLedgerItems(bill)
+        println '4 -> ' + dtSvc.serverDate
         
         if (util.toBoolean(bill.loadbillitems, true) ){
 			loadBillItems(bill)

@@ -14,9 +14,8 @@ FROM faas f
 	INNER JOIN realproperty rp ON rpu.realpropertyid = rp.objid
 	INNER JOIN barangay b ON rp.barangayid = b.objid 
 	INNER JOIN rptledger rl ON rl.faasid = f.objid 
-WHERE 1=1 	
+WHERE 1=1
 ${filters}	
-ORDER BY rl.state, f.tdno 
 
 
 [findById]
@@ -37,6 +36,7 @@ FROM rptledger rl
 	INNER JOIN barangay b ON rp.barangayid = b.objid 
 WHERE rl.objid = $P{objid}
 ORDER BY rl.state, f.tdno 
+
 
 	
 [findApprovedLedgerByFaasId]
@@ -82,6 +82,8 @@ ORDER BY rli.year DESC, rli.qtr DESC
 
 
 
+
+
 [closePreviousFaasToYearAndQtr]
 UPDATE rptledgerfaas SET
 	toyear = $P{toyear},
@@ -108,6 +110,7 @@ UPDATE rptledger SET
 WHERE state = 'APPROVED'
 
 
+
 [getLedgerCredits]
 SELECT 
 	cr.receiptno,
@@ -121,13 +124,14 @@ SELECT
 FROM cashreceipt cr 
 	INNER JOIN cashreceipt_rpt_item cri ON cr.objid = cri.rptreceiptid
 	LEFT JOIN cashreceipt_void v ON cr.objid = v.receiptid 
-WHERE 	cri.rptledgerid = $P{rptledgerid}
+WHERE cri.rptledgerid = $P{rptledgerid}
  AND v.objid IS NULL 
 GROUP BY cr.objid, cr.receiptno, cr.txndate, cr.txnmode, cr.paidby
 
+
+
 [approveLedgerFaas]
 UPDATE rptledgerfaas SET state = 'APPROVED' WHERE objid = $P{objid}
-
 
 
 [updateLedgerItemAccountInfo]
@@ -138,3 +142,5 @@ UPDATE rptledgeritem SET
 	sefintacct_objid = CASE WHEN sefintacct_objid IS NULL THEN $P{sefintacctid} ELSE sefintacct_objid END,
 	firecodeacct_objid = CASE WHEN firecodeacct_objid IS NULL THEN $P{firecodeacctid} ELSE firecodeacct_objid END
 WHERE objid = $P{rptledgeritemid}	
+
+

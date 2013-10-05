@@ -91,6 +91,7 @@ class RPTLedgerService
     @ProxyMethod
     public def createLedgerItem( item ) {
         item.forpayment = util.toBoolean(item.forpayment, false)
+        item.partial = util.toBoolean(item.partial, false)
         em.create(item, SCHEMA_ITEM)
         return item 
     }
@@ -261,8 +262,8 @@ class RPTLedgerService
         ledgerfaas.fromyear.upto(ledgerfaas.toyear){ yr ->
             postYearlyItems(ledgerfaas, yr)
             if ( yr >= pdate.year ){
-                billdb.insertQtrlyLedgerItems([rptledgerid:ledgerfaas.rptledgerid, billtoyear:yr])
-                billdb.setLedgerItemQtrlyFlag([rptledgerid:ledgerfaas.rptledgerid, billtoyear:yr])
+                billdb.insertQtrlyLedgerItems([rptledgerid:ledgerfaas.rptledgerid, billtoyear:yr, forpayment:0])
+                billdb.setLedgerItemQtrlyFlag([rptledgerid:ledgerfaas.rptledgerid, billtoyear:yr, forpayment:0])
             }
         }
     }
