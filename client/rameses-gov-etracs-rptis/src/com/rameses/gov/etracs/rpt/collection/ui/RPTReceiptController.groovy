@@ -206,7 +206,6 @@ class RPTReceiptController extends com.rameses.enterprise.treasury.cashreceipt.A
                 
             onpartial : { partial ->
                 selectedItem.putAll( billSvc.computePartialPayment(selectedItem, partial) );
-                selectedItem.amount = partial
                 listHandler.load();
                 calcReceiptAmount();
             },

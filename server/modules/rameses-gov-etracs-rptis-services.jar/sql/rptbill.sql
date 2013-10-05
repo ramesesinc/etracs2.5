@@ -416,7 +416,7 @@ SELECT
         0.0 AS firecodepaid,
         rli.revtype,
         rli.amnestyinfo,
-        0 AS forpayment,
+        $P{forpayment} AS forpayment,
         0 AS partial
 FROM rptledger rl
         INNER JOIN rptledgeritem rli ON rl.objid = rli.rptledgerid
@@ -467,6 +467,8 @@ WHERE ${filters}
  AND rl.faasid = f.objid
  AND rl.state = 'APPROVED'
  
+ [updateLedgerItemForPaymentFlagById]
+ UPDATE rptledgeritem SET forpayment = $P{forpayment} WHERE objid = $P{objid}
 
 
 [getFullyPaidItems]	
@@ -542,6 +544,11 @@ UPDATE rptledgeritem_qtrly SET
 WHERE rptledgerid = $P{rptledgerid}
   AND (year > $P{year} OR (year = $P{year} AND qtr > $P{qtr}))
 
+[updateQuarterlyLedgerItemForPaymentFlagByYear]
+UPDATE rptledgeritem_qtrly SET 
+	forpayment = $P{forpayment} 
+WHERE rptledgerid = $P{rptledgerid}
+  AND year = $P{year}
 
 [updatePartialInfo]
 UPDATE rptledgeritem_qtrly SET
