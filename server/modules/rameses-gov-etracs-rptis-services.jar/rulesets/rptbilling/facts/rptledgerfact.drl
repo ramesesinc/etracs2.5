@@ -6,7 +6,7 @@ declare RPTLedgerFact
     tdno                    : String 
     year                    : Integer
     qtr                     : Integer 
-    assessedvalue           : Double
+    originalav              : Double
     av                      : Double
     txntype_objid           : String 
     rputype                 : String 

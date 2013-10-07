@@ -369,6 +369,9 @@ public class RPTBillingService
 	            ledger.fullpayment            = ( bill.billtoqtr == 4 && it.lastqtrpaid == 4 ? true : false )
 	            ledger.advancepayment         = bill.advancepayment 
 	            ledger.paidyear				  = pdate.year 
+	            ledger.classification_objid	  = it.classification.objid
+	            ledger.actualuse_objid	  	  = it.actualuse.objid
+
 				map.facts << ledger 
 				map.ledgers << ledger
 			}

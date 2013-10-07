@@ -34,5 +34,6 @@
 	    {name:"sefamnesty", datatype:"decimal", caption:"SEF Amnesty" },
 	    {name:"sefintamnesty", datatype:"decimal", caption:"SEF Interest Amnesty" },
 	    {name:"firecode", datatype:"decimal", caption:"Fire Code" },
+	    {name:"originalav", datatype:"decimal", caption:"Original Assessed Value" },
 	]
 }
