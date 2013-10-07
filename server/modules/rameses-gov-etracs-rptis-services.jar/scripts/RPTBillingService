@@ -107,13 +107,9 @@ public class RPTBillingService
         	bill.recalc = false
         }
 
-        println '1 -> ' + dtSvc.serverDate
         insertUnpostedItems(bill)
-        println '2 -> ' + dtSvc.serverDate
         recalcBillItems(bill)
-        println '3 -> ' + dtSvc.serverDate
         rebuildLedgerItems(bill)
-        println '4 -> ' + dtSvc.serverDate
         
         if (util.toBoolean(bill.loadbillitems, true) ){
 			loadBillItems(bill)
@@ -124,7 +120,9 @@ public class RPTBillingService
 		return bill
 	}
 
-	void insertUnpostedItems(bill){
+
+	@ProxyMethod
+	public void insertUnpostedItems(bill){
 		em.getLedgerWithUnpostedItems(buildParams(bill)).each{ ledger -> 
 			if (ledger.lastitemyear < bill.billtoyear ){
 				ledgerSvc.insertLedgerItems(ledger, ledger.lastitemyear + 1, bill.billtoyear)
@@ -231,7 +229,6 @@ public class RPTBillingService
 			updateLedgerItemInfo(bill, data)
 			bill.expirydate = getExpiryDate(bill)
 			em.updateLedgerNextBillDate(buildParams(bill))
-
 		}
 	}
 

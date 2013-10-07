@@ -95,7 +95,7 @@ WHERE rl.objid = $P{ledgerid}
 
 
 [getLedgerWithUnpostedItems]
-SELECT rl.objid, rl.faasid, rl.lastitemyear
+SELECT rl.objid, rl.faasid, CASE WHEN rl.lastitemyear = 0 THEN rl.lastyearpaid ELSE rl.lastitemyear END AS lastitemyear 
 FROM faas f 
 	INNER JOIN rptledger rl ON f.objid = rl.faasid 
 WHERE ${filters}

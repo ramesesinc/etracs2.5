@@ -269,6 +269,7 @@ class RPTLedgerService
     }
 
     void postYearlyItems(ledgerfaas, yr){
+        println 'posting yearly item ' + ledgerfaas.objid + ' === ' + yr 
         createLedgerItem(doCreateLedgerItem(ledgerfaas, yr, 0))
     }
 
@@ -276,6 +277,7 @@ class RPTLedgerService
     public def insertLedgerItems(ledger, fromyear, toyear){
         if( fromyear <= toyear) {
             fromyear.upto(toyear){yr -> 
+                println 'Insert LedgerItem : ' + ledger.objid + '  year -> ' + yr 
                 def ledgerfaas = em.findLedgerFaasByFaasId([rptledgerid:ledger.objid, faasid:ledger.faasid])
                 if( ledgerfaas ){
                     postYearlyItems(ledgerfaas, yr)
@@ -326,6 +328,36 @@ class RPTLedgerService
             lastqtrpaid         : 0,
             qtrly               : false,
         ]
+    }
+
+
+
+
+    @ProxyMethod
+    public def approveMigratedLedger( ledger) {
+        ledger = openLedger(ledger)
+        if (ledger.state == STATE_CANCELLED)
+            throw new Exception('Ledger has already been cancelled.')
+
+        if (ledger.faases){
+            def firstfaas = ledger.faases[0]
+            def lastfaas = ledger.faases.last()
+            ledger.state            =  STATE_APPROVED
+            ledger.lastyearpaid     = (firstfaas.fromqtr == 1 ? firstfaas.fromyear - 1 : firstfaas.fromyear)
+            ledger.lastqtrpaid      = (firstfaas.fromqtr == 1 ?  4 : firstfaas.fromqtr - 1)
+            ledger.lastitemyear     = (lastfaas.toyear == 0 ? dtSvc.serverYear  : lastfaas.toyear )
+            ledger.nextbilldate     = null
+            ledger.advancebill      = false;
+            em.update(ledger)
+            
+            ledger.faases.each{  
+                it.state = ledger.state 
+                em.approveLedgerFaas(it)
+                postLedgerItems(it)
+            }
+            billingSvc.generateBillByLedgerId(ledger.objid)
+        }
+        return ledger;
     }
 
 }
