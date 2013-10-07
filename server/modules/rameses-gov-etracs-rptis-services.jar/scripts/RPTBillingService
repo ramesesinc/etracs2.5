@@ -63,6 +63,7 @@ public class RPTBillingService
 	* Called by RPTBilling Task to recalculate and update the
 	* taxes and penalties of the specified ledger
 	---------------------------------------------------------------*/
+	@Async
 	@ProxyMethod
 	public void calculateBillByLedgerIdAsync(ledgerid){
 		def bill = initBill()
@@ -479,14 +480,13 @@ public class RPTBillingService
 
 	void calcBillTotals(bill){
 		//summarize totals
-		bill.basic		= util.sum(bill.ledgers, 'basic')
-		bill.basicdp	= util.sum(bill.ledgers, 'basicdp')
-		bill.basicnet	= util.sum(bill.ledgers, 'basicnet')
-		bill.sef		= util.sum(bill.ledgers, 'sef')
-		bill.sefdp		= util.sum(bill.ledgers, 'sefdp')
-		bill.sefnet		= util.sum(bill.ledgers, 'sefnet')
-		bill.firecode   = util.sum(bill.ledgers, 'firecode')
-		bill.total		= util.sum(bill.ledgers, 'total')
+		bill.totalbasic		= util.sum(bill.ledgers, 'basic')
+		bill.totalbasicdp	= util.sum(bill.ledgers, 'basicdp')
+		bill.totalbasicnet	= util.sum(bill.ledgers, 'basicnet')
+		bill.totalsef		= util.sum(bill.ledgers, 'sef')
+		bill.totalsefdp		= util.sum(bill.ledgers, 'sefdp')
+		bill.totalsefnet		= util.sum(bill.ledgers, 'sefnet')
+		bill.totalfirecode   = util.sum(bill.ledgers, 'firecode')
 		bill.grandtotal = util.sum(bill.ledgers, 'total')
 	}
 
