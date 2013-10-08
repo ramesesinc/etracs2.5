@@ -63,6 +63,7 @@ public class RPTBillingService
 	* Called by RPTBilling Task to recalculate and update the
 	* taxes and penalties of the specified ledger
 	---------------------------------------------------------------*/
+	@Async
 	@ProxyMethod
 	public void calculateBillByLedgerIdAsync(ledgerid){
 		def bill = initBill()
@@ -120,7 +121,9 @@ public class RPTBillingService
 		return bill
 	}
 
-	void insertUnpostedItems(bill){
+
+	@ProxyMethod
+	public void insertUnpostedItems(bill){
 		em.getLedgerWithUnpostedItems(buildParams(bill)).each{ ledger -> 
 			if (ledger.lastitemyear < bill.billtoyear ){
 				ledgerSvc.insertLedgerItems(ledger, ledger.lastitemyear + 1, bill.billtoyear)
@@ -148,6 +151,7 @@ public class RPTBillingService
 			billdate   : pdate.date,
 			billyear   : pdate.year,
 			billqtr    : pdate.qtr,
+			forpayment : 0,
 		]
 
 		if (bill.ledgerids) {
@@ -226,7 +230,6 @@ public class RPTBillingService
 			updateLedgerItemInfo(bill, data)
 			bill.expirydate = getExpiryDate(bill)
 			em.updateLedgerNextBillDate(buildParams(bill))
-
 		}
 	}
 
@@ -239,12 +242,42 @@ public class RPTBillingService
 
 	@ProxyMethod
 	public def computePartialPayment( ledger, payment  ) {
+		def partial = payment 
 		if (payment == null || payment == 0)
 			throw new Exception('Partial Payment is required.')
 
 		def paiditems = em.getFullyPaidItems(['rptledgerid':ledger.rptledgerid])
-		def idx = 0;
-		def pitem;
+		def idx = 0
+		def pitem = null 
+
+		//find the item to partial and breakdown to quarterly
+		def pmt = payment
+		for(; idx < paiditems.size(); idx++)
+		{	
+			if (pmt == 0.0 ) break;
+
+			pitem = paiditems[idx]
+			def amtdue = pitem.total 
+			if ( pmt >= amtdue){
+				pmt -= amtdue 
+			}
+			else 
+			{
+				def bill = [insertqtrly:true, billtoyear:pitem.year, forpayment:pitem.forpayment]
+				insertQtrlyLedgerItems(bill, [objid:ledger.rptledgerid])
+				em.resetLedgerItemForPaymentFlag(pitem)
+				em.resetQuarterlyLedgerItemForPaymentFlag(pitem)
+				em.updateLedgerItemForPaymentFlagById([objid:pitem.rptledgeritemid, forpayment:0])
+				em.updateQuarterlyLedgerItemForPaymentFlagByYear([rptledgerid:pitem.rptledgerid, forpayment:1, year:pitem.year])
+				break;
+			}
+
+		}
+
+		// compute partial 
+		paiditems = em.getFullyPaidItems(['rptledgerid':ledger.rptledgerid])
+		idx = 0 
+		pitem = null 
 		for(; idx < paiditems.size(); idx++)
 		{
 			if (payment == 0.0 ) break;
@@ -312,7 +345,7 @@ public class RPTBillingService
 			em.resetLedgerItemForPaymentFlag(pitem)
 			em.resetQuarterlyLedgerItemForPaymentFlag(pitem)
 		}
-		return pitem 
+		return [amount:partial, toyear:pitem?.year, toqtr:pitem?.qtr]
 	}
 
 	def createFacts(bill){
@@ -336,6 +369,9 @@ public class RPTBillingService
 	            ledger.fullpayment            = ( bill.billtoqtr == 4 && it.lastqtrpaid == 4 ? true : false )
 	            ledger.advancepayment         = bill.advancepayment 
 	            ledger.paidyear				  = pdate.year 
+	            ledger.classification_objid	  = it.classification.objid
+	            ledger.actualuse_objid	  	  = it.actualuse.objid
+
 				map.facts << ledger 
 				map.ledgers << ledger
 			}
@@ -419,8 +455,9 @@ public class RPTBillingService
 	}
 
 	void insertQtrlyLedgerItems(bill, ledger){
-		if (bill.billtoyear >= dtSvc.serverYear || bill.billtoqtr !=  4){
-			def params = [rptledgerid:ledger.objid, billtoyear: bill.billtoyear]
+		if (bill.billtoyear >= dtSvc.serverYear || bill.billtoqtr !=  4 || bill.insertqtrly == true){
+			if (bill.forpayment == null) bill.forpayment = 0
+			def params = [rptledgerid:ledger.objid, billtoyear: bill.billtoyear, forpayment:bill.forpayment]
 			em.insertQtrlyLedgerItems(params)	
 			em.setLedgerItemQtrlyFlag(params)	
 			params.totalfirecode = em.findTotalFireCode(params).totalfirecode
@@ -446,14 +483,13 @@ public class RPTBillingService
 
 	void calcBillTotals(bill){
 		//summarize totals
-		bill.basic		= util.sum(bill.ledgers, 'basic')
-		bill.basicdp	= util.sum(bill.ledgers, 'basicdp')
-		bill.basicnet	= util.sum(bill.ledgers, 'basicnet')
-		bill.sef		= util.sum(bill.ledgers, 'sef')
-		bill.sefdp		= util.sum(bill.ledgers, 'sefdp')
-		bill.sefnet		= util.sum(bill.ledgers, 'sefnet')
-		bill.firecode   = util.sum(bill.ledgers, 'firecode')
-		bill.total		= util.sum(bill.ledgers, 'total')
+		bill.totalbasic		= util.sum(bill.ledgers, 'basic')
+		bill.totalbasicdp	= util.sum(bill.ledgers, 'basicdp')
+		bill.totalbasicnet	= util.sum(bill.ledgers, 'basicnet')
+		bill.totalsef		= util.sum(bill.ledgers, 'sef')
+		bill.totalsefdp		= util.sum(bill.ledgers, 'sefdp')
+		bill.totalsefnet		= util.sum(bill.ledgers, 'sefnet')
+		bill.totalfirecode   = util.sum(bill.ledgers, 'firecode')
 		bill.grandtotal = util.sum(bill.ledgers, 'total')
 	}
 
