@@ -1,0 +1,6 @@
+<workunit extends="wtemplates/ListController.xml" serviceName="UnremittedCollectionService" entityName="cashreceiptinfo" allowCreate="false" >
+    <invokers>
+        <invoker folderid="/explorer/txn/treasury" caption="Unremitted Collections" index="10" role="COLLECTOR" />
+        <invoker type="home.action" caption="Unremitted Collections" role="COLLECTOR"  index="10" target="window"/>
+    </invokers>
+</workunit>
