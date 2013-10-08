@@ -102,6 +102,7 @@ WHERE
 	(ac.assignee_objid =$P{userid} 
 		OR (ai.respcenter_objid=$P{userid} AND ac.assignee_objid IS NULL )
      )
+and ai.afid=$P{afid}
 AND ac.txnmode = $P{txnmode}
 AND ac.active=1
 
