@@ -12,6 +12,7 @@ class LargeCattleTransferInterceptor {
 	
 	@PersistenceContext("main")
 	def em;
+
 	
 	@After(pattern="CashReceiptService.init", eval="#{result.formno=='52'}")
 	public def initCashReceiptItems(def evt) { 
@@ -36,6 +37,12 @@ class LargeCattleTransferInterceptor {
 		def cs = evt.result;	
 		cs.issuedate = dateService.parse( 'yyyy-MM-dd', cs.issuedate)
 		em.create("cashreceipt_largecattletranfer:cashreceipt_largecattletranfer", cs);
+	}
+
+	@After(pattern="CashReceiptService.open", eval="#{result.formno=='52'}")
+	public def onOpenReceipt(def evt) { 
+		def cs = em.read("cashreceipt_largecattletranfer:cashreceipt_largecattletranfer", evt.result)
+		evt.result.putAll( cs );
 	}
 
 }

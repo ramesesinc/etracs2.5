@@ -17,9 +17,12 @@
             def reportData;
             def parameters = [:];
             
+            @Service("ReportParameterService")
+            def paramSvc
+            
             def reportPath = 'com/rameses/gov/lgu/treasury/cashreceipt/forms/'
             public Map getParameters() {
-                return parameters;
+                return paramSvc.getStandardParameter();
             }
             public Object getReportData() {
                 return reportData;

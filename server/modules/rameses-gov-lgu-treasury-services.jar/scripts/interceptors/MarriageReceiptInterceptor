@@ -34,4 +34,11 @@ class MarriageReceiptInterceptor {
 		em.create("cashreceiptmarriage:cashreceiptmarriage", cs);
 	}
 
+	@After(pattern="CashReceiptService.open", eval="#{result.formno=='54'}")
+	public def onOpenReceipt(def evt) { 
+		def cs = em.read("cashreceiptmarriage:cashreceiptmarriage", evt.result)
+		evt.result.putAll( cs );
+	}
+
+
 }

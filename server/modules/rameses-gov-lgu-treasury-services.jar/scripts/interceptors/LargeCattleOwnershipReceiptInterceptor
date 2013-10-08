@@ -34,4 +34,10 @@ class LargeCattleOwnershipInterceptor {
 		em.create("cashreceipt_largecattleownership:cashreceipt_largecattleownership", cs);
 	}
 
+	@After(pattern="CashReceiptService.open", eval="#{result.formno=='53'}")
+	public def onOpenReceipt(def evt) { 
+		def cs = em.read("cashreceipt_largecattleownership:cashreceipt_largecattleownership", evt.result)
+		evt.result.putAll( cs );
+	}
+
 }
