@@ -39,6 +39,7 @@
                     "query.collectorid": entity.collector.objid,
                     onselect: { o->
                         selectedItem.item = o;
+                        selectedItem.fund = o.fund;
                     }
                 ]);
             }
