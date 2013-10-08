@@ -50,9 +50,11 @@ FROM
    MAX( ad.endingendseries ) AS endingendseries
 FROM afserial_inventory_detail ad 
 INNER JOIN afserial_inventory ai ON ad.controlid=ai.objid
-INNER join liquidation_remittance lr on lr.objid=ad.remittanceid 
+INNER JOIN remittance_afserial r ON r.objid=ad.objid
+INNER join liquidation_remittance lr on lr.objid=r.remittanceid 
 where lr.liquidationid=$P{liquidationid} 
 GROUP BY ai.afid, ad.controlid) a
+
 
 [getRCDNonSerialRemittedForms]
 SELECT a.*, 
@@ -70,10 +72,11 @@ FROM
    SUM( ad.qtycancelled ) AS qtycancelled,  
    sum( ad.qtycancelled * ch.denomination) as cancelledamt
 FROM cashticket_inventory_detail ad 
-INNER JOIN cashticket_inventory ai ON ad.controlid=ai.objid 
-INNER join liquidation_remittance lr on lr.objid=ad.remittanceid 
+INNER JOIN cashticket_inventory ai ON ad.controlid=ai.objid
+INNER JOIN remittance_cashticket r ON r.objid = ad.objid
+INNER join liquidation_remittance lr on lr.objid=r.remittanceid 
 INNER join cashticket ch on ch.objid = ai.afid 
-where lr.liquidationid=$P{liquidationid}  
+where lr.liquidationid=$P{liquidationid} 
 GROUP BY ai.afid) a
 
 

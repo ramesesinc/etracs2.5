@@ -1,7 +1,7 @@
 [getRCDCollectionType]
 select  
   cr.formno,
-  case when ch.objid is null then max( cr.receiptno) else null end as fromseries, 
+  case when ch.objid is null then min( cr.receiptno) else null end as fromseries, 
   case when ch.objid is null then max(cr.receiptno) else null end as toseries, 
   sum( case when crv.objid is null then cr.amount else 0.0 end ) as amount 
 from remittance_cashreceipt rc 
