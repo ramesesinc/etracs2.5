@@ -27,6 +27,9 @@ class LiquidationReportService  {
 		liquidation.nonserialremittances = em.sqlContext.createNamedQuery('liquidationreport:getRCDNonSerialRemittedForms').setParameters(params ).resultList
 		liquidation.nonserialsummary = em.sqlContext.createNamedQuery('liquidationreport:getRCDNonSerialRemittedForms').setParameters(params ).resultList
 		liquidation.amountinwords = numSvc.doubleToWords( liquidation.amount )
+		liquidation.cashbreakdown.each{
+			it.qty = it.qty.toString();
+		}
 		return liquidation;
 	}
 

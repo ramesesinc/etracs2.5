@@ -2,6 +2,7 @@
     <invokers>
         <invoker folderid="/explorer/txn/treasury" caption="AF Issuances" role="AFO"/>
         
+        <invoker type="formActions" caption="Forward AF Serial" action="forwardAFSerial" mnemonic="f" shortcut="ctrl F" />
         <invoker type="formActions" caption="Change Mode" action="changeMode" mnemonic="h" shortcut="ctrl H" visibleWhen="#{selectedItem != null &amp;&amp; selectedItem.item.aftype=='SERIAL'}"/>
     </invokers>
     
@@ -60,10 +61,13 @@
             
              def changeMode() {
                 if(!selectedItem) throw new Exception("Select an item");
-                println selectedItem.item
                 return InvokerUtil.lookupOpener("afserial:changemode", 
                     [entity:selectedItem.item, saveHandler: { search() }] 
                 );
+            }
+            
+            def forwardAFSerial() {
+                return InvokerUtil.lookupOpener("afserial:forwardseries" );
             }
             
             

@@ -22,8 +22,8 @@
             @Service("AFInventoryService")
             def inventorySvc;
         
-            @Service("CollectionFormService")
-            def afSvc;    
+            @Service("CollectionTypeService")
+            def collTypeSvc;    
             
             def afType;
             def afTypes;
@@ -44,7 +44,7 @@
             ]
             
             public void init() {
-                afTypes = afSvc.getList();
+                afTypes = collTypeSvc.getFormTypes()
                 respcenters = inventorySvc.getRepsCenters()
             }
             

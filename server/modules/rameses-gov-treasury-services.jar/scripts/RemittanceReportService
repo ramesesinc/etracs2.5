@@ -28,7 +28,10 @@ class RemittanceReportService  {
 		remittance.nonserialremittances = afremSvc.getRemittedCashTickets( remittance)
 		remittance.nonserialsummary = afremSvc.getRemittedCashTickets( remittance)
 		remittance.amountinwords = numSvc.doubleToWords( remittance.amount).toUpperCase()
+		remittance.cashbreakdown.each {
+			it.qty = it.qty.toString()
 
+		}
 		return remittance 	
 
 	}
