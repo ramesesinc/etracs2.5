@@ -10,9 +10,10 @@ class SpecialCollectionTypeService {
 
 	@ProxyMethod
 	public def open( collectiontypeid ) {
-		return em.sqlContext.createNamedQuery('specialcollectiontype:read')
+		def qry = em.sqlContext.createNamedQuery('specialcollectiontype:read')
 					.setParameter('collectiontypeid', collectiontypeid )
-					.singleResult	
+		qry.setPagingKeys("ss.objid")
+		return qry.singleResult	
 	}
 	
 	@ProxyMethod
