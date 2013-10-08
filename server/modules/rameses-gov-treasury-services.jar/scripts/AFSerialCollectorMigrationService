@@ -17,6 +17,9 @@ class AFSerialCollectorMigrationService  {
 	@ActiveDB("afserial_control")
 	def afControl;
 
+	@Service("SequenceService") 
+	def seqSvc;
+
 	/**********************************************************
 	* pass the ff. parameters:
 	*    collector [objid, name]
@@ -25,6 +28,7 @@ class AFSerialCollectorMigrationService  {
 	*    suffix
 	*    prefix
 	*	 endseries
+	*    currentseries
 	*	 stub
 	*    reason
 	* 	 refno = transaction ref no. just create one
@@ -35,12 +39,15 @@ class AFSerialCollectorMigrationService  {
 	**********************************************************/
 	@ProxyMethod
 	public void post( def m ) {
+		if(! m.refno) m.refno = 'SYSTEM' + seqSvc.getNextFormattedSeries("AFSERIALFORWARD")
+
 		def sb = new StringBuffer();
 		if(!m.collector?.objid) sb.append( "collector.objid" );
 		if(!m.collector?.name) sb.append( "collector.name" );
 		if(!m.afid) sb.append( "afid" );
 		if(!m.startseries) sb.append( "startseries" );
 		if(!m.endseries) sb.append( "endseries" );
+		if(!m.currentseries) sb.append( "currentseries" );
 		if(!m.stub) sb.append( "stub" );
 		if(!m.reason) sb.append( "reason" );
 		if(!m.refno) sb.append( "refno" );
@@ -58,12 +65,12 @@ class AFSerialCollectorMigrationService  {
 	    head.endstub = m.stub;
 	    head.afid = m.afid;
 	    head.currentstub = m.stub;
-		head.startseries = m.startseries;
+		head.startseries = m.currentseries;
 		head.endseries = m.endseries;
-		head.currentseries = m.startseries;
+		head.currentseries = m.currentseries;
 		head.prefix = m.prefix;
 		head.suffix = m.suffix;
-		head.qty = m.endseries - m.startseries + 1;
+		head.qty = m.endseries - m.currentseries + 1;
 		head.unit = 'STUB';
 		head.remarks = m.remarks;
 		head.respcenter = m.collector;
