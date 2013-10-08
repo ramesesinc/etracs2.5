@@ -69,6 +69,7 @@ class ReportParameterService{
             LOGOLGU     				: var.url_logo_lgu,                    
             LOGOBLGF    				: var.url_logo_blgf,   
             LOGOASSESSOR				: var.url_logo_assessor,                 
+            LOGOTREASURY				: var.url_logo_treasury,                 
             LGUNAME     				: org.lgu_name, 
 			LGUFORMALNAME 				: org.lgu_fullname, 
 			LGUTYPE		  				: org.orgclass?.toLowerCase(), 
