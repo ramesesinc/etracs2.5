@@ -1,0 +1,107 @@
+<workunit>
+    <invokers>
+        <invoker type="afserial:forwardseries" caption="Forward AF Serial" target="popup" action="init"/>
+        
+        <invoker type="formActions" caption="Close" action="_close" mnemonic="c" shortcut="ctrl C" icon="images/toolbars/cancel.png" />
+        <invoker type="formActions" caption="Save" action="save" mnemonic="s" shortcut="ctrl S" icon="images/toolbars/create.png" visibleWhen="#{mode == 'create'}" />
+    </invokers>
+    
+    <code>
+        <![CDATA[    
+        import com.rameses.osiris2.common.*;
+        import com.rameses.rcp.common.*;
+        import com.rameses.rcp.annotations.*;
+        import java.rmi.server.*;
+        import com.rameses.osiris2.client.*;
+        import com.rameses.util.*;
+        import com.rameses.osiris2.reports.*;
+        
+        class ForwardAFSerialController {
+        
+            @Binding
+            def binding
+            
+            String title = "Forward AF Serial";
+        
+            @Service("DateService")
+            def dtsvc;
+        
+            @Service("CollectionTypeService")
+            def collTypeSvc;    
+            
+            @Service("UsergroupMemberLookupService")
+            def ugmSvc;
+            
+            @Service("AFSerialCollectorMigrationService")
+            def svc
+            
+            def entity
+            def collectorlist;
+            def collector
+            def formTypes
+            def formtype
+            def mode
+            def endseries
+            
+            @PropertyChangeListener
+            def listener = [
+                "collector" : { o->
+                    entity.collector = o
+                }, 
+                "formtype" : { o -> 
+                    entity.afid = o.objid 
+                },
+                "entity.startseries": { o -> 
+                    entity.endseries = entity.startseries + (entity.qtyreceived -1)
+                    endseries = entity.endseries
+                    binding.refresh("endseries");
+                }, 
+                
+            ]
+            
+            public void init() {
+                mode ='create'
+                entity = [
+                    refdate: dtsvc.serverDate,
+                    qtyreceived: 50 
+               ]
+            }
+            
+            def validateSeries( o ) { 
+                if( o.toString().length() > formtype.serieslength ) throw new Exception("Series number length must not greater than " + formtype.serieslength );
+                if(!o.toString().endsWith("1")) throw new Exception("Last number of start series must be 1"); 
+            }
+            
+            public void save() {
+                validateSeries( entity.startseries);
+                 if( entity.currentseries < entity.startseries || entity.currentseries > entity.endseries) 
+                    throw new Exception("Current series must be within ${entity.startseries} and ${entity.endseries}" );
+            
+                entity.reason = 'FORWARD BALANCE'
+                entity.remarks = 'FORWARD BALANCE'
+                entity.refid = 'SYSTEM'
+                entity.reftype = 'SYSTEM'
+                svc.post( entity)
+                mode ='posted'
+            }
+            
+            List getCollectorlist( ) {
+                if(! collectorlist) collectorlist =  ugmSvc.getList(['_tag':'COLLECTOR']);
+                return collectorlist;
+            }
+            
+            List getFormTypes() {
+                if( ! formTypes) formTypes = collTypeSvc.getFormTypesSerial();
+                
+                return formTypes
+            }
+            
+            
+            
+        }
+        ]]>
+    </code>
+    <pages>
+        <page template="com.rameses.gov.treasury.af.AFControlSerialPage"/>
+    </pages>
+</workunit>
