@@ -53,14 +53,14 @@ public class BatchCapturePage extends javax.swing.JPanel {
 
         xLabel2.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         xLabel2.setCaption("Start Series");
-        xLabel2.setExpression("#{entity.startseries}");
+        xLabel2.setExpression("#{entity.sstartseries}");
         xLabel2.setFont(new java.awt.Font("Tahoma", 1, 11));
         xLabel2.setPreferredSize(new java.awt.Dimension(0, 20));
         xFormPanel1.add(xLabel2);
 
         xLabel3.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         xLabel3.setCaption("End Series");
-        xLabel3.setExpression("#{entity.endseries}");
+        xLabel3.setExpression("#{entity.sendseries}");
         xLabel3.setFont(new java.awt.Font("Tahoma", 1, 11));
         xLabel3.setPreferredSize(new java.awt.Dimension(0, 20));
         xFormPanel1.add(xLabel3);
