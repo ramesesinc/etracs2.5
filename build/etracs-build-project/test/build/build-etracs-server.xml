@@ -192,7 +192,7 @@
         </copy>
     </target>
 
-    <target name="build-server" depends="init,cleanup,copy-osiris3-server,copy-etracs-platform,deploy-etracs-server,deploy-project-shared, deploy-etracs-client-jars, deploy-devlibs">
+    <target name="build-server" depends="init,cleanup,copy-osiris3-server,copy-etracs-platform,deploy-etracs-server,deploy-project-shared, deploy-etracs-client-jars">
     </target>
 
     <target name="xxbuild-server" depends="init,cleanup,copy-osiris3-server,copy-etracs-platform,deploy-etracs-server,deploy-project-shared, deploy-etracs-client-jars, copy-incubation-jars-to-devlibs, deploy-devlibs">

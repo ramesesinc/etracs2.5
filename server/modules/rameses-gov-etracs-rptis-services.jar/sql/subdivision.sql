@@ -146,3 +146,18 @@ UPDATE realproperty SET state = 'CANCELLED' WHERE objid = $P{objid}
 UPDATE rptledger SET state = 'CANCELLED' WHERE faasid = $P{faasid}
 
 
+
+[updateSubdividedLandNewTdNo]
+UPDATE sl SET
+	sl.newtdno =	f.tdno 	
+FROM subdividedland sl
+	inner join faas f on sl.newfaasid = f.objid  
+where subdivisionid = $P{subdivisionid}
+
+
+[updateAffectedRpuNewTdNo]
+UPDATE srpu SET
+	srpu.newtdno =	f.tdno 	
+FROM subdivisionaffectedrpu srpu
+	inner join faas f on srpu.newfaasid = f.objid  
+where subdivisionid = $P{subdivisionid}

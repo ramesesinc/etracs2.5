@@ -259,11 +259,13 @@ class RPTLedgerService
         def pdate = dtSvc.parseCurrentDate()
         ledgerfaas.toyear  = (ledgerfaas.toyear == 0 ? pdate.year : ledgerfaas.toyear)
         // def qtrlyPrevYears = util.toBoolean(var.rptledger_previous_year_computed_as_quarterly, false)
-        ledgerfaas.fromyear.upto(ledgerfaas.toyear){ yr ->
-            postYearlyItems(ledgerfaas, yr)
-            if ( yr >= pdate.year ){
-                billdb.insertQtrlyLedgerItems([rptledgerid:ledgerfaas.rptledgerid, billtoyear:yr, forpayment:0])
-                billdb.setLedgerItemQtrlyFlag([rptledgerid:ledgerfaas.rptledgerid, billtoyear:yr, forpayment:0])
+        if (ledgerfaas.fromyear <= ledgerfaas.toyear ){
+            ledgerfaas.fromyear.upto(ledgerfaas.toyear){ yr ->
+                postYearlyItems(ledgerfaas, yr)
+                if ( yr >= pdate.year ){
+                    billdb.insertQtrlyLedgerItems([rptledgerid:ledgerfaas.rptledgerid, billtoyear:yr, forpayment:0])
+                    billdb.setLedgerItemQtrlyFlag([rptledgerid:ledgerfaas.rptledgerid, billtoyear:yr, forpayment:0])
+                }
             }
         }
     }
