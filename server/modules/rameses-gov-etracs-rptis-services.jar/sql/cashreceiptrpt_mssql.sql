@@ -1,6 +1,7 @@
 [resetItemForPaymentFlag]
-UPDATE rptledgeritem rli, rptledger rl, faas f SET
+UPDATE rli SET
 	rli.forpayment = 0
+FROM rptledgeritem rli, rptledger rl, faas f 	
 WHERE rli.rptledgerid = rl.objid 
   AND rl.faasid = f.objid 
   AND ${filters}
@@ -10,8 +11,9 @@ WHERE rli.rptledgerid = rl.objid
 
 
 [resetQuarterlyItemForPaymentFlag]
-UPDATE rptledgeritem_qtrly rliq, rptledgeritem rli, rptledger rl, faas f SET
+UPDATE rliq SET
 	rliq.forpayment = 0 
+FROM rptledgeritem_qtrly rliq, rptledgeritem rli, rptledger rl, faas f 	
 WHERE rli.rptledgerid = rl.objid 
   AND rli.objid = rliq.rptledgeritemid 
   AND rl.faasid = f.objid 
@@ -22,8 +24,9 @@ WHERE rli.rptledgerid = rl.objid
 
 
 [setItemForPaymentFlag]
-UPDATE rptledgeritem rli, rptledger rl, faas f SET
+UPDATE rli SET
 	rli.forpayment = 1
+FROM rptledgeritem rli, rptledger rl, faas f 	
 WHERE ${filters}
   AND rli.rptledgerid = rl.objid 
   AND rl.faasid = f.objid 
@@ -34,8 +37,9 @@ WHERE ${filters}
 
 
 [setQuarterlyItemForPaymentFlag]
-UPDATE rptledgeritem_qtrly rliq, rptledgeritem rli, rptledger rl, faas f SET
+UPDATE rliq SET
 	rliq.forpayment = 1
+FROM rptledgeritem_qtrly rliq, rptledgeritem rli, rptledger rl, faas f 	
 WHERE rli.rptledgerid = rl.objid 
   AND rli.objid = rliq.rptledgeritemid 
   AND rl.faasid = f.objid 
@@ -69,7 +73,7 @@ FROM (
 	WHERE ${filters}
 	  AND rli.forpayment = 1
 	  AND rli.state = 'OPEN'
-	  GROUP BY rl.objid, f.tdno
+	  GROUP BY rl.objid, f.tdno, rl.lastyearpaid, rl.lastqtrpaid
 
 	UNION
 
@@ -88,44 +92,44 @@ FROM (
 	WHERE ${filters}
 	  AND rliq.forpayment = 1
 	  AND rliq.state = 'OPEN'
-	GROUP BY rl.objid, f.tdno
+	GROUP BY rl.objid, f.tdno, rl.lastyearpaid, rl.lastqtrpaid
 ) t
-GROUP BY t.rptledgerid, t.tdno
+GROUP BY t.rptledgerid, t.tdno, t.lastyearpaid, t.lastqtrpaid
 
 
 
 [insertPaidItemByLedgerId]
-INSERT INTO `cashreceiptitem_rpt`
-            (`objid`,
-             `rptreceiptid`,
-             `rptledgerid`,
-             `rptledgeritemid`,
-             `rptledgeritemqtrlyid`,
-             `barangayid`,
-             `year`,
-             `qtr`,
-             `basic`,
-             `basicint`,
-             `basicdisc`,
-             `basiccredit`,
-             `basicamnesty`,
-             `basicintamnesty`,
-             `basicacct_objid`,
-             `basicintacct_objid`,
-             `sef`,
-             `sefint`,
-             `sefdisc`,
-             `sefcredit`,
-             `sefamnesty`,
-             `sefintamnesty`,
-             `sefacct_objid`,
-             `sefintacct_objid`,
-             `firecode`,
-             `firecodeacct_objid`,
-             `revtype`,
-             `qtrly`)
+INSERT INTO cashreceiptitem_rpt
+            (objid,
+             rptreceiptid,
+             rptledgerid,
+             rptledgeritemid,
+             rptledgeritemqtrlyid,
+             barangayid,
+             year,
+             qtr,
+             basic,
+             basicint,
+             basicdisc,
+             basiccredit,
+             basicamnesty,
+             basicintamnesty,
+             basicacct_objid,
+             basicintacct_objid,
+             sef,
+             sefint,
+             sefdisc,
+             sefcredit,
+             sefamnesty,
+             sefintamnesty,
+             sefacct_objid,
+             sefintacct_objid,
+             firecode,
+             firecodeacct_objid,
+             revtype,
+             qtrly)
 SELECT 
-	CONCAT($P{objid},'-', rli.year) AS objid,
+	$P{objid} + '-' + CONVERT(VARCHAR(4),rli.year) AS objid,
 	$P{rptreceiptid} AS rptreceiptid,
 	rl.objid AS rptledgerid,
 	rli.objid AS rptledgeritemid,
@@ -157,12 +161,12 @@ FROM rptledger rl
 		INNER JOIN rptledgeritem rli ON rl.objid = rli.rptledgerid
 WHERE rl.objid = $P{rptledgerid}
   AND rli.state = 'OPEN'
-  AND rli.forpayment = 1 
+  AND rli.forpayment = 1
 
 UNION ALL
 
 SELECT 
-	CONCAT($P{objid},$P{rptreceiptid},'-',rliq.year, rliq.qtr) AS objid,
+	$P{objid} + $P{rptreceiptid} + '-' + CONVERT(VARCHAR(4),rliq.year) + CONVERT(VARCHAR(1),rliq.qtr) AS objid,
 	$P{rptreceiptid} AS rptreceiptid,
 	rl.objid AS rptledgerid,
 	rli.objid AS rptledgeritemid,
@@ -200,7 +204,7 @@ WHERE rl.objid = $P{rptledgerid}
 
 
 [postPaymentToLedgerItem]
-UPDATE rptledgeritem rli, cashreceiptitem_rpt cr SET
+UPDATE rli SET
 	rli.state = CASE WHEN rli.basicpaid + cr.basic >= rli.basic THEN 'CLOSED' ELSE rli.state END,
 	rli.lastqtrpaid = CASE WHEN rli.basicpaid + cr.basic >= rli.basic THEN 4 ELSE 0 END,
 	rli.basicpaid = rli.basicpaid + cr.basic,
@@ -215,6 +219,7 @@ UPDATE rptledgeritem rli, cashreceiptitem_rpt cr SET
 	
 	rli.firecodepaid = rli.firecodepaid + cr.firecode,
 	rli.forpayment = 0
+FROM rptledgeritem rli, cashreceiptitem_rpt cr 	
 WHERE rli.rptledgerid = $P{rptledgerid}
   AND cr.rptreceiptid = $P{rptreceiptid}
   AND rli.objid = cr.rptledgeritemid 
@@ -223,7 +228,7 @@ WHERE rli.rptledgerid = $P{rptledgerid}
 
 
 [postPaymentToQuarterlyLedgerItem]  
-UPDATE rptledgeritem_qtrly rliq, cashreceiptitem_rpt cr SET
+UPDATE rliq SET
 	rliq.state = CASE WHEN rliq.basicpaid + cr.basic >= rliq.basic THEN 'CLOSED' ELSE rliq.state END,
 	rliq.basicpaid = rliq.basicpaid + cr.basic,
 	rliq.basicintpaid = rliq.basicintpaid + cr.basicint,
@@ -244,6 +249,7 @@ UPDATE rptledgeritem_qtrly rliq, cashreceiptitem_rpt cr SET
 	rliq.partialsef = 0,
 	rliq.partialsefint = 0,
 	rliq.partialsefdisc = 0
+FROM rptledgeritem_qtrly rliq, cashreceiptitem_rpt cr 
 WHERE rliq.rptledgerid = $P{rptledgerid}
   AND cr.rptreceiptid = $P{rptreceiptid}
   AND rliq.objid = cr.rptledgeritemqtrlyid 
@@ -257,7 +263,7 @@ WHERE cr.rptreceiptid = $P{rptreceiptid}
 
 
 [applyQuarterlyPaymentToLedgerItem]  
-UPDATE rptledgeritem_qtrly rliq, rptledgeritem rli, cashreceiptitem_rpt cr SET
+UPDATE rli SET
 	rli.basicpaid = rli.basicpaid + cr.basic,
 	rli.basicintpaid = rli.basicintpaid + cr.basicint,
 	rli.basicdisctaken = rli.basicdisctaken + cr.basicdisc,
@@ -269,22 +275,25 @@ UPDATE rptledgeritem_qtrly rliq, rptledgeritem rli, cashreceiptitem_rpt cr SET
 	rli.sefcredit = rli.sefcredit + cr.sefcredit,
 	
 	rli.firecodepaid = rli.firecodepaid + cr.firecode
+FROM rptledgeritem_qtrly rliq, rptledgeritem rli, cashreceiptitem_rpt cr 	
 WHERE cr.objid = $P{objid}
   AND cr.rptledgeritemqtrlyid = rliq.objid
   AND rliq.rptledgeritemid = rli.objid 
 
 
 [updateLedgerItemQuarterlyPaidInfo]
-UPDATE rptledgeritem rli SET
+UPDATE rli SET
 	rli.state = CASE WHEN NOT EXISTS (
 				  		SELECT *
 				  		FROM rptledgeritem_qtrly 
 				  		WHERE rptledgeritemid = rli.objid AND state = 'OPEN'
 				  	) 
 					THEN 'CLOSED' ELSE 'OPEN' END,					
-	rli.lastqtrpaid = IFNULL((SELECT MAX(qtr) FROM rptledgeritem_qtrly WHERE rptledgeritemid = rli.objid AND (basicpaid > 0  OR state = 'CLOSED')),0)
+	rli.lastqtrpaid = ISNULL((SELECT MAX(qtr) FROM rptledgeritem_qtrly WHERE rptledgeritemid = rli.objid AND (basicpaid > 0  OR state = 'CLOSED')),0)
+FROM rptledgeritem rli 	
 WHERE rli.rptledgerid = $P{rptledgerid} 
   AND rli.qtrly = 1 
+
 
 
 [updateLedgerYearQtrPaid]
@@ -297,7 +306,7 @@ WHERE objid = $P{rptledgerid}
 
 
 [voidLedgerItemPayment]
-UPDATE rptledgeritem rli, cashreceiptitem_rpt cr SET
+UPDATE rli SET
 	rli.state = 'OPEN',
 	rli.lastqtrpaid = 0,
 	rli.basicpaid = rli.basicpaid - cr.basic,
@@ -312,13 +321,14 @@ UPDATE rptledgeritem rli, cashreceiptitem_rpt cr SET
 	
 	rli.firecodepaid = rli.firecodepaid - cr.firecode,
 	rli.forpayment = 0
+FROM  rptledgeritem rli, cashreceiptitem_rpt cr 	
 WHERE cr.rptreceiptid = $P{rptreceiptid}
   AND rli.objid = cr.rptledgeritemid
   AND cr.rptledgeritemqtrlyid IS NULL 
 
 
 [voidQuarterlyItemPayment]  
-UPDATE rptledgeritem_qtrly rliq, cashreceiptitem_rpt cr SET
+UPDATE rliq SET
 	rliq.state = 'OPEN',
 	rliq.basicpaid = rliq.basicpaid - cr.basic,
 	rliq.basicintpaid = rliq.basicintpaid - cr.basicint,
@@ -332,6 +342,7 @@ UPDATE rptledgeritem_qtrly rliq, cashreceiptitem_rpt cr SET
 	
 	rliq.firecodepaid = rliq.firecodepaid - cr.firecode,
 	rliq.forpayment = 0
+FROM rptledgeritem_qtrly rliq, cashreceiptitem_rpt cr 	
 WHERE cr.rptreceiptid = $P{rptreceiptid}
   AND rliq.objid = cr.rptledgeritemqtrlyid 
 
@@ -347,7 +358,7 @@ ORDER BY cr.year DESC, cr.qtr DESC
 
 
 [voidAppliedQuarterlyPaymentsOnLedgerItem]  
-UPDATE rptledgeritem rli, cashreceiptitem_rpt cr SET
+UPDATE rli SET
 	rli.state = 'OPEN',
 	rli.basicpaid = rli.basicpaid - cr.basic,
 	rli.basicintpaid = rli.basicintpaid - cr.basicint,
@@ -359,6 +370,7 @@ UPDATE rptledgeritem rli, cashreceiptitem_rpt cr SET
 	
 	rli.firecodepaid = rli.firecodepaid - cr.firecode,
 	rli.lastqtrpaid = $P{qtr} - 1
+FROM rptledgeritem rli, cashreceiptitem_rpt cr 	
 WHERE cr.objid = $P{objid}
   AND cr.rptledgeritemid = rli.objid 
 
@@ -576,20 +588,20 @@ SELECT
 	t.barangay,
 	CASE
 		WHEN MIN(t.fromyear) = MAX(t.toyear) AND MIN(t.fromqtr) = 1 AND MAX(t.toqtr) = 4 
-			THEN CONCAT('FULL ', MAX(t.toyear))
+			THEN 'FULL ' + CONVERT(VARCHAR(4),MAX(t.toyear))
 		WHEN MIN(t.fromyear) = MAX(t.toyear) AND MIN(t.fromqtr) = MAX(t.toqtr)
-			THEN CONCAT(MAX(t.toqtr), 'Q, ', MAX(t.toyear))
+			THEN CONVERT(VARCHAR(1),MAX(t.toqtr)) + 'Q, ' + CONVERT(VARCHAR(4),MAX(t.toyear))
 		WHEN MIN(t.fromyear) = MAX(t.toyear) 
-			THEN CONCAT(MIN(t.fromqtr), MAX(t.toqtr), 'Q, ', MAX(t.toyear))
+			THEN CONVERT(VARCHAR(1),MIN(t.fromqtr)) + CONVERT(VARCHAR(1),MAX(t.toqtr)) + 'Q, ' + CONVERT(VARCHAR(4),MAX(t.toyear))
 
 		WHEN MIN(t.fromqtr) = 1 AND MAX(t.toqtr) = 4
-			THEN CONCAT('FULL ', MIN(t.fromyear), '-', MAX(t.toyear))
+			THEN 'FULL ' + CONVERT(VARCHAR(4),MIN(t.fromyear)) + '-' + CONVERT(VARCHAR(4),MAX(t.toyear))
 		WHEN MIN(t.fromqtr) = 1 AND MAX(t.toqtr) <> 4
-			THEN CONCAT(MIN(t.fromyear), '-', MAX(t.toqtr), 'Q,', MAX(t.toyear))
+			THEN CONVERT(VARCHAR(4),MIN(t.fromyear)) + '-' + CONVERT(VARCHAR(1),MAX(t.toqtr)) + 'Q,' + CONVERT(VARCHAR(4),MAX(t.toyear))
 		WHEN MIN(t.fromqtr) <> 1 AND MAX(t.toqtr) = 4
-			THEN CONCAT(MIN(t.fromqtr), 'Q,', MIN(t.fromyear), '-',MAX(t.toyear))
+			THEN CONVERT(VARCHAR(1),MIN(t.fromqtr)) + 'Q,' + CONVERT(VARCHAR(4),MIN(t.fromyear)) + '-' + CONVERT(VARCHAR(4),MAX(t.toyear))
 		ELSE
-			CONCAT(MIN(t.fromqtr), 'Q,', MIN(t.fromyear), '-', MAX(t.toqtr), 'Q,', MAX(t.toyear))
+			CONVERT(VARCHAR(1),MIN(t.fromqtr)) + 'Q,' + CONVERT(VARCHAR(4),MIN(t.fromyear)) + '-' + CONVERT(VARCHAR(1),MAX(t.toqtr)) + 'Q,' + CONVERT(VARCHAR(4),MAX(t.toyear))
 	END AS period,
 	SUM(t.basic) AS basic, 
 	SUM(t.basicdisc) AS basicdisc, 
@@ -613,9 +625,9 @@ FROM (
 		pc.code AS classcode,
 		b.name AS barangay,
 		MIN(cri.year) AS fromyear,
-		(SELECT MIN(qtr) FROM cashreceiptitem_rpt WHERE rptreceiptid = cri.rptreceiptid AND YEAR = MIN(cri.year) ) AS fromqtr,
+		(SELECT MIN(CASE WHEN qtr = 0 THEN 1 ELSE qtr END)  FROM cashreceiptitem_rpt WHERE rptreceiptid = cri.rptreceiptid AND YEAR = MIN(cri.year) ) AS fromqtr,
 		MAX(cri.year) AS toyear,
-		(SELECT MAX(qtr) FROM cashreceiptitem_rpt WHERE rptreceiptid = cri.rptreceiptid AND YEAR = MIN(cri.year) ) AS toqtr,
+		(SELECT MAX(CASE WHEN qtr = 0 THEN 4 ELSE qtr END) FROM cashreceiptitem_rpt WHERE rptreceiptid = cri.rptreceiptid AND YEAR = MIN(cri.year) ) AS toqtr,
 		SUM(basic) AS basic,
 		SUM(basicint) AS basicint,
 		SUM(basicdisc) AS basicdisc,
@@ -638,6 +650,7 @@ FROM (
 		INNER JOIN barangay b ON rp.barangayid = b.objid 
 	WHERE cri.rptreceiptid = $P{rptreceiptid}
 	GROUP BY 
+		cri.rptreceiptid,
 		cri.rptledgerid, 
 		f.tdno, f.owner_name, 
 		r.rputype, r.totalav, r.fullpin,
