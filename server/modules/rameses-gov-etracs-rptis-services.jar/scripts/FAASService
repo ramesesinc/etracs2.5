@@ -454,12 +454,14 @@ class FAASService
         values.keySet().each {
             tdno = tdno.replace( it, values[it] )
         }
-        return tdno + '-' + seqSvc.getNextFormattedSeriesA( tdno, seqcount )
+        def ntdno = tdno + '-' + seqSvc.getNextFormattedSeriesA( tdno, seqcount )
+        println 'New TD No -> ' + ntdno 
+        return ntdno 
     }
 
 
     void updateTDNo(faas){
-    	if ( faas.tdno == null && utilSvc.isTrue(faas.autonumber) ){
+    	if ( (faas.tdno == null || faas.tdno == '-') && utilSvc.isTrue(faas.autonumber) ){
 			faas.tdno = generateNextTdNo(faas)
 			faas.utdno = faas.tdno 
 		}
@@ -582,7 +584,7 @@ class FAASService
 
 	@ProxyMethod
 	public def generateUniqueTdNo(faas){
-		if (faas.tdno ) {
+		if (faas.tdno && faas.tdno != '-') {
 			return faas.tdno
 		}
 		else {

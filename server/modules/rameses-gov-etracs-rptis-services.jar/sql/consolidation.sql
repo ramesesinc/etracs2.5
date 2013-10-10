@@ -142,7 +142,13 @@ UPDATE consolidationaffectedrpu SET newfaasid = null WHERE objid = $P{objid}
 
 
 [approveConsolidation]
-UPDATE consolidation SET state = 'APPROVED' WHERE objid = $P{objid}
+UPDATE cs SET
+	cs.state = 'APPROVED',
+	cs.newtdno = f.tdno 	
+FROM consolidation cs
+	INNER JOIN faas f ON cs.newfaasid = f.objid  
+WHERE cs.objid = $P{objid}
+
 
 [cancelRealProperty]
 UPDATE realproperty SET state = 'CANCELLED' WHERE objid = $P{objid}

@@ -410,11 +410,7 @@ class ConsolidationService
    	*
    	-----------------------------------------------------------------*/
    	void doApproveConsolidation(consolidation){
-		em.sqlContext.createNamedExecutor('consolidation:approveConsolidation')
-            .setParameter('objid', consolidation.objid)
-            .execute()
-
-        def faas = faasSvc.openFaas(consolidation.newfaasid)
+		    def faas = faasSvc.openFaas(consolidation.newfaasid)
         faasSvc.approveFaas(faas)
 
         getAffectedRpus(consolidation.objid).each{ arpu ->
@@ -430,6 +426,12 @@ class ConsolidationService
                 .setParameter('faasid', cl.landfaasid)
                 .execute()
         }
+
+        em.sqlContext.createNamedExecutor('consolidation:approveConsolidation')
+            .setParameter('objid', consolidation.objid)
+            .execute()
+
+      
 
  	}
 
