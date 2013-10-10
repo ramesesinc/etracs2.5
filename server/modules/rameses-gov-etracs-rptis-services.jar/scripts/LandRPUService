@@ -222,6 +222,7 @@ class LandRPUService
 		adjustment.adjustment 	= 0.0
 		adjustment.expr 		= adjustment.adjustmenttype.expr 
 		def classifications 	= getApplicableClassifications(adjustment.adjustmenttype)
+		println 'classifications -> ' + classifications 
 		landdetails.each { ld ->
 			if( isApplicableAdjustment( ld, classifications) )
 			{
@@ -515,6 +516,7 @@ class LandRPUService
 
     boolean isApplicableAdjustment( landdetail, classifications ) {
     	def classid = landdetail.actualuse.classification.objid 
+    	println 'classid -> ' + classid 
     	def adjustall = util.toBoolean( var.landrpu_calculate_landvalueadjustment_all, false )
 		if (adjustall) 
 			return true 
