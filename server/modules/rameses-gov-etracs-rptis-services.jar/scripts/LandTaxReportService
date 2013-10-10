@@ -37,7 +37,6 @@ class LandTaxReportService
 
 	@ProxyMethod
 	public def generateDelinquencyReportOldFormat(params){
-		println 'params -> ' + params
 		util.required('Barangay', params.barangay)
 		def list = em.sqlContext.createNamedQuery('landtaxreport:generateDelinquencyReportOldFormat')
 				.setParameter('barangayid', params.barangay.objid)

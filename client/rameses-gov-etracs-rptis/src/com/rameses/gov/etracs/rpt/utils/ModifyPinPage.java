@@ -122,7 +122,6 @@ public class ModifyPinPage extends javax.swing.JPanel {
 
         xComboBox2.setCaption("Barangay");
         xComboBox2.setCaptionWidth(120);
-        xComboBox2.setDepends(new String[] {"munidistrict"});
         xComboBox2.setExpression("#{item.name}");
         xComboBox2.setItems("barangayList");
         xComboBox2.setName("barangay");
