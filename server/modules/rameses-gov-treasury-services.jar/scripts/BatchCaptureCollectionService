@@ -78,6 +78,7 @@ public class BatchCaptureCollectionService extends ActiveCrudService {
 			bi.cashchange = 0
 			bi.totalcredit = 0
 			bi.user = entity.capturedby
+			bi.items.each { it.remarks = bi.remarks; }
 			crSvc.post(bi);
 		}
 		entity.state = 'POSTED'
@@ -116,6 +117,7 @@ public class BatchCaptureCollectionService extends ActiveCrudService {
 				it.item.fund = it.fund;
 			}
 			it.acctinfo = (it.items.size() > 1) ? '( Multiple Accounts )' : it.items[0].item.title 
+			it.remarks = it.items[0].remarks;
 		}
 	}
 

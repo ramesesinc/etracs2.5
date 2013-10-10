@@ -46,6 +46,7 @@
 		<field name="series" required="true"/>
 		<field name="collectiontype_objid" required="true"/>
 		<field name="collectiontype_name" required="true"/>
+		<field name="remarks"/>
 	</element>
 
 	<element name="entry_item" tablename="batchcapture_collection_entry_item" >
