@@ -12,8 +12,8 @@
         <invoker type="formActions" caption="Save" action="save" visibleWhen="#{mode == 'create'}" mnemonic="s" shortcut="ctrl S" icon="images/toolbars/save.png"/>
         <invoker type="formActions" caption="Edit" action="edit" visibleWhen="#{mode == 'saved' &amp;&amp; entity.state == 'DRAFT'}" mnemonic="e" shortcut="ctrl E"/>
         <invoker type="formActions" caption="Submit For Posting" action="submitForPosting" visibleWhen="#{mode == 'saved' &amp;&amp; entity.state == 'DRAFT'}" mnemonic="s"/>
-        <invoker type="formActions" caption="Disapprove" action="disapprove" visibleWhen="#{mode == 'saved' &amp;&amp; entity.state =='FORPOSTING'}" mnemonic="d"/>
-        <invoker type="formActions" caption="Post" action="post" visibleWhen="#{mode == 'saved' &amp;&amp; entity.state =='FORPOSTING'}" mnemonic="p"/>
+        <invoker type="formActions" caption="Disapprove" action="disapprove" visibleWhen="#{mode == 'saved' &amp;&amp; entity.state =='FORPOSTING'}" mnemonic="d" role="SUBCOLLECTOR" permission="batchcapture.disapprove"/>
+        <invoker type="formActions" caption="Post" action="post" visibleWhen="#{mode == 'saved' &amp;&amp; entity.state =='FORPOSTING'}" mnemonic="p" role="SUBCOLLECTOR" permission="batchcapture.post"/>
    </invokers>
    
    <code class="com.rameses.gov.treasury.batchcapture.BatchCaptureController"/>
