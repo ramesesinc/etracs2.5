@@ -369,6 +369,10 @@ class SubdivisionService
         getAffectedRpus(subdivision.objid).each{ arpu ->
             def faas = faasSvc.openFaas(arpu.newfaasid)
             faasSvc.approveFaas(faas)
+            em.sqlContext.createNamedExecutor('subdivision:updateRpuFullPin')
+                .setParameter('fullpin', arpu.newpin + '-' + arpu.newsuffix)
+                .setParameter('objid', arpu.newrpuid )
+                .execute()
         }
 
         em.sqlContext.createNamedExecutor('subdivision:cancelRealProperty')

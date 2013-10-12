@@ -161,3 +161,7 @@ UPDATE srpu SET
 FROM subdivisionaffectedrpu srpu
 	inner join faas f on srpu.newfaasid = f.objid  
 where subdivisionid = $P{subdivisionid}
+
+
+[updateRpuFullPin]
+UPDATE rpu SET fullpin = $P{fullpin} WHERE objid = $P{objid}

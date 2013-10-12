@@ -14,3 +14,8 @@ SELECT state FROM realproperty WHERE objid = $P{objid}
 
 [cancelPrevRealPropertyById]
 UPDATE realproperty SET state = 'CANCELLED' WHERE objid = $P{objid}
+
+
+
+[updateState]
+UPDATE realproperty SET state = $P{state} WHERE objid = $P{objid}

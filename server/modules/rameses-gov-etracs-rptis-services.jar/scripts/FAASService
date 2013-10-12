@@ -1,6 +1,7 @@
 import com.rameses.annotations.*
 import com.rameses.common.*
 import com.rameses.util.*
+import com.rameses.services.extended.*
 
 
 class FAASService
@@ -8,6 +9,9 @@ class FAASService
 
 	@PersistenceContext('rpt')	
 	def em 
+
+	@ActiveDB('faas')
+	def db 
 
 	@Service('Var')
 	def var 
@@ -226,7 +230,8 @@ class FAASService
 			rpuSvc.submitRpuForApproval( faas.rpu )
 		}
 		wsSvc.insert(faas)
-		return updateFaas(faas)
+		db.updateFaasState(faas)
+		return faas
 	}
 
 
@@ -240,7 +245,8 @@ class FAASService
 		cancelPreviousFaases(faas)
 		txnRef.delete(faas.objid)
 		updateTDNo(faas)
-		return updateFaas(faas)
+		db.approveFaas(faas)
+		return faas 
 	}
 
 
@@ -463,8 +469,8 @@ class FAASService
     void updateTDNo(faas){
     	if ( (faas.tdno == null || faas.tdno == '-') && utilSvc.isTrue(faas.autonumber) ){
 			faas.tdno = generateNextTdNo(faas)
-			faas.utdno = faas.tdno 
 		}
+		faas.utdno = faas.tdno 
     }
 
 	void clearOwnerInfo(faas){

@@ -357,7 +357,6 @@ class RPTLedgerService
                 em.approveLedgerFaas(it)
                 postLedgerItems(it)
             }
-            billingSvc.generateBillByLedgerId(ledger.objid)
         }
         return ledger;
     }
