@@ -22,6 +22,9 @@ public class RPTBillingController
     @Service("ReportParameterService")
     def reportSvc;
     
+    @Service('LGUService')
+    def lguSvc 
+    
     def mode;
     def parsedate;
     def bill;
@@ -75,6 +78,15 @@ public class RPTBillingController
     
     List getQuarters() {
         return  [1,2,3,4]
+    }
+    
+    List getRpuTypes(){
+        return ['land', 'bldg', 'mach', 'planttree', 'misc']
+    }
+    
+    
+    List getBarangays(){
+        return lguSvc.lookupBarangays([:])
     }
     
 }

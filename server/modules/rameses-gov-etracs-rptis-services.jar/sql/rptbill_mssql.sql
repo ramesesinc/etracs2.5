@@ -97,6 +97,8 @@ WHERE rl.objid = $P{ledgerid}
 [getLedgerWithUnpostedItems]
 SELECT rl.objid, rl.faasid, CASE WHEN rl.lastitemyear = 0 THEN rl.lastyearpaid ELSE rl.lastitemyear END AS lastitemyear 
 FROM faas f 
+	INNER JOIN rpu r ON f.rpuid = r.objid 
+	INNER JOIN realproperty rp ON r.realpropertyid = rp.objid 
 	INNER JOIN rptledger rl ON f.objid = rl.faasid 
 WHERE ${filters}
  AND rl.state = 'APPROVED'
@@ -121,7 +123,10 @@ ORDER BY expirydate ASC
 [updateLedgerNextBillDate]
 UPDATE rl SET
 	rl.nextbilldate = $P{nextbilldate}
-FROM rptledger rl, faas f 	
+FROM faas f 	
+	INNER JOIN rpu r ON f.rpuid = r.objid 
+	INNER JOIN realproperty rp ON r.realpropertyid = rp.objid 
+	INNER JOIN rptledger rl ON f.objid = rl.faasid
 WHERE f.objid = rl.faasid 
  AND rl.state = 'APPROVED'
  AND ${filters}
@@ -194,10 +199,7 @@ FROM (
 		rli.sef + rli.sefint - rli.sefdisc - rli.sefdisctaken - rli.sefpaid - rli.sefintpaid AS sefnet,
 		rli.firecode - rli.firecodepaid AS firecode,
 		rl.barangayid
-	FROM faas f
-		INNER JOIN rpu r ON f.rpuid = r.objid 
-		INNER JOIN realproperty rp ON r.realpropertyid = rp.objid 
-		INNER JOIN rptledger rl ON f.objid = rl.faasid
+	FROM rptledger rl
 		INNER JOIN rptledgeritem rli ON rl.objid = rli.rptledgerid
 		INNER JOIN rptledgerfaas rlf ON rli.rptledgerfaasid = rlf.objid
 	WHERE rl.objid = $P{rptledgerid}
@@ -227,10 +229,7 @@ FROM (
 		SUM(rliq.sef + rliq.sefint - rliq.sefdisc - rliq.sefdisctaken - rliq.sefpaid - rliq.sefintpaid) AS sefnet,
 		SUM(rliq.firecode - rliq.firecodepaid) AS firecode,
 		rl.barangayid
-	FROM faas f
-		INNER JOIN rpu r ON f.rpuid = r.objid 
-		INNER JOIN realproperty rp ON r.realpropertyid = rp.objid 
-		INNER JOIN rptledger rl ON f.objid = rl.faasid
+	FROM rptledger rl 
 		INNER JOIN rptledgeritem rli ON rl.objid = rli.rptledgerid
 		INNER JOIN rptledgeritem_qtrly rliq ON rli.objid = rliq.rptledgeritemid 
 		INNER JOIN rptledgerfaas rlf ON rli.rptledgerfaasid = rlf.objid
@@ -271,10 +270,7 @@ SELECT
 	SUM(rliq.sef + rliq.sefint - rliq.sefdisc - rliq.sefdisctaken - rliq.sefpaid - rliq.sefintpaid) AS sefnet,
 	SUM(rliq.firecode - rliq.firecodepaid) AS firecode,
 	rl.barangayid
-FROM faas f
-	INNER JOIN rpu r ON f.rpuid = r.objid 
-	INNER JOIN realproperty rp ON r.realpropertyid = rp.objid 
-	INNER JOIN rptledger rl ON f.objid = rl.faasid
+FROM rptledger rl
 	INNER JOIN rptledgeritem rli ON rl.objid = rli.rptledgerid
 	INNER JOIN rptledgeritem_qtrly rliq ON rli.objid = rliq.rptledgeritemid 
 	INNER JOIN rptledgerfaas rlf ON rli.rptledgerfaasid = rlf.objid
@@ -294,9 +290,11 @@ ORDER BY rli.year, rliq.qtr
 DELETE FROM rptledgeritem_qtrly
 WHERE rptledgeritemid IN (
 	SELECT rli.objid 
-	FROM rptledger rl 
+	FROM faas f 	
+		INNER JOIN rpu r ON f.rpuid = r.objid 
+		INNER JOIN realproperty rp ON r.realpropertyid = rp.objid 
+		INNER JOIN rptledger rl ON f.objid = rl.faasid
 		INNER JOIN rptledgeritem rli ON rl.objid = rli.rptledgerid 
-		INNER JOIN faas f ON rl.faasid = f.objid 
 	WHERE ${filters}
 	 AND rl.state = 'APPROVED'
 	 AND rli.year < $P{currentyr}
@@ -310,10 +308,12 @@ WHERE rptledgeritemid IN (
 [resetLedgerItemQtrlyFlag]
 UPDATE rli SET
 	rli.qtrly = 0 
-FROM rptledgeritem rli, rptledger rl, faas f 	
+FROM faas f 	
+		INNER JOIN rpu r ON f.rpuid = r.objid 
+		INNER JOIN realproperty rp ON r.realpropertyid = rp.objid 
+		INNER JOIN rptledger rl ON f.objid = rl.faasid
+		INNER JOIN rptledgeritem rli ON rl.objid = rli.rptledgerid 
 WHERE ${filters}
-  AND rli.rptledgerid = rl.objid 
-  AND rl.faasid = f.objid 
   AND rl.state = 'APPROVED'
   AND rli.year < $P{currentyr}
  AND rli.state = 'OPEN' 
@@ -466,9 +466,11 @@ WHERE rptledgerid = $P{rptledgerid}  AND year = $P{billtoyear}
 UPDATE rl SET
 	rl.advancebill = 0, 
 	rl.nextbilldate = null 
-FROM rptledger rl, faas f 	
+FROM faas f 	
+	INNER JOIN rpu r ON f.rpuid = r.objid 
+	INNER JOIN realproperty rp ON r.realpropertyid = rp.objid 
+	INNER JOIN rptledger rl ON f.objid = rl.faasid
 WHERE ${filters}
- AND rl.faasid = f.objid
  AND rl.state = 'APPROVED'
  AND rl.advancebill = 1
 
@@ -477,7 +479,10 @@ WHERE ${filters}
 [clearLedgerBillingInfoFlags]
 UPDATE rl SET
 	rl.nextbilldate = null 
-FROM rptledger rl, faas f 	
+FROM faas f 	
+	INNER JOIN rpu r ON f.rpuid = r.objid 
+	INNER JOIN realproperty rp ON r.realpropertyid = rp.objid 
+	INNER JOIN rptledger rl ON f.objid = rl.faasid
 WHERE ${filters}
  AND rl.faasid = f.objid
  AND rl.state = 'APPROVED'

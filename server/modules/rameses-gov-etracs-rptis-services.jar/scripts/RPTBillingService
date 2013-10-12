@@ -133,7 +133,7 @@ public class RPTBillingService
 	@ProxyMethod
 	public void insertUnpostedItems(bill){
 		em.getLedgerWithUnpostedItems(buildParams(bill)).each{ ledger -> 
-			if (ledger.lastitemyear < bill.billtoyear ){
+			if (ledger.lastitemyear < bill.billtoyear && ledger.lastitemyear > 0){
 				ledgerSvc.insertLedgerItems(ledger, ledger.lastitemyear + 1, bill.billtoyear)
 			}
 		}
@@ -159,6 +159,7 @@ public class RPTBillingService
 			billdate   : pdate.date,
 			billyear   : pdate.year,
 			billqtr    : pdate.qtr,
+			rputype    : bill.rputype, 
 			forpayment : 0,
 		]
 
@@ -168,6 +169,15 @@ public class RPTBillingService
 		}
 		else {
 			params.filters = ' f.taxpayer_objid = $P{taxpayerid} '
+		}
+
+		if (bill.rputype ){
+			params.filters += ' AND r.rputype = $P{rputype} '
+		}
+
+		if (bill.barangay){
+			params.barangayid = bill.barangay.objid 
+			params.filters += ' AND rp.barangayid = $P{barangayid}'
 		}
 		return params
 	}
