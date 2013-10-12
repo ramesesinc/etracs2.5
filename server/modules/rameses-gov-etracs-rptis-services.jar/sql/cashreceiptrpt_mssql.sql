@@ -62,10 +62,10 @@ FROM (
 	SELECT
 		rl.objid AS rptledgerid, f.tdno, 
 		rl.lastyearpaid, rl.lastqtrpaid,
-		SUM(rli.basic - rli.basicpaid - rli.basicamnesty - rli.basicdisc + 
-		rli.basicint - rli.basicintpaid - rli.basicintamnesty + 
-		rli.sef - rli.sefpaid - rli.sefamnesty - rli.sefdisc + 
-		rli.sefint - rli.sefintpaid - rli.sefintamnesty  +
+		SUM(rli.basic - rli.basicpaid - rli.basicdisc + 
+		rli.basicint - rli.basicintpaid + 
+		rli.sef - rli.sefpaid -  rli.sefdisc + 
+		rli.sefint - rli.sefintpaid +
 		rli.firecode - rli.firecodepaid) AS amount
 	FROM rptledger rl
 		INNER JOIN faas f ON rl.faasid = f.objid 

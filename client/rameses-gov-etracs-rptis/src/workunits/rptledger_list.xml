@@ -47,7 +47,5 @@
         }
         
     </code>
-    <pages>
-        <page name="queryform" template="com.rameses.gov.etracs.rpt.common.StateQueryPanel"/>
-    </pages>
+    
 </workunit>

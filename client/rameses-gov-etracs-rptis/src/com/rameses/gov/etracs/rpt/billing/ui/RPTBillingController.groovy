@@ -12,6 +12,9 @@ public class RPTBillingController
 {
     @Binding
     def binding
+            
+    @Caller
+    def caller;
     
     @Service("RPTBillingService")
     def svc;
@@ -55,7 +58,7 @@ public class RPTBillingController
         mode = 'view'
         return 'preview'
     }
-    
+                      
     def reportpath = 'com/rameses/gov/etracs/rpt/report/billing/'
             
     def report = [

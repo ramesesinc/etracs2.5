@@ -66,10 +66,18 @@ public class RPTBillingService
 	@Async
 	@ProxyMethod
 	public void calculateBillByLedgerIdAsync(ledgerid){
+		util.required('Ledger ID', ledgerid)
 		def bill = initBill()
 		bill.billdate = dtSvc.serverDate
 		bill.ledgerids.add(ledgerid)
 		recalcBillItems(bill)
+	}
+
+	@ProxyMethod
+	public void forceRecalcBill( ledgerid ) {
+		util.required('Ledger ID', ledgerid)
+		em.clearLedgerBillingInfoFlags([filters:'rl.objid = $P{objid}', objid:ledgerid])
+		calculateBillByLedgerIdAsync(ledgerid)
 	}
 
 	@ProxyMethod

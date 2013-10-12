@@ -72,13 +72,68 @@ WHERE rlf.rptledgerid = $P{rptledgerid}
   AND rlf.faasid = $P{faasid}
 ORDER BY rlf.fromyear DESC 
 
+
 [getLedgerItems]
-SELECT rli.*,
-	rlf.tdno 
-FROM rptledgeritem rli
-	INNER JOIN rptledgerfaas rlf ON rli.rptledgerfaasid = rlf.objid 
-WHERE rli.rptledgerid = $P{rptledgerid} 
-ORDER BY rli.year DESC, rli.qtr DESC 
+SELECT t.*
+FROM ( 
+	SELECT
+		rl.objid AS rptledgerid, lf.tdno, rli.year, lf.assessedvalue,
+		rli.basic - rli.basicpaid AS basic, 
+		rli.basicint - rli.basicintpaid AS basicint, 
+		rli.basicdisc - rli.basicdisctaken AS basicdisc, 
+		rli.basicamnesty + rli.basicintamnesty AS basictotalamnesty,
+
+		rli.sef - rli.sefpaid AS sef, 
+		rli.sefint - rli.sefintpaid AS sefint, 
+		rli.sefdisc - rli.sefdisctaken AS sefdisc, 
+		rli.sefamnesty + rli.sefintamnesty AS seftotalamnesty,
+
+		rli.firecode - rli.firecodepaid AS firecode,
+
+		rli.basic - rli.basicpaid -  rli.basicdisc + 
+		rli.basicint - rli.basicintpaid  + 
+		rli.sef - rli.sefpaid -  rli.sefdisc + 
+		rli.sefint - rli.sefintpaid  +
+		rli.firecode - rli.firecodepaid AS total 
+	FROM rptledger rl
+		INNER JOIN rptledgerfaas lf ON rl.objid = lf.rptledgerid
+		INNER JOIN rptledgeritem rli ON lf.objid = rli.rptledgerfaasid
+	WHERE rl.objid = $P{rptledgerid} 
+	  AND rli.state = 'OPEN'
+	  AND rli.qtrly = 0
+
+	UNION
+
+	SELECT
+		rl.objid AS rptledgerid,  lf.tdno, rli.year, lf.assessedvalue, 
+		SUM(rliq.basic - rliq.basicpaid) AS basic, 
+		SUM(rliq.basicint - rliq.basicintpaid) AS basicint, 
+		SUM(rliq.basicdisc - rliq.basicdisctaken) AS basicdisc, 
+		SUM(rliq.basicamnesty + rliq.basicintamnesty) AS basictotalamnesty,
+
+		SUM(rliq.sef - rliq.sefpaid) AS sef, 
+		SUM(rliq.sefint - rliq.sefintpaid) AS sefint, 
+		SUM(rliq.sefdisc - rliq.sefdisctaken) AS sefdisc, 
+		SUM(rliq.sefamnesty + rliq.sefintamnesty) AS seftotalamnesty,
+		SUM(rliq.firecode - rliq.firecodepaid) AS firecode,
+
+		SUM(rliq.basic - rliq.basicpaid -  rliq.basicdisc + 
+		rliq.basicint - rliq.basicintpaid  + 
+		rliq.sef - rliq.sefpaid -  rliq.sefdisc + 
+		rliq.sefint - rliq.sefintpaid  +
+		rliq.firecode - rliq.firecodepaid) AS total 
+
+	FROM rptledger rl
+		INNER JOIN rptledgerfaas lf ON rl.objid = lf.rptledgerid
+		INNER JOIN rptledgeritem rli ON lf.objid = rli.rptledgerfaasid
+		INNER JOIN rptledgeritem_qtrly rliq ON rli.objid = rliq.rptledgeritemid 
+	WHERE rl.objid = $P{rptledgerid} 
+	  AND rliq.state = 'OPEN'
+	GROUP BY rl.objid, lf.tdno, rli.year, lf.assessedvalue
+) t
+ORDER BY t.year DESC 
+
+
 
 
 
@@ -122,7 +177,7 @@ SELECT
 	MIN(CONVERT(VARCHAR(1),cri.qtr) + 'Q,' + CONVERT(VARCHAR(4),cri.year)) + '-' + MAX(CONVERT(VARCHAR(1),cri.qtr) + 'Q,' + CONVERT(VARCHAR(4),cri.year)) AS period,
 	SUM(basic - basicdisc + basicint + sef - sefdisc + sefint) AS total
 FROM cashreceipt cr 
-	INNER JOIN cashreceipt_rpt_item cri ON cr.objid = cri.rptreceiptid
+	INNER JOIN cashreceiptitem_rpt cri ON cr.objid = cri.rptreceiptid
 	LEFT JOIN cashreceipt_void v ON cr.objid = v.receiptid 
 WHERE cri.rptledgerid = $P{rptledgerid}
  AND v.objid IS NULL 

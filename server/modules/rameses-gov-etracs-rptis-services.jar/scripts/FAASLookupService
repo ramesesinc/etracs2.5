@@ -22,7 +22,7 @@ class FAASLookupService
 		def filters = [
 			' and f.tdno = $P{tdno} ',
 			' and r.fullpin LIKE $P{searchtext} ',
-			' and f.owner_name LIKE $P{searchtext} ',
+			' and f.name LIKE $P{searchtext} ',
 			' and rp.cadastrallotno LIKE $P{searchtext} ',
 			' and rp.blockno = $P{blockno} ',
 			' and rp.surveyno LIKE $P{searchtext}',

@@ -153,6 +153,7 @@ class FAASService
 		if (approver.dtsigned) {
 			faas.txntimestamp = dtSvc.buildCustomTimeStamp(approver.dtsigned)
 		}
+		updateNameInfo(faas)
 		em.create(SCHEMA_FAAS, faas)
 		signatorySvc.saveSignatories(faas.signatories)
 		faas.previousfaases.each{
@@ -176,6 +177,7 @@ class FAASService
 		if (approver.dtsigned) {
 			faas.txntimestamp = dtSvc.buildCustomTimeStamp(approver.dtsigned)
 		}
+		updateNameInfo(faas)
 		em.update(SCHEMA_FAAS, faas)
 		signatorySvc.saveSignatories(faas.signatories)
 		saveBackTaxes(faas)
@@ -713,6 +715,13 @@ class FAASService
 		utilSvc.required('Approver', approver)
 		utilSvc.required('Approver', approver.name)
 		utilSvc.required('Approver Date Signed', approver.dtsigned)
+	}
+
+
+	void updateNameInfo(faas){
+		def len = faas.owner.name.length()
+		if (len > 100) len = 100
+		faas.name = faas.owner.name.substring(0,len)
 	}
 }
 

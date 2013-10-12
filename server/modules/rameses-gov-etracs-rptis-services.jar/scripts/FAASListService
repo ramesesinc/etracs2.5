@@ -63,7 +63,7 @@ class FAASListService
         if (params.ownername) {
             params.ownername += '%'
             if (whereclause) whereclause += ' AND '
-            whereclause += ' f.owner_name LIKE $P{ownername} '
+            whereclause += ' f.name LIKE $P{ownername} '
         }
         if (params.fullpin) {
             params.fullpin += '%'
