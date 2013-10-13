@@ -472,7 +472,8 @@ public class RPTBillingService
 		em.resetLedgerItemQtrlyFlag(params)
 	}
 
-	void insertQtrlyLedgerItems(bill, ledger){
+	@ProxyMethod
+	public void insertQtrlyLedgerItems(bill, ledger){
 		if (bill.billtoyear >= dtSvc.serverYear || bill.billtoqtr !=  4 || bill.insertqtrly == true){
 			if (bill.forpayment == null) bill.forpayment = 0
 			def params = [rptledgerid:ledger.objid, billtoyear: bill.billtoyear, forpayment:bill.forpayment]

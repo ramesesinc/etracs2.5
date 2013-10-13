@@ -223,5 +223,20 @@ public class RPTLedgerController
         bill.ledgerids.add(entity.objid)
         return InvokerUtil.lookupOpener('rptbill:print', [bill:bill])
     }
+    
+    
+    def capturePayment(){
+        return InvokerUtil.lookupOpener('rptledger:capture', [
+            ledger : ledger,
+            
+            onadd  : { payment ->
+                svc.postCapturedPayment(payment)
+                ledger.lastyearpaid = payment.toyear;
+                ledger.lastqtrpaid  = payment.toqtr;
+                loadItems()
+                binding.refresh('.*');
+            }
+        ])
+    }
 }
 

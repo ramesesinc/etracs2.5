@@ -192,3 +192,66 @@ UPDATE rptledgeritem SET
 	sefintacct_objid = CASE WHEN sefintacct_objid IS NULL THEN $P{sefintacctid} ELSE sefintacct_objid END,
 	firecodeacct_objid = CASE WHEN firecodeacct_objid IS NULL THEN $P{firecodeacctid} ELSE firecodeacct_objid END
 WHERE objid = $P{rptledgeritemid}	
+
+
+
+[updateLastYearQtrPaid]
+UPDATE rptledger SET lastyearpaid = $P{lastyearpaid}, lastqtrpaid = $P{lastqtrpaid} WHERE objid = $P{objid}
+
+
+
+
+[closePaidLedgerItemByYear]
+UPDATE rptledgeritem SET 
+	state = 'CLOSED',
+	basic = $P{basic}, basicpaid = $P{basic},
+	basicint = $P{basicint}, basicintpaid = $P{basicint},
+	basicdisc = $P{basicdisc}, basicdisctaken = $P{basicdisc},
+	
+	sef = $P{sef}, sefpaid = $P{sef},
+	sefint = $P{sefint}, sefintpaid = $P{sefint},
+	sefdisc = $P{sefdisc}, sefdisctaken = $P{sefdisc},
+
+	firecode = $P{firecode}, firecodepaid = $P{firecode}
+WHERE rptledgerid = $P{rptledgerid}	
+ AND state = 'OPEN'
+ AND year = $P{paidyear}
+ AND qtrly = 0
+
+
+ [closePaidQtrlyLedgerItemByYear]
+ UPDATE rptledgeritem_qtrly SET 
+	state = 'CLOSED',
+	basic = $P{basic}, basicpaid = $P{basic},
+	basicint = $P{basicint}, basicintpaid = $P{basicint},
+	basicdisc = $P{basicdisc}, basicdisctaken = $P{basicdisc},
+	
+	sef = $P{sef}, sefpaid = $P{sef},
+	sefint = $P{sefint}, sefintpaid = $P{sefint},
+	sefdisc = $P{sefdisc}, sefdisctaken = $P{sefdisc},
+
+	firecode = $P{firecode}, firecodepaid = $P{firecode}
+WHERE rptledgerid = $P{rptledgerid}	
+ AND state = 'OPEN'
+ AND year = $P{paidyear}
+ AND qtr <= $P{toqtr}
+
+
+[findLedgerItemByYear]
+SELECT * FROM rptledgeritem WHERE rptledgerid = $P{rptledgerid} AND year = $P{year}
+
+
+
+[updateLedgerItemQuarterlyPaidInfo]
+UPDATE rptledgeritem rli SET
+	rli.state = CASE WHEN NOT EXISTS (
+				  		SELECT *
+				  		FROM rptledgeritem_qtrly 
+				  		WHERE rptledgeritemid = rli.objid AND state = 'OPEN'
+				  	) 
+					THEN 'CLOSED' ELSE 'OPEN' END,					
+	rli.lastqtrpaid = IFNULL((SELECT MAX(qtr) FROM rptledgeritem_qtrly WHERE rptledgeritemid = rli.objid AND (basicpaid > 0  OR state = 'CLOSED')),0)
+WHERE rli.rptledgerid = $P{rptledgerid} 
+  AND rli.qtrly = 1 
+
+

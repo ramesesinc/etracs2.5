@@ -6,6 +6,9 @@ import com.rameses.services.extended.*
 
 class RPTLedgerService
 {
+    @Env
+    def env
+
     @ActiveDB('rptbill')
     def billdb 
 
@@ -38,6 +41,7 @@ class RPTLedgerService
     def SCHEMA_FAAS     = 'ledgerfaas'
     def SCHEMA_ITEM     = 'item'
     def SCHEMA_QTRLYITEM = 'qtrlyitem'
+    def SCHEMA_CAPTUREPMT = 'capturepayment'
 
     def STATE_PENDING   = 'PENDING'
     def STATE_APPROVED  = 'APPROVED'
@@ -254,6 +258,55 @@ class RPTLedgerService
         saveLedgerFaas(ledgerfaas)
     }
 
+
+    @ProxyMethod
+    public void postCapturedPayment( payment ) {
+        payment.dtposted = dtSvc.serverDate 
+        payment.postedby = env.NAME
+        payment.postedbytitle = env.JOBTITLE
+        def len = payment.paidby.name.length()
+        if (len > 100 ) len = 100
+        payment.paidby_name = payment.paidby.name
+        payment.paidby_address = payment.paidby.address
+        payment.paidby = payment.paidby.name.substring(0,len)
+        em.create(payment, SCHEMA_CAPTUREPMT)
+
+        em.updateLastYearQtrPaid(payment)    
+        
+        payment.origtoqtr = payment.toqtr
+
+        payment.fromyear.upto(payment.toyear){ yr ->
+            def item = em.findLedgerItemByYear([rptledgerid:payment.rptledgerid, year:yr])
+            payment.paidyear = yr 
+            payment.toqtr = payment.origtoqtr
+
+            def bill = [rptledgerid:payment.rptledgerid, billtoyear:yr, insertqtrly:1, forpayment:0]
+
+            if (item.qtrly == 1 && yr == payment.fromyear ){
+                payment.toqtr = (payment.fromyear == payment.toyear ? payment.toqtr : 4)
+                em.closePaidQtrlyLedgerItemByYear(payment)
+                em.updateLedgerItemQuarterlyPaidInfo(payment)
+            }
+            else if (item.qtrly == 1 && yr == payment.toyear ){
+                payment.toqtr = payment.origtoqtr
+                em.closePaidQtrlyLedgerItemByYear(payment)
+                em.updateLedgerItemQuarterlyPaidInfo(payment)
+            }
+            else if ( item.qtrly == 0 && yr == payment.fromyear && payment.fromyear == payment.toyear && ( payment.fromqtr != 1 || payment.toqtr != 4  )) {
+                billingSvc.insertQtrlyLedgerItems(bill, [objid:payment.rptledgerid])
+                em.closePaidQtrlyLedgerItemByYear(payment)
+                em.updateLedgerItemQuarterlyPaidInfo(payment)
+            }
+            else if ( item.qtrly == 0 && yr == payment.toyear && ( payment.toqtr != 4 )) {
+                billingSvc.insertQtrlyLedgerItems(bill, [objid:payment.rptledgerid])
+                em.closePaidQtrlyLedgerItemByYear(payment)
+                em.updateLedgerItemQuarterlyPaidInfo(payment)
+            }
+            else {
+                em.closePaidLedgerItemByYear(payment)
+            }
+        }
+    }
 
     void postLedgerItems(ledgerfaas){
         def pdate = dtSvc.parseCurrentDate()

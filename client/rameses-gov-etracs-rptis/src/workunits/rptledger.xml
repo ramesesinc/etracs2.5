@@ -13,8 +13,10 @@
         <invoker type="formActions" action="approve" caption="Approve" mnemonic="v" visibleWhen="#{mode=='read' &amp;&amp; ledger.state=='PENDING'}" icon="images/toolbars/approve.png" 
             role="LANDTAX" permission="rptledger.approve" />
             
-        <invoker type="formActions" action="printBill" caption="Print Bill" mnemonic="b" visibleWhen="#{mode=='read' &amp;&amp; ledger.state=='APPROVED'}" icon="images/toolbars/approve.png" role="LANDTAX" />
-        <invoker type="formActions" action="recalcBill" caption="Recalculate Bill" mnemonic="r" visibleWhen="#{mode=='read' &amp;&amp; ledger.state=='APPROVED'}" icon="images/toolbars/approve.png" role="LANDTAX"/>
+        <invoker type="formActions" action="printBill" caption="Print Bill" mnemonic="b" visibleWhen="#{mode=='read' &amp;&amp; ledger.state=='APPROVED'}"  role="LANDTAX" />
+        <invoker type="formActions" action="recalcBill" caption="Recalculate Bill" mnemonic="r" visibleWhen="#{mode=='read' &amp;&amp; ledger.state=='APPROVED'}"  role="LANDTAX"/>
+        <invoker type="formActions" action="capturePayment" caption="Capture Payment" mnemonic="c" visibleWhen="#{mode=='read' &amp;&amp; ledger.state=='APPROVED'}"  role="LANDTAX" xpermission="rptledger.capturepayment"/>
+        
         
     </invokers>
     
