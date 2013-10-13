@@ -639,7 +639,7 @@ FROM (
 	WHERE cri.rptreceiptid = $P{rptreceiptid}
 	GROUP BY 
 		cri.rptledgerid, 
-		f.tdno, f.owner_name, 
+		f.tdno, f.name, 
 		r.rputype, r.totalav, r.fullpin,
 		rp.cadastrallotno,
 		pc.code, b.name
@@ -647,7 +647,7 @@ FROM (
 GROUP BY 
 		t.rptledgerid,
 		t.tdno,
-		t.owner_name, t.rputype,
+		t.name, t.rputype,
 		t.totalav, t.fullpin,
 		t.cadastrallotno,
 		t.classcode,

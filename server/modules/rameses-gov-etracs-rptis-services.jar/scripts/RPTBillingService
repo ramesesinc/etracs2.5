@@ -247,7 +247,10 @@ public class RPTBillingService
 			}
 			updateLedgerItemInfo(bill, data)
 			bill.expirydate = getExpiryDate(bill)
-			em.updateLedgerNextBillDate(buildParams(bill))
+			def params = buildParams(bill)
+			em.updateLedgerNextBillDate(params)
+			em.applyLedgerItemTaxIncentives(params)
+			em.applyQuarterlyLedgerItemTaxIncentives(params)
 		}
 	}
 

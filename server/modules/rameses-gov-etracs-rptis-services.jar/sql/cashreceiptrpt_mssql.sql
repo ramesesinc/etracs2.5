@@ -581,7 +581,8 @@ GROUP BY t.item_objid, t.item_code, t.item_title, t.item_fund_objid, t.item_fund
 SELECT
 	t.rptledgerid,
 	t.tdno,
-	t.owner_name, t.rputype,
+	(SELECT owner_name FROM faas WHERE objid = t.faasid ) AS owner_name, 
+	t.rputype,
 	t.totalav, t.fullpin,
 	t.cadastrallotno,
 	t.classcode,
@@ -618,8 +619,9 @@ SELECT
 FROM ( 
 	SELECT
 		cri.rptledgerid,
+		f.objid AS faasid,
 		f.tdno,
-		f.owner_name, r.rputype,
+		r.rputype,
 		r.totalav, r.fullpin,
 		rp.cadastrallotno,
 		pc.code AS classcode,
@@ -652,15 +654,17 @@ FROM (
 	GROUP BY 
 		cri.rptreceiptid,
 		cri.rptledgerid, 
-		f.tdno, f.owner_name, 
+		f.objid,
+		f.tdno, 
 		r.rputype, r.totalav, r.fullpin,
 		rp.cadastrallotno,
 		pc.code, b.name
 	) t
 GROUP BY 
 		t.rptledgerid,
+		t.faasid, 
 		t.tdno,
-		t.owner_name, t.rputype,
+		t.rputype,
 		t.totalav, t.fullpin,
 		t.cadastrallotno,
 		t.classcode,

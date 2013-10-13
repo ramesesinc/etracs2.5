@@ -561,3 +561,45 @@ UPDATE rptledgeritem_qtrly SET
 	partial = 1
 WHERE objid = $P{rptledgeritemqtrlyid}	
 
+
+
+
+[applyLedgerItemTaxIncentives]
+UPDATE rptledgeritem rli, rptledger rl, faas f, rpu r, rpttaxincentive_item rti SET 
+	rli.basic = ROUND(rli.basic - (rli.basic * rti.basicrate / 100), 2),
+	rli.basicint = ROUND(rli.basicint - (rli.basicint * rti.basicrate / 100), 2),
+	rli.basicdisc = ROUND(rli.basicdisc - (rli.basicdisc * rti.basicrate / 100), 2),
+	rli.sef = ROUND(rli.sef - (rli.sef * rti.sefrate / 100), 2),
+	rli.sefint = ROUND(rli.sefint - (rli.sefint * rti.sefrate / 100), 2),
+	rli.sefdisc = ROUND(rli.sefdisc - (rli.sefdisc * rti.sefrate / 100), 2)
+WHERE rl.faasid = f.objid 
+ AND f.rpuid = r.objid 
+ AND rl.objid = rli.rptledgerid
+ AND rti.rptledgerid = rl.objid
+ AND ${filters}
+ AND rl.state = 'APPROVED'
+ AND rli.state = 'OPEN'  
+ AND rli.qtrly = 0
+ AND rli.year >= rti.fromyear  
+ AND rli.year <= rti.toyear 
+
+
+[applyQuarterlyLedgerItemTaxIncentives]
+UPDATE rptledgeritem_qtrly rliq, rptledger rl, faas f, rpu r, rptledgeritem rli, rpttaxincentive_item rti  SET 
+	rliq.basic = ROUND(rliq.basic - (rliq.basic * rti.basicrate / 100), 2),
+	rliq.basicint = ROUND(rliq.basicint - (rliq.basicint * rti.basicrate / 100), 2),
+	rliq.basicdisc = ROUND(rliq.basicdisc - (rliq.basicdisc * rti.basicrate / 100), 2),
+	rliq.sef = ROUND(rliq.sef - (rliq.sef * rti.sefrate / 100), 2),
+	rliq.sefint = ROUND(rliq.sefint - (rliq.sefint * rti.sefrate / 100), 2),
+	rliq.sefdisc = ROUND(rliq.sefdisc - (rliq.sefdisc * rti.sefrate / 100), 2)
+WHERE rl.faasid = f.objid
+ AND f.rpuid = r.objid
+ AND rl.objid = rli.rptledgerid 
+ ANd rli.objid = rliq.rptledgeritemid
+ AND rl.objid = rti.rptledgerid 
+ AND ${filters}
+ AND rl.state = 'APPROVED'
+ AND rli.state = 'OPEN'  
+ AND rli.qtrly = 1
+ AND rli.year >= rti.fromyear  
+ AND rli.year <= rti.toyear 
