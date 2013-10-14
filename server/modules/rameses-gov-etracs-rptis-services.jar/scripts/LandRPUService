@@ -46,7 +46,6 @@ class LandRPUService
 
 	@ProxyMethod
 	public def createLandRpu( rpu ) {
-		em.validate(SCHEMA_LANDRPU, rpu)
 		em.create(SCHEMA_LANDRPU, rpu)
 		saveLandAdjustments(rpu)
 		saveLandDetails(rpu)
@@ -57,7 +56,6 @@ class LandRPUService
 
 	@ProxyMethod
 	public def updateLandRpu(rpu) { 
-		em.validate(SCHEMA_LANDRPU, rpu)
 		em.update(SCHEMA_LANDRPU, rpu)
 		saveLandAdjustments(rpu)
 		saveLandDetails(rpu)
@@ -199,7 +197,6 @@ class LandRPUService
 
 		landdetail.assesslevel = 0.0 
 		landdetail.assessedvalue = 0.0 
-		println 'landdetail.taxable -> ' + landdetail.taxable
 		if (util.isTrue(landdetail.taxable)) {
 			landdetail.assesslevel 			= determineAssessLevel( landdetail, ry )
 			if (util.toBoolean(var.rpt_round_to_ten_item_assessed_value, true) == true)
@@ -304,8 +301,6 @@ class LandRPUService
 	void saveLandDetails(rpu){
 		rpu.landdetails.each{ ld ->
 			ld.taxable = util.toBoolean(ld.taxable,true)
-			ld = EntityUtil.mapToField(ld)
-			em.validate(SCHEMA_LANDDETAIL, ld)
 			em.save(SCHEMA_LANDDETAIL, ld)
 
 			ld.landadjustments.each{ lda ->
@@ -335,8 +330,6 @@ class LandRPUService
 
 	void savePlantTrees(rpu){
 		rpu.planttrees.each{ pt ->
-			pt = EntityUtil.mapToField(pt)
-			em.validate(SCHEMA_PLANTTREE_DETAIL , pt)
 			em.save(SCHEMA_PLANTTREE_DETAIL, pt)
 		}
 
@@ -347,13 +340,9 @@ class LandRPUService
 
 
     void saveAdjustment(adj) {
-    	adj = EntityUtil.mapToField(adj)
-    	em.validate(SCHEMA_LANDADJUSTMENT, adj)
 		em.save(SCHEMA_LANDADJUSTMENT, adj)
 
 		adj.paramaters.each{ param ->
-			param = EntityUtil.mapToField(param)
-			em.validate(SCHEMA_PARAMETER, param)
 			em.save(SCHEMA_PARAMETER, param)
 		}
     }

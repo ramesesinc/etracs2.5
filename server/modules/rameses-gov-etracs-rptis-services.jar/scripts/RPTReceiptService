@@ -43,12 +43,21 @@ class RPTReceiptService
 		bill.loadbillitems = false
 		billingSvc.generateBill(bill)
 		
+		resetForPaymentFlag(bill)
+		def params = billingSvc.buildParams(bill)
+		em.setItemForPaymentFlag(params)
+		em.setQuarterlyItemForPaymentFlag(params)
+		def items =  em.getItemsForPayment(params).each{ it.pay = true }	
+		if (!items) throw new Exception('There are no more unpaid ledgers for this taxpayer.')
+		return items 
+	}
+
+	@ProxyMethod
+	public void resetForPaymentFlag(bill){
+		if (!bill.billdate) bill.billdate = dtSvc.serverDate
 		def params = billingSvc.buildParams(bill)
 		em.resetItemForPaymentFlag(params)
 		em.resetQuarterlyItemForPaymentFlag(params)
-		em.setItemForPaymentFlag(params)
-		em.setQuarterlyItemForPaymentFlag(params)
-		return em.getItemsForPayment(params).each{ it.pay = true }	
 	}
 
 
@@ -95,7 +104,7 @@ class RPTReceiptService
 			it.receiptid = receipt.objid
 			items += it
 		}
-		return items
+		return items.findAll{it.amount > 0.0} 
 	}
 
 

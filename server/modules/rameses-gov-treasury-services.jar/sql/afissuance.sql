@@ -1,6 +1,6 @@
 [getList]
 select 
-	afi.afid, afi.respcenter_name as respcentername, afi.startseries, afi.endseries,
+	afc.controlid as objid, afi.afid, afi.respcenter_name as respcentername, afi.startseries, afi.endseries,
 	afi.startstub as stubno, 'SERIAL' as aftype, afi.qtyin as qtyreceived, (afi.qtyin - afc.qtyissued) as balance, 
 	afc.currentseries, afc.txnmode, af.serieslength, afc.assignee_name as assigneename
 from afserial_control afc 
@@ -13,7 +13,7 @@ where afc.currentseries <= afi.endseries
 union
 
 select 
-	afi.afid, afi.respcenter_name as respcentername  null as startseries, null as endseries,
+	afc.controlid as objid, afi.afid, afi.respcenter_name as respcentername  null as startseries, null as endseries,
 	null as stubno, 'CASHTICKET' as aftype, afc.qtyin as qtyreceived, afc.qtybalance as balance, 
 	null as currentseries, 'ONLINE' AS txnmode, 0 as serieslength, afc.assignee_name as assigneename
 from cashticket_control afc 

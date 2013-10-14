@@ -2,6 +2,8 @@
     <invokers>
        <invoker type="remittance:reports" caption="Report on Collection and Deposits (RCD)" 
         action="viewReport"  target="self" index="-1"/>
+        
+        <invoker type="formActions" caption="Back" action="_close" mnemonic="b" shortcut="ctrl B"/>
    </invokers>
     
     <code>
@@ -48,6 +50,7 @@
                         new SubReport("NonSerialRemittances", reportPath + "nonserialremittances.jasper"),
                         new SubReport("NonSerialSummary", reportPath + "nonserialsummary.jasper"),
                         new SubReport("OtherPayments", reportPath + "otherpayments.jasper"),
+                        new SubReport("Denomination", reportPath + "denomination.jasper"),
                     ] as SubReport[];    
                  }
             ] as ReportModel

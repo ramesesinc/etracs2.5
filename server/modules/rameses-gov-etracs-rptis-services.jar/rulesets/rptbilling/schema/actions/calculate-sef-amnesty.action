@@ -1,0 +1,8 @@
+{
+	name: "Calculate SEF Amnesty",
+	template: "calculate-sef-amnesty",
+	params: [
+		{ name:"ledger", datatype:'RPTLedgerFact', usevar:true, caption:'Ledger ID', required:true },
+		{ name: "expr", datatype: 'string', caption: 'Computation Formula', expression:true },
+	]
+}

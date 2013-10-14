@@ -1,0 +1,128 @@
+import com.rameses.annotations.*;
+import com.rameses.util.*;
+import java.rmi.server.*;
+import com.rameses.common.*
+import com.rameses.services.extended.*
+
+public class BatchCaptureCollectionService extends ActiveCrudService {
+	
+	@ActiveDB("batchcapture_collection")
+	def em
+
+	@Service("DateService")
+	def dtSvc
+
+	@Service("CashReceiptService")
+	def crSvc;
+
+	@Env
+	def env
+
+	protected void beforeCreate(def entity) {
+		em.deleteBatchEntryItem(entity);
+		em.deleteBatchEntry(entity);
+		em.deleteBatch(entity);
+	}
+
+	protected void afterCreate(def entity) { 
+		entity.batchitems.each { bc ->
+			bc.objid = "BCCE"+new java.rmi.server.UID();
+			bc.parentid = entity.objid
+			em.create(bc, "entry")
+
+			bc.items.each { 
+				it.objid ="BCCEI"+new java.rmi.server.UID();
+				it.parentid = bc.objid
+				it.item.fund = it.fund;
+				em.create(it, "entry_item")
+			}
+		}
+	}
+	
+	@ProxyMethod
+	public def initBatchCapture(def entity){
+		if( em.findBatchControlByState(entity) ) 	
+			throw new Exception("There are still unposted collection for this series. ");
+
+		entity.objid = "BCC"+new java.rmi.server.UID();
+		entity.state = 'DRAFT'
+		entity.org =  [objid:env.ORGID, name:env.ORGNAME]
+		entity.txndate = dtSvc.serverDate
+		entity.paymenttype='CASH'
+		entity.totalcash = 0.0
+		entity.totalnoncash = 0.0
+		entity.amount = 0.0
+		return entity;
+	}
+
+	@ProxyMethod
+	public def submitForPosting(entity) {
+		entity.state = 'FORPOSTING'
+		em.updateBatchCaptureState( entity );
+		return entity; 
+	} 
+
+	@ProxyMethod
+	public def disapproved(entity) {
+		entity.state = 'DRAFT'
+		em.updateBatchCaptureState( entity );
+		return entity; 
+	} 
+
+	@ProxyMethod
+	public def post(entity){
+		entity.batchitems.each {bi->
+			bi.collector = entity.collector;
+			bi.formtype = entity.formtype;
+			bi.formno = entity.formno;
+			bi.stub = entity.stub
+			bi.controlid = entity.controlid;
+			bi.txnmode = entity.txnmode;
+			bi.org = entity.org;
+			bi.cashchange = 0
+			bi.totalcredit = 0
+			bi.user = entity.capturedby
+			bi.items.each { it.remarks = bi.remarks; }
+			crSvc.post(bi);
+		}
+		entity.state = 'POSTED'
+		entity.postedby_objid = env.USERID;
+		entity.postedby_name = env.USER;
+		entity.postedby_date = dtSvc.serverDate;
+		em.post( entity )
+		return entity 
+	}
+
+	@ProxyMethod
+	public def getColumns(def p) {
+		return [
+			[name:'state', caption:'State'],
+            [name:'formno', caption:'AF No.'],
+            [name:'collectorname', caption:'Collector'],
+            [name:'startseries', caption:'Start Series'],
+            [name:'endseries', caption:'endseries'],
+            [name:'totalamount', caption:'Amount', type:'decimal', format:'#,##0.00' ],
+            [name:'capturedbyname', caption:'Encoded By']
+		];
+	}
+
+	@ProxyMethod
+	public def getList(def params ) {
+		return em.getList(params);
+	}
+
+
+	protected void afterOpen(def entity) {
+		entity.batchitems = em.getBatchEntry(entity);
+		entity.currentseries = entity.batchitems[-1].series+1
+		entity.batchitems.each {
+			it.items = em.getBatchEntryItems(it)
+			it.items.each {
+				it.item.fund = it.fund;
+			}
+			it.acctinfo = (it.items.size() > 1) ? '( Multiple Accounts )' : it.items[0].item.title 
+			it.remarks = it.items[0].remarks;
+		}
+	}
+
+}

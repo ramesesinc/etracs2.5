@@ -26,12 +26,14 @@
 	    {name:"basic", datatype:"decimal", caption:"Basic" },
 	    {name:"basicint", datatype:"decimal", caption:"Basic Interest" },
 	    {name:"basicdisc", datatype:"decimal", caption:"Basic Discount" },
+	    {name:"basicamnesty", datatype:"decimal", caption:"Basic Amnesty" },
+	    {name:"basicintamnesty", datatype:"decimal", caption:"Basic Interest Amnesty" },
 	    {name:"sef", datatype:"decimal", caption:"SEF" },
 	    {name:"sefint", datatype:"decimal", caption:"SEF Interest" },
 	    {name:"sefdisc", datatype:"decimal", caption:"SEF Discount" },
-	    {name:"basicacct", datatype:"string", caption:"Basic Tax Account" },
-	    {name:"basicintacct", datatype:"string", caption:"Basic Tax Penalty Account" },
-	    {name:"sefacct", datatype:"string", caption:"SEF Tax Account" },
-	    {name:"sefintacct", datatype:"string", caption:"SEF Tax Penalty Account" },
+	    {name:"sefamnesty", datatype:"decimal", caption:"SEF Amnesty" },
+	    {name:"sefintamnesty", datatype:"decimal", caption:"SEF Interest Amnesty" },
+	    {name:"firecode", datatype:"decimal", caption:"Fire Code" },
+	    {name:"originalav", datatype:"decimal", caption:"Original Assessed Value" },
 	]
 }

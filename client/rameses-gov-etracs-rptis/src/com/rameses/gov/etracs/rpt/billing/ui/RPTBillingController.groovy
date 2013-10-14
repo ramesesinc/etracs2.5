@@ -12,12 +12,18 @@ public class RPTBillingController
 {
     @Binding
     def binding
+            
+    @Caller
+    def caller;
     
     @Service("RPTBillingService")
     def svc;
 
     @Service("ReportParameterService")
     def reportSvc;
+    
+    @Service('LGUService')
+    def lguSvc 
     
     def mode;
     def parsedate;
@@ -55,7 +61,7 @@ public class RPTBillingController
         mode = 'view'
         return 'preview'
     }
-    
+                      
     def reportpath = 'com/rameses/gov/etracs/rpt/report/billing/'
             
     def report = [
@@ -72,6 +78,15 @@ public class RPTBillingController
     
     List getQuarters() {
         return  [1,2,3,4]
+    }
+    
+    List getRpuTypes(){
+        return ['land', 'bldg', 'mach', 'planttree', 'misc']
+    }
+    
+    
+    List getBarangays(){
+        return lguSvc.lookupBarangays([:])
     }
     
 }

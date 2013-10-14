@@ -8,8 +8,6 @@
         <invoker type="formActions" caption="Activate" action="activate"/>
         <invoker type="formActions" caption="Assign" action="assign" role="COLLECTOR" />
         <invoker type="formActions" caption="Deactivate" action="deactivate" />
-        <invoker type="formActions" caption="Change Mode" action="changeMode" role="COLLECTOR"/>
-
     </invokers>
     
     <code>
@@ -92,7 +90,6 @@
                     else{
                         list.add([value:'Deactivate',id:'deactivate']);                    
                     }
-                    list.add([value:'Change Mode',id:'changemode']);
                     return list;
                 },
                 callContextMenu: { o,m->
@@ -100,10 +97,7 @@
                     else if(m.id == "deactivate") deactivate();
                     else if(m.id=="assign") {
                         return assign();
-                    }    
-                    else if(m.id=="changemode") {
-                        return changeMode();
-                    }    
+                    }   
                 }
             ] as BasicListModel;
             

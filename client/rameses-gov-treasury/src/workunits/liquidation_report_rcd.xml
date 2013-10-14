@@ -2,6 +2,8 @@
     
    <invokers>
          <invoker type="liquidation:reports" caption="Report on Collection and Deposits (RCD)" action="init" index="1" target="self"/>
+         
+         <invoker type="formActions" caption="Back" action="_close" mnemonic="b" shortcut="ctrl B"/>
    </invokers>
    
    <code>
@@ -57,7 +59,7 @@
                         new SubReport("reportaforms", reportPath + "reportaforms.jasper"),
                         new SubReport("reportnsaforms", reportPath + "reportnsaforms.jasper"),
                         new SubReport("reportnonserialsummary", reportPath + "reportnonserialsummary.jasper"),
-                        new SubReport("otherpayments", reportPath + "otherpayments.jasper"),
+                        new SubReport("otherpayments", reportPath + "otherpayments.jasper")
                     ] as SubReport[];    
                  }
             ] as ReportModel

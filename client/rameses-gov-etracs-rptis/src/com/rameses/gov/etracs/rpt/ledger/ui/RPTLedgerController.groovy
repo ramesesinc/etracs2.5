@@ -21,6 +21,9 @@ public class RPTLedgerController
     @Service("RPTLedgerService")
     def svc;
     
+    @Service('RPTBillingService')
+    def billSvc;
+    
     def entity
     def ledger 
     def mode 
@@ -149,7 +152,7 @@ public class RPTLedgerController
     
     def getBasic(){
         if (debits){
-            return debits.sum{ it.basic - it.basicpaid}
+            return debits.sum{ it.basic}
         }
         return 0.0; 
     }
@@ -170,14 +173,14 @@ public class RPTLedgerController
     
     def getTotalBasic(){
         if (debits){
-            return debits.sum{ it.basic - it.basicpaid + it.basicint - it.basicdisc }
+            return debits.sum{ it.basic + it.basicint - it.basicdisc }
         }
         return 0.0; 
     }
     
     def getSef(){
         if (debits){
-            return debits.sum{ it.sef - it.sefpaid}
+            return debits.sum{ it.sef}
         }
         return 0.0; 
     }
@@ -198,9 +201,42 @@ public class RPTLedgerController
     
     def getTotalSef(){
         if (debits){
-            return debits.sum{ it.sef - it.sefpaid + it.sefint - it.sefdisc }
+            return debits.sum{ it.sef + it.sefint - it.sefdisc }
         }
         return 0.0;
+    }
+    
+    
+        
+    void recalcBill(){
+        if (MsgBox.confirm('Recalculate Bill?')){
+            billSvc.forceRecalcBill(entity.objid);
+            open();
+            binding.refresh('.*')
+            MsgBox.alert('Billing information has been successfully recalculated.')
+        }
+    }
+    
+    def printBill(){
+        def bill = billSvc.initBill();
+        bill.taxpayer = entity.taxpayer
+        bill.ledgerids.add(entity.objid)
+        return InvokerUtil.lookupOpener('rptbill:print', [bill:bill])
+    }
+    
+    
+    def capturePayment(){
+        return InvokerUtil.lookupOpener('rptledger:capture', [
+            ledger : ledger,
+            
+            onadd  : { payment ->
+                svc.postCapturedPayment(payment)
+                ledger.lastyearpaid = payment.toyear;
+                ledger.lastqtrpaid  = payment.toqtr;
+                loadItems()
+                binding.refresh('.*');
+            }
+        ])
     }
 }
 

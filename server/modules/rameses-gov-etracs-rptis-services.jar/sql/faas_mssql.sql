@@ -129,3 +129,13 @@ FROM barangay b
 	left join municipality m on b.parentid = m.objid 
 	left join province p on m.parentid = p.objid 
 where b.objid = $P{barangayid}	
+
+
+
+[updateFaasState]
+UPDATE faas SET state = $P{state} WHERE objid = $P{objid}
+
+
+[approveFaas]
+UPDATE faas SET state = $P{state}, utdno = $P{utdno}, tdno = $P{tdno} WHERE objid = $P{objid}
+

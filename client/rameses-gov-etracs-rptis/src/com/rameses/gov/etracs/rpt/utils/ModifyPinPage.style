@@ -1,7 +1,7 @@
-"faas|provcity|munidistrict|barangay" [mode != 'byfaas']{
+"faas|provcity|munidistrict" [mode != 'byfaas']{
     enabled:true;
 }
 
-"faas|provcity|munidistrict|barangay" [mode == 'byfaas']{
+"faas|provcity|munidistrict" [mode == 'byfaas']{
     enabled:false;
 }

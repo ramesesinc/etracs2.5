@@ -10,9 +10,10 @@ class SpecialCollectionTypeService {
 
 	@ProxyMethod
 	public def open( collectiontypeid ) {
-		return em.sqlContext.createNamedQuery('specialcollectiontype:read')
+		def qry = em.sqlContext.createNamedQuery('specialcollectiontype:read')
 					.setParameter('collectiontypeid', collectiontypeid )
-					.singleResult	
+		qry.setPagingKeys("ss.objid")
+		return qry.singleResult	
 	}
 	
 	@ProxyMethod
@@ -34,11 +35,16 @@ class SpecialCollectionTypeService {
 
 	@ProxyMethod
 	public void update( ct ) {
-		em.sqlContext.createNamedExecutor('specialcollectiontype:update')
-			.setParameter('objid', ct.specialacctobj )
-			.setParameter('item_objid', ct.item.objid)
-			.setParameter('amount', ct.amount)
-			.execute()	
+		if(open(ct.objid)) {
+			em.sqlContext.createNamedExecutor('specialcollectiontype:update')
+				.setParameter('objid', ct.specialacctobj )
+				.setParameter('item_objid', ct.item.objid)
+				.setParameter('amount', ct.amount)
+				.execute()	
+		} else {
+			ct.specialacctobj = "CI" + new java.rmi.server.UID()
+			create(ct)
+		}
 	}
 
 	@ProxyMethod

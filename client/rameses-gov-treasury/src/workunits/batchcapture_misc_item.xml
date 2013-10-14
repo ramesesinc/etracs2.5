@@ -1,0 +1,119 @@
+<workunit>
+    <invokers>
+        <invoker type="batchcapture:misc:open" caption="Batch Item Information" action="init" target="popup"/>
+    </invokers>
+    
+    <code>
+        <![CDATA[    
+        import com.rameses.rcp.annotations.*
+        import com.rameses.rcp.common.*
+        import com.rameses.osiris2.client.*
+        import com.rameses.osiris2.common.*
+        import java.rmi.server.*;
+        import com.rameses.gov.treasury.controllers.*
+        import com.rameses.osiris2.reports.*;
+        
+        class BatchCaptureItemController  {
+            
+            //to be feed by the caller
+            def entity, callerListModel, calculateHandler;
+            
+            def selectedItem;
+            def payment = [:]
+            
+            void init(){    
+                if( entity.paymentitems) payment = entity.paymentitems[0]
+            }
+
+            def getLookupPayer() {
+                return InvokerUtil.lookupOpener("entity:lookup", [
+                    onselect: { o->
+                        entity.payer = o;
+                        entity.paidby = o.name;
+                        entity.paidbyaddress = o.address;
+                    }
+                ]);
+            }
+            
+            def getLookupAccount() {
+                return InvokerUtil.lookupOpener("cashreceiptitem:lookup", [ 
+                    "query.collectorid": entity.collector.objid,
+                    onselect: { o->
+                        selectedItem.item = o;
+                        selectedItem.fund = o.fund;
+                    }
+                ]);
+            }
+            
+            def listModel = [
+                fetchList: { o->
+                    if (entity.items == null) entity.items = []; 
+                    
+                    return entity.items;
+                },
+                
+                onAddItem: {o-> 
+                    entity.items << o;
+                },
+                
+                onCommitItem:{o-> 
+                    entity.amount = 0.0;
+                    entity.items.each{ 
+                        entity.amount += (it.amount? it.amount: 0.0); 
+                    }
+                }
+            ] as EditorListModel;
+            
+            void validateCheckPayment() {
+                 if(payment && !payment.bank )  throw new Exception("Bank is required.  ");
+                 if(payment && !payment.checkno )  throw new Exception("Check No is required.  ");
+                 if(payment && !payment.checkdate )  throw new Exception("Check Date is required.  ");
+                 if(payment && !payment.amount)  throw new Exception("Amount is required.  ");
+                    
+                if(payment && payment.amount <= 0.0 ) throw new Exception("Check Amount must be greater than 0.  ")    
+            
+                if(payment && payment.amount > 0.0 ) {
+                    if( payment.amount > entity.amount) throw new Exception("Check Amount must not be greater than amount to be paid.  ")
+                }
+            }
+            
+            def doOk() {
+                validateCheckPayment()
+                if( payment ) {
+                    entity.totalnoncash = payment.amount 
+                    entity.totalcash = entity.amount - payment.amount 
+                    payment.type = 'CHECK'
+                    payemnt.particulars = payment.checkno + " (" + payment.bank + ") dated " + payment.checkdate;
+                    if( entity.paymentitems ) entity.paymentitems.clear()
+                    entity.paymentitems << payment;
+                } else {
+                    entity.totalnoncash = 0.0
+                    entity.totalcash = entity.amount;
+                    entity.paymentitems = []
+                }
+                
+                if (entity.items && entity.items.size() > 1) { 
+                    entity.acctinfo = '( Multiple Accounts )'; 
+                } else { 
+                    entity.acctinfo = entity.items[0].item.title;
+                }
+                
+                if (callerListModel) callerListModel.refreshSelectedItem(); 
+                if (calculateHandler) calculateHandler(); 
+                
+                return "_close"; 
+            }
+
+            def doCancel() {
+                return "_close";
+            }
+        }
+        ]]>
+        
+    </code>
+    
+    <pages>
+        <page template="com.rameses.gov.treasury.batchcapture.BatchCollectionItemPage"/>
+    </pages>
+    
+</workunit>

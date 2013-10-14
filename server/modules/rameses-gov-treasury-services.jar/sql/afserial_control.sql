@@ -14,8 +14,9 @@ SELECT a.* FROM
 	FROM afserial_inventory ai
 	LEFT JOIN afserial_control ac ON ac.controlid=ai.objid
 	WHERE  ai.afid =  $P{af}
-	AND ai.currentseries <= ai.endseries ) a
+	AND ac.currentseries <= ai.endseries ) a
 WHERE a.ownerid =  $P{userid}
+order by a.startseries 
 
 [getAssigneeIssuanceList]
 SELECT 
@@ -32,6 +33,38 @@ INNER JOIN afserial_control ac ON ai.objid=ac.controlid
 WHERE  ai.afid = $P{af} 
 AND NOT(ac.assignee_objid IS NULL) 
 AND ai.respcenter_objid = $P{userid}
+
+[getAssigneeControlForBatchList]
+SELECT a.* 
+FROM 
+(	SELECT DISTINCT 
+	ai.objid AS controlid,	
+	ai.prefix, 
+	ai.suffix, 
+	ai.currentstub,
+	ac.currentseries,
+	ac.currentseries as startseries,
+	ai.endseries, 
+	ai.currentstub AS stub,
+	ac.assignee_objid AS ownerid,
+	ai.respcenter_objid AS collector_objid,
+	ai.respcenter_name AS collector_name,
+	col.jobtitle AS collector_title,
+	ac.assignee_objid AS subcollector_objid,
+	ac.assignee_name AS subcollector_name,
+	scol.jobtitle AS subcollector_title,
+	af.serieslength
+	FROM afserial_control ac 
+	INNER JOIN  afserial_inventory ai ON ac.controlid=ai.objid
+	INNER JOIN  afserial af on af.objid = ai.afid  
+	INNER JOIN sys_usergroup_member col ON col.user_objid=ai.respcenter_objid 
+	LEFT JOIN sys_usergroup_member scol ON scol.user_objid=ac.assignee_objid 
+	WHERE  ai.afid =  $P{formno}
+	AND ac.txnmode = 'CAPTURE'
+	AND ac.currentseries <= ai.endseries ) a
+WHERE a.ownerid = $P{userid} and 
+		( a.currentstub like $P{searchtext} or a.startseries like $P{searchtext} )
+
 
 [findActiveControlForCashReceipt]
 SELECT a.* 
@@ -70,8 +103,14 @@ WHERE
 	(ac.assignee_objid =$P{userid} 
 		OR (ai.respcenter_objid=$P{userid} AND ac.assignee_objid IS NULL )
      )
+and ai.afid = $P{afid}
 AND ac.txnmode = $P{txnmode}
 AND ac.active=1
+
+[findActiveControrForDeactivation]
+select ac.controlid from afserial_control ac
+ inner join afserial_inventory ai on ac.controlid = ai.objid 
+where ac.controlid= $P{controlid} and ac.currentseries > ai.endseries
 
 [createControl]
 INSERT INTO afserial_control (controlid, txnmode,assignee_objid, assignee_name, currentseries,qtyissued,active)
@@ -90,7 +129,7 @@ WHERE controlid=$P{objid}
 
 [deactivateControl]
 UPDATE afserial_control 
-SET active = false, txnmode = NULL 
+SET active = 0 
 WHERE controlid=$P{objid}
 
 [reactivateAssignSubcollector]

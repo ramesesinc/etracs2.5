@@ -1,0 +1,27 @@
+<workunit>
+   <invokers>
+        <invoker type="home.action" caption="Batch Capture" action="init" role="SUBCOLLECTOR" target="window"/>
+        <invoker type="quick_launcher" code="BC01" caption="Batch Capture" action="init" role="SUBCOLLECTOR" target="window"/>
+        <invoker folderid="/menu/txn/treasury" caption="Batch Capture" action="init" index="10" role="SUBCOLLECTOR"/>
+        
+        <invoker type="batchcapture:create" caption="Batch Capture" action="init" role="SUBCOLLECTOR" target="window"/>
+        <invoker type="batchcapture:open" caption="Batch Capture" action="open" role="SUBCOLLECTOR" target="window"/>
+       
+        <invoker type="formActions" caption="Cancel" action="_close" visibleWhen="#{mode != 'posted'}" immediate="true" mnemonic="c" shortcut="ctrl C" icon="images/toolbars/cancel.png"/>
+        <invoker type="formActions" caption="Close" action="_close" visibleWhen="#{mode == 'posted'}" immediate="true" mnemonic="c" shortcut="ctrl C" icon="images/toolbars/cancel.png"/>
+        <invoker type="formActions" caption="Next" action="next" visibleWhen="#{mode == 'init'}" mnemonic="n" shortcut="ctrl N"/>
+        <invoker type="formActions" caption="Save" action="save" visibleWhen="#{mode == 'create'}" mnemonic="s" shortcut="ctrl S" icon="images/toolbars/save.png"/>
+        <invoker type="formActions" caption="Edit" action="edit" visibleWhen="#{mode == 'saved' &amp;&amp; entity.state == 'DRAFT'}" mnemonic="e" shortcut="ctrl E"/>
+        <invoker type="formActions" caption="Submit For Posting" action="submitForPosting" visibleWhen="#{mode == 'saved' &amp;&amp; entity.state == 'DRAFT'}" mnemonic="s"/>
+        <invoker type="formActions" caption="Disapprove" action="disapprove" visibleWhen="#{mode == 'saved' &amp;&amp; entity.state =='FORPOSTING'}" mnemonic="d" role="SUBCOLLECTOR" permission="batchcapture.disapprove"/>
+        <invoker type="formActions" caption="Post" action="post" visibleWhen="#{mode == 'saved' &amp;&amp; entity.state =='FORPOSTING'}" mnemonic="p" role="SUBCOLLECTOR" permission="batchcapture.post"/>
+   </invokers>
+   
+   <code class="com.rameses.gov.treasury.batchcapture.BatchCaptureController"/>
+   
+   <pages>
+        <page template="com.rameses.gov.treasury.batchcapture.BatchCaptureInitPage"/>
+        <page name="main" template="com.rameses.gov.treasury.batchcapture.BatchCapturePage"/>
+   </pages>
+   
+</workunit>

@@ -27,9 +27,12 @@ public class RPTCapturePaymentPage extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc=" Generated Code ">//GEN-BEGIN:initComponents
     private void initComponents() {
         formPanel1 = new com.rameses.rcp.util.FormPanel();
+        xTextField3 = new com.rameses.rcp.control.XTextField();
+        xTextField4 = new com.rameses.rcp.control.XTextField();
         xTextField1 = new com.rameses.rcp.control.XTextField();
         xDateField1 = new com.rameses.rcp.control.XDateField();
         xTextField2 = new com.rameses.rcp.control.XTextField();
+        xDecimalField8 = new com.rameses.rcp.control.XDecimalField();
         xButton1 = new com.rameses.rcp.control.XButton();
         xButton2 = new com.rameses.rcp.control.XButton();
         jPanel1 = new javax.swing.JPanel();
@@ -37,27 +40,42 @@ public class RPTCapturePaymentPage extends javax.swing.JPanel {
         xLabel1 = new com.rameses.rcp.control.XLabel();
         xLabel2 = new com.rameses.rcp.control.XLabel();
         formPanel3 = new com.rameses.rcp.util.FormPanel();
-        xNumberField1 = new com.rameses.rcp.control.XNumberField();
+        xIntegerField1 = new com.rameses.rcp.control.XIntegerField();
         xComboBox1 = new com.rameses.rcp.control.XComboBox();
         formPanel4 = new com.rameses.rcp.util.FormPanel();
-        xNumberField2 = new com.rameses.rcp.control.XNumberField();
-        xNumberField4 = new com.rameses.rcp.control.XNumberField();
-        xNumberField5 = new com.rameses.rcp.control.XNumberField();
-        xNumberField8 = new com.rameses.rcp.control.XNumberField();
+        xDecimalField1 = new com.rameses.rcp.control.XDecimalField();
+        xDecimalField2 = new com.rameses.rcp.control.XDecimalField();
+        xDecimalField3 = new com.rameses.rcp.control.XDecimalField();
         formPanel5 = new com.rameses.rcp.util.FormPanel();
-        xNumberField3 = new com.rameses.rcp.control.XNumberField();
-        xNumberField6 = new com.rameses.rcp.control.XNumberField();
-        xNumberField7 = new com.rameses.rcp.control.XNumberField();
-        xNumberField10 = new com.rameses.rcp.control.XNumberField();
+        xDecimalField4 = new com.rameses.rcp.control.XDecimalField();
+        xDecimalField5 = new com.rameses.rcp.control.XDecimalField();
+        xDecimalField6 = new com.rameses.rcp.control.XDecimalField();
+        xFormPanel1 = new com.rameses.rcp.control.XFormPanel();
+        xDecimalField7 = new com.rameses.rcp.control.XDecimalField();
 
-        setPreferredSize(new java.awt.Dimension(553, 417));
+        setPreferredSize(new java.awt.Dimension(553, 456));
 
         com.rameses.rcp.control.border.XTitledBorder xTitledBorder1 = new com.rameses.rcp.control.border.XTitledBorder();
         xTitledBorder1.setTitle("Receipt Information");
         formPanel1.setBorder(xTitledBorder1);
+        xTextField3.setCaption("Paid By");
+        xTextField3.setCaptionWidth(100);
+        xTextField3.setIndex(-100);
+        xTextField3.setName("payment.paidby.name");
+        xTextField3.setPreferredSize(new java.awt.Dimension(0, 19));
+        xTextField3.setRequired(true);
+        formPanel1.add(xTextField3);
+
+        xTextField4.setCaption("Address");
+        xTextField4.setCaptionWidth(100);
+        xTextField4.setIndex(-100);
+        xTextField4.setName("payment.paidby.address");
+        xTextField4.setPreferredSize(new java.awt.Dimension(0, 19));
+        xTextField4.setRequired(true);
+        formPanel1.add(xTextField4);
+
         xTextField1.setCaption("Receipt No.");
         xTextField1.setCaptionWidth(100);
-        xTextField1.setIndex(-100);
         xTextField1.setName("payment.receiptno");
         xTextField1.setPreferredSize(new java.awt.Dimension(0, 19));
         xTextField1.setRequired(true);
@@ -73,20 +91,28 @@ public class RPTCapturePaymentPage extends javax.swing.JPanel {
 
         xTextField2.setCaption("Collector");
         xTextField2.setCaptionWidth(100);
-        xTextField2.setName("payment.collectorname");
+        xTextField2.setName("payment.collector");
         xTextField2.setPreferredSize(new java.awt.Dimension(0, 19));
         xTextField2.setRequired(true);
         formPanel1.add(xTextField2);
 
+        xDecimalField8.setCaption("Receipt Amount");
+        xDecimalField8.setCaptionWidth(100);
+        xDecimalField8.setEnabled(false);
+        xDecimalField8.setFont(new java.awt.Font("Courier New", 1, 14));
+        xDecimalField8.setName("payment.amount");
+        xDecimalField8.setPreferredSize(new java.awt.Dimension(120, 20));
+        formPanel1.add(xDecimalField8);
+
         xButton1.setMnemonic('c');
-        xButton1.setText("Cancel");
         xButton1.setImmediate(true);
         xButton1.setName("_close");
+        xButton1.setText("Cancel");
 
         xButton2.setMnemonic('o');
-        xButton2.setText("OK");
         xButton2.setDefaultCommand(true);
         xButton2.setName("ok");
+        xButton2.setText("OK");
 
         com.rameses.rcp.control.border.XTitledBorder xTitledBorder2 = new com.rameses.rcp.control.border.XTitledBorder();
         xTitledBorder2.setTitle("Payment Breakdown");
@@ -94,32 +120,31 @@ public class RPTCapturePaymentPage extends javax.swing.JPanel {
 
         formPanel2.setOrientation(com.rameses.rcp.constant.UIConstants.HORIZONTAL);
         formPanel2.setPadding(new java.awt.Insets(0, 0, 0, 0));
-        xLabel1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(153, 153, 153)));
         xLabel1.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        xLabel1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(153, 153, 153)));
         xLabel1.setCaption("From Year");
         xLabel1.setCellPadding(new java.awt.Insets(0, 0, 0, 20));
         xLabel1.setName("payment.fromyear");
-        xLabel1.setPreferredSize(new java.awt.Dimension(100, 19));
+        xLabel1.setPreferredSize(new java.awt.Dimension(100, 20));
         formPanel2.add(xLabel1);
 
-        xLabel2.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(153, 153, 153)));
         xLabel2.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        xLabel2.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(153, 153, 153)));
         xLabel2.setCaption("From Qtr.");
         xLabel2.setCaptionWidth(70);
         xLabel2.setName("payment.fromqtr");
-        xLabel2.setPreferredSize(new java.awt.Dimension(100, 19));
+        xLabel2.setPreferredSize(new java.awt.Dimension(100, 20));
         formPanel2.add(xLabel2);
 
         formPanel3.setOrientation(com.rameses.rcp.constant.UIConstants.HORIZONTAL);
         formPanel3.setPadding(new java.awt.Insets(0, 0, 0, 0));
         formPanel3.setPreferredSize(new java.awt.Dimension(475, 23));
-        xNumberField1.setCaption("To Year");
-        xNumberField1.setCellPadding(new java.awt.Insets(0, 0, 0, 20));
-        xNumberField1.setFieldType(Integer.class);
-        xNumberField1.setName("payment.toyear");
-        xNumberField1.setPreferredSize(new java.awt.Dimension(100, 19));
-        xNumberField1.setRequired(true);
-        formPanel3.add(xNumberField1);
+        xIntegerField1.setCaption("To Year");
+        xIntegerField1.setCellPadding(new java.awt.Insets(0, 0, 0, 20));
+        xIntegerField1.setName("payment.toyear");
+        xIntegerField1.setPreferredSize(new java.awt.Dimension(100, 21));
+        xIntegerField1.setRequired(true);
+        formPanel3.add(xIntegerField1);
 
         xComboBox1.setCaption("To Qtr.");
         xComboBox1.setCaptionWidth(70);
@@ -132,68 +157,58 @@ public class RPTCapturePaymentPage extends javax.swing.JPanel {
         com.rameses.rcp.control.border.XTitledBorder xTitledBorder3 = new com.rameses.rcp.control.border.XTitledBorder();
         xTitledBorder3.setTitle("Basic Payment Breakdown");
         formPanel4.setBorder(xTitledBorder3);
-        xNumberField2.setCaption("Basic");
-        xNumberField2.setCaptionWidth(90);
-        xNumberField2.setFieldType(BigDecimal.class);
-        xNumberField2.setName("basic");
-        xNumberField2.setPattern("#,##0.00");
-        xNumberField2.setPreferredSize(new java.awt.Dimension(0, 19));
-        formPanel4.add(xNumberField2);
+        xDecimalField1.setCaption("Basic");
+        xDecimalField1.setCaptionWidth(90);
+        xDecimalField1.setName("payment.basic");
+        xDecimalField1.setPreferredSize(new java.awt.Dimension(0, 20));
+        xDecimalField1.setRequired(true);
+        formPanel4.add(xDecimalField1);
 
-        xNumberField4.setCaption("Discount");
-        xNumberField4.setCaptionWidth(90);
-        xNumberField4.setFieldType(BigDecimal.class);
-        xNumberField4.setName("basicdisc");
-        xNumberField4.setPattern("#,##0.00");
-        xNumberField4.setPreferredSize(new java.awt.Dimension(0, 19));
-        formPanel4.add(xNumberField4);
+        xDecimalField2.setCaption("Discount");
+        xDecimalField2.setCaptionWidth(90);
+        xDecimalField2.setName("payment.basicdisc");
+        xDecimalField2.setPreferredSize(new java.awt.Dimension(0, 20));
+        xDecimalField2.setRequired(true);
+        formPanel4.add(xDecimalField2);
 
-        xNumberField5.setCaption("Penalty");
-        xNumberField5.setCaptionWidth(90);
-        xNumberField5.setFieldType(BigDecimal.class);
-        xNumberField5.setName("basicint");
-        xNumberField5.setPattern("#,##0.00");
-        xNumberField5.setPreferredSize(new java.awt.Dimension(0, 19));
-        formPanel4.add(xNumberField5);
-
-        xNumberField8.setCaption("Partial");
-        xNumberField8.setCaptionWidth(90);
-        xNumberField8.setFieldType(BigDecimal.class);
-        xNumberField8.setName("basicpartial");
-        xNumberField8.setPattern("#,##0.00");
-        xNumberField8.setPreferredSize(new java.awt.Dimension(0, 19));
-        formPanel4.add(xNumberField8);
+        xDecimalField3.setCaption("Penalty");
+        xDecimalField3.setCaptionWidth(90);
+        xDecimalField3.setName("payment.basicint");
+        xDecimalField3.setPreferredSize(new java.awt.Dimension(0, 20));
+        xDecimalField3.setRequired(true);
+        formPanel4.add(xDecimalField3);
 
         com.rameses.rcp.control.border.XTitledBorder xTitledBorder4 = new com.rameses.rcp.control.border.XTitledBorder();
         xTitledBorder4.setTitle("SEF Payment Breakdown");
         formPanel5.setBorder(xTitledBorder4);
-        xNumberField3.setCaption("SEF");
-        xNumberField3.setCaptionWidth(80);
-        xNumberField3.setDepends(new String[] {"basic"});
-        xNumberField3.setName("payment.sef");
-        xNumberField3.setPreferredSize(new java.awt.Dimension(0, 19));
-        formPanel5.add(xNumberField3);
+        xDecimalField4.setCaption("SEF");
+        xDecimalField4.setCaptionWidth(90);
+        xDecimalField4.setName("payment.sef");
+        xDecimalField4.setPreferredSize(new java.awt.Dimension(0, 20));
+        xDecimalField4.setRequired(true);
+        formPanel5.add(xDecimalField4);
 
-        xNumberField6.setCaption("Discount");
-        xNumberField6.setCaptionWidth(80);
-        xNumberField6.setDepends(new String[] {"basicdisc"});
-        xNumberField6.setName("payment.sefdisc");
-        xNumberField6.setPreferredSize(new java.awt.Dimension(0, 19));
-        formPanel5.add(xNumberField6);
+        xDecimalField5.setCaption("Discount");
+        xDecimalField5.setCaptionWidth(90);
+        xDecimalField5.setName("payment.sefdisc");
+        xDecimalField5.setPreferredSize(new java.awt.Dimension(0, 20));
+        xDecimalField5.setRequired(true);
+        formPanel5.add(xDecimalField5);
 
-        xNumberField7.setCaption("Penalty");
-        xNumberField7.setCaptionWidth(80);
-        xNumberField7.setDepends(new String[] {"basicint"});
-        xNumberField7.setName("payment.sefint");
-        xNumberField7.setPreferredSize(new java.awt.Dimension(0, 19));
-        formPanel5.add(xNumberField7);
+        xDecimalField6.setCaption("Penalty");
+        xDecimalField6.setCaptionWidth(90);
+        xDecimalField6.setName("payment.sefint");
+        xDecimalField6.setPreferredSize(new java.awt.Dimension(0, 20));
+        xDecimalField6.setRequired(true);
+        formPanel5.add(xDecimalField6);
 
-        xNumberField10.setCaption("Partial");
-        xNumberField10.setCaptionWidth(80);
-        xNumberField10.setDepends(new String[] {"basicparital"});
-        xNumberField10.setName("payment.sefpartial");
-        xNumberField10.setPreferredSize(new java.awt.Dimension(0, 19));
-        formPanel5.add(xNumberField10);
+        xFormPanel1.setFont(new java.awt.Font("Tahoma", 1, 11));
+        xDecimalField7.setCaption("Fire Code");
+        xDecimalField7.setCaptionWidth(92);
+        xDecimalField7.setFont(new java.awt.Font("Courier New", 1, 12));
+        xDecimalField7.setName("payment.firecode");
+        xDecimalField7.setPreferredSize(new java.awt.Dimension(0, 20));
+        xFormPanel1.add(xDecimalField7);
 
         org.jdesktop.layout.GroupLayout jPanel1Layout = new org.jdesktop.layout.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -203,12 +218,14 @@ public class RPTCapturePaymentPage extends javax.swing.JPanel {
                 .addContainerGap()
                 .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(org.jdesktop.layout.GroupLayout.TRAILING, formPanel3, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 509, Short.MAX_VALUE)
+                    .add(formPanel2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 509, Short.MAX_VALUE)
                     .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanel1Layout.createSequentialGroup()
                         .add(formPanel4, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 262, Short.MAX_VALUE)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(formPanel5, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 232, Short.MAX_VALUE)
-                        .add(9, 9, 9))
-                    .add(formPanel2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 509, Short.MAX_VALUE))
+                        .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
+                            .add(org.jdesktop.layout.GroupLayout.LEADING, xFormPanel1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 232, Short.MAX_VALUE)
+                            .add(formPanel5, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 232, Short.MAX_VALUE))
+                        .add(9, 9, 9)))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -219,22 +236,24 @@ public class RPTCapturePaymentPage extends javax.swing.JPanel {
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(formPanel3, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 34, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(formPanel4, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 139, Short.MAX_VALUE)
-                    .add(formPanel5, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 139, Short.MAX_VALUE))
-                .addContainerGap())
+                .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
+                    .add(formPanel5, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .add(formPanel4, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 111, Short.MAX_VALUE))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .add(xFormPanel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 25, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(36, 36, 36))
         );
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(layout.createSequentialGroup()
+            .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(jPanel1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .add(formPanel1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 533, Short.MAX_VALUE)
-                    .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
+                    .add(org.jdesktop.layout.GroupLayout.LEADING, formPanel1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 533, Short.MAX_VALUE)
+                    .add(org.jdesktop.layout.GroupLayout.LEADING, jPanel1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .add(layout.createSequentialGroup()
                         .add(xButton2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(xButton1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
@@ -242,16 +261,16 @@ public class RPTCapturePaymentPage extends javax.swing.JPanel {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
+            .add(layout.createSequentialGroup()
                 .addContainerGap()
-                .add(formPanel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 110, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(formPanel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 169, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(jPanel1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .add(jPanel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 253, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(xButton1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(xButton2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap())
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
     
@@ -267,19 +286,22 @@ public class RPTCapturePaymentPage extends javax.swing.JPanel {
     private com.rameses.rcp.control.XButton xButton2;
     private com.rameses.rcp.control.XComboBox xComboBox1;
     private com.rameses.rcp.control.XDateField xDateField1;
+    private com.rameses.rcp.control.XDecimalField xDecimalField1;
+    private com.rameses.rcp.control.XDecimalField xDecimalField2;
+    private com.rameses.rcp.control.XDecimalField xDecimalField3;
+    private com.rameses.rcp.control.XDecimalField xDecimalField4;
+    private com.rameses.rcp.control.XDecimalField xDecimalField5;
+    private com.rameses.rcp.control.XDecimalField xDecimalField6;
+    private com.rameses.rcp.control.XDecimalField xDecimalField7;
+    private com.rameses.rcp.control.XDecimalField xDecimalField8;
+    private com.rameses.rcp.control.XFormPanel xFormPanel1;
+    private com.rameses.rcp.control.XIntegerField xIntegerField1;
     private com.rameses.rcp.control.XLabel xLabel1;
     private com.rameses.rcp.control.XLabel xLabel2;
-    private com.rameses.rcp.control.XNumberField xNumberField1;
-    private com.rameses.rcp.control.XNumberField xNumberField10;
-    private com.rameses.rcp.control.XNumberField xNumberField2;
-    private com.rameses.rcp.control.XNumberField xNumberField3;
-    private com.rameses.rcp.control.XNumberField xNumberField4;
-    private com.rameses.rcp.control.XNumberField xNumberField5;
-    private com.rameses.rcp.control.XNumberField xNumberField6;
-    private com.rameses.rcp.control.XNumberField xNumberField7;
-    private com.rameses.rcp.control.XNumberField xNumberField8;
     private com.rameses.rcp.control.XTextField xTextField1;
     private com.rameses.rcp.control.XTextField xTextField2;
+    private com.rameses.rcp.control.XTextField xTextField3;
+    private com.rameses.rcp.control.XTextField xTextField4;
     // End of variables declaration//GEN-END:variables
     
 }

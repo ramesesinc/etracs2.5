@@ -1,0 +1,8 @@
+{
+	name: "Calculate Basic Amnesty",
+	template: "calculate-basic-amnesty",
+	params: [
+		{ name:"ledger", datatype:"RPTLedgerFact", usevar:true, caption:"Ledger ID", required:true },
+		{ name: "expr", datatype: "string", caption: "Computation Formula", expression:true },
+	]
+}

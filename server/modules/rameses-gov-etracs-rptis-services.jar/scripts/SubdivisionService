@@ -369,6 +369,10 @@ class SubdivisionService
         getAffectedRpus(subdivision.objid).each{ arpu ->
             def faas = faasSvc.openFaas(arpu.newfaasid)
             faasSvc.approveFaas(faas)
+            em.sqlContext.createNamedExecutor('subdivision:updateRpuFullPin')
+                .setParameter('fullpin', arpu.newpin + '-' + arpu.newsuffix)
+                .setParameter('objid', arpu.newrpuid )
+                .execute()
         }
 
         em.sqlContext.createNamedExecutor('subdivision:cancelRealProperty')
@@ -376,6 +380,12 @@ class SubdivisionService
             .execute()
         em.sqlContext.createNamedExecutor('subdivision:cancelMotherLandLedger')
                 .setParameter('faasid', subdivision.motherfaasid)
+                .execute()
+        em.sqlContext.createNamedExecutor('subdivision:updateSubdividedLandNewTdNo')
+                .setParameter('subdivisionid', subdivision.objid)
+                .execute()
+        em.sqlContext.createNamedExecutor('subdivision:updateAffectedRpuNewTdNo')
+                .setParameter('subdivisionid', subdivision.objid)
                 .execute()
  	}
 
@@ -517,7 +527,7 @@ class SubdivisionService
             objid               : 'F' + sl.objid,
             state               : STATE_PENDING, 
             datacapture         : false,
-            autonumber          : false,
+            autonumber          : util.toBoolean(var.td_autonumber, false),
             tdno                : sl.newtdno, 
             utdno               : sl.newutdno,
             txntype             : faasSvc.getTxnType(TXNTYPE_SD),

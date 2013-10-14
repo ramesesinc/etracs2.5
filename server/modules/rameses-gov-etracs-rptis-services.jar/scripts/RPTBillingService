@@ -63,12 +63,22 @@ public class RPTBillingService
 	* Called by RPTBilling Task to recalculate and update the
 	* taxes and penalties of the specified ledger
 	---------------------------------------------------------------*/
+	@Async
 	@ProxyMethod
 	public void calculateBillByLedgerIdAsync(ledgerid){
+		println 'Recalculating Ledger -> ' + ledgerid 
+		util.required('Ledger ID', ledgerid)
 		def bill = initBill()
 		bill.billdate = dtSvc.serverDate
 		bill.ledgerids.add(ledgerid)
 		recalcBillItems(bill)
+	}
+
+	@ProxyMethod
+	public void forceRecalcBill( ledgerid ) {
+		util.required('Ledger ID', ledgerid)
+		em.clearLedgerBillingInfoFlags([filters:'rl.objid = $P{objid}', objid:ledgerid])
+		calculateBillByLedgerIdAsync(ledgerid)
 	}
 
 	@ProxyMethod
@@ -102,6 +112,11 @@ public class RPTBillingService
 		if (bill.advancebill && bill.billdate <= (dtSvc.serverDate - 1 ))
             throw new Exception('Advance Billing Date must be greater than current date.')
 
+        if (bill.recalc){
+        	em.clearLedgerBillingInfoFlags(buildParams(bill))
+        	bill.recalc = false
+        }
+
         insertUnpostedItems(bill)
         recalcBillItems(bill)
         rebuildLedgerItems(bill)
@@ -115,9 +130,11 @@ public class RPTBillingService
 		return bill
 	}
 
-	void insertUnpostedItems(bill){
+
+	@ProxyMethod
+	public void insertUnpostedItems(bill){
 		em.getLedgerWithUnpostedItems(buildParams(bill)).each{ ledger -> 
-			if (ledger.lastitemyear < bill.billtoyear ){
+			if (ledger.lastitemyear < bill.billtoyear && ledger.lastitemyear > 0){
 				ledgerSvc.insertLedgerItems(ledger, ledger.lastitemyear + 1, bill.billtoyear)
 			}
 		}
@@ -143,6 +160,8 @@ public class RPTBillingService
 			billdate   : pdate.date,
 			billyear   : pdate.year,
 			billqtr    : pdate.qtr,
+			rputype    : bill.rputype, 
+			forpayment : 0,
 		]
 
 		if (bill.ledgerids) {
@@ -151,6 +170,15 @@ public class RPTBillingService
 		}
 		else {
 			params.filters = ' f.taxpayer_objid = $P{taxpayerid} '
+		}
+
+		if (bill.rputype ){
+			params.filters += ' AND r.rputype = $P{rputype} '
+		}
+
+		if (bill.barangay){
+			params.barangayid = bill.barangay.objid 
+			params.filters += ' AND rp.barangayid = $P{barangayid}'
 		}
 		return params
 	}
@@ -202,78 +230,13 @@ public class RPTBillingService
 
 
 	@ProxyMethod
-	public def computePartialPayment(ledger, payment ) {
-		if (!ledger.items)
-			throw new Exception('Items for payment are required.')
-		if (payment == null || payment == 0)
-			throw new Exception('Payment is required.')
-
-		def paiditems = [] 
-
-		ledger.items.each{
-			if (payment > 0.0) {
-				def amtdue = it.total
-				if ( payment >= amtdue){
-					payment -= amtdue 
-				}
-				else {
-					it.firecodepaid  = it.firecode 
-					payment -= it.firecode 
-
-					//apply proportionally
-					def basicpaymentrate  = numSvc.round(it.basicnet / (it.basicnet + it.sefnet))
-					def basicpayment 	= numSvc.round(payment * basicpaymentrate)
-					def sefpayment 		= payment - basicpayment 
-
-					def basicintrate    = numSvc.round(it.basicint / it.basic)
-					def basic           = numSvc.round(basicpayment / (1 + basicintrate))
-					it.basicint         = basicpayment - basic 
-					if (it.basicdisc == 0.0) {
-						it.basic = basic 
-					}
-					else{
-						it.basicdisc = numSvc.round(basic * basicdiscrate)
-						it.basic     = basic + it.basicdisc 
-					}
-					it.basicdp 			= it.basicint - it.basicdisc 
-					it.basicnet 		= it.basic + it.basicdp
-
-					def sefintrate    = numSvc.round(it.sefint / it.sef)
-					def sef           = numSvc.round(sefpayment / (1 + sefintrate))
-					it.sefint         = sefpayment - sef 
-					if (it.sefdisc == 0.0) {
-						it.sef = sef 
-					}
-					else{
-						it.sefdisc = numSvc.round(sef * sefdiscrate)
-						it.sef     = sef + it.sefdisc 
-					}
-					it.sefdp 			= it.sefint - it.sefdisc 
-					it.sefnet 		= it.sef + it.sefdp
-
-					it.total 		= it.basicnet + it.sefnet 
-					it.partialled 	= true
-					payment = 0.0
-				}
-				paiditems += it 
-			}
-		}
-		ledger.items = paiditems 
-		summarizeLedgerInfo(ledger)
-		ledger.partialled = true
-		return ledger 
-	}
-
-
-
-	@ProxyMethod
 	public def getLedgersToRecalc(count){
 		def params = [billdate:dtSvc.serverDate, _limit : count]
 		return em.getLedgersToRecalc(params)
 	}
 
 
-	def phases = ['TAX', 'PENALTY', 'DISCOUNT']
+	def phases = ['TAX', 'AFTER_TAX', 'PENALTY', 'AFTER_PENALTY', 'DISCOUNT', 'AFTER_DISCOUNT', 'SUMMARY']
 
 	@ProxyMethod
 	public void recalcBillItems(bill){
@@ -285,8 +248,10 @@ public class RPTBillingService
 			}
 			updateLedgerItemInfo(bill, data)
 			bill.expirydate = getExpiryDate(bill)
-			em.updateLedgerNextBillDate(buildParams(bill))
-
+			def params = buildParams(bill)
+			em.updateLedgerNextBillDate(params)
+			em.applyLedgerItemTaxIncentives(params)
+			em.applyQuarterlyLedgerItemTaxIncentives(params)
 		}
 	}
 
@@ -294,6 +259,115 @@ public class RPTBillingService
 	@ProxyMethod
 	public def recalcBillItemsAsync( bill ) {
 		recalcBillItems(bill)	
+	}
+
+
+	@ProxyMethod
+	public def computePartialPayment( ledger, payment  ) {
+		def partial = payment 
+		if (payment == null || payment == 0)
+			throw new Exception('Partial Payment is required.')
+
+		def paiditems = em.getFullyPaidItems(['rptledgerid':ledger.rptledgerid])
+		def idx = 0
+		def pitem = null 
+
+		//find the item to partial and breakdown to quarterly
+		def pmt = payment
+		for(; idx < paiditems.size(); idx++)
+		{	
+			if (pmt == 0.0 ) break;
+
+			pitem = paiditems[idx]
+			def amtdue = pitem.total 
+			if ( pmt >= amtdue){
+				pmt -= amtdue 
+			}
+			else 
+			{
+				def bill = [insertqtrly:true, billtoyear:pitem.year, forpayment:pitem.forpayment]
+				insertQtrlyLedgerItems(bill, [objid:ledger.rptledgerid])
+				em.resetLedgerItemForPaymentFlag(pitem)
+				em.resetQuarterlyLedgerItemForPaymentFlag(pitem)
+				em.updateLedgerItemForPaymentFlagById([objid:pitem.rptledgeritemid, forpayment:0])
+				em.updateQuarterlyLedgerItemForPaymentFlagByYear([rptledgerid:pitem.rptledgerid, forpayment:1, year:pitem.year])
+				break;
+			}
+
+		}
+
+		// compute partial 
+		paiditems = em.getFullyPaidItems(['rptledgerid':ledger.rptledgerid])
+		idx = 0 
+		pitem = null 
+		for(; idx < paiditems.size(); idx++)
+		{
+			if (payment == 0.0 ) break;
+
+			pitem = paiditems[idx]
+			def amtdue = pitem.total 
+			if ( payment >= amtdue){
+				payment -= amtdue 
+			}
+			else 
+			{
+				pitem.partial = true;
+
+				if (payment > pitem.firecode){
+					payment -= pitem.firecode 
+				}
+				else{
+					pitem.firecode = payment 
+					payment = 0.0 
+				}
+
+				if (payment > 0.0){
+					//apply proportionally
+					def basicpaymentrate  = numSvc.round(pitem.basic / (pitem.basic + pitem.sef))
+					def basicpayment 	= numSvc.round(payment * basicpaymentrate)
+					def sefpayment 		= payment - basicpayment 
+
+					def basicintrate    = numSvc.round(pitem.basicint / pitem.basic)
+					def partialbasic    = numSvc.round(basicpayment / (1 + basicintrate))
+					def partialbasicint = basicpayment - partialbasic 
+
+					def partialbasicdisc 		= 0.0
+					if (pitem.basicdisc > 0.0) {
+						def basicdiscrate = numSvc.round(pitem.basicdisc / pitem.basic)
+						partialbasicdisc = numSvc.round(partialbasic * basicdiscrate)
+					}
+
+					def sefintrate    	= numSvc.round(pitem.sefint / pitem.sef)
+					def partialsef    	= numSvc.round(sefpayment / (1 + sefintrate))
+					def partialsefint 	= sefpayment - partialsef 
+
+					def partialsefdisc 	= 0.0
+					if (pitem.sefdisc > 0.0) {
+						def sefdiscrate = numSvc.round(pitem.sefdisc / pitem.sef)
+						partialsefdisc = numSvc.round(partialsef * sefdiscrate)
+					}
+
+					def partialinfo = [
+						rptledgeritemqtrlyid : pitem.rptledgeritemqtrlyid,
+						partialbasic 		: partialbasic,
+						partialbasicint 	: partialbasicint,
+						partialbasicdisc 	: partialbasicdisc,
+						partialsef 			: partialsef,
+						partialsefint 		: partialsefint,
+						partialsefdisc 		: partialsefdisc,
+					]
+					em.updatePartialInfo(partialinfo)
+					payment = 0.0
+					break;
+				}
+			}
+		}
+		if (pitem) {
+			//clear forpayment flag for items not included in the partial payment
+			em.resetLedgerItemForPaymentFlag(pitem)
+			em.resetQuarterlyLedgerItemForPaymentFlag(pitem)
+		}
+		return [amount:partial, toyear:pitem?.year, toqtr:pitem?.qtr]
 	}
 
 	def createFacts(bill){
@@ -317,6 +391,9 @@ public class RPTBillingService
 	            ledger.fullpayment            = ( bill.billtoqtr == 4 && it.lastqtrpaid == 4 ? true : false )
 	            ledger.advancepayment         = bill.advancepayment 
 	            ledger.paidyear				  = pdate.year 
+	            ledger.classification_objid	  = it.classification.objid
+	            ledger.actualuse_objid	  	  = it.actualuse.objid
+
 				map.facts << ledger 
 				map.ledgers << ledger
 			}
@@ -399,10 +476,15 @@ public class RPTBillingService
 		em.resetLedgerItemQtrlyFlag(params)
 	}
 
-	void insertQtrlyLedgerItems(bill, ledger){
-		if (bill.billtoyear >= dtSvc.serverYear || bill.billtoqtr !=  4){
-			em.insertQtrlyLedgerItems([rptledgerid:ledger.objid, billtoyear: bill.billtoyear])	
-			em.setLedgerItemQtrlyFlag([rptledgerid:ledger.objid, billtoyear: bill.billtoyear])	
+	@ProxyMethod
+	public void insertQtrlyLedgerItems(bill, ledger){
+		if (bill.billtoyear >= dtSvc.serverYear || bill.billtoqtr !=  4 || bill.insertqtrly == true){
+			if (bill.forpayment == null) bill.forpayment = 0
+			def params = [rptledgerid:ledger.objid, billtoyear: bill.billtoyear, forpayment:bill.forpayment]
+			em.insertQtrlyLedgerItems(params)	
+			em.setLedgerItemQtrlyFlag(params)	
+			params.totalfirecode = em.findTotalFireCode(params).totalfirecode
+			em.chargeFireCodeOnFirstQtr(params)
 		}
 		
 	}
@@ -424,14 +506,13 @@ public class RPTBillingService
 
 	void calcBillTotals(bill){
 		//summarize totals
-		bill.basic		= util.sum(bill.ledgers, 'basic')
-		bill.basicdp	= util.sum(bill.ledgers, 'basicdp')
-		bill.basicnet	= util.sum(bill.ledgers, 'basicnet')
-		bill.sef		= util.sum(bill.ledgers, 'sef')
-		bill.sefdp		= util.sum(bill.ledgers, 'sefdp')
-		bill.sefnet		= util.sum(bill.ledgers, 'sefnet')
-		bill.firecode   = util.sum(bill.ledgers, 'firecode')
-		bill.total		= util.sum(bill.ledgers, 'total')
+		bill.totalbasic		= util.sum(bill.ledgers, 'basic')
+		bill.totalbasicdp	= util.sum(bill.ledgers, 'basicdp')
+		bill.totalbasicnet	= util.sum(bill.ledgers, 'basicnet')
+		bill.totalsef		= util.sum(bill.ledgers, 'sef')
+		bill.totalsefdp		= util.sum(bill.ledgers, 'sefdp')
+		bill.totalsefnet		= util.sum(bill.ledgers, 'sefnet')
+		bill.totalfirecode   = util.sum(bill.ledgers, 'firecode')
 		bill.grandtotal = util.sum(bill.ledgers, 'total')
 	}
 
@@ -512,7 +593,18 @@ public class RPTBillingService
 					item.sefacct = [objid:ledger.sefacctid]
 					item.sefintacct = [objid:ledger.sefintacctid]
 					item.firecodeacct = [objid:ledger.firecodeacctid]
-					item.revtype = ledger.revtype 
+					item.revtype = (ledger.revtype ? ledger.revtype : item.revtype)
+					item.partial = false
+					item.partialbasic = 0.0
+					item.partialbasicint = 0.0
+					item.partialbasicdisc = 0.0
+					item.partialbasicamnesty = 0.0
+					item.partialbasicintamnesty = 0.0
+					item.partialsef = 0.0
+					item.partialsefint = 0.0
+					item.partialsefdisc = 0.0
+					item.partialsefamnesty = 0.0
+					item.partialsefintamnesty = 0.0
 					if (item.qtrly) {
 						ledgerSvc.updateLedgerItemAccountInfo(item)
 						ledgerSvc.updateLedgerItemQuarterly(item)

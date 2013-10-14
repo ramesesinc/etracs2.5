@@ -20,4 +20,13 @@ class SlaughterReceiptInterceptor {
 		em.create("cashreceiptslaughter:cashreceiptslaughter", cs);
 	}
 
+	@After(pattern="CashReceiptService.open", eval="#{result.formno=='57'}")
+	public def onOpenReceipt(def evt) { 
+		def cs = em.read("cashreceiptslaughter:cashreceiptslaughter", evt.result)
+		if(!cs.items) cs.items = []
+		items << cs.item
+		
+		evt.result.putAll( cs );
+	}
+
 }

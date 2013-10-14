@@ -39,6 +39,7 @@
 		<field name="lguid" />
 		<field name="txntimestamp" required="true" />
 		<field name="cancelledtimestamp"/>
+		<field name="name"/>
 	</element>
 
 	<element name="previousfaas" tablename="previousfaas">
