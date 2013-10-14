@@ -628,7 +628,7 @@ FROM (
 		SUM(sef + sefint - sefdisc) AS sefnet,
 		SUM(firecode) AS firecode,
 		SUM(basic + basicint - basicdisc   + 
-			sef + sefint - sefdisc  + firecode) AS amount 
+			sef + sefint - sefdisc) AS amount 
 	FROM cashreceiptitem_rpt cri
 		INNER JOIN rptledger rl ON cri.rptledgerid = rl.objid 
 		INNER JOIN faas f ON rl.faasid = f.objid 

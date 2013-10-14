@@ -62,6 +62,8 @@ public class ModifyPINUtilityController {
         provcity = provcityList.find{it.objid == provcity.objid}
         munidistrict = muniDistrictList.find{it.objid == munidistrict.objid}
         barangay = barangayList.find{it.objid == barangay.objid}
+        println '='*50 
+        println 'barangay -> ' + barangay
     }
     
     

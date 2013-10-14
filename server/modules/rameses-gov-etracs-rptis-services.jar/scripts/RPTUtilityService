@@ -22,10 +22,6 @@ class RPTUtilityService
 	//section, parcel, suffix, newpin, ssection, sparcel 
 	@ProxyMethod
 	public def updatePin( info ) { 
-		println "************************************"
-		println " updating pin $info"
-		println "************************************"
-		
 		validatePin( info )
 		rpuSvc.checkDuplicateFullPin([objid:info.rpuid, ry: info.ry, fullpin:info.newpin])
 		if( info.rputype == 'land') {

@@ -72,3 +72,9 @@ WHERE m.objid = r.objid
 update rpu set 
 	fullpin=$P{newpin}, suffix=$P{suffix}
 where objid=$P{rpuid}
+
+
+
+[updateRpuState]
+UPDATE rpu SET state = $P{state} WHERE objid = $P{objid}
+

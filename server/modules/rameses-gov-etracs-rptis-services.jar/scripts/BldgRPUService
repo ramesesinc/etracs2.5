@@ -64,9 +64,8 @@ class BldgRPUService
 
 	@ProxyMethod
 	public def createBldgRpu( rpu ) {
-		def xrpu = EntityUtil.mapToField(rpu)
-		em.validate(SCHEMA_RPU, xrpu)
-		em.create(SCHEMA_RPU, xrpu)
+		validateInfo(rpu)
+		em.create(SCHEMA_RPU, rpu)
 		saveStructures(rpu.structures)
 		saveBldgUses(rpu.bldguses)
 		return rpu
@@ -75,9 +74,8 @@ class BldgRPUService
 
 	@ProxyMethod
 	public def updateBldgRpu(rpu) { 
-		def xrpu = EntityUtil.mapToField(rpu)
-		em.validate(SCHEMA_RPU, xrpu)
-		em.update(SCHEMA_RPU, xrpu)
+		validateInfo(rpu)
+		em.update(SCHEMA_RPU, rpu)
 		saveStructures(rpu.structures)
 		saveBldgUses(rpu.bldguses)
 		removeDeletedItems(rpu)
@@ -160,6 +158,11 @@ class BldgRPUService
 		return bldgSettingSvc.lookupBldgRySettingById(objid)
 	}
 
+
+	void validateInfo(rpu){
+		if (rpu.floorcount == null || rpu.floorcount == 0)
+			throw new Exception('Please enter floor count information.')
+	}
 
 	
 	/*-------------------------------------------------------------------
@@ -446,15 +449,13 @@ class BldgRPUService
 	-------------------------------------------------------------------*/
 	void saveStructures(structures){
 		structures.each{ st ->
-			em.validate(SCHEMA_STRUCTURE, EntityUtil.mapToField(st))
-			em.save(SCHEMA_STRUCTURE, EntityUtil.mapToField(st))
+			em.save(SCHEMA_STRUCTURE, st)
 		}
 	}
 
 	void saveBldgUses(bldguses){
 		bldguses.each{bu ->
-			em.validate(SCHEMA_BLDGUSE, EntityUtil.mapToField(bu))
-			em.save(SCHEMA_BLDGUSE, EntityUtil.mapToField(bu))
+			em.save(SCHEMA_BLDGUSE, bu)
 			saveFloors(bu.floors)
 		}
 	}
@@ -503,16 +504,13 @@ class BldgRPUService
 
 	void saveFloorAdditionals(additionals){
 		additionals.each{
-			em.validate(SCHEMA_ADDITIONAL, EntityUtil.mapToField(it))
-			em.save(SCHEMA_ADDITIONAL, EntityUtil.mapToField(it))
+			em.save(SCHEMA_ADDITIONAL, it)
 			saveParams(it.params)
 		}
 	}
 
 	void saveParams(params){
 		params.each{ param ->
-			param = EntityUtil.mapToField(param)
-			em.validate(SCHEMA_PARAM, param)
 			em.save(SCHEMA_PARAM, param)
 		}
 	}

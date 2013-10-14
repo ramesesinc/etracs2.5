@@ -1,6 +1,6 @@
 <workunit>
     <invokers>
-        <invoker type="rptledgercapturepmt.create" caption="Capture Realty Tax Payment" action="create" target="popup" />        
+        <invoker type="rptledger:capture" caption="Capture Realty Tax Payment" action="create" target="popup" />        
     </invokers>
     
     <code lang="groovy">
@@ -16,20 +16,34 @@ import java.rmi.server.UID;
 
 public class RPTLedgerCapturePmtController  {
     
+    @Binding
+    def binding
+
     //handlers
     def onadd
     
     def ledger 
     def payment
     
+    @PropertyChangeListener
+    def listener = [
+        'payment.basic'     : { copyTaxAmount('basic', 'sef') },
+        'payment.basicint'  : { copyTaxAmount('basicint', 'sefint') },
+        'payment.basicdisc' : { copyTaxAmount('basicdisc', 'sefdisc') },
+    ]
+    
+    void copyTaxAmount(from, to){
+        if (payment."$to" == 0.0){
+            payment."$to" = payment."$from"
+            binding.refresh("payment.$to")
+        }
+    }
+    
     void create() {
         def fromyear = ( ledger.lastqtrpaid == 4 ? ledger.lastyearpaid + 1 : ledger.lastyearpaid )
         def fromqtr  = ( ledger.lastqtrpaid == 4 ? 1 : ledger.lastqtrpaid + 1 )
         payment = [
             objid       : 'RP' + new UID(),
-            mode        : 'CAPTURE', 
-            opener      : 'rptledgercapturepmt',
-            voided      : false, 
             rptledgerid : ledger.objid,
             fromyear    : fromyear, 
             fromqtr     : fromqtr, 
@@ -43,36 +57,10 @@ public class RPTLedgerCapturePmtController  {
             sefint      : 0.0,
             sefdisc     : 0.0,
             sefpartial  : 0.0,
+            firecode    : 0.0,
+            amount      : 0.0,
+            paidby      : [address:'ILIGAN CITY'],
         ]
-    }
-    
-    def basic = 0.0
-    def basicdisc = 0.0
-    def basicint = 0.0
-    def basicpartial = 0.0 
-    
-    void setBasic( basic ) {
-        this.basic = (basic == null ? 0.0 : basic )
-        payment.basic = this.basic 
-        payment.sef = this.basic
-    }
-    
-    void setBasicdisc( basicdisc ) {
-        this.basicdisc = (basicdisc == null ? 0.0 : basicdisc )
-        payment.basicdisc = this.basicdisc 
-        payment.sefdisc = this.basicdisc
-    }
-    
-    void setBasicint( basicint ) {
-        this.basicint = (basicint == null ? 0.0 : basicint )
-        payment.basicint = this.basicint 
-        payment.sefint = this.basicint
-    }
-    
-    void setBasicpartial( basicpartial ) {
-        this.basicpartial = (basicpartial == null ? 0.0 : basicpartial )
-        payment.basicpartial = this.basicpartial 
-        payment.sefpartial = this.basicpartial
     }
     
     def ok() {
@@ -81,16 +69,15 @@ public class RPTLedgerCapturePmtController  {
         checkNegative( 'Basic', payment.basic )
         checkNegative( 'Basic Discount', payment.basicdisc )
         checkNegative( 'Basic Penalty', payment.basicint )
-        checkNegative( 'Basic Partial', payment.basicpartial )
         checkNegative( 'SEF', payment.sef )
         checkNegative( 'SEF Discount', payment.sefdisc )
         checkNegative( 'SEF Penalty', payment.sefint )
-        checkNegative( 'SEF Partial', payment.sefpartial )
+        checkNegative( 'Fire Code', payment.firecode )
         if( payment.basicdisc > payment.basic ) throw new Exception('Basic Discount must be less than Basic.')
         if( payment.sefdisc > payment.sef ) throw new Exception('SEF Discount must be less than SEF.')
         
         payment.period = determinePaidPeriod( payment )
-        
+        calcTotal()
         if( MsgBox.confirm('Posted payment could no longer be edited.\nPlease verify the information is correct.\n\nPost?') ) {
             if( onadd ) {
                 onadd( payment )
@@ -98,6 +85,12 @@ public class RPTLedgerCapturePmtController  {
             return '_close' 
         }
         return 'default' 
+    }
+    
+    void calcTotal(){
+        payment.amount = payment.basic + payment.basicint - payment.basicdisc +
+                        payment.sef + payment.sefint - payment.sefdisc + payment.firecode
+        binding.refresh('payment.total')
     }
     
     def determinePaidPeriod( item ) {
@@ -127,6 +120,6 @@ public class RPTLedgerCapturePmtController  {
     </code>
     
     <pages>
-        <page template="com.rameses.gov.etracs.rpt.ledger.RPTCapturePaymentPage" />
+        <page template="com.rameses.gov.etracs.rpt.ledger.ui.RPTCapturePaymentPage" />
     </pages>
 </workunit>
