@@ -1,29 +1,39 @@
 package bpassessment;
 
-declare Application 
-	apptype:			String
-	businessorgtype:	String
-	barangayid:			String
+declare BPApplication
+	orgtype:		String
+	officetype:		String
+	apptype:		String
+	barangayid:		String
 end
 
-declare Lob 
+declare LOB 
 	objid: 				String
 	name:				String
-	classificationid: 	String
+	classification: 	String
+	attributes:			String
+	assessmenttype:		String
 end
 
-declare LobAttribute 
+declare BusinessInfo 
 	objid: 				String
-	lob:				Lob
-	name: 				String
+	lob:				LOB
+	name:				String
+	datatype:			String
+	decimalvalue:		double
+	intvalue:			int
+	stringvalue:		String
+	boolvalue:			boolean
 end
 
-declare Info 
-	lob: 		  	Lob	
-	name: 		  	String
-	varid:			String
-	decimalValue: 	double
-	intValue:	  	int
-	stringValue:	String
-	booleanValue:	boolean 	
-end
+declare BusinessTax 
+	objid:			String
+	acctid:			String
+	lob:			LOB	
+	name:			String
+	amount:			double
+	assessedvalue:	double
+	highest:		boolean
+	lowest:			boolean
+	data:			Object
+end 

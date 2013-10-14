@@ -1,0 +1,17 @@
+package bpassessment;
+
+import java.util.*;
+import com.rameses.rules.common.*;
+global RuleAction action;
+
+rule "summarize-business-tax"
+	agenda-group "postbusinesstax"
+	salience 0
+	no-loop
+	when
+				
+	then
+		action.execute( "summarize_business_tax", null, drools);
+end
+
+

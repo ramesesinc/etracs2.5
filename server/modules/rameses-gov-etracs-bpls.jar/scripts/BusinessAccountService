@@ -1,0 +1,9 @@
+import com.rameses.annotations.*;
+import com.rameses.services.extended.*;
+
+class BusinessAccountService extends ActiveCrudService {
+
+	@ActiveDB("businessaccount")
+	def em;
+
+}

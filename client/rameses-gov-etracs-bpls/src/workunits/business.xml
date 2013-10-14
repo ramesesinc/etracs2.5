@@ -1,0 +1,52 @@
+<workunit>
+    <invokers>
+        <invoker type="business:open" caption="Business Info" action="start" target="window"/>
+    </invokers>
+    
+    <code>
+        <![CDATA[    
+        import com.rameses.rcp.annotations.*
+        import com.rameses.rcp.common.*
+        import com.rameses.osiris2.client.*
+        import com.rameses.osiris2.common.*
+        import com.rameses.gov.etracs.bpls.application.*;
+        
+        class  BusinessInfoController extends PageFlowController {
+        
+            @Service("BusinessInfoService")
+            def service;
+            
+            def entity;
+            
+            def start() {
+                entity = service.open(entity);
+                return super.start();
+            }
+        }
+        ]]>
+        
+    </code>
+    <pageflow>
+        <start>
+            <transition to="initial"/>
+        </start>
+        <page name="initial" title="#{entity.tradename}">
+            <transition to="end" caption="Close"/>
+            <transition to="txn" caption="Ledger"/>
+            <transition to="hist" caption="History"/>
+            <transition to="changelog" caption="Change Log"/>
+            <transition to="req" caption="Requirements"/>
+            <transition to="cases" caption="Cases"/>
+        </page>
+        <page name="txn" title="#{entity.tradename}/Ledger">
+            <transition to="initial" caption="Back"/>
+        </page>    
+        <end/>
+    </pageflow>
+    
+    <pages>
+        <page name="initial" template="com.rameses.gov.etracs.bpls.business.BusinessInfoPage"/>
+        <page name="txn"  template="com.rameses.gov.etracs.bpls.business.BusinessTxnPage"/>
+    </pages>
+    
+</workunit>

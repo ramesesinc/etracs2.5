@@ -1,0 +1,24 @@
+import com.rameses.annotations.*;
+import com.rameses.services.extended.*;
+
+class BusinessAccountLookupService extends ActiveCrudListService {
+
+	@ActiveDB("businessaccount")
+	def em;
+
+	String listMethod = "getLookup";
+
+	@ProxyMethod
+	public def getColumns( def p ) {
+		return [
+			[name:"code", caption:"Name"],
+			[name:"title", caption:"Caption"]
+		]
+	}
+
+	void beforeList(o) {
+		o.taxfeetype = o._tag;
+		println "tax fee type->"+o.taxfeetype;
+	}
+
+}

@@ -1,12 +1,11 @@
 import com.rameses.annotations.*;
 import com.rameses.services.extended.*;
 
-class LobLookupService extends AbstractListService {
+class LobLookupService extends ActiveListService {
 
-	@PersistenceContext("main")
+	@ActiveDB("lob")
 	def em;
 
-	String schemaName = 'lob'
 	String listMethod = "getLookup";
 
 	@ProxyMethod
@@ -15,6 +14,10 @@ class LobLookupService extends AbstractListService {
 			[name:'name', caption:'Line of Business'],
 			[name:'classification.name', caption:'Classification']
 		]	
+	}
+
+	void beforeList(o) {
+		o.searchtext = o.searchtext + "%";
 	}
 
 }

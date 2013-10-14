@@ -25,7 +25,7 @@
             String title = "Batch Capture (Miscellaneous Collection)";
             
             public String getFileType() {
-                return "cashreceipt:batch:misc";
+                return "cashreceipt:misc:editor";
             }    
             
             def batchItems = [];

@@ -1,0 +1,5 @@
+package bpbilling;
+
+declare BPApplication
+	orgtype:		String
+end

@@ -1,0 +1,197 @@
+import com.rameses.annotations.*;
+import com.rameses.util.*;
+import java.rmi.server.*;
+import com.rameses.rules.common.*;
+
+public class BPAssessmentService  {
+
+	@Resource("RuleService")	
+	def ruleSvc;
+
+	@ActiveDB("rule")
+	def ruleDB;
+
+	@ActiveDB("lob")
+	def lob;
+
+	@ActiveDB("businessaccount")
+	def ba;
+
+	@ActiveDB("businessvariable")
+	def bv;
+
+	String RULESET = "bpassessment";
+
+	def buildFacts( o, lobMap ) {
+		def facts = [];
+		def app = ruleSvc.createFact( RULESET, RULESET+".BPApplication");
+		app.apptype = o.apptype;
+		app.orgtype = o.orgtype;
+		app.officetype = o.officetype;
+		app.barangayid = o.barangay.objid;
+		facts << app;
+		o.lobs.each {
+			def LOB = ruleSvc.createFact( RULESET, RULESET+".LOB");
+			LOB.objid = it.lobid;
+			LOB.name = it.name;
+			LOB.classification = it.classification?.objid;
+			LOB.attributes = "-" + lob.getAttributes( [lobid: it.lobid ] )*.name.join("-") + "-";
+			LOB.assessmenttype = it.assessmenttype;
+			facts << LOB;
+			lobMap.put( it.lobid, LOB );
+		}
+		o.infos.each {
+			def dtype = it.attribute.datatype;
+			def lob = it.lob;
+			def obj = ruleSvc.createFact( RULESET, RULESET + ".BusinessInfo" );
+			obj.objid = it.objid;
+			obj.name = it.attribute.name;
+			
+			if(it.value ) {
+				switch( dtype ) {
+					case "decimal":
+						obj.decimalvalue = Double.parseDouble(it.value+"");
+						break;
+					case "integer":
+						obj.intvalue = Integer.parseInt(it.value+"");
+						break;
+				}
+			}
+			if( lob ) obj.lob = lobMap[ lob.objid ];
+			facts << obj;
+		}
+		println "about to return facts"
+		return facts;
+	}
+
+	def buildActions(def o, def newinfos, def taxfees, def _taxfees, def lobMap, def facts ) {
+		def actions = new RuleAction();
+		actions.addCommand( "print_test", new PrintTest() );
+		actions.addCommand( "ask_business_info", new AskBusinessInfo( entity:o, newinfos:newinfos, BV:bv) );
+		actions.addCommand( "compute_business_tax", new ComputeTaxFee( entity:o, taxfees:taxfees, _taxfees: _taxfees, BA:ba ) );
+		actions.addCommand( "summarize_business_tax", new SummarizeBusinessTax( taxfees:taxfees, ruleSvc: ruleSvc, lobMap: lobMap ) );
+		actions.addCommand( "update_business_tax", new UpdateBusinessTax( ) );
+		return actions;
+	}
+
+	@ProxyMethod
+	public def execute(def o) throws Exception {
+		def newinfos = [];
+		def taxfees = [];
+		def _taxfees = [];
+		def lobMap = [:];
+
+		def facts = buildFacts(o, lobMap);
+		def actions = buildActions(o, newinfos, taxfees, _taxfees, lobMap, facts );
+		def grps = ruleDB.getRulegroups( [ruleset: RULESET] );
+		for( g in grps ) { 
+			ruleSvc.execute( RULESET, facts, actions, g.name );
+
+			//if there is entry in newinfos break it.
+			if(newinfos) break;
+		}
+		return [infos:newinfos, taxfees: taxfees, _taxfees: _taxfees ];
+	}
+}
+
+//used for debugging
+public class PrintTest implements RuleActionHandler {
+	public void execute(def params, def drools) {
+		println "print ->"+params; 	
+	}
+}
+
+public class AskBusinessInfo implements RuleActionHandler {
+	def entity;
+	def newinfos;
+	def BV;
+	public void execute(def params, def drools) {
+		def lob = params.lob;
+		def attrid = params.attribute.key;
+		def option = params.option;
+		def test = null;
+		if( !lob ) {
+			test = entity.infos.find{ it.lob == null && it.attribute.objid == attrid };
+			if(!test) test = newinfos.find{ it.lob == null && it.attribute.objid == attrid };
+		}
+		else {
+			test = entity.infos.find{ it.lob.objid == lob.objid && it.attribute.objid == attrid };
+			if(!test) test = newinfos.find{ it.lob.objid == lob.objid && it.attribute.objid == attrid };
+		}
+		if(!test) {
+			def info = [objid:"BPINFO"+new UID()];
+			info.attribute = BV.read( [objid: attrid ] );
+			if(lob) {
+				info.lob = [objid:lob.objid, name:lob.name];
+			}
+
+			if( option == "REQUIRE_BEFORE_PRINT") {
+				info.beforeprint = 1;
+			}
+			newinfos << info;
+		} 
+	}
+}
+
+public class ComputeTaxFee implements RuleActionHandler {
+	def entity;
+	def taxfees;
+	def _taxfees;
+	def BA;
+
+	public void execute(def params, def drools) {
+		def lob = params.lob;
+		def acctid = params.account.key;
+		def test = null;
+		if( !lob ) {
+			test = taxfees.find{ it.lob == null && it.account.objid == acctid };
+		}
+		else {
+			test = taxfees.find{ it.lob.objid == lob.objid && it.account.objid == acctid };
+		}
+
+		//we need to override tax fees that already exist.
+		if(test) {
+			_taxfees << test;
+			taxfees.remove( test );
+		}
+
+		def info = [objid:"BPTF"+new UID()];
+		info.account = BA.findAccount( [objid: acctid]);
+		if(lob) {
+			info.lob = [objid:lob.objid, name:lob.name];
+		}
+		info.assessedvalue = params.amount;
+		info.amount = params.amount;
+		taxfees << info;
+	}
+}
+
+/**
+* totals all business taxes, finds highest, lowest, 
+**/
+public class SummarizeBusinessTax implements RuleActionHandler {
+	def taxfees;
+	def ruleSvc;
+	def lobMap;
+	public void execute(def params, def drools) {
+		def list = taxfees.findAll{ it.account.taxfeetype == "TAX" };
+		list.each {
+			def bt = ruleSvc.createFact( "bpassessment", "bpassessment.BusinessTax");
+			bt.objid = it.objid;
+			bt.acctid = it.account.objid;
+			if( it.lob ) bt.lob = lobMap[ it.lob.objid ]
+			bt.name = it.account.title;
+			bt.amount = it.amount;
+			bt.assessedvalue = it.assessedvalue;
+			bt.data = it;
+			drools.insert( bt );
+		}
+	}
+}
+
+public class UpdateBusinessTax implements RuleActionHandler {
+	public void execute(def params, def drools) {
+		params.businesstax.data.amount = params.amount;
+	}
+}

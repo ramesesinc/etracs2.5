@@ -7,8 +7,9 @@
         import com.rameses.rcp.annotations.*
         import com.rameses.osiris2.common.*
         
-        class LOBAttributeLookup extends LookupController
-        {
+        class LOBAttributeLookup extends LookupController {
+            String entityName = "lobattribute_lookup";
+        
             public String getServiceName() { return "LobAttributeService" }
             public Column[] getColumns() {
                 return [

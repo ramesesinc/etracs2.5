@@ -12,13 +12,13 @@
         import com.rameses.osiris2.client.*;
         import com.rameses.osiris2.common.*
 
-        class LobController extends CRUDController
-        {   
+        class LobController extends CRUDController {   
 
-            String serviceName = 'LobService'
+            @Service('LobService')
+            def service;
+            
             String entityName  = 'lob'
             String prefixId    = 'LOB';
-            
             def selectedItem;
             
             Map createEntity() {
@@ -29,32 +29,36 @@
                 listHandler.reload();
             }
             
-            def getLookupAttribute() {
+            def addAttribute() {
                 return InvokerUtil.lookupOpener( "lobattribute:lookup", [
                     onselect: { o->
                         if( entity.attributes.find{ it.objid == o.objid } )
                             throw new Exception("You have already added this attribute.")
-                        selectedItem.name = o.name;
-                        selectedItem.objid = o.objid;
+                        def m = [:];
+                        m.lobid = entity.objid;
+                        m.lobattributeid = o.objid;
+                        m.name = o.name;
+                        service.addAttribute( m );
+                        entity.attributes << m;
+                        listHandler.reload();
                     }
                 ]);
+            }
+            
+            void removeAttribute() {
+                if(!selectedItem) return;
+                if( MsgBox.confirm("You are about to delete this attribute. Continue?") ) {
+                    service.removeAttribute( selectedItem );
+                    entity.attributes.remove(selectedItem);
+                    listHandler.reload();
+               }
             }
             
             def listHandler = [
                 fetchList: {o->
                     return entity.attributes
-                },
-                onAddItem: {o->
-                    entity.attributes.add(o)
-                },
-                onRemoveItem: {o->
-                    if( MsgBox.confirm("You are about to delete this attribute. Continue?") ) {
-                        entity.attributes.remove(o)
-                        return true
-                    }
-                    return false
                 }
-            ] as EditorListModel;
+            ] as BasicListModel;
         }
         ]]>        
         

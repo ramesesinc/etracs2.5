@@ -1,0 +1,24 @@
+import com.rameses.annotations.*;
+import com.rameses.util.*;
+import java.rmi.server.*;
+import com.rameses.services.extended.*;
+
+public class BusinessInfoService extends ActiveCrudListService {
+
+	@ActiveDB("business")
+	def em;
+
+	@ProxyMethod
+	public def getColumns(o) {
+		return [
+			[name:'bin', caption:'Business ID'],
+			[name:'permitee.name', caption:'Permitee'],
+			[name:'tradename', caption:'Trade Name'],
+			[name:'state', caption:'State'],
+		];
+	}
+
+	void beforeList(o) {
+		o.state = o._tag;
+	}
+}

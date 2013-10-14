@@ -1,17 +1,32 @@
 <workunit>
     <invokers>
-        <invoker type="lob:formActions" action="create" caption="Add Attribute" target="popup"/>
+        <invoker type="lobattribute_lookup:formActions" action="create" caption="Add Attribute" target="popup"/>
     </invokers>
     <code>
         <![CDATA[
-            import com.rameses.rcp.annotations.*
-            import com.rameses.osiris2.common.*
+            import com.rameses.rcp.annotations.*;
+            import com.rameses.osiris2.common.*;
+            import com.rameses.rcp.common.*;
             
-            class LobAttributeController extends CRUDController
-            {
+            class LobAttributeController extends CRUDController {
+            
                 String serviceName = 'LobAttributeService'
                 String entityName = 'lobattribute'
                 String prefixId = 'LOBA'
+                
+                @Caller
+                def caller;
+                
+                def doOk() {
+                    super.save();
+                    caller.reload();
+                    return "_close";
+                }
+                
+                def doCancel() {
+                    return "_close";
+                }
+                
             }
         ]]>
     </code>

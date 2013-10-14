@@ -1,0 +1,70 @@
+<workunit extends="wtemplates/gov/treasury/BasicCashReceiptController.xml">
+    <invokers>
+        <invoker type="collectiontype:handler" caption="Business Permit Licensing" 
+            name="bpls"  formno="51" formtype="serial" index="0" />
+    </invokers>
+    
+    <code>
+        <![CDATA[    
+        import com.rameses.rcp.annotations.*
+        import com.rameses.rcp.common.*
+        import com.rameses.osiris2.client.*
+        import com.rameses.osiris2.common.*
+        import com.rameses.enterprise.treasury.controllers.*
+        
+        class  BPLSCollectionTypeController {
+
+            @Caller 
+            def caller 
+            
+            @Service("BusinessAccountService")
+            def service;
+            
+            def selectedItem;
+            
+            def taxFeeTypes = ["TAX", "REGFEE", "OTHERCHARGE"];
+            def billTypes = ["YEAR", "QTR"];
+            
+            def getEntity(){
+                return caller.entity
+            }
+            
+            def getLookupAccount() {
+                return InvokerUtil.lookupOpener("revenueitem:lookup", [
+                    onselect: { o->
+                        selectedItem.objid = o.objid;
+                        selectedItem.code = o.code;
+                        selectedItem.title = o.title;
+                        itemModel.refreshEditedCell();
+                    }
+                ]); 
+            }
+            
+            def itemModel = [
+                fetchList: {
+                    if( entity.items == null ) entity.items = [];
+                    return entity.items;
+                },
+                onAddItem: {o->
+                    service.create(o);
+                    entity.items << o;
+                },
+                onRemoveItem: {o->
+                    service.removeEntity(o);
+                    entity.items.remove(o);
+                },
+                onUpdateItem: { o->
+                    MsgBox.alert("updated");
+                }
+            ] as EditorListModel;
+            
+        }
+        ]]>
+        
+    </code>
+    
+    <pages>
+        <page name="default" template="com.rameses.gov.etracs.bpls.account.CollectionType"/>
+    </pages>
+    
+</workunit>

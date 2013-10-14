@@ -1,0 +1,6 @@
+<workunit extends="wtemplates/RuleMgmtController.xml" serviceName="RuleMgmtService" tag="bpbilling">
+    <invokers>
+        <invoker folderid="/explorer/rulemgmt/bpls" caption="BP Billing Rules" action="init" index="1" />
+        <invoker type="home.action" caption="BP Billing Rules" action="init" index="1" />
+    </invokers>
+</workunit>

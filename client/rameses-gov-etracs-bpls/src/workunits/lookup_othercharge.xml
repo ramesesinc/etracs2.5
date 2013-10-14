@@ -1,0 +1,6 @@
+<workunit extends="wtemplates/ServiceLookupController.xml" 
+    serviceName="BusinessAccountLookupService" tag="OTHERCHARGE">
+    <invokers>
+        <invoker type="othercharge:lookup" caption="Lookup Other Charge" target="popup"/>
+    </invokers>
+</workunit>

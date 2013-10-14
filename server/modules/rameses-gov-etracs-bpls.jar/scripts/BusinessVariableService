@@ -1,12 +1,10 @@
 import com.rameses.annotations.*;
 import com.rameses.services.extended.*;
 
-class BusinessVariableService extends AbstractCrudListService
-{
-	@PersistenceContext("main")
-	def em;
+class BusinessVariableService extends ActiveCrudListService {
 
-	String schemaName = 'businessvariable'
+	@ActiveDB("businessvariable")
+	def em;
 
 	@ProxyMethod
 	public def getColumns( def p ) {
@@ -15,5 +13,9 @@ class BusinessVariableService extends AbstractCrudListService
 			[name:"caption", caption:"Caption"],
 			[name:"datatype", caption:"Data Type"]
 		]
+	}
+
+	void beforeCreate(o) {
+		o.objid = o.name;
 	}
 }

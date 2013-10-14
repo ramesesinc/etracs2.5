@@ -1,12 +1,13 @@
 import com.rameses.annotations.*;
 import com.rameses.services.extended.*;
 
-class LobService extends AbstractCrudListService {
+class LobService extends ActiveCrudListService {
 
-	@PersistenceContext("main")
+	@ActiveDB("lob")
 	def em;
 
-	String schemaName = 'lob'
+	@ActiveDB("lobclassification")
+	def classification;
 
 	@ProxyMethod
 	public def getColumns( def p ) {
@@ -16,29 +17,25 @@ class LobService extends AbstractCrudListService {
 		]	
 	}
 
-	public void afterCreate( Object data ) {
-		insertAttributes(data)
+	@ProxyMethod
+	public void addAttribute( def o ) {
+		em.create( o, "attribute" );				
 	}
 
-	public void afterUpdate( Object data ) {
-		insertAttributes(data)
+	@ProxyMethod
+	public void removeAttribute( o ) {
+		em.delete( o, "attribute" );				
 	}
 
-	private void insertAttributes( entity ) {
-		em.sqlContext.createNamedExecutor("lob:removeAttributes").setParameter("lobid", entity.objid).execute()
-		entity.attributes.each{li->
-			def m = [
-				lobid: entity.objid,
-				lobattributeid: li.objid
-			]
-			em.create("lob:lob_lobattribute", m)
-		}
+	public void beforeRemoveEntity( def data ) {
+		em.removeAttributes([lobid: data.objid]);
 	}
 
-	public void afterOpen( Object data ) {
-		data.classification = em.read("lobclassification", data.classification)
-		data.attributes = em.sqlContext.createNamedQuery("lob:getAttributes")
-							.setParameter("lobid", data.objid)
-							.resultList
+	public void afterOpen( def data ) {
+		data.classification = classification.read(data.classification);
+		data.attributes = em.getAttributes([lobid: data.objid]);
 	}	
+
+
+
 }
