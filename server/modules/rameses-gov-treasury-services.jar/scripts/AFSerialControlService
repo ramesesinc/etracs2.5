@@ -47,15 +47,14 @@ class AFSerialControlService {
 			
 		def z = em.findActiveControlForActivation(m);
 		if(z) {
-			throw new Exception("A stub is currently active. Deactivate first existing stub");
+			em.deactivateControl( z )
 		}
-		else {
-			int test = em.reactivateControl(m);
-			if(test==0) {
-				em.activateControl(m);
-			}
-		}		
+		int test = em.reactivateControl(m);
+		if(test==0) {
+			em.activateControl(m);
+		}
 	}
+
 
 	@ProxyMethod
 	public void deactivateControl(def p) {

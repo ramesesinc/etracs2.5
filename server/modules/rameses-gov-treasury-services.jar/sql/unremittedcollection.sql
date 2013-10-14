@@ -11,3 +11,4 @@ WHERE c.collector_objid = $P{collectorid}
 	OR c.paidby LIKE $P{searchtext}
 	OR c.payer_name LIKE $P{searchtext} )
 ORDER BY c.formno, c.receiptno 
+

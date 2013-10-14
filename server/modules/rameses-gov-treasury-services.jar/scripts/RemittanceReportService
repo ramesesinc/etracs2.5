@@ -23,7 +23,7 @@ class RemittanceReportService  {
 		def remittance = rem.clone()
 		remittance.collectiontype = em.sqlContext.createNamedQuery('remittancereport:getRCDCollectionType').setParameter('remittanceid', remittance.objid ).resultList
 		remittance.collectionsummaries = em.sqlContext.createNamedQuery('remittancereport:getRCDCollectionSummaries').setParameter('remittanceid', remittance.objid ).resultList
-		remittance.remittedforms = afremSvc.getRemittedAFSerial( remittance)
+		remittance.remittedforms = getRemittedSerials(rem)
 		remittance.otherpayments = em.sqlContext.createNamedQuery('remittancereport:getRCDOtherPayment').setParameter('remittanceid', remittance.objid ).resultList
 		remittance.nonserialremittances = afremSvc.getRemittedCashTickets( remittance)
 		remittance.nonserialsummary = afremSvc.getRemittedCashTickets( remittance)
@@ -174,7 +174,7 @@ class RemittanceReportService  {
 		return  [ header  : header, items  	: items]
 	}
 
-
+	
 	@ProxyMethod 
 	def getFundlist( remittanceid ) {
 		return em.sqlContext.createNamedQuery('remittancereport:getFundlist').setParameter('remittanceid', remittanceid ).resultList
@@ -184,5 +184,78 @@ class RemittanceReportService  {
 	def getCollectiontypelist( remittanceid ) {
 		return em.sqlContext.createNamedQuery('remittancereport:getCollectionType').setParameter('remittanceid', remittanceid ).resultList
 	}
+
+	private def getRemittedSerials(remittance) {
+		def list = afremSvc.getRemittedAFSerial( remittance)
+		def items = []
+		def groups = list.groupBy{it.formno}
+		groups.each{k, v ->
+		    buildRange(items, v)
+		}
+
+		items.sort{ a,b -> 
+		    def sa = a.formno + a.endingstartseries
+		    def sb = b.formno + b.endingstartseries    
+		    return sa <=> sb
+		}
+		return items;
+	}	
+
+	void buildRange(items, list) {
+		if (!list) 
+	        return
+	    
+	    if (list.size() == 1){
+	        items << list[0] 
+	        return
+	    }
+	    
+	    def useditems = list.findAll{
+	        ! (it.endingstartseries.toString().endsWith('01') || it.endingstartseries.toString().endsWith('51'))
+	    }
+	    
+	    useditems.each{ items << it }
+
+	    list.removeAll(useditems)    
+	    
+	    def prevseries = 0
+	    def qty = 0
+	    def start = null
+	    def end = null
+	    
+	    list.each{
+	        if ( prevseries + 1 == it.endingstartseries || prevseries == 0){
+	            if ( !start ) start = it;
+	            end = it;
+	            qty += 50
+	        }
+	        else {
+	            items << createItem(start, end, qty)
+	            start = it;
+	            end = it;
+	            qty = 50
+	        }
+	        prevseries = it.endingendseries
+	    }
+	    
+	    items << createItem(start, end, qty)
+	}
+
+	def createItem(start, end, qty) {
+		return  [
+        	formno: start.formno,
+        	receivedstartseries: start.receivedstartseries  ? start.receivedstartseries: null ,
+        	receivedendseries : start.receivedstartseries ? end.endingendseries: null ,
+        	qtyreceived : start.receivedendseries ? qty : null,
+        	beginstartseries: start.beginstartseries ? start.beginstartseries: null ,
+        	beginendseries : start.beginstartseries ? end.endingendseries: null ,
+        	qtybegin : start.beginendseries ? qty : null,
+        	endingstartseries:  start.receivedstartseries ? start.receivedstartseries: start.beginstartseries ,
+        	endingendseries: end.endingendseries ,
+            qtyending  : qty,
+        ]
+
+	}
+
 
 }

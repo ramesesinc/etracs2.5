@@ -48,6 +48,10 @@ public class BatchCaptureCollectionService extends ActiveCrudService {
 		entity.state = 'DRAFT'
 		entity.org =  [objid:env.ORGID, name:env.ORGNAME]
 		entity.txndate = dtSvc.serverDate
+		entity.paymenttype='CASH'
+		entity.totalcash = 0.0
+		entity.totalnoncash = 0.0
+		entity.amount = 0.0
 		return entity;
 	}
 

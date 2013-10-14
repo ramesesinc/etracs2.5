@@ -10,10 +10,10 @@ package com.rameses.gov.treasury.af;
  *
  * @author  compaq
  */
-public class CollectorQueryPanel extends javax.swing.JPanel {
+public class CollectorQueryPanel_1 extends javax.swing.JPanel {
     
     /** Creates new form QueryFormPanel */
-    public CollectorQueryPanel() {
+    public CollectorQueryPanel_1() {
         initComponents();
     }
     
@@ -26,6 +26,8 @@ public class CollectorQueryPanel extends javax.swing.JPanel {
     private void initComponents() {
         xComboBox1 = new com.rameses.rcp.control.XComboBox();
         jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        xComboBox2 = new com.rameses.rcp.control.XComboBox();
 
         setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 0, 5, 0));
         xComboBox1.setExpression("#{item.name}");
@@ -36,6 +38,14 @@ public class CollectorQueryPanel extends javax.swing.JPanel {
 
         jLabel1.setText("Collector :");
 
+        jLabel2.setText("SubCollector :");
+
+        xComboBox2.setExpression("#{item.name}");
+        xComboBox2.setImmediate(true);
+        xComboBox2.setItems("subcollectorlist");
+        xComboBox2.setName("subcollector");
+        xComboBox2.setPreferredSize(new java.awt.Dimension(200, 22));
+
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -45,20 +55,28 @@ public class CollectorQueryPanel extends javax.swing.JPanel {
                 .add(jLabel1)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(xComboBox1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(13, 13, 13)
+                .add(jLabel2)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(xComboBox2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                 .add(xComboBox1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .add(jLabel1))
+                .add(jLabel1)
+                .add(jLabel2)
+                .add(xComboBox2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
         );
     }// </editor-fold>//GEN-END:initComponents
     
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private com.rameses.rcp.control.XComboBox xComboBox1;
+    private com.rameses.rcp.control.XComboBox xComboBox2;
     // End of variables declaration//GEN-END:variables
     
 }
