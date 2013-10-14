@@ -46,6 +46,11 @@ class CashReceiptInterceptor {
 	public def postAFControl(def evt) { 
 		def result = evt.result;
 		em.updateNextSeries([controlid:result.controlid]);
+
+		if( em.findActiveControrForDeactivation([controlid:result.controlid]) ) {
+			em.deactivateControl([objid:result.controlid])
+		}
+
 	}
 
 	/**********************************************************************

@@ -35,9 +35,9 @@
                 def checks = [];
                 def dates = []
                 reportData.paymentitems.each{
-                    println "check 0-> " + it 
                     checks << it.bank + ' - ' + it.checkno
-                    dates << sdf.format(it.checkdate);
+                    if( it.checkdate instanceof String ) it.checkdate = sdf.parse(it.checkdate) 
+                    dates << sdf.format( it.checkdate );
                 }
                 reportData.checkno = checks.join(',')
                 reportData.checkdate = dates.join(',');

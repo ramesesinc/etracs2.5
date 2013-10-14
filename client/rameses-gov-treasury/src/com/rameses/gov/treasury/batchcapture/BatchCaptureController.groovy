@@ -92,11 +92,12 @@ public class BatchCaptureController  {
         def amt = 0.0;
         batchItems.each {
             amt += (it.amount? it.amount: 0.0);
-            it.totalcash = it.amount? it.amount: 0.0
+            if( ! it.totalnoncash) it.totalcash= it.amount;
+
+            entity.totalcash += it.totalcash
+            entity.totalnoncash += it.totalnoncash
+            entity.totalamount += it.amount 
         }
-        entity.totalamount = amt;
-        entity.totalcash = amt;
-        entity.totalnoncash = 0.0
         binding?.refresh('entity.totalamount'); 
     }
             
@@ -117,6 +118,7 @@ public class BatchCaptureController  {
             m.totalcash = 0.0
             m.totalnoncash = 0.0
             m.collector = entity.collector;
+            m.paymentitems = []
             return m;
         },
 
@@ -126,7 +128,9 @@ public class BatchCaptureController  {
                 calculateHandler: { calculate(); } 
             ]; 
         },
-
+        onValidateItem:{
+            if( true) throw new Exception("fire validate")
+        },
         onAddItem: { o->
             batchItems << o; 
             moveNext();
@@ -135,7 +139,7 @@ public class BatchCaptureController  {
         onCommitItem:{o-> 
             calculate();
         },
-
+        
         isColumnEditable:{item, colname-> 
             if (colname != 'amount') return true;
             if (!item.items) return false; 
