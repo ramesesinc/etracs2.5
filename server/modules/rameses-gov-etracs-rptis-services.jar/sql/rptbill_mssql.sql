@@ -280,7 +280,10 @@ WHERE rl.objid = $P{rptledgerid}
  AND rli.year >= $P{currentyr}
  AND rli.qtrly = 1 
  AND rliq.state = 'OPEN'
- AND rliq.qtr <= $P{billtoqtr}
+ AND rliq.qtr <= (CASE WHEN $P{billtoyear} > $P{currentyr} AND rli.year < $P{billtoyear} 
+ 					THEN 4
+ 					ELSE $P{billtoqtr} 
+ 				END)
 GROUP BY rli.year, rliq.qtr, rlf.tdno, rlf.assessedvalue, rliq.qtrlyav, rl.barangayid 
 ORDER BY rli.year, rliq.qtr 
 

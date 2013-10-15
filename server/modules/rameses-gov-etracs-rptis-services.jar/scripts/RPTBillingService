@@ -389,7 +389,7 @@ public class RPTBillingService
 	            ledger.firstqtrpaidontime     = determineFirstQtrPaidOnTime( pdate, bill, it )
 	            ledger.qtrlypaymentavailed    = determineQtrlyPaymentAvailed( bill, it )
 				ledger.qtrlypaymentpaidontime = util.toBoolean(it.qtrlypaymentpaidontime, false )
-	            ledger.fullpayment            = ( bill.billtoqtr == 4 && it.lastqtrpaid == 4 ? true : false )
+	            ledger.fullpayment            = ( bill.billtoqtr == 4 && rl.lastqtrpaid == 4 ? true : false )
 	            ledger.advancepayment         = bill.advancepayment 
 	            ledger.paidyear				  = pdate.year 
 	            ledger.classification_objid	  = it.classification.objid
