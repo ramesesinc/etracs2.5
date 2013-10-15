@@ -9,7 +9,7 @@ import com.rameses.osiris2.reports.*
 import com.rameses.gov.etracs.rpt.common.RPTUtil;
 
 
-public class RPTLedgerController
+public class RPTLedgerController 
 {
     @FormTitle
     @FormId
@@ -33,10 +33,13 @@ public class RPTLedgerController
 
     def MODE_READ   = 'read'
     def MODE_EDIT   = 'edit'
-        
-    
+            
     String getTitle(){
-        return 'Realty Tax Ledger'
+        return 'Realty Tax Ledger (' + entity.state + ')'
+    }
+    
+    def getFormActions(){
+        return InvokerUtils.lookupOpeners('rptledger:formActions', [entity:entity])
     }
     
     void open(){

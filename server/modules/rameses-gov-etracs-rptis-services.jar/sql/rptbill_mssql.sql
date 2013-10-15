@@ -152,6 +152,7 @@ SELECT
 	rl.qtrlypaymentpaidontime,
 	rl.lastitemyear,
 	rl.faasid, 
+	rl.nextbilldate,
 	f.tdno,
 	f.owner_name,
 	f.administrator_name,

@@ -45,6 +45,7 @@ public class RPTBillingService
             qtrlypaymentavailed : false, 
             advancepayment      : false,
             currentdate 		: pdate.date,
+            cy 					: pdate.year,
             ledgerids 			: [],
             ledgers 			: [],
 		]
@@ -458,6 +459,8 @@ public class RPTBillingService
 	void loadBillItems(bill){
 		def params = buildParams(bill)
 		bill.ledgers.each{ ledger ->
+			bill.expirydate = ledger.nextbilldate
+			bill.validuntil = dtSvc.add(bill.expirydate, '-1d')
 			params.rptledgerid = ledger.objid
 			ledger.items = em.getPreviousBillItems(params).each{ 
 								it.total = it.basicnet + it.sefnet + it.firecode 
