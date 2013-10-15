@@ -184,7 +184,8 @@ FROM (
 		sefint,
 		sefdisc,
 		firecode,
-		amount
+		amount,
+		fromyear
 	FROM rptreceipt_capture rc 
 	WHERE rptledgerid = $P{rptledgerid}	
 
@@ -221,7 +222,8 @@ FROM (
 		SUM(t.sefint) AS sefint,
 		SUM(t.sefdisc) AS sefdisc,
 		SUM(t.firecode) AS firecode,
-		SUM(t.amount) AS amount
+		SUM(t.amount) AS amount,
+		MIN(fromyear) AS fromyear
 	FROM (
 		SELECT 
 			cr.receiptno,
@@ -264,6 +266,7 @@ FROM (
 		t.paidby_name,
 		t.paidby_address,
 		t.collector
+		t.fromyear 
 ) x 
 ORDER BY x.receiptdate DESC 
 
