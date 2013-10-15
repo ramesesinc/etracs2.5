@@ -64,6 +64,7 @@ public abstract class AbstractCertificationController
         entity.purpose          = "whatever legal purposes it may serve him/her"; 
         entity.oramount         = 0.0;
         entity.stampamount      = 0.0;
+        entity.office           = 'assessor'
         entity.official         = false;
         certbytd                = false;
         mode = MODE_CREATE;

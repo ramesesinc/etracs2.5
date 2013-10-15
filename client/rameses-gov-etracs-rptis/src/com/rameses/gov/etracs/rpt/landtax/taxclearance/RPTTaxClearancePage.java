@@ -65,6 +65,7 @@ public class RPTTaxClearancePage extends javax.swing.JPanel {
         xLookupField2.setCaptionWidth(110);
         xLookupField2.setExpression("#{entity.taxpayer.name}");
         xLookupField2.setHandler("lookupTaxpayer");
+        xLookupField2.setName("taxpayer");
         xLookupField2.setPreferredSize(new java.awt.Dimension(350, 19));
         xLookupField2.setRequired(true);
         formPanel1.add(xLookupField2);
@@ -218,7 +219,7 @@ public class RPTTaxClearancePage extends javax.swing.JPanel {
                 , new Object[]{"nullWhenEmpty", true}
                 , new Object[]{"editable", false}
                 , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
-                , new Object[]{"typeHandler", new com.rameses.rcp.common.DecimalColumnHandler("#,##0.00", -1.0, -1.0, false)}
+                , new Object[]{"typeHandler", new com.rameses.rcp.common.DecimalColumnHandler("#,##0.00", -1.0, -1.0, false, 0)}
             }),
             new com.rameses.rcp.common.Column(new Object[]{
                 new Object[]{"name", "totalav"}
@@ -231,7 +232,7 @@ public class RPTTaxClearancePage extends javax.swing.JPanel {
                 , new Object[]{"nullWhenEmpty", true}
                 , new Object[]{"editable", false}
                 , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
-                , new Object[]{"typeHandler", new com.rameses.rcp.common.DecimalColumnHandler("#,##0.00", -1.0, -1.0, false)}
+                , new Object[]{"typeHandler", new com.rameses.rcp.common.DecimalColumnHandler("#,##0.00", -1.0, -1.0, false, 0)}
             }),
             new com.rameses.rcp.common.Column(new Object[]{
                 new Object[]{"name", "lastyearpaid"}

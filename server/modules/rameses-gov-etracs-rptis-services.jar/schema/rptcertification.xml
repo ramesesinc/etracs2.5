@@ -24,6 +24,7 @@
 		<field name="createdbyid" />
 		<field name="createdby" required="true" />
 		<field name="createdbytitle" required="true" />
+		<field name="office" required="true" />
 	</element>
 
 	<element name="item" tablename="rptcertificationitem">

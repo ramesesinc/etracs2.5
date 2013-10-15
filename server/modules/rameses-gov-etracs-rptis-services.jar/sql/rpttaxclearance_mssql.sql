@@ -82,9 +82,10 @@ SELECT
 	xr.txndate AS ordate,
 	SUM(ri.basic + ri.basicint - ri.basicdisc + ri.sef + ri.sefint - ri.sefdisc) AS oramount,
 	CASE WHEN (MIN(ri.qtr) = 1 AND MAX(ri.qtr) = 4) OR ((MIN(ri.qtr) = 0 AND MAX(ri.qtr) = 0))
-		THEN  CONCAT('FULL ', ri.year)
+		THEN  'FULL ' + CONVERT(VARCHAR(4), ri.year)
 		ELSE
-			CONCAT(MIN(ri.qtr), 'Q,', ri.year, ' - ', MAX(ri.qtr), 'Q,', ri.year) 
+			CONVERT(VARCHAR(1),MIN(ri.qtr)) + 'Q,' + CONVERT(VARCHAR(4),ri.year) + ' - ' + 
+			CONVERT(VARCHAR(1),MAX(ri.qtr)) + 'Q,' + CONVERT(VARCHAR(4),ri.year) 
 	END AS period
 FROM rptcertificationitem rci 
 	INNER JOIN rptledger rl ON rci.refid = rl.objid 
@@ -104,9 +105,10 @@ SELECT
 	rc.receiptdate AS ordate,
 	SUM(rc.amount) AS oramount,
 	CASE WHEN MIN(rc.fromqtr) = 1 AND MAX(rc.toqtr) = 4
-		THEN  CONCAT('FULL ', rc.fromyear)
+		THEN  'FULL ' + CONVERT(VARCHAR(4), rc.fromyear)
 		ELSE
-			CONCAT(MIN(rc.fromqtr), 'Q,', rc.fromyear,  ' - ', MAX(rc.toqtr), 'Q,', rc.toyear) 
+			CONVERT(VARCHAR(1),MIN(rc.fromqtr)) + 'Q,' + CONVERT(VARCHAR(4),rc.fromyear) + ' - ' + 
+			CONVERT(VARCHAR(1),MAX(rc.toqtr)) + 'Q,' + CONVERT(VARCHAR(4),rc.toyear) 
 	END AS period
 FROM rptcertificationitem rci 
 	INNER JOIN rptledger rl ON rci.refid = rl.objid 

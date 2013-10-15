@@ -31,9 +31,18 @@ class RPTTaxClearanceController
     def selectedItem;
     
     String title = 'Realty Tax Clearance'
+            
+                
+    @PropertyChangeListener
+    def listener = [
+        'entity.year|entity.qtr|taxpayer' : {
+            loadProperties()
+        },
+    ]
     
     def init(){
         entity = svc.initClearance()
+        entity.office = 'landtax'
         mode = MODE_CREATE;
         return 'default'
     }

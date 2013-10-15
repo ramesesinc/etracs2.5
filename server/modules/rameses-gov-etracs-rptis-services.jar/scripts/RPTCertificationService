@@ -32,9 +32,9 @@ class RPTCertificationService
 	public def getList( params ) {
     	params.searchtext = (params.searchtext ? params.searchtext : '') + '%'
         def filters = [
-            ' and txnno LIKE $P{searchtext}',
-            ' and requestedby LIKE $P{searchtext}',
-            ' and opener LIKE $P{searchtext}',
+            ' and office = $P{office} and txnno LIKE $P{searchtext}',
+            ' and office = $P{office} and requestedby LIKE $P{searchtext}',
+            ' and office = $P{office} and opener LIKE $P{searchtext}',
         ]
         return util.getListFromQuery( 'rptcertification:getList' , filters, params, 'objid' )
 	}
@@ -63,7 +63,6 @@ class RPTCertificationService
 
 	@ProxyMethod
 	public def createItem( item ) {
-		em.validate(SCHEMA_ITEM, item)	
 		em.create(SCHEMA_ITEM, item)	
 	}
 
