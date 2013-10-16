@@ -18,6 +18,7 @@
             
             def status
             def statuslist = ['DRAFT', 'FORPOSTING', 'POSTED'];
+            def searchtext
             
             
             @PropertyChangeListener
@@ -26,16 +27,13 @@
                     search();
                 }
             ]   
-            
-            protected void onbeforeFetchList(Map m) {
-                m.state = status ? status : '%';
+            /*
+            protected void onbeforeFetchList(Map m) { 
+                m.searchtext = searchtext ? searchtext   
             }
+            */
             
         }
         
-    </code>
-    <pages>
-        <page name='queryform' template='com.rameses.gov.treasury.batchcapture.StatusQueryPanel'/>
-    </pages>
-    
+    </code> 
 </workunit>

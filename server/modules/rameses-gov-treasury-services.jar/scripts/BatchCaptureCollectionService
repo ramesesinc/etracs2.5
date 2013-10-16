@@ -15,6 +15,9 @@ public class BatchCaptureCollectionService extends ActiveCrudService {
 	@Service("CashReceiptService")
 	def crSvc;
 
+	@Service("CashReceiptVoidService")
+	def voidSvc;
+
 	@Env
 	def env
 
@@ -72,6 +75,7 @@ public class BatchCaptureCollectionService extends ActiveCrudService {
 	@ProxyMethod
 	public def post(entity){
 		entity.batchitems.each {bi->
+			bi.batchcapture = true
 			bi.collector = entity.collector;
 			bi.formtype = entity.formtype;
 			bi.formno = entity.formno;
@@ -82,15 +86,31 @@ public class BatchCaptureCollectionService extends ActiveCrudService {
 			bi.cashchange = 0
 			bi.totalcredit = 0
 			bi.user = entity.capturedby
-			bi.items.each { it.remarks = bi.remarks; }
+			bi.items.each { 
+				it.amount = it.amount ? it.amount : bi.amount ;
+				it.remarks = bi.remarks; 
+			}
 			crSvc.post(bi);
 		}
+		entity.batchitems.findAll{ it.voided == 1 }.each{
+			it.collector = entity.collector;
+			def info = [ receipt: it, reason: "CANCELLED" ]
+			voidSvc.post( info )
+		}
+
 		entity.state = 'POSTED'
 		entity.postedby_objid = env.USERID;
 		entity.postedby_name = env.USER;
 		entity.postedby_date = dtSvc.serverDate;
 		em.post( entity )
 		return entity 
+	}
+
+	@ProxyMethod
+	public void submitForOnlineRemittance(entity) { 	
+		entity.batchitems.each {bi->
+			em.updateCashReceiptState(bi);
+		}
 	}
 
 	@ProxyMethod
@@ -108,6 +128,7 @@ public class BatchCaptureCollectionService extends ActiveCrudService {
 
 	@ProxyMethod
 	public def getList(def params ) {
+		params.searchtext = params.searchtext ? params.searchtext + "%" : "%"
 		return em.getList(params);
 	}
 
