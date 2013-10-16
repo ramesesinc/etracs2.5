@@ -64,7 +64,6 @@ public class RPTBillingService
 	* Called by RPTBilling Task to recalculate and update the
 	* taxes and penalties of the specified ledger
 	---------------------------------------------------------------*/
-	@Async
 	@ProxyMethod
 	public void calculateBillByLedgerIdAsync(ledgerid){
 		println 'Recalculating Ledger -> ' + ledgerid 

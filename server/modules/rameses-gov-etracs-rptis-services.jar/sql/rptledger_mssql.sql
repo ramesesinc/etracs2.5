@@ -265,7 +265,7 @@ FROM (
 		t.receiptdate,
 		t.paidby_name,
 		t.paidby_address,
-		t.collector
+		t.collector,
 		t.fromyear 
 ) x 
 ORDER BY x.receiptdate DESC 
