@@ -107,6 +107,8 @@ public class RPTCertificationPage extends javax.swing.JPanel {
         formPanel1.add(xTextField8);
 
         jScrollPane1.setPreferredSize(new java.awt.Dimension(0, 77));
+        xTextArea1.setLineWrap(true);
+        xTextArea1.setWrapStyleWord(true);
         xTextArea1.setCaption("Purpose");
         xTextArea1.setCaptionWidth(135);
         xTextArea1.setName("entity.purpose");
