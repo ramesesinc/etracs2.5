@@ -52,7 +52,7 @@
 			</band>
 		</background>
 		<title>
-			<band height="372"  isSplitAllowed="true" >
+			<band height="343"  isSplitAllowed="true" >
 				<textField isStretchWithOverflow="false" pattern="MMM dd, yyyy" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						mode="Transparent"
@@ -97,7 +97,7 @@
 					<reportElement
 						mode="Transparent"
 						x="241"
-						y="320"
+						y="305"
 						width="102"
 						height="12"
 						forecolor="#000000"
@@ -117,7 +117,7 @@
 					<reportElement
 						mode="Transparent"
 						x="241"
-						y="335"
+						y="320"
 						width="102"
 						height="12"
 						forecolor="#000000"
@@ -136,9 +136,9 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						mode="Transparent"
-						x="407"
-						y="312"
-						width="174"
+						x="382"
+						y="301"
+						width="199"
 						height="14"
 						forecolor="#000000"
 						backcolor="#FFFFFF"
@@ -151,7 +151,7 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
 						<font fontName="SansSerif" pdfFontName="Helvetica" size="8" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$P{TREASURERNAME}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$P{TREASURERNAME} == null ? "LOUELA S. MAYBITUIN" : $P{TREASURERNAME}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -236,9 +236,9 @@
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="407"
-						y="345"
-						width="174"
+						x="382"
+						y="325"
+						width="199"
 						height="14"
 						key="textField-10"/>
 					<box></box>
