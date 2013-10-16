@@ -79,4 +79,9 @@ class AFSerialControlService {
 			em.activateAssignSubcollector(m);
 		}
 	}
+
+	@ProxyMethod
+	public void unassign(def p) {
+		em.unassignsubcollector([controlid:p.objid]) 
+	}
 }
