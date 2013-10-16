@@ -58,6 +58,7 @@ class RPTCertificationService
 		cert.givenyear = util.formalizeDate(cert.txndate, 'yyyy' )
 		validate(cert)
 		em.create(SCHEMA_NAME, cert)
+		replaceAmpersand(cert)
 		return cert 
 	}
 
@@ -75,7 +76,14 @@ class RPTCertificationService
 		cert.givenday = util.formalizeDate(cert.txndate, 'd' )
 		cert.givenmonth = util.formalizeDate(cert.txndate, 'MMMMM' )
 		cert.givenyear = util.formalizeDate(cert.txndate, 'yyyy' )
+		replaceAmpersand(cert)
 		return cert 
+	}
+
+	void replaceAmpersand(cert){
+		cert.taxpayer?.name?.replaceAll('&', '&amp;')
+		cert.requestedby?.replaceAll('&', '&amp;')
+		cert.purpose?.replaceAll('&', '&amp;')
 	}
 
 	@ProxyMethod
