@@ -96,9 +96,9 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						mode="Transparent"
-						x="241"
+						x="263"
 						y="305"
-						width="102"
+						width="114"
 						height="12"
 						forecolor="#000000"
 						backcolor="#FFFFFF"
@@ -116,9 +116,9 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						mode="Transparent"
-						x="241"
+						x="263"
 						y="320"
-						width="102"
+						width="114"
 						height="12"
 						forecolor="#000000"
 						backcolor="#FFFFFF"
@@ -136,9 +136,9 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						mode="Transparent"
-						x="382"
+						x="391"
 						y="301"
-						width="199"
+						width="190"
 						height="14"
 						forecolor="#000000"
 						backcolor="#FFFFFF"
@@ -148,7 +148,7 @@
 					<bottomPen lineWidth="0.0" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 </box>
-					<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
+					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
 						<font fontName="SansSerif" pdfFontName="Helvetica" size="8" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[$P{TREASURERNAME} == null ? "LOUELA S. MAYBITUIN" : $P{TREASURERNAME}]]></textFieldExpression>
@@ -236,13 +236,13 @@
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="382"
+						x="391"
 						y="325"
-						width="199"
+						width="190"
 						height="14"
 						key="textField-10"/>
 					<box></box>
-					<textElement textAlignment="Center" verticalAlignment="Middle">
+					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font fontName="SansSerif" pdfFontName="Helvetica" size="8" isBold="false"/>
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[$F{collector.name}]]></textFieldExpression>
