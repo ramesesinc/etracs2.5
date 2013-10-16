@@ -1,18 +1,18 @@
-<table>
-    <tr>
-        <th>Start Series</th>
-        <th>End series</th>
-        <th>Start Stub</th>        
-        <th>End Stub</th>
-        <th>Qty</th>
+<table >
+    <tr >
+        <th><font size="4">Start Series</font></th>
+        <th><font size="4">End Series</font></th>
+        <th><font size="4">Start Stub</font></th>        
+        <th><font size="4">End Stub</font></th>
+        <th><font size="4">Quantity</font></th>
     </tr>
     <%entity.items.each { %>
         <tr>
-            <td>${it.startseries}</td>
-            <td>${it.endseries}</td>
-            <td>${it.startstub}</td>
-            <td>${it.endstub}</td>
-            <td>${it.qtyissued}</td>
+            <td width="110"><font size="4">${it.startseries}</font></td>
+            <td width="110"><font size="4">${it.endseries}</font></td>
+            <td width="80"><font size="4">${it.startstub}</font></td>
+            <td width="80"><font size="4">${it.endstub}</font></td>
+            <td width="80"><font size="4">${it.qtyissued}</font></td>
         </tr>
     <% } %>
 </table>
