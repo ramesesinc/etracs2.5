@@ -1940,9 +1940,9 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						mode="Transparent"
-						x="327"
+						x="290"
 						y="74"
-						width="150"
+						width="187"
 						height="13"
 						forecolor="#000000"
 						backcolor="#FFFFFF"
@@ -2084,7 +2084,7 @@
 				<staticText>
 					<reportElement
 						mode="Transparent"
-						x="168"
+						x="174"
 						y="54"
 						width="73"
 						height="13"
@@ -2104,9 +2104,9 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						mode="Transparent"
-						x="168"
+						x="174"
 						y="74"
-						width="150"
+						width="108"
 						height="13"
 						forecolor="#000000"
 						backcolor="#FFFFFF"
@@ -2124,9 +2124,9 @@
 				<staticText>
 					<reportElement
 						mode="Transparent"
-						x="327"
+						x="290"
 						y="54"
-						width="54"
+						width="73"
 						height="12"
 						forecolor="#000000"
 						backcolor="#FFFFFF"
@@ -2245,9 +2245,9 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						mode="Transparent"
-						x="168"
+						x="174"
 						y="87"
-						width="150"
+						width="108"
 						height="10"
 						forecolor="#000000"
 						backcolor="#FFFFFF"
@@ -2265,9 +2265,9 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						mode="Transparent"
-						x="327"
+						x="290"
 						y="87"
-						width="150"
+						width="187"
 						height="10"
 						forecolor="#000000"
 						backcolor="#FFFFFF"
@@ -2387,7 +2387,7 @@
 						mode="Transparent"
 						x="1"
 						y="74"
-						width="157"
+						width="167"
 						height="13"
 						forecolor="#000000"
 						backcolor="#FFFFFF"
@@ -2407,7 +2407,7 @@
 						mode="Transparent"
 						x="1"
 						y="87"
-						width="157"
+						width="167"
 						height="10"
 						forecolor="#000000"
 						backcolor="#FFFFFF"
