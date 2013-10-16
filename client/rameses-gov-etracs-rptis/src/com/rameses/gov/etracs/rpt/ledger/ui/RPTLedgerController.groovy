@@ -49,9 +49,9 @@ public class RPTLedgerController
     }
     
     void loadItems(){
-        debits   = svc.getLedgerItems(ledger.objid)
+        //debits   = svc.getLedgerItems(ledger.objid)
         credits = svc.getLedgerCredits(ledger.objid)
-        debitListHandler.load();
+        //debitListHandler.load();
         paymentListHandler.load();
     }
 
