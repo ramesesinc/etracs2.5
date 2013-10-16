@@ -40,7 +40,11 @@ ORDER BY rl.state, f.tdno
 
 	
 [findApprovedLedgerByFaasId]
-SELECT * FROM rptledger WHERE faasid = $P{faasid} AND state = 'APPROVED' 
+SELECT rl.* , r.taxable 
+FROM rptledger rl 
+	INNER JOIN faas f ON rl.faasid = f.objid 
+	INNER JOIN rpu r ON f.rpuid = r.objid 
+WHERE rl.faasid = $P{faasid} AND rl.state = 'APPROVED' 
 
 
 [findLedgerByFaasId]	

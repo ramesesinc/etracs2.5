@@ -187,8 +187,13 @@ class RPTLedgerService
         if (!ledger)
             throw new Exception('Ledger does not exist or has already been deleted.')
             
-        if ( ledger.lastyearpaid < dtSvc.serverYear || (ledger.lastyearpaid == dtSvc.serverYear && ledger.lastqtrpaid < 4))
-            throw new Exception('Ledger has not yet been fully paid.')
+        if (util.isTrue(ledger.taxable)) {
+            if ( ledger.lastyearpaid < dtSvc.serverYear || (ledger.lastyearpaid == dtSvc.serverYear && ledger.lastqtrpaid < 4))
+                throw new Exception('Ledger has not yet been fully paid.')    
+        }
+        else {
+            em.updateLastYearQtrPaid([toyear:dtSvc.serverYear, toqtr:4, rptledgerid:ledger.objid])
+        }
     }
 
     @ProxyMethod
