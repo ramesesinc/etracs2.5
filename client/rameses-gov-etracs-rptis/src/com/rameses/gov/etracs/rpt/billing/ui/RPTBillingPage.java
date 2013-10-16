@@ -36,7 +36,6 @@ public class RPTBillingPage extends javax.swing.JPanel {
         xSeparator1 = new com.rameses.rcp.control.XSeparator();
         xNumberField1 = new com.rameses.rcp.control.XNumberField();
         xComboBox1 = new com.rameses.rcp.control.XComboBox();
-        xSeparator2 = new com.rameses.rcp.control.XSeparator();
         xCheckBox1 = new com.rameses.rcp.control.XCheckBox();
         xDateField1 = new com.rameses.rcp.control.XDateField();
         xSeparator3 = new com.rameses.rcp.control.XSeparator();
@@ -64,16 +63,16 @@ public class RPTBillingPage extends javax.swing.JPanel {
         xLabel1.setPreferredSize(new java.awt.Dimension(0, 19));
         formPanel1.add(xLabel1);
 
-        xSeparator1.setPreferredSize(new java.awt.Dimension(0, 20));
+        xSeparator1.setPreferredSize(new java.awt.Dimension(0, 15));
         javax.swing.GroupLayout xSeparator1Layout = new javax.swing.GroupLayout(xSeparator1);
         xSeparator1.setLayout(xSeparator1Layout);
         xSeparator1Layout.setHorizontalGroup(
             xSeparator1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 451, Short.MAX_VALUE)
+            .addGap(0, 525, Short.MAX_VALUE)
         );
         xSeparator1Layout.setVerticalGroup(
             xSeparator1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 20, Short.MAX_VALUE)
+            .addGap(0, 15, Short.MAX_VALUE)
         );
         formPanel1.add(xSeparator1);
 
@@ -97,22 +96,10 @@ public class RPTBillingPage extends javax.swing.JPanel {
         xComboBox1.setRequired(true);
         formPanel1.add(xComboBox1);
 
-        xSeparator2.setPreferredSize(new java.awt.Dimension(0, 20));
-        javax.swing.GroupLayout xSeparator2Layout = new javax.swing.GroupLayout(xSeparator2);
-        xSeparator2.setLayout(xSeparator2Layout);
-        xSeparator2Layout.setHorizontalGroup(
-            xSeparator2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 451, Short.MAX_VALUE)
-        );
-        xSeparator2Layout.setVerticalGroup(
-            xSeparator2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 20, Short.MAX_VALUE)
-        );
-        formPanel1.add(xSeparator2);
-
         xCheckBox1.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
         xCheckBox1.setCaption("");
         xCheckBox1.setCaptionWidth(90);
+        xCheckBox1.setCellPadding(new java.awt.Insets(5, 0, 0, 0));
         xCheckBox1.setMargin(new java.awt.Insets(0, 0, 0, 0));
         xCheckBox1.setName("bill.advancebill");
         xCheckBox1.setOpaque(false);
@@ -127,16 +114,16 @@ public class RPTBillingPage extends javax.swing.JPanel {
         xDateField1.setPreferredSize(new java.awt.Dimension(100, 19));
         formPanel1.add(xDateField1);
 
-        xSeparator3.setPreferredSize(new java.awt.Dimension(0, 20));
+        xSeparator3.setPreferredSize(new java.awt.Dimension(0, 10));
         javax.swing.GroupLayout xSeparator3Layout = new javax.swing.GroupLayout(xSeparator3);
         xSeparator3.setLayout(xSeparator3Layout);
         xSeparator3Layout.setHorizontalGroup(
             xSeparator3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 451, Short.MAX_VALUE)
+            .addGap(0, 525, Short.MAX_VALUE)
         );
         xSeparator3Layout.setVerticalGroup(
             xSeparator3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 20, Short.MAX_VALUE)
+            .addGap(0, 10, Short.MAX_VALUE)
         );
         formPanel1.add(xSeparator3);
 
@@ -161,15 +148,15 @@ public class RPTBillingPage extends javax.swing.JPanel {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(formPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 465, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(76, Short.MAX_VALUE))
+                .addComponent(formPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 539, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(447, 447, 447))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(formPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(34, Short.MAX_VALUE))
+                .addComponent(formPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 244, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(264, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
     
@@ -185,7 +172,6 @@ public class RPTBillingPage extends javax.swing.JPanel {
     private com.rameses.rcp.control.XLookupField xLookupField1;
     private com.rameses.rcp.control.XNumberField xNumberField1;
     private com.rameses.rcp.control.XSeparator xSeparator1;
-    private com.rameses.rcp.control.XSeparator xSeparator2;
     private com.rameses.rcp.control.XSeparator xSeparator3;
     // End of variables declaration//GEN-END:variables
     

@@ -19,6 +19,9 @@ class RPTTaxClearanceController
     @Service('RPTTaxClearanceService')
     def svc;
     
+    @Service('Var')
+    def var 
+    
     
     def MODE_CREATE = 'create';
     def MODE_PREVIEW = 'preview';
@@ -42,6 +45,8 @@ class RPTTaxClearanceController
     
     def init(){
         entity = svc.initClearance()
+        entity.certifiedby = var.LANDTAX_CERTIFIEDBY
+        entity.certifiedbytitle = var.LANDTAX_CERTIFIEDBY_TITLE
         entity.office = 'landtax'
         mode = MODE_CREATE;
         return 'default'
