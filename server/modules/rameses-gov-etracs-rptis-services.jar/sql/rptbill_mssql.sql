@@ -176,6 +176,7 @@ FROM rptledger rl
 WHERE ${filters}
  AND rl.state = 'APPROVED'
  AND ( rl.lastyearpaid < $P{billtoyear} OR ( rl.lastyearpaid = $P{billtoyear} AND rl.lastqtrpaid <= $P{billtoqtr}))
+ORDER BY f.tdno  
 
 
 [getPreviousBillItems]

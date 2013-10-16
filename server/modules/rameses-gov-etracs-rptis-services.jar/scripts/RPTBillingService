@@ -53,6 +53,14 @@ public class RPTBillingService
 
 
 	@ProxyMethod
+	public def loadProperties(bill){
+		bill.billdate = dtSvc.serverDate
+		if (!bill.taxpayer) throw new Exception('Taxpayer is required.')
+		bill.taxpayerid = bill.taxpayer.objid
+		return  em.getBilledLedgers(buildParams(bill))
+	}
+
+	@ProxyMethod
 	public def generateBillByLedgerId(ledgerid){
 		def bill = initBill()
 		bill.billdate = dtSvc.serverDate

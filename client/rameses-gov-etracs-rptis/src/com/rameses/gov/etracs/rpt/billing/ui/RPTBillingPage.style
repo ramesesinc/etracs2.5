@@ -1,7 +1,8 @@
-"bill.billdate" [ bill.advancepayment == true ] {
+"bill.billdate" [ bill.advancebill == true ] {
     enabled:true;
 }
 
-"bill.billdate" [ bill.advancepayment == false ] {
+"bill.billdate" [ bill.advancebill == false ] {
     enabled:false;
 }
+
