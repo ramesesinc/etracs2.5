@@ -104,7 +104,7 @@ SELECT
 	rc.receiptno AS orno,
 	rc.receiptdate AS ordate,
 	SUM(rc.amount) AS oramount,
-	CASE WHEN MIN(rc.fromqtr) = 1 AND MAX(rc.toqtr) = 4
+	CASE WHEN MIN(rc.fromyear) = MAX(rc.toyear) AND MIN(rc.fromqtr) = 1 AND MAX(rc.toqtr) = 4
 		THEN  'FULL ' + CONVERT(VARCHAR(4), rc.fromyear)
 		ELSE
 			CONVERT(VARCHAR(1),MIN(rc.fromqtr)) + 'Q,' + CONVERT(VARCHAR(4),rc.fromyear) + ' - ' + 
@@ -114,6 +114,7 @@ FROM rptcertificationitem rci
 	INNER JOIN rptledger rl ON rci.refid = rl.objid 
 	INNER JOIN rptreceipt_capture rc on rl.objid = rc.rptledgerid
 WHERE rci.rptcertificationid = $P{rptcertificationid}
-  AND rc.fromyear = $P{year}
+  AND rc.fromyear <= $P{year}
+  AND rc.toyear >= $P{year}
   AND rc.toqtr <= $P{qtr}
 GROUP BY rc.receiptno, rc.receiptdate, rc.fromyear, rc.toyear 
