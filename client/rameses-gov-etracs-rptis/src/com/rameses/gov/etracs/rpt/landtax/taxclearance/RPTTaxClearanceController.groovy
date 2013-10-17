@@ -47,7 +47,8 @@ class RPTTaxClearanceController
         entity = svc.initClearance()
         entity.certifiedby = var.LANDTAX_CERTIFIEDBY
         entity.certifiedbytitle = var.LANDTAX_CERTIFIEDBY_TITLE
-        entity.office = 'landtax'
+        entity.office = 'landtax';
+        listHandler.reload();
         mode = MODE_CREATE;
         return 'default'
     }

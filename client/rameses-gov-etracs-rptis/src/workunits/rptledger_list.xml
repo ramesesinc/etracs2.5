@@ -13,7 +13,7 @@
         
         class RPTLedgerListController extends ListController
         {
-            String formTarget   = 'window'
+            String formTarget   = 'self'
             String serviceName  = 'RPTLedgerListService'
             String entityName   = 'rptledger'
             

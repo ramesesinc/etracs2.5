@@ -436,6 +436,7 @@ class RPTLedgerService
         em.deleteLedgerItem(info)            
 
         def bill = billingSvc.initBill()
+        bill.loadbillitems = false
         bill.taxpayer = info.taxpayer
         bill.ledgerids.add(info.objid)
         billingSvc.generateBill( bill )
