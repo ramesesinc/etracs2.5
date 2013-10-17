@@ -454,6 +454,7 @@ class RPTLedgerService
             }
         }
 
+        em.updateLastYearQtrPaid(info)
         //force recalc bill again
         billingSvc.forceRecalcBill(info.objid)
     }
