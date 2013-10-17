@@ -2,6 +2,14 @@
     readonly:true;
 }
 
-"selectedItem" [mode != 'read'] {
+"selectedItem" [mode == 'create'] {
     readonly:false;
+}
+
+"addAttribute|removeAttribute" [mode == 'read'] {
+    visible:true;
+}
+
+"addAttribute|removeAttribute" [mode == 'create'] {
+    visible:false;
 }

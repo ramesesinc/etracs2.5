@@ -1,0 +1,89 @@
+<workunit>
+    <invokers>
+        <invoker folderid="/explorer/txn/bpls/app" caption="New" action="start"/>
+        
+        
+        <invoker type="formActions" caption="Print" action="print" visibleWhen="#{state=='appinfo'}"/>
+    </invokers>
+    
+    <code>
+        <![CDATA[    
+        import com.rameses.rcp.annotations.*
+        import com.rameses.rcp.common.*
+        import com.rameses.osiris2.client.*
+        import com.rameses.osiris2.common.*
+        import com.rameses.gov.etracs.bpls.application.*;
+        
+        class NewApplicationController extends BPApplicationController {
+        
+            @Service("BPAssessmentService")
+            def service;
+        
+             def getAppInfo() {
+                return InvokerUtil.lookupOpener( "bpapplication:info", [entity:entity] );
+             }
+             
+             def start() {
+                entity.apptype = "NEW";
+                entity.infos = [];
+                return  super.start();
+             }
+             
+             void loadInfos() {
+                def result = service.execute( entity );
+                infos = result.infos.findAll{ it.beforeprint == 1 };
+                if(result.infos) {
+                    entity.infos.addAll( result.infos );
+                    if(infos) buildFormInfos();
+                }
+             }
+             
+             void reloadModels() {
+                infoModel.reload();
+                taxfeeModel.reload();
+             }
+             
+             void resetInfo() {
+                entity.infos = [];
+                entity.taxfees = [];
+                reloadModels();
+             }
+        }
+        ]]>
+        
+    </code>
+    <pageflow>
+        <start>
+            <transition to="initial"/>
+        </start>
+        
+        <page name="initial" title="New Application">
+            <transition to="end" caption="Close"/>
+            <transition to="check-infos" caption="Next" />
+        </page>
+        
+        <process name="check-infos" action="loadInfos">
+            <transition to="specify-info" cond="#{!!infos}"/>
+            <transition to="appinfo" cond="#{!infos}"/>
+        </process>
+        
+        <page name="specify-info" title="Specify Information">
+            <transition to="check-infos" caption="Next"/>
+        </page>
+        
+        <page name="appinfo" title="Application Info">
+            <transition to="end" caption="Close"/>
+            <transition to="initial" caption="Reset" action="resetInfo"/>
+        </page>
+        
+        
+        <end/>
+    </pageflow>
+    <pages>
+        <page name="initial" template="com.rameses.gov.etracs.bpls.application.NewInitialPage"/>
+        <page name="appinfo" template="com.rameses.gov.etracs.bpls.application.ApplicationInfoPage"/>
+        <page name="specify-info" template="com.rameses.gov.etracs.bpls.application.AddInfoPage"/>
+        <page name="info" template="com.rameses.gov.etracs.bpls.application.CompleteInfoPage"/>
+    </pages>
+    
+</workunit>

@@ -1,0 +1,57 @@
+import com.rameses.annotations.*;
+import com.rameses.util.*;
+import java.rmi.server.*;
+import com.rameses.services.extended.*;
+
+public class BusinessInfoService extends ActiveCrudListService {
+
+	@ActiveDB("business")
+	def em;
+
+	@Service("SequenceService")
+	def seqSvc;
+
+	@Env
+	def env;
+
+	@ProxyMethod
+	public def getColumns(o) {
+		return [
+			[name:'tradename', caption:'Trade Name'],
+			[name:'permitee.name', caption:'Permitee'],
+			[name:'bin', caption:'BIN'],
+			[name:'state', caption:'State'],
+		];
+	}
+
+	void beforeList(o) {
+		if(!o.searchtext)
+			o.searchtext = "%";
+		else
+			o.searchtext += "%";
+		o.state = o._tag;
+	}
+
+	void beforeCreate(o) {
+		def yr = "B"+ o.yearstarted + "01"; 
+		o.bin = yr + "-" + seqSvc.getNextFormattedSeries( yr );
+		o.yearstarted = 0;
+		o.unpaidbalance = 0;
+		o.lastqtrpaid = 0;
+		o.lastyearpaid = 0;
+		o.credits = 0;
+		o.user = [objid:env.USERID];
+	}
+
+	void afterCreate(o) {
+		o.lobs.each {
+			it.businessid = o.objid;
+			em.save( it, "lob" );
+		}
+	}
+
+	void afterOpen(o) {
+		o.lobs = em.getLobs(o);
+	}
+	
+}

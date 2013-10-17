@@ -1,0 +1,109 @@
+<workunit>
+    <invokers>
+        <invoker type="bpapplication:info" caption="Add Information" action="start"/>
+    </invokers>
+    
+    <code>
+        <![CDATA[    
+        import com.rameses.rcp.annotations.*
+        import com.rameses.rcp.common.*
+        import com.rameses.osiris2.client.*
+        import com.rameses.osiris2.common.*
+        import com.rameses.gov.etracs.bpls.application.*;
+        
+        class SpecifyInformationController extends PageFlowController {
+        
+            @Service("BPAssessmentService")
+            def service;
+        
+            def entity;
+            def formInfos;
+            def infos;
+            def taxfees;
+            
+            boolean completed;
+            
+            void reload() {
+                formInfos = [];
+                infos.each {x->
+                    def i = [
+                        type:x.attribute.datatype, 
+                        caption:x.attribute.caption, 
+                        categoryid:x.lob?.objid, 
+                        name:x.attribute.name, 
+                        bean: x,
+                        properties: [:]
+                    ];
+                    //fix the datatype
+                    x.datatype = x.attribute.datatype;
+                    x.required = true;
+                    if(x.datatype.indexOf("_")>0) {
+                        x.datatype = x.datatype.substring(0, x.datatype.indexOf("_"));
+                    }
+                    if(i.type == "boolean") {
+                        i.type = "checkbox";
+                    }
+                    else if(i.type == "string_array") {
+                        i.type = "combo";
+                        i.itemsObject = x.attribute.arrayvalues;
+                    }
+                    formInfos << i;
+                }
+            }
+            
+            
+            def start() {
+                completed = false;
+                infos = [];
+                callRule();
+                return super.start();
+            }
+            
+            def formPanel = [
+                getCategory: { lobid->
+                    if(!lobid) return "";
+                    return entity.lobs.find{ it.lobid == lobid }?.name
+                },
+                updateBean: {name,value,item->
+                    item.bean.value = value;
+                },
+                getControlList: {
+                    return formInfos;
+                }
+            ] as FormPanelModel;
+   
+            void callRule() {
+                def result = service.execute(entity);
+                if( !result.infos ) {
+                    entity.taxfees = result.taxfees;
+                    completed = true;
+                }                
+                else {
+                    infos = result.infos;   //this is for the display.
+                    entity.infos.addAll( infos );
+                    reload();
+                }
+            }
+            
+        }
+        ]]>
+        
+    </code>
+    <pageflow>
+        <start>
+            <transition to="initial"/>
+        </start>
+        <page name="initial" title="Business Information">
+            <transition to="callrule" caption="Next" action="callRule" />
+        </page>
+        <process name="callrule">
+            <transition to="end" cond="#{completed==true}"  />
+            <transition to="initial" cond="#{completed==false}" />
+        </process>
+        <end/>
+    </pageflow>
+    <pages>
+        <page name="initial" template="com.rameses.gov.etracs.bpls.application.AddInfoPage"/>
+    </pages>
+    
+</workunit>

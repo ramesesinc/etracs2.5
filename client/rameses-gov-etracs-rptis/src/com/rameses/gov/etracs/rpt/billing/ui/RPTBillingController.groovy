@@ -42,11 +42,26 @@ public class RPTBillingController
     }
     
     def getLookupTaxpayer() {
-        return InvokerUtil.lookupOpener('entity:lookup', [:] )
+        return InvokerUtil.lookupOpener('entity:lookup', [
+            onselect : {
+                bill.taxpayer = it;
+                clearLoadedProperties();
+            },
+                
+            onempty : {
+                bill.taxpayer = null;
+                clearLoadedProperties();
+            }
+        ] )
     }
     
     void buildBillReportInfo(){
         bill.forprinting = true;
+        def selectedItems = items.findAll{it.bill == true}
+        if (selectedItems){
+            bill.ledgerids.clear();
+            bill.ledgerids.addAll(selectedItems.objid);
+        }
         bill = svc.generateBill( bill )
         report.viewReport()
     }
@@ -88,5 +103,46 @@ public class RPTBillingController
     List getBarangays(){
         return lguSvc.lookupBarangays([:])
     }
+    
+    
+    
+    
+    
+    def items = []
+            
+    def listHandler = [
+        fetchList : { return items },
+    ] as EditorListModel
+            
+                
+    void selectAll(){
+        items.each{
+            it.bill = true;
+            listHandler.reload();
+        }
+    }
+    
+    
+    void deselectAll(){
+        items.each{
+            it.bill = false;
+            listHandler.reload();
+        }
+    }
+    
+    void loadProperties(){
+        if (!bill.taxpayer) {
+            throw new Exception('Taxpayer is required.')
+        }
+        bill.ledgerids.clear();
+        items = svc.loadProperties(bill).each{ it.bill = true }
+        listHandler.reload();
+    }
+    
+    void clearLoadedProperties(){
+        items.clear()
+        listHandler.reload()
+    }
+    
     
 }

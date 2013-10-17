@@ -42,6 +42,7 @@ WHERE ni.assessmentnoticeid = $P{assessmentnoticeid}
 SELECT 
 	f.objid AS faasid,
 	f.effectivityyear,
+	f.effectivityqtr,
 	f.tdno,
 	rpu.rputype,
 	rpu.ry,
@@ -68,6 +69,37 @@ FROM faas f
 WHERE f.taxpayer_objid = $P{taxpayerid}
   AND f.state = 'CURRENT'
 
+
+[getFaasById]
+SELECT 
+	f.objid AS faasid,
+	f.effectivityyear,
+	f.effectivityqtr,
+	f.tdno,
+	rpu.rputype,
+	rpu.ry,
+	rpu.fullpin ,
+	rpu.taxable,
+	rpu.totalareaha,
+	rpu.totalareasqm,
+	rpu.totalbmv,
+	rpu.totalmv,
+	rpu.totalav,
+	rp.section,
+	rp.parcel,
+	rp.surveyno,
+	rp.cadastrallotno,
+	rp.blockno,
+	rp.claimno,
+	b.name AS barangay,
+	pc.code AS classcode
+FROM faas f 
+	INNER JOIN rpu rpu ON f.rpuid = rpu.objid
+	INNER JOIN propertyclassification pc ON rpu.classification_objid = pc.objid
+	LEFT JOIN realproperty rp ON rpu.realpropertyid = rp.objid
+	LEFT JOIN barangay b ON rp.barangayid = b.objid 
+WHERE f.objid = $P{faasid}
+  AND f.state = 'CURRENT'
 
 [getTaxpayerList]  
 select distinct f.taxpayer_objid as objid,

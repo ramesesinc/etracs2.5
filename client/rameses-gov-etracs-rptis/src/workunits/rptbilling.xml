@@ -10,7 +10,7 @@
         <invoker type="quick_launcher" code="RPTBILL" action="init"  caption="RPT Billing"  
             role="LANDTAX" permission="rptbilling.create" />
             
-        <invoker type="rptbill:print" action="printBill"  caption="RPT Billing" target="process" />
+        <invoker type="rptbill:print" action="previewBill"  caption="RPT Billing" target="popup" />
         
         
         <invoker type="formActions" action="_close" caption="Close" shortcut="ctrl W" mnemonic="c" icon="images/toolbars/cancel.png" immediate="true" visibleWhen="#{mode=='init'}"/>

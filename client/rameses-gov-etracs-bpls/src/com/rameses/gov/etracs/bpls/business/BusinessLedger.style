@@ -1,0 +1,7 @@
+"addPayment|removePayment" [selectedReceivable != null] {
+    visible:true;
+}
+
+"addPayment|removePayment" [selectedReceivable == null] {
+    visible:false;
+}

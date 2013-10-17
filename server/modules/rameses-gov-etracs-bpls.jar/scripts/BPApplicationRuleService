@@ -1,0 +1,45 @@
+import com.rameses.annotations.*;
+import com.rameses.util.*;
+import java.rmi.server.*;
+import com.rameses.services.extended.*
+
+public class BPApplicationRuleService  {
+
+	@Resource("RuleService")	
+	def ruleSvc;
+
+	@ActiveDB("rule")
+	def ruleDB;
+
+	@ActiveDB("lob")
+	def lob;
+
+	String RULESET = "bpassessment";
+
+
+	def buildFacts( o ) {
+		def facts = [];
+		o.lob.each {
+			def LOB = ruleSvc.createFact( RULESET, "bpassessment.Lob");
+			LOB.objid = it.objid;
+			LOB.name = it.name;
+			LOB.classificationid = it.classification.objid;
+			LOB.attributes = "-" + lob.getAttributes( [lobid: it.lobid ] )*.name.join("-") + "-";
+			facts << LOB;
+		}
+		return facts;
+	}
+
+	@ProxyMethod
+	public def eval(def o) {
+		def facts = buildFacts(o);
+		def globals = [:];
+		
+		def agendaGroups = ruleDB.getRulegroups( [ruleset: RULESET] );
+		agendaGroups.each { 
+			ruleSvc.execute( RULESET, facts, globals, it.name );
+		}
+		return o;
+	}
+
+}

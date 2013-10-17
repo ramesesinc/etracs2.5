@@ -87,6 +87,7 @@ class FAASService
 	public def initNewDiscoveryFaas(info) {
 		def faas = initDataCaptureFaas(info)
 		faas.datacapture = false
+		faas.autonumber = utilSvc.toBoolean(var.td_autonumber, false)
 		return faas
 	}
 
@@ -95,6 +96,7 @@ class FAASService
 		def newfaas = initFaasTransaction(info)
 		clearOwnerInfo(newfaas)
 		newfaas.rpu.rp.claimno  = info.claimno
+		newfaas.autonumber = utilSvc.toBoolean(var.td_autonumber, false)
 		return newfaas
 	}
 
@@ -406,7 +408,7 @@ class FAASService
 		newfaas.state 			= STATE_INTERIM
 		newfaas.txntype 		= getTxnType( info.txntype.objid )
 		newfaas.datacapture 	= false
-		newfaas.autonumber 	    = (info.autonumber != null ? info.autonumber : utilSvc.toBoolean(var.td_autonumber, false) )
+		newfaas.autonumber 	    = utilSvc.toBoolean(var.td_autonumber, false)
 		newfaas.backtaxyrs   	= 0
 		newfaas.backtaxes 		= []
 		newfaas.effectivityyear = pdate.year + 1

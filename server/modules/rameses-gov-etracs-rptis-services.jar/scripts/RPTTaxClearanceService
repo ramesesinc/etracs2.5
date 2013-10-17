@@ -33,7 +33,7 @@ class RPTTaxClearanceService
             qtr                 : 4,
             certifiedby         : var.treasurer_name,
             certifiedbytitle    : var.treasurer_title,
-            purpose             : 'for whatever legal purpose it may server him/her best.',
+            purpose             : 'for whatever legal purpose it may serve him/her best.',
             oramount            : 0.0,
             stampamount         : 0.0,
             items               : [],

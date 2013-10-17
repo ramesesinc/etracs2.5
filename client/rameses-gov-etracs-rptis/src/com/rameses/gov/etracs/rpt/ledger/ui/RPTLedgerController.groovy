@@ -9,7 +9,7 @@ import com.rameses.osiris2.reports.*
 import com.rameses.gov.etracs.rpt.common.RPTUtil;
 
 
-public class RPTLedgerController
+public class RPTLedgerController 
 {
     @FormTitle
     @FormId
@@ -33,10 +33,13 @@ public class RPTLedgerController
 
     def MODE_READ   = 'read'
     def MODE_EDIT   = 'edit'
-        
-    
+            
     String getTitle(){
-        return 'Realty Tax Ledger'
+        return 'Realty Tax Ledger (' + entity.state + ')'
+    }
+    
+    def getFormActions(){
+        return InvokerUtils.lookupOpeners('rptledger:formActions', [entity:entity])
     }
     
     void open(){
@@ -48,15 +51,15 @@ public class RPTLedgerController
     void loadItems(){
         debits   = svc.getLedgerItems(ledger.objid)
         credits = svc.getLedgerCredits(ledger.objid)
-        debitListHandler.load();
-        paymentListHandler.load();
+        debitListHandler.reload();
+        paymentListHandler.reload();
     }
 
     void cancel(){
         open()
-        historyListHandler.load()
-        debitListHandler.load()
-        paymentListHandler.load()
+        historyListHandler.reload()
+        debitListHandler.reload()
+        paymentListHandler.reload()
     }
 
     void edit(){
@@ -92,7 +95,7 @@ public class RPTLedgerController
     def onaddHandler = { item ->
         svc.saveLedgerFaas( item )
         ledger.faases.add( item )
-        historyListHandler.load() 
+        historyListHandler.reload() 
     }
 
     def addFaas() {
@@ -120,7 +123,7 @@ public class RPTLedgerController
         if( MsgBox.confirm( 'Remove last item?' )) {
             svc.removeLedgerFaas( ledger.faases.last() )
             ledger.faases.remove( ledger.faases.last())
-            historyListHandler.load()
+            historyListHandler.reload()
         }
     }
 
@@ -235,6 +238,21 @@ public class RPTLedgerController
                 ledger.lastqtrpaid  = payment.toqtr;
                 loadItems()
                 binding.refresh('.*');
+            }
+        ])
+    }
+    
+    def fixLedger(){
+        return InvokerUtil.lookupOpener('rptledger:formActions', [
+            entity : entity,
+                
+            svc    : svc, 
+                
+            oncomplete : {
+                open();
+                entity.lastyearpaid = it.lastyearpaid;
+                entity.lastqtrpaid = it.lastqtrpaid;
+                binding.refresh('.*')
             }
         ])
     }

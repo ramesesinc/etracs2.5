@@ -187,8 +187,13 @@ class RPTLedgerService
         if (!ledger)
             throw new Exception('Ledger does not exist or has already been deleted.')
             
-        if ( ledger.lastyearpaid < dtSvc.serverYear || (ledger.lastyearpaid == dtSvc.serverYear && ledger.lastqtrpaid < 4))
-            throw new Exception('Ledger has not yet been fully paid.')
+        if (util.isTrue(ledger.taxable)) {
+            if ( ledger.lastyearpaid < dtSvc.serverYear || (ledger.lastyearpaid == dtSvc.serverYear && ledger.lastqtrpaid < 4))
+                throw new Exception('Ledger has not yet been fully paid.')    
+        }
+        else {
+            em.updateLastYearQtrPaid([toyear:dtSvc.serverYear, toqtr:4, rptledgerid:ledger.objid])
+        }
     }
 
     @ProxyMethod
@@ -412,6 +417,46 @@ class RPTLedgerService
             }
         }
         return ledger;
+    }
+
+
+    @ProxyMethod
+    public void fixLedger( info ) {
+        if (!info.objid) throw new Exception('Ledger ID is required.')
+        if (!info.taxpayer) throw new Exception('Taxpayer is required.')
+
+        info.rptledgerid = info.objid 
+        info.lastitemyear = (info.lastqtrpaid == 4 ? info.lastyearpaid : info.lastyearpaid - 1)
+        info.paidyear = info.lastyearpaid
+        info.toyear = info.lastyearpaid
+        info.toqtr = info.lastqtrpaid
+
+        em.updateLedgerLastItemYear(info)
+        em.deleteQuarterlyLedgerItem(info)
+        em.deleteLedgerItem(info)            
+
+        def bill = billingSvc.initBill()
+        bill.taxpayer = info.taxpayer
+        bill.ledgerids.add(info.objid)
+        billingSvc.generateBill( bill )
+
+        if (info.lastqtrpaid != 4){
+            if (info.lastyearpaid == dtSvc.serverYear){
+                em.fixPaidQtrlyLedgerItemByYear(info)
+            }
+            else {
+                //simulate qtrly payment for previous year
+                bill.billtoyear = info.lastyearpaid
+                bill.billtoqtr = 3
+                billingSvc.generateBill( bill )
+                em.fixPaidQtrlyLedgerItemByYear(info)
+                em.updateLedgerItemLastQtrPaid(info)
+            }
+        }
+
+        em.updateLastYearQtrPaid(info)
+        //force recalc bill again
+        billingSvc.forceRecalcBill(info.objid)
     }
 
 }

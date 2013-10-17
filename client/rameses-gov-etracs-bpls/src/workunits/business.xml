@@ -1,0 +1,54 @@
+<workunit>
+    <invokers>
+        <invoker type="business:create" caption="Add New Business" action="create" target="window"/>
+        <invoker type="business:open" caption="Business Info" action="open" target="window"/>
+        <invoker type="formActions" caption="Close" action="_close" />
+        <invoker type="formActions" caption="Save" action="save" visibleWhen="#{mode=='create'}"/>
+    </invokers>
+    
+    <code>
+        <![CDATA[    
+        import com.rameses.rcp.annotations.*
+        import com.rameses.rcp.common.*
+        import com.rameses.osiris2.client.*
+        import com.rameses.osiris2.common.*
+        import java.rmi.server.*
+        import com.rameses.gov.etracs.bpls.business.*;
+        
+        class  BusinessInfoController extends AbstractBusinessController {
+        
+            @Service("BusinessInfoService")
+            def service;
+            
+            String title = "Business Information";
+            def mode = "read";
+            def entityName = "business";
+            
+            def create() {
+                entity = [objid: "BUS"+new UID(), lobs: []];
+                entity.state = 'INACTIVE';
+                mode="create";
+                return "new";
+            }
+            
+            def open() {
+                entity = service.open(entity);
+                mode="read";
+                return "info";
+            }
+            
+            def save() {
+                entity = service.create(entity);
+                mode = "read";
+                return "info";
+            }
+        }
+        ]]>
+        
+    </code>
+    <pages>
+        <page name="new" template="com.rameses.gov.etracs.bpls.business.NewBusinessPage"/>
+        <page name="info"  template="com.rameses.gov.etracs.bpls.business.BusinessInfoPage"/>
+    </pages>
+    
+</workunit>

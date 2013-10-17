@@ -36,6 +36,8 @@ public class RPTCertificationPage extends javax.swing.JPanel {
         xTextField8 = new com.rameses.rcp.control.XTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
         xTextArea1 = new com.rameses.rcp.control.XTextArea();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        xTextArea2 = new com.rameses.rcp.control.XTextArea();
         xTextField3 = new com.rameses.rcp.control.XTextField();
         xTextField4 = new com.rameses.rcp.control.XTextField();
         xTextField5 = new com.rameses.rcp.control.XTextField();
@@ -106,7 +108,9 @@ public class RPTCertificationPage extends javax.swing.JPanel {
         xTextField8.setRequired(true);
         formPanel1.add(xTextField8);
 
-        jScrollPane1.setPreferredSize(new java.awt.Dimension(0, 77));
+        jScrollPane1.setPreferredSize(new java.awt.Dimension(0, 60));
+        xTextArea1.setLineWrap(true);
+        xTextArea1.setWrapStyleWord(true);
         xTextArea1.setCaption("Purpose");
         xTextArea1.setCaptionWidth(135);
         xTextArea1.setName("entity.purpose");
@@ -115,6 +119,17 @@ public class RPTCertificationPage extends javax.swing.JPanel {
         jScrollPane1.setViewportView(xTextArea1);
 
         formPanel1.add(jScrollPane1);
+
+        jScrollPane2.setPreferredSize(new java.awt.Dimension(0, 60));
+        xTextArea2.setLineWrap(true);
+        xTextArea2.setWrapStyleWord(true);
+        xTextArea2.setCaption("Additional Info");
+        xTextArea2.setCaptionWidth(135);
+        xTextArea2.setName("entity.addlinfo");
+        xTextArea2.setPreferredSize(new java.awt.Dimension(120, 60));
+        jScrollPane2.setViewportView(xTextArea2);
+
+        formPanel1.add(jScrollPane2);
 
         xTextField3.setCaption("<html><u>C</u>ertified By:<font color=\"red\">*</font></html>");
         xTextField3.setCaptionWidth(135);
@@ -216,8 +231,8 @@ public class RPTCertificationPage extends javax.swing.JPanel {
             jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .add(formPanel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 514, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(322, Short.MAX_VALUE))
+                .add(formPanel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 554, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(282, Short.MAX_VALUE))
         );
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(this);
@@ -237,6 +252,7 @@ public class RPTCertificationPage extends javax.swing.JPanel {
     private com.rameses.rcp.util.FormPanel formPanel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     private com.rameses.rcp.control.XCheckBox xCheckBox1;
     private com.rameses.rcp.control.XDateField xDateField1;
     private com.rameses.rcp.control.XLabel xLabel3;
@@ -247,6 +263,7 @@ public class RPTCertificationPage extends javax.swing.JPanel {
     private com.rameses.rcp.control.XNumberField xNumberField2;
     private com.rameses.rcp.control.XSeparator xSeparator1;
     private com.rameses.rcp.control.XTextArea xTextArea1;
+    private com.rameses.rcp.control.XTextArea xTextArea2;
     private com.rameses.rcp.control.XTextField xTextField2;
     private com.rameses.rcp.control.XTextField xTextField3;
     private com.rameses.rcp.control.XTextField xTextField4;

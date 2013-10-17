@@ -1,0 +1,5 @@
+<workunit extends="wtemplates/ListController.xml" serviceName="BusinessInfoService" entityName="business" tag="PENDING">
+    <invokers>
+        <invoker folderid="/explorer/txn/bpls/business" caption="Pending" target="window" index="20" role="BPLS_ASSESSOR"/>
+    </invokers>
+</workunit>
