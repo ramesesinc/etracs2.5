@@ -352,3 +352,25 @@ FROM rptledgeritem rli
 WHERE rli.rptledgerid = $P{rptledgerid} 
   AND rli.qtrly = 1 
 
+
+
+
+
+ [fixPaidQtrlyLedgerItemByYear]
+ UPDATE rptledgeritem_qtrly SET 
+	state = 'CLOSED'
+WHERE rptledgerid = $P{rptledgerid}	
+ AND state = 'OPEN'
+ AND year = $P{paidyear}
+ AND qtr <= $P{toqtr}
+
+
+[deleteLedgerItem]
+DELETE FROM rptledgeritem WHERE rptledgerid = $P{rptledgerid} AND year >= $P{lastitemyear}
+
+[deleteQuarterlyLedgerItem]
+DELETE FROM rptledgeritem_qtrly WHERE rptledgerid = $P{rptledgerid} AND year >= $P{lastitemyear}
+
+
+[updateLedgerItemLastQtrPaid]
+UPDATE rptledgeritem SET lastqtrpaid = ${lastqtrpaid} WHERE rptledgerid = $P{rptledgerid} and year = $P{lastyearpaid}
