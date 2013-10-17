@@ -1,8 +1,8 @@
 [getListForReconcile] 
 SELECT * FROM entity 
-WHERE name LIKE $P{entityname} 
+WHERE entityname LIKE $P{entityname} 
   AND objid <> $P{entityid} 
-ORDER BY name 
+ORDER BY entityname 
 
 [reconcileTaxpayerId]
 update faas set
