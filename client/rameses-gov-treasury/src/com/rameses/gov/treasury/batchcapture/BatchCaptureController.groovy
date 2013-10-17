@@ -89,14 +89,16 @@ public class BatchCaptureController  {
     }
             
     void calculate() {
-        def amt = 0.0;
+        entity.totalcash = 0.0
+        entity.totalnoncash = 0.0
+        entity.totalamount = 0.0
         batchItems.each {
-            amt += (it.amount? it.amount: 0.0);
-            if( ! it.totalnoncash) it.totalcash= it.amount;
+            if( it.voided == 0) {
 
-            entity.totalcash += it.totalcash
-            entity.totalnoncash += it.totalnoncash
-            entity.totalamount += it.amount 
+                entity.totalcash += it.totalcash
+                entity.totalnoncash += it.totalnoncash
+                entity.totalamount += it.amount 
+            }   
         }
         binding?.refresh('entity.totalamount'); 
     }
@@ -119,6 +121,7 @@ public class BatchCaptureController  {
             m.totalnoncash = 0.0
             m.collector = entity.collector;
             m.paymentitems = []
+            m.voided = 0
             return m;
         },
 
@@ -127,9 +130,6 @@ public class BatchCaptureController  {
                 callerListModel: listModel, 
                 calculateHandler: { calculate(); } 
             ]; 
-        },
-        onValidateItem:{
-            if( true) throw new Exception("fire validate")
         },
         onAddItem: { o->
             batchItems << o; 
@@ -149,6 +149,7 @@ public class BatchCaptureController  {
         onColumnUpdate: {item, colname-> 
             if (colname == 'amount')
                 item.items[0].amount = item[colname]; 
+                
         }
     ] as EditorListModel;
 
@@ -198,6 +199,7 @@ public class BatchCaptureController  {
         if(!MsgBox.confirm("Save captured collections? ")) return;
 
         mode = 'saved'
+        calculate()
         entity.batchitems = batchItems
         entity = svc.create( entity )
     }
@@ -215,8 +217,17 @@ public class BatchCaptureController  {
     }
 
     void post() {
+        if(!MsgBox.confirm("You are about to post this captured collection. Continue? ")) return;
+
         mode = 'posted'
         entity = svc.post( entity);
+    }
+
+    void submitForOnlineRemittance() {
+        if(!MsgBox.confirm("You are about to submit this captured collection for online remittance. Continue? ")) return;
+
+        mode = 'submittedforremittance'
+        svc.submitForOnlineRemittance( entity )
     }
 
 }

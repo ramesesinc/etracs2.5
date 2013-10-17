@@ -25,7 +25,7 @@
 
 
 	<field name="amount" class="java.math.BigDecimal"/>
-	<field name="denomination" class="java.math.BigDecimal"/>
+	<field name="caption" class="java.lang.String"/>
 	<field name="qty" class="java.lang.String"/>
 
 		<background>
@@ -104,7 +104,7 @@
 					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
 						<font fontName="SansSerif" pdfFontName="Helvetica" size="8" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 					</textElement>
-				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{denomination}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{caption}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement

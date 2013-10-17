@@ -29,10 +29,15 @@ select
 	objid, state, formno, collector_name as collectorname, startseries, endseries,
 	totalamount, capturedby_name as capturedbyname
 from batchcapture_collection 
-where state like $P{state} 
+where startseries like $P{searchtext} 
 
 [getBatchEntry]
 select * from batchcapture_collection_entry where parentid=$P{objid} order by receiptno 
 
 [getBatchEntryItems]
 select * from batchcapture_collection_entry_item where parentid=$P{objid}
+
+[updateCashReceiptState]
+update cashreceipt 
+	set state='POSTED' 
+where objid=$P{objid} 

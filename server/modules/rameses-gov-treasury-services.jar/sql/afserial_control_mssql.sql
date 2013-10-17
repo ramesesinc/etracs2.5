@@ -167,3 +167,8 @@ FROM afserial_control ac
 INNER JOIN afserial_inventory ai ON ai.objid=ac.controlid
 INNER JOIN afserial a ON ai.afid=a.objid
 WHERE ac.controlid = $P{controlid}
+
+[unassignsubcollector]
+update afserial_control set 
+	assignee_name = null, assignee_objid = null, txnmode='ONLINE' 
+where controlid=$P{controlid} 
