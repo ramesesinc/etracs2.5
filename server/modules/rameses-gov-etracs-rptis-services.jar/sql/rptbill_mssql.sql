@@ -117,7 +117,7 @@ ORDER BY expirydate ASC
 
 
  [getLedgersToRecalc]
- SELECT objid FROM rptledger WHERE nextbilldate <= $P{billdate} OR nextbilldate IS NULL
+ SELECT objid FROM rptledger WHERE nextbilldate <= $P{billdate} OR nextbilldate IS NULL AND state = 'APPROVED'
 
 
 [updateLedgerNextBillDate]
@@ -152,6 +152,7 @@ SELECT
 	rl.qtrlypaymentpaidontime,
 	rl.lastitemyear,
 	rl.faasid, 
+	rl.nextbilldate,
 	f.tdno,
 	f.owner_name,
 	f.administrator_name,
@@ -175,6 +176,7 @@ FROM rptledger rl
 WHERE ${filters}
  AND rl.state = 'APPROVED'
  AND ( rl.lastyearpaid < $P{billtoyear} OR ( rl.lastyearpaid = $P{billtoyear} AND rl.lastqtrpaid <= $P{billtoqtr}))
+ORDER BY f.tdno  
 
 
 [getPreviousBillItems]
@@ -279,7 +281,10 @@ WHERE rl.objid = $P{rptledgerid}
  AND rli.year >= $P{currentyr}
  AND rli.qtrly = 1 
  AND rliq.state = 'OPEN'
- AND rliq.qtr <= $P{billtoqtr}
+ AND rliq.qtr <= (CASE WHEN $P{billtoyear} > $P{currentyr} AND rli.year < $P{billtoyear} 
+ 					THEN 4
+ 					ELSE $P{billtoqtr} 
+ 				END)
 GROUP BY rli.year, rliq.qtr, rlf.tdno, rlf.assessedvalue, rliq.qtrlyav, rl.barangayid 
 ORDER BY rli.year, rliq.qtr 
 

@@ -176,7 +176,7 @@ class PlantTreeRPUService
 
 
     def getRYSetting(){
-    	return [adjustplanttree:1, agriculturalid:'AGR']
+    	return [adjustplanttree:1, agriculturalid:'AGRICULTURAL']
     }
 
 

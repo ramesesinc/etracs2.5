@@ -52,14 +52,14 @@
 			</band>
 		</pageHeader>
 		<columnHeader>
-			<band height="12"  isSplitAllowed="true" >
+			<band height="17"  isSplitAllowed="true" >
 				<staticText>
 					<reportElement
 						mode="Transparent"
-						x="387"
+						x="415"
 						y="0"
-						width="86"
-						height="12"
+						width="90"
+						height="17"
 						forecolor="#000000"
 						backcolor="#FFFFFF"
 						key="staticText-3"/>
@@ -79,7 +79,7 @@
 						x="98"
 						y="0"
 						width="125"
-						height="12"
+						height="17"
 						forecolor="#000000"
 						backcolor="#FFFFFF"
 						key="staticText-4"/>
@@ -96,10 +96,10 @@
 				<staticText>
 					<reportElement
 						mode="Transparent"
-						x="315"
+						x="342"
 						y="0"
-						width="72"
-						height="12"
+						width="73"
+						height="17"
 						forecolor="#000000"
 						backcolor="#FFFFFF"
 						key="staticText-5"/>
@@ -116,10 +116,10 @@
 				<staticText>
 					<reportElement
 						mode="Transparent"
-						x="473"
+						x="505"
 						y="0"
-						width="92"
-						height="12"
+						width="96"
+						height="17"
 						forecolor="#000000"
 						backcolor="#FFFFFF"
 						key="staticText-7"/>
@@ -136,10 +136,10 @@
 				<staticText>
 					<reportElement
 						mode="Transparent"
-						x="564"
+						x="601"
 						y="0"
 						width="119"
-						height="12"
+						height="17"
 						forecolor="#000000"
 						backcolor="#FFFFFF"
 						key="staticText-15"/>
@@ -158,8 +158,8 @@
 						mode="Transparent"
 						x="223"
 						y="0"
-						width="92"
-						height="12"
+						width="119"
+						height="17"
 						forecolor="#000000"
 						backcolor="#FFFFFF"
 						key="staticText-20"/>
@@ -179,7 +179,7 @@
 						x="0"
 						y="0"
 						width="98"
-						height="12"
+						height="17"
 						forecolor="#000000"
 						backcolor="#FFFFFF"
 						key="staticText-27"/>
@@ -200,9 +200,9 @@
 				<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						mode="Transparent"
-						x="473"
+						x="505"
 						y="0"
-						width="92"
+						width="96"
 						height="12"
 						forecolor="#000000"
 						backcolor="#FFFFFF"
@@ -221,7 +221,7 @@
 				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						mode="Transparent"
-						x="564"
+						x="601"
 						y="0"
 						width="119"
 						height="12"
@@ -234,7 +234,7 @@
 					<bottomPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
 </box>
-					<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
+					<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
 						<font fontName="Tahoma" pdfFontName="Helvetica" size="8" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[$F{effectivityyear}.toString() + " Q" + $F{effectivityqtr}.toString()]]></textFieldExpression>
@@ -263,9 +263,9 @@
 				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						mode="Transparent"
-						x="315"
+						x="342"
 						y="0"
-						width="72"
+						width="73"
 						height="12"
 						forecolor="#000000"
 						backcolor="#FFFFFF"
@@ -276,7 +276,7 @@
 					<bottomPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 </box>
-					<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
+					<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
 						<font fontName="Tahoma" pdfFontName="Helvetica" size="8" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[$F{classcode}]]></textFieldExpression>
@@ -284,9 +284,9 @@
 				<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						mode="Transparent"
-						x="387"
+						x="415"
 						y="0"
-						width="86"
+						width="90"
 						height="12"
 						forecolor="#000000"
 						backcolor="#FFFFFF"
@@ -307,7 +307,7 @@
 						mode="Transparent"
 						x="223"
 						y="0"
-						width="92"
+						width="119"
 						height="12"
 						forecolor="#000000"
 						backcolor="#FFFFFF"

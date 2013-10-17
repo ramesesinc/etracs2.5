@@ -71,10 +71,10 @@
               <Connection code="&quot;byledger&quot;" type="code"/>
             </Property>
             <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-              <Dimension value="[89, 24]"/>
+              <Dimension value="[150, 24]"/>
             </Property>
             <Property name="showCaption" type="boolean" value="false"/>
-            <Property name="text" type="java.lang.String" value=" Pay by leder"/>
+            <Property name="text" type="java.lang.String" value=" Pay by ledger"/>
           </Properties>
         </Component>
         <Container class="com.rameses.rcp.util.FormPanel" name="formPanel3">
@@ -113,7 +113,7 @@
             <Component class="com.rameses.rcp.control.XIntegerField" name="xIntegerField1">
               <Properties>
                 <Property name="caption" type="java.lang.String" value="Year"/>
-                <Property name="captionWidth" type="int" value="40"/>
+                <Property name="captionWidth" type="int" value="80"/>
                 <Property name="depends" type="[Ljava.lang.String;" editor="org.netbeans.beaninfo.editors.StringArrayEditor">
                   <StringArray count="1">
                     <StringItem index="0" value="payoption"/>

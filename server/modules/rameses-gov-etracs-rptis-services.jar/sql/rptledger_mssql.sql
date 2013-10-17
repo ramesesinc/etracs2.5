@@ -40,7 +40,11 @@ ORDER BY rl.state, f.tdno
 
 	
 [findApprovedLedgerByFaasId]
-SELECT * FROM rptledger WHERE faasid = $P{faasid} AND state = 'APPROVED' 
+SELECT rl.* , r.taxable 
+FROM rptledger rl 
+	INNER JOIN faas f ON rl.faasid = f.objid 
+	INNER JOIN rpu r ON f.rpuid = r.objid 
+WHERE rl.faasid = $P{faasid} AND rl.state = 'APPROVED' 
 
 
 [findLedgerByFaasId]	
@@ -184,7 +188,8 @@ FROM (
 		sefint,
 		sefdisc,
 		firecode,
-		amount
+		amount,
+		fromyear
 	FROM rptreceipt_capture rc 
 	WHERE rptledgerid = $P{rptledgerid}	
 
@@ -221,7 +226,8 @@ FROM (
 		SUM(t.sefint) AS sefint,
 		SUM(t.sefdisc) AS sefdisc,
 		SUM(t.firecode) AS firecode,
-		SUM(t.amount) AS amount
+		SUM(t.amount) AS amount,
+		MIN(fromyear) AS fromyear
 	FROM (
 		SELECT 
 			cr.receiptno,
@@ -263,7 +269,8 @@ FROM (
 		t.receiptdate,
 		t.paidby_name,
 		t.paidby_address,
-		t.collector
+		t.collector,
+		t.fromyear 
 ) x 
 ORDER BY x.receiptdate DESC 
 
@@ -345,3 +352,25 @@ FROM rptledgeritem rli
 WHERE rli.rptledgerid = $P{rptledgerid} 
   AND rli.qtrly = 1 
 
+
+
+
+
+ [fixPaidQtrlyLedgerItemByYear]
+ UPDATE rptledgeritem_qtrly SET 
+	state = 'CLOSED'
+WHERE rptledgerid = $P{rptledgerid}	
+ AND state = 'OPEN'
+ AND year = $P{paidyear}
+ AND qtr <= $P{toqtr}
+
+
+[deleteLedgerItem]
+DELETE FROM rptledgeritem WHERE rptledgerid = $P{rptledgerid} 
+
+[deleteQuarterlyLedgerItem]
+DELETE FROM rptledgeritem_qtrly WHERE rptledgerid = $P{rptledgerid}
+
+
+[updateLedgerItemLastQtrPaid]
+UPDATE rptledgeritem SET lastqtrpaid = ${lastqtrpaid} WHERE rptledgerid = $P{rptledgerid} and year = $P{lastyearpaid}

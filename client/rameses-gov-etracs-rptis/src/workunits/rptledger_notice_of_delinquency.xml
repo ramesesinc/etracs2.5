@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workunit>
+    <invokers>
+        <invoker type="rptledger:formActions" action="printNotice" caption="Notice of Delinquency" target="process" />        
+    </invokers>
+    <code>
+
+import com.rameses.rcp.common.*;
+import com.rameses.rcp.annotations.*;
+import com.rameses.osiris2.client.*;
+import com.rameses.osiris2.common.*;
+import com.rameses.osiris2.reports.*;
+
+class RPTLedgerNoticeOfDelinquencyController
+{
+    @Service('RPTBillingService')
+    def svc 
+
+    @Service("ReportParameterService")
+    def reportSvc;
+
+    
+    def entity;
+    def bill;
+    
+    void buildBillReportInfo(){
+        bill.forprinting = true;
+        bill = svc.generateBill( bill )
+        report.viewReport()
+    }
+    
+    void printNotice() {
+        bill = svc.initBill();
+        bill.taxpayer = entity.taxpayer
+        bill.ledgerids.add(entity.objid)
+        
+        buildBillReportInfo()
+        ReportUtil.print( report.report, true )
+    }
+      
+    def reportpath = 'com/rameses/gov/etracs/rpt/report/landtax/'
+            
+    def report = [
+        getReportName : { return reportpath + 'noticeofdelinquency.jasper' },
+        getSubReports  : {
+            return [
+                new SubReport('NODLedger', reportpath + 'noticeofdelinquencyledger.jasper'),
+                new SubReport('NODItem', reportpath + 'noticeofdelinquencyitem.jasper'),
+            ] as SubReport[]
+        },
+        getReportData : { return bill },
+        getParameters : { return reportSvc.getStandardParameter() }
+    ] as ReportModel
+    
+
+}
+    </code>
+</workunit>

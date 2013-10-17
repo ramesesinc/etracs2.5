@@ -4,6 +4,7 @@
 		<field name="state" required="true" />
 		<field name="txnno" required="true" />
 		<field name="txndate" required="true" />
+		<field name="assessmentyear" required="true" type="integer" />
 		<field name="taxpayerid" required="true" />
 		<field name="taxpayername" required="true" />
 		<field name="taxpayeraddress" required="true" />
