@@ -35,7 +35,6 @@ public class BusinessInfoService extends ActiveCrudListService {
 	void beforeCreate(o) {
 		def yr = "B"+ o.yearstarted + "01"; 
 		o.bin = yr + "-" + seqSvc.getNextFormattedSeries( yr );
-		o.yearstarted = 0;
 		o.unpaidbalance = 0;
 		o.lastqtrpaid = 0;
 		o.lastyearpaid = 0;
@@ -47,6 +46,18 @@ public class BusinessInfoService extends ActiveCrudListService {
 		o.lobs.each {
 			it.businessid = o.objid;
 			em.save( it, "lob" );
+		}
+	}
+
+	void afterUpdate(o) {
+		o.lobs.each {
+			it.businessid = o.objid;
+			em.save( it, "lob" );
+		}
+		if(o._lobs_deleted )	 {
+			o._lobs_deleted.each {
+				em.delete( it, "lob" );	
+			}
 		}
 	}
 

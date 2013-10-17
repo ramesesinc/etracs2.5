@@ -14,6 +14,7 @@ class AbstractBusinessController  {
     def entity = [lobs:[]];
     def officeTypes = LOV.BUSINESS_OFFICE_TYPES;
     def orgTypes = LOV.BUSINESS_ORG_TYPES;
+    def selectedLob;
 
     def getLookupPermitees() {
         return InvokerUtil.lookupOpener( "entity:lookup", [
@@ -40,15 +41,23 @@ class AbstractBusinessController  {
             }
         ]);
     }
-            
+        
+    def removeLob()  {
+        if( !selectedLob ) return;
+        if( MsgBox.confirm("You are about to remove this item. Continue?")) {
+            entity.lobs.remove(selectedLob);
+            if( !entity._lobs_deleted ) entity._lobs_deleted = [];
+            entity._lobs_deleted << selectedLob;
+            lobModel.reload();
+            binding.focus("lob");
+        }
+    }
+   
     def lobModel = [
         fetchList: { o->
             return entity.lobs;
         },
-        onRemoveItem: { o->
-            entity.lobs.remove(o);
-        }
-    ] as EditorListModel;
+    ] as BasicListModel;
 
 
 }

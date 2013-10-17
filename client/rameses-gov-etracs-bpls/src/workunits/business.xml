@@ -2,8 +2,11 @@
     <invokers>
         <invoker type="business:create" caption="Add New Business" action="create" target="window"/>
         <invoker type="business:open" caption="Business Info" action="open" target="window"/>
-        <invoker type="formActions" caption="Close" action="_close" />
-        <invoker type="formActions" caption="Save" action="save" visibleWhen="#{mode=='create'}"/>
+        <invoker type="formActions" caption="Close" action="_close" visibleWhen="#{mode !='edit'}"/>
+        <invoker type="formActions" caption="Cancel" action="cancelEdit" visibleWhen="#{mode=='edit'}"/>
+
+        <invoker type="formActions" caption="Save" action="save" visibleWhen="#{mode=='create' || mode == 'edit'}"/>
+        <invoker type="formActions" caption="Edit" action="edit" visibleWhen="#{mode=='read'}"/>
     </invokers>
     
     <code>
@@ -37,8 +40,25 @@
                 return "info";
             }
             
+            def cancelEdit() {
+                mode = 'read'
+                return "info";
+            }
+            
+            def edit() {
+                mode = 'edit'
+                return "edit";
+            }
+            
             def save() {
-                entity = service.create(entity);
+                if(mode == 'create') {
+                    if(MsgBox.confirm("You are about to save this record. Proceed?")) {
+                        entity = service.create(entity);
+                    }
+                }    
+                else
+                    entity = service.update(entity);
+                    
                 mode = "read";
                 return "info";
             }
@@ -47,7 +67,8 @@
         
     </code>
     <pages>
-        <page name="new" template="com.rameses.gov.etracs.bpls.business.NewBusinessPage"/>
+        <page name="new" template="com.rameses.gov.etracs.bpls.business.EditBusinessPage"/>
+        <page name="edit"  template="com.rameses.gov.etracs.bpls.business.EditBusinessPage"/>
         <page name="info"  template="com.rameses.gov.etracs.bpls.business.BusinessInfoPage"/>
     </pages>
     
