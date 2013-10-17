@@ -15,6 +15,7 @@
             
         <invoker type="formActions" action="printBill" caption="Print Bill" mnemonic="b" visibleWhen="#{mode=='read' &amp;&amp; ledger.state=='APPROVED'}"  role="LANDTAX" />
         <invoker type="formActions" action="recalcBill" caption="Recalculate Bill" mnemonic="r" visibleWhen="#{mode=='read' &amp;&amp; ledger.state=='APPROVED'}"  role="LANDTAX"/>
+        <invoker type="formActions" action="generateNotice" caption="Notice of Delinquency" mnemonic="c" visibleWhen="#{mode=='read' &amp;&amp; ledger.state=='APPROVED'}"  role="LANDTAX" />
         <invoker type="formActions" action="capturePayment" caption="Capture Payment" mnemonic="c" visibleWhen="#{mode=='read' &amp;&amp; ledger.state=='APPROVED'}"  role="LANDTAX" permission="rptledger.capturepayment" />
         <invoker type="formActions" action="fixLedger" caption="Fix Ledger" mnemonic="f" visibleWhen="#{mode=='read' &amp;&amp; ledger.state=='APPROVED'}"  role="LANDTAX" permission="rptledger.fixledger" />
         

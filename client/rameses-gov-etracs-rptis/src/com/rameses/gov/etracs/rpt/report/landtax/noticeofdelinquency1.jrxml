@@ -360,12 +360,12 @@
 			</band>
 			</groupHeader>
 			<groupFooter>
-			<band height="28"  isSplitAllowed="true" >
+			<band height="32"  isSplitAllowed="true" >
 				<textField isStretchWithOverflow="false" pattern="MMMMM dd, yyyy" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						mode="Transparent"
-						x="152"
-						y="3"
+						x="178"
+						y="9"
 						width="219"
 						height="16"
 						forecolor="#000000"
@@ -373,7 +373,7 @@
 						key="textField"/>
 					<box></box>
 					<textElement textAlignment="Justified" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
-						<font fontName="SansSerif" pdfFontName="Helvetica-Bold" size="11" isBold="true" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
+						<font fontName="SansSerif" pdfFontName="Helvetica-Bold" size="12" isBold="true" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 					</textElement>
 				<textFieldExpression   class="java.util.Date"><![CDATA[$F{validuntil}]]></textFieldExpression>
 				</textField>
@@ -381,8 +381,8 @@
 					<reportElement
 						mode="Transparent"
 						x="0"
-						y="3"
-						width="152"
+						y="9"
+						width="178"
 						height="16"
 						forecolor="#000000"
 						backcolor="#FFFFFF"
@@ -393,7 +393,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 </box>
 					<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
-						<font fontName="SansSerif" pdfFontName="Helvetica" size="11" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
+						<font fontName="SansSerif" pdfFontName="Helvetica" size="12" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 					</textElement>
 				<text><![CDATA[This computation is valid until: ]]></text>
 				</staticText>
