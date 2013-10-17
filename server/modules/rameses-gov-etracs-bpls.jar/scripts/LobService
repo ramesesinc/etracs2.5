@@ -6,6 +6,8 @@ class LobService extends ActiveCrudListService {
 	@ActiveDB("lob")
 	def em;
 
+	String pagingKeys = "lob.objid";
+
 	@ActiveDB("lobclassification")
 	def classification;
 
@@ -15,6 +17,13 @@ class LobService extends ActiveCrudListService {
 			[name:'name', caption:'Line of Business'],
 			[name:'classification.name', caption:'Classification']
 		]	
+	}
+
+	void beforeList(o) {
+		if(!o.searchtext) 
+			o.searchtext = "%";		
+		else
+			o.searchtext += "%";
 	}
 
 	@ProxyMethod

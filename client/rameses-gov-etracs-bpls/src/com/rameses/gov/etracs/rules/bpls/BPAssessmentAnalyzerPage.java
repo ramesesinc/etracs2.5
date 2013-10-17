@@ -34,14 +34,16 @@ public class BPAssessmentAnalyzerPage extends javax.swing.JPanel {
         xLookupField1 = new com.rameses.rcp.control.XLookupField();
         jLabel1 = new javax.swing.JLabel();
         xDataTable2 = new com.rameses.rcp.control.XDataTable();
-        xDataTable3 = new com.rameses.rcp.control.XDataTable();
         jLabel2 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
         xFormPanel1 = new com.rameses.rcp.control.XFormPanel();
         xComboBox2 = new com.rameses.rcp.control.XComboBox();
         xComboBox3 = new com.rameses.rcp.control.XComboBox();
         xLookupField3 = new com.rameses.rcp.control.XLookupField();
         xComboBox4 = new com.rameses.rcp.control.XComboBox();
+        jTabbedPane1 = new javax.swing.JTabbedPane();
+        jPanel3 = new javax.swing.JPanel();
+        xDataTable3 = new com.rameses.rcp.control.XDataTable();
+        jPanel4 = new javax.swing.JPanel();
 
         com.rameses.rcp.control.border.XTitledBorder xTitledBorder1 = new com.rameses.rcp.control.border.XTitledBorder();
         xTitledBorder1.setTitle("Line of Business");
@@ -163,6 +165,51 @@ public class BPAssessmentAnalyzerPage extends javax.swing.JPanel {
         });
         xDataTable2.setHandler("infoModel");
 
+        jLabel2.setFont(new java.awt.Font("Tahoma", 1, 11));
+        jLabel2.setText("Infos");
+
+        com.rameses.rcp.control.border.XTitledBorder xTitledBorder2 = new com.rameses.rcp.control.border.XTitledBorder();
+        xTitledBorder2.setTitle("Business Info");
+        xFormPanel1.setBorder(xTitledBorder2);
+        xComboBox2.setCaption("Organization");
+        xComboBox2.setCaptionWidth(130);
+        xComboBox2.setExpression("#{item.value}");
+        xComboBox2.setItemKey("key");
+        xComboBox2.setItems("orgTypes");
+        xComboBox2.setName("entity.businessorgtype");
+        xComboBox2.setPreferredSize(new java.awt.Dimension(0, 22));
+        xComboBox2.setRequired(true);
+        xFormPanel1.add(xComboBox2);
+
+        xComboBox3.setCaption("Office Type");
+        xComboBox3.setCaptionWidth(130);
+        xComboBox3.setExpression("#{item.value}");
+        xComboBox3.setItemKey("key");
+        xComboBox3.setItems("officeTypes");
+        xComboBox3.setName("entity.officetype");
+        xComboBox3.setPreferredSize(new java.awt.Dimension(0, 22));
+        xComboBox3.setRequired(true);
+        xFormPanel1.add(xComboBox3);
+
+        xLookupField3.setCaption("Barangay");
+        xLookupField3.setCaptionWidth(130);
+        xLookupField3.setExpression("#{entity.barangay.name}");
+        xLookupField3.setHandler("barangay:lookup");
+        xLookupField3.setName("entity.barangay");
+        xLookupField3.setPreferredSize(new java.awt.Dimension(0, 19));
+        xLookupField3.setRequired(true);
+        xFormPanel1.add(xLookupField3);
+
+        xComboBox4.setCaption("App Type");
+        xComboBox4.setCaptionWidth(130);
+        xComboBox4.setExpression("#{item.value}");
+        xComboBox4.setItemKey("key");
+        xComboBox4.setItems("appTypes");
+        xComboBox4.setName("entity.apptype");
+        xComboBox4.setPreferredSize(new java.awt.Dimension(0, 22));
+        xComboBox4.setRequired(true);
+        xFormPanel1.add(xComboBox4);
+
         xDataTable3.setColumns(new com.rameses.rcp.common.Column[]{
             new com.rameses.rcp.common.Column(new Object[]{
                 new Object[]{"name", "lob.name"}
@@ -245,53 +292,35 @@ public class BPAssessmentAnalyzerPage extends javax.swing.JPanel {
         });
         xDataTable3.setHandler("taxfeeModel");
 
-        jLabel2.setFont(new java.awt.Font("Tahoma", 1, 11));
-        jLabel2.setText("Infos");
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(xDataTable3, javax.swing.GroupLayout.DEFAULT_SIZE, 757, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(xDataTable3, javax.swing.GroupLayout.DEFAULT_SIZE, 138, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        jTabbedPane1.addTab("Taxes, Fees and Charges", jPanel3);
 
-        jLabel3.setFont(new java.awt.Font("Tahoma", 1, 11));
-        jLabel3.setText("Taxes,  Fees and other charges");
-
-        com.rameses.rcp.control.border.XTitledBorder xTitledBorder2 = new com.rameses.rcp.control.border.XTitledBorder();
-        xTitledBorder2.setTitle("Business Info");
-        xFormPanel1.setBorder(xTitledBorder2);
-        xComboBox2.setCaption("Organization");
-        xComboBox2.setCaptionWidth(130);
-        xComboBox2.setExpression("#{item.value}");
-        xComboBox2.setItemKey("key");
-        xComboBox2.setItems("orgTypes");
-        xComboBox2.setName("entity.businessorgtype");
-        xComboBox2.setPreferredSize(new java.awt.Dimension(0, 22));
-        xComboBox2.setRequired(true);
-        xFormPanel1.add(xComboBox2);
-
-        xComboBox3.setCaption("Office Type");
-        xComboBox3.setCaptionWidth(130);
-        xComboBox3.setExpression("#{item.value}");
-        xComboBox3.setItemKey("key");
-        xComboBox3.setItems("officeTypes");
-        xComboBox3.setName("entity.officetype");
-        xComboBox3.setPreferredSize(new java.awt.Dimension(0, 22));
-        xComboBox3.setRequired(true);
-        xFormPanel1.add(xComboBox3);
-
-        xLookupField3.setCaption("Barangay");
-        xLookupField3.setCaptionWidth(130);
-        xLookupField3.setExpression("#{entity.barangay.name}");
-        xLookupField3.setHandler("barangay:lookup");
-        xLookupField3.setName("entity.barangay");
-        xLookupField3.setPreferredSize(new java.awt.Dimension(0, 19));
-        xLookupField3.setRequired(true);
-        xFormPanel1.add(xLookupField3);
-
-        xComboBox4.setCaption("App Type");
-        xComboBox4.setCaptionWidth(130);
-        xComboBox4.setExpression("#{item.value}");
-        xComboBox4.setItemKey("key");
-        xComboBox4.setItems("appTypes");
-        xComboBox4.setName("entity.apptype");
-        xComboBox4.setPreferredSize(new java.awt.Dimension(0, 22));
-        xComboBox4.setRequired(true);
-        xFormPanel1.add(xComboBox4);
+        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
+        jPanel4.setLayout(jPanel4Layout);
+        jPanel4Layout.setHorizontalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 777, Short.MAX_VALUE)
+        );
+        jPanel4Layout.setVerticalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 160, Short.MAX_VALUE)
+        );
+        jTabbedPane1.addTab("Requirements", jPanel4);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -299,9 +328,8 @@ public class BPAssessmentAnalyzerPage extends javax.swing.JPanel {
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(xDataTable3, javax.swing.GroupLayout.DEFAULT_SIZE, 782, Short.MAX_VALUE)
+                    .addComponent(jTabbedPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 782, Short.MAX_VALUE)
                     .addComponent(xDataTable2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 782, Short.MAX_VALUE)
-                    .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 216, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel2Layout.createSequentialGroup()
                         .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -320,9 +348,7 @@ public class BPAssessmentAnalyzerPage extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(xDataTable2, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel3)
-                .addGap(14, 14, 14)
-                .addComponent(xDataTable3, javax.swing.GroupLayout.DEFAULT_SIZE, 150, Short.MAX_VALUE)
+                .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 188, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -348,9 +374,11 @@ public class BPAssessmentAnalyzerPage extends javax.swing.JPanel {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
+    private javax.swing.JTabbedPane jTabbedPane1;
     private com.rameses.rcp.control.XComboBox xComboBox2;
     private com.rameses.rcp.control.XComboBox xComboBox3;
     private com.rameses.rcp.control.XComboBox xComboBox4;

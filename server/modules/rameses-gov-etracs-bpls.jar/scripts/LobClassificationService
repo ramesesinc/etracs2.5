@@ -13,4 +13,8 @@ class LobClassificationService extends ActiveCrudListService {
 		]
 	}
 
+	void beforeCreate(o) {
+		o.objid = o.name.trim().toUpperCase().replaceAll("\\s{1,}", "_");
+	}
+
 }

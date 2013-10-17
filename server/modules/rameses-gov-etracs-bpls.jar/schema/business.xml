@@ -2,7 +2,7 @@
 	<element tablename="business">
 		<field name="objid" primary="true"/>
 		<field name="state" required="true"/>
-		<field name="bin" required="true"/>
+		
 		<field name="permitee_name" required="true"/>
 		<field name="permitee_objid" required="true"/>
 		<field name="barangay_objid" required="true"/>
@@ -11,37 +11,51 @@
 		<field name="businessaddress" required="true"/>
 		<field name="orgtype" required="true"/>
 		<field name="officetype" required="true"/>
+
+		<field name="bin" />
 		<field name="yearstarted" required="true"/>
 		<field name="unpaidbalance" required="true"/>
 		<field name="lastqtrpaid" required="true"/>
 		<field name="lastyearpaid" required="true"/>
 		<field name="credits" required="true"/>
+		<field name="user_objid" required="true"/>
 	</element>	
+
+	<element name="lob" tablename="business_lob">
+		<field name="objid" primary="true"/>
+		<field name="businessid" required="true"/>
+		<field name="applicationid" />
+		<field name="permitid" />
+		<field name="lobid" required="true"/>
+		<field name="name" required="true"/>
+		<field name="assessmenttype" required="true"/>
+	</element>
 
 	<element name="receivable" tablename="business_receivable">
 		<field name="objid" primary="true"/>
 		<field name="businessid" required="true"/>
-		<field name="applicationid" required="true"/>
-		<field name="sortorder" required="true"/>
+		<field name="applicationid" />
 		<field name="iyear" required="true"/>
-		<field name="iqtr" required="true"/>
+		<field name="iqtr" />
 		<field name="account_objid" required="true"/>
-		<field name="account_code" required="true"/>
 		<field name="account_title" required="true"/>
 		<field name="lob_objid" required="true"/>
 		<field name="lob_name" required="true"/>
 		<field name="amount" required="true"/>
 		<field name="amtpaid" required="true"/>
 		<field name="discount" required="true"/>
+		<field name="paymentmode" required="true"/>
 	</element>	
 
-	<element name="payment" tablename="business_receivable_payment">
+	<element name="receivable_payment" tablename="business_receivable_payment">
 		<field name="objid" primary="true"/>
-		<field name="parentid" required="true"/>
+		<field name="receivableid" required="true"/>
 		<field name="businessid" required="true"/>
-		<field name="receipt_objid" required="true"/>
-		<field name="receipt_receiptno" required="true"/>
-		<field name="receipt_receiptdate" required="true"/>
+		<field name="iqtr" required="true"/>
+		<field name="refno" required="true"/>
+		<field name="reftype" />
+		<field name="refdate" />
+		<field name="refid" />
 		<field name="amtpaid" required="true"/>
 		<field name="surchargepaid" required="true"/>
 		<field name="interestpaid" required="true"/>
@@ -90,14 +104,7 @@
 		<field name="issuedby_name" required="true"/>
 	</element>
 
-	<element name="lob" tablename="business_lob">
-		<field name="objid" primary="true"/>
-		<field name="businessid" required="true"/>
-		<field name="applicationid" required="true"/>
-		<field name="permitid" required="false"/>
-		<field name="lobid" required="true"/>
-		<field name="name" required="true"/>
-	</element>
+	
 
 	<element name="info" tablename="business_info">
 		<field name="objid" primary="true"/>

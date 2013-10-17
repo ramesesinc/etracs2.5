@@ -37,3 +37,27 @@ declare BusinessTax
 	lowest:			boolean
 	data:			Object
 end 
+
+declare RegFee 
+	objid:			String
+	acctid:			String
+	lob:			LOB	
+	name:			String
+	amount:			double
+	assessedvalue:	double
+	highest:		boolean
+	lowest:			boolean
+	data:			Object
+end 
+
+declare OtherCharge 
+	objid:			String
+	acctid:			String
+	lob:			LOB	
+	name:			String
+	amount:			double
+	assessedvalue:	double
+	highest:		boolean
+	lowest:			boolean
+	data:			Object
+end 

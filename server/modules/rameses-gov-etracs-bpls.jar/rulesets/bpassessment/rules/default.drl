@@ -4,6 +4,16 @@ import java.util.*;
 import com.rameses.rules.common.*;
 global RuleAction action;
 
+rule "summarize-app-info"
+	agenda-group "postappinfo"
+	salience 0
+	no-loop
+	when
+				
+	then
+		action.execute( "summarize_appinfo", null, drools);
+end
+
 rule "summarize-business-tax"
 	agenda-group "postbusinesstax"
 	salience 0

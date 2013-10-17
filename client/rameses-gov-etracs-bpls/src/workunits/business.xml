@@ -1,6 +1,9 @@
 <workunit>
     <invokers>
-        <invoker type="business:open" caption="Business Info" action="start" target="window"/>
+        <invoker type="business:create" caption="Add New Business" action="create" target="window"/>
+        <invoker type="business:open" caption="Business Info" action="open" target="window"/>
+        <invoker type="formActions" caption="Close" action="_close" />
+        <invoker type="formActions" caption="Save" action="save" visibleWhen="#{mode=='create'}"/>
     </invokers>
     
     <code>
@@ -9,44 +12,43 @@
         import com.rameses.rcp.common.*
         import com.rameses.osiris2.client.*
         import com.rameses.osiris2.common.*
-        import com.rameses.gov.etracs.bpls.application.*;
+        import java.rmi.server.*
+        import com.rameses.gov.etracs.bpls.business.*;
         
-        class  BusinessInfoController extends PageFlowController {
+        class  BusinessInfoController extends AbstractBusinessController {
         
             @Service("BusinessInfoService")
             def service;
             
-            def entity;
+            String title = "Business Information";
+            def mode = "read";
+            def entityName = "business";
             
-            def start() {
+            def create() {
+                entity = [objid: "BUS"+new UID(), lobs: []];
+                entity.state = 'INACTIVE';
+                mode="create";
+                return "new";
+            }
+            
+            def open() {
                 entity = service.open(entity);
-                return super.start();
+                mode="read";
+                return "info";
+            }
+            
+            def save() {
+                entity = service.create(entity);
+                mode = "read";
+                return "info";
             }
         }
         ]]>
         
     </code>
-    <pageflow>
-        <start>
-            <transition to="initial"/>
-        </start>
-        <page name="initial" title="#{entity.tradename}">
-            <transition to="end" caption="Close"/>
-            <transition to="txn" caption="Ledger"/>
-            <transition to="hist" caption="History"/>
-            <transition to="changelog" caption="Change Log"/>
-            <transition to="req" caption="Requirements"/>
-            <transition to="cases" caption="Cases"/>
-        </page>
-        <page name="txn" title="#{entity.tradename}/Ledger">
-            <transition to="initial" caption="Back"/>
-        </page>    
-        <end/>
-    </pageflow>
-    
     <pages>
-        <page name="initial" template="com.rameses.gov.etracs.bpls.business.BusinessInfoPage"/>
-        <page name="txn"  template="com.rameses.gov.etracs.bpls.business.BusinessTxnPage"/>
+        <page name="new" template="com.rameses.gov.etracs.bpls.business.NewBusinessPage"/>
+        <page name="info"  template="com.rameses.gov.etracs.bpls.business.BusinessInfoPage"/>
     </pages>
     
 </workunit>

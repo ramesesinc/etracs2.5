@@ -2,6 +2,6 @@
 	<element name="businessaccount" tablename="businessaccount">
 		<field name="objid" primary="true"/>
 		<field name="taxfeetype" required="true"/>
-		<field name="billtype" required="true"/>
+		<field name="paymentmode" required="true"/>
 	</element>
 </schema>

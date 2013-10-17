@@ -6,6 +6,8 @@ class LobLookupService extends ActiveListService {
 	@ActiveDB("lob")
 	def em;
 
+	String pagingKeys = "lob.objid";
+	
 	String listMethod = "getLookup";
 
 	@ProxyMethod

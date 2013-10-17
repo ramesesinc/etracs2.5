@@ -23,7 +23,7 @@
             def selectedItem;
             
             def taxFeeTypes = ["TAX", "REGFEE", "OTHERCHARGE"];
-            def billTypes = ["YEAR", "QTR"];
+            def paymentModes = ["YEAR", "QTR"];
             
             def getEntity(){
                 return caller.entity
@@ -46,15 +46,14 @@
                     return entity.items;
                 },
                 onAddItem: {o->
-                    service.create(o);
                     entity.items << o;
                 },
                 onRemoveItem: {o->
                     service.removeEntity(o);
                     entity.items.remove(o);
                 },
-                onUpdateItem: { o->
-                    MsgBox.alert("updated");
+                onCommitItem: { o->
+                    service.save( o );
                 }
             ] as EditorListModel;
             

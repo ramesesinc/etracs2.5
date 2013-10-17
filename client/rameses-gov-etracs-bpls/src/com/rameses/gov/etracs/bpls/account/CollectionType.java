@@ -6,6 +6,8 @@
 
 package com.rameses.gov.etracs.bpls.account;
 
+import com.rameses.rcp.common.EditorListModel;
+
 /**
  *
  * @author  Elmo
@@ -72,8 +74,8 @@ public class CollectionType extends javax.swing.JPanel {
                 , new Object[]{"typeHandler", new com.rameses.rcp.common.ComboBoxColumnHandler("taxFeeTypes", null, null)}
             }),
             new com.rameses.rcp.common.Column(new Object[]{
-                new Object[]{"name", "billtype"}
-                , new Object[]{"caption", "Bill Types"}
+                new Object[]{"name", "paymentmode"}
+                , new Object[]{"caption", "Mode of Payment"}
                 , new Object[]{"width", 100}
                 , new Object[]{"minWidth", 0}
                 , new Object[]{"maxWidth", 0}
@@ -83,7 +85,7 @@ public class CollectionType extends javax.swing.JPanel {
                 , new Object[]{"editable", true}
                 , new Object[]{"editableWhen", null}
                 , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
-                , new Object[]{"typeHandler", new com.rameses.rcp.common.ComboBoxColumnHandler("billTypes", null, null)}
+                , new Object[]{"typeHandler", new com.rameses.rcp.common.ComboBoxColumnHandler("paymentModes", null, null)}
             })
         });
         xDataTable1.setHandler("itemModel");

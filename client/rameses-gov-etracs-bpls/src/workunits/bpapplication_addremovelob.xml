@@ -1,6 +1,6 @@
 <workunit>
     <invokers>
-        <invoker folderid="/explorer/txn/bpls/app" caption="Add/Remove Line of Business" action="start" index="3"/>
+        <invoker folderid="/explorer/txn/bpls/app" caption="Add/Remove Line of Business" action="start" index="3" />
     </invokers>
     
     <code>

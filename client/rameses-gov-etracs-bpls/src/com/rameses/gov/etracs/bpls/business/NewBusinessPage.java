@@ -4,7 +4,7 @@
  * Created on October 3, 2013, 7:41 PM
  */
 
-package com.rameses.gov.etracs.bpls.application;
+package com.rameses.gov.etracs.bpls.business;
 
 import com.rameses.osiris2.themes.FormPage;
 import com.rameses.rcp.ui.annotations.Template;
@@ -14,10 +14,10 @@ import com.rameses.rcp.ui.annotations.Template;
  * @author  Elmo
  */
 @Template(FormPage.class)
-public class NewInitialPage extends javax.swing.JPanel {
+public class NewBusinessPage extends javax.swing.JPanel {
     
     /** Creates new form NewBPApplicationInitPage */
-    public NewInitialPage() {
+    public NewBusinessPage() {
         initComponents();
     }
     
@@ -30,12 +30,13 @@ public class NewInitialPage extends javax.swing.JPanel {
     private void initComponents() {
         jPanel1 = new javax.swing.JPanel();
         xFormPanel1 = new com.rameses.rcp.control.XFormPanel();
-        xTextField2 = new com.rameses.rcp.control.XTextField();
         xLookupField1 = new com.rameses.rcp.control.XLookupField();
+        xTextField2 = new com.rameses.rcp.control.XTextField();
         xTextField1 = new com.rameses.rcp.control.XTextField();
         xLookupField3 = new com.rameses.rcp.control.XLookupField();
         xComboBox1 = new com.rameses.rcp.control.XComboBox();
         xComboBox2 = new com.rameses.rcp.control.XComboBox();
+        xIntegerField1 = new com.rameses.rcp.control.XIntegerField();
         jPanel2 = new javax.swing.JPanel();
         xFormPanel2 = new com.rameses.rcp.control.XFormPanel();
         xLookupField2 = new com.rameses.rcp.control.XLookupField();
@@ -46,12 +47,6 @@ public class NewInitialPage extends javax.swing.JPanel {
         jPanel1.setBorder(xTitledBorder1);
 
         xFormPanel1.setCaptionWidth(150);
-        xTextField2.setCaption("Trade Name");
-        xTextField2.setName("entity.tradename");
-        xTextField2.setPreferredSize(new java.awt.Dimension(0, 20));
-        xTextField2.setRequired(true);
-        xFormPanel1.add(xTextField2);
-
         xLookupField1.setCaption("Permitee");
         xLookupField1.setExpression("#{item.name}");
         xLookupField1.setHandler("lookupPermitees");
@@ -59,6 +54,12 @@ public class NewInitialPage extends javax.swing.JPanel {
         xLookupField1.setPreferredSize(new java.awt.Dimension(0, 20));
         xLookupField1.setRequired(true);
         xFormPanel1.add(xLookupField1);
+
+        xTextField2.setCaption("Trade Name");
+        xTextField2.setName("entity.tradename");
+        xTextField2.setPreferredSize(new java.awt.Dimension(0, 20));
+        xTextField2.setRequired(true);
+        xFormPanel1.add(xTextField2);
 
         xTextField1.setCaption("Business Address");
         xTextField1.setName("entity.businessaddress");
@@ -92,6 +93,10 @@ public class NewInitialPage extends javax.swing.JPanel {
         xComboBox2.setRequired(true);
         xFormPanel1.add(xComboBox2);
 
+        xIntegerField1.setCaption("Year started");
+        xIntegerField1.setName("entity.yearstarted");
+        xFormPanel1.add(xIntegerField1);
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -105,8 +110,8 @@ public class NewInitialPage extends javax.swing.JPanel {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(xFormPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 143, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(22, Short.MAX_VALUE))
+                .addComponent(xFormPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 169, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         com.rameses.rcp.control.border.XTitledBorder xTitledBorder2 = new com.rameses.rcp.control.border.XTitledBorder();
@@ -189,6 +194,7 @@ public class NewInitialPage extends javax.swing.JPanel {
     private com.rameses.rcp.control.XDataTable xDataTable1;
     private com.rameses.rcp.control.XFormPanel xFormPanel1;
     private com.rameses.rcp.control.XFormPanel xFormPanel2;
+    private com.rameses.rcp.control.XIntegerField xIntegerField1;
     private com.rameses.rcp.control.XLookupField xLookupField1;
     private com.rameses.rcp.control.XLookupField xLookupField2;
     private com.rameses.rcp.control.XLookupField xLookupField3;
