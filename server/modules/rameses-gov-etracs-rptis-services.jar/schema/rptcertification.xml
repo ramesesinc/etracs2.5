@@ -12,6 +12,7 @@
 		<field name="requestedby" required="true" />
 		<field name="requestedbyaddress" required="true" />
 		<field name="purpose" required="true" />
+		<field name="addlinfo" />
 		<field name="certifiedby" required="true" />
 		<field name="certifiedbytitle" required="true" />
 		<field name="byauthority" />

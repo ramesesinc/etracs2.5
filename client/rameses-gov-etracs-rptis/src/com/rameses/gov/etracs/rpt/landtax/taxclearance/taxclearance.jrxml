@@ -57,6 +57,7 @@
 	<field name="certifiedby" class="java.lang.String"/>
 	<field name="certifiedbytitle" class="java.lang.String"/>
 	<field name="txnno" class="java.lang.String"/>
+	<field name="addlinfo" class="java.lang.String"/>
 
 
 		<group  name="INFO" >
@@ -476,7 +477,7 @@
 					<reportElement
 						mode="Transparent"
 						x="0"
-						y="61"
+						y="56"
 						width="504"
 						height="22"
 						forecolor="#000000"
@@ -762,7 +763,7 @@
 					<reportElement
 						mode="Transparent"
 						x="0"
-						y="25"
+						y="21"
 						width="504"
 						height="22"
 						forecolor="#000000"
@@ -778,6 +779,29 @@
 						<font fontName="Tahoma" pdfFontName="Helvetica" size="10" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA["        This certificate is issued upon the request of " + $F{requestedby} + " " + $F{purpose} + "."]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						mode="Transparent"
+						x="0"
+						y="0"
+						width="504"
+						height="16"
+						forecolor="#000000"
+						backcolor="#FFFFFF"
+						key="textField-27"
+						positionType="Float">
+							<printWhenExpression><![CDATA[new Boolean($F{addlinfo} != null)]]></printWhenExpression>
+						</reportElement>
+					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
+					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" isStyledText="true" lineSpacing="Single">
+						<font fontName="Tahoma" pdfFontName="Helvetica" size="10" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{addlinfo}]]></textFieldExpression>
 				</textField>
 			</band>
 		</summary>
