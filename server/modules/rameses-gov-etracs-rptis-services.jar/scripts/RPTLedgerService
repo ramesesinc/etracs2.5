@@ -426,7 +426,7 @@ class RPTLedgerService
         if (!info.taxpayer) throw new Exception('Taxpayer is required.')
 
         info.rptledgerid = info.objid 
-        info.lastitemyear = info.lastyearpaid - 1
+        info.lastitemyear = (info.lastqtrpaid == 4 ? info.lastyearpaid : info.lastyearpaid - 1)
         info.paidyear = info.lastyearpaid
         info.toyear = info.lastyearpaid
         info.toqtr = info.lastqtrpaid

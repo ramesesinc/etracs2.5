@@ -366,10 +366,10 @@ WHERE rptledgerid = $P{rptledgerid}
 
 
 [deleteLedgerItem]
-DELETE FROM rptledgeritem WHERE rptledgerid = $P{rptledgerid} AND year >= $P{lastitemyear}
+DELETE FROM rptledgeritem WHERE rptledgerid = $P{rptledgerid} 
 
 [deleteQuarterlyLedgerItem]
-DELETE FROM rptledgeritem_qtrly WHERE rptledgerid = $P{rptledgerid} AND year >= $P{lastitemyear}
+DELETE FROM rptledgeritem_qtrly WHERE rptledgerid = $P{rptledgerid}
 
 
 [updateLedgerItemLastQtrPaid]
