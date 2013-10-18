@@ -366,6 +366,43 @@ WHERE rptledgerid = $P{rptledgerid}
  AND qtr <= $P{toqtr}
 
 
+
+[findPartialedQtrlyItem]
+SELECT * FROM rptledgeritem_qtrly
+WHERE rptledgerid = $P{rptledgerid}	
+ AND year = $P{paidyear} + 1
+ AND qtr = $P{toqtr}
+
+
+[partialPaidQtrlyLedgerItemByYear]
+UPDATE rptledgeritem_qtrly SET 
+	state = 'OPEN',
+	basicpaid = $P{basic},
+	basicintpaid = $P{basicint},
+	sefpaid = $P{sef},
+	sefintpaid = $P{sefint}
+WHERE rptledgerid = $P{rptledgerid}	
+ AND year = $P{paidyear} 
+ AND qtr = $P{toqtr}
+
+
+
+[findPartialedLedgerItem]
+SELECT * FROM rptledgeritem 
+WHERE rptledgerid = $P{rptledgerid}	
+ AND year = $P{paidyear} + 1
+
+[partialPaidLedgerItemByYear]
+UPDATE rptledgeritem SET 
+	state = 'OPEN',
+	basicpaid = $P{basic},
+	basicintpaid = $P{basicint},
+	sefpaid = $P{sef},
+	sefintpaid = $P{sefint}
+WHERE rptledgerid = $P{rptledgerid}	
+ AND year = $P{paidyear}
+
+
 [deleteLedgerItem]
 DELETE FROM rptledgeritem WHERE rptledgerid = $P{rptledgerid} 
 

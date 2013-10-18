@@ -453,11 +453,30 @@ class RPTLedgerService
                 em.fixPaidQtrlyLedgerItemByYear(info)
                 em.updateLedgerItemLastQtrPaid(info)
             }
+            if (info.basic > 0.0 || info.sef > 0.0){
+                em.partialPaidQtrlyLedgerItemByYear(info)
+            }
+        }
+        else if (info.basic > 0.0 || info.sef > 0.0){
+            em.partialPaidLedgerItemByYear(info)
         }
 
         em.updateLastYearQtrPaid(info)
         //force recalc bill again
         billingSvc.forceRecalcBill(info.objid)
+    }
+
+    void validateFixPartial(info, item){
+        println 'item -> ' + item 
+        if (info.basic > item.basic )
+            throw new Exception('Partial Basic must not exceed ' + numSvc.format('#,##0.00',item.basic) + '.')
+        if (info.basicint > item.basicint )
+            throw new Exception('Partial Basic Penalty must not exceed ' + numSvc.format('#,##0.00',item.basicint) + '.')
+
+        if (info.sef > item.sef )
+            throw new Exception('Partial SEF must not exceed ' + numSvc.format('#,##0.00',item.sef) + '.')
+        if (info.sefint > item.sefint )
+            throw new Exception('Partial SEF Penalty must not exceed ' + numSvc.format('#,##0.00',item.sefint) + '.')
     }
 
 }
