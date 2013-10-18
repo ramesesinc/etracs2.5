@@ -131,7 +131,13 @@ class RPTReceiptService
 
 	@ProxyMethod
 	public def getItemsForPrinting(receipt) {
-		return em.getItemsForPrinting([rptreceiptid:receipt.objid])
+		def items = em.getItemsForPrinting([rptreceiptid:receipt.objid])
+		items.each{
+			if (it.owner.name == receipt.paidby) {
+				it.owner.name = ''
+			}
+		}
+		return items 
 	}
 
 
