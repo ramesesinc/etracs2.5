@@ -74,7 +74,7 @@
 					<reportElement
 						mode="Transparent"
 						x="354"
-						y="9"
+						y="10"
 						width="186"
 						height="14"
 						forecolor="#000000"
@@ -90,7 +90,7 @@
 					<reportElement
 						mode="Transparent"
 						x="354"
-						y="22"
+						y="23"
 						width="186"
 						height="14"
 						forecolor="#000000"
@@ -292,9 +292,9 @@
 				<staticText>
 					<reportElement
 						mode="Transparent"
-						x="355"
-						y="42"
-						width="152"
+						x="359"
+						y="44"
+						width="71"
 						height="14"
 						forecolor="#000000"
 						backcolor="#FFFFFF"
@@ -307,7 +307,7 @@
 					<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
 						<font fontName="SansSerif" pdfFontName="Helvetica" size="9" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 					</textElement>
-				<text><![CDATA[By :]]></text>
+				<text><![CDATA[By:]]></text>
 				</staticText>
 			</band>
 			</groupFooter>
