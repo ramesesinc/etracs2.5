@@ -72,9 +72,10 @@ SELECT rlf.*,
 FROM rptledgerfaas rlf
 	INNER JOIN propertyclassification pc ON rlf.classification_objid = pc.objid 
 	LEFT JOIN propertyclassification pc1 ON rlf.actualuse_objid = pc1.objid 
-WHERE rlf.rptledgerid = $P{rptledgerid} 
-  AND rlf.faasid = $P{faasid}
-ORDER BY rlf.fromyear DESC 
+WHERE rlf.rptledgerid =  $P{rptledgerid} 
+  AND $P{yr} >= rlf.fromyear 
+  AND $P{yr} <= (CASE WHEN rlf.toyear = 0 THEN $P{curryear} ELSE rlf.toyear END)
+  AND rlf.state ='APPROVED'
 
 
 [getLedgerItems]
