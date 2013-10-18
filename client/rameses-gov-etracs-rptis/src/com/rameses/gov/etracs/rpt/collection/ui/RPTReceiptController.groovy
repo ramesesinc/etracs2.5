@@ -9,7 +9,7 @@ import com.rameses.osiris2.reports.*;
 import com.rameses.gov.etracs.rpt.common.*;
 
 
-class RPTReceiptController extends com.rameses.enterprise.treasury.cashreceipt.AbstractCashReceipt
+class RPTReceiptController extends com.rameses.enterprise.treasury.cashreceipt.AbstractCashReceipt implements ViewHandler
 {
     @Binding
     def binding;
@@ -42,6 +42,7 @@ class RPTReceiptController extends com.rameses.enterprise.treasury.cashreceipt.A
     
     void init(){
         super.init();
+        itemsforpayment = [];
         entity.txntype = 'rptonline';
         entity.amount = 0.0;
         clearAllPayments();
@@ -94,6 +95,8 @@ class RPTReceiptController extends com.rameses.enterprise.treasury.cashreceipt.A
     def selectedItem;
     
     def listHandler = [
+        createItem : { return null },
+            
         fetchList : { return itemsforpayment },
         
         onColumnUpdate : { item,colname ->
@@ -136,12 +139,13 @@ class RPTReceiptController extends com.rameses.enterprise.treasury.cashreceipt.A
     void loadItemByLedger(rptledgerid){
         bill.ledgerids.clear();
         bill.ledgerids.add(rptledgerid);
-        itemsforpayment += svc.loadItemsForPayment(bill);
+        itemsforpayment += svc.getItemsForPayment(bill);
         listHandler.load();
         calcReceiptAmount();
     }
 
     void updateItemDue(item){
+        item.partialled = false;
         bill.ledgerids.clear();
         bill.ledgerids.add(item.rptledgerid);
         def items = svc.getItemsForPayment(bill);
@@ -198,10 +202,11 @@ class RPTReceiptController extends com.rameses.enterprise.treasury.cashreceipt.A
     def partialPayment(){
         return InvokerUtil.lookupOpener('rptpartialpayment:open', [
                 
-            amount : selectedItem.total,
+            amount : selectedItem.amount,
                 
             onpartial : { partial ->
-                selectedItem.putAll( svc.computePartialPayment(selectedItem, partial) );
+                selectedItem.putAll( billSvc.computePartialPayment(selectedItem, partial) );
+                selectedItem.amount = partial
                 listHandler.load();
                 calcReceiptAmount();
             },
@@ -216,6 +221,17 @@ class RPTReceiptController extends com.rameses.enterprise.treasury.cashreceipt.A
             entity.amount = paiditems.amount.sum();
             updateBalances();
         }
+    }
+    
+    
+    
+    //viewhandler implementation
+    void activatePage(binding, pagename){
+        
+    }
+    
+    void afterRefresh(binding, pagename){
+        binding.requestFocus('ledger');
     }
     
             

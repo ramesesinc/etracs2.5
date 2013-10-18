@@ -206,6 +206,7 @@ public class RPTReceiptPage extends javax.swing.JPanel {
         formPanel6.setPadding(new java.awt.Insets(0, 0, 0, 0));
         formPanel6.setPreferredSize(new java.awt.Dimension(300, 35));
         xLookupField1.setCaption("Search Ledger");
+        xLookupField1.setCaptionMnemonic('s');
         xLookupField1.setCaptionWidth(100);
         xLookupField1.setCellPadding(new java.awt.Insets(10, 5, 0, 0));
         xLookupField1.setExpression("#{''}");

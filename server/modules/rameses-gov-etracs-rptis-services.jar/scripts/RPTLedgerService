@@ -96,15 +96,43 @@ class RPTLedgerService
     }
 
     @ProxyMethod
+    public def openLedgerItem( item ) {
+        item = em.read(item, SCHEMA_ITEM)
+        if (item){
+            item.year = util.toInteger(item.year)
+            item.forpayment = util.toBoolean(item.forpayment, false)
+            item.qtrly = util.toBoolean(item.qtrly, false)
+            item.partial = util.toBoolean(item.partial, false)
+        }
+        return item
+    }
+
+    @ProxyMethod
     public def updateLedgerItem( item ) {
+        item.year = util.toInteger(item.year)
         item.forpayment = util.toBoolean(item.forpayment, false)
+        item.partial = util.toBoolean(item.partial, false)
         em.update(item, SCHEMA_ITEM)
     }
 
     @ProxyMethod
+    public def openLedgerItemQuarterly( item ) {
+        item = em.read(item, SCHEMA_QTRLYITEM)
+        if (item){
+            item.year = util.toInteger(item.year)
+            item.qtr = util.toInteger(item.qtr)
+            item.forpayment = util.toBoolean(item.forpayment, false)
+            item.partial = util.toBoolean(item.partial, false)
+        }
+        return item 
+    }
+
+    @ProxyMethod
     public def updateLedgerItemQuarterly( item ) {
+        item.year = util.toInteger(item.year)
         item.qtr = util.toInteger(item.qtr)
         item.forpayment = util.toBoolean(item.forpayment, false)
+        item.partial = util.toBoolean(item.partial, false)
         em.update(item, SCHEMA_QTRLYITEM)
     }
 
@@ -275,6 +303,8 @@ class RPTLedgerService
             basicdisctaken      : 0.0,
             basicamnesty        : 0.0,
             basicintamnesty     : 0.0,
+            basicamnestyapplied : 0.0,
+            basicintamnestyapplied : 0.0,
             basiccredit         : 0.0,
             sef                 : 0.0,
             sefpaid             : 0.0,
@@ -285,10 +315,13 @@ class RPTLedgerService
             sefdisctaken        : 0.0,
             sefamnesty          : 0.0,
             sefintamnesty       : 0.0,
+            sefamnestyapplied   : 0.0,
+            sefintamnestyapplied : 0.0,
             sefcredit           : 0.0,
             firecode            : 0.0,
             firecodepaid        : 0.0,
             forpayment          : 0,
+            partial             : 0,
             lastqtrpaid         : 0,
             qtrly               : false,
         ]

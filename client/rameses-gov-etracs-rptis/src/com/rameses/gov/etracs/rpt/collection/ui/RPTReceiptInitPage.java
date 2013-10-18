@@ -40,6 +40,7 @@ public class RPTReceiptInitPage extends javax.swing.JPanel {
         formPanel2.setBorder(xTitledBorder1);
         formPanel2.setPreferredSize(new java.awt.Dimension(5200, 210));
         formPanel2.setShowCaption(false);
+        xRadio1.setMnemonic('a');
         xRadio1.setCaption("Pay all properties");
         xRadio1.setCaptionMnemonic('a');
         xRadio1.setCaptionWidth(200);
@@ -52,6 +53,7 @@ public class RPTReceiptInitPage extends javax.swing.JPanel {
         xRadio1.setText(" Pay all properties");
         formPanel2.add(xRadio1);
 
+        xRadio2.setMnemonic('l');
         xRadio2.setCaption("Pay by ledger");
         xRadio2.setCaptionMnemonic('l');
         xRadio2.setCaptionWidth(200);
@@ -69,6 +71,7 @@ public class RPTReceiptInitPage extends javax.swing.JPanel {
         formPanel3.setPadding(new java.awt.Insets(0, 0, 0, 0));
         formPanel3.setPreferredSize(new java.awt.Dimension(0, 22));
         formPanel3.setShowCaption(false);
+        xRadio3.setMnemonic('v');
         xRadio3.setCaption("Advance Payment");
         xRadio3.setCaptionMnemonic('v');
         xRadio3.setCaptionWidth(200);

@@ -71,6 +71,7 @@
         <field name="revtype" />
         <field name="amnestyinfo" />
         <field name="forpayment" type="boolean" required="true" />
+        <field name="partial" type="boolean" required="true" />
         <field name="lastqtrpaid" type="integer" required="true" />
         <field name="qtrly" type="boolean" required="true" />
     </element>
@@ -95,7 +96,7 @@
         <field name="basicintamnesty" required="true" type="decimal" />
         <field name="basiccredit" required="true" type="decimal" />
         <field name="sef" required="true" type="decimal" />
-        <field name="sefpaid" required="true" type="decimal" />
+        <field name="sefpaid" required="true" type="decimal" /> 
         <field name="sefint" required="true" type="decimal" />
         <field name="sefintpaid" required="true" type="decimal" />
         <field name="sefintpartial" required="true" type="decimal" />
@@ -109,5 +110,12 @@
         <field name="revtype" />
         <field name="amnestyinfo" />
         <field name="forpayment" required="true" type="boolean" />
+        <field name="partial" required="true" type="boolean" />
+        <field name="partialbasic" type="decimal" />
+        <field name="partialbasicint" type="decimal" />
+        <field name="partialbasicdisc" type="decimal" />
+        <field name="partialsef" type="decimal" />
+        <field name="partialsefint" type="decimal" />
+        <field name="partialsefdisc" type="decimal" />
     </element>
 </schema>

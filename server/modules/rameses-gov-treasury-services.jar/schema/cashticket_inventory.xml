@@ -28,7 +28,7 @@
 		<field name="txndate" required="true" />
 		<field name="txntype" required="true" />
 		<field name="qtyreceived" required="true" />
-		<field name="qtybegin" required="true" />
+		<field name="qtybegin"  />
 		<field name="qtyissued" required="true" />
 		<field name="qtyending" required="true" />
 		<field name="qtycancelled" required="true" />
