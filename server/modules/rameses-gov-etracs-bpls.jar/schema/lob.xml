@@ -7,9 +7,9 @@
 		<field name="psic"/>
 	</element>
 
-	<element name="lob_lobattribute" tablename="lob_lobattribute">
-		<field name="lobid" required="true"/>
-		<field name="lobattributeid" required="true"/>
+	<element name="attribute" tablename="lob_lobattribute">
+		<field name="lobid" primary="true"/>
+		<field name="lobattributeid" primary="true"/>
 	</element>
 
 </schema>

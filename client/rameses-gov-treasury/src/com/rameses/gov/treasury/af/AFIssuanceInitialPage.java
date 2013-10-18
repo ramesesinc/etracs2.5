@@ -46,6 +46,7 @@ public class AFIssuanceInitialPage extends javax.swing.JPanel {
         xComboBox1.setItems("issuanceTypes");
         xComboBox1.setName("issuanceType");
         xComboBox1.setPreferredSize(new java.awt.Dimension(0, 22));
+        xComboBox1.setRequired(true);
         xFormPanel1.add(xComboBox1);
 
         xLookupField1.setCaption("Request No");
@@ -53,6 +54,7 @@ public class AFIssuanceInitialPage extends javax.swing.JPanel {
         xLookupField1.setHandler("lookupRequest");
         xLookupField1.setName("request");
         xLookupField1.setPreferredSize(new java.awt.Dimension(0, 20));
+        xLookupField1.setRequired(true);
         xFormPanel1.add(xLookupField1);
 
         xLabel1.setCaption("Requester");

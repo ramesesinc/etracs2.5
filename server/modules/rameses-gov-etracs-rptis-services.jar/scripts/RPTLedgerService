@@ -6,6 +6,9 @@ import com.rameses.services.extended.*
 
 class RPTLedgerService
 {
+    @Env
+    def env
+
     @ActiveDB('rptbill')
     def billdb 
 
@@ -38,6 +41,7 @@ class RPTLedgerService
     def SCHEMA_FAAS     = 'ledgerfaas'
     def SCHEMA_ITEM     = 'item'
     def SCHEMA_QTRLYITEM = 'qtrlyitem'
+    def SCHEMA_CAPTUREPMT = 'capturepayment'
 
     def STATE_PENDING   = 'PENDING'
     def STATE_APPROVED  = 'APPROVED'
@@ -91,6 +95,7 @@ class RPTLedgerService
     @ProxyMethod
     public def createLedgerItem( item ) {
         item.forpayment = util.toBoolean(item.forpayment, false)
+        item.partial = util.toBoolean(item.partial, false)
         em.create(item, SCHEMA_ITEM)
         return item 
     }
@@ -182,8 +187,13 @@ class RPTLedgerService
         if (!ledger)
             throw new Exception('Ledger does not exist or has already been deleted.')
             
-        if ( ledger.lastyearpaid < dtSvc.serverYear || (ledger.lastyearpaid == dtSvc.serverYear && ledger.lastqtrpaid < 4))
-            throw new Exception('Ledger has not yet been fully paid.')
+        if (util.isTrue(ledger.taxable)) {
+            if ( ledger.lastyearpaid < dtSvc.serverYear || (ledger.lastyearpaid == dtSvc.serverYear && ledger.lastqtrpaid < 4))
+                throw new Exception('Ledger has not yet been fully paid.')    
+        }
+        else {
+            em.updateLastYearQtrPaid([toyear:dtSvc.serverYear, toqtr:4, rptledgerid:ledger.objid])
+        }
     }
 
     @ProxyMethod
@@ -254,20 +264,72 @@ class RPTLedgerService
     }
 
 
+    @ProxyMethod
+    public void postCapturedPayment( payment ) {
+        payment.dtposted = dtSvc.serverDate 
+        payment.postedby = env.NAME
+        payment.postedbytitle = env.JOBTITLE
+        def len = payment.paidby.name.length()
+        if (len > 100 ) len = 100
+        payment.paidby_name = payment.paidby.name
+        payment.paidby_address = payment.paidby.address
+        payment.paidby = payment.paidby.name.substring(0,len)
+        em.create(payment, SCHEMA_CAPTUREPMT)
+
+        em.updateLastYearQtrPaid(payment)    
+        
+        payment.origtoqtr = payment.toqtr
+
+        payment.fromyear.upto(payment.toyear){ yr ->
+            def item = em.findLedgerItemByYear([rptledgerid:payment.rptledgerid, year:yr])
+            payment.paidyear = yr 
+            payment.toqtr = payment.origtoqtr
+
+            def bill = [rptledgerid:payment.rptledgerid, billtoyear:yr, insertqtrly:1, forpayment:0]
+
+            if (item.qtrly == 1 && yr == payment.fromyear ){
+                payment.toqtr = (payment.fromyear == payment.toyear ? payment.toqtr : 4)
+                em.closePaidQtrlyLedgerItemByYear(payment)
+                em.updateLedgerItemQuarterlyPaidInfo(payment)
+            }
+            else if (item.qtrly == 1 && yr == payment.toyear ){
+                payment.toqtr = payment.origtoqtr
+                em.closePaidQtrlyLedgerItemByYear(payment)
+                em.updateLedgerItemQuarterlyPaidInfo(payment)
+            }
+            else if ( item.qtrly == 0 && yr == payment.fromyear && payment.fromyear == payment.toyear && ( payment.fromqtr != 1 || payment.toqtr != 4  )) {
+                billingSvc.insertQtrlyLedgerItems(bill, [objid:payment.rptledgerid])
+                em.closePaidQtrlyLedgerItemByYear(payment)
+                em.updateLedgerItemQuarterlyPaidInfo(payment)
+            }
+            else if ( item.qtrly == 0 && yr == payment.toyear && ( payment.toqtr != 4 )) {
+                billingSvc.insertQtrlyLedgerItems(bill, [objid:payment.rptledgerid])
+                em.closePaidQtrlyLedgerItemByYear(payment)
+                em.updateLedgerItemQuarterlyPaidInfo(payment)
+            }
+            else {
+                em.closePaidLedgerItemByYear(payment)
+            }
+        }
+    }
+
     void postLedgerItems(ledgerfaas){
         def pdate = dtSvc.parseCurrentDate()
         ledgerfaas.toyear  = (ledgerfaas.toyear == 0 ? pdate.year : ledgerfaas.toyear)
         // def qtrlyPrevYears = util.toBoolean(var.rptledger_previous_year_computed_as_quarterly, false)
-        ledgerfaas.fromyear.upto(ledgerfaas.toyear){ yr ->
-            postYearlyItems(ledgerfaas, yr)
-            if ( yr >= pdate.year ){
-                billdb.insertQtrlyLedgerItems([rptledgerid:ledgerfaas.rptledgerid, billtoyear:yr])
-                billdb.setLedgerItemQtrlyFlag([rptledgerid:ledgerfaas.rptledgerid, billtoyear:yr])
+        if (ledgerfaas.fromyear <= ledgerfaas.toyear ){
+            ledgerfaas.fromyear.upto(ledgerfaas.toyear){ yr ->
+                postYearlyItems(ledgerfaas, yr)
+                if ( yr >= pdate.year ){
+                    billdb.insertQtrlyLedgerItems([rptledgerid:ledgerfaas.rptledgerid, billtoyear:yr, forpayment:0])
+                    billdb.setLedgerItemQtrlyFlag([rptledgerid:ledgerfaas.rptledgerid, billtoyear:yr, forpayment:0])
+                }
             }
         }
     }
 
     void postYearlyItems(ledgerfaas, yr){
+        println 'posting yearly item ' + ledgerfaas.objid + ' === ' + yr 
         createLedgerItem(doCreateLedgerItem(ledgerfaas, yr, 0))
     }
 
@@ -275,6 +337,7 @@ class RPTLedgerService
     public def insertLedgerItems(ledger, fromyear, toyear){
         if( fromyear <= toyear) {
             fromyear.upto(toyear){yr -> 
+                println 'Insert LedgerItem : ' + ledger.objid + '  year -> ' + yr 
                 def ledgerfaas = em.findLedgerFaasByFaasId([rptledgerid:ledger.objid, faasid:ledger.faasid])
                 if( ledgerfaas ){
                     postYearlyItems(ledgerfaas, yr)
@@ -325,6 +388,75 @@ class RPTLedgerService
             lastqtrpaid         : 0,
             qtrly               : false,
         ]
+    }
+
+
+
+
+    @ProxyMethod
+    public def approveMigratedLedger( ledger) {
+        ledger = openLedger(ledger)
+        if (ledger.state == STATE_CANCELLED)
+            throw new Exception('Ledger has already been cancelled.')
+
+        if (ledger.faases){
+            def firstfaas = ledger.faases[0]
+            def lastfaas = ledger.faases.last()
+            ledger.state            =  STATE_APPROVED
+            ledger.lastyearpaid     = (firstfaas.fromqtr == 1 ? firstfaas.fromyear - 1 : firstfaas.fromyear)
+            ledger.lastqtrpaid      = (firstfaas.fromqtr == 1 ?  4 : firstfaas.fromqtr - 1)
+            ledger.lastitemyear     = (lastfaas.toyear == 0 ? dtSvc.serverYear  : lastfaas.toyear )
+            ledger.nextbilldate     = null
+            ledger.advancebill      = false;
+            em.update(ledger)
+            
+            ledger.faases.each{  
+                it.state = ledger.state 
+                em.approveLedgerFaas(it)
+                postLedgerItems(it)
+            }
+        }
+        return ledger;
+    }
+
+
+    @ProxyMethod
+    public void fixLedger( info ) {
+        if (!info.objid) throw new Exception('Ledger ID is required.')
+        if (!info.taxpayer) throw new Exception('Taxpayer is required.')
+
+        info.rptledgerid = info.objid 
+        info.lastitemyear = (info.lastqtrpaid == 4 ? info.lastyearpaid : info.lastyearpaid - 1)
+        info.paidyear = info.lastyearpaid
+        info.toyear = info.lastyearpaid
+        info.toqtr = info.lastqtrpaid
+
+        em.updateLedgerLastItemYear(info)
+        em.deleteQuarterlyLedgerItem(info)
+        em.deleteLedgerItem(info)            
+
+        def bill = billingSvc.initBill()
+        bill.taxpayer = info.taxpayer
+        bill.ledgerids.add(info.objid)
+        billingSvc.generateBill( bill )
+
+        if (info.lastqtrpaid != 4){
+            if (info.lastyearpaid == dtSvc.serverYear){
+                em.fixPaidQtrlyLedgerItemByYear(info)
+            }
+            else {
+                //simulate qtrly payment for previous year
+                bill.billtoyear = info.lastyearpaid
+                bill.billtoqtr = 3
+                billingSvc.generateBill( bill )
+                em.fixPaidQtrlyLedgerItemByYear(info)
+                em.updateLedgerItemLastQtrPaid(info)
+            }
+        }
+
+        em.updateLastYearQtrPaid(info)
+        //force recalc bill again
+        billingSvc.forceRecalcBill(info.objid)
     }
 
 }

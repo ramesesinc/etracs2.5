@@ -8,6 +8,7 @@ SELECT
 	rl.qtrlypaymentpaidontime,
 	rl.lastitemyear,
 	rl.faasid, 
+	rl.nextbilldate,
 	f.tdno,
 	f.owner_name,
 	f.administrator_name,
@@ -115,7 +116,7 @@ ORDER BY expirydate ASC
 
 
  [getLedgersToRecalc]
- SELECT objid FROM rptledger WHERE nextbilldate <= $P{billdate} OR nextbilldate IS NULL
+ SELECT objid FROM rptledger WHERE nextbilldate <= $P{billdate} OR nextbilldate IS NULL AND state = 'APPROVED'
 
 
 [updateLedgerNextBillDate]
@@ -416,7 +417,7 @@ SELECT
         0.0 AS firecodepaid,
         rli.revtype,
         rli.amnestyinfo,
-        0 AS forpayment,
+        $P{forpayment} AS forpayment,
         0 AS partial
 FROM rptledger rl
         INNER JOIN rptledgeritem rli ON rl.objid = rli.rptledgerid
@@ -467,6 +468,8 @@ WHERE ${filters}
  AND rl.faasid = f.objid
  AND rl.state = 'APPROVED'
  
+ [updateLedgerItemForPaymentFlagById]
+ UPDATE rptledgeritem SET forpayment = $P{forpayment} WHERE objid = $P{objid}
 
 
 [getFullyPaidItems]	
@@ -542,6 +545,11 @@ UPDATE rptledgeritem_qtrly SET
 WHERE rptledgerid = $P{rptledgerid}
   AND (year > $P{year} OR (year = $P{year} AND qtr > $P{qtr}))
 
+[updateQuarterlyLedgerItemForPaymentFlagByYear]
+UPDATE rptledgeritem_qtrly SET 
+	forpayment = $P{forpayment} 
+WHERE rptledgerid = $P{rptledgerid}
+  AND year = $P{year}
 
 [updatePartialInfo]
 UPDATE rptledgeritem_qtrly SET
@@ -554,3 +562,45 @@ UPDATE rptledgeritem_qtrly SET
 	partial = 1
 WHERE objid = $P{rptledgeritemqtrlyid}	
 
+
+
+
+[applyLedgerItemTaxIncentives]
+UPDATE rptledgeritem rli, rptledger rl, faas f, rpu r, rpttaxincentive_item rti SET 
+	rli.basic = ROUND(rli.basic - (rli.basic * rti.basicrate / 100), 2),
+	rli.basicint = ROUND(rli.basicint - (rli.basicint * rti.basicrate / 100), 2),
+	rli.basicdisc = ROUND(rli.basicdisc - (rli.basicdisc * rti.basicrate / 100), 2),
+	rli.sef = ROUND(rli.sef - (rli.sef * rti.sefrate / 100), 2),
+	rli.sefint = ROUND(rli.sefint - (rli.sefint * rti.sefrate / 100), 2),
+	rli.sefdisc = ROUND(rli.sefdisc - (rli.sefdisc * rti.sefrate / 100), 2)
+WHERE rl.faasid = f.objid 
+ AND f.rpuid = r.objid 
+ AND rl.objid = rli.rptledgerid
+ AND rti.rptledgerid = rl.objid
+ AND ${filters}
+ AND rl.state = 'APPROVED'
+ AND rli.state = 'OPEN'  
+ AND rli.qtrly = 0
+ AND rli.year >= rti.fromyear  
+ AND rli.year <= rti.toyear 
+
+
+[applyQuarterlyLedgerItemTaxIncentives]
+UPDATE rptledgeritem_qtrly rliq, rptledger rl, faas f, rpu r, rptledgeritem rli, rpttaxincentive_item rti  SET 
+	rliq.basic = ROUND(rliq.basic - (rliq.basic * rti.basicrate / 100), 2),
+	rliq.basicint = ROUND(rliq.basicint - (rliq.basicint * rti.basicrate / 100), 2),
+	rliq.basicdisc = ROUND(rliq.basicdisc - (rliq.basicdisc * rti.basicrate / 100), 2),
+	rliq.sef = ROUND(rliq.sef - (rliq.sef * rti.sefrate / 100), 2),
+	rliq.sefint = ROUND(rliq.sefint - (rliq.sefint * rti.sefrate / 100), 2),
+	rliq.sefdisc = ROUND(rliq.sefdisc - (rliq.sefdisc * rti.sefrate / 100), 2)
+WHERE rl.faasid = f.objid
+ AND f.rpuid = r.objid
+ AND rl.objid = rli.rptledgerid 
+ ANd rli.objid = rliq.rptledgeritemid
+ AND rl.objid = rti.rptledgerid 
+ AND ${filters}
+ AND rl.state = 'APPROVED'
+ AND rli.state = 'OPEN'  
+ AND rli.qtrly = 1
+ AND rli.year >= rti.fromyear  
+ AND rli.year <= rti.toyear 

@@ -101,7 +101,12 @@ class RPTReceiptController extends com.rameses.enterprise.treasury.cashreceipt.A
         
         onColumnUpdate : { item,colname ->
             if (colname == 'pay' && item.pay == false){
-                item.total = 0.0 
+                item.amount = 0.0;
+                bill.ledgerids.clear();
+                bill.ledgerids.add(item.rptledgerid);
+                svc.resetForPaymentFlag(bill);
+                bill.ledgerids.clear();
+                calcReceiptAmount();
             }
             else {
                 if (colname == 'toyear') {
@@ -115,7 +120,6 @@ class RPTReceiptController extends com.rameses.enterprise.treasury.cashreceipt.A
 
                 if (item.fromyear == item.toyear && item.toqtr < item.fromqtr)
                     item.toqtr = item.fromqtr 
-                            
                 updateItemDue(item)
             }
             
@@ -187,7 +191,7 @@ class RPTReceiptController extends com.rameses.enterprise.treasury.cashreceipt.A
         itemsforpayment.each{
             it.pay = false;
             it.partialled = false;
-            it.total = 0.0;
+            it.amount = 0.0;
         }
         listHandler.load();
     }
@@ -206,7 +210,6 @@ class RPTReceiptController extends com.rameses.enterprise.treasury.cashreceipt.A
                 
             onpartial : { partial ->
                 selectedItem.putAll( billSvc.computePartialPayment(selectedItem, partial) );
-                selectedItem.amount = partial
                 listHandler.load();
                 calcReceiptAmount();
             },
@@ -232,6 +235,11 @@ class RPTReceiptController extends com.rameses.enterprise.treasury.cashreceipt.A
     
     void afterRefresh(binding, pagename){
         binding.requestFocus('ledger');
+    }
+    
+    
+    def printDetail(){
+        return InvokerUtil.lookupOpener('rptreceipt:printdetail',[entity:entity])
     }
     
             

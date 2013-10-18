@@ -1,12 +1,16 @@
 import com.rameses.annotations.*
 import com.rameses.common.*;
 import com.rameses.util.*;
+import com.rameses.services.extended.*;
 
 
 class RPUService
 {
     @PersistenceContext('rpt')
     def em
+
+    @ActiveDB('rpu')
+    def db 
 
     @Service('RealPropertyService')
     def rpSvc
@@ -103,6 +107,7 @@ class RPUService
     @ProxyMethod
     public def updateRpu( rpu ) {
         rpSvc.updateRealProperty(rpu.rp)
+        rpu.fullpin = buildFullPin(rpu)
         em.update(SCHEMA_RPU, rpu)
         return rpu
     }
@@ -152,7 +157,7 @@ class RPUService
     @ProxyMethod
     public def submitRpuForApproval( rpu ) {
         rpSvc.submitRealPropertyForApproval(rpu.rp)
-        updateState(rpu, rpu.state )
+        db.updateRpuState(rpu)
         return rpu 
     }
 
@@ -161,7 +166,8 @@ class RPUService
     public def approveRpu( rpu ) {
         checkLandStateCurrent(rpu)
         rpSvc.approveRealProperty(rpu.rp)
-        updateState(rpu, STATE_CURRENT )
+        rpu.state = STATE_CURRENT
+        db.updateRpuState(rpu)
         updateImprovementLandRpuIds(rpu)
         return rpu 
     }
@@ -170,7 +176,8 @@ class RPUService
     @ProxyMethod
     public def disapproveRpu( rpu ) {
         rpSvc.disapproveRealProperty(rpu.rp)
-        updateState(rpu, STATE_INTERIM )
+        rpu.state = STATE_INTERIM
+        db.updateRpuState(rpu)
         return rpu 
     }
 
@@ -178,7 +185,8 @@ class RPUService
     public def submitRpuToProvince( rpu ) {
         checkLandStateCurrent(rpu)
         rpSvc.submitRealPropertyToProvince(rpu.rp)
-        updateState(rpu, STATE_FORPROVAPPROVAL )
+        rpu.state = STATE_FORPROVAPPROVAL
+        db.updateRpuState(rpu)
         return rpu
     }
 
@@ -187,7 +195,8 @@ class RPUService
     public def approveRpuSubmissionToProvince( rpu ) {
         checkLandStateCurrent(rpu)
         rpSvc.approveRealPropertySubmissionToProvince(rpu.rp)
-        updateState(rpu, STATE_CURRENT )
+        rpu.state = STATE_CURRENT
+        db.updateRpuState(rpu)
         return rpu
     }
 
@@ -195,7 +204,8 @@ class RPUService
     @ProxyMethod
     public def disapproveRpuSubmissionToProvince( rpu ) {
         rpSvc.disapproveRealPropertySubmissionToProvince(rpu.rp)
-        updateState(rpu, STATE_INTERIM )
+        rpu.state = STATE_INTERIM 
+        db.updateRpuState(rpu)
         return rpu
     }
 
@@ -204,7 +214,8 @@ class RPUService
     public def approveRpuByProvince( rpu ) {
         checkLandStateCurrent(rpu)
         rpSvc.approveRealPropertyByProvince(rpu.rp)
-        updateState(rpu, STATE_CURRENT )
+        rpu.state = STATE_CURRENT
+        db.updateRpuState(rpu)
         updateImprovementLandRpuIds(rpu)
         return rpu
     }
@@ -212,7 +223,8 @@ class RPUService
     @ProxyMethod
     public def disapproveRpuByProvince( rpu ) {
         rpSvc.disapproveRealPropertyByProvince(rpu.rp)
-        updateState(rpu, STATE_FORPROVSUBMISSION )
+        rpu.state = STATE_FORPROVSUBMISSION 
+        db.updateRpuState(rpu)
         return rpu
     }
 

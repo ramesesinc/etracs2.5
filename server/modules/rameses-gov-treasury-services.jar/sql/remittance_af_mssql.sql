@@ -6,6 +6,7 @@ INNER JOIN afserial_inventory ai ON ai.objid=ad.controlid
 LEFT JOIN remittance_afserial af ON af.objid=ad.objid
 WHERE ai.respcenter_objid = $P{collectorid}
 AND af.objid IS NULL
+and ai.currentseries <= ai.endseries    
 
 [updateRemittanceCashTicket]
 INSERT INTO remittance_cashticket (objid,remittanceid)
@@ -69,7 +70,7 @@ SELECT
     MAX(c.series)+1 AS endingstartseries,
     NULL AS endingendseries
 FROM cashreceipt c
-INNER JOIN afserial_inventory 
+INNER JOIN afserial_inventory ai on ai.objid = c.controlid 
 LEFT JOIN remittance_cashreceipt r ON r.objid=c.objid
 WHERE r.objid IS NULL 
 AND c.state = 'POSTED'   
@@ -145,7 +146,8 @@ SELECT a.*,
     (a.receivedendseries-a.receivedstartseries+1) AS qtyreceived,
     (a.beginendseries-a.beginstartseries+1) AS qtybegin,
     (a.issuedendseries-a.issuedstartseries+1) AS qtyissued,
-    (a.endingendseries-a.endingstartseries+1) AS qtyending
+    case when a.issuedendseries = a.endingstartseries then 0 
+    else  (a.endingendseries-a.endingstartseries+1) end AS qtyending
 FROM
 (SELECT 
    ai.afid AS formno,		
@@ -161,7 +163,9 @@ FROM afserial_inventory_detail ad
 INNER JOIN afserial_inventory ai ON ad.controlid=ai.objid
 INNER JOIN remittance_afserial r ON r.objid=ad.objid
 WHERE r.remittanceid = $P{objid}
-GROUP BY ai.afid, ad.controlid) a
+GROUP BY ai.afid, ad.controlid 
+) a
+order by a.formno, a.endingstartseries
 
 [getRemittedCashTickets]
 SELECT a.*, 

@@ -24,6 +24,7 @@ class AssessmentNoticeController
     def MODE_PREVIEW = 'preview';
     
     def entity;
+    def faas;
     def mode;
     def addoption = 'bytd';
     def lookup;
@@ -46,6 +47,7 @@ class AssessmentNoticeController
         entity.items.each{it.included=true};
         mode = MODE_READ;        
     }
+    
     
     def save(){
         if (MsgBox.confirm('Save notice?')){

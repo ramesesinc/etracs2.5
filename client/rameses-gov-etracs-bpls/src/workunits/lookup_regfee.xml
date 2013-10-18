@@ -1,0 +1,6 @@
+<workunit extends="wtemplates/ServiceLookupController.xml" 
+    serviceName="BusinessAccountLookupService" tag="REGFEE">
+    <invokers>
+        <invoker type="regfee:lookup" caption="Lookup Regulatory Fee" target="popup"/>
+    </invokers>
+</workunit>

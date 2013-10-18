@@ -1,5 +1,9 @@
 <workunit>
     <invokers>
+        <!--
+        <invoker folderid="/explorer/txn/treasury" caption="Manage Accountable Form" role="COLLECTOR" action="initList"/>
+        -->
+        
         <invoker type="cashreceipt:select-afcontrol" caption="Select Accountable Form" target="popup"/>
         <invoker type="cashreceipt-initial:formActions" caption="Accountable Forms" target="popup" action="init" />
         

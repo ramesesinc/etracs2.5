@@ -19,9 +19,10 @@
             def entity, callerListModel, calculateHandler;
             
             def selectedItem;
+            def payment = [:]
             
-            void init(){
-                println "entity ->" +  entity;
+            void init(){    
+                if( entity.paymentitems) payment = entity.paymentitems[0]
             }
 
             def getLookupPayer() {
@@ -39,6 +40,7 @@
                     "query.collectorid": entity.collector.objid,
                     onselect: { o->
                         selectedItem.item = o;
+                        selectedItem.fund = o.fund;
                     }
                 ]);
             }
@@ -62,13 +64,40 @@
                 }
             ] as EditorListModel;
             
+            void validateCheckPayment() {
+                 if(payment && !payment.bank )  throw new Exception("Bank is required.  ");
+                 if(payment && !payment.checkno )  throw new Exception("Check No is required.  ");
+                 if(payment && !payment.checkdate )  throw new Exception("Check Date is required.  ");
+                 if(payment && !payment.amount)  throw new Exception("Amount is required.  ");
+                    
+                if(payment && payment.amount <= 0.0 ) throw new Exception("Check Amount must be greater than 0.  ")    
+            
+                if(payment && payment.amount > 0.0 ) {
+                    if( payment.amount > entity.amount) throw new Exception("Check Amount must not be greater than amount to be paid.  ")
+                }
+            }
             
             def doOk() {
+                validateCheckPayment()
+                if( payment ) {
+                    entity.totalnoncash = payment.amount 
+                    entity.totalcash = entity.amount - payment.amount 
+                    payment.type = 'CHECK'
+                    payemnt.particulars = payment.checkno + " (" + payment.bank + ") dated " + payment.checkdate;
+                    if( entity.paymentitems ) entity.paymentitems.clear()
+                    entity.paymentitems << payment;
+                } else {
+                    entity.totalnoncash = 0.0
+                    entity.totalcash = entity.amount;
+                    entity.paymentitems = []
+                }
+                
                 if (entity.items && entity.items.size() > 1) { 
                     entity.acctinfo = '( Multiple Accounts )'; 
                 } else { 
-                    entity.acctinfo = entity.items[0].title;
+                    entity.acctinfo = entity.items[0].item.title;
                 }
+                
                 if (callerListModel) callerListModel.refreshSelectedItem(); 
                 if (calculateHandler) calculateHandler(); 
                 

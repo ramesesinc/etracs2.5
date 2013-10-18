@@ -15,6 +15,7 @@ class RPTReceiptInterceptor
 		def receipt = evt.result
 		svc.open(receipt)
 		receipt._items = svc.getItemsForPrinting(receipt)
+		receipt.itemcount = receipt._items.size()
 	}
 
 
@@ -29,6 +30,7 @@ class RPTReceiptInterceptor
 		def receipt = evt.result
 		svc.createReceipt(receipt)
 		receipt._items = svc.getItemsForPrinting(receipt)
+		receipt.itemcount = receipt._items.size()
 		receipt.rptitems = null
 	}
 

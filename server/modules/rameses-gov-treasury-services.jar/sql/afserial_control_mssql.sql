@@ -14,8 +14,9 @@ SELECT a.* FROM
 	FROM afserial_inventory ai
 	LEFT JOIN afserial_control ac ON ac.controlid=ai.objid
 	WHERE  ai.afid =  $P{af}
-	AND ai.currentseries <= ai.endseries ) a
-WHERE a.ownerid =  $P{userid}
+	AND ac.currentseries <= ai.endseries ) a
+WHERE a.ownerid =  $P{userid} 
+order by a.startseries 
 
 [getAssigneeIssuanceList]
 SELECT 
@@ -102,8 +103,14 @@ WHERE
 	(ac.assignee_objid =$P{userid} 
 		OR (ai.respcenter_objid=$P{userid} AND ac.assignee_objid IS NULL )
      )
+and ai.afid=$P{afid}
 AND ac.txnmode = $P{txnmode}
 AND ac.active=1
+
+[findActiveControrForDeactivation]
+select ac.controlid from afserial_control ac
+ inner join afserial_inventory ai on ac.controlid = ai.objid 
+where ac.controlid= $P{controlid} and ac.currentseries > ai.endseries
 
 [createControl]
 INSERT INTO afserial_control (controlid, txnmode,assignee_objid, assignee_name, currentseries,qtyissued,active)
@@ -122,7 +129,7 @@ WHERE controlid=$P{objid}
 
 [deactivateControl]
 UPDATE afserial_control 
-SET active = false, txnmode = NULL 
+SET active = 0 
 WHERE controlid=$P{objid}
 
 [reactivateAssignSubcollector]
@@ -160,3 +167,8 @@ FROM afserial_control ac
 INNER JOIN afserial_inventory ai ON ai.objid=ac.controlid
 INNER JOIN afserial a ON ai.afid=a.objid
 WHERE ac.controlid = $P{controlid}
+
+[unassignsubcollector]
+update afserial_control set 
+	assignee_name = null, assignee_objid = null, txnmode='ONLINE' 
+where controlid=$P{controlid} 

@@ -32,6 +32,7 @@
               <Dimension value="[0, 19]"/>
             </Property>
             <Property name="required" type="boolean" value="true"/>
+            <Property name="spaceChar" type="char" value="_"/>
           </Properties>
         </Component>
         <Container class="javax.swing.JScrollPane" name="jScrollPane1">

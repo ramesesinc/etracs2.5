@@ -34,4 +34,11 @@ class BurialPermitReceiptInterceptor {
 		em.create("cashreceiptburial:cashreceiptburial", cs);
 	}
 
+	@After(pattern="CashReceiptService.open", eval="#{result.formno=='58'}")
+	public def onOpenReceipt(def evt) { 
+		def cs = em.read("cashreceiptburial:cashreceiptburial", evt.result)
+		cs.age = cs.age ? cs.age.toString(): ""
+		evt.result.putAll( cs );
+	}
+
 }

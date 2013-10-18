@@ -81,12 +81,37 @@ SELECT
 	xr.receiptno AS orno,
 	xr.txndate AS ordate,
 	SUM(ri.basic + ri.basicint - ri.basicdisc + ri.sef + ri.sefint - ri.sefdisc) AS oramount,
-	CONCAT(ri.year, '-', ri.qtr, 'Q') AS period
+	CASE WHEN (MIN(ri.qtr) = 1 AND MAX(ri.qtr) = 4) OR ((MIN(ri.qtr) = 0 AND MAX(ri.qtr) = 0))
+		THEN  CONCAT('FULL ', ri.year)
+		ELSE
+			CONCAT(MIN(ri.qtr), 'Q,', ri.year, ' - ', MAX(ri.qtr), 'Q,', ri.year) 
+	END AS period
 FROM rptcertificationitem rci 
 	INNER JOIN rptledger rl ON rci.refid = rl.objid 
-	INNER JOIN cashreceipt_rpt_item  ri ON rl.objid = ri.rptledgerid
+	INNER JOIN cashreceiptitem_rpt  ri ON rl.objid = ri.rptledgerid
 	INNER JOIN cashreceipt xr ON ri.rptreceiptid = xr.objid 
+	LEFT JOIN cashreceipt_void cv ON xr.objid = cv.objid 
 WHERE rci.rptcertificationid = $P{rptcertificationid}
   AND ri.year = $P{year}
   AND ri.qtr <= $P{qtr}
-GROUP BY ri.year, xr.receiptno, xr.txndate
+  AND cv.objid IS NULL 
+GROUP BY xr.receiptno, xr.txndate, ri.year
+
+UNION
+
+SELECT 
+	rc.receiptno AS orno,
+	rc.receiptdate AS ordate,
+	SUM(rc.amount) AS oramount,
+	CASE WHEN MIN(rc.fromqtr) = 1 AND MAX(rc.toqtr) = 4
+		THEN  CONCAT('FULL ', rc.fromyear)
+		ELSE
+			CONCAT(MIN(rc.fromqtr), 'Q,', rc.fromyear,  ' - ', MAX(rc.toqtr), 'Q,', rc.toyear) 
+	END AS period
+FROM rptcertificationitem rci 
+	INNER JOIN rptledger rl ON rci.refid = rl.objid 
+	INNER JOIN rptreceipt_capture rc on rl.objid = rc.rptledgerid
+WHERE rci.rptcertificationid = $P{rptcertificationid}
+  AND rc.fromyear = $P{year}
+  AND rc.toqtr <= $P{qtr}
+GROUP BY rc.receiptno, rc.receiptdate, rc.fromyear, rc.toyear 

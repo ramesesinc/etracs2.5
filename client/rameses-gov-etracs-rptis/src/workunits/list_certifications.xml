@@ -1,7 +1,7 @@
 <workunit extends="wtemplates/ListController.xml">
     <invokers>
-        <invoker folderid="/explorer/txn/rpt/list" caption="Certifications and Clearances"  target="window" index="155" role="ASSESSOR_SHARED" />
-        <invoker type="quick_launcher" code="RC00" caption="Certifications and Clearances" role="ASSESSOR_SHARED" />
+        <invoker folderid="/explorer/txn/rpt/list" action="initAssessorCertifications" caption="Certifications and Clearances"  target="window" index="155" role="ASSESSOR_SHARED" />
+        <invoker folderid="/explorer/txn/landtax/list" action="initLandTaxClearances" caption="Clearances"  target="window" index="155" role="LANDTAX" />
     </invokers>
     <code>
         import com.rameses.rcp.common.*
@@ -15,6 +15,13 @@
             String formTarget   = 'window'
             boolean allowCreate = false;
             
+            void initAssessorCertifications(){
+                query.office = 'assessor'
+            }
+            
+            void initLandTaxClearances(){
+                query.office = 'landtax'
+            }
             
             public String getEntityName(){ 
                 return selectedEntity?.opener 

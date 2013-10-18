@@ -1,0 +1,125 @@
+<schema>
+	<element tablename="business">
+		<field name="objid" primary="true"/>
+		<field name="state" required="true"/>
+		
+		<field name="permitee_name" required="true"/>
+		<field name="permitee_objid" required="true"/>
+		<field name="barangay_objid" required="true"/>
+		<field name="barangay_name" required="true"/>
+		<field name="tradename" required="true"/>
+		<field name="businessaddress" required="true"/>
+		<field name="orgtype" required="true"/>
+		<field name="officetype" required="true"/>
+
+		<field name="bin" />
+		<field name="yearstarted" required="true"/>
+		<field name="unpaidbalance" required="true"/>
+		<field name="lastqtrpaid" required="true"/>
+		<field name="lastyearpaid" required="true"/>
+		<field name="credits" required="true"/>
+		<field name="user_objid" required="true"/>
+	</element>	
+
+	<element name="lob" tablename="business_lob">
+		<field name="objid" primary="true"/>
+		<field name="businessid" required="true"/>
+		<field name="applicationid" />
+		<field name="permitid" />
+		<field name="lobid" required="true"/>
+		<field name="name" required="true"/>
+		<field name="assessmenttype" required="true"/>
+	</element>
+
+	<element name="receivable" tablename="business_receivable">
+		<field name="objid" primary="true"/>
+		<field name="businessid" required="true"/>
+		<field name="applicationid" />
+		<field name="iyear" required="true"/>
+		<field name="iqtr" />
+		<field name="account_objid" required="true"/>
+		<field name="account_title" required="true"/>
+		<field name="lob_objid" required="true"/>
+		<field name="lob_name" required="true"/>
+		<field name="amount" required="true"/>
+		<field name="amtpaid" required="true"/>
+		<field name="discount" required="true"/>
+		<field name="paymentmode" required="true"/>
+	</element>	
+
+	<element name="receivable_payment" tablename="business_receivable_payment">
+		<field name="objid" primary="true"/>
+		<field name="receivableid" required="true"/>
+		<field name="businessid" required="true"/>
+		<field name="iqtr" required="true"/>
+		<field name="refno" required="true"/>
+		<field name="reftype" />
+		<field name="refdate" />
+		<field name="refid" />
+		<field name="amtpaid" required="true"/>
+		<field name="surchargepaid" required="true"/>
+		<field name="interestpaid" required="true"/>
+		<field name="discount" required="true"/>
+	</element>	
+
+	<element name="attribute" tablename="business_attribute">
+		<field name="objid" primary="true"/>
+		<field name="businessid" required="true"/>
+		<field name="attribute_objid" required="true"/>
+		<field name="attribute_name" required="true"/>
+		<field name="decimalvalue" required="true"/>
+		<field name="intvalue" required="true"/>
+		<field name="stringvalue" required="true"/>
+		<field name="boolvalue" required="true"/>
+		<complex name="listvalue" type="list" serializer="default"/>
+	</element>	
+
+	<element name="case" tablename="business_case">
+		<field name="objid" primary="true"/>
+		<field name="businessid" required="true"/>
+		<field name="state" required="true"/>
+		<field name="casetype" required="true"/>
+		<field name="description" required="true"/>
+	</element>	
+
+	<element name="permit" tablename="business_permit">
+		<field name="objid" primary="true"/>
+		<field name="businessid" required="true"/>
+		<field name="applicationid" required="true"/>
+		<field name="permitno" required="true"/>
+		<field name="dtissued" required="true"/>
+		<field name="iyear" required="true"/>
+	</element>	
+
+	<element name="changeinfo" tablename="business_changeinfo">
+		<field name="objid" primary="true"/>
+		<field name="businessid" required="true"/>
+		<field name="state" required="true"/>
+		<field name="reftype" required="true"/>
+		<field name="refno" required="true"/>
+		<field name="refdate" required="true"/>
+		<field name="oldvalue" required="true"/>
+		<field name="newvalue" required="true"/>
+		<field name="issuedby_objid" required="true"/>
+		<field name="issuedby_name" required="true"/>
+	</element>
+
+	
+
+	<element name="info" tablename="business_info">
+		<field name="objid" primary="true"/>
+		<field name="businessid" required="true"/>
+		<field name="applicationid" required="true"/>
+		<field name="permitid" required="false"/>
+		<field name="attribute_objid" required="true"/>
+		<field name="attribute_name" required="true"/>
+		<field name="lob_objid" />
+		<field name="lob_name" />
+		<field name="decimalvalue" />
+		<field name="intvalue" />
+		<field name="stringvalue" />
+		<field name="boolvalue" />
+		<complex name="listvalue" type="list" serializer="default"/>
+	</element>		
+
+</schema>

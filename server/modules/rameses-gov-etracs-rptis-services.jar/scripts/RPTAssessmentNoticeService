@@ -53,6 +53,7 @@ class RPTAssessmentNoticeService
 		notice.taxpayerid = notice.taxpayer.objid
 		notice.taxpayername = notice.taxpayer.name
 		notice.taxpayeraddress = notice.taxpayer.address
+		notice.assessmentyear = dateSvc.serverYear 
 		
 		notice.createdbyid =  (env.USERID ? env.USERID : 'SYSTEM')
 		notice.createdbyname =  (env.FULLNAME ? env.FULLNAME : 'SYSTEM')
@@ -110,4 +111,26 @@ class RPTAssessmentNoticeService
 							.resultList 
 	}
 
+	@ProxyMethod
+	public def getFaasById( faasid ) {
+		return em.sqlContext.createNamedQuery('assessmentnotice:getFaasById')
+							.setParameter('faasid', faasid)
+							.singleResult
+	}
+
+	@ProxyMethod 
+	public def getTaxpayerList(params) {
+		return em.sqlContext.createNamedQuery('assessmentnotice:getTaxpayerList')
+							.setParameters(params)
+							.resultList 
+
+	} 
+
+	@ProxyMethod 
+	public def getTaxpayerPropertyListForBatch(params) {
+		return em.sqlContext.createNamedQuery('assessmentnotice:getTaxpayerPropertyListForBatch')
+							.setParameters(params)
+							.resultList 
+	}
+ 
 }

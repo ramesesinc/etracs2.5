@@ -3,6 +3,7 @@
         <invoker type="cashreceipt:selectaf:formActions" caption="View Assignees"  role="COLLECTOR"/>
         <!-- OWN TOOLBARS -->
         <invoker type="formActions" caption="Back" action="_close" />
+        <invoker type="formActions" caption="Unassign" action="unassign" role="COLLECTOR"/>
         <invoker type="formActions" caption="Change Mode" action="changeMode" role="COLLECTOR"/>
 
     </invokers>
@@ -32,6 +33,14 @@
                 return InvokerUtil.lookupOpener("afserial:changemode", 
                     [entity:selectedItem, saveHandler: { listModel.reload(); }] 
                 );
+            }
+            
+            def unassign() {
+                if(!selectedItem) throw new Exception("Select an item");
+                
+                svc.unassign( selectedItem );
+                listModel.load();
+        
             }
             
             def listModel = [

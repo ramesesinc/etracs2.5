@@ -1,5 +1,5 @@
 <workunit extends="wtemplates/ListController.xml" serviceName="LobService" entityName="lob">
     <invokers>
-        <invoker folderid="/explorer/master/bpls" caption="Line of Business" target="window" index="10" />
+        <invoker folderid="/explorer/master/bpls" caption="Line of Business" target="window" index="10" role="BPLS_MASTER_ENCODER"/>
     </invokers>
 </workunit>

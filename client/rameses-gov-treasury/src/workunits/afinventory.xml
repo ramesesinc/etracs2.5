@@ -1,6 +1,6 @@
 <workunit>
     <invokers>
-        <invoker folderid="/explorer/txn/treasury" caption="AF Inventory" action="init"/>
+        <invoker folderid="/explorer/txn/treasury" caption="AF Inventory" action="init" role="AFO"/>
         <invoker type="formActions" caption="Close" action="_close" mnemonic="c" icon="images/toolbars/cancel.png"/>
         <invoker type="formActions" caption="CRAAF" action="viewCraaf" mnemonic="r"  icon="images/toolbars/create2.png" />
     </invokers>
@@ -22,8 +22,8 @@
             @Service("AFInventoryService")
             def inventorySvc;
         
-            @Service("CollectionFormService")
-            def afSvc;    
+            @Service("CollectionTypeService")
+            def collTypeSvc;    
             
             def afType;
             def afTypes;
@@ -44,7 +44,7 @@
             ]
             
             public void init() {
-                afTypes = afSvc.getList();
+                afTypes = collTypeSvc.getFormTypes()
                 respcenters = inventorySvc.getRepsCenters()
             }
             

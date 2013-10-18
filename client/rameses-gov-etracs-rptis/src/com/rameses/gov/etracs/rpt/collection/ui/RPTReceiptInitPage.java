@@ -61,9 +61,9 @@ public class RPTReceiptInitPage extends javax.swing.JPanel {
         xRadio2.setName("payoption");
         xRadio2.setOpaque(false);
         xRadio2.setOptionValue("byledger");
-        xRadio2.setPreferredSize(new java.awt.Dimension(89, 24));
+        xRadio2.setPreferredSize(new java.awt.Dimension(150, 24));
         xRadio2.setShowCaption(false);
-        xRadio2.setText(" Pay by leder");
+        xRadio2.setText(" Pay by ledger");
         formPanel2.add(xRadio2);
 
         formPanel3.setCellpadding(new java.awt.Insets(10, 10, 0, 0));
@@ -84,7 +84,7 @@ public class RPTReceiptInitPage extends javax.swing.JPanel {
         formPanel3.add(xRadio3);
 
         xIntegerField1.setCaption("Year");
-        xIntegerField1.setCaptionWidth(40);
+        xIntegerField1.setCaptionWidth(80);
         xIntegerField1.setDepends(new String[] {"payoption"});
         xIntegerField1.setEnabled(false);
         xIntegerField1.setName("advanceyear");

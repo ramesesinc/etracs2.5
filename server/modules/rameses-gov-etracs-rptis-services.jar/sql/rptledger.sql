@@ -71,13 +71,68 @@ WHERE rlf.rptledgerid = $P{rptledgerid}
   AND rlf.faasid = $P{faasid}
 ORDER BY rlf.fromyear DESC 
 
+
 [getLedgerItems]
-SELECT rli.*,
-	rlf.tdno 
-FROM rptledgeritem rli
-	INNER JOIN rptledgerfaas rlf ON rli.rptledgerfaasid = rlf.objid 
-WHERE rli.rptledgerid = $P{rptledgerid} 
-ORDER BY rli.year DESC, rli.qtr DESC 
+SELECT t.*
+FROM ( 
+	SELECT
+		rl.objid AS rptledgerid, lf.tdno, rli.year,
+		rli.basic - rli.basicpaid AS basic, 
+		rli.basicint - rli.basicintpaid AS basicint, 
+		rli.basicdisc - rli.basicdisctaken AS basicdisc, 
+		rli.basicamnesty + rli.basicintamnesty AS basictotalamnesty,
+
+		rli.sef - rli.sefpaid AS sef, 
+		rli.sefint - rli.sefintpaid AS sefint, 
+		rli.sefdisc - rli.sefdisctaken AS sefdisc, 
+		rli.sefamnesty + rli.sefintamnesty AS seftotalamnesty,
+
+		rli.firecode - rli.firecodepaid AS firecode,
+
+		rli.basic - rli.basicpaid -  rli.basicdisc + 
+		rli.basicint - rli.basicintpaid  + 
+		rli.sef - rli.sefpaid -  rli.sefdisc + 
+		rli.sefint - rli.sefintpaid  +
+		rli.firecode - rli.firecodepaid AS total 
+	FROM rptledger rl
+		INNER JOIN rptledgerfaas lf ON rl.objid = lf.rptledgerid
+		INNER JOIN rptledgeritem rli ON lf.objid = rli.rptledgerfaasid
+	WHERE rl.objid = $P{rptledgerid} 
+	  AND rli.state = 'OPEN'
+	  AND rli.qtrly = 0
+
+	UNION
+
+	SELECT
+		rl.objid AS rptledgerid, 
+		lf.tdno, rli.year,
+		SUM(rliq.basic - rliq.basicpaid) AS basic, 
+		SUM(rliq.basicint - rliq.basicintpaid) AS basicint, 
+		SUM(rliq.basicdisc - rliq.basicdisctaken) AS basicdisc, 
+		SUM(rliq.basicamnesty + rliq.basicintamnesty) AS basictotalamnesty,
+
+		SUM(rliq.sef - rliq.sefpaid) AS sef, 
+		SUM(rliq.sefint - rliq.sefintpaid) AS sefint, 
+		SUM(rliq.sefdisc - rliq.sefdisctaken) AS sefdisc, 
+		SUM(rliq.sefamnesty + rliq.sefintamnesty) AS seftotalamnesty,
+		SUM(rliq.firecode - rliq.firecodepaid) AS firecode,
+
+		SUM(rliq.basic - rliq.basicpaid -  rliq.basicdisc + 
+		rliq.basicint - rliq.basicintpaid  + 
+		rliq.sef - rliq.sefpaid -  rliq.sefdisc + 
+		rliq.sefint - rliq.sefintpaid  +
+		rliq.firecode - rliq.firecodepaid) AS total 
+
+	FROM rptledger rl
+		INNER JOIN rptledgerfaas lf ON rl.objid = lf.rptledgerid
+		INNER JOIN rptledgeritem rli ON lf.objid = rli.rptledgerfaasid
+		INNER JOIN rptledgeritem_qtrly rliq ON rli.objid = rliq.rptledgeritemid 
+	WHERE rl.objid = $P{rptledgerid} 
+	  AND rliq.state = 'OPEN'
+	GROUP BY rl.objid, lf.tdno, rli.year 
+) t
+ORDER BY t.year DESC 
+
 
 
 
@@ -118,7 +173,7 @@ SELECT
 	CONCAT(MIN(CONCAT(cri.qtr, 'Q,', cri.year)), '-', MAX(CONCAT(cri.qtr, 'Q,', cri.year))) AS period,
 	SUM(basic - basicdisc + basicint + sef - sefdisc + sefint) AS total
 FROM cashreceipt cr 
-	INNER JOIN cashreceipt_rpt_item cri ON cr.objid = cri.rptreceiptid
+	INNER JOIN cashreceiptitem_rpt cri ON cr.objid = cri.rptreceiptid
 	LEFT JOIN cashreceipt_void v ON cr.objid = v.receiptid 
 WHERE 	cri.rptledgerid = $P{rptledgerid}
  AND v.objid IS NULL 
@@ -137,3 +192,66 @@ UPDATE rptledgeritem SET
 	sefintacct_objid = CASE WHEN sefintacct_objid IS NULL THEN $P{sefintacctid} ELSE sefintacct_objid END,
 	firecodeacct_objid = CASE WHEN firecodeacct_objid IS NULL THEN $P{firecodeacctid} ELSE firecodeacct_objid END
 WHERE objid = $P{rptledgeritemid}	
+
+
+
+[updateLastYearQtrPaid]
+UPDATE rptledger SET lastyearpaid = $P{lastyearpaid}, lastqtrpaid = $P{lastqtrpaid} WHERE objid = $P{objid}
+
+
+
+
+[closePaidLedgerItemByYear]
+UPDATE rptledgeritem SET 
+	state = 'CLOSED',
+	basic = $P{basic}, basicpaid = $P{basic},
+	basicint = $P{basicint}, basicintpaid = $P{basicint},
+	basicdisc = $P{basicdisc}, basicdisctaken = $P{basicdisc},
+	
+	sef = $P{sef}, sefpaid = $P{sef},
+	sefint = $P{sefint}, sefintpaid = $P{sefint},
+	sefdisc = $P{sefdisc}, sefdisctaken = $P{sefdisc},
+
+	firecode = $P{firecode}, firecodepaid = $P{firecode}
+WHERE rptledgerid = $P{rptledgerid}	
+ AND state = 'OPEN'
+ AND year = $P{paidyear}
+ AND qtrly = 0
+
+
+ [closePaidQtrlyLedgerItemByYear]
+ UPDATE rptledgeritem_qtrly SET 
+	state = 'CLOSED',
+	basic = $P{basic}, basicpaid = $P{basic},
+	basicint = $P{basicint}, basicintpaid = $P{basicint},
+	basicdisc = $P{basicdisc}, basicdisctaken = $P{basicdisc},
+	
+	sef = $P{sef}, sefpaid = $P{sef},
+	sefint = $P{sefint}, sefintpaid = $P{sefint},
+	sefdisc = $P{sefdisc}, sefdisctaken = $P{sefdisc},
+
+	firecode = $P{firecode}, firecodepaid = $P{firecode}
+WHERE rptledgerid = $P{rptledgerid}	
+ AND state = 'OPEN'
+ AND year = $P{paidyear}
+ AND qtr <= $P{toqtr}
+
+
+[findLedgerItemByYear]
+SELECT * FROM rptledgeritem WHERE rptledgerid = $P{rptledgerid} AND year = $P{year}
+
+
+
+[updateLedgerItemQuarterlyPaidInfo]
+UPDATE rptledgeritem rli SET
+	rli.state = CASE WHEN NOT EXISTS (
+				  		SELECT *
+				  		FROM rptledgeritem_qtrly 
+				  		WHERE rptledgeritemid = rli.objid AND state = 'OPEN'
+				  	) 
+					THEN 'CLOSED' ELSE 'OPEN' END,					
+	rli.lastqtrpaid = IFNULL((SELECT MAX(qtr) FROM rptledgeritem_qtrly WHERE rptledgeritemid = rli.objid AND (basicpaid > 0  OR state = 'CLOSED')),0)
+WHERE rli.rptledgerid = $P{rptledgerid} 
+  AND rli.qtrly = 1 
+
+

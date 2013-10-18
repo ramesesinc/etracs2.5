@@ -118,4 +118,32 @@
         <field name="partialsefint" type="decimal" />
         <field name="partialsefdisc" type="decimal" />
     </element>
+
+    <element name="capturepayment" tablename="rptreceipt_capture">
+        <field name="objid" primary="true" />
+        <field name="rptledgerid" required="true" />
+        <field name="receiptno" required="true" />
+        <field name="receiptdate" required="true" />
+        <field name="payorid" />
+        <field name="paidby" required="true" />
+        <field name="paidby_name" required="true" />
+        <field name="paidby_address" required="true" />
+        <field name="collector" required="true" />
+        <field name="postedby" required="true" />
+        <field name="postedbytitle" required="true" />
+        <field name="dtposted" required="true" />
+        <field name="fromyear" type="integer" required="true" />
+        <field name="fromqtr" type="integer" required="true" />
+        <field name="toyear" type="integer" required="true" />
+        <field name="toqtr" type="integer" required="true" />
+        <field name="period" required="true" />
+        <field name="basic" required="true" type="decimal" />
+        <field name="basicint" required="true" type="decimal" />
+        <field name="basicdisc" required="true" type="decimal" />
+        <field name="sef" required="true" type="decimal" />
+        <field name="sefint" required="true" type="decimal" />
+        <field name="sefdisc" required="true" type="decimal" />
+        <field name="firecode" required="true" type="decimal" />
+        <field name="amount" required="true" type="decimal" />
+    </element>
 </schema>

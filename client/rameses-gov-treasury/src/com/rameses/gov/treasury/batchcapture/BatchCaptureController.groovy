@@ -34,7 +34,6 @@ public class BatchCaptureController  {
     def listener = [
          "formType": { o->
             entity=[:]
-            entity.objid = "BCC"+new java.rmi.server.UID();
             entity.txnmode = 'CAPTURE'
             entity.formno = o.objid;
             entity.formtype = o.formtype;
@@ -45,29 +44,25 @@ public class BatchCaptureController  {
          }
     ]
     
-    public void init() { 
-        formTypes = collectionTypeSvc.getFormTypesForBatch();
-        entity = [:]
-        mode='init'
-    }   
-
     def getAfserialHandler() {
         if(! entity.formno) throw new Exception("Please an accountable form first. ")
         return InvokerUtil.lookupOpener("afserialcapture:lookup",[
                 "query.formno" : entity.formno,
                 onselect:{ m ->
                     entity.collector = m.collector;
-                    entity.subcollector = m.subcollector;
+                    entity.capturedby = m.subcollector;
                     entity.stub = m.stub;
+                    entity.formtype='serial'
                     entity.controlid = m.controlid;
                     entity.prefix = m.prefix
                     entity.suffix = m.suffix
                     entity.serieslength = m.serieslength
-                    entity.startseries = formatSeries(m.startseries)
-                    entity.endseries = formatSeries(m.endseries)
+                    entity.startseries = m.startseries
+                    entity.endseries = m.endseries 
+                    entity.sstartseries = formatSeries(m.startseries)
+                    entity.sendseries = formatSeries(m.endseries)
                     entity.currentseries = m.currentseries
-                    entity.lastseries = m.endseries
-                    lookupexpression = entity.startseries + " - " +  entity.endseries  
+                    lookupexpression = entity.sstartseries + " - " +  entity.sendseries  
                 }]);
     }    
 
@@ -87,21 +82,24 @@ public class BatchCaptureController  {
             onselect: { o->
                 if(selectedItem.items == null ) selectedItem.items = [];
                 selectedItem.items.clear();
-                selectedItem.items << [item: o];
+                selectedItem.items << [item: o, fund:o.fund];
                 selectedItem.acctinfo = o.title;
             }
         ]);
     }
             
     void calculate() {
-        def amt = 0.0;
-        batchItems.each {
-            amt += (it.amount? it.amount: 0.0);
-            it.totalcash = it.amount? it.amount: 0.0
-        }
-        entity.totalamount = amt;
-        entity.totalcash = amt;
+        entity.totalcash = 0.0
         entity.totalnoncash = 0.0
+        entity.totalamount = 0.0
+        batchItems.each {
+            if( it.voided == 0) {
+
+                entity.totalcash += it.totalcash
+                entity.totalnoncash += it.totalnoncash
+                entity.totalamount += it.amount 
+            }   
+        }
         binding?.refresh('entity.totalamount'); 
     }
             
@@ -110,7 +108,7 @@ public class BatchCaptureController  {
             return batchItems;
         },
         createItem: {
-            if( entity.currentseries > entity.lastseries)
+            if( entity.currentseries > entity.endseries)
                     throw new Exception("Current Series already exceeds the end series.  ");
             def m  = [:];
             m.receiptno =  formatSeries(entity.currentseries);
@@ -122,6 +120,8 @@ public class BatchCaptureController  {
             m.totalcash = 0.0
             m.totalnoncash = 0.0
             m.collector = entity.collector;
+            m.paymentitems = []
+            m.voided = 0
             return m;
         },
 
@@ -131,7 +131,6 @@ public class BatchCaptureController  {
                 calculateHandler: { calculate(); } 
             ]; 
         },
-
         onAddItem: { o->
             batchItems << o; 
             moveNext();
@@ -140,7 +139,7 @@ public class BatchCaptureController  {
         onCommitItem:{o-> 
             calculate();
         },
-
+        
         isColumnEditable:{item, colname-> 
             if (colname != 'amount') return true;
             if (!item.items) return false; 
@@ -150,6 +149,7 @@ public class BatchCaptureController  {
         onColumnUpdate: {item, colname-> 
             if (colname == 'amount')
                 item.items[0].amount = item[colname]; 
+                
         }
     ] as EditorListModel;
 
@@ -173,13 +173,23 @@ public class BatchCaptureController  {
       FormActions 
     ********************************************************/
     
-
-    def back() {        
+    public void init() { 
+        formTypes = collectionTypeSvc.getFormTypesForBatch();
+        entity = [:]
         mode='init'
-        return "default"
-    }
+    }   
 
+    def open() {
+        entity = svc.open(entity)
+        batchItems = entity.batchitems
+        entity.sstartseries = formatSeries(entity.startseries);
+        entity.sendseries = formatSeries(entity.endseries);
+        mode = 'saved'
+        return 'main';
+    }
+    
     def next() {
+        entity = svc.initBatchCapture(entity);
         entity.totalamount = 0.0
         mode='create'
         return 'main';
@@ -189,6 +199,7 @@ public class BatchCaptureController  {
         if(!MsgBox.confirm("Save captured collections? ")) return;
 
         mode = 'saved'
+        calculate()
         entity.batchitems = batchItems
         entity = svc.create( entity )
     }
@@ -196,10 +207,27 @@ public class BatchCaptureController  {
     void edit() {
         mode = 'create'
     }
+    
+    void submitForPosting() {
+        entity = svc.submitForPosting( entity);
+    }
+    
+    void disapprove(){
+        entity = svc.disapproved( entity);
+    }
 
     void post() {
+        if(!MsgBox.confirm("You are about to post this captured collection. Continue? ")) return;
+
         mode = 'posted'
-        
+        entity = svc.post( entity);
+    }
+
+    void submitForOnlineRemittance() {
+        if(!MsgBox.confirm("You are about to submit this captured collection for online remittance. Continue? ")) return;
+
+        mode = 'submittedforremittance'
+        svc.submitForOnlineRemittance( entity )
     }
 
 }

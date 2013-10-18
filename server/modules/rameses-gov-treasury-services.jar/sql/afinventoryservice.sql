@@ -31,7 +31,8 @@ select
    MAX( qtyending) as qtyending, 
    MAX( cancelledstartseries ) AS cancelledstartseries,
    MAX( cancelledendseries ) AS cancelledendseries, 
-   MAX( qtycancelled) as qtycancelled 
+   MAX( qtycancelled) as qtycancelled, 
+   min( remarks ) as remarks
 from afserial_inventory_detail
 where controlid=$P{controlid}
 group by refid

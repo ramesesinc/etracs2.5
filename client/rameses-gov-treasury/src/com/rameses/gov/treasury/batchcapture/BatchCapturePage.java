@@ -53,14 +53,14 @@ public class BatchCapturePage extends javax.swing.JPanel {
 
         xLabel2.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         xLabel2.setCaption("Start Series");
-        xLabel2.setExpression("#{entity.startseries}");
+        xLabel2.setExpression("#{entity.sstartseries}");
         xLabel2.setFont(new java.awt.Font("Tahoma", 1, 11));
         xLabel2.setPreferredSize(new java.awt.Dimension(0, 20));
         xFormPanel1.add(xLabel2);
 
         xLabel3.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         xLabel3.setCaption("End Series");
-        xLabel3.setExpression("#{entity.endseries}");
+        xLabel3.setExpression("#{entity.sendseries}");
         xLabel3.setFont(new java.awt.Font("Tahoma", 1, 11));
         xLabel3.setPreferredSize(new java.awt.Dimension(0, 20));
         xFormPanel1.add(xLabel3);
@@ -157,13 +157,41 @@ public class BatchCapturePage extends javax.swing.JPanel {
                 , new Object[]{"width", 120}
                 , new Object[]{"minWidth", 100}
                 , new Object[]{"maxWidth", 100}
-                , new Object[]{"required", false}
+                , new Object[]{"required", true}
                 , new Object[]{"resizable", true}
                 , new Object[]{"nullWhenEmpty", true}
                 , new Object[]{"editable", true}
                 , new Object[]{"editableWhen", "#{mode=='create'}"}
                 , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
-                , new Object[]{"typeHandler", new com.rameses.rcp.common.DecimalColumnHandler("#,##0.00", -1.0, -1.0, false, 0)}
+                , new Object[]{"typeHandler", new com.rameses.rcp.common.DecimalColumnHandler("#,##0.00", -1.0, -1.0, false, 2)}
+            }),
+            new com.rameses.rcp.common.Column(new Object[]{
+                new Object[]{"name", "remarks"}
+                , new Object[]{"caption", "Remarks"}
+                , new Object[]{"width", 100}
+                , new Object[]{"minWidth", 0}
+                , new Object[]{"maxWidth", 0}
+                , new Object[]{"required", false}
+                , new Object[]{"resizable", true}
+                , new Object[]{"nullWhenEmpty", true}
+                , new Object[]{"editable", true}
+                , new Object[]{"editableWhen", null}
+                , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
+                , new Object[]{"typeHandler", new com.rameses.rcp.common.TextColumnHandler()}
+            }),
+            new com.rameses.rcp.common.Column(new Object[]{
+                new Object[]{"name", "voided"}
+                , new Object[]{"caption", "Voided"}
+                , new Object[]{"width", 100}
+                , new Object[]{"minWidth", 60}
+                , new Object[]{"maxWidth", 60}
+                , new Object[]{"required", false}
+                , new Object[]{"resizable", true}
+                , new Object[]{"nullWhenEmpty", true}
+                , new Object[]{"editable", true}
+                , new Object[]{"editableWhen", null}
+                , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
+                , new Object[]{"typeHandler", new com.rameses.rcp.common.CheckBoxColumnHandler(java.lang.Integer.class, 1, 0)}
             })
         });
         xDataTable1.setHandler("listModel");

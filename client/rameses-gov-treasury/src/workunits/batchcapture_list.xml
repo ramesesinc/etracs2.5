@@ -1,0 +1,39 @@
+<workunit extends="wtemplates/ListController.xml" >
+    <invokers>
+        <invoker folderid="/explorer/txn/treasury" caption="Batch Captures" role="SUBCOLLECTOR"/>
+    </invokers>
+    
+    <code>
+        import com.rameses.rcp.common.*;
+        import com.rameses.rcp.annotations.*;
+        import com.rameses.osiris2.client.*;
+        import com.rameses.osiris2.common.*;
+        
+        class BatchCaptureController extends ListController {
+                
+            String serviceName = 'BatchCaptureCollectionService'
+            String entityName = 'batchcapture'
+            String formTarget = 'window'
+            String tag = 'list'
+            
+            def status
+            def statuslist = ['DRAFT', 'FORPOSTING', 'POSTED'];
+            def searchtext
+            
+            
+            @PropertyChangeListener
+            def listener = [
+                "status" : {
+                    search();
+                }
+            ]   
+            /*
+            protected void onbeforeFetchList(Map m) { 
+                m.searchtext = searchtext ? searchtext   
+            }
+            */
+            
+        }
+        
+    </code> 
+</workunit>

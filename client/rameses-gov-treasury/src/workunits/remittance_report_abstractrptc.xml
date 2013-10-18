@@ -1,6 +1,8 @@
 <workunit>
     <invokers>
         <invoker type="remittance:reports" caption="Abstract of Real Property Tax Collection" action="init" target="self" index="11"/>
+        
+        <invoker type="formActions" caption="Back" action="_close" mnemonic="b" shortcut="ctrl B"/>
     </invokers>
     
     <code>

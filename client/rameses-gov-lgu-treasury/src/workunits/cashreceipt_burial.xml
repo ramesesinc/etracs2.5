@@ -18,7 +18,7 @@
             }
             
             def sexList = ["MALE", "FEMALE"];
-            def permissionTypeList = ['INTER','DISENTER', 'REMOVE'];
+            def permissionTypeList = ['INTER','DISINTER', 'REMOVE'];
         }
         ]]>
         

@@ -1,0 +1,34 @@
+<workunit>
+    <invokers>
+        <invoker folderid="/explorer/txn/bpls/app" caption="Renew" action="start" index="2"/>
+    </invokers>
+    
+    <code>
+        <![CDATA[    
+        import com.rameses.rcp.annotations.*
+        import com.rameses.rcp.common.*
+        import com.rameses.osiris2.client.*
+        import com.rameses.osiris2.common.*
+        import com.rameses.gov.etracs.bpls.application.*;
+        
+        class  RenewBPApplication extends PageFlowController {
+          
+        }
+        ]]>
+        
+    </code>
+    <pageflow>
+        <start>
+            <transition to="initial"/>
+        </start>
+        <page name="initial" title="Renewal Application">
+            <transition to="end" caption="Close"/>
+            <transition to="info" caption="Next"/>
+        </page>
+        <end/>
+    </pageflow>
+    <pages>
+        <page name="initial" template="com.rameses.gov.etracs.bpls.application.SelectApplicationPage"/>
+    </pages>
+    
+</workunit>
