@@ -25,18 +25,21 @@ public class BatchCaptureCollectionService extends ActiveCrudService {
 		em.deleteBatchEntryItem(entity);
 		em.deleteBatchEntry(entity);
 		em.deleteBatch(entity);
+		
 	}
 
 	protected void afterCreate(def entity) { 
 		entity.batchitems.each { bc ->
 			bc.objid = "BCCE"+new java.rmi.server.UID();
 			bc.parentid = entity.objid
-			em.create(bc, "entry")
+			bc.paymentitems = bc.paymentitems ? bc.paymentitems : null
+ 			em.create(bc, "entry")
 
 			bc.items.each { 
 				it.objid ="BCCEI"+new java.rmi.server.UID();
 				it.parentid = bc.objid
 				it.item.fund = it.fund;
+				it.amount = it.amount ? it.amount : bc.amount ;
 				em.create(it, "entry_item")
 			}
 		}

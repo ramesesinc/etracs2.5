@@ -83,7 +83,7 @@
                     entity.totalnoncash = payment.amount 
                     entity.totalcash = entity.amount - payment.amount 
                     payment.type = 'CHECK'
-                    payemnt.particulars = payment.checkno + " (" + payment.bank + ") dated " + payment.checkdate;
+                    payment.particulars = payment.checkno + " (" + payment.bank + ") dated " + payment.checkdate;
                     if( entity.paymentitems ) entity.paymentitems.clear()
                     entity.paymentitems << payment;
                 } else {

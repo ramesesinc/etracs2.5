@@ -94,6 +94,7 @@ public class BatchCaptureController  {
         entity.totalamount = 0.0
         batchItems.each {
             if( it.voided == 0) {
+                if( ! it.totalnoncash) it.totalcash= it.amount;
 
                 entity.totalcash += it.totalcash
                 entity.totalnoncash += it.totalnoncash
