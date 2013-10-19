@@ -6,7 +6,6 @@ INNER JOIN afserial_inventory ai ON ai.objid=ad.controlid
 LEFT JOIN remittance_afserial af ON af.objid=ad.objid
 WHERE ai.respcenter_objid = $P{collectorid}
 AND af.objid IS NULL
-and ai.currentseries <= ai.endseries    
 
 [updateRemittanceCashTicket]
 INSERT INTO remittance_cashticket (objid,remittanceid)

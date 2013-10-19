@@ -33,6 +33,7 @@ INNER JOIN afserial_control ac ON ai.objid=ac.controlid
 WHERE  ai.afid = $P{af} 
 AND NOT(ac.assignee_objid IS NULL) 
 AND ai.respcenter_objid = $P{userid}
+and ac.currentseries <= ai.endseries 
 
 [getAssigneeControlForBatchList]
 SELECT a.* 

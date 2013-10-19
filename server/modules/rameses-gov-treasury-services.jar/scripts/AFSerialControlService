@@ -47,7 +47,7 @@ class AFSerialControlService {
 			
 		def z = em.findActiveControlForActivation(m);
 		if(z) {
-			em.deactivateControl( z )
+			em.deactivateControl( [objid: z.controlid] )
 		}
 		int test = em.reactivateControl(m);
 		if(test==0) {
