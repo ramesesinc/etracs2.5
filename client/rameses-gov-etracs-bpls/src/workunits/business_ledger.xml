@@ -52,6 +52,7 @@
             
             def removeReceivable() {
                 if( MsgBox.confirm("You are about to remove this record. Proceed?")) {
+                    def o = selectedReceivable;
                     service.removeReceivable(o);
                     receivableList.remove( o );
                     receivablesModel.reload();
