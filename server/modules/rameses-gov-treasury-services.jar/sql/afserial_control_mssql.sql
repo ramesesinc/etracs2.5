@@ -34,6 +34,7 @@ WHERE  ai.afid = $P{af}
 AND NOT(ac.assignee_objid IS NULL) 
 AND ai.respcenter_objid = $P{userid}
 and ac.currentseries <= ai.endseries 
+ORDER BY ac.currentseries
 
 [getAssigneeControlForBatchList]
 SELECT a.* 

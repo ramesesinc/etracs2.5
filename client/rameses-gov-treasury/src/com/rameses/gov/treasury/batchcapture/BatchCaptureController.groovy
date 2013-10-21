@@ -27,7 +27,11 @@ public class BatchCaptureController  {
     def formType
     def collectionTypes;
     def collectiontype;
-    def lookupexpression
+    def lookupexpression;
+    
+    def onPost; //handler
+            
+            
     
 
     @PropertyChangeListener
@@ -222,6 +226,7 @@ public class BatchCaptureController  {
 
         mode = 'posted'
         entity = svc.post( entity);
+        if (onPost) onPost();
     }
 
     void submitForOnlineRemittance() {
@@ -229,6 +234,7 @@ public class BatchCaptureController  {
 
         mode = 'submittedforremittance'
         svc.submitForOnlineRemittance( entity )
+        if (onPost) onPost();
     }
 
 }
