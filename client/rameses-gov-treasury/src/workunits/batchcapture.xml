@@ -15,6 +15,7 @@
         <invoker type="formActions" caption="Submit For Posting" action="submitForPosting" visibleWhen="#{mode == 'saved' &amp;&amp; entity.state == 'DRAFT'}" mnemonic="s"/>
         <invoker type="formActions" caption="Disapprove" action="disapprove" visibleWhen="#{mode == 'saved' &amp;&amp; entity.state =='FORPOSTING'}" mnemonic="d" role="SUBCOLLECTOR" permission="batchcapture.disapprove"/>
         <invoker type="formActions" caption="Post" action="post" visibleWhen="#{mode == 'saved' &amp;&amp; entity.state =='FORPOSTING'}" mnemonic="p" role="SUBCOLLECTOR" permission="batchcapture.post"/>
+        <invoker type="formActions" caption="Submit For Online Remittance" action="submitForOnlineRemittance" visibleWhen="#{ mode.matches('saved|posted') &amp;&amp; entity.state =='POSTED'}" mnemonic="p" role="SUBCOLLECTOR" permission="batchcapture.submitforonlineremittance"/>
    </invokers>
    
    <code class="com.rameses.gov.treasury.batchcapture.BatchCaptureController"/>

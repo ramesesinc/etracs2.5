@@ -1,0 +1,112 @@
+<workunit>
+    <invokers>
+        <invoker type="business:formActions" caption="Ledger" index="5" 
+            visibleWhen="#{mode == 'read'}" />
+        
+        <invoker type="formActions" caption="Back" action="_close" />
+        
+    </invokers>
+    <code>
+        <![CDATA[    
+        import com.rameses.rcp.annotations.*
+        import com.rameses.rcp.common.*
+        import com.rameses.osiris2.client.*
+        import com.rameses.osiris2.common.*
+        import java.rmi.server.*
+        import com.rameses.gov.etracs.bpls.application.*;
+        
+        
+        class  BusinessInfoController {
+            
+            @Service("BusinessLedgerService")
+            def service;
+        
+            def entity;
+            String title = "Business Ledger"
+
+            def selectedReceivable;    
+            def selectedPayment;
+            def receivableList;
+            def paymentList = [:];
+            
+            def receivablesModel = [
+                fetchList: { o->
+                    if(!receivableList) {
+                        receivableList = service.getReceivables(entity);
+                    }
+                    return receivableList;
+                }
+            ] as BasicListModel;
+            
+            def addReceivable() {
+                return InvokerUtil.lookupOpener("businessledger:addreceivable", [
+                    handler: { o->  
+                        service.saveReceivable(o);
+                        receivableList << o;
+                        receivablesModel.reload();
+                    },
+                    lobList: entity.lobs,
+                    business: entity
+                ]);
+            }
+            
+            def removeReceivable() {
+                if( MsgBox.confirm("You are about to remove this record. Proceed?")) {
+                    def o = selectedReceivable;
+                    service.removeReceivable(o);
+                    receivableList.remove( o );
+                    receivablesModel.reload();
+                }
+            }
+            
+           def paymentsModel = [
+                fetchList: { o->
+                    if(!selectedReceivable) return [];
+                    def list = paymentList[selectedReceivable.objid];
+                    if(!list) {
+                        list = service.getReceivablePayments( selectedReceivable );
+                        paymentList[selectedReceivable.objid] = list;
+                    }
+                    return list;
+                }
+            ] as BasicListModel;
+            
+            def addPayment() {
+                if(!selectedReceivable) return null;
+                return InvokerUtil.lookupOpener("businessledger:addpayment", [
+                    handler: { o->  
+                        service.saveReceivablePayment(o);
+                        def list = paymentList[ selectedReceivable.objid ];
+                        if(!list) {
+                            list = [];
+                            paymentList[ selectedReceivable.objid ] = list;
+                        }    
+                        list << o;
+                        selectedReceivable.amtpaid = selectedReceivable.amtpaid + o.amtpaid;
+                        paymentsModel.reload();
+                        receivablesModel.reload();
+                    },
+                    receivable: selectedReceivable
+                ]);
+            }
+            
+            def removePayment() {
+                if(MsgBox.confirm("You are about to remove this record. Proceed?")) {
+                    def o = selectedPayment;
+                    service.removeReceivablePayment(o);
+                    selectedReceivable.amtpaid -= o.amtpaid;
+                    selectedReceivable.balance += o.amtpaid;
+                    paymentList[selectedReceivable.objid].remove( o );
+                    receivablesModel.reload();
+                    paymentsModel.reload();
+                }
+            }
+        }
+        ]]>
+    </code>
+    
+    <pages>
+        <page template="com.rameses.gov.etracs.bpls.business.BusinessLedger"/>
+    </pages>
+    
+</workunit>

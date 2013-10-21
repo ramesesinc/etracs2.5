@@ -47,7 +47,7 @@ class AFSerialControlService {
 			
 		def z = em.findActiveControlForActivation(m);
 		if(z) {
-			em.deactivateControl( z )
+			em.deactivateControl( [objid: z.controlid] )
 		}
 		int test = em.reactivateControl(m);
 		if(test==0) {
@@ -78,5 +78,10 @@ class AFSerialControlService {
 		if(test==0) {
 			em.activateAssignSubcollector(m);
 		}
+	}
+
+	@ProxyMethod
+	public void unassign(def p) {
+		em.unassignsubcollector([controlid:p.objid]) 
 	}
 }

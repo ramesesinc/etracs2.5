@@ -1,7 +1,8 @@
 [getList]
 SELECT *
 FROM lobclassification
+order by name
 
-[changeState-approved]
+[approve]
 UPDATE lobclassification SET state = 'APPROVED'
 WHERE objid = $P{objid}

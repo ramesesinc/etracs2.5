@@ -1,13 +1,10 @@
 import com.rameses.annotations.*;
 import com.rameses.services.extended.*;
 
-class BusinessVariableLookupService extends AbstractListService {
+class BusinessVariableLookupService extends ActiveListService {
 
-	@PersistenceContext("main")
+	@ActiveDB("businessvariable")
 	def em;
-
-	String schemaName = 'businessvariable'
-	String listMethod = "getList";
 
 	@ProxyMethod
 	public def getColumns( def p ) {

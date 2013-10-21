@@ -47,6 +47,7 @@
 		<field name="collectiontype_objid" required="true"/>
 		<field name="collectiontype_name" required="true"/>
 		<field name="remarks"/>
+		<field name="voided"/>
 		<complex name="paymentitems" required="true" serializer="default" type="list"/>
 	</element>
 

@@ -33,6 +33,7 @@ INNER JOIN afserial_control ac ON ai.objid=ac.controlid
 WHERE  ai.afid = $P{af} 
 AND NOT(ac.assignee_objid IS NULL) 
 AND ai.respcenter_objid = $P{userid}
+and ac.currentseries <= ai.endseries 
 
 [getAssigneeControlForBatchList]
 SELECT a.* 
@@ -167,3 +168,8 @@ FROM afserial_control ac
 INNER JOIN afserial_inventory ai ON ai.objid=ac.controlid
 INNER JOIN afserial a ON ai.afid=a.objid
 WHERE ac.controlid = $P{controlid}
+
+[unassignsubcollector]
+update afserial_control set 
+	assignee_name = null, assignee_objid = null, txnmode='ONLINE' 
+where controlid=$P{controlid} 

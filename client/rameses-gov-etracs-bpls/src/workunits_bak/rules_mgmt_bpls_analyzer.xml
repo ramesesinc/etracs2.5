@@ -1,0 +1,153 @@
+<workunit extends="wtemplates/RuleMgmtController.xml" serviceName="RuleMgmtService">
+    <invokers>
+       <invoker type="rulemgmt:formActions" caption="Analyzer"  
+            visibleWhen="#{ruleset == 'bpassessment'}" target="window"/>
+            
+       <invoker type="formActions" caption="Close" action="_close" immediate="true"/>
+       <invoker type="formActions" caption="Run" action="run"/>
+       <invoker type="formActions" caption="Reset" action="reset" immediate="true"/>
+       <invoker type="formActions" caption="Clear Infos" action="clearInfo" immediate="true"/>
+    </invokers>
+    <code>
+        <![CDATA[
+            import com.rameses.rcp.common.*
+            import com.rameses.rcp.annotations.*
+            import com.rameses.osiris2.client.*
+            import com.rameses.osiris2.common.*
+            import com.rameses.rulemgmt.constraint.*;
+            import com.rameses.rulemgmt.*;
+            import java.rmi.server.*;
+            
+            class BPAssessmentAnalyzerController  {
+                
+                @Service("BPAssessmentService")
+                def service;
+
+                def orgTypes = LOV.BUSINESS_ORG_TYPES;
+                def officeTypes = LOV.BUSINESS_OFFICE_TYPES;
+                def appTypes = LOV.BUSINESS_APP_TYPES;
+                def lobTypes = LOV.LOB_APP_TYPES*.key;
+                
+                def entity = [lobs:[],infos:[],taxfees:[]];
+                def formInfos;
+                
+                String title = "Business Rule Assessment Simulator";
+                
+                def getLookupLOB() {
+                    return InvokerUtil.lookupOpener("lob:lookup",[
+                        onselect: { o->
+                            if( entity.lobs.find{ it.lobid ==  o.objid }!=null ) {
+                                throw new Exception("LOB Item already added");
+                            }    
+                            o.lobid = o.objid;
+                            o.assessmenttype = "NEW";
+                            entity.lobs << o;
+                            lobModel.reload();
+                        }
+                    ]);
+                }
+                
+               
+                
+                def lobModel = [
+                    fetchList: { o->return entity.lobs; },
+                    onRemoveItem: { o->
+                        entity.lobs.remove(o);
+                    }
+                ] as EditorListModel;
+                
+                def infoModel = [
+                    fetchList: { o-> return entity.infos; }
+                ] as BasicListModel;
+            
+                def taxfeeModel = [
+                    fetchList: { o-> return entity.taxfees; }
+                ]as BasicListModel;
+                
+                def run() {
+                    def result = service.execute(entity);
+                    if( !result.infos ) {
+                        entity.taxfees = result.taxfees;
+                        taxfeeModel.reload();
+                        return;
+                    }    
+                    formInfos = [];
+                    result.infos.each {x->
+                        def i = [
+                            type:x.attribute.datatype, 
+                            caption:x.attribute.caption, 
+                            categoryid:x.lob?.objid, 
+                            name:x.attribute.name, 
+                            bean: x,
+                            properties: [:]
+                        ];
+                        //fix the datatype
+                        x.datatype = x.attribute.datatype;
+                        if(x.datatype.indexOf("_")>0) {
+                            x.datatype = x.datatype.substring(0, x.datatype.indexOf("_"));
+                        }
+                        
+                        if(i.type == "boolean") {
+                            i.type = "checkbox";
+                        }
+                        else if(i.type == "string_array") {
+                            i.type = "combo";
+                            i.itemsObject = x.attribute.arrayvalues;
+                        }
+                        formInfos << i;
+                    }
+                    return new Opener(outcome: "info", id:"businessassessment:simulator", target:"popup");
+                }
+            
+                void reset() {
+                    entity.infos.clear();
+                    entity.taxfees.clear();
+                    entity.lobs.clear();
+                    entity = [:];
+                    entity.infos = [];
+                    entity.taxfees = [];
+                    entity.lobs = [];
+                }
+                
+                void clearInfo() {
+                    entity.infos.clear();
+                    entity.taxfees.clear();
+                    infoModel.reload();
+                    taxfeeModel.reload();
+                }
+                
+                def formPanel = [
+                    getCategory: { lobid->
+                        if(!lobid) return "";
+                        return entity.lobs.find{ it.lobid == lobid }?.name
+                    },
+                    updateBean: {name,value,item->
+                        item.bean.value = value;
+                    },
+                    getControlList: {
+                        return formInfos;
+                    }
+                ] as FormPanelModel;
+            
+                def doOk() {
+                    formInfos.each {
+                        entity.infos << it.bean;
+                    }
+                    //re execute taxfee
+                    def result = service.execute(entity);
+                    entity.taxfees = result.taxfees;
+                    taxfeeModel.reload();
+                    infoModel.reload();
+                    return "_close";
+                }
+                def doCancel() {
+                    return "_close";
+                }
+            }
+        ]]>    
+    </code>
+    <pages>
+        <page template="com.rameses.gov.etracs.rules.bpls.BPAssessmentAnalyzerPage"/>
+        <page name="info" template="com.rameses.gov.etracs.rules.bpls.InfoPage" />
+    </pages>
+</workunit>

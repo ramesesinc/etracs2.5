@@ -22,6 +22,9 @@
             
             @Service("ReportParameterService") 
             def paramsvc
+            
+            @Service("UsergroupMemberLookupService")
+            def ugmSvc;
          
             void viewReport() {
                 report.viewReport();
@@ -29,7 +32,13 @@
             
             def report = [
                 getReportName : { return reportPath + "ris.jasper" },
-                getReportData : { return  entity },
+                getReportData : { 
+                    def afolist = ugmSvc.getList(['_tag':'AFO'])
+                    if( afolist) {
+                        entity.approver = afolist[0]
+                    }
+                    return  entity 
+                },
                 getParameters : { return paramsvc.getStandardParameter() },
                 getSubReports : { return [  new SubReport("ReportRISItem", reportPath + "risitem.jasper") ] as SubReport[]; }
             ] as ReportModel

@@ -6,14 +6,14 @@
 
 package com.rameses.gov.etracs.bpls.lob;
 
-import com.rameses.osiris2.themes.FormPage;
+import com.rameses.osiris2.themes.OKCancelPage;
 import com.rameses.rcp.ui.annotations.Template;
 
 /**
  *
  * @author  Rameses
  */
-@Template(FormPage.class)
+@Template(OKCancelPage.class)
 public class LobAttributePage extends javax.swing.JPanel {
     
     /** Creates new form LobAttributePage */
@@ -37,6 +37,7 @@ public class LobAttributePage extends javax.swing.JPanel {
         xTextField1.setName("entity.name");
         xTextField1.setPreferredSize(new java.awt.Dimension(0, 19));
         xTextField1.setRequired(true);
+        xTextField1.setSpaceChar('_');
         formPanel1.add(xTextField1);
 
         jScrollPane1.setPreferredSize(new java.awt.Dimension(0, 42));
