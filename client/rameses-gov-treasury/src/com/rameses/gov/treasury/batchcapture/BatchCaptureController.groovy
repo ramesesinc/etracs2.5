@@ -31,7 +31,10 @@ public class BatchCaptureController  {
     def onPost; //handler
             
     String getTitle(){
-        return 'Batch Capture (' + entity.state + ')'
+        def suffix = ''
+        if (entity.state)
+            suffix = '(' + entity.state + ')'
+        return 'Batch Capture ' + suffix 
     }
     
 
