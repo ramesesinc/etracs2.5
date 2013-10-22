@@ -75,7 +75,7 @@ class BldgRPUService
 	@ProxyMethod
 	public def updateBldgRpu(rpu) { 
 		validateInfo(rpu)
-		em.update(SCHEMA_RPU, rpu)
+		em.updateImmediate(SCHEMA_RPU, rpu)
 		saveStructures(rpu.structures)
 		saveBldgUses(rpu.bldguses)
 		removeDeletedItems(rpu)

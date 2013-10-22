@@ -48,9 +48,7 @@ class MachRPUService
 
     @ProxyMethod
     public def createMachRpu( rpu ) {
-        def xrpu = EntityUtil.mapToField(rpu)
-        em.validate(SCHEMA_RPU, xrpu)
-        em.create(SCHEMA_RPU, xrpu)
+        em.create(SCHEMA_RPU, rpu)
         saveMachUses(rpu.machuses)
         return rpu
     }
@@ -58,9 +56,7 @@ class MachRPUService
 
     @ProxyMethod
     public def updateMachRpu(rpu) { 
-        def xrpu = EntityUtil.mapToField(rpu)
-        em.validate(SCHEMA_RPU, xrpu)
-        em.update(SCHEMA_RPU, xrpu)
+        em.updateImmediate(SCHEMA_RPU, rpu)
         saveMachUses(rpu.machuses)
         removeDeletedItems(rpu)
         return rpu

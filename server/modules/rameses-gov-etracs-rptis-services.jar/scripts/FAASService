@@ -180,7 +180,7 @@ class FAASService
 			faas.txntimestamp = dtSvc.buildCustomTimeStamp(approver.dtsigned)
 		}
 		updateNameInfo(faas)
-		em.update(SCHEMA_FAAS, faas)
+		em.updateImmediate(SCHEMA_FAAS, faas)
 		signatorySvc.saveSignatories(faas.signatories)
 		saveBackTaxes(faas)
 		return faas;	

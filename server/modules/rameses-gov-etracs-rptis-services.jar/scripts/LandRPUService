@@ -56,7 +56,7 @@ class LandRPUService
 
 	@ProxyMethod
 	public def updateLandRpu(rpu) { 
-		em.update(SCHEMA_LANDRPU, rpu)
+		em.updateImmediate(SCHEMA_LANDRPU, rpu)
 		saveLandAdjustments(rpu)
 		saveLandDetails(rpu)
 		savePlantTrees(rpu)
