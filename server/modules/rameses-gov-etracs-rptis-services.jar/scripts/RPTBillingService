@@ -477,6 +477,7 @@ public class RPTBillingService
 							}
 			summarizeLedgerInfo(ledger)
 		}
+		bill.ledgers.removeAll( bill.ledgers.findAll{it.total == 0.0} )
 		calcBillTotals(bill)
 	}
 
