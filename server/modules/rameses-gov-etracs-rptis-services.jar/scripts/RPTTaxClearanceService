@@ -110,6 +110,7 @@ class RPTTaxClearanceService
         cert.items.each{item ->
             item.payments = em.sqlContext.createNamedQuery('rpttaxclearance:getPaymentInfo')
                                 .setParameter('rptcertificationid', cert.objid)
+                                .setParameter('rptledgerid', item.refid )
                                 .setParameter('year', cert.year)
                                 .setParameter('qtr', cert.qtr)
                                 .resultList 
