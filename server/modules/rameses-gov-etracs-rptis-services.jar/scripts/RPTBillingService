@@ -128,7 +128,7 @@ public class RPTBillingService
         insertUnpostedItems(bill)
         recalcBillItems(bill)
         rebuildLedgerItems(bill)
-        
+        bill.validuntil = dtSvc.add(bill.expirydate, '-1d')
         if (util.toBoolean(bill.loadbillitems, true) ){
 			loadBillItems(bill)
 			if (!bill.ledgers) 

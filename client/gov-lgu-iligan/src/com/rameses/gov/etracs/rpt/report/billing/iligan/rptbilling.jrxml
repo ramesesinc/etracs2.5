@@ -57,6 +57,7 @@
 	<field name="administrator.address" class="java.lang.String"/>
 	<field name="taxpayerno" class="java.lang.String"/>
 	<field name="totalfirecode" class="java.math.BigDecimal"/>
+	<field name="validuntil" class="java.util.Date"/>
 
 		<background>
 			<band height="0"  isSplitAllowed="true" >
@@ -446,7 +447,7 @@
 					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single">
 						<font fontName="Tahoma" pdfFontName="Helvetica-Bold" size="11" isBold="true" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 					</textElement>
-				<text><![CDATA[Expiry Date :]]></text>
+				<text><![CDATA[Bill is valid until :]]></text>
 				</staticText>
 				<staticText>
 					<reportElement
@@ -514,7 +515,7 @@
 					<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" lineSpacing="Single">
 						<font fontName="Tahoma" pdfFontName="Helvetica-Bold" size="11" isBold="true" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 					</textElement>
-				<textFieldExpression   class="java.util.Date"><![CDATA[$F{expirydate}]]></textFieldExpression>
+				<textFieldExpression   class="java.util.Date"><![CDATA[$F{validuntil}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement

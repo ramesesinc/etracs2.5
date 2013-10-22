@@ -111,6 +111,9 @@ class ReportParameterService{
 			DATE 						: formalizeDate( 'd' ), 
 			MONTH 						: formalizeDate( 'MMMMM' ),
 			YEAR 						: formalizeDate( 'yyyy' ),
+
+			LANDTAX_CERTIFIEDBY			: var.landtax_certifiedby,
+			LANDTAX_CERTIFIEDBY_TITLE	: var.landtax_certifiedby_title,
 		]
 		return params 
 		

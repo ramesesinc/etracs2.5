@@ -72,9 +72,10 @@ SELECT rlf.*,
 FROM rptledgerfaas rlf
 	INNER JOIN propertyclassification pc ON rlf.classification_objid = pc.objid 
 	LEFT JOIN propertyclassification pc1 ON rlf.actualuse_objid = pc1.objid 
-WHERE rlf.rptledgerid = $P{rptledgerid} 
-  AND rlf.faasid = $P{faasid}
-ORDER BY rlf.fromyear DESC 
+WHERE rlf.rptledgerid =  $P{rptledgerid} 
+  AND $P{yr} >= rlf.fromyear 
+  AND $P{yr} <= (CASE WHEN rlf.toyear = 0 THEN $P{curryear} ELSE rlf.toyear END)
+  AND rlf.state ='APPROVED'
 
 
 [getLedgerItems]
@@ -363,6 +364,43 @@ WHERE rptledgerid = $P{rptledgerid}
  AND state = 'OPEN'
  AND year = $P{paidyear}
  AND qtr <= $P{toqtr}
+
+
+
+[findPartialedQtrlyItem]
+SELECT * FROM rptledgeritem_qtrly
+WHERE rptledgerid = $P{rptledgerid}	
+ AND year = $P{paidyear} + 1
+ AND qtr = $P{toqtr}
+
+
+[partialPaidQtrlyLedgerItemByYear]
+UPDATE rptledgeritem_qtrly SET 
+	state = 'OPEN',
+	basicpaid = $P{basic},
+	basicintpaid = $P{basicint},
+	sefpaid = $P{sef},
+	sefintpaid = $P{sefint}
+WHERE rptledgerid = $P{rptledgerid}	
+ AND year = $P{paidyear} 
+ AND qtr = $P{toqtr}
+
+
+
+[findPartialedLedgerItem]
+SELECT * FROM rptledgeritem 
+WHERE rptledgerid = $P{rptledgerid}	
+ AND year = $P{paidyear} + 1
+
+[partialPaidLedgerItemByYear]
+UPDATE rptledgeritem SET 
+	state = 'OPEN',
+	basicpaid = $P{basic},
+	basicintpaid = $P{basicint},
+	sefpaid = $P{sef},
+	sefintpaid = $P{sefint}
+WHERE rptledgerid = $P{rptledgerid}	
+ AND year = $P{paidyear}
 
 
 [deleteLedgerItem]

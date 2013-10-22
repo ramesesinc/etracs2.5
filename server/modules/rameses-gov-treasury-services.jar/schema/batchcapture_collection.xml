@@ -48,7 +48,7 @@
 		<field name="collectiontype_name" required="true"/>
 		<field name="remarks"/>
 		<field name="voided"/>
-		<complex name="paymentitems" required="true" serializer="default" type="list"/>
+		<complex name="paymentitems" required="false" serializer="default" type="list"/>
 	</element>
 
 	<element name="entry_item" tablename="batchcapture_collection_entry_item" >
