@@ -401,7 +401,7 @@
 					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single">
 						<font fontName="SansSerif" pdfFontName="Helvetica" size="9" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 					</textElement>
-				<text><![CDATA[Pursuant to Section 256, 258, 260 of the Local Government Code of 1991, as amended, failure of real property owners to pay their delinquent taxes empowers the City Treasurer to avail of administrative action by Levy through Public Auction. Within thirty (30) days after service of warrant, the local treasurer shall proceed to publicly advertise for sale or auction the property to satisfy the tax delinquency and espenses of sale.
+				<text><![CDATA[Pursuant to Section 256, 258, 260 of the Local Government Code of 1991, as amended, failure of real property owners to pay their delinquent taxes empowers the City Treasurer to avail of administrative action by Levy through Public Auction. Within thirty (30) days after service of warrant, the local treasurer shall proceed to publicly advertise for sale or auction the property to satisfy the tax delinquency and expenses of sale.
 ]]></text>
 				</staticText>
 			</band>
