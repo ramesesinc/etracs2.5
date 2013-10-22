@@ -20,6 +20,11 @@ public class BatchCaptureController
             loadAfControls();
         },
             
+        'info.collector|info.afserial' : {
+            info.currentseries = null;
+            binding.refresh('info.currentseries');
+        },
+            
         'collector.*' : {
             loadCapturedItems();
         }
@@ -54,14 +59,16 @@ public class BatchCaptureController
     
     
     def afcontrolListHandler = [
-        fetchList : { return afcontrols },
-        getRows   : { return 150 },
+        fetchList : { 
+            if (info.currentseries != null )
+                return afcontrols.findAll{ info.currentseries >= it.startseries && info.currentseries <= it.endseries}
+            return afcontrols 
+        },
     ] as BasicListModel;
             
         
     def assignedListHandler = [
         fetchList : { return assignedcontrols },
-        getRows   : { return 150 },
     ] as BasicListModel;
     
         
@@ -134,7 +141,6 @@ public class BatchCaptureController
     
     def capturedListHandler = [
             fetchList : { return captureditems },
-            getRows   : { return 150 },
     ] as BasicListModel;
             
     

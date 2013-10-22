@@ -16,8 +16,7 @@ public class BatchCaptureController  {
     @Service("BatchCaptureCollectionService")
     def svc;
 
-    def title="Batch Capture"
-
+    
     def mode;
     def entity;
     def batchItems = [];
@@ -31,7 +30,9 @@ public class BatchCaptureController  {
     
     def onPost; //handler
             
-            
+    String getTitle(){
+        return 'Batch Capture (' + entity.state + ')'
+    }
     
 
     @PropertyChangeListener
@@ -214,7 +215,9 @@ public class BatchCaptureController  {
     }
     
     void submitForPosting() {
-        entity = svc.submitForPosting( entity);
+        if (MsgBox.confirm('Submit captured receipts for posting?')){
+            entity = svc.submitForPosting( entity);
+        }
     }
     
     void disapprove(){
