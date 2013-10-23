@@ -2,16 +2,15 @@ package rptbilling;
 
 declare RPTLedgerFact
     objid                   : String
-    rptledgerid              : String
     tdno                    : String 
     year                    : Integer
     qtr                     : Integer 
     originalav              : Double
     av                      : Double
-    txntype_objid           : String 
+    txntype                 : String 
     rputype                 : String 
-    classification_objid    : String
-    actualuse_objid         : String
+    classification          : String
+    actualuse               : String
     numberofmonthsfromqtr   : Integer
     numberofmonthsfromjan   : Integer
     firstqtrpaidontime      : Boolean
@@ -43,3 +42,13 @@ declare RPTLedgerFact
     paidyear              : Integer
     revtype               : String
 end
+
+
+
+declare AssessedValueFact
+    rptledgerid   : String
+    year          : Integer
+    assessedvalue : Double 
+end
+
+

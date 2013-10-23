@@ -74,7 +74,7 @@ FROM rptledgerfaas rlf
 	LEFT JOIN propertyclassification pc1 ON rlf.actualuse_objid = pc1.objid 
 WHERE rlf.rptledgerid =  $P{rptledgerid} 
   AND $P{yr} >= rlf.fromyear 
-  AND $P{yr} <= (CASE WHEN rlf.toyear = 0 THEN $P{curryear} ELSE rlf.toyear END)
+  AND $P{yr} <= (CASE WHEN rlf.toyear = 0 THEN $P{yr} ELSE rlf.toyear END)
   AND rlf.state ='APPROVED'
 
 
