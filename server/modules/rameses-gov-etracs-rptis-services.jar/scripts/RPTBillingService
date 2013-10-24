@@ -10,6 +10,10 @@ public class RPTBillingService
 	@ActiveDB('rptbill')
 	def em 
 
+	@ActiveDB("rule")
+	def ruleDB;
+
+
 	@Service('RPTUtil')
 	def util
 
@@ -120,7 +124,7 @@ public class RPTBillingService
 		if (bill.advancebill && bill.billdate <= (dtSvc.serverDate - 1 ))
             throw new Exception('Advance Billing Date must be greater than current date.')
 
-        if (bill.recalc){
+        if (bill.recalc || bill.billtoyear > dtSvc.serverYear){
         	em.clearLedgerBillingInfoFlags(buildParams(bill))
         	bill.recalc = false
         }
@@ -244,15 +248,15 @@ public class RPTBillingService
 	}
 
 
-	def phases = ['TAX', 'AFTER_TAX', 'PENALTY', 'AFTER_PENALTY', 'DISCOUNT', 'AFTER_DISCOUNT', 'SUMMARY']
-
 	@ProxyMethod
 	public void recalcBillItems(bill){
 		bill.ledgers = getOpenLedgers(bill)
 		if ( bill.ledgers) {
 			def data = createFacts(bill)
-			phases.each{phase ->
-				ruleSvc.execute( RULESET, data.facts, data.globals, phase );
+			def actions = buildActions(bill, data)
+			def grps = ruleDB.getRulegroups( [ruleset: RULESET] );
+			grps.each{g ->
+				ruleSvc.execute( RULESET, data.facts, actions, g.name);
 			}
 			updateLedgerItemInfo(bill, data)
 			bill.expirydate = getExpiryDate(bill)
@@ -261,14 +265,30 @@ public class RPTBillingService
 			em.applyLedgerItemTaxIncentives(params)
 			em.applyQuarterlyLedgerItemTaxIncentives(params)
 		}
+	} 
+
+	def buildActions(bill, data){
+		def actions = new RuleAction();
+		actions.addCommand('calc-basic', new CalcBasic(ledgers:data.ledgers))
+		actions.addCommand('calc-basicint', new CalcBasicInterest(ledgers:data.ledgers))
+		actions.addCommand('calc-basicdisc', new CalcBasicDiscount(ledgers:data.ledgers))
+		actions.addCommand('calc-basic-amnesty', new CalcBasicAmnesty(ledgers:data.ledgers))
+		actions.addCommand('calc-basicint-amnesty', new CalcBasicIntAmnesty(ledgers:data.ledgers))
+
+		actions.addCommand('calc-sef', new CalcSEF(ledgers:data.ledgers))
+		actions.addCommand('calc-sefint', new CalcSEFInterest(ledgers:data.ledgers))
+		actions.addCommand('calc-sefdisc', new CalcSEFDiscount(ledgers:data.ledgers))
+		actions.addCommand('calc-sef-amnesty', new CalcSEFAmnesty(ledgers:data.ledgers))
+		actions.addCommand('calc-sefint-amnesty', new CalcSEFIntAmnesty(ledgers:data.ledgers))
+
+		actions.addCommand('calc-firecode', new CalcFireCode(ledgers:data.ledgers))
+		return actions 
 	}
 
-	@Async
 	@ProxyMethod
 	public def recalcBillItemsAsync( bill ) {
 		recalcBillItems(bill)	
 	}
-
 
 	@ProxyMethod
 	public def computePartialPayment( ledger, payment  ) {
@@ -381,30 +401,31 @@ public class RPTBillingService
 	def createFacts(bill){
 		def pdate = dtSvc.parseDate(bill.billdate, null)
 
-		def map = [facts:[], globals:[:], ledgers:[]]
-		map.facts << new DateBean(dtSvc.serverDate)
+		def map = [facts:[], ledgers:[]]
+		map.facts << new CurrentDate(dtSvc.serverDate)
+		map.facts << new EffectiveDate(dtSvc.serverDate)
 
 		//create rptledgerfact 
 		bill.ledgers.each{ rl ->
-			createAssessedValueFacts(map, rl)
+			def ledger = null 
 			rl.items.each{
 				resetAssessmentValues(it)
-				def ledger = ruleSvc.createFact(RULESET, FACT_PACKAGE+'RPTLedgerFact')
+				ledger = ruleSvc.createFact(RULESET, FACT_PACKAGE+'RPTLedgerFact')
 				populateFactData(ledger, it)
 				ledger.numberofmonthsfromqtr  = calculateNoOfMonthsFromQtr( pdate, ledger.year, ledger.qtr )
 	            ledger.numberofmonthsfromjan  = calculateNoOfMonthsFromJan( pdate, ledger.year, ledger.qtr )
 	            ledger.firstqtrpaidontime     = determineFirstQtrPaidOnTime( pdate, bill, it )
 	            ledger.qtrlypaymentavailed    = determineQtrlyPaymentAvailed( bill, it )
 				ledger.qtrlypaymentpaidontime = util.toBoolean(it.qtrlypaymentpaidontime, false )
-	            ledger.fullpayment            = ( bill.billtoqtr == 4 && rl.lastqtrpaid == 4 ? true : false )
+	            ledger.fullpayment            = determineFullPayment(pdate, bill, rl, it) 
 	            ledger.advancepayment         = bill.advancepayment 
 	            ledger.paidyear				  = pdate.year 
-	            ledger.classification_objid	  = it.classification.objid
-	            ledger.actualuse_objid	  	  = it.actualuse.objid
-
+	            ledger.classification	  	  = it.classification.objid
+	            ledger.actualuse	  	  	  = it.actualuse.objid
 				map.facts << ledger 
 				map.ledgers << ledger
 			}
+			createAssessedValueFacts(map, rl)
 		}
 		return map 
 	}
@@ -579,6 +600,19 @@ public class RPTBillingService
         if( bill.billtoqtr == 4 && item.lastqtrpaid != 4 ) return true 
         return false 
     }
+
+    boolean determineFullPayment(pdate, bill, rl, item) {
+    	def fullpayment = false
+
+    	if (item.year > pdate.year && item.year < bill.billtoyear) 
+    		fullpayment = true
+    	else if (item.year > pdate.year && item.year == bill.billtoyear &&  bill.billtoqtr == 4)
+    		fullpayment = true 
+    	else if (item.year == pdate.year && rl.lastyearpaid == 4 &&  bill.billtoqtr == 4)
+    		fullpayment = true 
+
+    	return fullpayment
+    }
 	
 	void updateLedgerItemInfo(bill, data){
 		bill.ledgers.each{bl ->
@@ -630,3 +664,120 @@ public class RPTBillingService
 
 }
 	
+
+public class CalcBasic implements RuleActionHandler {
+	def ledgers 
+	public void execute(def params, def drools) {
+		def ledger = ledgers.find{ it.objid == params.rptledger.objid }
+		if (ledger){
+			ledger.basic = params.expr.getDecimalValue();
+			ledger.basicacctid = params.basicacct.key
+		}
+	}
+}	
+
+public class CalcBasicInterest implements RuleActionHandler {
+	def ledgers 
+	public void execute(def params, def drools) {
+		def ledger = ledgers.find{ it.objid == params.rptledger.objid }
+		if (ledger){
+			ledger.basicint = params.expr.getDecimalValue();
+			ledger.basicintacctid = params.basicintacct.key
+		}
+	}
+}	
+
+public class CalcBasicDiscount implements RuleActionHandler {
+	def ledgers 
+	public void execute(def params, def drools) {
+		def ledger = ledgers.find{ it.objid == params.rptledger.objid }
+		if (ledger){
+			ledger.basicdisc = params.expr.getDecimalValue();
+		}
+	}
+}	
+
+public class CalcBasicAmnesty implements RuleActionHandler {
+	def ledgers 
+	public void execute(def params, def drools) {
+		def ledger = ledgers.find{ it.objid == params.rptledger.objid }
+		if (ledger){
+			ledger.basicamnesty = params.expr.getDecimalValue();
+		}
+	}
+}	
+
+public class CalcBasicIntAmnesty implements RuleActionHandler {
+	def ledgers 
+	public void execute(def params, def drools) {
+		def ledger = ledgers.find{ it.objid == params.rptledger.objid }
+		if (ledger){
+			ledger.basicintamnesty = params.expr.getDecimalValue();
+		}
+	}
+}	
+
+
+
+public class CalcSEF implements RuleActionHandler {
+	def ledgers 
+	public void execute(def params, def drools) {
+		def ledger = ledgers.find{ it.objid == params.rptledger.objid }
+		if (ledger){
+			ledger.sef = params.expr.getDecimalValue();
+			ledger.sefacctid = params.sefacct.key
+		}
+	}
+}	
+
+public class CalcSEFInterest implements RuleActionHandler {
+	def ledgers 
+	public void execute(def params, def drools) {
+		def ledger = ledgers.find{ it.objid == params.rptledger.objid }
+		if (ledger){
+			ledger.sefint = params.expr.getDecimalValue();
+			ledger.sefintacctid = params.sefintacct.key
+		}
+	}
+}	
+
+public class CalcSEFDiscount implements RuleActionHandler {
+	def ledgers 
+	public void execute(def params, def drools) {
+		def ledger = ledgers.find{ it.objid == params.rptledger.objid }
+		if (ledger){
+			ledger.sefdisc = params.expr.getDecimalValue();
+		}
+	}
+}	
+
+public class CalcSEFAmnesty implements RuleActionHandler {
+	def ledgers 
+	public void execute(def params, def drools) {
+		def ledger = ledgers.find{ it.objid == params.rptledger.objid }
+		if (ledger){
+			ledger.sefamnesty = params.expr.getDecimalValue();
+		}
+	}
+}	
+
+public class CalcSEFIntAmnesty implements RuleActionHandler {
+	def ledgers 
+	public void execute(def params, def drools) {
+		def ledger = ledgers.find{ it.objid == params.rptledger.objid }
+		if (ledger){
+			ledger.sefintamnesty = params.expr.getDecimalValue();
+		}
+	}
+}	
+
+public class CalcFireCode implements RuleActionHandler {
+	def ledgers 
+	public void execute(def params, def drools) {
+		def ledger = ledgers.find{ it.objid == params.rptledger.objid }
+		if (ledger){
+			ledger.firecode = params.expr.getDecimalValue()
+			ledger.firecodeacctid = params.firecodeacct.key
+		}
+	}
+}	

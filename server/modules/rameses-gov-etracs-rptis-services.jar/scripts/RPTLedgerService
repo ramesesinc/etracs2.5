@@ -319,12 +319,16 @@ class RPTLedgerService
         // def qtrlyPrevYears = util.toBoolean(var.rptledger_previous_year_computed_as_quarterly, false)
         if (ledgerfaas.fromyear <= ledgerfaas.toyear ){
             ledgerfaas.fromyear.upto(ledgerfaas.toyear){ yr ->
-                postYearlyItems(ledgerfaas, yr)
-                if ( yr >= pdate.year ){
-                    billdb.insertQtrlyLedgerItems([rptledgerid:ledgerfaas.rptledgerid, billtoyear:yr, forpayment:0])
-                    billdb.setLedgerItemQtrlyFlag([rptledgerid:ledgerfaas.rptledgerid, billtoyear:yr, forpayment:0])
-                }
+                doPostLedgerItems(ledgerfaas.rptledgerid, ledgerfaas, yr)
             }
+        }
+    }
+
+    void doPostLedgerItems(rptledgerid, ledgerfaas, yr){
+        postYearlyItems(ledgerfaas, yr)
+        if ( yr >= dtSvc.serverYear  ){
+            billdb.insertQtrlyLedgerItems([rptledgerid:rptledgerid, billtoyear:yr, forpayment:0])
+            billdb.setLedgerItemQtrlyFlag([rptledgerid:rptledgerid, billtoyear:yr, forpayment:0])
         }
     }
 
@@ -340,7 +344,7 @@ class RPTLedgerService
             fromyear.upto(toyear){yr -> 
                 def ledgerfaas = em.findLedgerFaasByFaasId([rptledgerid:ledger.objid, faasid:ledger.faasid, yr:yr, curryear:curryear])
                 if( ledgerfaas ){
-                    postYearlyItems(ledgerfaas, yr)
+                    doPostLedgerItems(ledgerfaas.rptledgerid, ledgerfaas, yr)
                     em.updateLedgerLastItemYear([objid:ledger.objid, lastitemyear:toyear])
                 }
             }
