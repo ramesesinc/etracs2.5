@@ -45,11 +45,11 @@
 	<field name="liquidatingofficer.name" class="java.lang.String"/>
 	<field name="dtposted" class="java.util.Date"/>
 	<field name="amountInWords" class="java.lang.String"/>
-	<field name="ctamount" class="java.math.BigDecimal"/>
 	<field name="liquidatingofficer.title" class="java.lang.String"/>
 	<field name="collector.title" class="java.lang.String"/>
 	<field name="collectiontype" class="java.lang.Object"/>
 	<field name="cashticketsummaries" class="java.lang.Object"/>
+	<field name="amount" class="java.math.BigDecimal"/>
 
 
 		<group  name="TYPE_GROUP" >
@@ -1415,7 +1415,7 @@
 					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
 						<font fontName="Tahoma" pdfFontName="Helvetica" size="9" isBold="true" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 					</textElement>
-				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{ctamount}]]></textFieldExpression>
+				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{amount}]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement
@@ -1516,7 +1516,7 @@
 					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
 						<font fontName="Tahoma" pdfFontName="Helvetica" size="9" isBold="true" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 					</textElement>
-				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{ctamount}]]></textFieldExpression>
+				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{amount}]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement
@@ -1586,7 +1586,7 @@
 					<reportElement
 						mode="Transparent"
 						x="190"
-						y="90"
+						y="104"
 						width="24"
 						height="13"
 						forecolor="#000000"
@@ -1626,7 +1626,7 @@
 					<reportElement
 						mode="Transparent"
 						x="216"
-						y="90"
+						y="104"
 						width="145"
 						height="13"
 						forecolor="#000000"
@@ -1646,7 +1646,7 @@
 					<reportElement
 						mode="Transparent"
 						x="0"
-						y="68"
+						y="67"
 						width="540"
 						height="13"
 						forecolor="#000000"
@@ -1658,7 +1658,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 </box>
 					<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
-						<font fontName="Tahoma" pdfFontName="Helvetica" size="9" isBold="true" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
+						<font fontName="Tahoma" pdfFontName="Helvetica-Bold" size="9" isBold="true" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[$P{TREASUREROFFICENAME}]]></textFieldExpression>
 				</textField>
@@ -1745,7 +1745,7 @@
 				<staticText>
 					<reportElement
 						x="373"
-						y="80"
+						y="94"
 						width="166"
 						height="23"
 						key="staticText-72"/>
@@ -1754,6 +1754,26 @@
 						<font pdfFontName="Helvetica-Bold" size="14" isBold="true"/>
 					</textElement>
 				<text><![CDATA[GENERAL FUND]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						mode="Transparent"
+						x="0"
+						y="82"
+						width="540"
+						height="12"
+						forecolor="#000000"
+						backcolor="#FFFFFF"
+						key="staticText-73"/>
+					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
+						<font fontName="Tahoma" pdfFontName="Helvetica-Bold" size="9" isBold="true" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
+					</textElement>
+				<text><![CDATA[CASH TICKET COLLECTION SUMMARY]]></text>
 				</staticText>
 			</band>
 		</title>
@@ -2165,7 +2185,7 @@
 					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="styled" lineSpacing="Single">
 						<font fontName="Tahoma" pdfFontName="Helvetica" size="8" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA["         I hereby certify that the foregoing report on collections has been verified and acknowledged receipt of  <style isBold = \"true\">"+$F{amountInWords}.toLowerCase() +" ONLY (Php "+ new DecimalFormat("#,##0.00").format($F{ctamount})+" )</style>"]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA["         I hereby certify that the foregoing report on collections has been verified and acknowledged receipt of  <style isBold = \"true\">"+$F{amountInWords}.toLowerCase() +" ONLY (Php "+ new DecimalFormat("#,##0.00").format($F{amount})+" )</style>"]]></textFieldExpression>
 				</textField>
 			</band>
 		</summary>

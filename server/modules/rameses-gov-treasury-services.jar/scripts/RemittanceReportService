@@ -141,17 +141,16 @@ class RemittanceReportService  {
 	// edit after the cash ticket will be done
 	@ProxyMethod
 	def generateReportByCashTicket( entity ) {
-		def data = entity.clone()
-		data.cashticketsummaries = []
-		def ctamount = data.cashticketsummaries.amount.sum();
-		if( ctamount <= 0.0 ) throw new Exception('There are no cash ticket collections.')
-		data.amount = ( data.cashticketsummaries ? cashticketsummaries.amount.sum() : 0.0 )
-		data.amountInWords = numSvc.doubleToWords( data.amount )
-		data.ctamount = data.amount 
-		data.collectiontype= em.sqlContext.createNamedQuery('remittancereport:getRCDCollectionType').setParameter('remittanceid', entity.objid ).resultList
+		entity.cashticketsummaries = db.getCashTicketCollectionSummaries(entity)
+		println entity.cashticketsummaries
+		entity.amount = 0.0 
+		if (entity.cashticketsummaries) {
+			entity.amount = entity.cashticketsummaries.amount.sum();
+		}
+		if( entity.amount <= 0.0 ) throw new Exception('There are no cash ticket collections.')
 
-		return data;
-
+		entity.amountInWords = numSvc.doubleToWords( entity.amount )
+		return entity;
 	}
 
 	@ProxyMethod 
