@@ -116,10 +116,7 @@
             <param name="sourcefile" value="rameses-enterprise-treasury"/>
         </antcall>
         <antcall target="deploy-shared-to-platform">
-            <param name="sourcefile" value="rameses-rules-developer"/>
-        </antcall>
-        <antcall target="deploy-shared-to-platform">
-            <param name="sourcefile" value="rulemgmt"/>
+            <param name="sourcefile" value="rameses-rules-mgmt"/>
         </antcall>
     </target>
     

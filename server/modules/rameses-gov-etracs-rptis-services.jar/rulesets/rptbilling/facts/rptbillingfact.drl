@@ -2,6 +2,7 @@ package rptbilling;
 
 declare RPTLedgerFact
     objid                   : String
+    rptledgerid             : String 
     tdno                    : String 
     year                    : Integer
     qtr                     : Integer 

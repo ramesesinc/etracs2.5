@@ -412,6 +412,7 @@ public class RPTBillingService
 				resetAssessmentValues(it)
 				ledger = ruleSvc.createFact(RULESET, FACT_PACKAGE+'RPTLedgerFact')
 				populateFactData(ledger, it)
+				ledger.rptledgerid 			  = rl.objid
 				ledger.numberofmonthsfromqtr  = calculateNoOfMonthsFromQtr( pdate, ledger.year, ledger.qtr )
 	            ledger.numberofmonthsfromjan  = calculateNoOfMonthsFromJan( pdate, ledger.year, ledger.qtr )
 	            ledger.firstqtrpaidontime     = determineFirstQtrPaidOnTime( pdate, bill, it )
@@ -439,7 +440,7 @@ public class RPTBillingService
 				def avfact = ruleSvc.createFact(RULESET, FACT_PACKAGE+'AssessedValueFact')
 				avfact.rptledgerid = rl.objid
 				avfact.year  	   = util.toInteger(yr)
-				avfact.assessedvalue  = numSvc.round(ledgerfaas.assessedvalue/4)
+				avfact.assessedvalue  = numSvc.round(ledgerfaas.assessedvalue)
 				map.facts << avfact 		
 			}
 		}
