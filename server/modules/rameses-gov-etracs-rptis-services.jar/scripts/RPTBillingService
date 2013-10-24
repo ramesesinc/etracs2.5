@@ -673,6 +673,7 @@ public class CalcBasic implements RuleActionHandler {
 		if (ledger){
 			ledger.basic = params.expr.getDecimalValue();
 			ledger.basicacctid = params.basicacct.key
+			ledger.revtype = params.revtype.key
 		}
 	}
 }	

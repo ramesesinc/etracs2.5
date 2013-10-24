@@ -9,6 +9,9 @@ class RemittanceReportService  {
 	@PersistenceContext("main")
 	def em; 
 
+	@ActiveDB('remittancereport')
+	def db;
+
 	@Service("NumberService")
 	def numSvc;
 
@@ -153,10 +156,11 @@ class RemittanceReportService  {
 
 	@ProxyMethod 
 	def generateAbstractOfRPTCollection(entity) {
-		//still checking the data..
-		def items = []
-
-		if( ! items ) throw new Exception('No records found.')
+		def remyr = dtsvc.getYear(entity.dtposted)
+		def params = [objid:entity.objid, remyear : remyr]
+		def items = db.getAbstractOfRPTCollection(params)
+		def advitems = db.getAbstractOfRPTCollectionAdvance(params)
+		if( !items &&  !advitems) throw new Exception('No records found.')
 
 		def header = [:]
 		header.TITLE = 'ABSTRACT OF REAL PROPERTY TAX COLLECTION'
@@ -171,7 +175,7 @@ class RemittanceReportService  {
 		header.DATEPOSTED =  entity.dtposted 
 		header.AMTINWORDS = numSvc.convertDouble( entity.amount )
 
-		return  [ header  : header, items  	: items]
+		return  [ header:header, items:items, advitems:advitems]
 	}
 
 	
