@@ -386,3 +386,18 @@ FROM (
 ) t
 ORDER BY t.municityname, t.year, t.idx, t.orno 
 
+
+
+[getCashTicketCollectionSummaries]
+SELECT 
+  CASE WHEN subcollector_name IS NULL THEN cr.collector_name ELSE cr.subcollector_name END AS particulars,
+  SUM(cr.amount) AS amount
+FROM remittance rem
+  INNER JOIN remittance_cashreceipt rc ON rem.objid = rc.remittanceid
+  INNER JOIN cashreceipt cr ON rc.objid = cr.objid 
+  LEFT JOIN cashreceipt_void cv ON cr.objid = cv.receiptid
+  INNER JOIN cashreceipt_cashticket cc ON cr.objid = cc.objid
+WHERE rem.objid = $P{objid} 
+  AND cv.objid IS NULL 
+GROUP BY cr.collector_name, cr.subcollector_name
+  
