@@ -88,7 +88,7 @@
                     throw new Exception("Total of items must be equal to amount collected");
                 if( MsgBox.confirm('You are about to post this transaction. Continue?')) {
                     entity = service.post( entity );
-                    MsgBox.alert( "suceesfully saved. Receipt No " + entity.receiptno );
+                    MsgBox.alert( "Receipt has been successfully saved.");
                     return "_close";
                 }
             }
