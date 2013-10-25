@@ -19,9 +19,8 @@ rule "summarize-business-tax"
 	salience 0
 	no-loop
 	when
-				
 	then
-		action.execute( "summarize_business_tax", null, drools);
+		//action.execute( "summarize_taxfee", "TAX", drools);
 end
 
 

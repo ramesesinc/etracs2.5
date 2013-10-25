@@ -23,6 +23,10 @@
 
                 void init() {
                     formInfos = [];
+                    
+                    //sort the infos
+                    infos = infos.findAll{it.lob==null} + infos.findAll{ it.lob!=null }.sort{ it.lob };
+                    
                     infos.each {x->
                         def i = [
                             type:x.attribute.datatype, 

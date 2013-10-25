@@ -1,7 +1,8 @@
 [getList]
 SELECT *
 FROM lobclassification
-order by name
+WHERE name LIKE $P{searchtext}
+ORDER BY name
 
 [approve]
 UPDATE lobclassification SET state = 'APPROVED'

@@ -1,12 +1,27 @@
 import com.rameses.annotations.*;
 import com.rameses.services.extended.*;
 
-class BusinessAccountService extends ActiveCrudService {
+class BusinessAccountService extends ActiveCrudListService {
 
 	@ActiveDB("businessaccount")
 	def em;
 
-	
+	String pagingKeys = "ba.objid";
+
+	@ProxyMethod
+	public def getColumns(o) {
+		return[
+			[name:'code', caption:'Item Code' ],
+			[name:'title', caption:'Item Title' ],
+			[name:'taxfeetype', caption:'Tax Fee Type' ],
+			[name:'paymentmode', caption:'Payment Mode' ],
+		];
+	}
+
+	public def open(o) {
+		return em.findAccount( o );
+	}
+
 	@ProxyMethod
 	public def save(o) {
 		em.save(o);

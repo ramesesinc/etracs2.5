@@ -1,0 +1,42 @@
+<workunit>
+    <invokers>
+        <invoker type="businessaccount:create" caption="Create Business Account" action="create"/>
+        <invoker type="businessaccount:open" caption="View Business Account" action="open"/>
+    </invokers>
+    
+    <code>
+        <![CDATA[    
+        import com.rameses.rcp.annotations.*
+        import com.rameses.rcp.common.*
+        import com.rameses.osiris2.client.*
+        import com.rameses.osiris2.common.*
+        
+        class  BPLSCollectionTypeController extends CRUDController {
+
+            @Service("BusinessAccountService")
+            def service;
+            
+            boolean allowApprove = false;
+            
+            def taxfeeTypes = ["TAX", "REGFEE", "OTHERCHARGE"];
+            def paymentModes = ["YEAR", "QTR"];
+            
+            def getLookupAccount() {
+                return InvokerUtil.lookupOpener("revenueitem:lookup", [
+                    onselect: { o->
+                        entity.objid = o.objid;
+                        entity.code = o.code;
+                        entity.title = o.title;
+                    }
+                ]); 
+            }
+        }
+        ]]>
+        
+    </code>
+    
+    <pages>
+        <page template="com.rameses.gov.etracs.bpls.account.BusinessAccountPage"/>
+    </pages>
+    
+</workunit>

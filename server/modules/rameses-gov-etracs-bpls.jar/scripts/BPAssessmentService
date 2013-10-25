@@ -28,7 +28,6 @@ public class BPAssessmentService  {
 	def buildFacts( o, lobMap ) {
 		def facts = [];
 
-		println "dtfiled is " + o.dtfiled;
 		def currDate = dateSvc.serverDate;
 		def dt = o.dtfiled;
 		if( dt ==null ) dt = currDate;
@@ -86,14 +85,14 @@ public class BPAssessmentService  {
 		return facts;
 	}
 
-	def buildActions(def o, def newinfos, def taxfees, def _taxfees, def lobMap, def facts ) {
+	def buildActions(def o, def newinfos, def taxfees, def lobMap, def facts ) {
 		def actions = new RuleAction();
 		actions.addCommand( "print_test", new PrintTest() );
 		actions.addCommand( "ask_business_info", new AskBusinessInfo( entity:o, newinfos:newinfos, BV:bv) );
 		actions.addCommand( "summarize_appinfo", new SummarizeAppInfo( entity:o, newinfos:newinfos, facts: facts ) );
-		actions.addCommand( "compute_business_tax", new ComputeTaxFee( entity:o, taxfees:taxfees, _taxfees: _taxfees, BA:ba ) );
-		actions.addCommand( "summarize_business_tax", new SummarizeTaxFee( taxfees:taxfees, ruleSvc: ruleSvc, lobMap: lobMap, type: "TAX", facts: facts ) );
-		actions.addCommand( "update_business_tax", new UpdateBusinessTax( ) );
+		actions.addCommand( "compute_taxfee", new ComputeTaxFee( entity:o, taxfees:taxfees, BA:ba ) );
+		actions.addCommand( "summarize_taxfee", new SummarizeTaxFee( taxfees:taxfees, ruleSvc: ruleSvc, lobMap: lobMap, facts: facts));
+		actions.addCommand( "update_business_tax", new UpdateBusinessTax());
 		return actions;
 	}
 
@@ -101,10 +100,9 @@ public class BPAssessmentService  {
 	public def execute(def o) throws Exception {
 		def newinfos = [];
 		def taxfees = [];
-		def _taxfees = [];
 		def lobMap = [:];
 		def facts = buildFacts(o, lobMap);
-		def actions = buildActions(o, newinfos, taxfees, _taxfees, lobMap, facts );
+		def actions = buildActions(o, newinfos, taxfees, lobMap, facts );
 		def grps = ruleDB.getRulegroups( [ruleset: RULESET] );
 		int phase = 0;
 		for( g in grps ) { 
@@ -114,7 +112,7 @@ public class BPAssessmentService  {
 			phase++;
 		}
 		newinfos.each {it.phase = phase};
-		return [infos:newinfos, taxfees: taxfees, _taxfees: _taxfees, phase: phase];
+		return [infos:newinfos, taxfees: taxfees, phase: phase];
 	}
 }
 
@@ -164,40 +162,49 @@ public class SummarizeAppInfo implements RuleActionHandler {
 	def newinfos;
 	def entity;
 	public void execute(def params, def drools) {
-		print "summarize app info";
+		println "summarize app info";
 	}
 }
+
+/***
+* This has a different implementation than the old rules. The higher the number is prioritized
+*/
 
 public class ComputeTaxFee implements RuleActionHandler {
 	def entity;
 	def taxfees;
-	def _taxfees;
 	def BA;
 
 	public void execute(def params, def drools) {
+	
 		def lob = params.lob;
 		def acctid = params.account.key;
 		def test = null;
+		def amt = params.amount.doubleValue;
+
 		if( !lob ) {
 			test = taxfees.findAll{it.lob==null}.find{it.account.objid == acctid};
 		}
 		else {
 			test = taxfees.findAll{it.lob!=null}.find{ it.lob.objid == lob.objid && it.account.objid == acctid };
 		}
-		//we need to override tax fees that already exist.
-		if(test) {
-			_taxfees << test;
-			taxfees.remove( test );
+
+		//if account already exists, do not override.
+		if(!test) {
+			def info = [objid:"BPTXFE"+new UID()];
+			info.account = BA.findAccount( [objid: acctid] );
+			if(lob) {
+				info.lob = [objid:lob.objid, name:lob.name];
+			}
+			info.assessedvalue = amt;
+			info.amount = amt;
+			info.rulename = drools.rule.name;
+			taxfees << info;
 		}
-		def info = [objid:"BPTF"+new UID()];
-		info.account = BA.findAccount( [objid: acctid]);
-		if(lob) {
-			info.lob = [objid:lob.objid, name:lob.name];
+		else {
+			if( test._taxfees == null ) test._taxfees = [];
+			test._taxfees << [rulename: drools.rule.name, amount: amt];
 		}
-		def amt = params.amount.doubleValue;
-		info.assessedvalue = amt;
-		info.amount = amt;
-		taxfees << info;
 	}
 }
 
@@ -209,16 +216,24 @@ public class SummarizeTaxFee implements RuleActionHandler {
 	def taxfees;
 	def ruleSvc;
 	def lobMap;
-	def type;
-
-	public void execute(def params, def drools) {
+	
+	public void execute(def type, def drools) {
 		String fact;
-		if(type == "TAX") fact = "bpassessment.BusinessTax";
-		else if(type == "REGFEE") fact = "bpassessment.RegFee";
-		else if(type == "OTHERCHARGE") fact = "bpassessment.OtherCharge";
+		switch(type) {
+			case "TAX":
+				fact = "BusinessTax";
+				break;
+			case "REGFEE":
+				fact = "RegFee"
+				break;
+			case "OTHERCHARGE":
+				fact = "OtherCharge";
+				break;
+		}
+		String pkg = "bpassessment"; 
 		def list = taxfees.findAll{ it.account.taxfeetype == type };
 		list.each {
-			def bt = ruleSvc.createFact( "bpassessment", fact);
+			def bt = ruleSvc.createFact( "bpassessment", pkg+"."+fact);
 			bt.objid = it.objid;
 			bt.acctid = it.account.objid;
 			if( it.lob ) bt.lob = lobMap[ it.lob.objid ]
@@ -226,7 +241,6 @@ public class SummarizeTaxFee implements RuleActionHandler {
 			bt.amount = it.amount;
 			bt.assessedvalue = it.assessedvalue;
 			bt.data = it;
-			drools.insert( bt );
 			facts << bt;
 		}
 	}

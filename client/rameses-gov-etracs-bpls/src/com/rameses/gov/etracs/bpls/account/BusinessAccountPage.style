@@ -1,0 +1,11 @@
+"entity.*"[ mode != 'read' ] {
+    editable: true;
+}
+
+"entity.*"[  mode == 'read' ] {
+    editable: false;
+}
+
+"entity.objid"[  mode != 'create' ] {
+    editable: false;
+}
