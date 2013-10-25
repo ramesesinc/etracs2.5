@@ -7,6 +7,7 @@ class BusinessAccountLookupService extends ActiveCrudListService {
 	def em;
 
 	String listMethod = "getLookup";
+	String pagingKeys = "ba.objid";
 
 	@ProxyMethod
 	public def getColumns( def p ) {
@@ -18,7 +19,6 @@ class BusinessAccountLookupService extends ActiveCrudListService {
 
 	void beforeList(o) {
 		o.taxfeetype = o._tag;
-		println "tax fee type->"+o.taxfeetype;
 	}
 
 }

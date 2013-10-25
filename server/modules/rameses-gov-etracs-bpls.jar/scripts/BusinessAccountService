@@ -6,6 +6,7 @@ class BusinessAccountService extends ActiveCrudService {
 	@ActiveDB("businessaccount")
 	def em;
 
+	
 	@ProxyMethod
 	public def save(o) {
 		em.save(o);

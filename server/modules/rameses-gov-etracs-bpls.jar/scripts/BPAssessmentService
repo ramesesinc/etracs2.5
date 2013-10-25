@@ -20,10 +20,21 @@ public class BPAssessmentService  {
 	@ActiveDB("businessvariable")
 	def bv;
 
+	@Service("DateService")
+	def dateSvc;
+
 	String RULESET = "bpassessment";
 
 	def buildFacts( o, lobMap ) {
 		def facts = [];
+
+		println "dtfiled is " + o.dtfiled;
+		def currDate = dateSvc.serverDate;
+		def dt = o.dtfiled;
+		if( dt ==null ) dt = currDate;
+		facts << new EffectiveDate( dt );
+		facts << new CurrentDate(currDate);
+
 		def app = ruleSvc.createFact( RULESET, RULESET+".BPApplication");
 		app.apptype = o.apptype;
 		app.orgtype = o.orgtype;
@@ -33,6 +44,7 @@ public class BPAssessmentService  {
 		o.lobs.each {
 			def LOB = ruleSvc.createFact( RULESET, RULESET+".LOB");
 			LOB.objid = it.lobid;
+			LOB.lobid = it.lobid;
 			LOB.name = it.name;
 			LOB.classification = it.classification?.objid;
 			LOB.attributes = "-" + lob.getAttributes( [lobid: it.lobid ] )*.name.join("-") + "-";
@@ -43,24 +55,34 @@ public class BPAssessmentService  {
 		o.infos.each {
 			def dtype = it.attribute.datatype;
 			def lob = it.lob;
-			def obj = ruleSvc.createFact( RULESET, RULESET + ".BusinessInfo" );
+			def obj = null;
+			switch( dtype ) {
+				case "decimal":
+					obj = ruleSvc.createFact( RULESET, RULESET + ".DecimalBusinessInfo" );
+					if(it.value) obj.value = Double.parseDouble(it.value+"");
+					break;
+				case "integer":
+					obj = ruleSvc.createFact( RULESET, RULESET + ".IntegerBusinessInfo" );
+					if(it.value)  obj.value = Integer.parseInt(it.value+"");
+					break;
+				case "boolean":
+					obj = ruleSvc.createFact( RULESET, RULESET + ".BooleanBusinessInfo" );
+					if(it.value) {
+						it.value = ( it.value == 1 || it.value == true ) ? "true" : "false";
+						obj.value = Boolean.parseBoolean(it.value);
+					}
+					break;
+				case "string_array":	
+				case "string":
+					obj = ruleSvc.createFact( RULESET, RULESET + ".StringBusinessInfo" );
+					obj.value = (String) it.value;
+					break;
+			}
 			obj.objid = it.objid;
 			obj.name = it.attribute.name;
-			
-			if(it.value ) {
-				switch( dtype ) {
-					case "decimal":
-						obj.decimalvalue = Double.parseDouble(it.value+"");
-						break;
-					case "integer":
-						obj.intvalue = Integer.parseInt(it.value+"");
-						break;
-				}
-			}
 			if( lob ) obj.lob = lobMap[ lob.objid ];
 			facts << obj;
 		}
-		println "about to return facts"
 		return facts;
 	}
 
@@ -81,17 +103,18 @@ public class BPAssessmentService  {
 		def taxfees = [];
 		def _taxfees = [];
 		def lobMap = [:];
-
 		def facts = buildFacts(o, lobMap);
 		def actions = buildActions(o, newinfos, taxfees, _taxfees, lobMap, facts );
 		def grps = ruleDB.getRulegroups( [ruleset: RULESET] );
+		int phase = 0;
 		for( g in grps ) { 
 			ruleSvc.execute( RULESET, facts, actions, g.name );
-
 			//if there is entry in newinfos break it.
 			if(newinfos) break;
+			phase++;
 		}
-		return [infos:newinfos, taxfees: taxfees, _taxfees: _taxfees ];
+		newinfos.each {it.phase = phase};
+		return [infos:newinfos, taxfees: taxfees, _taxfees: _taxfees, phase: phase];
 	}
 }
 
@@ -111,23 +134,25 @@ public class AskBusinessInfo implements RuleActionHandler {
 		def attrid = params.attribute.key;
 		def option = params.option;
 		def test = null;
+
+		//find it in the list so we dont have to add it again.
 		if( !lob ) {
-			test = entity.infos.find{ it.lob == null && it.attribute.objid == attrid };
-			if(!test) test = newinfos.find{ it.lob == null && it.attribute.objid == attrid };
+			test = entity.infos.findAll{ it.lob == null }.find{ it.attribute.objid == attrid };
+			if(!test) {
+				test = newinfos.findAll{it.lob==null}.find{ it.attribute.objid == attrid };
+			}	
 		}
 		else {
-			test = entity.infos.find{ it.lob.objid == lob.objid && it.attribute.objid == attrid };
-			if(!test) test = newinfos.find{ it.lob.objid == lob.objid && it.attribute.objid == attrid };
+			test = entity.infos.findAll{ it.lob!=null }.find{ it.lob.objid == lob.objid && it.attribute.objid == attrid };
+			if(!test) {
+				test =  newinfos.findAll{ it.lob!=null }.find{ it.lob.objid == lob.objid && it.attribute.objid == attrid };
+			}
 		}
 		if(!test) {
 			def info = [objid:"BPINFO"+new UID()];
 			info.attribute = BV.read( [objid: attrid ] );
 			if(lob) {
 				info.lob = [objid:lob.objid, name:lob.name];
-			}
-
-			if( option == "REQUIRE_BEFORE_PRINT") {
-				info.beforeprint = 1;
 			}
 			newinfos << info;
 		} 
@@ -154,10 +179,10 @@ public class ComputeTaxFee implements RuleActionHandler {
 		def acctid = params.account.key;
 		def test = null;
 		if( !lob ) {
-			test = taxfees.find{ it.lob == null && it.account.objid == acctid };
+			test = taxfees.findAll{it.lob==null}.find{it.account.objid == acctid};
 		}
 		else {
-			test = taxfees.find{ it.lob.objid == lob.objid && it.account.objid == acctid };
+			test = taxfees.findAll{it.lob!=null}.find{ it.lob.objid == lob.objid && it.account.objid == acctid };
 		}
 		//we need to override tax fees that already exist.
 		if(test) {
@@ -169,8 +194,9 @@ public class ComputeTaxFee implements RuleActionHandler {
 		if(lob) {
 			info.lob = [objid:lob.objid, name:lob.name];
 		}
-		info.assessedvalue = params.amount;
-		info.amount = params.amount;
+		def amt = params.amount.doubleValue;
+		info.assessedvalue = amt;
+		info.amount = amt;
 		taxfees << info;
 	}
 }

@@ -1,8 +1,0 @@
-{
-	name: "Ask Info",
-	template: "ask-info",
-	params: [
-		{ name:"lob", datatype:"Lob", usevar:true, caption:"Line of business" }, 
-		{ name:"var", datatype:"object", caption:"Variable", handler:'businessvariable:lookup', expression:'#{item.caption}' } 
-	]
-}

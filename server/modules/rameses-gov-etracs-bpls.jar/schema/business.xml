@@ -14,6 +14,7 @@
 
 		<field name="bin" />
 		<field name="yearstarted" required="true"/>
+		<field name="activeyear" required="true"/>
 		<field name="unpaidbalance" required="true"/>
 		<field name="lastqtrpaid" required="true"/>
 		<field name="lastyearpaid" required="true"/>
@@ -122,4 +123,10 @@
 		<complex name="listvalue" type="list" serializer="default"/>
 	</element>		
 
+	<element name="redflag" tablename="business_redflag">
+		<field name="objid" primary="true"/>
+		<field name="businessid" required="true"/>
+		<field name="message" required="true"/>
+		<field name="flagid" required="false"/>
+	</element>	
 </schema>

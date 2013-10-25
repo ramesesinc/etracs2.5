@@ -1,0 +1,5 @@
+<workunit extends="wtemplates/ServiceLookupController.xml" serviceName="BusinessVariableLookupService" tag="integer">
+    <invokers>
+        <invoker type="businessvariable:integer:lookup" caption="Lookup Business Info (Integer)" target="popup"/>
+    </invokers>
+</workunit>

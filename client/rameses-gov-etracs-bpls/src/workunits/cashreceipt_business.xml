@@ -1,6 +1,7 @@
 <workunit extends="wtemplates/gov/treasury/BasicCashReceiptController.xml">
     <invokers>
         <invoker type="cashreceipt:bpls" action="init" />
+        <invoker type="cashreceipt:barcode:51005" action="initBarcode" />
     </invokers>
     
     <code>
@@ -22,6 +23,12 @@
             def years = startyear..1980;
             int year;
             int qtr;
+            
+            def barcodeid;
+            void initBarcode() {
+                MsgBox.alert( barcodeid );
+            }
+            
             
             public void payerChanged( o ) {
                 entity.tradename = null;

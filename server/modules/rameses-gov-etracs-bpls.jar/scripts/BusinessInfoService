@@ -35,6 +35,7 @@ public class BusinessInfoService extends ActiveCrudListService {
 	void beforeCreate(o) {
 		def yr = "B"+ o.yearstarted + "01"; 
 		o.bin = yr + "-" + seqSvc.getNextFormattedSeries( yr );
+		o.activeyear = o.yearstarted;
 		o.unpaidbalance = 0;
 		o.lastqtrpaid = 0;
 		o.lastyearpaid = 0;

@@ -1,0 +1,91 @@
+<workunit>
+    <invokers>
+       <invoker type="bpassessment:info" caption="Info" action="init"/>
+    </invokers>
+    <code>
+        <![CDATA[
+            import com.rameses.rcp.common.*
+            import com.rameses.rcp.annotations.*
+            import com.rameses.osiris2.client.*
+            import com.rameses.osiris2.common.*
+            import com.rameses.rulemgmt.constraint.*;
+            import com.rameses.rulemgmt.*;
+            import java.rmi.server.*;
+            
+            class BPAssessmentAnalyzerInfoController  {
+                @Binding
+                def binding;
+            
+                def infos;
+                def lobs;
+                def handler;
+                def formInfos;
+
+                void init() {
+                    formInfos = [];
+                    infos.each {x->
+                        def i = [
+                            type:x.attribute.datatype, 
+                            caption:x.attribute.caption, 
+                            categoryid:x.lob?.objid, 
+                            name:x.attribute.name, 
+                            bean: x,
+                            properties: [:],
+                            value: x.value
+                        ];
+                        //fix the datatype
+                        x.datatype = x.attribute.datatype;
+                        if(x.datatype.indexOf("_")>0) {
+                            x.datatype = x.datatype.substring(0, x.datatype.indexOf("_"));
+                        }
+                        if(i.type == "boolean") {
+                            i.type = "subform";
+                            i.handler = "bpassessment:yesno";
+                            i.properties = [item:x];
+                        }
+                        else if(i.type == "string_array") {
+                            i.type = "combo";
+                            i.itemsObject = x.attribute.arrayvalues;
+                        }
+                        formInfos << i;
+                    }
+                }
+                
+                void reload() {
+                    init();
+                    binding.refresh();
+                }
+                
+                def formPanel = [
+                    getCategory: { lobid->
+                        if(!lobid) return "";
+                        return lobs.find{ it.lobid == lobid }?.name
+                    },
+                    updateBean: {name,value,item->
+                        item.bean.value = value;
+                    },
+                    getControlList: {
+                        return formInfos;
+                    }
+                ] as FormPanelModel;
+   
+                def doOk() {
+                    def list = [];
+                    formInfos.each {
+                        list << it.bean;
+                    }
+                    infos = handler(list);
+                    if(!infos) return "_close";
+                    reload();
+                }
+                
+                def doCancel() {
+                    return "_close";
+                }
+            }
+        ]]>    
+    </code>
+    <pages>
+        <page template="com.rameses.gov.etracs.rules.bpls.InfoPage" />
+    </pages>
+</workunit>

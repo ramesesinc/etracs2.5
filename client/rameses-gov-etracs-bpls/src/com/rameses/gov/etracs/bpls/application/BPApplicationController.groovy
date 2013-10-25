@@ -14,6 +14,7 @@ class BPApplicationController extends PageFlowController {
     def entity = [lobs:[]];
     def officeTypes = LOV.BUSINESS_OFFICE_TYPES;
     def orgTypes = LOV.BUSINESS_ORG_TYPES;
+    def lobAssessmentTypes = ["RENEW", "RETIRE"];
 
     def formInfos = [];
     def infos;
@@ -51,6 +52,8 @@ class BPApplicationController extends PageFlowController {
             return entity.lobs;
         },
         onRemoveItem: { o->
+            if(o.assessmenttype != "NEW" ) 
+                throw new Exception("Only new lines of business can be removed");
             entity.lobs.remove(o);
         }
     ] as EditorListModel;

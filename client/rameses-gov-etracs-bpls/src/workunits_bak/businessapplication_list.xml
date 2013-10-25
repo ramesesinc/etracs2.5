@@ -1,9 +1,0 @@
-<workunit extends="wtemplates/InboxController.xml" 
-    serviceName="BusinessApplicationListService"
-    defaultFileType="businessapplication">
-        
-    <invokers>
-        <invoker folderid="/explorer/txn/bpls" caption="Business Applications" />
-    </invokers>
-    
-</workunit>

@@ -1,0 +1,15 @@
+"lobModel.*" [ item.assessmenttype == 'NEW' ] {
+    editable:false;
+}
+
+"lobModel.*" [ item.assessmenttype != 'NEW' ] {
+    editable:true;
+}
+
+"htmlAlerts"[ !!alerts ] {
+    visible: true;
+}
+
+"htmlAlerts"[ !alerts ] {
+    visible: false;
+}

@@ -8,22 +8,40 @@ declare BPApplication
 end
 
 declare LOB 
-	objid: 				String
-	name:				String
+	objid: 			String
+	lobid:			String
+	name:			String
 	classification: 	String
 	attributes:			String
 	assessmenttype:		String
 end
 
-declare BusinessInfo 
+declare StringBusinessInfo 
+	objid: 		String
+	lob:		LOB
+	name:		String
+	value:		String
+end
+
+declare DecimalBusinessInfo 
+	objid: 		String
+	lob:		LOB
+	name:		String
+	value:		double
+end
+
+declare IntegerBusinessInfo 
+	objid: 			String
+	lob:			LOB
+	name:			String
+	value:			int
+end
+
+declare BooleanBusinessInfo 
 	objid: 				String
 	lob:				LOB
 	name:				String
-	datatype:			String
-	decimalvalue:		double
-	intvalue:			int
-	stringvalue:		String
-	boolvalue:			boolean
+	value:			boolean
 end
 
 declare BusinessTax 
