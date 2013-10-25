@@ -1,7 +1,7 @@
 <workunit extends="wtemplates/ListController.xml">
     <invokers>
         <invoker folderid="/explorer/txn/rpt/list" caption="Notices"  target="window" index="200" role="ASSESSOR_SHARED" />
-        <invoker type="quick_launcher" code="NA00" caption="Notices" role="ASSESSOR_SHARED" />
+        <invoker type="quick_launcher" code="NOA00" caption="Notices" role="ASSESSOR_SHARED" />
     </invokers>
     <code>
         import com.rameses.rcp.common.*
