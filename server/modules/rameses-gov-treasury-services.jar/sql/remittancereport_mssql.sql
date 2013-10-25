@@ -1,6 +1,6 @@
 [getRCDCollectionType]
 select  
-  min(cr.formno) as formno,
+  cr.formno,
   case when min(ch.objid) is null then min( cr.receiptno) else null end as fromseries, 
   case when min(ch.objid) is null then max(cr.receiptno) else null end as toseries, 
   sum( case when crv.objid is null then cr.amount else 0.0 end ) as amount 
@@ -9,12 +9,12 @@ from remittance_cashreceipt rc
    left join cashreceipt_void crv on crv.receiptid = cr.objid 
    left join cashticket ch on ch.objid = cr.formno 
 where remittanceid=$P{remittanceid}
-group by cr.controlid 
+group by cr.formno, cr.controlid 
 
 
 [getRCDCollectionSummaries]
 select  
-  ( 'AF#' + a.objid +  ': ' + min(ct.title) )  as particulars, 
+  ('AF#' + a.objid +  ': ' + min(ct.title) + '-' + min(ri.fund_title) )  as particulars, 
   sum( case when crv.objid is null then cri.amount else 0.0 end ) as amount 
 from remittance_cashreceipt rc 
    inner join cashreceipt cr on rc.objid = cr.objid 
@@ -23,8 +23,8 @@ from remittance_cashreceipt rc
    inner join collectiontype ct on ct.objid = cr.collectiontype_objid 
    inner join cashreceiptitem cri on cri.receiptid = cr.objid
    inner join revenueitem ri on ri.objid = cri.item_objid 
-where remittanceid=$P{remittanceid} 
-group by a.objid, ri.fund_objid, ct.objid 
+where remittanceid=$P{remittanceid}
+group by a.objid, ct.objid, ri.fund_title
 
 
 [getRCDOtherPayment]
@@ -113,7 +113,7 @@ ORDER BY afid, particulars, serialno
 [getRevenueItemSummaryByFund]
 select 
   ri.fund_title as fundname, cri.item_objid as acctid, cri.item_title as acctname,
-  sum( cri.amount ) as amount 
+  min(cri.item_code) as acctcode, sum( cri.amount ) as amount 
 from remittance_cashreceipt rem 
    inner join cashreceipt cr on cr.objid = rem.objid 
    left join cashreceipt_void cv on cv.receiptid = cr.objid 

@@ -126,18 +126,20 @@ SELECT
   MAX(ad.endingendseries) AS endseries
 FROM afserial_inventory_detail ad 
 INNER JOIN remittance_afserial af ON ad.objid=af.objid
+INNER JOIN afserial_inventory ai on ai.objid = ad.controlid 
 WHERE af.remittanceid = $P{remittanceid}
+  AND ai.currentseries <= ai.endseries
 GROUP BY ad.controlid
 
 [getCashTicketRemittanceForBalanceForward]
 SELECT DISTINCT
   ct.controlid,
-  min(cti.qtybalance),
-  min(cti.afid) 
+  min(cti.qtybalance) as qtybalance,
+  min(cti.afid) as afid 
 FROM cashticket_inventory_detail ct 
 INNER JOIN cashticket_inventory cti ON ct.controlid=cti.objid 
 INNER JOIN remittance_cashticket rc ON ct.objid=rc.objid
-WHERE rc.remittanceid=$P{remittanceid}
+WHERE rc.remittanceid=$P{remittanceid} and cti.qtybalance > 0
 GROUP BY ct.controlid
 
 [getRemittedAFSerial]

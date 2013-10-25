@@ -92,6 +92,8 @@
                 title = "Request Accountable Form - " + entity.reqno;
                 reqTypes = InvokerUtil.lookupOpeners( "afris:type", [:] )
                 reqType = reqTypes.find{ it.properties.reqtype == entity.reqtype }
+                requestedbylist = [ entity.requester ]
+                
             }
             
         }
