@@ -48,7 +48,7 @@
                 onAddItem: { o->
                     item.items << o;
                     item.qtyreceived = item.items.sum{ it.qty };
-                    item.remarks = item.items.collect{ it.startseries + "-" + it.endseries }.join(",");
+                    item.remarks = item.items.collect{ it.startseries + "-" + it.endseries + "(" + it.startstub  + "-" + it.endstub + ")" }.join(",");
                     caller.itemModel.reload();
                 },
                 fetchList: { o->
