@@ -68,7 +68,7 @@ class RemittanceReportService  {
 		def data = rem.clone() 
 		def params = [ remittanceid: data.objid,  fundid : fund ? fund.objid : '%']
 		data.serials = em.sqlContext.createNamedQuery('remittancereport:getSerialReceiptsByRemittanceFund').setParameters(params ).resultList
-		data.nonserial = em.sqlContext.createNamedQuery('remittancereport:getNonSerialReceiptDetailsByFund').setParameters(params ).resultList
+		data.nonserials = em.sqlContext.createNamedQuery('remittancereport:getNonSerialReceiptDetailsByFund').setParameters(params ).resultList
 		return data;
 	}
 
