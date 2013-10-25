@@ -49,6 +49,7 @@
         <antcall target="do-copy-incubation-jars-to-devlibs">
             <param name="sourcefile" value="osiris2-client-themes"/>
         </antcall>
+        <!--
         <antcall target="do-copy-incubation-jars-to-devlibs">
             <param name="sourcefile" value="osiris2-client-ui"/>
         </antcall>
@@ -70,6 +71,7 @@
         <antcall target="do-copy-incubation-jars-to-devlibs">
             <param name="sourcefile" value="db-dialect"/>
         </antcall>
+        -->
     </target>
     
     <target name="do-copy-incubation-jars-to-devlibs">
@@ -116,10 +118,7 @@
             <param name="sourcefile" value="rameses-enterprise-treasury"/>
         </antcall>
         <antcall target="deploy-shared-to-platform">
-            <param name="sourcefile" value="rameses-rules-developer"/>
-        </antcall>
-        <antcall target="deploy-shared-to-platform">
-            <param name="sourcefile" value="rulemgmt"/>
+            <param name="sourcefile" value="rameses-rules-mgmt"/>
         </antcall>
     </target>
     
@@ -192,7 +191,7 @@
         </copy>
     </target>
 
-    <target name="build-server" depends="init,cleanup,copy-osiris3-server,copy-etracs-platform,deploy-etracs-server,deploy-project-shared, deploy-etracs-client-jars, deploy-devlibs">
+    <target name="build-server" depends="init,cleanup,copy-osiris3-server,copy-etracs-platform,deploy-etracs-server,deploy-project-shared, deploy-etracs-client-jars, copy-incubation-jars-to-devlibs, deploy-devlibs">
     </target>
 
     <target name="xxbuild-server" depends="init,cleanup,copy-osiris3-server,copy-etracs-platform,deploy-etracs-server,deploy-project-shared, deploy-etracs-client-jars, copy-incubation-jars-to-devlibs, deploy-devlibs">

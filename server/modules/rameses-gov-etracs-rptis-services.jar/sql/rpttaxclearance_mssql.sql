@@ -93,6 +93,7 @@ FROM rptcertificationitem rci
 	INNER JOIN cashreceipt xr ON ri.rptreceiptid = xr.objid 
 	LEFT JOIN cashreceipt_void cv ON xr.objid = cv.objid 
 WHERE rci.rptcertificationid = $P{rptcertificationid}
+  AND rl.objid = $P{rptledgerid}
   AND ri.year = $P{year}
   AND ri.qtr <= $P{qtr}
   AND cv.objid IS NULL 
@@ -114,6 +115,7 @@ FROM rptcertificationitem rci
 	INNER JOIN rptledger rl ON rci.refid = rl.objid 
 	INNER JOIN rptreceipt_capture rc on rl.objid = rc.rptledgerid
 WHERE rci.rptcertificationid = $P{rptcertificationid}
+  AND rl.objid = $P{rptledgerid}
   AND rc.fromyear <= $P{year}
   AND rc.toyear >= $P{year}
   AND rc.toqtr <= $P{qtr}

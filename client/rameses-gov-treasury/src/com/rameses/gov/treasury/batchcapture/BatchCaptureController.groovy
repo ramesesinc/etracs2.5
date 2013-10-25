@@ -16,8 +16,7 @@ public class BatchCaptureController  {
     @Service("BatchCaptureCollectionService")
     def svc;
 
-    def title="Batch Capture"
-
+    
     def mode;
     def entity;
     def batchItems = [];
@@ -27,7 +26,16 @@ public class BatchCaptureController  {
     def formType
     def collectionTypes;
     def collectiontype;
-    def lookupexpression
+    def lookupexpression;
+    
+    def onPost; //handler
+            
+    String getTitle(){
+        def suffix = ''
+        if (entity.state)
+            suffix = '(' + entity.state + ')'
+        return 'Batch Capture ' + suffix 
+    }
     
 
     @PropertyChangeListener
@@ -210,7 +218,9 @@ public class BatchCaptureController  {
     }
     
     void submitForPosting() {
-        entity = svc.submitForPosting( entity);
+        if (MsgBox.confirm('Submit captured receipts for posting?')){
+            entity = svc.submitForPosting( entity);
+        }
     }
     
     void disapprove(){
@@ -222,6 +232,7 @@ public class BatchCaptureController  {
 
         mode = 'posted'
         entity = svc.post( entity);
+        if (onPost) onPost();
     }
 
     void submitForOnlineRemittance() {
@@ -229,6 +240,7 @@ public class BatchCaptureController  {
 
         mode = 'submittedforremittance'
         svc.submitForOnlineRemittance( entity )
+        if (onPost) onPost();
     }
 
 }

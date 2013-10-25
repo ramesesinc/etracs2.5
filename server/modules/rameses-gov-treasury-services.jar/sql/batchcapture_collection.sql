@@ -1,6 +1,6 @@
 [findBatchControlByState]
 select objid from batchcapture_collection 
-where controlid=$P{controlid} and state != 'POSTED' 
+where controlid=$P{controlid} and state NOT IN ('POSTED','CLOSED')
 
 [updateBatchCaptureState]
 update batchcapture_collection set state=$P{state} 

@@ -2,6 +2,15 @@
 <workunit>
     <invokers>
         <invoker type="rptledger:formActions" action="printNotice" caption="Notice of Delinquency" target="process" />        
+        <invoker type="rptledger:nod" action="previewNotice" caption="Notice of Delinquency" target="popup" />        
+        
+        <invoker folderid="/explorer/txn/landtax/txn" action="init" caption="Notice of Delinquency" index="5" 
+            role="LANDTAX" target="window" />
+            
+        <invoker type="formActions" action="_close" caption="Close" mnemonic="c" icon="images/toolbars/cancel.png" immediate="true"/>            
+        <invoker type="formActions" action="previewNotice" caption="Preview" mnemonic="p" visibleWhen="#{mode=='init'}"  immediate="true"/>
+        <invoker type="formActions" action="init" caption="Back" mnemonic="b" icon="images/toolbars/back.png" visibleWhen="#{mode=='preview'}"/>
+        
     </invokers>
     <code>
 
@@ -13,29 +22,44 @@ import com.rameses.osiris2.reports.*;
 
 class RPTLedgerNoticeOfDelinquencyController
 {
-    @Service('RPTBillingService')
+    @Service('RPTLedgerReportService')
     def svc 
 
     @Service("ReportParameterService")
     def reportSvc;
 
-    
+    def taxpayer;
     def entity;
-    def bill;
+    def data = [:]
     
-    void buildBillReportInfo(){
-        bill.forprinting = true;
-        bill = svc.generateBill( bill )
+    String title = 'Notice of Delinquency'
+    
+    def mode
+    
+    def init(){
+        mode = 'init'
+        return 'default'
+    }
+    
+    
+    void buildReportInfo(){
+        def params = [
+            taxpayer : (taxpayer ? taxpayer : entity.taxpayer),
+            rptledgerid : entity?.objid,
+        ]
+        data = svc.generateNoticeOfDelinquency(params)
         report.viewReport()
     }
     
     void printNotice() {
-        bill = svc.initBill();
-        bill.taxpayer = entity.taxpayer
-        bill.ledgerids.add(entity.objid)
-        
-        buildBillReportInfo()
+        buildReportInfo()
         ReportUtil.print( report.report, true )
+    }
+    
+    def previewNotice() {
+        buildReportInfo()
+        mode = 'preview'
+        return 'preview'
     }
       
     def reportpath = 'com/rameses/gov/etracs/rpt/report/landtax/'
@@ -45,14 +69,17 @@ class RPTLedgerNoticeOfDelinquencyController
         getSubReports  : {
             return [
                 new SubReport('NODLedger', reportpath + 'noticeofdelinquencyledger.jasper'),
-                new SubReport('NODItem', reportpath + 'noticeofdelinquencyitem.jasper'),
             ] as SubReport[]
         },
-        getReportData : { return bill },
+        getReportData : { return data },
         getParameters : { return reportSvc.getStandardParameter() }
     ] as ReportModel
     
 
 }
     </code>
+    <pages>
+        <page template="com.rameses.gov.etracs.rpt.ledger.ui.NoticeOfDelinquencyInitPage"/>
+        <page name="preview" template="com.rameses.gov.etracs.rpt.report.PreviewPage"/>
+    </pages>
 </workunit>

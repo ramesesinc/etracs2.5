@@ -156,14 +156,14 @@ SELECT
 	COUNT(*) AS improvcount
 FROM faas f
 	INNER JOIN rpu r ON f.rpuid = r.objid 
-	INNER JOIN realproperty rp ON r.realpropertyid = rp.objid 
 WHERE f.objid = $P{faasid}
   AND f.state = 'CURRENT' 
   AND r.rputype = 'land'
-  AND EXISTS( SELECT * FROM rpu 
-  			  WHERE realpropertyid = r.realpropertyid 
-  			    AND state = 'CURRENT' 
-  			    AND rputype <> 'land'
+  AND EXISTS( SELECT * FROM faas xf 
+  				INNER JOIN rpu xr ON xf.rpuid = xr.objid 
+  			  WHERE xr.realpropertyid = r.realpropertyid 
+  			    AND xf.state = 'CURRENT' 
+  			    AND xr.rputype <> 'land'
   			)
 
 

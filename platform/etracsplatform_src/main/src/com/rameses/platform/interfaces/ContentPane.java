@@ -9,6 +9,8 @@
 
 package com.rameses.platform.interfaces;
 
+import java.util.Map;
+
 /**
  *
  * @author wflores
@@ -18,7 +20,9 @@ public interface ContentPane
     Object getClientProperty(Object key);
     void putClientProperty(Object key, Object value); 
 
-    ContentPane.View getView(); 
+    ContentPane.View getView();     
+    boolean isCanClose();    
+    void close();
     
     
     
@@ -26,6 +30,8 @@ public interface ContentPane
     {        
         Object getClientProperty(Object key);
         void putClientProperty(Object key, Object value); 
+        
+        Map getInfo();
         void showInfo(); 
-    }    
+    } 
 }

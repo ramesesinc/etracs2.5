@@ -108,7 +108,7 @@ class RPUService
     public def updateRpu( rpu ) {
         rpSvc.updateRealProperty(rpu.rp)
         rpu.fullpin = buildFullPin(rpu)
-        em.update(SCHEMA_RPU, rpu)
+        em.updateImmediate(SCHEMA_RPU, rpu)
         return rpu
     }
 

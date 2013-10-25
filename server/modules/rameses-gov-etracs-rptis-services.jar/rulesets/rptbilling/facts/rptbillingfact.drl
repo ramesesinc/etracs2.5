@@ -1,0 +1,55 @@
+package rptbilling;
+
+declare RPTLedgerFact
+    objid                   : String
+    rptledgerid             : String 
+    tdno                    : String 
+    year                    : Integer
+    qtr                     : Integer 
+    originalav              : Double
+    av                      : Double
+    txntype                 : String 
+    rputype                 : String 
+    classification          : String
+    actualuse               : String
+    numberofmonthsfromqtr   : Integer
+    numberofmonthsfromjan   : Integer
+    firstqtrpaidontime      : Boolean
+    qtrlypaymentavailed     : Boolean
+    qtrlypaymentpaidontime : Boolean
+    backtax                 : Boolean 
+    fullpayment             : Boolean 
+    advancepayment          : Boolean 
+    basic                   : Double
+    basicint                : Double
+    basicdisc               : Double
+    basiccredit             : Double
+    basicamnesty            : Double
+    basicintamnesty         : Double
+    sef                     : Double
+    sefint                  : Double
+    sefdisc                 : Double
+    sefcredit               : Double
+    sefamnesty              : Double
+    sefintamnesty           : Double
+    firecode                : Double
+
+    basicacctid           : String 
+    basicintacctid        : String 
+    sefacctid             : String 
+    sefintacctid          : String 
+    firecodeacctid        : String 
+    expr                  : String 
+    paidyear              : Integer
+    revtype               : String
+end
+
+
+
+declare AssessedValueFact
+    rptledgerid   : String
+    year          : Integer
+    assessedvalue : Double 
+end
+
+

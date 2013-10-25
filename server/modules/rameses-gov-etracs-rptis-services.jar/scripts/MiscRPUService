@@ -46,9 +46,7 @@ class MiscRPUService
 
     @ProxyMethod
     public def createMiscRpu( rpu ) {
-        def xrpu = EntityUtil.mapToField(rpu)
-        em.validate(SCHEMA_RPU, xrpu)
-        em.create(SCHEMA_RPU, xrpu)
+        em.create(SCHEMA_RPU, rpu)
         saveItems(rpu.items)
         return rpu
     }
@@ -56,9 +54,7 @@ class MiscRPUService
 
     @ProxyMethod
     public def updateMiscRpu(rpu) { 
-        def xrpu = EntityUtil.mapToField(rpu)
-        em.validate(SCHEMA_RPU, xrpu)
-        em.update(SCHEMA_RPU, xrpu)
+        em.updateImmediate(SCHEMA_RPU, rpu)
         saveItems(rpu.items)
         removeDeletedItems(rpu)
         return rpu

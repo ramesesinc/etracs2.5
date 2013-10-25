@@ -48,6 +48,7 @@ class RPTReceiptService
 		em.setItemForPaymentFlag(params)
 		em.setQuarterlyItemForPaymentFlag(params)
 		def items =  em.getItemsForPayment(params).each{ it.pay = true }	
+		items.removeAll(items.findAll{it.amount == 0.0})
 		if (!items) throw new Exception('There are no more unpaid ledgers for this taxpayer.')
 		return items 
 	}
@@ -131,7 +132,13 @@ class RPTReceiptService
 
 	@ProxyMethod
 	public def getItemsForPrinting(receipt) {
-		return em.getItemsForPrinting([rptreceiptid:receipt.objid])
+		def items = em.getItemsForPrinting([rptreceiptid:receipt.objid])
+		items.each{
+			if (it.owner.name == receipt.paidby) {
+				it.owner.name = ''
+			}
+		}
+		return items 
 	}
 
 

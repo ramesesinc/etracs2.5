@@ -81,6 +81,7 @@ class RPTCertificationService
 	}
 
 	void replaceAmpersand(cert){
+		cert.owner?.name?.replaceAll('&', '&amp;')
 		cert.taxpayer?.name?.replaceAll('&', '&amp;')
 		cert.requestedby?.replaceAll('&', '&amp;')
 		cert.purpose?.replaceAll('&', '&amp;')

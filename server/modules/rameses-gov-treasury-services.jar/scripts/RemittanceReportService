@@ -9,6 +9,9 @@ class RemittanceReportService  {
 	@PersistenceContext("main")
 	def em; 
 
+	@ActiveDB('remittancereport')
+	def db;
+
 	@Service("NumberService")
 	def numSvc;
 
@@ -65,7 +68,7 @@ class RemittanceReportService  {
 		def data = rem.clone() 
 		def params = [ remittanceid: data.objid,  fundid : fund ? fund.objid : '%']
 		data.serials = em.sqlContext.createNamedQuery('remittancereport:getSerialReceiptsByRemittanceFund').setParameters(params ).resultList
-		data.nonserial = em.sqlContext.createNamedQuery('remittancereport:getNonSerialReceiptDetailsByFund').setParameters(params ).resultList
+		data.nonserials = em.sqlContext.createNamedQuery('remittancereport:getNonSerialReceiptDetailsByFund').setParameters(params ).resultList
 		return data;
 	}
 
@@ -138,25 +141,25 @@ class RemittanceReportService  {
 	// edit after the cash ticket will be done
 	@ProxyMethod
 	def generateReportByCashTicket( entity ) {
-		def data = entity.clone()
-		data.cashticketsummaries = []
-		def ctamount = data.cashticketsummaries.amount.sum();
-		if( ctamount <= 0.0 ) throw new Exception('There are no cash ticket collections.')
-		data.amount = ( data.cashticketsummaries ? cashticketsummaries.amount.sum() : 0.0 )
-		data.amountInWords = numSvc.doubleToWords( data.amount )
-		data.ctamount = data.amount 
-		data.collectiontype= em.sqlContext.createNamedQuery('remittancereport:getRCDCollectionType').setParameter('remittanceid', entity.objid ).resultList
+		entity.cashticketsummaries = db.getCashTicketCollectionSummaries(entity)
+		println entity.cashticketsummaries
+		entity.amount = 0.0 
+		if (entity.cashticketsummaries) {
+			entity.amount = entity.cashticketsummaries.amount.sum();
+		}
+		if( entity.amount <= 0.0 ) throw new Exception('There are no cash ticket collections.')
 
-		return data;
-
+		entity.amountInWords = numSvc.doubleToWords( entity.amount )
+		return entity;
 	}
 
 	@ProxyMethod 
 	def generateAbstractOfRPTCollection(entity) {
-		//still checking the data..
-		def items = []
-
-		if( ! items ) throw new Exception('No records found.')
+		def remyr = dtsvc.getYear(entity.dtposted)
+		def params = [objid:entity.objid, remyear : remyr]
+		def items = db.getAbstractOfRPTCollection(params)
+		def advitems = db.getAbstractOfRPTCollectionAdvance(params)
+		if( !items &&  !advitems) throw new Exception('No records found.')
 
 		def header = [:]
 		header.TITLE = 'ABSTRACT OF REAL PROPERTY TAX COLLECTION'
@@ -171,7 +174,7 @@ class RemittanceReportService  {
 		header.DATEPOSTED =  entity.dtposted 
 		header.AMTINWORDS = numSvc.convertDouble( entity.amount )
 
-		return  [ header  : header, items  	: items]
+		return  [ header:header, items:items, advitems:advitems]
 	}
 
 	

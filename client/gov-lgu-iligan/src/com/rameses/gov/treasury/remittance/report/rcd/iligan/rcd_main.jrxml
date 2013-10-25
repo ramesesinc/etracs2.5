@@ -1110,7 +1110,7 @@
 					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="styled" lineSpacing="Single">
 						<font fontName="SansSerif" pdfFontName="Helvetica" size="9" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA["         I hereby certify that the foregoing report on collections has been verified and acknowledged receipt of  <style isBold = \"true\">"+$F{amountinwords}.toLowerCase() +" ONLY (Php "+ new DecimalFormat("#,##0.00").format($F{amount})+" )</style>"]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA["         I hereby certify that the foregoing report on collections has been verified and acknowledged receipt of <style isBold = \"true\" isUnderline=\"true\">"+$F{amountinwords}.toLowerCase() +" ONLY</style> <style isBold = \"true\">(Php "+ new DecimalFormat("#,##0.00").format($F{amount})+" )</style>"]]></textFieldExpression>
 				</textField>
 			</band>
 		</summary>

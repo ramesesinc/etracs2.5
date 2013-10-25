@@ -475,8 +475,8 @@ class SubdivisionService
 
     void validateSubdividedLand(sland){
         checkDuplicateTdNo(sland.newfaasid, sland.newtdno)
-        if (sland.areaha <= 0.0){
-            throw new Exception('Area must for TD No. ' + sland.newtdno + ' must be greater than zero.')
+        if (sland.areasqm <= 0.0){
+            throw new Exception('Area for TD No. ' + sland.newtdno + ' must be greater than zero.')
         }
         util.required('Memoranda', sland.memoranda)
         em.validate(SCHEMA_SUBDIVIDED_LAND, sland)

@@ -256,5 +256,11 @@ public class RPTLedgerController
             }
         ])
     }
+    
+    def generateNotice(){
+        return InvokerUtil.lookupOpener('rptledger:nod', [
+            entity : entity,
+        ])
+    }
 }
 

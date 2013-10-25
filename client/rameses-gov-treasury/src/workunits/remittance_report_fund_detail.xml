@@ -66,8 +66,8 @@
                 },
                 getSubReports : {
                     return [ 
-                        new SubReport("ReportDDetailedSerial", reportPath + "detailedreportbyfundnonserial.jasper"),
-                        new SubReport("ReportDDetailedNonSerial", reportPath + "detailedreportbyfundserial.jasper"),
+                        new SubReport("ReportDDetailedSerial", reportPath + "detailedreportbyfundserial.jasper"),
+                        new SubReport("ReportDDetailedNonSerial", reportPath + "detailedreportbyfundnonserial.jasper"),
                     ] as SubReport[];    
                  }
             ] as ReportModel

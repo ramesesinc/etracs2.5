@@ -39,12 +39,19 @@
             
             def report = [
                 getReportName : { return reportPath + 'abstractrptcollection.jasper' },
-                getReportData : { return reportdata.items }, 
+                getSubReports : {
+                    return [ 
+                        new SubReport("AbstractItem", reportPath + "abstractrptcollectionitem.jasper"),
+                        new SubReport("AbstractAdvance", reportPath + "abstractrptcollectionadv.jasper"),
+                    ] as SubReport[];    
+                 },
+                getReportData : { return reportdata }, 
                 getParameters : { 
                     def params = paramsvc.getStandardParameter()  
                     params.putAll( reportdata.header )
                     return params;    
-                }
+                },
+                
             ] as ReportModel
             
         }      

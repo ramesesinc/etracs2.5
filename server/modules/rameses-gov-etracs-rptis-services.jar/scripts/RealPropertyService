@@ -77,7 +77,6 @@ class RealPropertyService
 				pinSvc.createPin( pininfo )
 			}
 			rp.state = STATE_INTERIM
-			em.validate(SCHEMA_REALPROPERTY, rp)
 			em.create(SCHEMA_REALPROPERTY,rp)	
 		}
 		return rp 
@@ -86,8 +85,7 @@ class RealPropertyService
 
 	@ProxyMethod
 	public def updateRealProperty( rp ) {
-		em.validate(SCHEMA_REALPROPERTY, rp)
-		em.update(SCHEMA_REALPROPERTY,rp)
+		em.updateImmediate(SCHEMA_REALPROPERTY,rp)
 		return rp 
 	}
 

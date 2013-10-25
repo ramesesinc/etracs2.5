@@ -1,9 +1,0 @@
-{
-	name: "Calculate Fire Code",
-	template: "calculate-firecode",
-	params: [
-		{ name:"ledger", datatype:"RPTLedgerFact", usevar:true, caption:"Ledger ID", required:true },
-		{ name: "expr", datatype: "string", caption: "Computation Formula", expression:true },
-		{ name: "firecodeacct", datatype: "lookup", caption: "Account Title", handler:"revenueitem:lookup", itemKey:"objid", itemLabel:"title", required:true},
-	]
-}

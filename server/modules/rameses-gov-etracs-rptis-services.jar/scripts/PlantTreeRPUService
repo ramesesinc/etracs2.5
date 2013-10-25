@@ -41,9 +41,7 @@ class PlantTreeRPUService
 
     @ProxyMethod
     public def createPlantTreeRpu( rpu ) {
-        def xrpu = EntityUtil.mapToField(rpu)
-        em.validate(SCHEMA_RPU, xrpu)
-        em.create(SCHEMA_RPU, xrpu)
+        em.create(SCHEMA_RPU, rpu)
         savePlantTrees(rpu.planttrees)
         return rpu
     }
@@ -51,9 +49,7 @@ class PlantTreeRPUService
 
     @ProxyMethod
     public def updatePlantTreeRpu(rpu) { 
-        def xrpu = EntityUtil.mapToField(rpu)
-        em.validate(SCHEMA_RPU, xrpu)
-        em.update(SCHEMA_RPU, xrpu)
+        em.updateImmediate(SCHEMA_RPU, rpu)
         savePlantTrees(rpu.planttrees)
         removeDeletedItems(rpu)
         return rpu

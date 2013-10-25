@@ -1,7 +1,0 @@
-TAX=Tax Computation
-AFTER_TAX=After Tax Computation
-PENALTY=Penalty Computation
-AFTER_PENALTY=After Penalty Computation
-DISCOUNT=Discount Computation
-AFTER_DISCOUNT=After Discount Computation
-SUMMARY=Summary

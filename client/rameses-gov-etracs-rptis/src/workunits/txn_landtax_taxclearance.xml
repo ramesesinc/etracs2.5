@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <workunit>
     <invokers>
-        <invoker folderid="/menu/txn/landtax" action="init" caption="Realty Tax Clearance" index="5" 
-            role="LANDTAX" permission="taxclearance.create"/>
-            
         <invoker folderid="/explorer/txn/landtax/txn" action="init" caption="Realty Tax Clearance" index="5" 
             role="LANDTAX" permission="taxclearance.create"/>
             
