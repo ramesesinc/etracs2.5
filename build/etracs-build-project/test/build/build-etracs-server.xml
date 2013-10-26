@@ -6,7 +6,7 @@
     
     
     <target name="cleanup" depends="init">
-        <delete dir="${target.etracs.platform25.dir}/bin/osiris2"/>
+        <delete dir="${target.etracs.platform25.dir}/osiris2"/>
         <delete dir="${target.etracs.platform25.dir}/downloads"/>
     </target>
         
