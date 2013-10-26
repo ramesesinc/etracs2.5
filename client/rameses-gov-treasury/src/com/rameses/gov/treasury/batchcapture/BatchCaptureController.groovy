@@ -206,11 +206,10 @@ public class BatchCaptureController  {
 
     void save() {
         if(!MsgBox.confirm("Save captured collections? ")) return;
-
-        mode = 'saved'
         calculate()
         entity.batchitems = batchItems
         entity = svc.create( entity )
+        mode = 'saved'
     }
 
     void edit() {

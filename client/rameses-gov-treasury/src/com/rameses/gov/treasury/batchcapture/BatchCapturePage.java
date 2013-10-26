@@ -7,6 +7,7 @@
 package com.rameses.gov.treasury.batchcapture;
 
 import com.rameses.osiris2.themes.FormPage;
+import com.rameses.rcp.ui.annotations.StyleSheet;
 import com.rameses.rcp.ui.annotations.Template;
 import java.math.BigDecimal;
 
@@ -14,6 +15,7 @@ import java.math.BigDecimal;
  *
  * @author  Elmo
  */
+@StyleSheet
 @Template(FormPage.class)
 public class BatchCapturePage extends javax.swing.JPanel {
     
