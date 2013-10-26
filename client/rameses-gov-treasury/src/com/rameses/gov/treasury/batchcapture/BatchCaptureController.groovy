@@ -217,6 +217,14 @@ public class BatchCaptureController  {
         mode = 'create'
     }
     
+    def delete(){
+        if (MsgBox.confirm('Delete record?')){
+            svc.removeEntity([objid:entity.objid]);
+            return '_close';
+        }
+        return null;
+    }
+    
     void submitForPosting() {
         if (MsgBox.confirm('Submit captured receipts for posting?')){
             entity = svc.submitForPosting( entity);

@@ -31,6 +31,10 @@ public class BatchCaptureCollectionService extends ActiveCrudService {
 		
 	}
 
+	protected void beforeRemoveEntity(entity) {
+		beforeCreate(entity)
+	}
+
 	protected void afterCreate(def entity) { 
 		entity.batchitems.each { bc ->
 			bc.objid = "BCCE"+new java.rmi.server.UID();
