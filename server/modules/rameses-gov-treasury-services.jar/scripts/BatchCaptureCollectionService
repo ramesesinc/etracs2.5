@@ -145,6 +145,7 @@ public class BatchCaptureCollectionService extends ActiveCrudService {
 		entity.batchitems = em.getBatchEntry(entity);
 		entity.currentseries = entity.batchitems[-1].series+1
 		entity.batchitems.each {
+			it._filetype = "batchcapture:misc"
 			it.items = em.getBatchEntryItems(it)
 			it.items.each {
 				it.item.fund = it.fund;
