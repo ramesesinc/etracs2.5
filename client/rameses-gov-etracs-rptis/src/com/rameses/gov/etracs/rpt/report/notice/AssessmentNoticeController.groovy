@@ -37,7 +37,7 @@ class AssessmentNoticeController
             objid : RPTUtil.generateId('AN'),
             items : [],
         ];
-        
+        listHandler?.reload();
         mode = MODE_CREATE;
         return 'init'
     }

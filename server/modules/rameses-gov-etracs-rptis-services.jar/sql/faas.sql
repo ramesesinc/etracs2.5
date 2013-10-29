@@ -94,7 +94,9 @@ UPDATE rpu SET state = 'CANCELLED' WHERE objid = $P{objid}
 SELECT 
 	f.*,
 	pc.code AS classification_code, 
+	pc.code AS classcode, 
 	pc.name AS classification_name, 
+	pc.name AS classname, 
 	r.ry, r.realpropertyid, r.rputype, r.fullpin, r.totalmv, r.totalav, r.rputype, 
 	r.totalareasqm, r.totalareaha,
 	rp.barangayid, rp.cadastrallotno, rp.blockno, rp.surveyno,

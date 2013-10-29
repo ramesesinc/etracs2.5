@@ -256,6 +256,7 @@ CREATE TABLE [dbo].[sys_rule_actiondef](
 	[ruleset] [varchar](50) NOT NULL,
 	[title] [varchar](250) NULL,
 	[sortorder] [int] NULL,
+	[actionname] varchar(50) null,
 PRIMARY KEY CLUSTERED 
 (
 	[objid] ASC

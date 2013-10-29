@@ -112,7 +112,9 @@ class LiquidationReportService  {
 	        prevseries = it.endingendseries
 	    }
 	    
-	    items << createItem(start, end, qty)
+	    if (start && end && qty > 0) {
+	    	items << createItem(start, end, qty)
+	    }
 	}
 
 	def createItem(start, end, qty) {
