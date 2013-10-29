@@ -1,0 +1,10 @@
+<schema>
+	<element tablename="business_requirement">
+		<field name="objid" primary="true"/>
+		<field name="code" required="true"/>
+		<field name="title" required="true"/>
+		<field name="type" required="true"/>
+	</element>	
+
+
+</schema>

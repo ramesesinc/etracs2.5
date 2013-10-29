@@ -16,66 +16,36 @@ declare LOB
 	assessmenttype:		String
 end
 
-declare StringBusinessInfo 
-	objid: 		String
-	lob:		LOB
-	name:		String
-	value:		String
-end
-
-declare DecimalBusinessInfo 
-	objid: 		String
-	lob:		LOB
-	name:		String
-	value:		double
-end
-
-declare IntegerBusinessInfo 
+declare BusinessInfo 
 	objid: 			String
 	lob:			LOB
 	name:			String
-	value:			int
+	stringvalue:	String
+	intvalue:		int
+	booleanvalue:	boolean
+	decimalvalue:	double
 end
 
-declare BooleanBusinessInfo 
-	objid: 				String
-	lob:				LOB
-	name:				String
-	value:			boolean
+declare TaxFeeAccount 
+	objid:			String
+	acctid:			String
+	type:			String
+	lob:			LOB	
+	name:			String
+	amount:			double
+	highest:		boolean
+	lowest:			boolean
+	assessedvalue:	double
+	data:			Object
+end 
+
+declare SysVariable 
+	objid:			String
+	lob:			LOB
+	name:			String
+	stringvalue:	String
+	intvalue:		int
+	booleanvalue:	boolean
+	decimalvalue:	double
 end
 
-declare BusinessTax 
-	objid:			String
-	acctid:			String
-	lob:			LOB	
-	name:			String
-	amount:			double
-	assessedvalue:	double
-	highest:		boolean
-	lowest:			boolean
-	data:			Object
-end 
-
-declare RegFee 
-	objid:			String
-	acctid:			String
-	lob:			LOB	
-	name:			String
-	amount:			double
-	assessedvalue:	double
-	highest:		boolean
-	lowest:			boolean
-	data:			Object
-end 
-
-declare OtherCharge 
-	objid:			String
-	acctid:			String
-	lob:			LOB	
-	name:			String
-	amount:			double
-	assessedvalue:	double
-	highest:		boolean
-	lowest:			boolean
-	data:			Object
-end 

@@ -30,7 +30,7 @@
                 def officeTypes = LOV.BUSINESS_OFFICE_TYPES;
                 def appTypes = LOV.BUSINESS_APP_TYPES;
                 def lobTypes = LOV.LOB_ASSESSMENT_TYPES*.key;
-                def entity = [lobs:[],infos:[],taxfees:[]];
+                def entity = [lobs:[],infos:[],taxfees:[],requirements:[]];
                 def formInfos;
                 
                 String title = "Business Rule Assessment Simulator";
@@ -60,6 +60,11 @@
                     fetchList: { o-> return entity.infos; }
                 ] as BasicListModel;
             
+                
+                def requirementModel = [
+                    fetchList: { o-> return entity.requirements; }
+                ] as BasicListModel;
+                
                 def taxfeeModel = [
                     fetchList: { o-> return entity.taxfees; },
                     onOpenItem: { o,col->
@@ -117,7 +122,14 @@
                                 entity.taxfees.clear();
                                 def result = service.execute(entity);
                                 entity.taxfees = result.taxfees;
+                                if(result.infos) {
+                                    entity.infos.addAll( result.infos );
+                                }
                                 infoModel.reload();
+                                if(result.requirements) {
+                                    entity.requirements = result.requirements;
+                                }
+                                requirementModel.reload();
                                 refreshTaxfees();
                             }
                         ]
@@ -133,13 +145,16 @@
                     entity = [:];
                     entity.infos = [];
                     entity.taxfees = [];
+                    entity.requirements = [];
                     entity.lobs = [];
                 }
                 
                 void clearInfo() {
                     entity.infos.clear();
                     entity.taxfees.clear();
+                    entity.requirements.clear();
                     infoModel.reload();
+                    requirementModel.reload();
                     taxfeeModel.reload();
                 }
                 

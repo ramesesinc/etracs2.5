@@ -2,11 +2,14 @@ import com.rameses.annotations.*;
 import com.rameses.util.*;
 import java.rmi.server.*;
 import com.rameses.common.*
+import com.rameses.services.extended.*
 
-class SREAccountLookupService  {
+class SREAccountLookupService extends ActiveListService {
 
-	@PersistenceContext('main')
+	@ActiveDB('sreaccount')
 	def em;
+
+	String listMethod = "getLookup";
 
 	@ProxyMethod
 	public List getColumns( params ) {
@@ -16,29 +19,12 @@ class SREAccountLookupService  {
 		]; 
 	} 
 	
-
-	def searchTypes = [
-		[filter:' t.code LIKE $P{searchtext} AND t.type=$P{type} ', orderby:' t.code '], 
-		[filter:' t.title LIKE $P{searchtext} AND t.type=$P{type} ', orderby:' t.title ']
-	];
-
-	@ProxyMethod
-	public List getList( params ) {
+	public void beforeList(params) {
 		params.searchtext = removeLeadingChar(params.searchtext, '%')+'%'; 
 		params.type = 'detail';
-		
-		def qry = em.sqlContext.createNamedQuery('sreaccount:lookup'); 
-		for (o in searchTypes) {
-			def list = qry.setParameters(params).setVars(o).resultList;
-			if (list.isEmpty()) continue; 
-
-			return list;
-		} 
-		//otherwise return an empty list
-		return []; 
-	} 
+	}
 	
-    private String removeLeadingChar(String text, def ch) {
+	private String removeLeadingChar(String text, def ch) {
     	if (text == null) return "";
 
         while (true) { 

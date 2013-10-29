@@ -1,5 +1,0 @@
-<workunit extends="wtemplates/ServiceLookupController.xml" serviceName="BusinessVariableLookupService" tag="decimal">
-    <invokers>
-        <invoker type="businessvariable:decimal:lookup" caption="Lookup Business Info (Decimal)" target="popup"/>
-    </invokers>
-</workunit>

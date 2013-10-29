@@ -1,0 +1,29 @@
+<workunit>
+    <invokers>       
+        <invoker type="businessrequirement:create" action="init" caption="Business Requirement" />
+        <invoker type="businessrequirement:open" action="open" caption="Business Requirement" />
+    </invokers>
+    <code>
+        <![CDATA[
+
+        import com.rameses.rcp.common.*;
+        import com.rameses.rcp.annotations.*;
+        import com.rameses.osiris2.client.*;
+        import com.rameses.osiris2.common.*
+
+        class BusinessRequirementController extends CRUDController {   
+
+            @Service('BusinessRequirementService')
+            def service;
+            
+            String entityName  = 'businessrequirement'
+            
+            def types = ["ROUTE", "DOCUMENT" ]
+        }
+        ]]>        
+        
+    </code>
+    <pages>
+        <page name="main" template="com.rameses.gov.etracs.bpls.BusinessRequirementPage"/>
+    </pages>
+</workunit>

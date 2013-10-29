@@ -1,0 +1,45 @@
+<workunit>
+    <invokers>
+        <invoker type="rulecondition:businessinfo:create" action="create"/>
+        <invoker type="rulecondition:businessinfo:open" action="open"/>
+    </invokers>
+    
+    <code>
+        <![CDATA[    
+        import com.rameses.rcp.annotations.*
+        import com.rameses.rcp.common.*
+        import com.rameses.osiris2.client.*
+        import com.rameses.osiris2.common.*
+        import com.rameses.gov.etracs.bpls.application.*;
+        import com.rameses.rulemgmt.*;
+        
+        class BusinessInfoFactHandlerController extends RuleConditionController {
+        
+            def getAvailableFields() {
+                if( !entity.dynamic?.datatype ) {
+                    return [];
+                }
+                return fact.fields.findAll{it.datatype == entity.dynamic.datatype};
+            }
+        
+            def getLookupTypes() {
+                return InvokerUtil.lookupOpener( fact.lookuphandler, [
+                    onselect: {o->
+                        entity.dynamic = [:];
+                        entity.dynamic.key = o[fact.lookupkey];
+                        entity.dynamic.value = o[fact.lookupvalue];
+                        entity.dynamic.datatype = o[fact.lookupdatatype];
+                        entity.varname = o[fact.lookupkey];
+                        binding.refresh("entity.dynamic.datatype");
+                        binding.refresh("entity.varname");
+                    }
+                ] );
+            }
+            
+        }]]>
+    </code>
+    <pages>
+        <page template="com.rameses.gov.etracs.rules.bpls.BusinessInfoFactHandler"/>
+    </pages>
+    
+</workunit>

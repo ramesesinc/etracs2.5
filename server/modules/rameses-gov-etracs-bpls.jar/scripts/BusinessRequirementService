@@ -1,0 +1,21 @@
+import com.rameses.annotations.*;
+import com.rameses.services.extended.*;
+
+class BusinessVariableService extends ActiveCrudListService {
+
+	@ActiveDB("businessrequirement")
+	def em;
+
+	@ProxyMethod
+	public def getColumns( def p ) {
+		return [
+			[name:"code", caption:"Code", width:200, resizable:false],
+			[name:"type", caption:"Type", width:200, resizable:false],
+			[name:"title", caption:"Title"]
+		]
+	}
+
+	void beforeCreate(o) {
+		o.objid = o.code;
+	}
+}

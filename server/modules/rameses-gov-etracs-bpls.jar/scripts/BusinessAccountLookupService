@@ -18,7 +18,10 @@ class BusinessAccountLookupService extends ActiveCrudListService {
 	}
 
 	void beforeList(o) {
-		o.taxfeetype = o._tag;
+		if(o._tag) 
+			o.taxfeetype = o._tag;
+		else
+			o._listMethod = "getList";	
 	}
 
 }
