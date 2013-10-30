@@ -40,6 +40,7 @@
 	<parameter name="reportnsaforms" isForPrompting="false" class="java.lang.Object"/>
 	<parameter name="collectionsummary" isForPrompting="false" class="java.lang.Object"/>
 	<parameter name="remittancedeposits" isForPrompting="false" class="java.lang.Object"/>
+	<parameter name="LOGOTREASURY" isForPrompting="false" class="java.lang.String"/>
 
 	<field name="cashier.title" class="java.lang.String"/>
 	<field name="cashier.name" class="java.lang.String"/>
@@ -320,7 +321,7 @@
 			</band>
 		</background>
 		<title>
-			<band height="114"  isSplitAllowed="true" >
+			<band height="123"  isSplitAllowed="true" >
 				<line direction="TopDown">
 					<reportElement
 						mode="Opaque"
@@ -359,7 +360,7 @@
 					<reportElement
 						mode="Transparent"
 						x="190"
-						y="90"
+						y="101"
 						width="24"
 						height="13"
 						forecolor="#000000"
@@ -399,8 +400,8 @@
 					<reportElement
 						mode="Transparent"
 						x="216"
-						y="90"
-						width="145"
+						y="101"
+						width="135"
 						height="13"
 						forecolor="#000000"
 						backcolor="#FFFFFF"
@@ -517,17 +518,31 @@
 				</image>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="373"
-						y="80"
-						width="166"
+						x="365"
+						y="96"
+						width="175"
 						height="23"
 						key="textField-14"/>
 					<box></box>
-					<textElement textAlignment="Center" verticalAlignment="Middle">
+					<textElement textAlignment="Left" verticalAlignment="Middle">
 						<font fontName="Tahoma" pdfFontName="Helvetica-Bold" size="14" isBold="true"/>
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[$F{fund.title}]]></textFieldExpression>
 				</textField>
+				<image  scaleImage="FillFrame" vAlign="Top" hAlign="Left" isUsingCache="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						mode="Opaque"
+						x="425"
+						y="36"
+						width="62"
+						height="62"
+						forecolor="#000000"
+						backcolor="#FFFFFF"
+						key="image-2"/>
+					<box></box>
+					<graphicElement stretchType="NoStretch" fill="Solid" />
+					<imageExpression class="java.lang.String"><![CDATA[$P{LOGOTREASURY}]]></imageExpression>
+				</image>
 			</band>
 		</title>
 		<pageHeader>
