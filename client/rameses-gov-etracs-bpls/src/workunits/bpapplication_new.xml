@@ -13,41 +13,51 @@
         import com.rameses.osiris2.client.*
         import com.rameses.osiris2.common.*
         import com.rameses.gov.etracs.bpls.application.*;
+        import com.rameses.gov.etracs.bpls.*;
         
         class NewApplicationController extends BPApplicationController {
         
-            @Service("BPAssessmentService")
-            def service;
+             @Service("BPAssessmentService")
+             def service;
         
-             def getAppInfo() {
-                return InvokerUtil.lookupOpener( "bpapplication:info", [entity:entity] );
-             }
-             
              def start() {
                 entity.apptype = "NEW";
                 entity.infos = [];
+                entity.taxfees = [];
+                entity.requirements = [];
                 return  super.start();
              }
              
              void loadInfos() {
-                def result = service.execute( entity );
-                infos = result.infos.findAll{ it.beforeprint == 1 };
-                if(result.infos) {
-                    entity.infos.addAll( result.infos );
-                    if(infos) buildFormInfos();
+                def result = service.execute(entity);
+                if( !result.infos) 
+                    throw new Exception("No infos found!");
+                    
+                //phase 0 is the looping phase.    
+                if( result.phase != 0) {
+                    entity.infos.addAll(result.infos);
+                    entity.requirements.addAll(result.requirements);
+                    FormInfo.sortInfos(entity.infos);
+                    infoModel.reload();
+                    requirementModel.reload();
+                }
+                else {
+                    infos.addAll( result.infos );
+                    buildFormInfo();
                 }
              }
              
-             void reloadModels() {
-                infoModel.reload();
-                taxfeeModel.reload();
+             void updateInfos() {
+                entity.infos.addAll(infos);
+                infos.clear();
              }
              
-             void resetInfo() {
-                entity.infos = [];
-                entity.taxfees = [];
-                reloadModels();
+             void clearAll() {
+                entity.infos.clear();
+                entity.requirements.clear();
+                entity.taxfees.clear();
              }
+             
         }
         ]]>
         
@@ -68,10 +78,12 @@
         </process>
         
         <page name="specify-info" title="Specify Information">
-            <transition to="check-infos" caption="Next"/>
+            <transition to="initial" caption="Back" action="clearAll"/>
+            <transition to="check-infos" caption="Next" action="updateInfos"/>
         </page>
         
         <page name="appinfo" title="Application Info">
+            <transition to="initial" caption="Back" action="clearAll"/>
             <transition to="end" caption="Close"/>
             <transition to="initial" caption="Reset" action="resetInfo"/>
         </page>
