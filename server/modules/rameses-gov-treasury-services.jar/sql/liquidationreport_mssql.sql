@@ -80,7 +80,7 @@ where lr.liquidationid=$P{liquidationid}
 GROUP BY ai.afid) a
 
 [getRCDOtherPayments]
-select  'CHECK' as paytype, min(pc.particulars) as particulars, sum( cri.amount ) as amount 
+select  'CHECK' as paytype, pc.particulars, cri.amount  as amount 
 from liquidation_remittance  lr 
    inner join remittance_cashreceipt rc  on rc.remittanceid = lr.objid 
    inner join cashreceipt cr on rc.objid = cr.objid 
@@ -90,7 +90,7 @@ from liquidation_remittance  lr
    inner join revenueitem ri on ri.objid = cri.item_objid   
 where lr.liquidationid=$P{liquidationid} and ri.fund_objid =$P{fundname} 
   and crv.objid is null 
-group by ri.fund_objid  
+
 
 
 [getLiquidationFundlist]
