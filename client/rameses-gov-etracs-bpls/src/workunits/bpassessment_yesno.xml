@@ -27,6 +27,6 @@
         ]]>    
     </code>
     <pages>
-        <page template="com.rameses.gov.etracs.rules.bpls.BooleanHandler" />
+        <page template="com.rameses.gov.etracs.bpls.BooleanHandler" />
     </pages>
 </workunit>

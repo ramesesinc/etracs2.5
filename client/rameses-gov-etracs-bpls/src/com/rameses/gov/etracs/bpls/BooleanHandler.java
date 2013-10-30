@@ -4,7 +4,7 @@
  * Created on October 25, 2013, 6:05 AM
  */
 
-package com.rameses.gov.etracs.rules.bpls;
+package com.rameses.gov.etracs.bpls;
 
 /**
  *

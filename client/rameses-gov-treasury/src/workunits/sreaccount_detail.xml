@@ -16,12 +16,14 @@
         
             String serviceName = "SREAccountService";
             String entityName = "sreaccount";
-            String title = "SRE Account";
+            String title = "SRE Account Detail";
             String prefixId = "SRE";
             def node;
             
             Map createEntity() {
-                return [parentid:node.objid,parentcode:node.code, type:'detail'];
+                def m = [parentid:node.objid, type:'detail'];
+                m.parent = [code:node.code, title: node.title];
+                return m;
             }
         }      
        ]]>

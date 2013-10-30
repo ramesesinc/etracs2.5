@@ -5,6 +5,7 @@ import com.rameses.rcp.common.*
 import com.rameses.osiris2.client.*
 import com.rameses.osiris2.common.*
 import java.rmi.server.*
+import com.rameses.gov.etracs.bpls.*;
 
 class BPApplicationController extends PageFlowController {
 
@@ -17,7 +18,7 @@ class BPApplicationController extends PageFlowController {
     def lobAssessmentTypes = ["RENEW", "RETIRE"];
 
     def formInfos = [];
-    def infos;
+    def infos = [];
 
     def getLookupPermitees() {
         return InvokerUtil.lookupOpener( "entity:lookup", [
@@ -66,32 +67,13 @@ class BPApplicationController extends PageFlowController {
         fetchList: { o-> return entity.taxfees; }
     ]as BasicListModel;
 
-    void buildFormInfos() {
-        formInfos.clear();
-        infos.each {x->
-            def i = [
-                type:x.attribute.datatype, 
-                caption:x.attribute.caption, 
-                categoryid:x.lob?.objid, 
-                name:x.attribute.name, 
-                bean: x,
-                properties: [:]
-            ];
-            //fix the datatype
-            x.datatype = x.attribute.datatype;
-            x.required = true;
-            if(x.datatype.indexOf("_")>0) {
-                x.datatype = x.datatype.substring(0, x.datatype.indexOf("_"));
-            }
-            if(i.type == "boolean") {
-                i.type = "checkbox";
-            }
-            else if(i.type == "string_array") {
-                i.type = "combo";
-                i.itemsObject = x.attribute.arrayvalues;
-            }
-            formInfos << i;
-        }
+    def requirementModel = [
+        fetchList: { o-> return entity.requirements; }
+    ] as BasicListModel;
+
+    void buildFormInfo() {
+        FormInfo.sortInfos(infos);
+        formInfos = FormInfo.buildFormInfos(infos);
     }
 
     def formPanel = [
