@@ -4,24 +4,38 @@ import java.util.*;
 import com.rameses.rules.common.*;
 global RuleAction action;
 
-rule "summarize-app-info"
-	agenda-group "postappinfo"
-	salience 0
+rule "assert-variables"
+	salience -100
 	no-loop
 	when
-				
 	then
-		action.execute( "summarize_appinfo", null, drools);
+		action.execute( "assert_sysvars", null, drools);
 end
 
-rule "summarize-business-tax"
-	agenda-group "postbusinesstax"
-	salience 0
+rule "assert-business-tax"
+	agenda-group "businesstax"
+	salience -100
 	no-loop
 	when
-				
 	then
-		action.execute( "summarize_business_tax", null, drools);
+		action.execute( "assert_taxfee", "TAX", drools);
 end
 
+rule "assert-regfee"
+	agenda-group "regfee"
+	salience -100
+	no-loop
+	when
+	then
+		action.execute( "assert_taxfee", "REGFEE", drools);
+end
+
+rule "assert-othercharge"
+	agenda-group "othercharge"
+	salience -100
+	no-loop
+	when
+	then
+		action.execute( "assert_taxfee", "OTHERCHARGE", drools);
+end
 

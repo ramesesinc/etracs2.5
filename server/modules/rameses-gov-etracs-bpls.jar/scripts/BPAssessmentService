@@ -20,19 +20,124 @@ public class BPAssessmentService  {
 	@ActiveDB("businessvariable")
 	def bv;
 
+	@Service("DateService")
+	def dateSvc;
+
 	String RULESET = "bpassessment";
 
-	def buildFacts( o, lobMap ) {
+	def factBuilder = { dtype, objid, name, lob, value, factName ->
+		def obj = ruleSvc.createFact( RULESET, RULESET + "." + factName );
+		obj.objid = objid;
+		obj.name = name;
+		obj.lob = lob;
+		if( value ) {
+			switch( dtype ) {
+				case "decimal":
+					obj.decimalvalue = Double.parseDouble(value+"");
+					break;
+				case "integer":
+					obj.intvalue = Integer.parseInt(value+"");
+					break;
+				case "boolean":
+					value = ( value == 1 || value == true ) ? "true" : "false";
+					obj.booleanvalue = Boolean.parseBoolean(value);
+					break;
+				case "string_array":	
+				case "string":
+					obj.stringvalue = (String) value;
+					break;
+			}
+		}
+		return obj;
+	}
+
+	def infoBuilder = { def entity, def newinfos, def lob, def attrid, def val ->
+		//check first if info already exists.
+		def test = null;
+		if( !lob ) {
+			test = entity.infos.findAll{ it.lob == null }.find{ it.attribute.objid == attrid };
+			if(!test) {
+				test = newinfos.findAll{it.lob==null}.find{ it.attribute.objid == attrid };
+			}	
+		}
+		else {
+			test = entity.infos.findAll{ it.lob!=null }.find{ it.lob.objid == lob.objid && it.attribute.objid == attrid };
+			if(!test) {
+				test =  newinfos.findAll{ it.lob!=null }.find{ it.lob.objid == lob.objid && it.attribute.objid == attrid };
+			}
+		}
+		if(test) return null;
+
+		def info = [objid:"BPINFO"+new UID()];
+		info.attribute = bv.read( [objid: attrid ] );
+		if(lob) {
+			info.lob = [objid:lob.objid, name:lob.name];
+		}
+		info.datatype = info.attribute.datatype;
+		if(val) {
+			String datatype = info.attribute.datatype;
+			switch(datatype) {
+				case "integer":
+					info.value = val.intValue;
+					break;
+				case "decimal":
+					info.value = val.doubleValue;
+					break;
+				case "string":	
+					info.value = val.stringValue;
+					break;
+				case "boolean":	
+					info.value = val.booleanValue;
+					break;
+			}
+		}			
+		newinfos << info;
+		return info;
+	}
+
+	def comparator = { agg, oldvalue, newvalue ->
+		switch(agg) {
+			case "COUNT":
+				return (oldvalue + 1);
+
+			case "SUM":
+				return oldvalue + newvalue;
+
+			case "MIN":
+				if( oldvalue <= newvalue  )		
+					return oldvalue;
+				else
+					return newvalue;
+			case "MAX":
+				if( oldvalue >= newvalue  )		
+					return oldvalue;
+				else
+					return newvalue;
+		}
+		return 0;
+	}
+
+	def buildFacts( request ) {
+		def o = request.entity;
+		def lobMap = request.lobMap;
+
 		def facts = [];
+		def currDate = dateSvc.serverDate;
+		def dt = o.dtfiled;
+		if( dt ==null ) dt = currDate;
+		facts << new EffectiveDate( dt );
+		facts << new CurrentDate(currDate);
+
 		def app = ruleSvc.createFact( RULESET, RULESET+".BPApplication");
 		app.apptype = o.apptype;
-		app.orgtype = o.orgtype;
+		app.orgtype = o.businessorgtype;
 		app.officetype = o.officetype;
 		app.barangayid = o.barangay.objid;
 		facts << app;
 		o.lobs.each {
 			def LOB = ruleSvc.createFact( RULESET, RULESET+".LOB");
 			LOB.objid = it.lobid;
+			LOB.lobid = it.lobid;
 			LOB.name = it.name;
 			LOB.classification = it.classification?.objid;
 			LOB.attributes = "-" + lob.getAttributes( [lobid: it.lobid ] )*.name.join("-") + "-";
@@ -42,172 +147,258 @@ public class BPAssessmentService  {
 		}
 		o.infos.each {
 			def dtype = it.attribute.datatype;
-			def lob = it.lob;
-			def obj = ruleSvc.createFact( RULESET, RULESET + ".BusinessInfo" );
-			obj.objid = it.objid;
-			obj.name = it.attribute.name;
-			
-			if(it.value ) {
-				switch( dtype ) {
-					case "decimal":
-						obj.decimalvalue = Double.parseDouble(it.value+"");
-						break;
-					case "integer":
-						obj.intvalue = Integer.parseInt(it.value+"");
-						break;
-				}
-			}
-			if( lob ) obj.lob = lobMap[ lob.objid ];
-			facts << obj;
+			def lob = null;
+			if(it.lob) lob = lobMap[ it.lob.objid ];
+			facts << factBuilder(dtype, it.objid, it.attribute.name, lob, it.value, "BusinessInfo");
 		}
-		println "about to return facts"
 		return facts;
 	}
 
-	def buildActions(def o, def newinfos, def taxfees, def _taxfees, def lobMap, def facts ) {
+	def buildActions(def request) {
 		def actions = new RuleAction();
-		actions.addCommand( "print_test", new PrintTest() );
-		actions.addCommand( "ask_business_info", new AskBusinessInfo( entity:o, newinfos:newinfos, BV:bv) );
-		actions.addCommand( "summarize_appinfo", new SummarizeAppInfo( entity:o, newinfos:newinfos, facts: facts ) );
-		actions.addCommand( "compute_business_tax", new ComputeTaxFee( entity:o, taxfees:taxfees, _taxfees: _taxfees, BA:ba ) );
-		actions.addCommand( "summarize_business_tax", new SummarizeTaxFee( taxfees:taxfees, ruleSvc: ruleSvc, lobMap: lobMap, type: "TAX", facts: facts ) );
-		actions.addCommand( "update_business_tax", new UpdateBusinessTax( ) );
+		actions.addCommand( "ask_business_info", new AskBusinessInfo( infoBuilder: infoBuilder, request:request ));
+		actions.addCommand( "assert_business_info", new AssertBusinessInfo(request:request, infoBuilder: infoBuilder, factBuilder:factBuilder, comparator: comparator));
+		actions.addCommand( "compute_taxfee", new ComputeTaxFee( request:request, BA:ba ) );
+		actions.addCommand( "assert_taxfee", new AssertTaxFee( request:request, ruleSvc: ruleSvc));
+		actions.addCommand( "update_taxfee", new UpdateTaxFee(request:request));
+		actions.addCommand( "add_sysvar", new AddSysVar(request:request, comparator: comparator));
+		actions.addCommand( "assert_sysvars", new AssertSysVars(request:request, factBuilder:factBuilder));
+		actions.addCommand( "add_requirement", new AddRequirement(request:request));
+		actions.addCommand( "print_test", new PrintTest());
 		return actions;
 	}
 
+
 	@ProxyMethod
 	public def execute(def o) throws Exception {
-		def newinfos = [];
-		def taxfees = [];
-		def _taxfees = [];
-		def lobMap = [:];
-
-		def facts = buildFacts(o, lobMap);
-		def actions = buildActions(o, newinfos, taxfees, _taxfees, lobMap, facts );
+		def request = [newinfos:[], taxfees:[], lobMap:[:], vars:[:], entity: o, requirements:[] ]; 
+		request.facts = buildFacts(request);
+		request.actions = buildActions( request );
+		
 		def grps = ruleDB.getRulegroups( [ruleset: RULESET] );
+		int phase = 0;
 		for( g in grps ) { 
-			ruleSvc.execute( RULESET, facts, actions, g.name );
-
-			//if there is entry in newinfos break it.
-			if(newinfos) break;
+			request.vars.clear();
+			ruleSvc.execute( RULESET, request.facts, request.actions, g.name );
+			//if first phase and there is entry in newinfos break it.
+			if(phase==0 && request.newinfos) break;
+			phase++;
 		}
-		return [infos:newinfos, taxfees: taxfees, _taxfees: _taxfees ];
-	}
-}
-
-//used for debugging
-public class PrintTest implements RuleActionHandler {
-	public void execute(def params, def drools) {
-		println "print ->"+params; 	
+		request.newinfos.each {it.phase = phase};
+		return [infos:request.newinfos, taxfees: request.taxfees, phase: phase, requirements:request.requirements];
 	}
 }
 
 public class AskBusinessInfo implements RuleActionHandler {
-	def entity;
-	def newinfos;
-	def BV;
+	def infoBuilder;
+	def request;
 	public void execute(def params, def drools) {
 		def lob = params.lob;
 		def attrid = params.attribute.key;
-		def option = params.option;
-		def test = null;
-		if( !lob ) {
-			test = entity.infos.find{ it.lob == null && it.attribute.objid == attrid };
-			if(!test) test = newinfos.find{ it.lob == null && it.attribute.objid == attrid };
-		}
-		else {
-			test = entity.infos.find{ it.lob.objid == lob.objid && it.attribute.objid == attrid };
-			if(!test) test = newinfos.find{ it.lob.objid == lob.objid && it.attribute.objid == attrid };
-		}
-		if(!test) {
-			def info = [objid:"BPINFO"+new UID()];
-			info.attribute = BV.read( [objid: attrid ] );
-			if(lob) {
-				info.lob = [objid:lob.objid, name:lob.name];
-			}
-
-			if( option == "REQUIRE_BEFORE_PRINT") {
-				info.beforeprint = 1;
-			}
-			newinfos << info;
-		} 
+		def entity = request.entity;
+		def newinfos = request.newinfos;
+		infoBuilder( entity, newinfos, lob, attrid, null );
 	}
 }
 
-public class SummarizeAppInfo implements RuleActionHandler {
-	def facts;
-	def newinfos;
-	def entity;
-	public void execute(def params, def drools) {
-		print "summarize app info";
-	}
-}
-
-public class ComputeTaxFee implements RuleActionHandler {
-	def entity;
-	def taxfees;
-	def _taxfees;
-	def BA;
+public class AssertBusinessInfo implements RuleActionHandler {
+	def request;
+	def factBuilder;
+	def infoBuilder;
+	def comparator;
 
 	public void execute(def params, def drools) {
 		def lob = params.lob;
+		def attrid = params.attribute.key;
+		def val = params.value;
+		def facts = request.facts;
+
+		//check if fact already exists
+		def info = infoBuilder( request.entity, request.newinfos, lob, attrid, val );
+		if(info!=null) {
+			//assert in facts so if can be evaluated.
+			def objid = info.objid;
+			def name = info.attribute.name;
+			def value = info.value;
+			def datatype = info.attribute.datatype;
+			facts << factBuilder(datatype, objid, name, lob, value, "BusinessInfo");
+		}
+	}
+}
+
+
+/***
+* This has a different implementation than the old rules. The higher the number is prioritized
+*/
+public class ComputeTaxFee implements RuleActionHandler {
+	def request;
+	def BA;
+
+	public void execute(def params, def drools) {
+		def entity = request.entity;
+		def taxfees = request.taxfees;
+		def lob = params.lob;
 		def acctid = params.account.key;
+		def amt = params.amount.doubleValue;
 		def test = null;
 		if( !lob ) {
-			test = taxfees.find{ it.lob == null && it.account.objid == acctid };
+			test = taxfees.findAll{it.lob==null}.find{it.account.objid == acctid};
 		}
 		else {
-			test = taxfees.find{ it.lob.objid == lob.objid && it.account.objid == acctid };
+			test = taxfees.findAll{it.lob!=null}.find{ it.lob.objid == lob.objid && it.account.objid == acctid };
 		}
-		//we need to override tax fees that already exist.
-		if(test) {
-			_taxfees << test;
-			taxfees.remove( test );
+
+		//if account already exists, do not override.
+		if(!test) {
+			def info = [objid:"BPTXFEE"+new UID()];
+			info.account = BA.findAccount( [objid: acctid] );
+			if(lob) {
+				info.lob = [objid:lob.objid, name:lob.name];
+			}
+			info.assessedvalue = amt;
+			info.amount = amt;
+			info.rulename = drools.rule.name;
+			taxfees << info;
 		}
-		def info = [objid:"BPTF"+new UID()];
-		info.account = BA.findAccount( [objid: acctid]);
-		if(lob) {
-			info.lob = [objid:lob.objid, name:lob.name];
+		else {
+			//add rule history so we can trace rules that executed the account.
+			if( test._taxfees == null ) test._taxfees = [];
+			def hist = [rulename: drools.rule.name, amount: amt];
+			if( lob!=null) hist.lob = [objid:lob.objid, name:lob.name];
+			test._taxfees << hist;
 		}
-		info.assessedvalue = params.amount;
-		info.amount = params.amount;
-		taxfees << info;
 	}
 }
 
 /**
 * totals all business taxes, finds highest, lowest, 
 **/
-public class SummarizeTaxFee implements RuleActionHandler {
-	def facts;
-	def taxfees;
+public class AssertTaxFee implements RuleActionHandler {
 	def ruleSvc;
-	def lobMap;
-	def type;
-
-	public void execute(def params, def drools) {
-		String fact;
-		if(type == "TAX") fact = "bpassessment.BusinessTax";
-		else if(type == "REGFEE") fact = "bpassessment.RegFee";
-		else if(type == "OTHERCHARGE") fact = "bpassessment.OtherCharge";
+	def request;
+	
+	public void execute(def type, def drools) {
+		def facts = request.facts;
+		def taxfees = request.taxfees;
+		def lobMap = request.lobMap;
+		
 		def list = taxfees.findAll{ it.account.taxfeetype == type };
+		def tmp = [:];
 		list.each {
-			def bt = ruleSvc.createFact( "bpassessment", fact);
+			def bt = ruleSvc.createFact( "bpassessment", "bpassessment.TaxFeeAccount");
 			bt.objid = it.objid;
 			bt.acctid = it.account.objid;
-			if( it.lob ) bt.lob = lobMap[ it.lob.objid ]
+			if(it.lob) bt.lob = lobMap[ it.lob.objid ]
 			bt.name = it.account.title;
 			bt.amount = it.amount;
+			bt.type = it.account.taxfeetype;
 			bt.assessedvalue = it.assessedvalue;
 			bt.data = it;
-			drools.insert( bt );
 			facts << bt;
+			//collect in prepartion for determining min,max only if lob is not null
+			if( bt.lob ) {
+				def xlist = tmp[bt.acctid];
+				if(xlist==null) {
+					xlist = [];
+					tmp[bt.acctid] = xlist;
+				}
+				xlist << bt;
+			}
+		}
+		//determine min max for each in tmp list, list must have more than 1.
+		tmp.each { k,v->
+			if(v.size()>1) {
+				v.min{it.amount}.lowest = true;
+				v.max{it.amount}.highest = true;
+			}
 		}
 	}
 }
 
-public class UpdateBusinessTax implements RuleActionHandler {
+
+public class UpdateTaxFee implements RuleActionHandler {
+	def request;
 	public void execute(def params, def drools) {
-		params.businesstax.data.amount = params.amount;
+		def amt = params.amount.doubleValue;
+		def tf = params.taxfee;
+		tf.amount = amt
+		params.taxfee.data.amount = amt;
+		def list = request.facts.findAll{ it.class.name == "bpassessment.TaxFeeAccount" }.findAll{ it.acctid == tf.acctid && it.lob!=null};
+		list.each { it.highest = false; it.lowest = false; }
+
+		//update is highest and lowest again.
+		if(list.size()>1) {
+			list.min{it.amount}.lowest = true;
+			list.max{it.amount}.highest = true;
+		}
+		
+		
 	}
+}
+
+public class AddSysVar implements RuleActionHandler {
+	def request;
+	def comparator;
+
+	public void execute(def params, def drools) {
+		def vars = request.vars;
+		String name = params.name;
+		String agg = params.aggregate;
+		String dtype = params.datatype;
+		def value = params.value;
+		if( agg == "COUNT") dtype = "integer";
+		
+		def var = vars[name];
+		if( var == null ) {
+			var = [datatype:dtype, name: name ];
+			vars[name] = var;
+		}
+		def newAmt = 0;
+		if( agg !="COUNT") {
+			newAmt = (dtype=="integer") ? value.intValue : value.doubleValue;
+		}
+		
+		def oldAmt = (var.value==null) ? 0 : var.value;
+		var.value = comparator( agg, oldAmt, newAmt );
+ 		
+	}
+}
+
+//Loads each variable and 
+public class AssertSysVars implements RuleActionHandler {
+	def factBuilder;
+	def request;
+	public void execute(def params, def drools) {
+		def vars = request.vars;
+		def facts = request.facts;
+		vars.each { k,v->
+			def svar = factBuilder(v.datatype, null, v.name, null, v.value, "SysVariable");
+			facts << svar;
+		}
+		vars.clear();
+	}
+
+}
+
+public class AddRequirement implements RuleActionHandler {
+	def request;
+
+	public void execute(def params, def drools) {
+		def type = params.type;
+		def step = params.step;
+		if( !request.requirements.find{it.code == type.key}) {
+			request.requirements << [code: type.key, title: type.value, step: step ]; 
+		}
+	}
+
+}
+
+public class PrintTest implements RuleActionHandler {
+
+	public void execute(def params, def drools) {
+		def msg = params.message;
+		println "-------------- Print Message ------------------";
+		println msg.stringValue; 
+	}
+
 }

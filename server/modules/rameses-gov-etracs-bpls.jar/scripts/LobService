@@ -19,11 +19,12 @@ class LobService extends ActiveCrudListService {
 		]	
 	}
 
-	void beforeList(o) {
-		if(!o.searchtext) 
-			o.searchtext = "%";		
-		else
-			o.searchtext += "%";
+	public void beforeList(o) {
+		if(o.attribute?.objid)	{
+			o.attributeid = o.attribute.objid;
+			println o.attributeid;
+			o._listMethod = "getListByAttribute";
+		}	
 	}
 
 	@ProxyMethod

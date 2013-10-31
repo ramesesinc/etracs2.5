@@ -7,7 +7,6 @@ class LobLookupService extends ActiveListService {
 	def em;
 
 	String pagingKeys = "lob.objid";
-	
 	String listMethod = "getLookup";
 
 	@ProxyMethod
@@ -18,8 +17,5 @@ class LobLookupService extends ActiveListService {
 		]	
 	}
 
-	void beforeList(o) {
-		o.searchtext = o.searchtext + "%";
-	}
 
 }

@@ -3,7 +3,17 @@ SELECT lob.*, lc.name AS classification_name
 FROM lob lob 
 INNER JOIN lobclassification lc ON lob.classification_objid = lc.objid
 WHERE lob.name LIKE $P{searchtext}
-ORDER BY lob.name
+ORDER BY lob.name 
+
+[getListByAttribute]
+SELECT lob.*, lc.name AS classification_name 
+FROM lob lob 
+INNER JOIN lobclassification lc ON lob.classification_objid = lc.objid
+INNER JOIN lob_lobattribute lla ON lla.lobid = lob.objid
+INNER JOIN lobattribute la ON lla.lobattributeid=la.objid
+WHERE lob.name LIKE $P{searchtext}
+AND la.objid = $P{attributeid}
+ORDER BY lob.name 
 
 [removeAttributes]
 DELETE FROM lob_lobattribute

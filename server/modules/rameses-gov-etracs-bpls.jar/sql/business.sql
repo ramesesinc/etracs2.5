@@ -38,3 +38,18 @@ WHERE receivableid = $P{objid}
 UPDATE business_receivable
 SET amtpaid = amtpaid + $P{amtpaid} 
 WHERE objid = $P{objid}
+
+[getListForRenewal]
+SELECT b.*,
+CASE WHEN b.activeyear=$P{previousyear} THEN 0 ELSE 1 END AS laterenewal 
+FROM 
+(
+   SELECT objid,tradename, permitee_name, businessaddress, bin, activeyear
+   FROM business WHERE state='ACTIVE' AND activeyear < $P{activeyear} 
+   AND tradename LIKE $P{searchtext}
+   UNION 
+   SELECT objid, tradename, permitee_name, businessaddress, bin, activeyear
+   FROM business WHERE state='ACTIVE' AND activeyear < $P{activeyear} 
+   AND permitee_name LIKE $P{searchtext}
+) b
+

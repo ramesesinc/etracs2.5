@@ -1,23 +1,41 @@
 [getRootNodes]
-SELECT a.* FROM sreaccount a 
-WHERE a.parentid IS NULL and a.type='group' 
-ORDER BY a.code 
+SELECT a.* FROM sreaccount a WHERE a.parentid IS NULL and a.type='group' ORDER BY a.code 
 
 [getChildNodes]
-SELECT a.* FROM sreaccount a 
-WHERE a.parentid=$P{objid} and a.type='group' 
-ORDER BY a.code 
+SELECT a.* FROM sreaccount a WHERE a.parentid=$P{objid} and a.type='group' ORDER BY a.code 
 
 [getList]
 SELECT * FROM sreaccount WHERE parentid=$P{objid} ORDER BY code
 
-[search]
-SELECT t.* FROM sreaccount t  
-WHERE ${filter} t.parentid IS NOT NULL 
-ORDER BY t.title 
+[getSearch]
+SELECT DISTINCT a.* FROM 
+( 
+  SELECT * FROM sreaccount WHERE code LIKE $P{searchtext}
+  UNION 
+  SELECT * FROM sreaccount WHERE title LIKE $P{searchtext}
+) a
+ ORDER BY a.code 
 
-[lookup]
-SELECT t.* FROM sreaccount t WHERE ${filter} ORDER BY t.title 
+[findInfo]
+SELECT a.*, p.code AS parent_code, p.title AS parent_title 
+FROM sreaccount a
+LEFT JOIN sreaccount p ON a.parentid = p.objid
+WHERE a.objid=$P{objid}
 
-[changeState-approved]
+
+[getLookup]
+SELECT * FROM 
+(SELECT objid,code,title FROM sreaccount t WHERE t.code LIKE $P{searchtext} AND t.type=$P{type} 
+UNION 
+SELECT objid,code,title FROM sreaccount t WHERE t.title  LIKE $P{searchtext} AND t.type=$P{type} ) a
+ORDER BY a.title 
+
+[approve]
 UPDATE sreaccount SET state='APPROVED' WHERE objid=$P{objid} 
+
+
+[changeParent]
+UPDATE sreaccount SET parentid=$P{parentid} WHERE objid=$P{objid} 
+
+[getSubaccounts]
+SELECT a.* FROM sreaccount a WHERE a.parentid=$P{objid} AND a.type='subaccount' ORDER BY a.code

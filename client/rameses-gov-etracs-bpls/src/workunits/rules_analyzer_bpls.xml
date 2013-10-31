@@ -1,0 +1,167 @@
+<workunit extends="wtemplates/RuleMgmtController.xml" serviceName="RuleMgmtService">
+    <invokers>
+       <invoker type="rulemgmt:formActions" caption="Analyzer"  
+            visibleWhen="#{ruleset == 'bpassessment'}" target="window"/>
+            
+       <invoker type="formActions" caption="Close" action="_close" immediate="true"/>
+       <invoker type="formActions" caption="Get Info" action="getInfo"/>
+       <invoker type="formActions" caption="Get Tax Fees" action="getTaxFees"/>
+
+       <invoker type="formActions" caption="Clear Infos" action="clearInfo" immediate="true"/>
+       <invoker type="formActions" caption="Restart" action="reset" immediate="true"/>
+       
+    </invokers>
+    <code>
+        <![CDATA[
+            import com.rameses.rcp.common.*
+            import com.rameses.rcp.annotations.*
+            import com.rameses.osiris2.client.*
+            import com.rameses.osiris2.common.*
+            import com.rameses.rulemgmt.constraint.*;
+            import com.rameses.rulemgmt.*;
+            import java.rmi.server.*;
+            
+            class BPAssessmentAnalyzerController  {
+                
+                @Service("BPAssessmentService")
+                def service;
+
+                def orgTypes = LOV.BUSINESS_ORG_TYPES;
+                def officeTypes = LOV.BUSINESS_OFFICE_TYPES;
+                def appTypes = LOV.BUSINESS_APP_TYPES;
+                def lobTypes = LOV.LOB_ASSESSMENT_TYPES*.key;
+                def entity = [lobs:[],infos:[],taxfees:[],requirements:[]];
+                def formInfos;
+                
+                String title = "Business Rule Assessment Simulator";
+                
+                def getLookupLOB() {
+                    return InvokerUtil.lookupOpener("lob:lookup",[
+                        onselect: { o->
+                            if( entity.lobs.find{ it.lobid ==  o.objid }!=null ) {
+                                throw new Exception("LOB Item already added");
+                            }    
+                            o.lobid = o.objid;
+                            o.assessmenttype = "NEW";
+                            entity.lobs << o;
+                            lobModel.reload();
+                        }
+                    ]);
+                }
+                
+                def lobModel = [
+                    fetchList: { o->return entity.lobs; },
+                    onRemoveItem: { o->
+                        entity.lobs.remove(o);
+                    }
+                ] as EditorListModel;
+                
+                def infoModel = [
+                    fetchList: { o-> return entity.infos; }
+                ] as BasicListModel;
+            
+                
+                def requirementModel = [
+                    fetchList: { o-> return entity.requirements; }
+                ] as BasicListModel;
+                
+                def taxfeeModel = [
+                    fetchList: { o-> return entity.taxfees; },
+                    onOpenItem: { o,col->
+                        MsgBox.alert( o._taxfees );
+                    }
+                ]as BasicListModel;
+                
+                void refreshInfos() {
+                    entity.infos = entity.infos.findAll{it.lob==null} + entity.infos.findAll{it.lob!=null}.sort{ it.lob };
+                    infoModel.reload();
+                }
+                void refreshTaxfees() {
+                    entity.taxfees = entity.taxfees.findAll{ it.lob!=null }.sort{ it.lob } + entity.taxfees.findAll{it.lob==null}; 
+                    taxfeeModel.reload();
+                }
+
+                
+                def getInfo() {
+                    def result = service.execute(entity);
+                    if( !result.infos) 
+                        throw new Exception("No infos found!");
+                        
+                    if( result.phase != 0) {
+                        entity.infos.addAll(result.infos);
+                        refreshInfos();
+                        return null;
+                    }
+                        
+                    //pass to the looper
+                    def opener = InvokerUtil.lookupOpener( "bpassessment:info",
+                          [infos:result.infos,lobs:entity.lobs,handler:{infos->
+                                entity.infos.addAll(infos);
+                                
+                                result = service.execute(entity);
+                                if( result.phase == 0 ) {
+                                    //continue specifying data if phase is 0
+                                    return result.infos;
+                                }
+                                if(result.infos) {
+                                    entity.infos.addAll(result.infos);
+                                }
+                                refreshInfos();
+                                return null;
+                          }]
+                    );    
+                    opener.target = "popup";
+                    return opener;
+                }
+                
+                def getTaxFees() {
+                    def infos = entity.infos.findAll{ it.phase != 0};
+                    def opener = InvokerUtil.lookupOpener( "bpassessment:info",
+                        [infos:infos,lobs:entity.lobs,
+                            handler:{o->
+                                entity.taxfees.clear();
+                                def result = service.execute(entity);
+                                entity.taxfees = result.taxfees;
+                                if(result.infos) {
+                                    entity.infos.addAll( result.infos );
+                                }
+                                infoModel.reload();
+                                if(result.requirements) {
+                                    entity.requirements = result.requirements;
+                                }
+                                requirementModel.reload();
+                                refreshTaxfees();
+                            }
+                        ]
+                    );   
+                    opener.target = "popup";
+                    return opener;
+                }
+                
+                void reset() {
+                    entity.infos.clear();
+                    entity.taxfees.clear();
+                    entity.lobs.clear();
+                    entity = [:];
+                    entity.infos = [];
+                    entity.taxfees = [];
+                    entity.requirements = [];
+                    entity.lobs = [];
+                }
+                
+                void clearInfo() {
+                    entity.infos.clear();
+                    entity.taxfees.clear();
+                    entity.requirements.clear();
+                    infoModel.reload();
+                    requirementModel.reload();
+                    taxfeeModel.reload();
+                }
+                
+            }
+        ]]>    
+    </code>
+    <pages>
+        <page template="com.rameses.gov.etracs.rules.bpls.BPAssessmentAnalyzerPage"/>
+    </pages>
+</workunit>

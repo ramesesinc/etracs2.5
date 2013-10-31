@@ -10,4 +10,5 @@ class LobAttributeService extends ActiveCrudListService {
 		o.objid = o.name;
 	}
 
+	
 }
