@@ -182,21 +182,7 @@
 		<group  name="NSASUMMARY" >
 			<groupExpression><![CDATA[]]></groupExpression>
 			<groupHeader>
-			<band height="12"  isSplitAllowed="true" >
-				<subreport  isUsingCache="true">
-					<reportElement
-						mode="Opaque"
-						x="0"
-						y="0"
-						width="540"
-						height="12"
-						forecolor="#000000"
-						backcolor="#FFFFFF"
-						key="subreport-7"
-						positionType="Float"/>
-					<dataSourceExpression><![CDATA[$F{nonserialsummary}]]></dataSourceExpression>
-					<subreportExpression  class="net.sf.jasperreports.engine.JasperReport"><![CDATA[$P{NonSerialSummary}]]></subreportExpression>
-				</subreport>
+			<band height="0"  isSplitAllowed="true" >
 			</band>
 			</groupHeader>
 			<groupFooter>

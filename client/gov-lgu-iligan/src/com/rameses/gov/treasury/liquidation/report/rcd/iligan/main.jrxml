@@ -40,6 +40,9 @@
 	<parameter name="reportnsaforms" isForPrompting="false" class="java.lang.Object"/>
 	<parameter name="collectionsummary" isForPrompting="false" class="java.lang.Object"/>
 	<parameter name="reportnonserialsummary" isForPrompting="false" class="java.lang.Object"/>
+	<parameter name="CASHIERHEADNAME" isForPrompting="false" class="java.lang.String"/>
+	<parameter name="CASHIERHEADTITLE" isForPrompting="false" class="java.lang.String"/>
+	<parameter name="LOGOTREASURY" isForPrompting="false" class="java.lang.String"/>
 
 	<field name="cashier.title" class="java.lang.String"/>
 	<field name="cashier.name" class="java.lang.String"/>
@@ -111,7 +114,7 @@
 			<groupExpression><![CDATA[]]></groupExpression>
 			<groupHeader>
 			<band height="61"  isSplitAllowed="true" >
-				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="0"
 						y="37"
@@ -127,9 +130,9 @@
 					<textElement verticalAlignment="Middle">
 						<font fontName="SansSerif" pdfFontName="Helvetica" size="8" isBold="false"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[""]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$P{CASHIERHEADNAME} + " - " + $P{CASHIERHEADTITLE}]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="233"
 						y="37"
@@ -398,21 +401,7 @@
 		<group  name="NSAF_SUMMARY" >
 			<groupExpression><![CDATA[]]></groupExpression>
 			<groupHeader>
-			<band height="12"  isSplitAllowed="true" >
-				<subreport  isUsingCache="true">
-					<reportElement
-						mode="Opaque"
-						x="0"
-						y="0"
-						width="540"
-						height="12"
-						forecolor="#000000"
-						backcolor="#FFFFFF"
-						key="subreport-7"
-						positionType="Float"/>
-					<dataSourceExpression><![CDATA[$F{nonserialsummary}]]></dataSourceExpression>
-					<subreportExpression  class="net.sf.jasperreports.engine.JasperReport"><![CDATA[$P{reportnonserialsummary}]]></subreportExpression>
-				</subreport>
+			<band height="0"  isSplitAllowed="true" >
 			</band>
 			</groupHeader>
 			<groupFooter>
@@ -423,21 +412,7 @@
 		<group  name="OTHERPAYMENT" >
 			<groupExpression><![CDATA[]]></groupExpression>
 			<groupHeader>
-			<band height="16"  isSplitAllowed="true" >
-				<subreport  isUsingCache="true">
-					<reportElement
-						mode="Opaque"
-						x="0"
-						y="0"
-						width="540"
-						height="16"
-						forecolor="#000000"
-						backcolor="#FFFFFF"
-						key="subreport-8"
-						positionType="Float"/>
-					<dataSourceExpression><![CDATA[$F{otherpayments}]]></dataSourceExpression>
-					<subreportExpression  class="net.sf.jasperreports.engine.JasperReport"><![CDATA[$P{otherpayments}]]></subreportExpression>
-				</subreport>
+			<band height="0"  isSplitAllowed="true" >
 			</band>
 			</groupHeader>
 			<groupFooter>
@@ -609,7 +584,7 @@
 			</band>
 		</background>
 		<title>
-			<band height="121"  isSplitAllowed="true" >
+			<band height="128"  isSplitAllowed="true" >
 				<line direction="TopDown">
 					<reportElement
 						mode="Opaque"
@@ -648,7 +623,7 @@
 					<reportElement
 						mode="Transparent"
 						x="180"
-						y="88"
+						y="104"
 						width="24"
 						height="18"
 						forecolor="#000000"
@@ -688,7 +663,7 @@
 					<reportElement
 						mode="Transparent"
 						x="206"
-						y="88"
+						y="104"
 						width="138"
 						height="19"
 						forecolor="#000000"
@@ -807,7 +782,7 @@
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="344"
-						y="88"
+						y="104"
 						width="196"
 						height="19"
 						key="textField-14"/>
@@ -817,6 +792,20 @@
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[$F{fund.title}]]></textFieldExpression>
 				</textField>
+				<image  scaleImage="FillFrame" vAlign="Top" hAlign="Left" isUsingCache="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						mode="Opaque"
+						x="426"
+						y="42"
+						width="69"
+						height="62"
+						forecolor="#000000"
+						backcolor="#FFFFFF"
+						key="image-2"/>
+					<box></box>
+					<graphicElement stretchType="NoStretch" fill="Solid" />
+					<imageExpression class="java.lang.String"><![CDATA[$P{LOGOTREASURY}]]></imageExpression>
+				</image>
 			</band>
 		</title>
 		<pageHeader>
@@ -895,7 +884,7 @@
 					<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
 						<font fontName="SansSerif" pdfFontName="Helvetica" size="7" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA["GENERATED BY : ETRACS 2.0  LTR  PRINTED BY : " + $P{PRINTEDBY} + "  PRINT DATE : "  + (new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format($P{PRINTDATE}) )]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA["GENERATED BY : ETRACS 2.5  LTR  PRINTED BY : " + $P{PRINTEDBY} + "  PRINT DATE : "  + (new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format($P{PRINTDATE}) )]]></textFieldExpression>
 				</textField>
 			</band>
 		</pageFooter>

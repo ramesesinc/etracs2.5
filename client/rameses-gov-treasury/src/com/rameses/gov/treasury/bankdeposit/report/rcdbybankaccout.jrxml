@@ -42,6 +42,7 @@
 	<parameter name="CASHIERTITLE" isForPrompting="false" class="java.lang.String"/>
 	<parameter name="DEPOSITREFERENCE" isForPrompting="false" class="java.lang.String"/>
 	<parameter name="DEPOSITAMT" isForPrompting="false" class="java.math.BigDecimal"/>
+	<parameter name="LOGOTREASURY" isForPrompting="false" class="java.lang.String"/>
 
 	<field name="dtposted" class="java.util.Date"/>
 	<field name="txnno" class="java.lang.String"/>
@@ -72,10 +73,8 @@
 						forecolor="#000000"
 						backcolor="#FFFFFF"
 						key="staticText-50"/>
-					<box>					<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-					<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+					<box>					<bottomPen lineWidth="0.25" lineStyle="Solid"/>
+					<rightPen lineWidth="0.25" lineStyle="Solid"/>
 </box>
 					<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
 						<font fontName="Tahoma" pdfFontName="Helvetica" size="8" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
@@ -92,10 +91,8 @@
 						forecolor="#000000"
 						backcolor="#FFFFFF"
 						key="staticText-51"/>
-					<box>					<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-					<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+					<box>					<bottomPen lineWidth="0.25" lineStyle="Solid"/>
+					<rightPen lineWidth="0.25" lineStyle="Solid"/>
 </box>
 					<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
 						<font fontName="Tahoma" pdfFontName="Helvetica" size="8" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
@@ -112,10 +109,9 @@
 						forecolor="#000000"
 						backcolor="#FFFFFF"
 						key="staticText-52"/>
-					<box>					<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-					<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+					<box>					<leftPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
 </box>
 					<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
 						<font fontName="Tahoma" pdfFontName="Helvetica" size="8" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
@@ -132,10 +128,8 @@
 						forecolor="#000000"
 						backcolor="#FFFFFF"
 						key="staticText-53"/>
-					<box>					<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-					<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+					<box>					<bottomPen lineWidth="0.25" lineStyle="Solid"/>
+					<rightPen lineWidth="0.25" lineStyle="Solid"/>
 </box>
 					<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
 						<font fontName="Tahoma" pdfFontName="Helvetica" size="8" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
@@ -152,10 +146,8 @@
 						forecolor="#000000"
 						backcolor="#FFFFFF"
 						key="staticText-54"/>
-					<box>					<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-					<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+					<box>					<bottomPen lineWidth="0.25" lineStyle="Solid"/>
+					<rightPen lineWidth="0.25" lineStyle="Solid"/>
 </box>
 					<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
 						<font fontName="Tahoma" pdfFontName="Helvetica" size="8" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
@@ -168,14 +160,14 @@
 						x="0"
 						y="0"
 						width="540"
-						height="15"
+						height="14"
 						forecolor="#000000"
 						backcolor="#FFFFFF"
 						key="staticText-55"/>
-					<box>					<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-					<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+					<box>					<topPen lineWidth="0.25" lineStyle="Solid"/>
+					<leftPen lineWidth="0.25" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.25" lineStyle="Solid"/>
+					<rightPen lineWidth="0.25" lineStyle="Solid"/>
 </box>
 					<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
 						<font fontName="Tahoma" pdfFontName="Helvetica-Bold" size="9" isBold="true" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
@@ -189,10 +181,9 @@
 						width="104"
 						height="14"
 						key="staticText-56"/>
-					<box>					<topPen lineWidth="0.5" lineStyle="Solid"/>
-					<leftPen lineWidth="0.5" lineStyle="Solid"/>
-					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
-					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+					<box>					<leftPen lineWidth="0.25" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.25" lineStyle="Solid"/>
+					<rightPen lineWidth="0.25" lineStyle="Solid"/>
 </box>
 					<textElement>
 						<font/>
@@ -206,10 +197,8 @@
 						width="177"
 						height="14"
 						key="staticText-57"/>
-					<box>					<topPen lineWidth="0.5" lineStyle="Solid"/>
-					<leftPen lineWidth="0.5" lineStyle="Solid"/>
-					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
-					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+					<box>					<bottomPen lineWidth="0.25" lineStyle="Solid"/>
+					<rightPen lineWidth="0.25" lineStyle="Solid"/>
 </box>
 					<textElement>
 						<font/>
@@ -223,10 +212,8 @@
 						width="182"
 						height="14"
 						key="staticText-58"/>
-					<box>					<topPen lineWidth="0.5" lineStyle="Solid"/>
-					<leftPen lineWidth="0.5" lineStyle="Solid"/>
-					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
-					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+					<box>					<bottomPen lineWidth="0.25" lineStyle="Solid"/>
+					<rightPen lineWidth="0.25" lineStyle="Solid"/>
 </box>
 					<textElement>
 						<font/>
@@ -240,10 +227,8 @@
 						width="77"
 						height="14"
 						key="staticText-59"/>
-					<box>					<topPen lineWidth="0.5" lineStyle="Solid"/>
-					<leftPen lineWidth="0.5" lineStyle="Solid"/>
-					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
-					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+					<box>					<bottomPen lineWidth="0.25" lineStyle="Solid"/>
+					<rightPen lineWidth="0.25" lineStyle="Solid"/>
 </box>
 					<textElement>
 						<font/>
@@ -257,10 +242,9 @@
 						width="104"
 						height="14"
 						key="staticText-60"/>
-					<box>					<topPen lineWidth="0.5" lineStyle="Solid"/>
-					<leftPen lineWidth="0.5" lineStyle="Solid"/>
-					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
-					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+					<box>					<leftPen lineWidth="0.25" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.25" lineStyle="Solid"/>
+					<rightPen lineWidth="0.25" lineStyle="Solid"/>
 </box>
 					<textElement>
 						<font/>
@@ -274,10 +258,8 @@
 						width="177"
 						height="14"
 						key="staticText-61"/>
-					<box>					<topPen lineWidth="0.5" lineStyle="Solid"/>
-					<leftPen lineWidth="0.5" lineStyle="Solid"/>
-					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
-					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+					<box>					<bottomPen lineWidth="0.25" lineStyle="Solid"/>
+					<rightPen lineWidth="0.25" lineStyle="Solid"/>
 </box>
 					<textElement>
 						<font/>
@@ -291,10 +273,8 @@
 						width="182"
 						height="14"
 						key="staticText-62"/>
-					<box>					<topPen lineWidth="0.5" lineStyle="Solid"/>
-					<leftPen lineWidth="0.5" lineStyle="Solid"/>
-					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
-					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+					<box>					<bottomPen lineWidth="0.25" lineStyle="Solid"/>
+					<rightPen lineWidth="0.25" lineStyle="Solid"/>
 </box>
 					<textElement>
 						<font/>
@@ -308,10 +288,8 @@
 						width="77"
 						height="14"
 						key="staticText-63"/>
-					<box>					<topPen lineWidth="0.5" lineStyle="Solid"/>
-					<leftPen lineWidth="0.5" lineStyle="Solid"/>
-					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
-					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+					<box>					<bottomPen lineWidth="0.25" lineStyle="Solid"/>
+					<rightPen lineWidth="0.25" lineStyle="Solid"/>
 </box>
 					<textElement>
 						<font/>
@@ -325,10 +303,9 @@
 						width="104"
 						height="14"
 						key="staticText-64"/>
-					<box>					<topPen lineWidth="0.5" lineStyle="Solid"/>
-					<leftPen lineWidth="0.5" lineStyle="Solid"/>
-					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
-					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+					<box>					<leftPen lineWidth="0.25" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.25" lineStyle="Solid"/>
+					<rightPen lineWidth="0.25" lineStyle="Solid"/>
 </box>
 					<textElement>
 						<font/>
@@ -342,10 +319,8 @@
 						width="177"
 						height="14"
 						key="staticText-65"/>
-					<box>					<topPen lineWidth="0.5" lineStyle="Solid"/>
-					<leftPen lineWidth="0.5" lineStyle="Solid"/>
-					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
-					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+					<box>					<bottomPen lineWidth="0.25" lineStyle="Solid"/>
+					<rightPen lineWidth="0.25" lineStyle="Solid"/>
 </box>
 					<textElement>
 						<font/>
@@ -359,10 +334,8 @@
 						width="182"
 						height="14"
 						key="staticText-66"/>
-					<box>					<topPen lineWidth="0.5" lineStyle="Solid"/>
-					<leftPen lineWidth="0.5" lineStyle="Solid"/>
-					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
-					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+					<box>					<bottomPen lineWidth="0.25" lineStyle="Solid"/>
+					<rightPen lineWidth="0.25" lineStyle="Solid"/>
 </box>
 					<textElement>
 						<font/>
@@ -376,10 +349,8 @@
 						width="77"
 						height="14"
 						key="staticText-67"/>
-					<box>					<topPen lineWidth="0.5" lineStyle="Solid"/>
-					<leftPen lineWidth="0.5" lineStyle="Solid"/>
-					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
-					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+					<box>					<bottomPen lineWidth="0.25" lineStyle="Solid"/>
+					<rightPen lineWidth="0.25" lineStyle="Solid"/>
 </box>
 					<textElement>
 						<font/>
@@ -393,10 +364,9 @@
 						width="104"
 						height="14"
 						key="staticText-68"/>
-					<box>					<topPen lineWidth="0.5" lineStyle="Solid"/>
-					<leftPen lineWidth="0.5" lineStyle="Solid"/>
-					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
-					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+					<box>					<leftPen lineWidth="0.25" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.25" lineStyle="Solid"/>
+					<rightPen lineWidth="0.25" lineStyle="Solid"/>
 </box>
 					<textElement>
 						<font/>
@@ -410,10 +380,8 @@
 						width="177"
 						height="14"
 						key="staticText-69"/>
-					<box>					<topPen lineWidth="0.5" lineStyle="Solid"/>
-					<leftPen lineWidth="0.5" lineStyle="Solid"/>
-					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
-					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+					<box>					<bottomPen lineWidth="0.25" lineStyle="Solid"/>
+					<rightPen lineWidth="0.25" lineStyle="Solid"/>
 </box>
 					<textElement>
 						<font/>
@@ -427,10 +395,8 @@
 						width="182"
 						height="14"
 						key="staticText-70"/>
-					<box>					<topPen lineWidth="0.5" lineStyle="Solid"/>
-					<leftPen lineWidth="0.5" lineStyle="Solid"/>
-					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
-					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+					<box>					<bottomPen lineWidth="0.25" lineStyle="Solid"/>
+					<rightPen lineWidth="0.25" lineStyle="Solid"/>
 </box>
 					<textElement>
 						<font/>
@@ -444,10 +410,8 @@
 						width="77"
 						height="14"
 						key="staticText-71"/>
-					<box>					<topPen lineWidth="0.5" lineStyle="Solid"/>
-					<leftPen lineWidth="0.5" lineStyle="Solid"/>
-					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
-					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+					<box>					<bottomPen lineWidth="0.25" lineStyle="Solid"/>
+					<rightPen lineWidth="0.25" lineStyle="Solid"/>
 </box>
 					<textElement>
 						<font/>
@@ -473,10 +437,9 @@
 						height="13"
 						key="textField-14"
 						positionType="Float"/>
-					<box leftPadding="3">					<topPen lineWidth="0.5" lineStyle="Solid"/>
-					<leftPen lineWidth="0.5" lineStyle="Solid"/>
-					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
-					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+					<box leftPadding="3">					<leftPen lineWidth="0.25" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.25" lineStyle="Solid"/>
+					<rightPen lineWidth="0.25" lineStyle="Solid"/>
 </box>
 					<textElement verticalAlignment="Middle">
 						<font fontName="Tahoma" pdfFontName="Helvetica-Bold" size="8" isBold="true"/>
@@ -491,10 +454,8 @@
 						height="13"
 						key="textField-15"
 						positionType="Float"/>
-					<box leftPadding="3">					<topPen lineWidth="0.5" lineStyle="Solid"/>
-					<leftPen lineWidth="0.5" lineStyle="Solid"/>
-					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
-					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+					<box leftPadding="3">					<bottomPen lineWidth="0.25" lineStyle="Solid"/>
+					<rightPen lineWidth="0.25" lineStyle="Solid"/>
 </box>
 					<textElement verticalAlignment="Middle">
 						<font fontName="Tahoma" pdfFontName="Helvetica-Bold" size="8" isBold="true"/>
@@ -511,10 +472,9 @@
 						forecolor="#000000"
 						backcolor="#FFFFFF"
 						key="staticText-95"/>
-					<box leftPadding="3">					<topPen lineWidth="0.5" lineStyle="Solid"/>
-					<leftPen lineWidth="0.5" lineStyle="Solid"/>
-					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
-					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+					<box leftPadding="3">					<leftPen lineWidth="0.25" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.25" lineStyle="Solid"/>
+					<rightPen lineWidth="0.25" lineStyle="Solid"/>
 </box>
 					<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
 						<font fontName="Tahoma" pdfFontName="Helvetica-Bold" size="9" isBold="true" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
@@ -528,10 +488,9 @@
 						width="233"
 						height="13"
 						key="staticText-96"/>
-					<box>					<topPen lineWidth="0.5" lineStyle="Solid"/>
-					<leftPen lineWidth="0.5" lineStyle="Solid"/>
-					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
-					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+					<box>					<leftPen lineWidth="0.25" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.25" lineStyle="Solid"/>
+					<rightPen lineWidth="0.25" lineStyle="Solid"/>
 </box>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font fontName="Tahoma" pdfFontName="Helvetica" size="9" isBold="false"/>
@@ -545,10 +504,8 @@
 						width="193"
 						height="13"
 						key="staticText-97"/>
-					<box>					<topPen lineWidth="0.5" lineStyle="Solid"/>
-					<leftPen lineWidth="0.5" lineStyle="Solid"/>
-					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
-					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+					<box>					<bottomPen lineWidth="0.25" lineStyle="Solid"/>
+					<rightPen lineWidth="0.25" lineStyle="Solid"/>
 </box>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font fontName="Tahoma" pdfFontName="Helvetica" size="9" isBold="false"/>
@@ -562,10 +519,8 @@
 						width="114"
 						height="13"
 						key="staticText-98"/>
-					<box>					<topPen lineWidth="0.5" lineStyle="Solid"/>
-					<leftPen lineWidth="0.5" lineStyle="Solid"/>
-					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
-					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+					<box>					<bottomPen lineWidth="0.25" lineStyle="Solid"/>
+					<rightPen lineWidth="0.25" lineStyle="Solid"/>
 </box>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font fontName="Tahoma" pdfFontName="Helvetica" size="9" isBold="false"/>
@@ -579,10 +534,9 @@
 						width="233"
 						height="13"
 						key="staticText-99"/>
-					<box>					<topPen lineWidth="0.5" lineStyle="Solid"/>
-					<leftPen lineWidth="0.5" lineStyle="Solid"/>
-					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
-					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+					<box>					<leftPen lineWidth="0.25" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.25" lineStyle="Solid"/>
+					<rightPen lineWidth="0.25" lineStyle="Solid"/>
 </box>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font fontName="Tahoma" pdfFontName="Helvetica-Bold" size="9" isBold="true"/>
@@ -596,10 +550,8 @@
 						width="193"
 						height="13"
 						key="staticText-100"/>
-					<box>					<topPen lineWidth="0.5" lineStyle="Solid"/>
-					<leftPen lineWidth="0.5" lineStyle="Solid"/>
-					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
-					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+					<box>					<bottomPen lineWidth="0.25" lineStyle="Solid"/>
+					<rightPen lineWidth="0.25" lineStyle="Solid"/>
 </box>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font fontName="Tahoma" pdfFontName="Helvetica-Bold" size="9" isBold="true"/>
@@ -613,10 +565,8 @@
 						width="114"
 						height="13"
 						key="staticText-101"/>
-					<box>					<topPen lineWidth="0.5" lineStyle="Solid"/>
-					<leftPen lineWidth="0.5" lineStyle="Solid"/>
-					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
-					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+					<box>					<bottomPen lineWidth="0.25" lineStyle="Solid"/>
+					<rightPen lineWidth="0.25" lineStyle="Solid"/>
 </box>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font fontName="Tahoma" pdfFontName="Helvetica-Bold" size="9" isBold="true"/>
@@ -630,10 +580,9 @@
 						width="233"
 						height="13"
 						key="staticText-102"/>
-					<box>					<topPen lineWidth="0.5" lineStyle="Solid"/>
-					<leftPen lineWidth="0.5" lineStyle="Solid"/>
-					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
-					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+					<box>					<leftPen lineWidth="0.25" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.25" lineStyle="Solid"/>
+					<rightPen lineWidth="0.25" lineStyle="Solid"/>
 </box>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font fontName="Tahoma" pdfFontName="Helvetica-Bold" size="9" isBold="true"/>
@@ -647,10 +596,8 @@
 						width="193"
 						height="13"
 						key="staticText-103"/>
-					<box>					<topPen lineWidth="0.5" lineStyle="Solid"/>
-					<leftPen lineWidth="0.5" lineStyle="Solid"/>
-					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
-					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+					<box>					<bottomPen lineWidth="0.25" lineStyle="Solid"/>
+					<rightPen lineWidth="0.25" lineStyle="Solid"/>
 </box>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font fontName="Tahoma" pdfFontName="Helvetica-Bold" size="9" isBold="true"/>
@@ -664,10 +611,8 @@
 						width="114"
 						height="13"
 						key="staticText-104"/>
-					<box>					<topPen lineWidth="0.5" lineStyle="Solid"/>
-					<leftPen lineWidth="0.5" lineStyle="Solid"/>
-					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
-					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+					<box>					<bottomPen lineWidth="0.25" lineStyle="Solid"/>
+					<rightPen lineWidth="0.25" lineStyle="Solid"/>
 </box>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font fontName="Tahoma" pdfFontName="Helvetica-Bold" size="9" isBold="true"/>
@@ -682,10 +627,8 @@
 						height="13"
 						key="textField-16"
 						positionType="Float"/>
-					<box leftPadding="3" rightPadding="3">					<topPen lineWidth="0.5" lineStyle="Solid"/>
-					<leftPen lineWidth="0.5" lineStyle="Solid"/>
-					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
-					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+					<box leftPadding="3" rightPadding="3">					<bottomPen lineWidth="0.25" lineStyle="Solid"/>
+					<rightPen lineWidth="0.25" lineStyle="Solid"/>
 </box>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font fontName="Tahoma" pdfFontName="Helvetica-Bold" size="8" isBold="true"/>
@@ -700,10 +643,9 @@
 						height="13"
 						key="textField-17"
 						positionType="Float"/>
-					<box leftPadding="3">					<topPen lineWidth="0.5" lineStyle="Solid"/>
-					<leftPen lineWidth="0.5" lineStyle="Solid"/>
-					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
-					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+					<box leftPadding="3">					<leftPen lineWidth="0.25" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.25" lineStyle="Solid"/>
+					<rightPen lineWidth="0.25" lineStyle="Solid"/>
 </box>
 					<textElement verticalAlignment="Middle">
 						<font fontName="Tahoma" pdfFontName="Helvetica-Bold" size="8" isBold="true"/>
@@ -718,10 +660,8 @@
 						height="13"
 						key="textField-18"
 						positionType="Float"/>
-					<box leftPadding="3">					<topPen lineWidth="0.5" lineStyle="Solid"/>
-					<leftPen lineWidth="0.5" lineStyle="Solid"/>
-					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
-					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+					<box leftPadding="3">					<bottomPen lineWidth="0.25" lineStyle="Solid"/>
+					<rightPen lineWidth="0.25" lineStyle="Solid"/>
 </box>
 					<textElement verticalAlignment="Middle">
 						<font fontName="Tahoma" pdfFontName="Helvetica-Bold" size="8" isBold="true"/>
@@ -736,10 +676,8 @@
 						height="13"
 						key="textField-19"
 						positionType="Float"/>
-					<box leftPadding="3" rightPadding="3">					<topPen lineWidth="0.5" lineStyle="Solid"/>
-					<leftPen lineWidth="0.5" lineStyle="Solid"/>
-					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
-					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+					<box leftPadding="3" rightPadding="3">					<bottomPen lineWidth="0.25" lineStyle="Solid"/>
+					<rightPen lineWidth="0.25" lineStyle="Solid"/>
 </box>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font fontName="Tahoma" pdfFontName="Helvetica-Bold" size="8" isBold="true"/>
@@ -760,17 +698,15 @@
 				<staticText>
 					<reportElement
 						mode="Transparent"
-						x="2"
-						y="18"
-						width="28"
-						height="34"
+						x="0"
+						y="15"
+						width="32"
+						height="41"
 						forecolor="#000000"
 						backcolor="#FFFFFF"
 						key="staticText-72"/>
-					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<box leftPadding="2">					<leftPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
 </box>
 					<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
 						<font fontName="Tahoma" pdfFontName="Helvetica" size="6" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
@@ -780,19 +716,19 @@
 				<staticText>
 					<reportElement
 						mode="Transparent"
-						x="35"
-						y="18"
-						width="122"
-						height="13"
+						x="32"
+						y="15"
+						width="128"
+						height="16"
 						forecolor="#000000"
 						backcolor="#FFFFFF"
 						key="staticText-73"/>
 					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
 </box>
-					<textElement textAlignment="Center" verticalAlignment="Top" rotation="None" lineSpacing="Single">
+					<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
 						<font fontName="Tahoma" pdfFontName="Helvetica" size="8" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 					</textElement>
 				<text><![CDATA[Begining Balance]]></text>
@@ -800,19 +736,19 @@
 				<staticText>
 					<reportElement
 						mode="Transparent"
-						x="163"
-						y="18"
-						width="122"
-						height="13"
+						x="159"
+						y="15"
+						width="128"
+						height="16"
 						forecolor="#000000"
 						backcolor="#FFFFFF"
 						key="staticText-74"/>
 					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
 </box>
-					<textElement textAlignment="Center" verticalAlignment="Top" rotation="None" lineSpacing="Single">
+					<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
 						<font fontName="Tahoma" pdfFontName="Helvetica" size="8" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 					</textElement>
 				<text><![CDATA[Received since]]></text>
@@ -820,19 +756,19 @@
 				<staticText>
 					<reportElement
 						mode="Transparent"
-						x="289"
-						y="18"
-						width="122"
-						height="13"
+						x="286"
+						y="15"
+						width="127"
+						height="16"
 						forecolor="#000000"
 						backcolor="#FFFFFF"
 						key="staticText-75"/>
 					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
 </box>
-					<textElement textAlignment="Center" verticalAlignment="Top" rotation="None" lineSpacing="Single">
+					<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
 						<font fontName="Tahoma" pdfFontName="Helvetica" size="8" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 					</textElement>
 				<text><![CDATA[Issued]]></text>
@@ -840,19 +776,19 @@
 				<staticText>
 					<reportElement
 						mode="Transparent"
-						x="416"
-						y="18"
-						width="122"
-						height="13"
+						x="413"
+						y="15"
+						width="127"
+						height="16"
 						forecolor="#000000"
 						backcolor="#FFFFFF"
 						key="staticText-76"/>
 					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
 </box>
-					<textElement textAlignment="Center" verticalAlignment="Top" rotation="None" lineSpacing="Single">
+					<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
 						<font fontName="Tahoma" pdfFontName="Helvetica" size="8" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 					</textElement>
 				<text><![CDATA[Ending Balance]]></text>
@@ -860,17 +796,17 @@
 				<staticText>
 					<reportElement
 						mode="Transparent"
-						x="33"
-						y="32"
-						width="20"
-						height="23"
+						x="32"
+						y="31"
+						width="22"
+						height="25"
 						forecolor="#000000"
 						backcolor="#FFFFFF"
 						key="staticText-77"/>
 					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
 </box>
 					<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
 						<font fontName="Tahoma" pdfFontName="Helvetica" size="8" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
@@ -880,19 +816,19 @@
 				<staticText>
 					<reportElement
 						mode="Transparent"
-						x="56"
-						y="32"
-						width="101"
-						height="11"
+						x="54"
+						y="31"
+						width="106"
+						height="14"
 						forecolor="#000000"
 						backcolor="#FFFFFF"
 						key="staticText-78"/>
 					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
 </box>
-					<textElement textAlignment="Center" verticalAlignment="Top" rotation="None" lineSpacing="Single">
+					<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
 						<font fontName="Tahoma" pdfFontName="Helvetica" size="8" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 					</textElement>
 				<text><![CDATA[Inclusive Serial Nos]]></text>
@@ -900,17 +836,17 @@
 				<staticText>
 					<reportElement
 						mode="Transparent"
-						x="55"
-						y="44"
-						width="51"
+						x="54"
+						y="45"
+						width="53"
 						height="11"
 						forecolor="#000000"
 						backcolor="#FFFFFF"
 						key="staticText-79"/>
 					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
 </box>
 					<textElement textAlignment="Center" verticalAlignment="Top" rotation="None" lineSpacing="Single">
 						<font fontName="Tahoma" pdfFontName="Helvetica" size="8" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
@@ -920,121 +856,37 @@
 				<staticText>
 					<reportElement
 						mode="Transparent"
-						x="110"
-						y="44"
-						width="48"
+						x="107"
+						y="45"
+						width="53"
 						height="11"
 						forecolor="#000000"
 						backcolor="#FFFFFF"
 						key="staticText-80"/>
 					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
 </box>
 					<textElement textAlignment="Center" verticalAlignment="Top" rotation="None" lineSpacing="Single">
 						<font fontName="Tahoma" pdfFontName="Helvetica" size="8" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 					</textElement>
 				<text><![CDATA[To]]></text>
 				</staticText>
-				<line direction="TopDown">
-					<reportElement
-						mode="Opaque"
-						x="0"
-						y="15"
-						width="540"
-						height="1"
-						forecolor="#000000"
-						backcolor="#FFFFFF"
-						key="line-96"/>
-					<graphicElement stretchType="NoStretch" fill="Solid" />
-				</line>
-				<line direction="TopDown">
-					<reportElement
-						mode="Opaque"
-						x="32"
-						y="16"
-						width="1"
-						height="40"
-						forecolor="#000000"
-						backcolor="#FFFFFF"
-						key="line-97"/>
-					<graphicElement stretchType="NoStretch" fill="Solid" />
-				</line>
-				<line direction="TopDown">
-					<reportElement
-						mode="Opaque"
-						x="33"
-						y="30"
-						width="506"
-						height="1"
-						forecolor="#000000"
-						backcolor="#FFFFFF"
-						key="line-98"/>
-					<graphicElement stretchType="NoStretch" fill="Solid" />
-				</line>
-				<line direction="TopDown">
-					<reportElement
-						mode="Opaque"
-						x="160"
-						y="16"
-						width="1"
-						height="40"
-						forecolor="#000000"
-						backcolor="#FFFFFF"
-						key="line-99"/>
-					<graphicElement stretchType="NoStretch" fill="Solid" />
-				</line>
-				<line direction="TopDown">
-					<reportElement
-						mode="Opaque"
-						x="54"
-						y="31"
-						width="1"
-						height="25"
-						forecolor="#000000"
-						backcolor="#FFFFFF"
-						key="line-100"/>
-					<graphicElement stretchType="NoStretch" fill="Solid" />
-				</line>
-				<line direction="TopDown">
-					<reportElement
-						mode="Opaque"
-						x="54"
-						y="43"
-						width="107"
-						height="1"
-						forecolor="#000000"
-						backcolor="#FFFFFF"
-						key="line-101"/>
-					<graphicElement stretchType="NoStretch" fill="Solid" />
-				</line>
-				<line direction="TopDown">
-					<reportElement
-						mode="Opaque"
-						x="107"
-						y="44"
-						width="1"
-						height="12"
-						forecolor="#000000"
-						backcolor="#FFFFFF"
-						key="line-102"/>
-					<graphicElement stretchType="NoStretch" fill="Solid" />
-				</line>
 				<staticText>
 					<reportElement
 						mode="Transparent"
-						x="162"
-						y="32"
-						width="20"
-						height="23"
+						x="160"
+						y="31"
+						width="24"
+						height="25"
 						forecolor="#000000"
 						backcolor="#FFFFFF"
 						key="staticText-81"/>
 					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
 </box>
 					<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
 						<font fontName="Tahoma" pdfFontName="Helvetica" size="8" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
@@ -1045,18 +897,18 @@
 					<reportElement
 						mode="Transparent"
 						x="184"
-						y="32"
-						width="101"
-						height="11"
+						y="31"
+						width="103"
+						height="14"
 						forecolor="#000000"
 						backcolor="#FFFFFF"
 						key="staticText-82"/>
 					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
 </box>
-					<textElement textAlignment="Center" verticalAlignment="Top" rotation="None" lineSpacing="Single">
+					<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
 						<font fontName="Tahoma" pdfFontName="Helvetica" size="8" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 					</textElement>
 				<text><![CDATA[Inclusive Serial Nos]]></text>
@@ -1064,17 +916,17 @@
 				<staticText>
 					<reportElement
 						mode="Transparent"
-						x="185"
-						y="44"
-						width="48"
+						x="184"
+						y="45"
+						width="50"
 						height="11"
 						forecolor="#000000"
 						backcolor="#FFFFFF"
 						key="staticText-83"/>
 					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
 </box>
 					<textElement textAlignment="Center" verticalAlignment="Top" rotation="None" lineSpacing="Single">
 						<font fontName="Tahoma" pdfFontName="Helvetica" size="8" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
@@ -1084,117 +936,57 @@
 				<staticText>
 					<reportElement
 						mode="Transparent"
-						x="235"
-						y="44"
-						width="51"
+						x="234"
+						y="45"
+						width="53"
 						height="11"
 						forecolor="#000000"
 						backcolor="#FFFFFF"
 						key="staticText-84"/>
 					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
 </box>
 					<textElement textAlignment="Center" verticalAlignment="Top" rotation="None" lineSpacing="Single">
 						<font fontName="Tahoma" pdfFontName="Helvetica" size="8" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 					</textElement>
 				<text><![CDATA[To]]></text>
 				</staticText>
-				<line direction="TopDown">
-					<reportElement
-						mode="Opaque"
-						x="184"
-						y="43"
-						width="102"
-						height="1"
-						forecolor="#000000"
-						backcolor="#FFFFFF"
-						key="line-103"/>
-					<graphicElement stretchType="NoStretch" fill="Solid" />
-				</line>
-				<line direction="TopDown">
-					<reportElement
-						mode="Opaque"
-						x="234"
-						y="44"
-						width="1"
-						height="11"
-						forecolor="#000000"
-						backcolor="#FFFFFF"
-						key="line-104"/>
-					<graphicElement stretchType="NoStretch" fill="Solid" />
-				</line>
-				<line direction="TopDown">
-					<reportElement
-						mode="Opaque"
-						x="184"
-						y="30"
-						width="1"
-						height="26"
-						forecolor="#000000"
-						backcolor="#FFFFFF"
-						key="line-105"/>
-					<graphicElement stretchType="NoStretch" fill="Solid" />
-				</line>
-				<line direction="TopDown">
-					<reportElement
-						mode="Opaque"
-						x="287"
-						y="16"
-						width="1"
-						height="40"
-						forecolor="#000000"
-						backcolor="#FFFFFF"
-						key="line-106"/>
-					<graphicElement stretchType="NoStretch" fill="Solid" />
-				</line>
 				<staticText>
 					<reportElement
 						mode="Transparent"
-						x="311"
-						y="32"
-						width="101"
-						height="11"
+						x="310"
+						y="31"
+						width="103"
+						height="14"
 						forecolor="#000000"
 						backcolor="#FFFFFF"
 						key="staticText-85"/>
 					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
 </box>
-					<textElement textAlignment="Center" verticalAlignment="Top" rotation="None" lineSpacing="Single">
+					<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
 						<font fontName="Tahoma" pdfFontName="Helvetica" size="8" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 					</textElement>
 				<text><![CDATA[Inclusive Serial Nos]]></text>
 				</staticText>
-				<line direction="TopDown">
-					<reportElement
-						mode="Opaque"
-						x="312"
-						y="43"
-						width="101"
-						height="1"
-						forecolor="#000000"
-						backcolor="#FFFFFF"
-						key="line-107"/>
-					<graphicElement stretchType="NoStretch" fill="Solid" />
-				</line>
 				<staticText>
 					<reportElement
 						mode="Transparent"
-						x="312"
-						y="44"
-						width="41"
+						x="310"
+						y="45"
+						width="52"
 						height="11"
 						forecolor="#000000"
 						backcolor="#FFFFFF"
 						key="staticText-86"/>
 					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
 </box>
 					<textElement textAlignment="Center" verticalAlignment="Top" rotation="None" lineSpacing="Single">
 						<font fontName="Tahoma" pdfFontName="Helvetica" size="8" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
@@ -1204,17 +996,17 @@
 				<staticText>
 					<reportElement
 						mode="Transparent"
-						x="364"
-						y="44"
-						width="42"
+						x="362"
+						y="45"
+						width="51"
 						height="11"
 						forecolor="#000000"
 						backcolor="#FFFFFF"
 						key="staticText-87"/>
 					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
 </box>
 					<textElement textAlignment="Center" verticalAlignment="Top" rotation="None" lineSpacing="Single">
 						<font fontName="Tahoma" pdfFontName="Helvetica" size="8" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
@@ -1224,75 +1016,39 @@
 				<staticText>
 					<reportElement
 						mode="Transparent"
-						x="289"
+						x="287"
 						y="31"
-						width="20"
-						height="23"
+						width="23"
+						height="25"
 						forecolor="#000000"
 						backcolor="#FFFFFF"
 						key="staticText-88"/>
 					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
 </box>
 					<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
 						<font fontName="Tahoma" pdfFontName="Helvetica" size="8" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 					</textElement>
 				<text><![CDATA[Qty]]></text>
 				</staticText>
-				<line direction="TopDown">
-					<reportElement
-						mode="Opaque"
-						x="310"
-						y="31"
-						width="1"
-						height="25"
-						forecolor="#000000"
-						backcolor="#FFFFFF"
-						key="line-108"/>
-					<graphicElement stretchType="NoStretch" fill="Solid" />
-				</line>
-				<line direction="TopDown">
-					<reportElement
-						mode="Opaque"
-						x="413"
-						y="16"
-						width="1"
-						height="40"
-						forecolor="#000000"
-						backcolor="#FFFFFF"
-						key="line-109"/>
-					<graphicElement stretchType="NoStretch" fill="Solid" />
-				</line>
-				<line direction="TopDown">
-					<reportElement
-						mode="Opaque"
-						x="362"
-						y="44"
-						width="1"
-						height="11"
-						forecolor="#000000"
-						backcolor="#FFFFFF"
-						key="line-110"/>
-					<graphicElement stretchType="NoStretch" fill="Solid" />
-				</line>
 				<staticText>
 					<reportElement
 						mode="Transparent"
-						x="438"
+						x="437"
 						y="31"
-						width="101"
-						height="11"
+						width="103"
+						height="14"
 						forecolor="#000000"
 						backcolor="#FFFFFF"
 						key="staticText-89"/>
 					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
 </box>
-					<textElement textAlignment="Center" verticalAlignment="Top" rotation="None" lineSpacing="Single">
+					<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
 						<font fontName="Tahoma" pdfFontName="Helvetica" size="8" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 					</textElement>
 				<text><![CDATA[Inclusive Serial Nos]]></text>
@@ -1300,17 +1056,17 @@
 				<staticText>
 					<reportElement
 						mode="Transparent"
-						x="416"
+						x="413"
 						y="31"
-						width="20"
-						height="23"
+						width="24"
+						height="25"
 						forecolor="#000000"
 						backcolor="#FFFFFF"
 						key="staticText-90"/>
 					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
 </box>
 					<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
 						<font fontName="Tahoma" pdfFontName="Helvetica" size="8" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
@@ -1320,17 +1076,17 @@
 				<staticText>
 					<reportElement
 						mode="Transparent"
-						x="438"
-						y="43"
-						width="51"
+						x="437"
+						y="45"
+						width="52"
 						height="11"
 						forecolor="#000000"
 						backcolor="#FFFFFF"
 						key="staticText-91"/>
 					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
 </box>
 					<textElement textAlignment="Center" verticalAlignment="Top" rotation="None" lineSpacing="Single">
 						<font fontName="Tahoma" pdfFontName="Helvetica" size="8" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
@@ -1340,8 +1096,8 @@
 				<staticText>
 					<reportElement
 						mode="Transparent"
-						x="488"
-						y="43"
+						x="489"
+						y="45"
 						width="51"
 						height="11"
 						forecolor="#000000"
@@ -1349,88 +1105,27 @@
 						key="staticText-92"/>
 					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
 </box>
 					<textElement textAlignment="Center" verticalAlignment="Top" rotation="None" lineSpacing="Single">
 						<font fontName="Tahoma" pdfFontName="Helvetica" size="8" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 					</textElement>
 				<text><![CDATA[To]]></text>
 				</staticText>
-				<line direction="TopDown">
-					<reportElement
-						mode="Opaque"
-						x="489"
-						y="43"
-						width="1"
-						height="13"
-						forecolor="#000000"
-						backcolor="#FFFFFF"
-						key="line-111"/>
-					<graphicElement stretchType="NoStretch" fill="Solid" />
-				</line>
-				<line direction="TopDown">
-					<reportElement
-						mode="Opaque"
-						x="437"
-						y="31"
-						width="1"
-						height="25"
-						forecolor="#000000"
-						backcolor="#FFFFFF"
-						key="line-112"/>
-					<graphicElement stretchType="NoStretch" fill="Solid" />
-				</line>
-				<line direction="TopDown">
-					<reportElement
-						mode="Opaque"
-						x="437"
-						y="42"
-						width="102"
-						height="1"
-						forecolor="#000000"
-						backcolor="#FFFFFF"
-						key="line-113"/>
-					<graphicElement stretchType="NoStretch" fill="Solid" />
-				</line>
-				<line direction="TopDown">
-					<reportElement
-						mode="Opaque"
-						x="0"
-						y="15"
-						width="1"
-						height="40"
-						forecolor="#000000"
-						backcolor="#FFFFFF"
-						key="line-114"/>
-					<graphicElement stretchType="NoStretch" fill="Solid" />
-				</line>
-				<line direction="TopDown">
-					<reportElement
-						mode="Opaque"
-						x="539"
-						y="15"
-						width="1"
-						height="40"
-						forecolor="#000000"
-						backcolor="#FFFFFF"
-						key="line-115"/>
-					<graphicElement stretchType="NoStretch" fill="Solid" />
-				</line>
 				<staticText>
 					<reportElement
 						mode="Transparent"
 						x="0"
-						y="1"
+						y="0"
 						width="540"
-						height="14"
+						height="15"
 						forecolor="#000000"
 						backcolor="#FFFFFF"
 						key="staticText-93"/>
-					<box>					<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-					<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+					<box>					<leftPen lineWidth="0.25" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.25" lineStyle="Solid"/>
+					<rightPen lineWidth="0.25" lineStyle="Solid"/>
 </box>
 					<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
 						<font fontName="Tahoma" pdfFontName="Helvetica-Bold" size="9" isBold="true" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
@@ -1468,7 +1163,9 @@
 						width="32"
 						height="14"
 						key="rectangle-2"/>
-					<graphicElement stretchType="NoStretch"/>
+					<graphicElement stretchType="NoStretch">
+					<pen lineWidth="0.25"/>
+</graphicElement>
 				</rectangle>
 				<rectangle>
 					<reportElement
@@ -1477,7 +1174,9 @@
 						width="22"
 						height="14"
 						key="rectangle-3"/>
-					<graphicElement stretchType="NoStretch"/>
+					<graphicElement stretchType="NoStretch">
+					<pen lineWidth="0.25"/>
+</graphicElement>
 				</rectangle>
 				<rectangle>
 					<reportElement
@@ -1486,7 +1185,9 @@
 						width="53"
 						height="14"
 						key="rectangle-4"/>
-					<graphicElement stretchType="NoStretch"/>
+					<graphicElement stretchType="NoStretch">
+					<pen lineWidth="0.25"/>
+</graphicElement>
 				</rectangle>
 				<rectangle>
 					<reportElement
@@ -1495,7 +1196,9 @@
 						width="53"
 						height="14"
 						key="rectangle-5"/>
-					<graphicElement stretchType="NoStretch"/>
+					<graphicElement stretchType="NoStretch">
+					<pen lineWidth="0.25"/>
+</graphicElement>
 				</rectangle>
 				<rectangle>
 					<reportElement
@@ -1504,7 +1207,9 @@
 						width="24"
 						height="14"
 						key="rectangle-6"/>
-					<graphicElement stretchType="NoStretch"/>
+					<graphicElement stretchType="NoStretch">
+					<pen lineWidth="0.25"/>
+</graphicElement>
 				</rectangle>
 				<rectangle>
 					<reportElement
@@ -1513,7 +1218,9 @@
 						width="50"
 						height="14"
 						key="rectangle-7"/>
-					<graphicElement stretchType="NoStretch"/>
+					<graphicElement stretchType="NoStretch">
+					<pen lineWidth="0.25"/>
+</graphicElement>
 				</rectangle>
 				<rectangle>
 					<reportElement
@@ -1522,7 +1229,9 @@
 						width="53"
 						height="14"
 						key="rectangle-8"/>
-					<graphicElement stretchType="NoStretch"/>
+					<graphicElement stretchType="NoStretch">
+					<pen lineWidth="0.25"/>
+</graphicElement>
 				</rectangle>
 				<rectangle>
 					<reportElement
@@ -1531,7 +1240,9 @@
 						width="23"
 						height="14"
 						key="rectangle-9"/>
-					<graphicElement stretchType="NoStretch"/>
+					<graphicElement stretchType="NoStretch">
+					<pen lineWidth="0.25"/>
+</graphicElement>
 				</rectangle>
 				<rectangle>
 					<reportElement
@@ -1540,7 +1251,9 @@
 						width="52"
 						height="14"
 						key="rectangle-10"/>
-					<graphicElement stretchType="NoStretch"/>
+					<graphicElement stretchType="NoStretch">
+					<pen lineWidth="0.25"/>
+</graphicElement>
 				</rectangle>
 				<rectangle>
 					<reportElement
@@ -1549,7 +1262,9 @@
 						width="51"
 						height="14"
 						key="rectangle-11"/>
-					<graphicElement stretchType="NoStretch"/>
+					<graphicElement stretchType="NoStretch">
+					<pen lineWidth="0.25"/>
+</graphicElement>
 				</rectangle>
 				<rectangle>
 					<reportElement
@@ -1558,7 +1273,9 @@
 						width="24"
 						height="14"
 						key="rectangle-12"/>
-					<graphicElement stretchType="NoStretch"/>
+					<graphicElement stretchType="NoStretch">
+					<pen lineWidth="0.25"/>
+</graphicElement>
 				</rectangle>
 				<rectangle>
 					<reportElement
@@ -1567,7 +1284,9 @@
 						width="52"
 						height="14"
 						key="rectangle-13"/>
-					<graphicElement stretchType="NoStretch"/>
+					<graphicElement stretchType="NoStretch">
+					<pen lineWidth="0.25"/>
+</graphicElement>
 				</rectangle>
 				<rectangle>
 					<reportElement
@@ -1576,7 +1295,9 @@
 						width="51"
 						height="14"
 						key="rectangle-14"/>
-					<graphicElement stretchType="NoStretch"/>
+					<graphicElement stretchType="NoStretch">
+					<pen lineWidth="0.25"/>
+</graphicElement>
 				</rectangle>
 				<rectangle>
 					<reportElement
@@ -1585,7 +1306,9 @@
 						width="32"
 						height="14"
 						key="rectangle-15"/>
-					<graphicElement stretchType="NoStretch"/>
+					<graphicElement stretchType="NoStretch">
+					<pen lineWidth="0.25"/>
+</graphicElement>
 				</rectangle>
 				<rectangle>
 					<reportElement
@@ -1594,7 +1317,9 @@
 						width="22"
 						height="14"
 						key="rectangle-16"/>
-					<graphicElement stretchType="NoStretch"/>
+					<graphicElement stretchType="NoStretch">
+					<pen lineWidth="0.25"/>
+</graphicElement>
 				</rectangle>
 				<rectangle>
 					<reportElement
@@ -1603,7 +1328,9 @@
 						width="53"
 						height="14"
 						key="rectangle-17"/>
-					<graphicElement stretchType="NoStretch"/>
+					<graphicElement stretchType="NoStretch">
+					<pen lineWidth="0.25"/>
+</graphicElement>
 				</rectangle>
 				<rectangle>
 					<reportElement
@@ -1612,7 +1339,9 @@
 						width="53"
 						height="14"
 						key="rectangle-18"/>
-					<graphicElement stretchType="NoStretch"/>
+					<graphicElement stretchType="NoStretch">
+					<pen lineWidth="0.25"/>
+</graphicElement>
 				</rectangle>
 				<rectangle>
 					<reportElement
@@ -1621,7 +1350,9 @@
 						width="24"
 						height="14"
 						key="rectangle-19"/>
-					<graphicElement stretchType="NoStretch"/>
+					<graphicElement stretchType="NoStretch">
+					<pen lineWidth="0.25"/>
+</graphicElement>
 				</rectangle>
 				<rectangle>
 					<reportElement
@@ -1630,7 +1361,9 @@
 						width="50"
 						height="14"
 						key="rectangle-20"/>
-					<graphicElement stretchType="NoStretch"/>
+					<graphicElement stretchType="NoStretch">
+					<pen lineWidth="0.25"/>
+</graphicElement>
 				</rectangle>
 				<rectangle>
 					<reportElement
@@ -1639,7 +1372,9 @@
 						width="53"
 						height="14"
 						key="rectangle-21"/>
-					<graphicElement stretchType="NoStretch"/>
+					<graphicElement stretchType="NoStretch">
+					<pen lineWidth="0.25"/>
+</graphicElement>
 				</rectangle>
 				<rectangle>
 					<reportElement
@@ -1648,7 +1383,9 @@
 						width="23"
 						height="14"
 						key="rectangle-22"/>
-					<graphicElement stretchType="NoStretch"/>
+					<graphicElement stretchType="NoStretch">
+					<pen lineWidth="0.25"/>
+</graphicElement>
 				</rectangle>
 				<rectangle>
 					<reportElement
@@ -1657,7 +1394,9 @@
 						width="52"
 						height="14"
 						key="rectangle-23"/>
-					<graphicElement stretchType="NoStretch"/>
+					<graphicElement stretchType="NoStretch">
+					<pen lineWidth="0.25"/>
+</graphicElement>
 				</rectangle>
 				<rectangle>
 					<reportElement
@@ -1666,7 +1405,9 @@
 						width="51"
 						height="14"
 						key="rectangle-24"/>
-					<graphicElement stretchType="NoStretch"/>
+					<graphicElement stretchType="NoStretch">
+					<pen lineWidth="0.25"/>
+</graphicElement>
 				</rectangle>
 				<rectangle>
 					<reportElement
@@ -1675,7 +1416,9 @@
 						width="24"
 						height="14"
 						key="rectangle-25"/>
-					<graphicElement stretchType="NoStretch"/>
+					<graphicElement stretchType="NoStretch">
+					<pen lineWidth="0.25"/>
+</graphicElement>
 				</rectangle>
 				<rectangle>
 					<reportElement
@@ -1684,7 +1427,9 @@
 						width="52"
 						height="14"
 						key="rectangle-26"/>
-					<graphicElement stretchType="NoStretch"/>
+					<graphicElement stretchType="NoStretch">
+					<pen lineWidth="0.25"/>
+</graphicElement>
 				</rectangle>
 				<rectangle>
 					<reportElement
@@ -1693,7 +1438,9 @@
 						width="51"
 						height="14"
 						key="rectangle-27"/>
-					<graphicElement stretchType="NoStretch"/>
+					<graphicElement stretchType="NoStretch">
+					<pen lineWidth="0.25"/>
+</graphicElement>
 				</rectangle>
 				<rectangle>
 					<reportElement
@@ -1702,7 +1449,9 @@
 						width="32"
 						height="14"
 						key="rectangle-28"/>
-					<graphicElement stretchType="NoStretch"/>
+					<graphicElement stretchType="NoStretch">
+					<pen lineWidth="0.25"/>
+</graphicElement>
 				</rectangle>
 				<rectangle>
 					<reportElement
@@ -1711,7 +1460,9 @@
 						width="22"
 						height="14"
 						key="rectangle-29"/>
-					<graphicElement stretchType="NoStretch"/>
+					<graphicElement stretchType="NoStretch">
+					<pen lineWidth="0.25"/>
+</graphicElement>
 				</rectangle>
 				<rectangle>
 					<reportElement
@@ -1720,7 +1471,9 @@
 						width="53"
 						height="14"
 						key="rectangle-30"/>
-					<graphicElement stretchType="NoStretch"/>
+					<graphicElement stretchType="NoStretch">
+					<pen lineWidth="0.25"/>
+</graphicElement>
 				</rectangle>
 				<rectangle>
 					<reportElement
@@ -1729,7 +1482,9 @@
 						width="53"
 						height="14"
 						key="rectangle-31"/>
-					<graphicElement stretchType="NoStretch"/>
+					<graphicElement stretchType="NoStretch">
+					<pen lineWidth="0.25"/>
+</graphicElement>
 				</rectangle>
 				<rectangle>
 					<reportElement
@@ -1738,7 +1493,9 @@
 						width="24"
 						height="14"
 						key="rectangle-32"/>
-					<graphicElement stretchType="NoStretch"/>
+					<graphicElement stretchType="NoStretch">
+					<pen lineWidth="0.25"/>
+</graphicElement>
 				</rectangle>
 				<rectangle>
 					<reportElement
@@ -1747,7 +1504,9 @@
 						width="50"
 						height="14"
 						key="rectangle-33"/>
-					<graphicElement stretchType="NoStretch"/>
+					<graphicElement stretchType="NoStretch">
+					<pen lineWidth="0.25"/>
+</graphicElement>
 				</rectangle>
 				<rectangle>
 					<reportElement
@@ -1756,7 +1515,9 @@
 						width="53"
 						height="14"
 						key="rectangle-34"/>
-					<graphicElement stretchType="NoStretch"/>
+					<graphicElement stretchType="NoStretch">
+					<pen lineWidth="0.25"/>
+</graphicElement>
 				</rectangle>
 				<rectangle>
 					<reportElement
@@ -1765,7 +1526,9 @@
 						width="23"
 						height="14"
 						key="rectangle-35"/>
-					<graphicElement stretchType="NoStretch"/>
+					<graphicElement stretchType="NoStretch">
+					<pen lineWidth="0.25"/>
+</graphicElement>
 				</rectangle>
 				<rectangle>
 					<reportElement
@@ -1774,7 +1537,9 @@
 						width="52"
 						height="14"
 						key="rectangle-36"/>
-					<graphicElement stretchType="NoStretch"/>
+					<graphicElement stretchType="NoStretch">
+					<pen lineWidth="0.25"/>
+</graphicElement>
 				</rectangle>
 				<rectangle>
 					<reportElement
@@ -1783,7 +1548,9 @@
 						width="51"
 						height="14"
 						key="rectangle-37"/>
-					<graphicElement stretchType="NoStretch"/>
+					<graphicElement stretchType="NoStretch">
+					<pen lineWidth="0.25"/>
+</graphicElement>
 				</rectangle>
 				<rectangle>
 					<reportElement
@@ -1792,7 +1559,9 @@
 						width="24"
 						height="14"
 						key="rectangle-38"/>
-					<graphicElement stretchType="NoStretch"/>
+					<graphicElement stretchType="NoStretch">
+					<pen lineWidth="0.25"/>
+</graphicElement>
 				</rectangle>
 				<rectangle>
 					<reportElement
@@ -1801,7 +1570,9 @@
 						width="52"
 						height="14"
 						key="rectangle-39"/>
-					<graphicElement stretchType="NoStretch"/>
+					<graphicElement stretchType="NoStretch">
+					<pen lineWidth="0.25"/>
+</graphicElement>
 				</rectangle>
 				<rectangle>
 					<reportElement
@@ -1810,7 +1581,9 @@
 						width="51"
 						height="14"
 						key="rectangle-40"/>
-					<graphicElement stretchType="NoStretch"/>
+					<graphicElement stretchType="NoStretch">
+					<pen lineWidth="0.25"/>
+</graphicElement>
 				</rectangle>
 				<rectangle>
 					<reportElement
@@ -1819,7 +1592,9 @@
 						width="32"
 						height="14"
 						key="rectangle-41"/>
-					<graphicElement stretchType="NoStretch"/>
+					<graphicElement stretchType="NoStretch">
+					<pen lineWidth="0.25"/>
+</graphicElement>
 				</rectangle>
 				<rectangle>
 					<reportElement
@@ -1828,7 +1603,9 @@
 						width="22"
 						height="14"
 						key="rectangle-42"/>
-					<graphicElement stretchType="NoStretch"/>
+					<graphicElement stretchType="NoStretch">
+					<pen lineWidth="0.25"/>
+</graphicElement>
 				</rectangle>
 				<rectangle>
 					<reportElement
@@ -1837,7 +1614,9 @@
 						width="53"
 						height="14"
 						key="rectangle-43"/>
-					<graphicElement stretchType="NoStretch"/>
+					<graphicElement stretchType="NoStretch">
+					<pen lineWidth="0.25"/>
+</graphicElement>
 				</rectangle>
 				<rectangle>
 					<reportElement
@@ -1846,7 +1625,9 @@
 						width="53"
 						height="14"
 						key="rectangle-44"/>
-					<graphicElement stretchType="NoStretch"/>
+					<graphicElement stretchType="NoStretch">
+					<pen lineWidth="0.25"/>
+</graphicElement>
 				</rectangle>
 				<rectangle>
 					<reportElement
@@ -1855,7 +1636,9 @@
 						width="24"
 						height="14"
 						key="rectangle-45"/>
-					<graphicElement stretchType="NoStretch"/>
+					<graphicElement stretchType="NoStretch">
+					<pen lineWidth="0.25"/>
+</graphicElement>
 				</rectangle>
 				<rectangle>
 					<reportElement
@@ -1864,7 +1647,9 @@
 						width="50"
 						height="14"
 						key="rectangle-46"/>
-					<graphicElement stretchType="NoStretch"/>
+					<graphicElement stretchType="NoStretch">
+					<pen lineWidth="0.25"/>
+</graphicElement>
 				</rectangle>
 				<rectangle>
 					<reportElement
@@ -1873,7 +1658,9 @@
 						width="53"
 						height="14"
 						key="rectangle-47"/>
-					<graphicElement stretchType="NoStretch"/>
+					<graphicElement stretchType="NoStretch">
+					<pen lineWidth="0.25"/>
+</graphicElement>
 				</rectangle>
 				<rectangle>
 					<reportElement
@@ -1882,7 +1669,9 @@
 						width="23"
 						height="14"
 						key="rectangle-48"/>
-					<graphicElement stretchType="NoStretch"/>
+					<graphicElement stretchType="NoStretch">
+					<pen lineWidth="0.25"/>
+</graphicElement>
 				</rectangle>
 				<rectangle>
 					<reportElement
@@ -1891,7 +1680,9 @@
 						width="52"
 						height="14"
 						key="rectangle-49"/>
-					<graphicElement stretchType="NoStretch"/>
+					<graphicElement stretchType="NoStretch">
+					<pen lineWidth="0.25"/>
+</graphicElement>
 				</rectangle>
 				<rectangle>
 					<reportElement
@@ -1900,7 +1691,9 @@
 						width="51"
 						height="14"
 						key="rectangle-50"/>
-					<graphicElement stretchType="NoStretch"/>
+					<graphicElement stretchType="NoStretch">
+					<pen lineWidth="0.25"/>
+</graphicElement>
 				</rectangle>
 				<rectangle>
 					<reportElement
@@ -1909,7 +1702,9 @@
 						width="24"
 						height="14"
 						key="rectangle-51"/>
-					<graphicElement stretchType="NoStretch"/>
+					<graphicElement stretchType="NoStretch">
+					<pen lineWidth="0.25"/>
+</graphicElement>
 				</rectangle>
 				<rectangle>
 					<reportElement
@@ -1918,7 +1713,9 @@
 						width="52"
 						height="14"
 						key="rectangle-52"/>
-					<graphicElement stretchType="NoStretch"/>
+					<graphicElement stretchType="NoStretch">
+					<pen lineWidth="0.25"/>
+</graphicElement>
 				</rectangle>
 				<rectangle>
 					<reportElement
@@ -1927,7 +1724,9 @@
 						width="51"
 						height="14"
 						key="rectangle-53"/>
-					<graphicElement stretchType="NoStretch"/>
+					<graphicElement stretchType="NoStretch">
+					<pen lineWidth="0.25"/>
+</graphicElement>
 				</rectangle>
 				<rectangle>
 					<reportElement
@@ -1936,7 +1735,9 @@
 						width="32"
 						height="14"
 						key="rectangle-54"/>
-					<graphicElement stretchType="NoStretch"/>
+					<graphicElement stretchType="NoStretch">
+					<pen lineWidth="0.25"/>
+</graphicElement>
 				</rectangle>
 				<rectangle>
 					<reportElement
@@ -1945,7 +1746,9 @@
 						width="22"
 						height="14"
 						key="rectangle-55"/>
-					<graphicElement stretchType="NoStretch"/>
+					<graphicElement stretchType="NoStretch">
+					<pen lineWidth="0.25"/>
+</graphicElement>
 				</rectangle>
 				<rectangle>
 					<reportElement
@@ -1954,7 +1757,9 @@
 						width="53"
 						height="14"
 						key="rectangle-56"/>
-					<graphicElement stretchType="NoStretch"/>
+					<graphicElement stretchType="NoStretch">
+					<pen lineWidth="0.25"/>
+</graphicElement>
 				</rectangle>
 				<rectangle>
 					<reportElement
@@ -1963,7 +1768,9 @@
 						width="53"
 						height="14"
 						key="rectangle-57"/>
-					<graphicElement stretchType="NoStretch"/>
+					<graphicElement stretchType="NoStretch">
+					<pen lineWidth="0.25"/>
+</graphicElement>
 				</rectangle>
 				<rectangle>
 					<reportElement
@@ -1972,7 +1779,9 @@
 						width="24"
 						height="14"
 						key="rectangle-58"/>
-					<graphicElement stretchType="NoStretch"/>
+					<graphicElement stretchType="NoStretch">
+					<pen lineWidth="0.25"/>
+</graphicElement>
 				</rectangle>
 				<rectangle>
 					<reportElement
@@ -1981,7 +1790,9 @@
 						width="50"
 						height="14"
 						key="rectangle-59"/>
-					<graphicElement stretchType="NoStretch"/>
+					<graphicElement stretchType="NoStretch">
+					<pen lineWidth="0.25"/>
+</graphicElement>
 				</rectangle>
 				<rectangle>
 					<reportElement
@@ -1990,7 +1801,9 @@
 						width="53"
 						height="14"
 						key="rectangle-60"/>
-					<graphicElement stretchType="NoStretch"/>
+					<graphicElement stretchType="NoStretch">
+					<pen lineWidth="0.25"/>
+</graphicElement>
 				</rectangle>
 				<rectangle>
 					<reportElement
@@ -1999,7 +1812,9 @@
 						width="23"
 						height="14"
 						key="rectangle-61"/>
-					<graphicElement stretchType="NoStretch"/>
+					<graphicElement stretchType="NoStretch">
+					<pen lineWidth="0.25"/>
+</graphicElement>
 				</rectangle>
 				<rectangle>
 					<reportElement
@@ -2008,7 +1823,9 @@
 						width="52"
 						height="14"
 						key="rectangle-62"/>
-					<graphicElement stretchType="NoStretch"/>
+					<graphicElement stretchType="NoStretch">
+					<pen lineWidth="0.25"/>
+</graphicElement>
 				</rectangle>
 				<rectangle>
 					<reportElement
@@ -2017,7 +1834,9 @@
 						width="51"
 						height="14"
 						key="rectangle-63"/>
-					<graphicElement stretchType="NoStretch"/>
+					<graphicElement stretchType="NoStretch">
+					<pen lineWidth="0.25"/>
+</graphicElement>
 				</rectangle>
 				<rectangle>
 					<reportElement
@@ -2026,7 +1845,9 @@
 						width="24"
 						height="14"
 						key="rectangle-64"/>
-					<graphicElement stretchType="NoStretch"/>
+					<graphicElement stretchType="NoStretch">
+					<pen lineWidth="0.25"/>
+</graphicElement>
 				</rectangle>
 				<rectangle>
 					<reportElement
@@ -2035,7 +1856,9 @@
 						width="52"
 						height="14"
 						key="rectangle-65"/>
-					<graphicElement stretchType="NoStretch"/>
+					<graphicElement stretchType="NoStretch">
+					<pen lineWidth="0.25"/>
+</graphicElement>
 				</rectangle>
 				<rectangle>
 					<reportElement
@@ -2044,7 +1867,9 @@
 						width="51"
 						height="14"
 						key="rectangle-66"/>
-					<graphicElement stretchType="NoStretch"/>
+					<graphicElement stretchType="NoStretch">
+					<pen lineWidth="0.25"/>
+</graphicElement>
 				</rectangle>
 				<rectangle>
 					<reportElement
@@ -2053,7 +1878,9 @@
 						width="32"
 						height="14"
 						key="rectangle-67"/>
-					<graphicElement stretchType="NoStretch"/>
+					<graphicElement stretchType="NoStretch">
+					<pen lineWidth="0.25"/>
+</graphicElement>
 				</rectangle>
 				<rectangle>
 					<reportElement
@@ -2062,7 +1889,9 @@
 						width="22"
 						height="14"
 						key="rectangle-68"/>
-					<graphicElement stretchType="NoStretch"/>
+					<graphicElement stretchType="NoStretch">
+					<pen lineWidth="0.25"/>
+</graphicElement>
 				</rectangle>
 				<rectangle>
 					<reportElement
@@ -2071,7 +1900,9 @@
 						width="53"
 						height="14"
 						key="rectangle-69"/>
-					<graphicElement stretchType="NoStretch"/>
+					<graphicElement stretchType="NoStretch">
+					<pen lineWidth="0.25"/>
+</graphicElement>
 				</rectangle>
 				<rectangle>
 					<reportElement
@@ -2080,7 +1911,9 @@
 						width="53"
 						height="14"
 						key="rectangle-70"/>
-					<graphicElement stretchType="NoStretch"/>
+					<graphicElement stretchType="NoStretch">
+					<pen lineWidth="0.25"/>
+</graphicElement>
 				</rectangle>
 				<rectangle>
 					<reportElement
@@ -2089,7 +1922,9 @@
 						width="24"
 						height="14"
 						key="rectangle-71"/>
-					<graphicElement stretchType="NoStretch"/>
+					<graphicElement stretchType="NoStretch">
+					<pen lineWidth="0.25"/>
+</graphicElement>
 				</rectangle>
 				<rectangle>
 					<reportElement
@@ -2098,7 +1933,9 @@
 						width="50"
 						height="14"
 						key="rectangle-72"/>
-					<graphicElement stretchType="NoStretch"/>
+					<graphicElement stretchType="NoStretch">
+					<pen lineWidth="0.25"/>
+</graphicElement>
 				</rectangle>
 				<rectangle>
 					<reportElement
@@ -2107,7 +1944,9 @@
 						width="53"
 						height="14"
 						key="rectangle-73"/>
-					<graphicElement stretchType="NoStretch"/>
+					<graphicElement stretchType="NoStretch">
+					<pen lineWidth="0.25"/>
+</graphicElement>
 				</rectangle>
 				<rectangle>
 					<reportElement
@@ -2116,7 +1955,9 @@
 						width="23"
 						height="14"
 						key="rectangle-74"/>
-					<graphicElement stretchType="NoStretch"/>
+					<graphicElement stretchType="NoStretch">
+					<pen lineWidth="0.25"/>
+</graphicElement>
 				</rectangle>
 				<rectangle>
 					<reportElement
@@ -2125,7 +1966,9 @@
 						width="52"
 						height="14"
 						key="rectangle-75"/>
-					<graphicElement stretchType="NoStretch"/>
+					<graphicElement stretchType="NoStretch">
+					<pen lineWidth="0.25"/>
+</graphicElement>
 				</rectangle>
 				<rectangle>
 					<reportElement
@@ -2134,7 +1977,9 @@
 						width="51"
 						height="14"
 						key="rectangle-76"/>
-					<graphicElement stretchType="NoStretch"/>
+					<graphicElement stretchType="NoStretch">
+					<pen lineWidth="0.25"/>
+</graphicElement>
 				</rectangle>
 				<rectangle>
 					<reportElement
@@ -2143,7 +1988,9 @@
 						width="24"
 						height="14"
 						key="rectangle-77"/>
-					<graphicElement stretchType="NoStretch"/>
+					<graphicElement stretchType="NoStretch">
+					<pen lineWidth="0.25"/>
+</graphicElement>
 				</rectangle>
 				<rectangle>
 					<reportElement
@@ -2152,7 +1999,9 @@
 						width="52"
 						height="14"
 						key="rectangle-78"/>
-					<graphicElement stretchType="NoStretch"/>
+					<graphicElement stretchType="NoStretch">
+					<pen lineWidth="0.25"/>
+</graphicElement>
 				</rectangle>
 				<rectangle>
 					<reportElement
@@ -2161,7 +2010,9 @@
 						width="51"
 						height="14"
 						key="rectangle-79"/>
-					<graphicElement stretchType="NoStretch"/>
+					<graphicElement stretchType="NoStretch">
+					<pen lineWidth="0.25"/>
+</graphicElement>
 				</rectangle>
 			</band>
 			</groupHeader>
@@ -2179,9 +2030,11 @@
 						x="0"
 						y="0"
 						width="540"
-						height="86"
+						height="87"
 						key="rectangle-1"/>
-					<graphicElement stretchType="NoStretch"/>
+					<graphicElement stretchType="NoStretch">
+					<pen lineWidth="0.25"/>
+</graphicElement>
 				</rectangle>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -2334,7 +2187,7 @@
 			</band>
 		</background>
 		<title>
-			<band height="115"  isSplitAllowed="true" >
+			<band height="127"  isSplitAllowed="true" >
 				<line direction="TopDown">
 					<reportElement
 						mode="Opaque"
@@ -2372,8 +2225,8 @@
 				<staticText>
 					<reportElement
 						mode="Transparent"
-						x="190"
-						y="90"
+						x="188"
+						y="108"
 						width="24"
 						height="13"
 						forecolor="#000000"
@@ -2412,8 +2265,8 @@
 				<textField isStretchWithOverflow="false" pattern="MM/dd/yyyy" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						mode="Transparent"
-						x="216"
-						y="90"
+						x="214"
+						y="108"
 						width="145"
 						height="13"
 						forecolor="#000000"
@@ -2532,16 +2385,30 @@
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="371"
-						y="84"
+						y="105"
 						width="169"
 						height="19"
 						key="textField-20"/>
 					<box></box>
-					<textElement textAlignment="Center" verticalAlignment="Middle">
+					<textElement textAlignment="Left" verticalAlignment="Middle">
 						<font fontName="Tahoma" pdfFontName="Helvetica-Bold" size="14" isBold="true"/>
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[$F{fund}]]></textFieldExpression>
 				</textField>
+				<image  scaleImage="FillFrame" vAlign="Top" hAlign="Left" isUsingCache="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						mode="Opaque"
+						x="426"
+						y="42"
+						width="69"
+						height="62"
+						forecolor="#000000"
+						backcolor="#FFFFFF"
+						key="image-2"/>
+					<box></box>
+					<graphicElement stretchType="NoStretch" fill="Solid" />
+					<imageExpression class="java.lang.String"><![CDATA[$P{LOGOTREASURY}]]></imageExpression>
+				</image>
 			</band>
 		</title>
 		<pageHeader>
@@ -2554,18 +2421,6 @@
 		</columnHeader>
 		<detail>
 			<band height="0"  isSplitAllowed="true" >
-				<line direction="TopDown">
-					<reportElement
-						mode="Opaque"
-						x="81"
-						y="-461"
-						width="1"
-						height="15"
-						forecolor="#000000"
-						backcolor="#FFFFFF"
-						key="line-157"/>
-					<graphicElement stretchType="NoStretch" fill="Solid" />
-				</line>
 			</band>
 		</detail>
 		<columnFooter>
@@ -2632,7 +2487,7 @@
 					<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
 						<font fontName="Tahoma" pdfFontName="Helvetica" size="7" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA["GENERATED BY : ETRACS 2.0  LTR  PRINTED BY : " + $P{PRINTEDBY} + "  PRINT DATE : "  + (new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format($P{PRINTDATE}) )]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA["GENERATED BY : ETRACS 2.5  LTR  PRINTED BY : " + $P{PRINTEDBY} + "  PRINT DATE : "  + (new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format($P{PRINTDATE}) )]]></textFieldExpression>
 				</textField>
 			</band>
 		</pageFooter>
@@ -2933,7 +2788,7 @@
 				<line direction="TopDown">
 					<reportElement
 						mode="Opaque"
-						x="539"
+						x="540"
 						y="0"
 						width="1"
 						height="106"

@@ -18,6 +18,7 @@ class BankDepositReportService  {
 	@ProxyMethod 
 	def generateRCDByFund( deposit, fund ) {
 		def data = deposit.clone();
+		data.fund = fund; 
 		def params = [bankdepositid: data.objid, fundname: fund.objid ]
 		data.collectionsummaries = em.sqlContext.createNamedQuery('bankdepositreport:getCollectionSummaryByAFAndFund').setParameters(params ).resultList
 		if( data.collectionsummaries ) {
@@ -29,10 +30,12 @@ class BankDepositReportService  {
 		data.remittancedeposits.addAll(em.sqlContext.createNamedQuery('bankdepositreport:getCheckFundSummary').setParameters(params ).resultList)
 
 		data.remittedforms=[]
+		/** 
 		if('SEF'.equals(fund.title)) {
 			params.afid = '56'
 			data.remittedforms = em.sqlContext.createNamedQuery('bankdepositreport:getSerialRemittedForms').setParameters(params ).resultList
-		}
+		} 
+		**/
 		data.nonserialremittances = [[:],[:]]
 		return data;
 	}
