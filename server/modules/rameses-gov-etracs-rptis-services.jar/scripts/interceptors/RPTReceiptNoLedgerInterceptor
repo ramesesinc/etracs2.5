@@ -1,0 +1,72 @@
+import com.rameses.annotations.*
+import com.rameses.eserver.*;
+import com.rameses.common.*;
+import com.rameses.services.extended.*;
+
+class RPTReceiptNoLedgerInterceptor
+{
+	@ActiveDB('cashreceiptrpt')
+	def em
+
+	@Service('RPTReceiptNoLedgerService')
+	def svc 
+
+
+	@After(pattern="CashReceiptService.open", eval="#{result.formno=='56'}", index=100) 
+	public void interceptOpenReceipt( evt ) {
+		def receipt = evt.result
+		receipt._items = svc.getItemsForPrinting(receipt)
+		receipt.itemcount = receipt._items.size()
+	}
+
+	@Before(pattern="CashReceiptService.post", eval="#{args[0].formno=='56' && args[0].txntype == 'noledger'}") 
+	public void interceptBeforePostNoLedgerReceipt( evt ) {
+		def receipt = evt.args[0]
+
+		//summarize items
+		receipt.items = []
+		receipt.ledgers.each{ rl ->
+			rl.items.each{ rli ->
+				summarizeReceiptItem(receipt, rli.basicacct?.objid, rli.basic)
+				summarizeReceiptItem(receipt, rli.basicintacct?.objid, rli.basicint)
+				summarizeReceiptItem(receipt, rli.sefacct?.objid, rli.sef)
+				summarizeReceiptItem(receipt, rli.sefintacct?.objid, rli.sefint)
+				summarizeReceiptItem(receipt, rli.firecodeacct?.objid, rli.firecode)
+			}
+		}
+		receipt.items.removeAll(receipt.items.findAll{it.amount <= 0.0 })
+	}
+
+
+	@After(pattern="CashReceiptService.post", eval="#{result.formno=='56' && args[0].txntype == 'noledger'}") 
+	public void interceptPostNoLedgerReceipt( evt ) {
+		def receipt = evt.result
+		svc.createReceipt(receipt)
+		receipt._items = svc.getItemsForPrinting(receipt)
+		receipt.itemcount = receipt._items.size()
+		receipt.ledgers = null
+	}
+
+
+	void summarizeReceiptItem(receipt, acctid, amount){
+		if (!acctid) return 
+		def item = receipt.items.find{it.item.objid == acctid}
+		if (!item) {
+			item = createReceiptItem(receipt, acctid)
+			receipt.items << item 
+		}
+		item.amount += amount
+	}
+
+
+	def createReceiptItem(receipt, acctid){
+		return [
+			objid  		: 'RI' + new java.rmi.server.UID(),
+			receiptid 	: receipt.objid,
+			item        : em.findRevenueItemById([objid:acctid]),
+			amount		: 0.0,
+			remarks		: null,
+		]
+	}
+}
+

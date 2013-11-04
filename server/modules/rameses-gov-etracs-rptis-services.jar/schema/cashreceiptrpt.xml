@@ -24,8 +24,8 @@
 		<field name="basiccredit" required="true" type="decimal" />
 		<field name="basicamnesty" required="true" type="decimal" />
 		<field name="basicintamnesty" required="true" type="decimal" />
-		<field name="basicacct_objid" required="true"  />
-		<field name="basicintacct_objid" required="true"  />
+		<field name="basicacct_objid"  />
+		<field name="basicintacct_objid" />
 
 		<field name="sef" required="true" type="decimal" />
 		<field name="sefint" required="true" type="decimal" />
@@ -33,12 +33,26 @@
 		<field name="sefcredit" required="true" type="decimal" />
 		<field name="sefamnesty" required="true" type="decimal" />
 		<field name="sefintamnesty" required="true" type="decimal" />
-		<field name="sefacct_objid" required="true"  />
-		<field name="sefintacct_objid" required="true"  />
+		<field name="sefacct_objid"  />
+		<field name="sefintacct_objid" />
 
 		<field name="firecode" required="true" type="decimal" />
 		<field name="firecodeacct_objid" />
-		<field name="revtype" required="true" type="decimal" />
-		<field name="qtrly" required="true" type="decimal" />
+		<field name="revtype" required="true" />
+		<field name="qtrly" required="true" type="integer" />
+	</element>
+
+	<element name="noledgeritem" tablename="cashreceiptitem_rpt_noledger">
+		<field name="objid" primary="true" />
+		<field name="tdno" required="true" />
+		<field name="pin" />
+		<field name="txntype_objid" />
+		<field name="rputype" />
+		<field name="cadastrallotno" />
+		<field name="classification_objid" required="true" />
+		<field name="actualuse_objid" required="true" />
+		<field name="barangay_objid" required="true" />
+		<field name="av" required="true" type="decimal" />
+		<field name="originalav" required="true" type="decimal" />
 	</element>
 </schema>

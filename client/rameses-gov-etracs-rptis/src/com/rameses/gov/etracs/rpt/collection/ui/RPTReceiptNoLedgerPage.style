@@ -1,0 +1,7 @@
+"removeLedger" [selectedLedger != null]{
+    enabled:true;
+}
+
+"removeLedger" [selectedLedger == null]{
+    enabled:false;
+}

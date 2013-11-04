@@ -1,0 +1,165 @@
+import com.rameses.annotations.*
+import com.rameses.common.*
+import com.rameses.services.extended.*
+
+class RPTReceiptNoLedgerService
+{
+
+	@ActiveDB('cashreceiptrpt')
+	def em
+
+	@Service('DateService')
+	def dtSvc
+
+	@Service('NumberService')
+	def numSvc
+
+	@Service('RPTBillingService')
+	def billingSvc
+
+	@Service('FAASService')
+	def faasSvc
+
+	def SCHEMA_RECEIPT_ITEM = 'cashreceiptrptitem'
+	def SCHEMA_NOLEDGER_ITEM = 'noledgeritem'
+
+
+
+
+	@ProxyMethod
+	public def getTxntypes(  ) {
+		return faasSvc.getTxnTypes();	
+	}
+
+	@ProxyMethod
+	public def calculateDue(bill, entity){
+		if (!bill.billdate) 
+			bill.billdate = dtSvc.serverDate 
+
+		entity.objid = 'RL' + new java.rmi.server.UID()
+		bill.ledgers = []
+		bill.ledgers << createLedgerInfo(bill, entity)
+		def data = billingSvc.executeRules(bill)
+		bill.ledgers.each{bl ->
+			bl.items.each{ item ->
+				def ledger = data.ledgers.find{it.objid == item.objid}
+				if (ledger){
+					billingSvc.updateLedgerItemData(item, ledger)
+					item.basicnet = item.basic + item.basicint - item.basicdisc 
+					item.sefnet   = item.sef + item.sefint - item.sefdisc 
+					item.amount = item.basicnet + item.sefnet + item.firecode
+				}
+			}
+			bl.basicnet = bl.items.basicnet.sum();
+			bl.sefnet   = bl.items.sefnet.sum();
+			bl.firecode = bl.items.firecode.sum();
+			bl.amount   = bl.items.amount.sum();
+			bl.period   = entity.fromqtr + 'Q,' + entity.fromyear + '-' + entity.toqtr + 'Q,' + entity.toyear 
+		}
+		return bill.ledgers.first()
+	}	
+
+
+	@ProxyMethod
+	public def createReceipt( receipt ) {
+		def pdate = dtSvc.parseDate(receipt.txndate, null)
+		receipt.year = pdate.year
+		receipt.qtr = pdate.qtr
+		receipt.month = pdate.month
+		receipt.day = pdate.day
+		
+		em.create(receipt)
+		receipt.ledgers.each{ rl ->
+			rl.items.each{rli ->
+				rli.rptreceiptid = receipt.objid 
+				em.create(rli, SCHEMA_RECEIPT_ITEM)
+				em.create(rli, SCHEMA_NOLEDGER_ITEM)
+			}
+		}
+	}
+
+	@ProxyMethod
+	public def getItemsForPrinting( receipt ) {
+		return em.getNoLedgerItemsForPrinting(receipt)
+	}
+
+
+
+	def createLedgerInfo(bill, entity){
+		entity.lastyearpaid = (entity.fromqtr == 1 ? entity.fromyear - 1 : entity.fromyear )
+		entity.lastqtrpaid  = (entity.fromqtr == 1 ? 4 : entity.fromqtr )
+		def rl = [
+			lastyearpaid 	: entity.lastyearpaid,
+			lastqtrpaid		: entity.lastqtrpaid,
+			tdno			: entity.tdno,
+			rputype			: entity.rputype,
+			fullpin			: entity.pin ,
+			totalareaha		: 0.0 ,
+			totalareasqm	: 0.0,
+			totalav			: entity.av ,
+			barangay 		: entity.barangay.name,
+			cadastrallotno  : null ,
+			barangayid 		: entity.barangay.objid ,
+			classcode 		: entity.classification.code ,
+			actualusecode   : entity.actualuse.code,
+			fromyear 		: (entity.lastqtrpaid = 4 ? entity.lastyearpaid + 1 : entity.lastyearpaid ),
+			fromqtr 		: (entity.lastqtrpaid = 4 ? 1 : entity.lastqtrpaid + 1 ),
+		]
+
+		def curryr = dtSvc.serverYear 
+
+		rl.items = []
+		for (int yr = entity.fromyear; yr <= entity.toyear; yr++){
+			if (yr == entity.fromyear && entity.fromyear == entity.toyear && (entity.fromqtr != 1 || entity.toqtr != 4)){
+				rl.items += createQuarterlyItems(entity, yr, entity.fromqtr, entity.toqtr) 
+			}
+			else if (yr == entity.fromyear && entity.fromqtr != 1){
+				rl.items += createQuarterlyItems(entity, yr, entity.fromqtr, 4) 
+			}
+			else if (yr == entity.toyear && entity.toqtr != 4){
+				rl.items += createQuarterlyItems(entity, yr, 1, entity.toqtr) 
+			}
+			else if (yr >= curryr){
+				rl.items += createQuarterlyItems(entity, yr, 1, 4) 
+			}
+			else{
+				rl.items << createItemInfo(entity, yr, 0, entity.av, 1) 
+			}
+		}
+
+		return rl 
+	}
+
+
+	def createQuarterlyItems(entity, yr, fromqtr, toqtr){
+		def items = [] 
+		fromqtr.upto(toqtr){ qtr ->
+			def qtrlyav = numSvc.round(entity.av / 4)
+			def forthav   = numSvc.round( entity.av - (qtrlyav * 3))
+			items << createItemInfo(entity, yr, qtr, (qtr != 4 ? qtrlyav : forthav), 1)
+		}
+		return items 
+	}
+
+	def createItemInfo(entity, yr, qtr, av, qtrly) {
+		return [
+			objid 			: entity.objid + '-' + yr + '' + qtr,
+			rptledgerid 	: null,
+			rptledgeritemid : null,
+			originalav 		: entity.av, 
+			av 				: av,
+			qtrly 			: qtrly,
+			revtype 		: null,
+			tdno 			: entity.tdno, 
+			year 			: yr,
+			qtr 			: qtr,
+			txntype 	    : entity.txntype,
+			rputype 		: entity.rputype,
+			classification  : entity.classification,
+			actualuse       : entity.classification,
+			barangay 	    : entity.barangay,
+			barangayid 	    : entity.barangay.objid,
+			pin 			: entity.pin,
+		]
+	}
+}
