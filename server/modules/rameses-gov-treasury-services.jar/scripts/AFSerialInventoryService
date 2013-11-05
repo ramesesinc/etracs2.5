@@ -101,6 +101,44 @@ class AFSerialInventoryService {
 	}
 
 	@ProxyMethod
+	public def postSale(def o)	{
+		def m = [:];
+		m.objid = "AFCTRL"+new UID();
+		m.txntype = o.txntype;
+		m.afid = o.afid;
+		m.startseries = o.startseries;
+		m.endseries = o.endseries;
+		m.startstub = o.startstub;
+		m.endstub = o.endstub;
+		m.unit = o.unit;
+		m.prefix = o.prefix;
+		m.suffix = o.suffix;
+		m.currentseries = o.endseries + 1;
+		m.currentstub = o.startstub;
+		m.qtyin = 0;
+		m.qtyout = o.qty;
+		m.qtycancelled = 0;
+		m.qtybalance = 0;
+		m.currentlineno = 1; 
+		m.respcenter = o.respcenter;
+		afcontrol.create( m );
+		
+		def detail = initDetail(o);
+		detail.controlid = m.objid;
+		detail.lineno = m.currentlineno;
+		detail.txntype = o.txntype;
+		detail.receivedstartseries= o.startseries;
+		detail.receivedendseries = o.endseries;
+		detail.endingstartseries = o.endseries;
+		detail.endingendseries = o.endseries;
+		detail.qtyreceived = o.qty;
+		detail.qtyending = o.qty;
+		detail.remarks = o.remarks;
+		afcontrol.create( detail, "detail" );
+		return m;
+	}
+
+	@ProxyMethod
 	public def postBegin(def o)	{
 		def head = afcontrol.read( [objid: o.controlid]);
 		head.currentlineno+=1;

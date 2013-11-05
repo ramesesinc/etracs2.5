@@ -21,7 +21,7 @@ SELECT
    ac.unit,
    ac.qtybalance
 FROM afserial_inventory ac
-   inner join afserial_inventory_detail ad on ad.controlid = ac.objid and ad.lineno=1
+   inner join afserial_inventory_detail ad on ad.controlid = ac.objid and ad."lineno"=1
 WHERE ac.afid=$P{afid} 
 AND ac.respcenter_objid = 'AFO'
 AND ac.qtybalance > 0
