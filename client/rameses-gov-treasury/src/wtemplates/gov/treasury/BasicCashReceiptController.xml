@@ -8,7 +8,7 @@
         <invoker type="formActions" action="_close:_close" caption="Quit" visibleWhen="#{completed}" mnemonic="n"/>
         <invoker type="formActions" action="_close" caption="New" visibleWhen="#{completed}" mnemonic="n"/>
         <invoker type="formActions" action="reprint" caption="Reprint" mnemonic="p" visibleWhen="#{completed}"/>
-        <invoker type="formActions" action="void" caption="Void" visibleWhen="#{completed}"/>
+        <invoker type="formActions" action="doVoid" caption="Void" visibleWhen="#{completed}"/>
     </invokers>
     
     <code class="com.rameses.enterprise.treasury.cashreceipt.BasicCashReceipt"/>
