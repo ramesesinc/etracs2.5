@@ -131,11 +131,11 @@ public class BPLSCashReceipt extends javax.swing.JPanel {
                 , new Object[]{"nullWhenEmpty", true}
                 , new Object[]{"editable", false}
                 , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
-                , new Object[]{"expression", "#{item.item.code}-#{item.item.title}"}
+                , new Object[]{"expression", "#{item.account.code}-#{item.account.title}"}
                 , new Object[]{"typeHandler", new com.rameses.rcp.common.LabelColumnHandler()}
             }),
             new com.rameses.rcp.common.Column(new Object[]{
-                new Object[]{"name", "principalpaid"}
+                new Object[]{"name", "amtpaid"}
                 , new Object[]{"caption", "Amount Due"}
                 , new Object[]{"width", 100}
                 , new Object[]{"minWidth", 100}
@@ -160,7 +160,7 @@ public class BPLSCashReceipt extends javax.swing.JPanel {
                 , new Object[]{"editable", false}
                 , new Object[]{"alignment", "RIGHT"}
                 , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
-                , new Object[]{"typeHandler", new com.rameses.rcp.common.DecimalColumnHandler("#,##0.00", -1.0, -1.0, false)}
+                , new Object[]{"typeHandler", new com.rameses.rcp.common.DecimalColumnHandler("#,##0.00", -1.0, -1.0, false, 0)}
             }),
             new com.rameses.rcp.common.Column(new Object[]{
                 new Object[]{"name", "interestpaid"}
@@ -174,10 +174,10 @@ public class BPLSCashReceipt extends javax.swing.JPanel {
                 , new Object[]{"editable", false}
                 , new Object[]{"alignment", "RIGHT"}
                 , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
-                , new Object[]{"typeHandler", new com.rameses.rcp.common.DecimalColumnHandler("#,##0.00", -1.0, -1.0, false)}
+                , new Object[]{"typeHandler", new com.rameses.rcp.common.DecimalColumnHandler("#,##0.00", -1.0, -1.0, false, 0)}
             }),
             new com.rameses.rcp.common.Column(new Object[]{
-                new Object[]{"name", "discounted"}
+                new Object[]{"name", "discount"}
                 , new Object[]{"caption", "Discount"}
                 , new Object[]{"width", 100}
                 , new Object[]{"minWidth", 100}
@@ -188,7 +188,7 @@ public class BPLSCashReceipt extends javax.swing.JPanel {
                 , new Object[]{"editable", false}
                 , new Object[]{"alignment", "RIGHT"}
                 , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
-                , new Object[]{"typeHandler", new com.rameses.rcp.common.DecimalColumnHandler("#,##0.00", -1.0, -1.0, false)}
+                , new Object[]{"typeHandler", new com.rameses.rcp.common.DecimalColumnHandler("#,##0.00", -1.0, -1.0, false, 0)}
             }),
             new com.rameses.rcp.common.Column(new Object[]{
                 new Object[]{"name", "total"}
@@ -202,10 +202,10 @@ public class BPLSCashReceipt extends javax.swing.JPanel {
                 , new Object[]{"editable", false}
                 , new Object[]{"alignment", "RIGHT"}
                 , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
-                , new Object[]{"typeHandler", new com.rameses.rcp.common.DecimalColumnHandler("#,##0.00", -1.0, -1.0, false)}
+                , new Object[]{"typeHandler", new com.rameses.rcp.common.DecimalColumnHandler("#,##0.00", -1.0, -1.0, false, 0)}
             })
         });
-        xDataTable1.setHandler("listModel");
+        xDataTable1.setHandler("billingListModel");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);

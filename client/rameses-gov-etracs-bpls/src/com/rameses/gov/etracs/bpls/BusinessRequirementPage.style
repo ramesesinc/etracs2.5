@@ -1,0 +1,7 @@
+"entity.account" [ entity.type == 'OTHERFEE' ] {
+    visible: true;
+}
+
+"entity.account" [ entity.type != 'OTHERFEE'  ] {
+    visible: false;
+}

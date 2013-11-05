@@ -14,7 +14,7 @@
         
         class  BusinessCashReceiptController extends BasicCashReceipt {
             
-            @Service("BusinessBillingService")
+            @Service("BPBillingService")
             def billSvc;
         
             int startyear = 2013;
@@ -25,10 +25,10 @@
             int qtr;
             
             def barcodeid;
+            
             void initBarcode() {
                 MsgBox.alert( barcodeid );
             }
-            
             
             public void payerChanged( o ) {
                 entity.tradename = null;
@@ -37,7 +37,7 @@
                 entity.items.clear();
                 entity.amount = 0;
                 binding.refresh( "entity.tradename" );
-                listModel.reload();
+                billingListModel.reload();
                 super.clearAllPayments();
                 super.updateBalances();
             }
@@ -46,23 +46,25 @@
                 if(!entity.payer) {
                     return new Exception("Please select a payer first");
                 }    
-                return InvokerUtil.lookupOpener( "businessapplication:lookup", [
+                return InvokerUtil.lookupOpener( "business:lookup", [
                     "query.permiteeid":entity.payer.objid,
                     onselect: { o->
                         entity.tradename = o.tradename;
-                        entity.appid = o.objid;
+                        entity.businessid = o.objid;
+                        entity.billitems = [];
+                        entity.items = [];
+                        billingListModel.reload();
                     }
                 ]);
             }
             
             void runBilling() {
-                def m = [year:year,qtr:qtr,appid:entity.appid];
-                def result = billSvc.getBilling( m );
-                println result.billitems;
+                def m = [year:year,qtr:qtr,businessid:entity.businessid];
+                def result = billSvc.getBillItems( m );
                 if(result.billitems.size()==0)
                     throw new Exception("No open items for payment found for the criteria specified" );
                 entity.billitems = result.billitems;
-                listModel.reload();
+                billingListModel.reload();
                 entity.items.clear();
                 entity.items.addAll( result.receiptitems );
                 entity.amount = 0;
@@ -72,7 +74,7 @@
                 super.updateBalances();
             }
             
-            def listModel = [
+            def billingListModel = [
                 fetchList: { o->
                     return entity.billitems;
                 }

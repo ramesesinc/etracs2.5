@@ -1,0 +1,73 @@
+<workunit>
+    
+    <invokers>
+        <invoker type="bprequirement:open" caption="Requirement" target="popup" action="init" />
+        <invoker type="formActions" caption="Close" action="_close"  />
+        <invoker type="formActions" caption="Submit" action="submit" />
+    </invokers>
+    
+    <code>
+        <![CDATA[    
+        import com.rameses.rcp.annotations.*
+        import com.rameses.rcp.common.*
+        import com.rameses.osiris2.client.*
+        import com.rameses.osiris2.common.*
+        import java.rmi.server.*
+        import com.rameses.gov.etracs.bpls.application.*;
+        
+        class  RequirementTaxFeeController {
+        
+            @Service("BPApplicationRequirementService")
+            def service;
+        
+            def entity;
+            def node;
+            
+            String title;
+            def selectedItem;
+            
+            void init() {
+                title = node.caption + " fees";
+                entity = service.init(entity);
+            }
+            
+            def getAccountLookup() {
+                return InvokerUtil.lookupOpener( "businessaccount:lookup", [
+                    onselect: { o->
+                        selectedItem.account = o;
+                    }
+                ]);
+            }
+            
+            def taxfeeModel = [
+                fetchList: { o->
+                    return entity.taxfees;
+                },
+            ] as EditorListModel;
+            
+            def completedTaxfeeModel = [
+                fetchList: { o->
+                    return entity.completedtaxfees;
+                },
+            ] as EditorListModel;
+            
+            def submit() {
+                def hasOne = entity.taxfees.find{it.amount!=null};
+                if(!hasOne)    
+                    throw new Exception("Please specify at least one item to post");
+            
+                if(MsgBox.confirm("You are about to submit this form. Continue?")) {
+                    service.submitCompletedRequirements( entity.taxfees );
+                    MsgBox.alert("Submit successful");
+                    return "_close";
+                }
+            }
+        }
+        ]]>
+    </code>
+    
+    <pages>
+        <page template="com.rameses.gov.etracs.bpls.application.BPRequirementTaxFee"/>
+    </pages>
+    
+</workunit>

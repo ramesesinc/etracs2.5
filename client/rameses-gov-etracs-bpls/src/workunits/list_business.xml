@@ -1,0 +1,6 @@
+<workunit extends="wtemplates/ExplorerViewController.xml" 
+serviceName="BusinessInfoService"  defaultFileType="business" autoSelect="true">
+    <invokers>
+        <invoker folderid="/explorer/txn/bpls" caption="List of Business"  index="4" />
+    </invokers>
+</workunit>

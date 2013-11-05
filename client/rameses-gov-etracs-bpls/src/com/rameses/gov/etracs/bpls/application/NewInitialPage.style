@@ -1,0 +1,13 @@
+"entity.(dtfiled|yearstarted|appyear)" [ entity.txnmode != "CAPTURE" ] {
+    visible:false;
+}
+"entity.(dtfiled|yearstarted|appyear)" [ entity.txnmode == "CAPTURE" ] {
+    visible:true;
+}
+
+"entity.branchname" [ entity.officetype == "BRANCH" ] {
+    visible:true;
+}
+"entity.branchname" [ entity.officetype != "BRANCH" ] {
+    visible:false;
+}
