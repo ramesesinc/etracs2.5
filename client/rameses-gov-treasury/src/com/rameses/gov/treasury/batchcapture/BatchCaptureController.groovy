@@ -206,15 +206,22 @@ public class BatchCaptureController  {
 
     void save() {
         if(!MsgBox.confirm("Save captured collections? ")) return;
-
-        mode = 'saved'
         calculate()
         entity.batchitems = batchItems
         entity = svc.create( entity )
+        mode = 'saved'
     }
 
     void edit() {
         mode = 'create'
+    }
+    
+    def delete(){
+        if (MsgBox.confirm('Delete record?')){
+            svc.removeEntity([objid:entity.objid]);
+            return '_close';
+        }
+        return null;
     }
     
     void submitForPosting() {

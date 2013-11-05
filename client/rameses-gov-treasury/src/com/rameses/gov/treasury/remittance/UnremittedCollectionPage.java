@@ -6,9 +6,6 @@
 
 package com.rameses.gov.treasury.remittance;
 
-import com.rameses.osiris2.themes.FormPage;
-import com.rameses.rcp.ui.annotations.Template;
-
 /**
  *
  * @author  arnel
@@ -27,55 +24,21 @@ public class UnremittedCollectionPage extends javax.swing.JPanel {
      */
     // <editor-fold defaultstate="collapsed" desc=" Generated Code ">//GEN-BEGIN:initComponents
     private void initComponents() {
-        jPanel3 = new javax.swing.JPanel();
-        xActionBar1 = new com.rameses.rcp.control.XActionBar();
-        jPanel4 = new javax.swing.JPanel();
-        jLabel2 = new javax.swing.JLabel();
-        xActionTextField1 = new com.rameses.rcp.control.XActionTextField();
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         xLabel1 = new com.rameses.rcp.control.XLabel();
         jPanel2 = new javax.swing.JPanel();
         xDataTable1 = new com.rameses.rcp.control.XDataTable();
+        jPanel3 = new javax.swing.JPanel();
+        xActionBar1 = new com.rameses.rcp.control.XActionBar();
+        jPanel4 = new javax.swing.JPanel();
+        jLabel2 = new javax.swing.JLabel();
+        xActionTextField1 = new com.rameses.rcp.control.XActionTextField();
+        xLabel2 = new com.rameses.rcp.control.XLabel();
 
         setLayout(new java.awt.BorderLayout());
 
-        jPanel3.setLayout(new java.awt.BorderLayout());
-
-        jPanel3.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        xActionBar1.setBorder(null);
-        xActionBar1.setName("formActions");
-        jPanel3.add(xActionBar1, java.awt.BorderLayout.WEST);
-
-        jLabel2.setText("Search :");
-
-        xActionTextField1.setActionName("refresh");
-        xActionTextField1.setName("params.searchtext");
-
-        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
-        jPanel4.setLayout(jPanel4Layout);
-        jPanel4Layout.setHorizontalGroup(
-            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel4Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel2)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(xActionTextField1, javax.swing.GroupLayout.DEFAULT_SIZE, 226, Short.MAX_VALUE))
-        );
-        jPanel4Layout.setVerticalGroup(
-            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel4Layout.createSequentialGroup()
-                .addGap(5, 5, 5)
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
-                    .addComponent(xActionTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap())
-        );
-        jPanel3.add(jPanel4, java.awt.BorderLayout.EAST);
-
-        add(jPanel3, java.awt.BorderLayout.NORTH);
-
-        jPanel1.setPreferredSize(new java.awt.Dimension(100, 40));
+        jPanel1.setPreferredSize(new java.awt.Dimension(100, 35));
         jLabel1.setFont(new java.awt.Font("Tahoma", 1, 14));
         jLabel1.setText("Total:");
 
@@ -91,16 +54,14 @@ public class UnremittedCollectionPage extends javax.swing.JPanel {
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(311, Short.MAX_VALUE)
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(358, Short.MAX_VALUE)
+                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(xLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 217, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addComponent(xLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(xLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel1))
@@ -108,9 +69,8 @@ public class UnremittedCollectionPage extends javax.swing.JPanel {
         );
         add(jPanel1, java.awt.BorderLayout.SOUTH);
 
-        com.rameses.rcp.control.border.XTitledBorder xTitledBorder1 = new com.rameses.rcp.control.border.XTitledBorder();
-        xTitledBorder1.setTitle("Collection List");
-        xDataTable1.setBorder(xTitledBorder1);
+        jPanel2.setLayout(new java.awt.BorderLayout());
+
         xDataTable1.setColumns(new com.rameses.rcp.common.Column[]{
             new com.rameses.rcp.common.Column(new Object[]{
                 new Object[]{"name", "formno"}
@@ -226,29 +186,61 @@ public class UnremittedCollectionPage extends javax.swing.JPanel {
                 , new Object[]{"resizable", true}
                 , new Object[]{"nullWhenEmpty", true}
                 , new Object[]{"editable", false}
+                , new Object[]{"alignment", "RIGHT"}
                 , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
                 , new Object[]{"typeHandler", new com.rameses.rcp.common.DecimalColumnHandler("#,##0.00", -1.0, -1.0, false, 2)}
             })
         });
         xDataTable1.setHandler("listHandler");
         xDataTable1.setName("selectedItem");
+        jPanel2.add(xDataTable1, java.awt.BorderLayout.CENTER);
 
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+        jPanel3.setLayout(new java.awt.BorderLayout());
+
+        jPanel3.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        jPanel3.setPreferredSize(new java.awt.Dimension(0, 35));
+        xActionBar1.setBorder(null);
+        xActionBar1.setName("formActions");
+        jPanel3.add(xActionBar1, java.awt.BorderLayout.CENTER);
+
+        jLabel2.setText("Search :");
+
+        xActionTextField1.setActionName("refresh");
+        xActionTextField1.setName("params.searchtext");
+        xActionTextField1.setPreferredSize(new java.awt.Dimension(100, 22));
+
+        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
+        jPanel4.setLayout(jPanel4Layout);
+        jPanel4Layout.setHorizontalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(xDataTable1, javax.swing.GroupLayout.DEFAULT_SIZE, 573, Short.MAX_VALUE)
+                .addComponent(jLabel2)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(xActionTextField1, javax.swing.GroupLayout.DEFAULT_SIZE, 216, Short.MAX_VALUE)
                 .addContainerGap())
         );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(xDataTable1, javax.swing.GroupLayout.DEFAULT_SIZE, 386, Short.MAX_VALUE))
+        jPanel4Layout.setVerticalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addGap(5, 5, 5)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel2)
+                    .addComponent(xActionTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap())
         );
+        jPanel3.add(jPanel4, java.awt.BorderLayout.EAST);
+
+        jPanel2.add(jPanel3, java.awt.BorderLayout.NORTH);
+
         add(jPanel2, java.awt.BorderLayout.CENTER);
+
+        xLabel2.setBackground(new java.awt.Color(255, 255, 255));
+        xLabel2.setExpression("Unremitted Collection");
+        xLabel2.setFont(new java.awt.Font("Tahoma", 1, 16));
+        xLabel2.setOpaque(true);
+        xLabel2.setPadding(new java.awt.Insets(2, 7, 2, 5));
+        add(xLabel2, java.awt.BorderLayout.NORTH);
 
     }// </editor-fold>//GEN-END:initComponents
     
@@ -264,6 +256,7 @@ public class UnremittedCollectionPage extends javax.swing.JPanel {
     private com.rameses.rcp.control.XActionTextField xActionTextField1;
     private com.rameses.rcp.control.XDataTable xDataTable1;
     private com.rameses.rcp.control.XLabel xLabel1;
+    private com.rameses.rcp.control.XLabel xLabel2;
     // End of variables declaration//GEN-END:variables
     
 }

@@ -4,7 +4,10 @@
             <folder id="treasury" caption="Treasury" index="5"/>
         </folder>
         <folder id="txn">
-            <folder id="treasury" caption="Treasury" index="5"/>
+            <folder id="treasury" caption="Treasury" index="5">
+                <folder id="reports" caption="Reports" index="5"/>
+            </folder>
+                
         </folder>
     </folder>
      <folder id="menu">

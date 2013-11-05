@@ -1,6 +1,6 @@
 
-ALTER TABLE sys_usergroup ADD role varchar(50);
-UPDATE sys_usergroup SET role=objid;
+ALTER TABLE sys_usergroup ADD [role] varchar(50);
+UPDATE sys_usergroup SET [role]=objid;
 
 ALTER TABLE sys_usergroup_admin NOCHECK CONSTRAINT ALL; 
 ALTER TABLE sys_usergroup_member NOCHECK CONSTRAINT ALL; 

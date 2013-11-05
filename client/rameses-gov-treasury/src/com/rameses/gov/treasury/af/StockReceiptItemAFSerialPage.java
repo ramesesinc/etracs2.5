@@ -40,7 +40,7 @@ public class StockReceiptItemAFSerialPage extends javax.swing.JPanel {
                 , new Object[]{"width", 100}
                 , new Object[]{"minWidth", 100}
                 , new Object[]{"maxWidth", 100}
-                , new Object[]{"required", false}
+                , new Object[]{"required", true}
                 , new Object[]{"resizable", true}
                 , new Object[]{"nullWhenEmpty", true}
                 , new Object[]{"editable", true}
@@ -54,7 +54,7 @@ public class StockReceiptItemAFSerialPage extends javax.swing.JPanel {
                 , new Object[]{"width", 120}
                 , new Object[]{"minWidth", 120}
                 , new Object[]{"maxWidth", 120}
-                , new Object[]{"required", false}
+                , new Object[]{"required", true}
                 , new Object[]{"resizable", true}
                 , new Object[]{"nullWhenEmpty", true}
                 , new Object[]{"editable", true}
@@ -83,7 +83,7 @@ public class StockReceiptItemAFSerialPage extends javax.swing.JPanel {
                 , new Object[]{"width", 100}
                 , new Object[]{"minWidth", 100}
                 , new Object[]{"maxWidth", 100}
-                , new Object[]{"required", false}
+                , new Object[]{"required", true}
                 , new Object[]{"resizable", true}
                 , new Object[]{"nullWhenEmpty", true}
                 , new Object[]{"editable", true}
@@ -149,7 +149,7 @@ public class StockReceiptItemAFSerialPage extends javax.swing.JPanel {
             .add(layout.createSequentialGroup()
                 .addContainerGap()
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(xDataTable1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 560, Short.MAX_VALUE)
+                    .add(xDataTable1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 563, Short.MAX_VALUE)
                     .add(xLabel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 549, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );

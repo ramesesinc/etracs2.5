@@ -102,6 +102,9 @@ class ReportParameterService{
 			SECRETARYNAME				: var.secretary_name,
 			SECRETRAYTITLE				: var.secretary_title, 
 
+			CASHIERHEADNAME				: var.cashierhead_name,
+			CASHIERHEADTITLE			: var.cashierhead_title, 
+
 			GIVENAT 					: org.address, 
 			USERNAME	 				: env.NAME,
 			USERFULLNAME	 			: env.FULLNAME,

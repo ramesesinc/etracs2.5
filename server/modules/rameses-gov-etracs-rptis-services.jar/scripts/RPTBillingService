@@ -252,12 +252,7 @@ public class RPTBillingService
 	public void recalcBillItems(bill){
 		bill.ledgers = getOpenLedgers(bill)
 		if ( bill.ledgers) {
-			def data = createFacts(bill)
-			def actions = buildActions(bill, data)
-			def grps = ruleDB.getRulegroups( [ruleset: RULESET] );
-			grps.each{g ->
-				ruleSvc.execute( RULESET, data.facts, actions, g.name);
-			}
+			def data = executeRules(bill)
 			updateLedgerItemInfo(bill, data)
 			bill.expirydate = getExpiryDate(bill)
 			def params = buildParams(bill)
@@ -266,6 +261,17 @@ public class RPTBillingService
 			em.applyQuarterlyLedgerItemTaxIncentives(params)
 		}
 	} 
+
+	@ProxyMethod
+	public def executeRules(bill){
+		def data = createFacts(bill)
+		def actions = buildActions(bill, data)
+		def grps = ruleDB.getRulegroups( [ruleset: RULESET] );
+		grps.each{g ->
+			ruleSvc.execute( RULESET, data.facts, actions, g.name);
+		}
+		return data 
+	}
 
 	def buildActions(bill, data){
 		def actions = new RuleAction();
@@ -620,37 +626,7 @@ public class RPTBillingService
 			bl.items.each{ item ->
 				def ledger = data.ledgers.find{it.objid == item.objid}
 				if (ledger){
-					item.basic = numSvc.round(ledger.basic)
-					item.basicint = numSvc.round(ledger.basicint)
-					item.basicdisc = numSvc.round(ledger.basicdisc)
-					item.basicamnesty = numSvc.round(ledger.basicamnesty)
-					item.basicintamnesty = numSvc.round(ledger.basicintamnesty)
-					item.basiccredit = numSvc.round(ledger.basiccredit)
-					item.sef = numSvc.round(ledger.sef)
-					item.sefint = numSvc.round(ledger.sefint)
-					item.sefdisc = numSvc.round(ledger.sefdisc)
-					item.sefamnesty = numSvc.round(ledger.sefamnesty)
-					item.sefintamnesty = numSvc.round(ledger.sefintamnesty)
-					item.sefcredit = numSvc.round(ledger.sefcredit)
-					item.firecode = numSvc.round(ledger.firecode)
-					item.paidyear = ledger.paidyear 
-					item.basicacct = [objid:ledger.basicacctid]
-					item.basicintacct = [objid:ledger.basicintacctid]
-					item.sefacct = [objid:ledger.sefacctid]
-					item.sefintacct = [objid:ledger.sefintacctid]
-					item.firecodeacct = [objid:ledger.firecodeacctid]
-					item.revtype = (ledger.revtype ? ledger.revtype : item.revtype)
-					item.partial = false
-					item.partialbasic = 0.0
-					item.partialbasicint = 0.0
-					item.partialbasicdisc = 0.0
-					item.partialbasicamnesty = 0.0
-					item.partialbasicintamnesty = 0.0
-					item.partialsef = 0.0
-					item.partialsefint = 0.0
-					item.partialsefdisc = 0.0
-					item.partialsefamnesty = 0.0
-					item.partialsefintamnesty = 0.0
+					updateLedgerItemData(item, ledger)
 					if (item.qtrly) {
 						ledgerSvc.updateLedgerItemAccountInfo(item)
 						ledgerSvc.updateLedgerItemQuarterly(item)
@@ -661,6 +637,41 @@ public class RPTBillingService
 				}
 			}
 		}
+	}
+
+	@ProxyMethod
+	public void updateLedgerItemData(item, ledger){
+		item.basic = numSvc.round(ledger.basic)
+		item.basicint = numSvc.round(ledger.basicint)
+		item.basicdisc = numSvc.round(ledger.basicdisc)
+		item.basicamnesty = numSvc.round(ledger.basicamnesty)
+		item.basicintamnesty = numSvc.round(ledger.basicintamnesty)
+		item.basiccredit = numSvc.round(ledger.basiccredit)
+		item.sef = numSvc.round(ledger.sef)
+		item.sefint = numSvc.round(ledger.sefint)
+		item.sefdisc = numSvc.round(ledger.sefdisc)
+		item.sefamnesty = numSvc.round(ledger.sefamnesty)
+		item.sefintamnesty = numSvc.round(ledger.sefintamnesty)
+		item.sefcredit = numSvc.round(ledger.sefcredit)
+		item.firecode = numSvc.round(ledger.firecode)
+		item.paidyear = ledger.paidyear 
+		item.basicacct = [objid:ledger.basicacctid]
+		item.basicintacct = [objid:ledger.basicintacctid]
+		item.sefacct = [objid:ledger.sefacctid]
+		item.sefintacct = [objid:ledger.sefintacctid]
+		item.firecodeacct = [objid:ledger.firecodeacctid]
+		item.revtype = (ledger.revtype ? ledger.revtype : item.revtype)
+		item.partial = false
+		item.partialbasic = 0.0
+		item.partialbasicint = 0.0
+		item.partialbasicdisc = 0.0
+		item.partialbasicamnesty = 0.0
+		item.partialbasicintamnesty = 0.0
+		item.partialsef = 0.0
+		item.partialsefint = 0.0
+		item.partialsefdisc = 0.0
+		item.partialsefamnesty = 0.0
+		item.partialsefintamnesty = 0.0
 	}
 
 }

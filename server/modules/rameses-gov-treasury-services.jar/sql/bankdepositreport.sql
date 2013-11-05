@@ -1,6 +1,6 @@
 [getFundlist]
 select 
-  lcf.fund_objid as objid , lcf.fund_title as title 
+  distinct lcf.fund_objid as objid , lcf.fund_title as title 
 from bankdeposit bd 
   inner join bankdeposit_liquidation bl on bd.objid = bl.bankdepositid 
   inner join liquidation_cashier_fund lcf on lcf.objid = bl.objid  
@@ -8,28 +8,28 @@ where bd.objid = $P{bankdepositid}
 
 [getBackAccountList]
 select 
-     ba.objid, concat( ba.bank_code, ' ( ', ba.code, ' )'  ) as title 
+    distinct ba.objid, concat( ba.bank_code, ' ( ', ba.code, ' )'  ) as title 
 from bankdeposit_entry be 
  inner join bankaccount ba on ba.objid = be.bankaccount_objid 
 where parentid=$P{bankdepositid}
 
 [getCollectionSummaryByAFAndFund]
 select  
-  case 
-      when a.objid in ( '51', '56') and a.formtype='serial' then CONCAT( 'AF#', a.objid, ': ', lcf.fund_title ) 
-      ELSE CONCAT( 'AF#',a.objid, ': ', a.title,' - ', lcf.fund_title ) 
-  end as particulars, 
+  concat('AF#' , a.objid ,  ':' , ct.title , '-' , ri.fund_title )  as particulars, 
   sum( case when crv.objid is null then cri.amount else 0.0 end ) as amount 
 from bankdeposit_liquidation bl  
    inner join liquidation_cashier_fund lcf on lcf.objid = bl.objid
-   inner join liquidation_remittance lr on lr.liquidationid = lcf.liquidationid 
+   inner join liquidation_remittance lr on lr.liquidationid = lcf.liquidationid and lcf.fund_objid=$P{fundname}
    inner join remittance_cashreceipt rc on rc.remittanceid = lr.objid 
    inner join cashreceipt cr on rc.objid = cr.objid 
    left join cashreceipt_void crv on crv.receiptid = cr.objid 
    inner join collectionform a on a.objid = cr.formno 
-   inner join cashreceiptitem cri on cri.receiptid = cr.objid 
-where bl.bankdepositid=$P{bankdepositid}  and lcf.fund_objid = $P{fundname}
-group by a.objid, lcf.fund_objid 
+   inner join collectiontype ct on ct.objid = cr.collectiontype_objid 
+   inner join cashreceiptitem cri on cri.receiptid = cr.objid
+   inner join revenueitem ri on ri.objid = cri.item_objid 
+where bl.bankdepositid=$P{bankdepositid}  and ri.fund_objid = $P{fundname}
+group by a.objid, ct.objid, ri.fund_title
+
 
 [getCashFundSummary]
 select 

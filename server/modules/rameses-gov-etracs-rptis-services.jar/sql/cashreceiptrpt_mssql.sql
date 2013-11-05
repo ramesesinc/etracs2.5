@@ -669,3 +669,63 @@ GROUP BY
 		t.cadastrallotno,
 		t.classcode,
 		t.barangay
+
+
+
+[findRevenueItemById]
+SELECT 
+	objid, code, title, 
+	fund_objid, fund_code, fund_title
+FROM revenueitem 
+WHERE objid = $P{objid}
+
+
+
+[getNoLedgerItemsForPrinting]	
+SELECT
+	t.*,
+	(SELECT CONVERT(VARCHAR(1), MIN(CASE WHEN qtr = 0 THEN 1 ELSE qtr END)) FROM cashreceiptitem_rpt WHERE rptreceiptid = t.rptreceiptid AND year = t.minyear) + 
+	'Q,' + CONVERT(VARCHAR(4),t.minyear) + ' - ' + 
+	(SELECT CONVERT(VARCHAR(1), MAX(CASE WHEN qtr = 0 THEN 4 ELSE qtr END)) FROM cashreceiptitem_rpt WHERE rptreceiptid = t.rptreceiptid AND year = t.maxyear) + 
+	'Q,' + CONVERT(VARCHAR(4),t.maxyear) AS	period 
+FROM (
+	SELECT
+		cri.rptreceiptid,
+		nl.tdno,
+		cr.payer_name AS owner_name,
+		nl.rputype,
+		nl.originalav  AS totalav,
+		nl.pin AS fullpin,
+		nl.cadastrallotno AS cadastrallotno,
+		nl.classification_objid AS classcode,
+		b.name AS barangay,
+		MIN(cri.year) AS minyear,
+		MAX(cri.year) AS maxyear,
+		SUM(basic) AS basic, 
+		SUM(basicdisc) AS basicdisc, 
+		SUM(basicint) AS basicint, 
+		SUM(basicint - basicdisc) AS basicdp, 
+		SUM(basic + basicint - basicdisc) AS basicnet,
+		SUM(sef) AS sef,  
+		SUM(sefdisc) AS sefdisc, 
+		SUM(sefint) AS sefint, 
+		SUM(sefint - sefdisc) AS sefdp, 
+		SUM(sef + sefint - sefdisc) AS sefnet,
+		SUM(firecode) AS firecode,
+		SUM(basic + basicint- basicdisc + sef + sefint - sefdisc + firecode) AS amount
+	FROM cashreceipt cr
+		INNER JOIN cashreceiptitem_rpt cri ON cr.objid = cri.rptreceiptid
+		INNER JOIN cashreceiptitem_rpt_noledger nl ON cri.objid = nl.objid 
+		INNER JOIN barangay b ON nl.barangay_objid = b.objid 
+	WHERE cr.objid = $P{objid}
+	GROUP BY 
+		cri.rptreceiptid,
+		cr.payer_name,
+		nl.tdno,
+		nl.rputype,
+		nl.originalav,
+		nl.pin,
+		nl.cadastrallotno,
+		nl.classification_objid ,
+		b.name
+) t

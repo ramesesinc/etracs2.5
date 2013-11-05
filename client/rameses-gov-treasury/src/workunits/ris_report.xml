@@ -20,6 +20,8 @@
         
             def reportPath = "com/rameses/gov/treasury/ris/report/"
             
+            def title = 'RIS Report'
+            
             @Service("ReportParameterService") 
             def paramsvc
             
@@ -33,10 +35,8 @@
             def report = [
                 getReportName : { return reportPath + "ris.jasper" },
                 getReportData : { 
-                    def afolist = ugmSvc.getList(['_tag':'AFO'])
-                    if( afolist) {
-                        entity.approver = afolist[0]
-                    }
+                    def afolist = ugmSvc.getList(['_tag':'AFO']) 
+                    if( afolist) { entity.approver = afolist[0] } 
                     return  entity 
                 },
                 getParameters : { return paramsvc.getStandardParameter() },

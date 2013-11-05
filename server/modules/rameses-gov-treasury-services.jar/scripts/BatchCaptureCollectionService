@@ -31,6 +31,10 @@ public class BatchCaptureCollectionService extends ActiveCrudService {
 		
 	}
 
+	protected void beforeRemoveEntity(entity) {
+		beforeCreate(entity)
+	}
+
 	protected void afterCreate(def entity) { 
 		entity.batchitems.each { bc ->
 			bc.objid = "BCCE"+new java.rmi.server.UID();
@@ -66,6 +70,8 @@ public class BatchCaptureCollectionService extends ActiveCrudService {
 
 	@ProxyMethod
 	public def submitForPosting(entity) {
+		def item = entity.batchitems.find{it.amount == 0.0 && (it.voided == 0 || it.voided == false)}
+		validateAmount(item)
 		entity.state = 'FORPOSTING'
 		em.updateBatchCaptureState( entity );
 		return entity; 
@@ -81,6 +87,7 @@ public class BatchCaptureCollectionService extends ActiveCrudService {
 	@ProxyMethod
 	public def post(entity){
 		entity.batchitems.each {bi->
+			validateAmount(bi)
 			bi.batchcapture = true
 			bi.collector = entity.collector;
 			bi.formtype = entity.formtype;
@@ -145,6 +152,7 @@ public class BatchCaptureCollectionService extends ActiveCrudService {
 		entity.batchitems = em.getBatchEntry(entity);
 		entity.currentseries = entity.batchitems[-1].series+1
 		entity.batchitems.each {
+			it._filetype = "batchcapture:misc"
 			it.items = em.getBatchEntryItems(it)
 			it.items.each {
 				it.item.fund = it.fund;
@@ -152,6 +160,12 @@ public class BatchCaptureCollectionService extends ActiveCrudService {
 			it.acctinfo = (it.items.size() > 1) ? '( Multiple Accounts )' : it.items[0].item.title 
 			it.remarks = it.items[0].remarks;
 			it.paymentitems = (it.paymentitems ? pem.serializer.read(it.paymentitems)  : it.paymentitems)
+		}
+	}
+
+	void validateAmount(item){
+		if (item && item.amount <= 0.0 && item.voided == 0){
+			throw new Exception('Amount for Receipt No. ' + item.receiptno + ' must be greater than zero.')
 		}
 	}
 

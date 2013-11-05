@@ -22,6 +22,13 @@ class StatementOfRevenueController extends com.rameses.gov.treasury.report.Repor
     String reportpath = 'com/rameses/gov/treasury/report/statementofrevenue/'
     String reportName = reportpath + 'statementofrevenue.jasper'
     
+        
+    def initReport(){
+        entity.hidezeroamount = true
+        return 'default'
+    }
+    
+    
     def data
     def getReportData(){
         data = svc.generateReport(entity);
@@ -31,10 +38,12 @@ class StatementOfRevenueController extends com.rameses.gov.treasury.report.Repor
     def formControl = [
         getFormControls: {
             return [
-                new FormControl( "combo", [caption:'Chart Type', name:'entity.charttype', items:'charttypes', required:true, immediate:true]),
-                new FormControl( "integer", [caption:'Year', name:'entity.year', required:true, preferredSize:'100,19']),
-                new FormControl( "combo", [caption:'Quarter', name:'entity.qtr', items:'quarters', required:true, immediate:true, preferredSize:'100,19']),
-                new FormControl( "combo", [caption:'Month', name:'entity.month', items:'monthsByQtr', depends:'entity.qtr', expression:'#{item.name}', dynamic:true, preferredSize:'100,19']),
+                new FormControl( "combo", [caption:'Chart Type', name:'entity.charttype', items:'charttypes', required:true, captionWidth:120, allowNull:false]),
+                new FormControl( "combo", [caption:'Format', name:'entity.type', items:'reportTypes', required:true, allowNull:false, captionWidth:120]),
+                new FormControl( "integer", [caption:'Year', name:'entity.year', required:true, preferredSize:'80,19', captionWidth:120]),
+                new FormControl( "combo", [caption:'Quarter', name:'entity.qtr', items:'quarters', required:true, immediate:true, preferredSize:'80,19', captionWidth:120]),
+                new FormControl( "combo", [caption:'Month', name:'entity.month', items:'monthsByQtr', depends:'entity.qtr', expression:'#{item.name}', dynamic:true, preferredSize:'80,19', captionWidth:120]),
+                new FormControl( "checkbox", [caption:'Hide Zero Amount', name:'entity.hidezeroamount',preferredSize:'140,19', captionWidth:120]),
             ]    
         },
    ] as FormPanelModel;
@@ -45,8 +54,12 @@ class StatementOfRevenueController extends com.rameses.gov.treasury.report.Repor
     }
     
     def getCharttypes(){
-        return ['SRE', 'NGAS']
+        return ['NGAS', 'SRE']
     }
+    
+    def getReportTypes(){
+        return ['standard', 'extended', 'detailed']
+    }   
 }
 
 ]]>        

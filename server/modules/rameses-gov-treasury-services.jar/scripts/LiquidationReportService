@@ -84,7 +84,12 @@ class LiquidationReportService  {
 	        ! (it.endingstartseries.toString().endsWith('01') || it.endingstartseries.toString().endsWith('51')) 
 	    }
 	    
-	    useditems.each{ items << it } 
+	    useditems.each{  
+	    	it.beginstartseries = (it.beginstartseries && it.receivedstartseries == null) ? it.beginstartseries : null 
+	    	it.beginendseries = (it.beginstartseries && it.receivedstartseries == null) ? it.beginendseries : null 
+	    	it.qtybegin = (it.beginstartseries && it.receivedstartseries == null) ? it.qtybegin : null 
+	    	items << it
+	    } 
 
 	    list.removeAll(useditems)    
 	    
@@ -94,16 +99,12 @@ class LiquidationReportService  {
 	    def end = null
 	    
 	    list.each{
-	    	println "prevseries  "  + prevseries 
-	    	println "ending  " + it.endingstartseries
-	        if ( prevseries + 1 == it.endingstartseries || prevseries == 0){
-	        	println "solud 1"
+	    	    if ( prevseries + 1 == it.endingstartseries || prevseries == 0){
 	            if ( !start ) start = it;
 	            end = it;
 	            qty += 50
 	        }
 	        else {
-	        	println "solud 2"
 	            items << createItem(start, end, qty)
 	            start = it;
 	            end = it;
@@ -123,8 +124,8 @@ class LiquidationReportService  {
         	receivedstartseries: start.receivedstartseries  ? start.receivedstartseries: null ,
         	receivedendseries : start.receivedstartseries ? end.endingendseries: null ,
         	qtyreceived : start.receivedendseries ? qty : null,
-        	beginstartseries: (start.beginstartseries && start.receivedstartseries == null) ? start.beginstartseries: null ,
-        	beginendseries : (start.beginstartseries && start.receivedstartseries == null) ? end.endingendseries: null ,
+        	beginstartseries: (start.beginstartseries && !start.receivedstartseries == null) ? start.beginstartseries: null ,
+        	beginendseries : (start.beginstartseries && !start.receivedstartseries == null) ? end.endingendseries: null ,
         	qtybegin : (start.beginstartseries && start.receivedstartseries == null) ? qty : null,
         	endingstartseries:  start.receivedstartseries ? start.receivedstartseries: start.beginstartseries ,
         	endingendseries: end.endingendseries ,

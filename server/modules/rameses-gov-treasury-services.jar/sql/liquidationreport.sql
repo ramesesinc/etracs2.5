@@ -91,7 +91,6 @@ from liquidation_remittance  lr
    inner join revenueitem ri on ri.objid = cri.item_objid   
 where lr.liquidationid=$P{liquidationid} and ri.fund_objid =$P{fundname} 
   and crv.objid is null 
-group by ri.fund_objid  
 
 
 [getLiquidationFundlist]

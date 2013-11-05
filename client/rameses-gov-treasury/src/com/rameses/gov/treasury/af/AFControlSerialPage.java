@@ -50,6 +50,7 @@ public class AFControlSerialPage extends javax.swing.JPanel {
         formPanel1.setCaptionWidth(110);
         xComboBox1.setCaption("Collector");
         xComboBox1.setExpression("#{item.name}");
+        xComboBox1.setIndex(-10);
         xComboBox1.setItems("collectorlist");
         xComboBox1.setName("collector");
         xComboBox1.setPreferredSize(new java.awt.Dimension(0, 22));

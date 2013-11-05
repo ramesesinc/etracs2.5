@@ -13,6 +13,6 @@ SET lookuphandler='sreaccount:lookup',sortorder=2,source='sreaccount'
 WHERE name='sreaccount' AND objectname = 'revenueitem';
   
 UPDATE account_segment 
-SET lookuphandler='sresubacct:lookup',sortorder=3,source='sreaccount' 
+SET lookuphandler='sresubacct:lookup',sortorder=3,source='sreaccount', depends='sreaccount'
 WHERE name='sresubacct' AND objectname = 'revenueitem';
 
