@@ -6,9 +6,9 @@
 		 columnCount="1"
 		 printOrder="Vertical"
 		 orientation="Portrait"
-		 pageWidth="552"
-		 pageHeight="1133"
-		 columnWidth="552"
+		 pageWidth="612"
+		 pageHeight="792"
+		 columnWidth="612"
 		 columnSpacing="0"
 		 leftMargin="0"
 		 rightMargin="0"
@@ -172,7 +172,7 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
 						<font fontName="SansSerif" pdfFontName="Helvetica" size="8" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{formno} ]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{formno}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
