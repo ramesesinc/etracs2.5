@@ -27,6 +27,7 @@
             @PropertyChangeListener
             def listener = [
                 "issuanceType" : { o->
+                    entity.issuanceType = o
                     request = null;
                     binding.refresh();
                 }

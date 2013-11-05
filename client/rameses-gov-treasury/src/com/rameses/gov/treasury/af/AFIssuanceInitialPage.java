@@ -15,7 +15,6 @@ import com.rameses.rcp.ui.annotations.Template;
  *
  * @author  Elmo
  */
-@StyleSheet
 @Template(FormPage.class)
 public class AFIssuanceInitialPage extends javax.swing.JPanel {
     

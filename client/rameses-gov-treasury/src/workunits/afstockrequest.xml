@@ -22,6 +22,7 @@
         -->    
         <invoker type="afris:type" caption="Collection" reqtype="ISSUANCE" role="COLLECTOR, AFO"/>
         <invoker type="afris:type" caption="Purchase Stock" reqtype="PURCHASE" role="AFO"/>
+        <invoker type="afris:type" caption="Sale" reqtype="SALE" role="AFO"/>
     </invokers>
     
     <code>
@@ -56,11 +57,11 @@
                 "reqType": {o->
                     entity.reqtype = o.properties.reqtype
                     if( role == 'AFO' ) {
-                        if( o.properties.reqtype == 'ISSUANCE') 
-                             requestedbylist = ugmSvc.getList(['_tag':'COLLECTOR']);
-                        else {
-                           requestedbylist = [ [objid: user.env.USERID, name:user.env.FULLNAME, title:user.env.JOBTITLE ]]
-                           entity.requester = requestedbylist[0]
+                        if( o.properties.reqtype == 'PURCHASE') {
+                            requestedbylist = [ [objid: user.env.USERID, name:user.env.FULLNAME, title:user.env.JOBTITLE ]]
+                            entity.requester = requestedbylist[0]
+                       } else {
+                           requestedbylist = ugmSvc.getList(['_tag':'COLLECTOR']);
                         }   
                     } else {
                         requestedbylist = [ [objid: user.env.USERID, name:user.env.FULLNAME, title:user.env.JOBTITLE ]]
