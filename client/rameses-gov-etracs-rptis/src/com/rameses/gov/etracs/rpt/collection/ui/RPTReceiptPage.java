@@ -50,7 +50,7 @@ public class RPTReceiptPage extends javax.swing.JPanel {
         jPanel6.setLayout(new java.awt.BorderLayout());
 
         jPanel7.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 3, 0, 3));
-        xButton1.setMnemonic('s');
+        xButton1.setMnemonic('a');
         xButton1.setName("selectAll");
         xButton1.setText("Select All");
 
