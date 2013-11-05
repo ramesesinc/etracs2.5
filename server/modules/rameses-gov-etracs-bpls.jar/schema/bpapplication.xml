@@ -4,8 +4,11 @@
 		<field name="state" required="true"/>
 		<field name="appno" required="true"/>
 		<field name="apptype" required="true"/>
+		<field name="appyear" required="true"/>
+		<field name="yearstarted" required="true"/>
 		<field name="dtfiled" required="true"/>
-		<field name="refapplicationid" />
+		<field name="txnmode" required="true"/>
+		<field name="txndate" required="true"/>
 		<field name="permitee_name" required="true"/>
 		<field name="permitee_objid" required="true"/>
 		<field name="barangay_objid" required="true"/>
@@ -14,8 +17,9 @@
 		<field name="businessaddress" required="true"/>
 		<field name="orgtype" required="true"/>
 		<field name="officetype" required="true"/>
-		<complex name="infos" required="true" type="list" serializer="default"/>
-		<field name="iyear" required="true"/>
+		<field name="createdby" required="true"/>
+		<field name="businessid" />
+		<field name="branchname" />
 	</element>	
 
 	<element name="lob" tablename="bpapplication_lob">
@@ -29,6 +33,10 @@
 	<element name="info" tablename="bpapplication_info">
 		<field name="objid" primary="true"/>
 		<field name="parentid" required="true"/>
+		<field name="iyear" />
+		<field name="iqtr" />
+		<field name="phase" required="true"/>
+		<field name="sortorder"/>
 		<field name="attribute_objid" required="true"/>
 		<field name="attribute_name" required="true"/>
 		<field name="lob_objid" />
@@ -36,35 +44,49 @@
 		<field name="decimalvalue" />
 		<field name="intvalue" />
 		<field name="stringvalue" />
-		<field name="boolvalue" />
-		<complex name="listvalue" type="list" serializer="default"/>
+		<field name="booleanvalue" />
 	</element>	
 
 	<element name="taxfee" tablename="bpapplication_taxfee">
 		<field name="objid" primary="true"/>
 		<field name="parentid" required="true"/>
+		<field name="iyear" />
+		<field name="iqtr" />
 		<field name="account_objid" required="true"/>
 		<field name="account_code" required="true"/>
 		<field name="account_title" required="true"/>
 		<field name="lob_objid" />
 		<field name="lob_name" />
-		<field name="org_objid"/>
-		<field name="org_name" />
 		<field name="assessedvalue" required="true"/>
 		<field name="amount" required="true"/>
-		<field name="remarks"/>
-		<field name="recurring" required="true"/>
+		<field name="refid"/>
+		<field name="reftype" />
+		<field name="taxfeetype" required="true" />
 	</element>	
 
 	<element name="requirement" tablename="bpapplication_requirement">
 		<field name="objid" primary="true"/>
 		<field name="parentid" required="true"/>
-		<field name="reftype" required="true"/>
+		<field name="reftype" />
+		<field name="refid" required="true"/>
+		<field name="refno" />
+		<field name="title" required="true"/>
+		<field name="remarks"/>
+		<field name="status" required="true"/>
+		<field name="step" required="true"/>
+		<field name="completedby_objid"/>
+		<field name="completedby_name"/>
+		<field name="dtcompleted"/>
+	</element>
+
+	<element name="requirement_data" tablename="bpapplication_requirement_data">
+		<field name="objid" primary="true"/>
 		<field name="refid" required="true"/>
 		<field name="refno" required="true"/>
-		<field name="title" required="true"/>
-		<field name="remarks" required="true"/>
-		<field name="status" required="true"/>
+		<field name="dtissued" />
+		<field name="issuedby" />
+		<field name="placeissued" />
+		<field name="remarks" />
 	</element>	
-
+	
 </schema>

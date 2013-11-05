@@ -1,8 +1,14 @@
 [getList]
-SELECT lob.*, lc.name AS classification_name 
+SELECT DISTINCT lob.* FROM 
+(SELECT lob.*, lc.name AS classification_name 
 FROM lob lob 
 INNER JOIN lobclassification lc ON lob.classification_objid = lc.objid
 WHERE lob.name LIKE $P{searchtext}
+UNION
+SELECT lob.*, lc.name AS classification_name 
+FROM lob lob 
+INNER JOIN lobclassification lc ON lob.classification_objid = lc.objid
+WHERE lc.name LIKE $P{searchtext}) lob
 ORDER BY lob.name 
 
 [getListByAttribute]

@@ -4,6 +4,7 @@ declare BPApplication
 	orgtype:		String
 	officetype:		String
 	apptype:		String
+	txnmode:		String
 	barangayid:		String
 end
 

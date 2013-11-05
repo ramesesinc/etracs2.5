@@ -4,7 +4,8 @@
 		<field name="code" required="true"/>
 		<field name="title" required="true"/>
 		<field name="type" required="true"/>
+		<field name="account_objid" />
+		<field name="account_code" />
+		<field name="account_title" />
 	</element>	
-
-
 </schema>

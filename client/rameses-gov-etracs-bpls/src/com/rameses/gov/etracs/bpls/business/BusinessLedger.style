@@ -5,3 +5,7 @@
 "addPayment|removePayment" [selectedReceivable == null] {
     visible:false;
 }
+
+"add.*|remove.*" [entity.state == 'ACTIVE' ] {
+    visible:false;
+}

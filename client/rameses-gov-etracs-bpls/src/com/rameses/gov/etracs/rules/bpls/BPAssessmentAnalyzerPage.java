@@ -42,6 +42,7 @@ public class BPAssessmentAnalyzerPage extends javax.swing.JPanel {
         xComboBox3 = new com.rameses.rcp.control.XComboBox();
         xLookupField3 = new com.rameses.rcp.control.XLookupField();
         xComboBox4 = new com.rameses.rcp.control.XComboBox();
+        xComboBox5 = new com.rameses.rcp.control.XComboBox();
         jTabbedPane1 = new javax.swing.JTabbedPane();
         jPanel3 = new javax.swing.JPanel();
         xDataTable3 = new com.rameses.rcp.control.XDataTable();
@@ -77,13 +78,13 @@ public class BPAssessmentAnalyzerPage extends javax.swing.JPanel {
                 , new Object[]{"editable", true}
                 , new Object[]{"editableWhen", null}
                 , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
-                , new Object[]{"typeHandler", new com.rameses.rcp.common.ComboBoxColumnHandler("lobTypes", null, null)}
+                , new Object[]{"typeHandler", new com.rameses.rcp.common.ComboBoxColumnHandler("lobAssessmentTypes", null, null)}
             })
         });
         xDataTable1.setHandler("lobModel");
 
         xLookupField1.setText("xLookupField1");
-        xLookupField1.setHandler("lookupLOB");
+        xLookupField1.setHandler("lookupLob");
 
         jLabel1.setText("Add Line of Business");
 
@@ -180,7 +181,7 @@ public class BPAssessmentAnalyzerPage extends javax.swing.JPanel {
         xComboBox2.setExpression("#{item.value}");
         xComboBox2.setItemKey("key");
         xComboBox2.setItems("orgTypes");
-        xComboBox2.setName("entity.businessorgtype");
+        xComboBox2.setName("entity.orgtype");
         xComboBox2.setPreferredSize(new java.awt.Dimension(0, 22));
         xComboBox2.setRequired(true);
         xFormPanel1.add(xComboBox2);
@@ -213,6 +214,14 @@ public class BPAssessmentAnalyzerPage extends javax.swing.JPanel {
         xComboBox4.setPreferredSize(new java.awt.Dimension(0, 22));
         xComboBox4.setRequired(true);
         xFormPanel1.add(xComboBox4);
+
+        xComboBox5.setCaption("Txn Mode");
+        xComboBox5.setCaptionWidth(130);
+        xComboBox5.setItems("txnmodes");
+        xComboBox5.setName("entity.txnmode");
+        xComboBox5.setPreferredSize(new java.awt.Dimension(0, 22));
+        xComboBox5.setRequired(true);
+        xFormPanel1.add(xComboBox5);
 
         xDataTable3.setColumns(new com.rameses.rcp.common.Column[]{
             new com.rameses.rcp.common.Column(new Object[]{
@@ -316,7 +325,7 @@ public class BPAssessmentAnalyzerPage extends javax.swing.JPanel {
 
         xDataTable4.setColumns(new com.rameses.rcp.common.Column[]{
             new com.rameses.rcp.common.Column(new Object[]{
-                new Object[]{"name", "code"}
+                new Object[]{"name", "type"}
                 , new Object[]{"caption", "Type"}
                 , new Object[]{"width", 100}
                 , new Object[]{"minWidth", 0}
@@ -435,6 +444,7 @@ public class BPAssessmentAnalyzerPage extends javax.swing.JPanel {
     private com.rameses.rcp.control.XComboBox xComboBox2;
     private com.rameses.rcp.control.XComboBox xComboBox3;
     private com.rameses.rcp.control.XComboBox xComboBox4;
+    private com.rameses.rcp.control.XComboBox xComboBox5;
     private com.rameses.rcp.control.XDataTable xDataTable1;
     private com.rameses.rcp.control.XDataTable xDataTable2;
     private com.rameses.rcp.control.XDataTable xDataTable3;
