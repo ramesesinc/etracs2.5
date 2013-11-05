@@ -109,7 +109,7 @@ public class BatchCaptureController  {
                 entity.totalamount += it.amount 
             }   
         }
-        binding?.refresh('entity.totalamount'); 
+        binding?.refresh('entity.*'); 
     }
             
     def listModel = [
