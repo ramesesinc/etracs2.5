@@ -46,6 +46,11 @@
             void activate() {
                 if(selectedItem.active==1)
                     throw new Exception("Entry is already active");
+                if( !entity.txnmode)
+                    throw new Exception("Please select mode first.  ");
+                if( selectedItem.txnmode != entity.txnmode)
+                    throw new Exception("Collection mode did not match on AF mode. ")
+                    
                 def z = [:];
                 z.objid = selectedItem.objid;
                 z.txnmode = entity.txnmode;
