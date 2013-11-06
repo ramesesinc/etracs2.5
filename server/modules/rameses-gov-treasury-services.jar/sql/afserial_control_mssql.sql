@@ -18,6 +18,26 @@ SELECT a.* FROM
 WHERE a.ownerid =  $P{userid} 
 order by a.startseries 
 
+[getCollectorOpenIssuanceList]
+SELECT a.* FROM 
+(	SELECT 
+	ai.objid AS objid,	
+	ai.startstub AS stub,
+	CASE WHEN ac.currentseries IS NULL THEN ai.currentseries ELSE ac.currentseries END AS startseries,
+	ai.endseries AS endseries,
+	ac.txnmode AS txnmode,
+	CASE WHEN ac.active IS NULL THEN 0 ELSE ac.active END  AS active,
+	CASE WHEN ac.currentseries > ai.currentseries THEN 1 ELSE 0 END AS "open",
+	ac.controlid,
+	ac.assignee_name,
+	CASE WHEN ac.assignee_objid IS NULL THEN ai.respcenter_objid ELSE ac.assignee_objid END AS ownerid,
+	CASE WHEN ac.assignee_objid IS NULL THEN 'COLLECTOR' ELSE 'SUBCOLLECTOR' END AS ownerrole
+	FROM afserial_inventory ai
+	LEFT JOIN afserial_control ac ON ac.controlid=ai.objid
+	WHERE  ai.afid =  $P{af} AND ai.respcenter_objid = $P{userid} 
+	AND ac.currentseries <= ai.endseries ) a
+ORDER BY a.startseries 
+
 [getAssigneeIssuanceList]
 SELECT 
 ai.objid AS objid,	
