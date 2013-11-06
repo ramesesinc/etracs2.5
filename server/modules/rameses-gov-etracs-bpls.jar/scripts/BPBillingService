@@ -1,0 +1,39 @@
+import com.rameses.annotations.*;
+import com.rameses.util.*;
+import java.rmi.server.*;
+import com.rameses.services.extended.*;
+
+public class BPApplicationService extends ActiveCrudListService {
+
+	@ActiveDB("bpbilling")
+	def em;
+
+	@Env
+	def env;
+
+	@ProxyMethod
+	public def getBillItems(o) {
+		def list = em.getBillItems(o);
+		def bills = [];
+		list.each {
+			it.amtpaid = it.amount;
+			it.surchargepaid = 0;
+			it.interestpaid = 0;
+			it.discount = 0;
+			it.total = it.amtpaid;
+			if( it.paymentmode == "QTR") {
+				
+			}
+			else {
+				bills << it;
+			}
+		}
+		//generate also the receipt items here. for cash receipt.
+		return [billitems: list, receiptitems: [] ];
+	}	
+
+
+
+
+
+}	

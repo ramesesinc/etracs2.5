@@ -11,6 +11,7 @@
 		<field name="businessaddress" required="true"/>
 		<field name="orgtype" required="true"/>
 		<field name="officetype" required="true"/>
+		<field name="branchname" />
 
 		<field name="bin" />
 		<field name="yearstarted" required="true"/>
@@ -19,7 +20,7 @@
 		<field name="lastqtrpaid" required="true"/>
 		<field name="lastyearpaid" required="true"/>
 		<field name="credits" required="true"/>
-		<field name="user_objid" required="true"/>
+		<field name="user_objid" />
 	</element>	
 
 	<element name="lob" tablename="business_lob">
@@ -40,8 +41,8 @@
 		<field name="iqtr" />
 		<field name="account_objid" required="true"/>
 		<field name="account_title" required="true"/>
-		<field name="lob_objid" required="true"/>
-		<field name="lob_name" required="true"/>
+		<field name="lob_objid" />
+		<field name="lob_name" />
 		<field name="amount" required="true"/>
 		<field name="amtpaid" required="true"/>
 		<field name="discount" required="true"/>
@@ -104,8 +105,6 @@
 		<field name="issuedby_objid" required="true"/>
 		<field name="issuedby_name" required="true"/>
 	</element>
-
-	
 
 	<element name="info" tablename="business_info">
 		<field name="objid" primary="true"/>

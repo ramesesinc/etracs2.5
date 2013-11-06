@@ -6,7 +6,7 @@ class BusinessAccountService extends ActiveCrudListService {
 	@ActiveDB("businessaccount")
 	def em;
 
-	String pagingKeys = "ba.objid";
+	String pagingKeys = "a.objid";
 
 	@ProxyMethod
 	public def getColumns(o) {
@@ -14,7 +14,7 @@ class BusinessAccountService extends ActiveCrudListService {
 			[name:'code', caption:'Item Code' ],
 			[name:'title', caption:'Item Title' ],
 			[name:'taxfeetype', caption:'Tax Fee Type' ],
-			[name:'paymentmode', caption:'Payment Mode' ],
+			[name:'paymentmode', caption:'Payment Mode' ]
 		];
 	}
 

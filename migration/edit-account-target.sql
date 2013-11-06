@@ -1,0 +1,1 @@
+ALTER TABLE account ADD target decimal(18,2) NOT NULL DEFAULT 0.00

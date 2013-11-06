@@ -1,6 +1,6 @@
 <workunit>
     <invokers>
-       <invoker type="bpassessment:info" caption="Info" action="init"/>
+       <invoker type="bpassessment:info" caption="Info" />
     </invokers>
     <code>
         <![CDATA[
@@ -17,20 +17,9 @@
                 @Binding
                 def binding;
             
-                def infos;
                 def lobs;
                 def handler;
                 def formInfos;
-
-                void init() {
-                    FormInfo.sortInfos(infos);
-                    formInfos = FormInfo.buildFormInfos(infos);
-                }
-                
-                void reload() {
-                    init();
-                    binding.refresh();
-                }
                 
                 def formPanel = [
                     getCategory: { lobid->
@@ -46,13 +35,11 @@
                 ] as FormPanelModel;
    
                 def doOk() {
-                    def list = [];
-                    formInfos.each {
-                        list << it.bean;
-                    }
-                    infos = handler(list);
-                    if(!infos) return "_close";
-                    reload();
+                    formInfos = handler();
+                    if(!formInfos) 
+                        return "_close";
+                    else    
+                        binding.refresh();
                 }
                 
                 def doCancel() {

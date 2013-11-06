@@ -81,10 +81,10 @@ class RPTCertificationService
 	}
 
 	void replaceAmpersand(cert){
-		cert.owner?.name?.replaceAll('&', '&amp;')
-		cert.taxpayer?.name?.replaceAll('&', '&amp;')
-		cert.requestedby?.replaceAll('&', '&amp;')
-		cert.purpose?.replaceAll('&', '&amp;')
+		cert.owner?.name = cert.owner?.name?.replaceAll('&', 'AND')
+		cert.taxpayer?.name = cert.taxpayer?.name?.replaceAll('&', 'AND')
+		cert.requestedby = cert.requestedby?.replaceAll('&', 'AND')
+		cert.purpose = cert.purpose?.replaceAll('&', 'AND')
 	}
 
 	@ProxyMethod

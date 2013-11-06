@@ -14,10 +14,10 @@ import com.rameses.rcp.ui.annotations.Template;
  * @author  Elmo
  */
 @Template(FormPage.class)
-public class CompleteInfoPage extends javax.swing.JPanel {
+public class ApplicationInfoPage_1 extends javax.swing.JPanel {
     
     /** Creates new form NewBPApplicationInitPage */
-    public CompleteInfoPage() {
+    public ApplicationInfoPage_1() {
         initComponents();
     }
     
@@ -33,20 +33,23 @@ public class CompleteInfoPage extends javax.swing.JPanel {
         xLabel8 = new com.rameses.rcp.control.XLabel();
         xFormPanel1 = new com.rameses.rcp.control.XFormPanel();
         xLabel1 = new com.rameses.rcp.control.XLabel();
-        xLabel2 = new com.rameses.rcp.control.XLabel();
+        xLabel6 = new com.rameses.rcp.control.XLabel();
+        xLabel7 = new com.rameses.rcp.control.XLabel();
         xFormPanel2 = new com.rameses.rcp.control.XFormPanel();
         xLabel3 = new com.rameses.rcp.control.XLabel();
         xLabel5 = new com.rameses.rcp.control.XLabel();
-        xFormPanel3 = new com.rameses.rcp.control.XFormPanel();
-        xLabel6 = new com.rameses.rcp.control.XLabel();
-        xLabel7 = new com.rameses.rcp.control.XLabel();
-        xFormPanel4 = new com.rameses.rcp.control.XFormPanel();
         xLabel9 = new com.rameses.rcp.control.XLabel();
+        xLabel11 = new com.rameses.rcp.control.XLabel();
         xLabel10 = new com.rameses.rcp.control.XLabel();
-        xDataTable2 = new com.rameses.rcp.control.XDataTable();
         jTabbedPane1 = new javax.swing.JTabbedPane();
         jPanel1 = new javax.swing.JPanel();
+        xDataTable2 = new com.rameses.rcp.control.XDataTable();
+        jPanel2 = new javax.swing.JPanel();
+        xDataTable4 = new com.rameses.rcp.control.XDataTable();
+        jPanel4 = new javax.swing.JPanel();
         xDataTable3 = new com.rameses.rcp.control.XDataTable();
+        jPanel5 = new javax.swing.JPanel();
+        xDataTable5 = new com.rameses.rcp.control.XDataTable();
 
         jPanel3.setLayout(null);
 
@@ -74,27 +77,37 @@ public class CompleteInfoPage extends javax.swing.JPanel {
 
         com.rameses.rcp.control.border.XLineBorder xLineBorder2 = new com.rameses.rcp.control.border.XLineBorder();
         xLineBorder2.setLineColor(new java.awt.Color(204, 204, 204));
-        xLabel2.setBorder(xLineBorder2);
-        xLabel2.setCaption("Address");
-        xLabel2.setExpression("#{entity.permitee.address}");
-        xLabel2.setPreferredSize(new java.awt.Dimension(0, 18));
-        xFormPanel1.add(xLabel2);
-
-        jPanel3.add(xFormPanel1);
-        xFormPanel1.setBounds(10, 30, 370, 50);
+        xLabel6.setBorder(xLineBorder2);
+        xLabel6.setCaption("Trade Name");
+        xLabel6.setExpression("#{entity.tradename}");
+        xLabel6.setPreferredSize(new java.awt.Dimension(0, 18));
+        xFormPanel1.add(xLabel6);
 
         com.rameses.rcp.control.border.XLineBorder xLineBorder3 = new com.rameses.rcp.control.border.XLineBorder();
         xLineBorder3.setLineColor(new java.awt.Color(204, 204, 204));
-        xLabel3.setBorder(xLineBorder3);
+        xLabel7.setBorder(xLineBorder3);
+        xLabel7.setCaption("Address");
+        xLabel7.setExpression("#{entity.businessaddress}");
+        xLabel7.setName("application.info.taxpayeraddress");
+        xLabel7.setPreferredSize(new java.awt.Dimension(0, 18));
+        xFormPanel1.add(xLabel7);
+
+        jPanel3.add(xFormPanel1);
+        xFormPanel1.setBounds(10, 30, 370, 90);
+
+        xFormPanel2.setCaptionWidth(100);
+        com.rameses.rcp.control.border.XLineBorder xLineBorder4 = new com.rameses.rcp.control.border.XLineBorder();
+        xLineBorder4.setLineColor(new java.awt.Color(204, 204, 204));
+        xLabel3.setBorder(xLineBorder4);
         xLabel3.setCaption("Date");
         xLabel3.setCaptionWidth(100);
-        xLabel3.setExpression("#{entity.appdate}");
+        xLabel3.setExpression("#{entity.dtfiled}");
         xLabel3.setPreferredSize(new java.awt.Dimension(0, 18));
         xFormPanel2.add(xLabel3);
 
-        com.rameses.rcp.control.border.XLineBorder xLineBorder4 = new com.rameses.rcp.control.border.XLineBorder();
-        xLineBorder4.setLineColor(new java.awt.Color(204, 204, 204));
-        xLabel5.setBorder(xLineBorder4);
+        com.rameses.rcp.control.border.XLineBorder xLineBorder5 = new com.rameses.rcp.control.border.XLineBorder();
+        xLineBorder5.setLineColor(new java.awt.Color(204, 204, 204));
+        xLabel5.setBorder(xLineBorder5);
         xLabel5.setCaption("Applicable Year");
         xLabel5.setCaptionWidth(100);
         xLabel5.setExpression("#{entity.iyear}");
@@ -102,37 +115,21 @@ public class CompleteInfoPage extends javax.swing.JPanel {
         xLabel5.setPreferredSize(new java.awt.Dimension(0, 18));
         xFormPanel2.add(xLabel5);
 
-        jPanel3.add(xFormPanel2);
-        xFormPanel2.setBounds(390, 30, 330, 50);
-
-        com.rameses.rcp.control.border.XLineBorder xLineBorder5 = new com.rameses.rcp.control.border.XLineBorder();
-        xLineBorder5.setLineColor(new java.awt.Color(204, 204, 204));
-        xLabel6.setBorder(xLineBorder5);
-        xLabel6.setCaption("Trade Name");
-        xLabel6.setExpression("#{entity.tradename}");
-        xLabel6.setPreferredSize(new java.awt.Dimension(0, 18));
-        xFormPanel3.add(xLabel6);
-
         com.rameses.rcp.control.border.XLineBorder xLineBorder6 = new com.rameses.rcp.control.border.XLineBorder();
         xLineBorder6.setLineColor(new java.awt.Color(204, 204, 204));
-        xLabel7.setBorder(xLineBorder6);
-        xLabel7.setCaption("Address");
-        xLabel7.setExpression("#{entity.businessaddress}");
-        xLabel7.setName("application.info.taxpayeraddress");
-        xLabel7.setPreferredSize(new java.awt.Dimension(0, 18));
-        xFormPanel3.add(xLabel7);
-
-        jPanel3.add(xFormPanel3);
-        xFormPanel3.setBounds(10, 80, 368, 50);
-
-        xFormPanel4.setCaptionWidth(100);
-        com.rameses.rcp.control.border.XLineBorder xLineBorder7 = new com.rameses.rcp.control.border.XLineBorder();
-        xLineBorder7.setLineColor(new java.awt.Color(204, 204, 204));
-        xLabel9.setBorder(xLineBorder7);
+        xLabel9.setBorder(xLineBorder6);
         xLabel9.setCaption("Bus. Org Type");
         xLabel9.setExpression("#{entity.orgtype}");
         xLabel9.setPreferredSize(new java.awt.Dimension(0, 18));
-        xFormPanel4.add(xLabel9);
+        xFormPanel2.add(xLabel9);
+
+        com.rameses.rcp.control.border.XLineBorder xLineBorder7 = new com.rameses.rcp.control.border.XLineBorder();
+        xLineBorder7.setLineColor(new java.awt.Color(204, 204, 204));
+        xLabel11.setBorder(xLineBorder7);
+        xLabel11.setCaption("Office Type");
+        xLabel11.setExpression("#{entity.officetype}");
+        xLabel11.setPreferredSize(new java.awt.Dimension(0, 18));
+        xFormPanel2.add(xLabel11);
 
         com.rameses.rcp.control.border.XLineBorder xLineBorder8 = new com.rameses.rcp.control.border.XLineBorder();
         xLineBorder8.setLineColor(new java.awt.Color(204, 204, 204));
@@ -141,14 +138,11 @@ public class CompleteInfoPage extends javax.swing.JPanel {
         xLabel10.setExpression("#{entity.barangay.name}");
         xLabel10.setName("application.info.taxpayeraddress");
         xLabel10.setPreferredSize(new java.awt.Dimension(0, 18));
-        xFormPanel4.add(xLabel10);
+        xFormPanel2.add(xLabel10);
 
-        jPanel3.add(xFormPanel4);
-        xFormPanel4.setBounds(390, 76, 332, 50);
+        jPanel3.add(xFormPanel2);
+        xFormPanel2.setBounds(390, 30, 330, 110);
 
-        com.rameses.rcp.control.border.XTitledBorder xTitledBorder2 = new com.rameses.rcp.control.border.XTitledBorder();
-        xTitledBorder2.setTitle("Business Information");
-        xDataTable2.setBorder(xTitledBorder2);
         xDataTable2.setColumns(new com.rameses.rcp.common.Column[]{
             new com.rameses.rcp.common.Column(new Object[]{
                 new Object[]{"name", "lob.name"}
@@ -177,19 +171,6 @@ public class CompleteInfoPage extends javax.swing.JPanel {
                 , new Object[]{"typeHandler", new com.rameses.rcp.common.TextColumnHandler()}
             }),
             new com.rameses.rcp.common.Column(new Object[]{
-                new Object[]{"name", "datatype"}
-                , new Object[]{"caption", "Data Type"}
-                , new Object[]{"width", 100}
-                , new Object[]{"minWidth", 0}
-                , new Object[]{"maxWidth", 0}
-                , new Object[]{"required", false}
-                , new Object[]{"resizable", true}
-                , new Object[]{"nullWhenEmpty", true}
-                , new Object[]{"editable", false}
-                , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
-                , new Object[]{"typeHandler", new com.rameses.rcp.common.TextColumnHandler()}
-            }),
-            new com.rameses.rcp.common.Column(new Object[]{
                 new Object[]{"name", "value"}
                 , new Object[]{"caption", "Value"}
                 , new Object[]{"width", 100}
@@ -199,12 +180,61 @@ public class CompleteInfoPage extends javax.swing.JPanel {
                 , new Object[]{"resizable", true}
                 , new Object[]{"nullWhenEmpty", true}
                 , new Object[]{"editable", false}
+                , new Object[]{"alignment", "RIGHT"}
+                , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
+                , new Object[]{"typeHandler", new com.rameses.rcp.common.TextColumnHandler()}
+            })
+        });
+        xDataTable2.setHandler("infoModel");
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(xDataTable2, javax.swing.GroupLayout.DEFAULT_SIZE, 775, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(xDataTable2, javax.swing.GroupLayout.DEFAULT_SIZE, 233, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        jTabbedPane1.addTab("Business Information", jPanel1);
+
+        xDataTable4.setColumns(new com.rameses.rcp.common.Column[]{
+            new com.rameses.rcp.common.Column(new Object[]{
+                new Object[]{"name", "code"}
+                , new Object[]{"caption", "Type"}
+                , new Object[]{"width", 100}
+                , new Object[]{"minWidth", 0}
+                , new Object[]{"maxWidth", 0}
+                , new Object[]{"required", false}
+                , new Object[]{"resizable", true}
+                , new Object[]{"nullWhenEmpty", true}
+                , new Object[]{"editable", false}
                 , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
                 , new Object[]{"typeHandler", new com.rameses.rcp.common.TextColumnHandler()}
             }),
             new com.rameses.rcp.common.Column(new Object[]{
-                new Object[]{"name", "beforeprint"}
-                , new Object[]{"caption", "Before Print"}
+                new Object[]{"name", "title"}
+                , new Object[]{"caption", "Title"}
+                , new Object[]{"width", 100}
+                , new Object[]{"minWidth", 0}
+                , new Object[]{"maxWidth", 0}
+                , new Object[]{"required", false}
+                , new Object[]{"resizable", true}
+                , new Object[]{"nullWhenEmpty", true}
+                , new Object[]{"editable", false}
+                , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
+                , new Object[]{"typeHandler", new com.rameses.rcp.common.TextColumnHandler()}
+            }),
+            new com.rameses.rcp.common.Column(new Object[]{
+                new Object[]{"name", "step"}
+                , new Object[]{"caption", "Step"}
                 , new Object[]{"width", 100}
                 , new Object[]{"minWidth", 0}
                 , new Object[]{"maxWidth", 0}
@@ -216,7 +246,25 @@ public class CompleteInfoPage extends javax.swing.JPanel {
                 , new Object[]{"typeHandler", new com.rameses.rcp.common.TextColumnHandler()}
             })
         });
-        xDataTable2.setHandler("infoModel");
+        xDataTable4.setHandler("requirementModel");
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(xDataTable4, javax.swing.GroupLayout.DEFAULT_SIZE, 775, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(xDataTable4, javax.swing.GroupLayout.DEFAULT_SIZE, 233, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        jTabbedPane1.addTab("Requirements", jPanel2);
 
         xDataTable3.setColumns(new com.rameses.rcp.common.Column[]{
             new com.rameses.rcp.common.Column(new Object[]{
@@ -259,7 +307,7 @@ public class CompleteInfoPage extends javax.swing.JPanel {
                 , new Object[]{"typeHandler", new com.rameses.rcp.common.TextColumnHandler()}
             }),
             new com.rameses.rcp.common.Column(new Object[]{
-                new Object[]{"name", "account.taxfeetype"}
+                new Object[]{"name", "taxfeetype"}
                 , new Object[]{"caption", "Type"}
                 , new Object[]{"width", 100}
                 , new Object[]{"minWidth", 0}
@@ -300,23 +348,111 @@ public class CompleteInfoPage extends javax.swing.JPanel {
         });
         xDataTable3.setHandler("taxfeeModel");
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(xDataTable3, javax.swing.GroupLayout.DEFAULT_SIZE, 775, Short.MAX_VALUE)
+        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
+        jPanel4.setLayout(jPanel4Layout);
+        jPanel4Layout.setHorizontalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(xDataTable3, javax.swing.GroupLayout.PREFERRED_SIZE, 775, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+        jPanel4Layout.setVerticalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(xDataTable3, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
+                .addComponent(xDataTable3, javax.swing.GroupLayout.DEFAULT_SIZE, 233, Short.MAX_VALUE)
                 .addContainerGap())
         );
-        jTabbedPane1.addTab("Taxes and Fees", jPanel1);
+        jTabbedPane1.addTab("Taxes and Fees", jPanel4);
+
+        xDataTable5.setColumns(new com.rameses.rcp.common.Column[]{
+            new com.rameses.rcp.common.Column(new Object[]{
+                new Object[]{"name", "account.code"}
+                , new Object[]{"caption", "Acct Code"}
+                , new Object[]{"width", 100}
+                , new Object[]{"minWidth", 0}
+                , new Object[]{"maxWidth", 0}
+                , new Object[]{"required", false}
+                , new Object[]{"resizable", true}
+                , new Object[]{"nullWhenEmpty", true}
+                , new Object[]{"editable", false}
+                , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
+                , new Object[]{"typeHandler", new com.rameses.rcp.common.TextColumnHandler()}
+            }),
+            new com.rameses.rcp.common.Column(new Object[]{
+                new Object[]{"name", "account.title"}
+                , new Object[]{"caption", "Account Title"}
+                , new Object[]{"width", 100}
+                , new Object[]{"minWidth", 0}
+                , new Object[]{"maxWidth", 0}
+                , new Object[]{"required", false}
+                , new Object[]{"resizable", true}
+                , new Object[]{"nullWhenEmpty", true}
+                , new Object[]{"editable", false}
+                , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
+                , new Object[]{"typeHandler", new com.rameses.rcp.common.TextColumnHandler()}
+            }),
+            new com.rameses.rcp.common.Column(new Object[]{
+                new Object[]{"name", "taxfeetype"}
+                , new Object[]{"caption", "Type"}
+                , new Object[]{"width", 100}
+                , new Object[]{"minWidth", 0}
+                , new Object[]{"maxWidth", 0}
+                , new Object[]{"required", false}
+                , new Object[]{"resizable", true}
+                , new Object[]{"nullWhenEmpty", true}
+                , new Object[]{"editable", false}
+                , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
+                , new Object[]{"typeHandler", new com.rameses.rcp.common.TextColumnHandler()}
+            }),
+            new com.rameses.rcp.common.Column(new Object[]{
+                new Object[]{"name", "assessedvalue"}
+                , new Object[]{"caption", "AssessedValue"}
+                , new Object[]{"width", 100}
+                , new Object[]{"minWidth", 100}
+                , new Object[]{"maxWidth", 100}
+                , new Object[]{"required", false}
+                , new Object[]{"resizable", false}
+                , new Object[]{"nullWhenEmpty", true}
+                , new Object[]{"editable", false}
+                , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
+                , new Object[]{"typeHandler", new com.rameses.rcp.common.DecimalColumnHandler("#,##0.00", -1.0, -1.0, false, 2)}
+            }),
+            new com.rameses.rcp.common.Column(new Object[]{
+                new Object[]{"name", "amount"}
+                , new Object[]{"caption", "Amount"}
+                , new Object[]{"width", 100}
+                , new Object[]{"minWidth", 100}
+                , new Object[]{"maxWidth", 100}
+                , new Object[]{"required", false}
+                , new Object[]{"resizable", false}
+                , new Object[]{"nullWhenEmpty", true}
+                , new Object[]{"editable", false}
+                , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
+                , new Object[]{"typeHandler", new com.rameses.rcp.common.DecimalColumnHandler("#,##0.00", -1.0, -1.0, false, 2)}
+            })
+        });
+        xDataTable5.setHandler("otherFeesModel");
+        xDataTable5.setId("otherFeesModel");
+
+        javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
+        jPanel5.setLayout(jPanel5Layout);
+        jPanel5Layout.setHorizontalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel5Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(xDataTable5, javax.swing.GroupLayout.DEFAULT_SIZE, 775, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        jPanel5Layout.setVerticalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel5Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(xDataTable5, javax.swing.GroupLayout.PREFERRED_SIZE, 222, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(22, Short.MAX_VALUE))
+        );
+        jTabbedPane1.addTab("Other Fees", jPanel5);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -326,9 +462,8 @@ public class CompleteInfoPage extends javax.swing.JPanel {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                     .addComponent(jTabbedPane1, javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(xDataTable2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jPanel3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(258, Short.MAX_VALUE))
+                .addContainerGap(348, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -336,9 +471,7 @@ public class CompleteInfoPage extends javax.swing.JPanel {
                 .addContainerGap()
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(xDataTable2, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 150, Short.MAX_VALUE)
+                .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 283, Short.MAX_VALUE)
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -346,17 +479,20 @@ public class CompleteInfoPage extends javax.swing.JPanel {
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
+    private javax.swing.JPanel jPanel5;
     private javax.swing.JTabbedPane jTabbedPane1;
     private com.rameses.rcp.control.XDataTable xDataTable2;
     private com.rameses.rcp.control.XDataTable xDataTable3;
+    private com.rameses.rcp.control.XDataTable xDataTable4;
+    private com.rameses.rcp.control.XDataTable xDataTable5;
     private com.rameses.rcp.control.XFormPanel xFormPanel1;
     private com.rameses.rcp.control.XFormPanel xFormPanel2;
-    private com.rameses.rcp.control.XFormPanel xFormPanel3;
-    private com.rameses.rcp.control.XFormPanel xFormPanel4;
     private com.rameses.rcp.control.XLabel xLabel1;
     private com.rameses.rcp.control.XLabel xLabel10;
-    private com.rameses.rcp.control.XLabel xLabel2;
+    private com.rameses.rcp.control.XLabel xLabel11;
     private com.rameses.rcp.control.XLabel xLabel3;
     private com.rameses.rcp.control.XLabel xLabel4;
     private com.rameses.rcp.control.XLabel xLabel5;

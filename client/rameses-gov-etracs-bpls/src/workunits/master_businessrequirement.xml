@@ -12,13 +12,10 @@
         import com.rameses.osiris2.common.*
 
         class BusinessRequirementController extends CRUDController {   
-
             @Service('BusinessRequirementService')
             def service;
-            
             String entityName  = 'businessrequirement'
-            
-            def types = ["ROUTE", "DOCUMENT" ]
+            def types = LOV.BP_REQUIREMENT_TYPES*.key;
         }
         ]]>        
         

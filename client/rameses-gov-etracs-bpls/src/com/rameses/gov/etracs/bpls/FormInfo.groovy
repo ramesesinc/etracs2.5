@@ -1,5 +1,4 @@
 package com.rameses.gov.etracs.bpls;
-
 import com.rameses.rcp.common.*
 import com.rameses.rcp.annotations.*
 import com.rameses.osiris2.client.*
@@ -10,9 +9,9 @@ import java.rmi.server.*;
 
 class FormInfo {
     
-    public static void sortInfos(infos) {
+    public static def sortInfos(infos) {
         //sort the infos
-        infos = infos.findAll{it.lob==null} + infos.findAll{ it.lob!=null }.sort{ it.lob };
+        return infos.findAll{it.lob==null} + infos.findAll{ it.lob!=null }.sort{ it.lob };
     }
 
     public static def buildFormInfos(infos) {

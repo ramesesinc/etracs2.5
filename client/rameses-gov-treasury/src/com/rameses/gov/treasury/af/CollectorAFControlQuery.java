@@ -1,23 +1,23 @@
 /*
- * NewBPApplicationInitPage.java
+ * AFSerialHandler.java
  *
- * Created on October 3, 2013, 7:41 PM
+ * Created on September 5, 2013, 5:15 PM
  */
 
-package com.rameses.gov.etracs.bpls.application;
+package com.rameses.gov.treasury.af;
 
-import com.rameses.osiris2.themes.ListPage;
+import com.rameses.osiris2.themes.CloseOnlyPage;
 import com.rameses.rcp.ui.annotations.Template;
 
 /**
  *
  * @author  Elmo
  */
-@Template(ListPage.class)
-public class BusinessRenewalListPage extends javax.swing.JPanel {
+
+public class CollectorAFControlQuery extends javax.swing.JPanel {
     
-    /** Creates new form NewBPApplicationInitPage */
-    public BusinessRenewalListPage() {
+    /** Creates new form AFSerialHandler */
+    public CollectorAFControlQuery() {
         initComponents();
     }
     
@@ -28,9 +28,16 @@ public class BusinessRenewalListPage extends javax.swing.JPanel {
      */
     // <editor-fold defaultstate="collapsed" desc=" Generated Code ">//GEN-BEGIN:initComponents
     private void initComponents() {
-        jLabel1 = new javax.swing.JLabel();
+        xFormPanel1 = new com.rameses.rcp.control.XFormPanel();
+        xComboBox1 = new com.rameses.rcp.control.XComboBox();
 
-        jLabel1.setText("Select Business to renew");
+        xComboBox1.setCaption("AF ");
+        xComboBox1.setExpression("#{item.objid}");
+        xComboBox1.setItemKey("objid");
+        xComboBox1.setItems("afTypes");
+        xComboBox1.setName("entity.formno");
+        xComboBox1.setPreferredSize(new java.awt.Dimension(0, 22));
+        xFormPanel1.add(xComboBox1);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -38,21 +45,22 @@ public class BusinessRenewalListPage extends javax.swing.JPanel {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 225, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(516, Short.MAX_VALUE))
+                .addComponent(xFormPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 199, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(339, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel1)
+                .addComponent(xFormPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
     
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel jLabel1;
+    private com.rameses.rcp.control.XComboBox xComboBox1;
+    private com.rameses.rcp.control.XFormPanel xFormPanel1;
     // End of variables declaration//GEN-END:variables
     
 }

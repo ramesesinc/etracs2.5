@@ -1,0 +1,79 @@
+import com.rameses.annotations.*;
+import com.rameses.util.*;
+import java.rmi.server.*;
+import com.rameses.services.extended.*
+
+public class BPApplicationRequirementService extends ActiveCrudListService {
+
+	@ActiveDB("businessrequirement")
+	def em;
+
+	@ActiveDB("bpapplication")
+	def bpapp;
+
+	@Env
+	def env;
+
+	@Service("DateService")
+	def dateSvc;
+
+	String pagingKeys = "bp.objid";
+	String listMethod = "getOpenApplicationsList";
+
+	@ProxyMethod
+	public def getNodes(def o) {
+		return [
+			[name:'forassessment', caption:'For Assessment', state:'forassessment', folder:true,leaf:true],
+			[name:'forpayment', caption:'For Payment', state:'forpayment', folder:true,leaf:true],
+		];
+	}	
+
+	@ProxyMethod
+	public def getColumns(def o) {
+		return [
+			[name:"appno", caption:"App No"],
+			[name:"tradename", caption:"Tradename"],
+			[name:"permitee.name", caption:"Permitee"],
+		];
+	}
+
+	@ProxyMethod
+	def init(def o) {
+		def list = em.getOpenFeeRequirements(o);	
+		o.taxfees = [];
+		list.each {
+			def m = [:];
+			m.objid = "BPTAXFEE"+ new UID();
+			m.account = it.account;
+			m.parentid = o.objid;
+			m.refid = it.objid;
+			m.reftype = it.refid;
+			o.taxfees << m
+		}
+		o.completedtaxfees = em.getCompletedFeeRequirements(o);
+		return o;	
+	}
+
+	@ProxyMethod
+	def submitCompletedRequirements(def list) {
+		//post the taxfees
+		for(o in list) {
+			if(o.amount)  {
+				o.assessedvalue = o.amount;
+				o.taxfeetype = "OTHERFEE";
+				bpapp.save( o, "taxfee");
+
+				def m = [:];
+				m.objid = o.refid;
+				m.userid=env.USERID;
+				m.username = env.USER;	
+				m.dtcompleted = dateSvc.serverDate;
+				m.remarks =  o.account.title + ":" + o.amount;
+				em.updateCompletedFeeRequirement(m);
+			}
+		}
+	}
+
+
+
+}
