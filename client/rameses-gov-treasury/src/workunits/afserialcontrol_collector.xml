@@ -1,10 +1,10 @@
 <workunit extends="wtemplates/ListController.xml">
         
    <invokers>
-        <invoker folderid="/explorer/txn/treasury" caption="Collector AF Serial" index="1" action="init" />
+        <invoker folderid="/explorer/txn/treasury" caption="Collector AF Serial" index="1" action="init" role="COLLECTOR"/>
         
         <!-- OWN TOOLBARS -->
-        <invoker type="formActions" caption="Close" action="_close" />
+        <invoker type="formActions" caption="Close" action="_close" icon="images/toolbars/cancel.png"/>
         <invoker type="formActions" caption="Activate" action="activate" visibleWhen="#{selectedEntity!=null &amp;&amp; selectedEntity.active ==0}"/>
         <invoker type="formActions" caption="Assign" action="assign" visibleWhen="#{selectedEntity!=null &amp;&amp; selectedEntity.assignee?.name ==null }"/>
         <invoker type="formActions" caption="Unassign" action="unassign" visibleWhen="#{selectedEntity!=null &amp;&amp; selectedEntity.assignee?.name !=null}"/>

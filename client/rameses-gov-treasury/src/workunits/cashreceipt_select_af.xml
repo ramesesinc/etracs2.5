@@ -10,8 +10,10 @@
         <!-- OWN TOOLBARS -->
         <invoker type="formActions" caption="Close" action="_close" />
         <invoker type="formActions" caption="Activate" action="activate"/>
-        <invoker type="formActions" caption="Assign" action="assign" role="COLLECTOR" />
         <invoker type="formActions" caption="Deactivate" action="deactivate" />
+        <!-- 
+        <invoker type="formActions" caption="Assign" action="assign" role="COLLECTOR" />
+        -->
     </invokers>
     
     <code>
