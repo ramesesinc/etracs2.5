@@ -20,6 +20,19 @@ class AFSerialControlService {
 		return em.getOpenIssuanceList(m);
 	}
 
+	/*************************************************************************
+	* just added this so as not to affect select af for cashreceipt_select_af
+	*************************************************************************/
+	@ProxyMethod
+	public def getCollectorOpenIssuanceList(def p) {
+		def m = [af:p.formno,  txnmode:p.txnmode]; 
+		if(!p.collector) 
+			m.userid = env.USERID;
+		else	
+			m.userid = p.collector.objid
+		return em.getCollectorOpenIssuanceList(m);
+	}
+
 	@ProxyMethod
 	public def getAssigneeIssuanceList(def p) {
 		def m = [:];

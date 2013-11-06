@@ -94,7 +94,7 @@
                   <SubComponents>
                     <Component class="com.rameses.rcp.control.XButton" name="xButton1">
                       <Properties>
-                        <Property name="mnemonic" type="int" value="115"/>
+                        <Property name="mnemonic" type="int" value="97"/>
                         <Property name="name" type="java.lang.String" value="selectAll"/>
                         <Property name="text" type="java.lang.String" value="Select All"/>
                       </Properties>
