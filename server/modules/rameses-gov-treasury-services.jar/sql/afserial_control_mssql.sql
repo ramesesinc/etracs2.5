@@ -59,8 +59,8 @@ FROM
 	FROM afserial_control ac 
 	INNER JOIN  afserial_inventory ai ON ac.controlid=ai.objid
 	INNER JOIN  afserial af on af.objid = ai.afid  
-	INNER JOIN sys_usergroup_member col ON col.user_objid=ai.respcenter_objid 
-	LEFT JOIN sys_usergroup_member scol ON scol.user_objid=ac.assignee_objid 
+	inner join sys_user col on col.objid = ai.respcenter_objid
+	left join sys_user scol on scol.objid = ac.assignee_name 
 	WHERE  ai.afid =  $P{formno}
 	AND ac.txnmode = 'CAPTURE'
 	AND ac.currentseries <= ai.endseries ) a
@@ -89,8 +89,8 @@ FROM
 	FROM afserial_control ac 
 	INNER JOIN  afserial_inventory ai ON ac.controlid=ai.objid
 	INNER JOIN  afserial af on af.objid = ai.afid  
-	INNER JOIN sys_usergroup_member col ON col.user_objid=ai.respcenter_objid 
-	LEFT JOIN sys_usergroup_member scol ON scol.user_objid=ac.assignee_objid 
+	inner join sys_user col on col.objid = ai.respcenter_objid
+	left join sys_user scol on scol.objid = ac.assignee_name 
 	WHERE  ai.afid =  $P{afid}
 	AND ac.active = 1
 	AND ac.txnmode = $P{txnmode}
