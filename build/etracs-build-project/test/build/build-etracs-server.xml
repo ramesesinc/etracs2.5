@@ -49,10 +49,10 @@
         <antcall target="do-copy-incubation-jars-to-devlibs">
             <param name="sourcefile" value="osiris2-client-themes"/>
         </antcall>
-        <!--
         <antcall target="do-copy-incubation-jars-to-devlibs">
-            <param name="sourcefile" value="osiris2-client-ui"/>
+            <param name="sourcefile" value="rameses-services-extended"/>
         </antcall>
+        <!--
         <antcall target="do-copy-incubation-jars-to-devlibs">
             <param name="sourcefile" value="osiris2-framework"/>
         </antcall>
@@ -155,6 +155,9 @@
         </antcall>
         <antcall target="deploy-etracs-jars-to-platform">
             <param name="sourcefile" value="rameses-gov-treasury"/>
+        </antcall>
+        <antcall target="deploy-etracs-jars-to-platform">
+            <param name="sourcefile" value="rameses-gov-etracs-tools"/>
         </antcall>
     </target>
     

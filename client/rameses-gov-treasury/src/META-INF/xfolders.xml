@@ -6,6 +6,7 @@
         <folder id="txn">
             <folder id="treasury" caption="Treasury" index="5">
                 <folder id="reports" caption="Reports" index="5"/>
+                <folder id="tools" caption="Tools" index="10"/>
             </folder>
                 
         </folder>

@@ -1,0 +1,20 @@
+"entity.*" [mode == 'read']{
+    enabled:false;
+}
+
+"entity.*" [mode != 'read']{
+    enabled:true;
+}
+
+"selectedCollectionType|selectedRevenueItem|selectedUser" [mode == 'read']{
+    readonly:true;
+}
+
+"selectedCollectionType|selectedRevenueItem|selectedUser" [mode != 'read']{
+    readonly:false;
+}
+
+"entity.objid" [entity.state == 'POSTED']{
+    enabled:false;
+}
+
