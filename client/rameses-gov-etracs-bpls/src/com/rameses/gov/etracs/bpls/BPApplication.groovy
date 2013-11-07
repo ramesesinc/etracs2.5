@@ -17,7 +17,7 @@ class BPApplication extends PageFlowController {
 
     def entity = [lobs:[], taxfees:[], requirements:[], infos:[]];
     def officeTypes = LOV.BUSINESS_OFFICE_TYPES;
-    def orgTypes = LOV.BUSINESS_ORG_TYPES;
+    def orgTypes = LOV.ORG_TYPES;
     def lobAssessmentTypes = ["RENEW", "RETIRE"];
 
     def appTypes = LOV.BUSINESS_APP_TYPES;
@@ -37,12 +37,22 @@ class BPApplication extends PageFlowController {
         entity.lobs = [];
     }
     
+    @PropertyChangeListener
+    def listener = [
+        "entity.orgtype" : { o->
+            entity.permitee = null;
+        }
+    ]
+
     def getLookupPermitees() {
+        if( !entity.orgtype ) {
+            MsgBox.err("Please select an orgtype first.");
+            return null;
+        }    
         return InvokerUtil.lookupOpener( "entity:lookup", [
+            "query.orgtype": entity.orgtype,
             onselect: { o->
                 entity.permitee = o;
-                entity.businessaddress = o.address;
-                binding.refresh("entity.businessaddress");
             }
         ]);
     }

@@ -2,6 +2,7 @@
         
    <invokers>
         <invoker folderid="/explorer/txn/treasury" caption="Collector AF Serial" index="1" action="init" />
+        <invoker type="home.action" caption="Collector AF Serial" index="1" action="init" />
         
         <!-- OWN TOOLBARS -->
         <invoker type="formActions" caption="Close" action="_close" />

@@ -1,0 +1,13 @@
+"query.amtpaid" [ query.payoption != 'AVAILABLE_CASH' ] {
+    visible: false;
+}
+"query.amtpaid" [ query.payoption == 'AVAILABLE_CASH' ] {
+    visible: true;
+}
+"query.qtr" [ query.payoption != 'QTR' ] {
+    visible: false;
+}
+"query.qtr" [ query.payoption == 'QTR' ] {
+    visible: true;
+}
+

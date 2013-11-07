@@ -1,0 +1,46 @@
+<workunit>
+    <invokers>
+       <invoker type="bpassessment:analyzer:formActions" caption="Billing" action="init"/>
+       <invoker type="formActions" caption="Close" action="_close"/>
+    </invokers>
+    <code>
+        <![CDATA[
+            import com.rameses.rcp.common.*
+            import com.rameses.rcp.annotations.*
+            import com.rameses.osiris2.client.*
+            import com.rameses.osiris2.common.*
+            import com.rameses.rulemgmt.constraint.*;
+            import com.rameses.rulemgmt.*;
+            import java.rmi.server.*;
+            import com.rameses.gov.etracs.bpls.*;
+            
+            class BPBillingAnalyzerController  {
+            
+                @Service("BPBillingService")
+                def billSvc;
+                
+                String title = "BP Billing Simulator";
+                
+                def entity;    
+                def query = [:];
+                
+                def qtrs = (1..4);
+                def payOptions = ["FULL","QTR","AVAILABLE_CASH"];
+                
+                void init() {
+                    if( !entity.taxfees )
+                        throw new Exception("Please run first tax fee calculation" );
+                }
+                
+                def listModel = [
+                    fetchList: { o->
+                        return entity.billitems;
+                    }
+                ] as BasicListModel;
+            }
+        ]]>    
+    </code>
+    <pages>
+        <page template="com.rameses.gov.etracs.rules.bpls.BPBillingAnalyzerPage"/>
+    </pages>
+</workunit>

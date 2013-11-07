@@ -1,5 +1,23 @@
 package bpbilling;
 
-declare BPApplication
-	orgtype:		String
+declare BPLedger
+	tradename:	String	
+	appyear:	int
 end
+
+declare TaxFeeAccount
+	objid:			String
+	acctid:			String
+	ledger:			BPLedger
+	qtr:			int
+	year:			int
+	expired:		boolean
+	type:			String
+	name:			String
+	amtdue:			double
+	surcharge:		double
+	interest:		double
+	discount:		double
+	data:			Object 
+end
+

@@ -138,7 +138,7 @@ public class BPAssessmentService  {
 		app.apptype = o.apptype;
 		app.orgtype = o.orgtype;
 		app.officetype = o.officetype;
-		app.barangayid = o.barangay.objid;
+		app.barangayid = o.barangay?.objid;
 		app.txnmode = o.txnmode;
 		facts << app;
 		o.lobs.each {
@@ -272,6 +272,7 @@ public class ComputeTaxFee implements RuleActionHandler {
 				info.lob = [objid:lob.objid, name:lob.name];
 			}
 			info.taxfeetype = info.account.taxfeetype;
+			info.paymentmode = info.account.paymentmode;
 			info.assessedvalue = amt;
 			info.amount = amt;
 			info.rulename = drools.rule.name;
