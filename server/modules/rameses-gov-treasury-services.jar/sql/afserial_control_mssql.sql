@@ -80,7 +80,7 @@ FROM
 	INNER JOIN  afserial_inventory ai ON ac.controlid=ai.objid
 	INNER JOIN  afserial af on af.objid = ai.afid  
 	inner join sys_user col on col.objid = ai.respcenter_objid
-	left join sys_user scol on scol.objid = ac.assignee_name 
+	left join sys_user scol on scol.objid = ac.assignee_objid 
 	WHERE  ai.afid =  $P{formno}
 	AND ac.txnmode = 'CAPTURE'
 	AND ac.currentseries <= ai.endseries ) a
@@ -110,7 +110,7 @@ FROM
 	INNER JOIN  afserial_inventory ai ON ac.controlid=ai.objid
 	INNER JOIN  afserial af on af.objid = ai.afid  
 	inner join sys_user col on col.objid = ai.respcenter_objid
-	left join sys_user scol on scol.objid = ac.assignee_name 
+	left join sys_user scol on scol.objid = ac.assignee_objid
 	WHERE  ai.afid =  $P{afid}
 	AND ac.active = 1
 	AND ac.txnmode = $P{txnmode}
@@ -192,5 +192,5 @@ WHERE ac.controlid = $P{controlid}
 
 [unassignsubcollector]
 update afserial_control set 
-	assignee_name = null, assignee_objid = null, txnmode='ONLINE' 
+	assignee_name = null, assignee_objid = null, txnmode='ONLINE',  active = 0 
 where controlid=$P{controlid} 
