@@ -10,6 +10,8 @@
         <invoker type="formActions" caption="Unassign" action="unassign" visibleWhen="#{selectedEntity!=null &amp;&amp; selectedEntity.assignee?.name !=null}"/>
         <invoker type="formActions" caption="Deactivate" action="deactivate" visibleWhen="#{selectedEntity!=null &amp;&amp; selectedEntity.active !=0}"/>
         <invoker type="formActions" caption="Change Mode" action="changeMode" visibleWhen="#{selectedEntity!=null}"/>
+        <invoker type="formActions" caption="Export" action="doExport" />
+        <invoker type="formActions" caption="Import" action="doImport" />
    </invokers>
    
    <code>
@@ -90,6 +92,15 @@
                 return InvokerUtil.lookupOpener("afserial:changemode", 
                     [entity:selectedEntity, saveHandler: { listHandler.reload(); }] 
                 );
+            }
+            
+            
+            def doExport(){
+                return InvokerUtil.lookupOpener('afserialcontrol:export', [:])
+            }
+            
+            def doImport(){
+                return InvokerUtil.lookupOpener('afserialcontrol:import', [:])
             }
             
             def listHandler = [
