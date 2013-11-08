@@ -15,7 +15,9 @@ class RPTReceiptNoLedgerInterceptor
 	@After(pattern="CashReceiptService.open", eval="#{result.formno=='56'}", index=100) 
 	public void interceptOpenReceipt( evt ) {
 		def receipt = evt.result
-		receipt._items = svc.getItemsForPrinting(receipt)
+		if ( ! receipt._items )
+			receipt._items = []
+		receipt._items += svc.getItemsForPrinting(receipt)
 		receipt.itemcount = receipt._items.size()
 	}
 

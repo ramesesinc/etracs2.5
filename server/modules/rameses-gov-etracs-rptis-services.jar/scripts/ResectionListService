@@ -15,7 +15,7 @@ class ResectionListService
     	params.searchtext = (params.searchtext ? params.searchtext : '') + '%'
         def filters = [
             ' and r.txnno LIKE $P{searchtext}',
-            ' and r.sectionno LIKE $P{searchtext}',
+            ' and r.section LIKE $P{searchtext}',
             ' and b.name LIKE $P{searchtext}',
             ' and r.appraiser_name LIKE $P{searchtext}',
         ]

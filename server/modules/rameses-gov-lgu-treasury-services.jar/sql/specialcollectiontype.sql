@@ -18,7 +18,7 @@ SELECT
 	ri.fund_objid AS item_fund_objid
 FROM specialaccountsetting ss 
 	INNER JOIN revenueitem ri ON ss.item_objid = ri.objid 
-WHERE ss.objid = $P{collectiontypeid}	
+WHERE ss.collectiontypeid = $P{collectiontypeid}	
 
 [delete]
 DELETE FROM specialaccountsetting WHERE objid = $P{objid}
