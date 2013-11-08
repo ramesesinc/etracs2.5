@@ -1,7 +1,7 @@
 <workunit>
     
    <invokers>
-         <invoker type="liquidation:reports" caption="Report on Collection and Deposits (RCD) By Fund" action="init" index="1" target="self"/>
+         <invoker type="liquidation:reports" caption="Report on Collection and Deposits (Summary)" action="init" index="2" target="self"/>
          
          <invoker type="formActions" caption="Back" action="_close" mnemonic="b" shortcut="ctrl B"/>
    </invokers>
@@ -16,7 +16,7 @@
         import com.rameses.util.*;
         import com.rameses.osiris2.reports.*;
         
-        class LiquidationRCDReportController {
+        class LiquidationRCDReportAllController {
         
             @Binding
             def binding;
@@ -27,31 +27,26 @@
             @Service("ReportParameterService")
             def paramsvc
             
-            String title = "Report on Collection and Deposits (RCD) By Fund";
+            String title = "Report on Collection and Deposits (Summary)";
             
             def reportdata;
             def reportPath = "com/rameses/gov/treasury/liquidation/report/rcd/"
             def liquidationid
-            def fundlist 
-            def fund 
             def entity;
             
             void init() {
-                fundlist = svc.getFundlist( entity.objid ); 
-                setFund( fundlist[0] );
-            }
-            
-            void setFund(def fund ){
-                this.fund = fund 
-                reportdata = svc.getRCDReportData( [ liquidationid:entity.objid, fundname:this.fund.fundid ] )
+                reportdata = svc.getRCDSummaryData( [ liquidationid:entity.objid  ] )
                 report.viewReport();
-                if( binding) binding.refresh()
             }
             
             def report = [
                 getReportName : { return reportPath + 'main.jasper' },
                 getReportData : { return reportdata }, 
-                getParameters : { return paramsvc.getStandardParameter() },
+                getParameters : { 
+                    def params =  paramsvc.getStandardParameter() 
+                    params.REPORTTYPE = 'SUMMARY'
+                    return params;
+                },
                 getSubReports : {
                     return [ 
                         new SubReport("remittances", reportPath + "remittances.jasper"),
@@ -59,7 +54,8 @@
                         new SubReport("reportaforms", reportPath + "reportaforms.jasper"),
                         new SubReport("reportnsaforms", reportPath + "reportnsaforms.jasper"),
                         new SubReport("reportnonserialsummary", reportPath + "reportnonserialsummary.jasper"),
-                        new SubReport("otherpayments", reportPath + "otherpayments.jasper")
+                        new SubReport("OtherPayments", reportPath + "otherpayments.jasper"),
+                        new SubReport("Denomination", reportPath + "denomination.jasper")
                     ] as SubReport[];    
                  }
             ] as ReportModel
@@ -69,7 +65,7 @@
    </code>
    
    <pages>
-       <page template="com.rameses.enterprise.treasury.report.PreviewByFundPage" />
+       <page template="com.rameses.osiris2.common.ui.ReportPreviewPage"/>
    </pages>
    
 </workunit>
