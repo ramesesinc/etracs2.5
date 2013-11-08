@@ -30,6 +30,22 @@
                     }
                 ]); 
             }
+            
+            def getLookupSurchargeAccount() {
+                return InvokerUtil.lookupOpener("revenueitem:lookup", [
+                    onselect: { o->
+                        entity.surcharge = [objid:o.objid, code:o.code, title:o.title];
+                    }
+                ]); 
+            }
+            
+            def getLookupInterestAccount() {
+                return InvokerUtil.lookupOpener("revenueitem:lookup", [
+                    onselect: { o->
+                        entity.interest = [objid:o.objid, code:o.code, title:o.title];
+                    }
+                ]); 
+            }
         }
         ]]>
         

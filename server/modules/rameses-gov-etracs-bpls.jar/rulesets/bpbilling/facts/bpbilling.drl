@@ -1,5 +1,43 @@
 package bpbilling;
 
+import java.util.Date;
+
+declare BPApplication
+	orgtype:		String
+	officetype:		String
+	apptype:		String
+	txnmode:		String
+	barangayid:		String
+end
+
+declare BillingDate
+	date:		Date
+	year:		int
+	month:		int
+	day:		int
+	qtr:		int
+end
+
+declare PayOption
+	type:		String
+	qtr:		int
+	amount:		double
+	balance:	double
+end
+
+declare PayCursor
+	qtr:		int
+	maxqtr:		int
+end
+
+declare QtrDeadline
+	qtr:		int
+	deadline:	Date
+	month:  	int
+	year:		int
+	day:		int
+end
+
 declare BPLedger
 	tradename:	String	
 	appyear:	int
@@ -9,15 +47,20 @@ declare TaxFeeAccount
 	objid:			String
 	acctid:			String
 	ledger:			BPLedger
-	qtr:			int
-	year:			int
-	expired:		boolean
 	type:			String
-	name:			String
+	expired:		boolean
+	deadline:		Date
 	amtdue:			double
 	surcharge:		double
 	interest:		double
 	discount:		double
-	data:			Object 
+	total:			double
+	lob:			Object
+	account:		Object
+	year:			int
+	qtrmonth:		int
+	qtr:			int
+	consumed:		boolean
 end
+
 

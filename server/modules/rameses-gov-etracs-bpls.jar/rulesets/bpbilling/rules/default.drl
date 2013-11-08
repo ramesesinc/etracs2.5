@@ -1,0 +1,136 @@
+package bpbilling;
+
+import java.util.*;
+import com.rameses.rules.common.*;
+global RuleAction action;
+
+rule "determine-expiry"
+	agenda-group "initial"
+	no-loop
+	when
+		BillingDate( $date: date )
+		QtrDeadline( $qtr:qtr, $deadline: deadline < $date)
+		TF: TaxFeeAccount( qtr == $qtr )
+	then
+		TF.setExpired(true);
+		TF.setDeadline( $deadline );
+end
+
+
+
+#######################################
+# FULL PAYMENT
+#######################################
+rule "distribute-full-payment-othercharge"
+	agenda-group "apply-payment"
+	salience 300
+	no-loop
+	when
+		PayCursor( $qtr: qtr )
+		PayOption( type == "FULLYEAR" )
+		TF: TaxFeeAccount( type == "OTHERCHARGE", qtr == $qtr )
+	then
+		action.execute( "collect_items", TF, drools );
+end
+
+rule "distribute-full-payment-regfee"
+	agenda-group "apply-payment"
+	salience 200
+	no-loop
+	when
+		PayCursor( $qtr: qtr )
+		PayOption( type == "FULLYEAR" )
+		TF: TaxFeeAccount( type == "REGFEE", qtr == $qtr )
+	then
+		action.execute( "collect_items", TF, drools );
+end
+
+
+rule "distribute-full-payment-tax"
+	agenda-group "apply-payment"
+	salience 100
+	no-loop
+	when
+		PayCursor($qtr: qtr)
+		PayOption( type == "FULLYEAR" )
+		TF: TaxFeeAccount( type == "TAX", qtr == $qtr )
+	then
+		action.execute( "collect_items", TF, drools );
+end
+
+rule "update-full-pay-cursor"
+agenda-group "apply-payment"
+salience 0
+when
+	PayOption( type == "FULLYEAR" )
+	p: PayCursor( $q: qtr <= 4 )	
+then
+	p.setQtr( $q + 1);
+	update(p);
+end		
+
+
+#######################################
+# QTR PAYMENT
+#######################################
+rule "distribute-qtr-payment-othercharge"
+	agenda-group "apply-payment"
+	salience 300
+	no-loop
+	when
+		PayCursor( $qtr: qtr )
+		PayOption( type == "QTR" )
+		TF: TaxFeeAccount( type == "OTHERCHARGE", qtr == $qtr )
+	then
+		action.execute( "collect_items", TF, drools );
+end
+
+rule "distribute-qtr-payment-regfee"
+	agenda-group "apply-payment"
+	salience 200
+	no-loop
+	when
+		PayCursor( $qtr: qtr )
+		PayOption( type == "QTR" )
+		TF: TaxFeeAccount( type == "REGFEE", qtr == $qtr )
+	then
+		action.execute( "collect_items", TF, drools );
+end
+
+rule "distribute-qtr-businesstax-regfee"
+	agenda-group "apply-payment"
+	salience 100
+	no-loop
+	when
+		PayCursor( $qtr: qtr )
+		PayOption( type == "QTR" )
+		TF: TaxFeeAccount( type == "TAX", qtr == $qtr )
+	then
+		action.execute( "collect_items", TF, drools );
+end
+
+rule "update-qtr-pay-cursor"
+agenda-group "apply-payment"
+salience 0
+when
+	PayOption( type == "QTR", $qtr: qtr )
+	p: PayCursor( $q: qtr < $qtr )	
+then
+	p.setQtr( $q + 1);
+	update(p);
+end	
+
+#######################################
+# PAYMENT
+#######################################
+rule "update-partial-pay-cursor"
+agenda-group "apply-payment"
+salience 0
+when
+	PayOption( type == "QTR", $qtr: qtr )
+	p: PayCursor( $q: qtr < $qtr )	
+then
+	p.setQtr( $q + 1);
+	update(p);
+end
+

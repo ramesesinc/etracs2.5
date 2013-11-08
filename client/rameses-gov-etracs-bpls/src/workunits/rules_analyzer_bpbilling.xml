@@ -1,7 +1,7 @@
 <workunit>
     <invokers>
        <invoker type="bpassessment:analyzer:formActions" caption="Billing" action="init"/>
-       <invoker type="formActions" caption="Close" action="_close"/>
+       <invoker type="formActions" caption="Back" action="_close" immediate="true"/>
     </invokers>
     <code>
         <![CDATA[
@@ -19,22 +19,36 @@
                 @Service("BPBillingService")
                 def billSvc;
                 
+                @Binding
+                def binding;
+                
                 String title = "BP Billing Simulator";
                 
                 def entity;    
                 def query = [:];
                 
                 def qtrs = (1..4);
-                def payOptions = ["FULL","QTR","AVAILABLE_CASH"];
+                def payOptions = LOV.BP_PAYOPTIONS*.key
+                def result = [:];
                 
                 void init() {
                     if( !entity.taxfees )
                         throw new Exception("Please run first tax fee calculation" );
+                    def d = new java.text.SimpleDateFormat("yyyy-MM-dd");
+                    query.billdate = d.format(new Date());
+                }
+                
+                void runTest() {
+                    query.entity = entity;
+                    query.receivables = entity.taxfees;
+                    result = billSvc.getBillItems( query );
+                    listModel.reload();
+                    binding.refresh("result.*");
                 }
                 
                 def listModel = [
                     fetchList: { o->
-                        return entity.billitems;
+                        return result.items;
                     }
                 ] as BasicListModel;
             }

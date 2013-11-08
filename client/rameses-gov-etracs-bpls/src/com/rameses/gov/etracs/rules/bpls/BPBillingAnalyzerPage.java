@@ -40,14 +40,20 @@ public class BPBillingAnalyzerPage extends javax.swing.JPanel {
         xComboBox2 = new com.rameses.rcp.control.XComboBox();
         jPanel2 = new javax.swing.JPanel();
         xDataTable1 = new com.rameses.rcp.control.XDataTable();
+        xFormPanel3 = new com.rameses.rcp.control.XFormPanel();
+        xDecimalField2 = new com.rameses.rcp.control.XDecimalField();
+        xDecimalField3 = new com.rameses.rcp.control.XDecimalField();
+        xDecimalField4 = new com.rameses.rcp.control.XDecimalField();
+        xDecimalField5 = new com.rameses.rcp.control.XDecimalField();
 
         com.rameses.rcp.control.border.XTitledBorder xTitledBorder1 = new com.rameses.rcp.control.border.XTitledBorder();
         xTitledBorder1.setTitle("Business Information");
         jPanel1.setBorder(xTitledBorder1);
 
         xFormPanel1.setCaptionWidth(120);
-        xDateField1.setCaption("Transaction Date");
-        xDateField1.setName("query.date");
+        xDateField1.setCaption("Billing  Date");
+        xDateField1.setName("query.billdate");
+        xDateField1.setRequired(true);
         xFormPanel1.add(xDateField1);
 
         xButton1.setCaption("Run Test");
@@ -59,17 +65,20 @@ public class BPBillingAnalyzerPage extends javax.swing.JPanel {
         xComboBox1.setItems("payOptions");
         xComboBox1.setName("query.payoption");
         xComboBox1.setPreferredSize(new java.awt.Dimension(0, 22));
+        xComboBox1.setRequired(true);
         xFormPanel2.add(xComboBox1);
 
         xDecimalField1.setCaption("Amount To Pay");
         xDecimalField1.setDepends(new String[] {"query.payoption"});
         xDecimalField1.setName("query.amtpaid");
+        xDecimalField1.setRequired(true);
         xFormPanel2.add(xDecimalField1);
 
         xComboBox2.setCaption("Qtr");
         xComboBox2.setDepends(new String[] {"query.payoption"});
         xComboBox2.setItems("qtrs");
         xComboBox2.setName("query.qtr");
+        xComboBox2.setRequired(true);
         xFormPanel2.add(xComboBox2);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -137,7 +146,7 @@ public class BPBillingAnalyzerPage extends javax.swing.JPanel {
                 , new Object[]{"caption", "Line of Business"}
                 , new Object[]{"width", 100}
                 , new Object[]{"minWidth", 0}
-                , new Object[]{"maxWidth", 0}
+                , new Object[]{"maxWidth", 150}
                 , new Object[]{"required", false}
                 , new Object[]{"resizable", true}
                 , new Object[]{"nullWhenEmpty", true}
@@ -150,7 +159,7 @@ public class BPBillingAnalyzerPage extends javax.swing.JPanel {
                 , new Object[]{"caption", "Account"}
                 , new Object[]{"width", 100}
                 , new Object[]{"minWidth", 0}
-                , new Object[]{"maxWidth", 0}
+                , new Object[]{"maxWidth", 150}
                 , new Object[]{"required", false}
                 , new Object[]{"resizable", true}
                 , new Object[]{"nullWhenEmpty", true}
@@ -166,6 +175,19 @@ public class BPBillingAnalyzerPage extends javax.swing.JPanel {
                 , new Object[]{"maxWidth", 100}
                 , new Object[]{"required", false}
                 , new Object[]{"resizable", false}
+                , new Object[]{"nullWhenEmpty", true}
+                , new Object[]{"editable", false}
+                , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
+                , new Object[]{"typeHandler", new com.rameses.rcp.common.DecimalColumnHandler("#,##0.00", -1.0, -1.0, false, 2)}
+            }),
+            new com.rameses.rcp.common.Column(new Object[]{
+                new Object[]{"name", "discount"}
+                , new Object[]{"caption", "Discount"}
+                , new Object[]{"width", 100}
+                , new Object[]{"minWidth", 10}
+                , new Object[]{"maxWidth", 100}
+                , new Object[]{"required", false}
+                , new Object[]{"resizable", true}
                 , new Object[]{"nullWhenEmpty", true}
                 , new Object[]{"editable", false}
                 , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
@@ -195,7 +217,7 @@ public class BPBillingAnalyzerPage extends javax.swing.JPanel {
                 , new Object[]{"nullWhenEmpty", true}
                 , new Object[]{"editable", false}
                 , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
-                , new Object[]{"typeHandler", new com.rameses.rcp.common.TextColumnHandler()}
+                , new Object[]{"typeHandler", new com.rameses.rcp.common.DecimalColumnHandler("#,##0.00", -1.0, -1.0, false, 2)}
             }),
             new com.rameses.rcp.common.Column(new Object[]{
                 new Object[]{"name", "total"}
@@ -209,26 +231,65 @@ public class BPBillingAnalyzerPage extends javax.swing.JPanel {
                 , new Object[]{"editable", false}
                 , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
                 , new Object[]{"typeHandler", new com.rameses.rcp.common.DecimalColumnHandler("#,##0.00", -1.0, -1.0, false, 2)}
+            }),
+            new com.rameses.rcp.common.Column(new Object[]{
+                new Object[]{"name", "deadline"}
+                , new Object[]{"caption", "Deadline"}
+                , new Object[]{"width", 100}
+                , new Object[]{"minWidth", 0}
+                , new Object[]{"maxWidth", 0}
+                , new Object[]{"required", false}
+                , new Object[]{"resizable", true}
+                , new Object[]{"nullWhenEmpty", true}
+                , new Object[]{"editable", false}
+                , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
+                , new Object[]{"typeHandler", new com.rameses.rcp.common.DateColumnHandler(null, "yyyy-MM-dd", null)}
             })
         });
         xDataTable1.setHandler("listModel");
         xDataTable1.setName("selectedItem");
 
+        xFormPanel3.setCellspacing(10);
+        xFormPanel3.setOrientation(com.rameses.rcp.constant.UIConstants.HORIZONTAL);
+        xDecimalField2.setCaption("Total Business Tax");
+        xDecimalField2.setCaptionWidth(120);
+        xDecimalField2.setName("result.total_businesstax");
+        xFormPanel3.add(xDecimalField2);
+
+        xDecimalField3.setCaption("Total Reg. Fee");
+        xDecimalField3.setCaptionWidth(120);
+        xDecimalField3.setName("result.total_regfee");
+        xFormPanel3.add(xDecimalField3);
+
+        xDecimalField4.setCaption("Total Other Charge");
+        xDecimalField4.setCaptionWidth(120);
+        xDecimalField4.setName("result.total_othercharge");
+        xFormPanel3.add(xDecimalField4);
+
+        xDecimalField5.setCaption("Total Amt Due");
+        xDecimalField5.setCaptionWidth(120);
+        xDecimalField5.setName("result.total_amtdue");
+        xFormPanel3.add(xDecimalField5);
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(xDataTable1, javax.swing.GroupLayout.PREFERRED_SIZE, 911, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(20, Short.MAX_VALUE))
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(xFormPanel3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 921, Short.MAX_VALUE)
+                    .addComponent(xDataTable1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 921, Short.MAX_VALUE))
+                .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(xDataTable1, javax.swing.GroupLayout.DEFAULT_SIZE, 360, Short.MAX_VALUE)
-                .addContainerGap())
+                .addComponent(xDataTable1, javax.swing.GroupLayout.PREFERRED_SIZE, 298, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(xFormPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(17, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -263,8 +324,13 @@ public class BPBillingAnalyzerPage extends javax.swing.JPanel {
     private com.rameses.rcp.control.XDataTable xDataTable1;
     private com.rameses.rcp.control.XDateField xDateField1;
     private com.rameses.rcp.control.XDecimalField xDecimalField1;
+    private com.rameses.rcp.control.XDecimalField xDecimalField2;
+    private com.rameses.rcp.control.XDecimalField xDecimalField3;
+    private com.rameses.rcp.control.XDecimalField xDecimalField4;
+    private com.rameses.rcp.control.XDecimalField xDecimalField5;
     private com.rameses.rcp.control.XFormPanel xFormPanel1;
     private com.rameses.rcp.control.XFormPanel xFormPanel2;
+    private com.rameses.rcp.control.XFormPanel xFormPanel3;
     // End of variables declaration//GEN-END:variables
     
 }
