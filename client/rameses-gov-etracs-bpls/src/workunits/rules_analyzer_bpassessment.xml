@@ -2,8 +2,7 @@
     <invokers>
        <invoker type="rulemgmt:formActions" caption="Analyzer" action="init"
             visibleWhen="#{ruleset == 'bpassessment'}" target="window" role="ASSESSOR,RULE_AUTHOR"/>
-       <invoker type="home.action" caption="BP Assessment Analyzer" action="init" index="1" target="window" role="ASSESSOR,RULE_AUTHOR"/>
-            
+       <invoker type="home.action" caption="BP Rules Analyzer" action="init" index="1" target="window" role="ASSESSOR,RULE_AUTHOR"/>
        <invoker type="formActions" caption="Close" action="_close" immediate="true"/>
        <invoker type="formActions" caption="Get Info" action="getInfo"/>
        <invoker type="formActions" caption="Get Tax Fees" action="getTaxFees"/>

@@ -2,6 +2,8 @@ package bpbilling;
 
 import java.util.*;
 import com.rameses.rules.common.*;
+import java.math.*;
+
 global RuleAction action;
 
 rule "determine-expiry"
@@ -16,121 +18,71 @@ rule "determine-expiry"
 		TF.setDeadline( $deadline );
 end
 
-
-
 #######################################
 # FULL PAYMENT
 #######################################
-rule "distribute-full-payment-othercharge"
+rule "distribute-full-payment"
 	agenda-group "apply-payment"
-	salience 300
-	no-loop
 	when
-		PayCursor( $qtr: qtr )
 		PayOption( type == "FULLYEAR" )
-		TF: TaxFeeAccount( type == "OTHERCHARGE", qtr == $qtr )
+		TF: TaxFeeAccount( $p: paypriority )
+		not TaxFeeAccount( paypriority!=$p, paypriority < $p )
 	then
-		action.execute( "collect_items", TF, drools );
+		action.execute( "collect_full", TF, drools );
+		retract( TF );
 end
-
-rule "distribute-full-payment-regfee"
-	agenda-group "apply-payment"
-	salience 200
-	no-loop
-	when
-		PayCursor( $qtr: qtr )
-		PayOption( type == "FULLYEAR" )
-		TF: TaxFeeAccount( type == "REGFEE", qtr == $qtr )
-	then
-		action.execute( "collect_items", TF, drools );
-end
-
-
-rule "distribute-full-payment-tax"
-	agenda-group "apply-payment"
-	salience 100
-	no-loop
-	when
-		PayCursor($qtr: qtr)
-		PayOption( type == "FULLYEAR" )
-		TF: TaxFeeAccount( type == "TAX", qtr == $qtr )
-	then
-		action.execute( "collect_items", TF, drools );
-end
-
-rule "update-full-pay-cursor"
-agenda-group "apply-payment"
-salience 0
-when
-	PayOption( type == "FULLYEAR" )
-	p: PayCursor( $q: qtr <= 4 )	
-then
-	p.setQtr( $q + 1);
-	update(p);
-end		
-
 
 #######################################
 # QTR PAYMENT
 #######################################
-rule "distribute-qtr-payment-othercharge"
+rule "distribute-qtr-payment"
 	agenda-group "apply-payment"
-	salience 300
-	no-loop
 	when
-		PayCursor( $qtr: qtr )
-		PayOption( type == "QTR" )
-		TF: TaxFeeAccount( type == "OTHERCHARGE", qtr == $qtr )
+		PayOption( type == "QTR", $qtr: qtr )
+		TF: TaxFeeAccount( $p: paypriority, qtr <= $qtr )
+		not TaxFeeAccount( paypriority!=$p, paypriority < $p, qtr <= $qtr )
 	then
-		action.execute( "collect_items", TF, drools );
+		action.execute( "collect_full", TF, drools );
+		retract( TF );
 end
 
-rule "distribute-qtr-payment-regfee"
-	agenda-group "apply-payment"
-	salience 200
-	no-loop
-	when
-		PayCursor( $qtr: qtr )
-		PayOption( type == "QTR" )
-		TF: TaxFeeAccount( type == "REGFEE", qtr == $qtr )
-	then
-		action.execute( "collect_items", TF, drools );
-end
-
-rule "distribute-qtr-businesstax-regfee"
-	agenda-group "apply-payment"
+#######################################
+# PARTIAL PAYMENT (PARTIAL COMPLETE)
+#######################################
+rule "distribute-partial-payment"
 	salience 100
-	no-loop
+	agenda-group "apply-payment"
 	when
-		PayCursor( $qtr: qtr )
-		PayOption( type == "QTR" )
-		TF: TaxFeeAccount( type == "TAX", qtr == $qtr )
+		TF: TaxFeeAccount( $p: paypriority, $total:total )
+		not TaxFeeAccount( paypriority!=$p, paypriority < $p )
+		P: PayOption( type == "PARTIAL_PMT", $bal:balance >= $total )
 	then
-		action.execute( "collect_items", TF, drools );
+		action.execute( "collect_full", TF, drools );
+		retract( TF );
+		System.out.println( "full bal is " + $bal + " from line total ->"+$total);
+		BigDecimal bd1 = new BigDecimal($bal+"");
+        BigDecimal bd2 = new BigDecimal($total+"");		
+		P.setBalance( bd1.subtract(bd2).doubleValue() );
+		update(P);
 end
 
-rule "update-qtr-pay-cursor"
-agenda-group "apply-payment"
-salience 0
-when
-	PayOption( type == "QTR", $qtr: qtr )
-	p: PayCursor( $q: qtr < $qtr )	
-then
-	p.setQtr( $q + 1);
-	update(p);
-end	
-
 #######################################
-# PAYMENT
+# PARTIAL PAYMENT (UNDERPAYMENT)
 #######################################
-rule "update-partial-pay-cursor"
-agenda-group "apply-payment"
-salience 0
-when
-	PayOption( type == "QTR", $qtr: qtr )
-	p: PayCursor( $q: qtr < $qtr )	
-then
-	p.setQtr( $q + 1);
-	update(p);
+rule "distribute-under-payment"
+	salience 50
+	agenda-group "apply-payment"
+	when
+		TF: TaxFeeAccount( $p: paypriority, $total:total )
+		not TaxFeeAccount( paypriority!=$p, paypriority < $p )
+		P: PayOption( type == "PARTIAL_PMT", $bal:balance < $total, balance > 0 )
+	then
+		Map m = new HashMap();
+		m.put("taxfeeaccount",TF);
+		m.put("amtpaid", new BigDecimal($bal+"").doubleValue() );
+		System.out.println( "partial bal is " + $bal + " from line total ->"+$total);
+		action.execute( "collect_partial", m, drools );
+		retract( TF );
+		P.setBalance( 0 );
+		update(P);
 end
-

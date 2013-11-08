@@ -25,11 +25,6 @@ declare PayOption
 	balance:	double
 end
 
-declare PayCursor
-	qtr:		int
-	maxqtr:		int
-end
-
 declare QtrDeadline
 	qtr:		int
 	deadline:	Date
@@ -58,9 +53,9 @@ declare TaxFeeAccount
 	lob:			Object
 	account:		Object
 	year:			int
-	qtrmonth:		int
 	qtr:			int
-	consumed:		boolean
+	paypriority:	int
+	balance:		double
 end
 
 

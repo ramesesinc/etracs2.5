@@ -202,7 +202,6 @@ public class BPAssessmentAnalyzerPage extends javax.swing.JPanel {
         xLookupField3.setHandler("barangay:lookup");
         xLookupField3.setName("entity.barangay");
         xLookupField3.setPreferredSize(new java.awt.Dimension(0, 19));
-        xLookupField3.setRequired(true);
         xFormPanel1.add(xLookupField3);
 
         xComboBox4.setCaption("App Type");
