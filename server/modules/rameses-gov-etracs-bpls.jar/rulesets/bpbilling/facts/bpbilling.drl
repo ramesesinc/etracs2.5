@@ -21,9 +21,15 @@ end
 declare PayOption
 	type:		String
 	qtr:		int
-	amount:		double
-	balance:	double
 end
+
+declare Payment 
+	pmtdate:	Date
+	amtpaid:	double
+	minamt:		double
+	balance: 	double
+end
+
 
 declare QtrDeadline
 	qtr:		int

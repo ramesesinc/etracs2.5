@@ -43,12 +43,12 @@
                 fetchList: { o->
                     return entity.taxfees;
                 },
-            ] as EditorListModel;
-            
-            def completedTaxfeeModel = [
-                fetchList: { o->
-                    return entity.completedtaxfees;
+                onAddItem: { o->
+                    MsgBox.alert("add item");
                 },
+                onCommitItem: { o->
+                    MsgBox.alert("committed");
+                }
             ] as EditorListModel;
             
             def submit() {

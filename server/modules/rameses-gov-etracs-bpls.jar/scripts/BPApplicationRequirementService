@@ -22,10 +22,12 @@ public class BPApplicationRequirementService extends ActiveCrudListService {
 
 	@ProxyMethod
 	public def getNodes(def o) {
-		return [
-			[name:'forassessment', caption:'For Assessment', state:'forassessment', folder:true,leaf:true],
-			[name:'forpayment', caption:'For Payment', state:'forpayment', folder:true,leaf:true],
-		];
+		def list = em.getDepartments();
+		list.each {
+			it.caption = it.department;
+			it.folder = true;
+			it.leaf = true;
+		}
 	}	
 
 	@ProxyMethod

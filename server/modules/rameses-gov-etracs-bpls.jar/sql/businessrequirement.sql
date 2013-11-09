@@ -8,7 +8,20 @@ SELECT * FROM business_requirement WHERE code LIKE $P{searchtext}
 [findReq]
 SELECT * FROM business_requirement WHERE objid=$P{objid}
 
+[getDepartments]
+SELECT objid, department, 'forassessment' AS state  
+FROM business_requirement 
+WHERE type='WORKFLOW'
+
 [getOpenApplicationsList]
+SELECT DISTINCT bp.* 
+FROM bpapplication bp
+INNER JOIN bpapplication_requirement br ON bp.objid=br.parentid
+INNER JOIN business_requirement r ON r.objid=br.refid
+WHERE r.department = $P{department} AND bp.state = $P{state}
+
+
+[sgetOpenApplicationsList]
 SELECT bp.* 
 FROM bpapplication bp
 WHERE bp.state = $P{state}
