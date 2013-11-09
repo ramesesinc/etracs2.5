@@ -1,10 +1,8 @@
-<workunit extends="wtemplates/RuleMgmtController.xml" serviceName="RuleMgmtService">
+<workunit>
     <invokers>
        <invoker type="rulemgmt:formActions" caption="Analyzer" action="init"
-            visibleWhen="#{ruleset == 'bpassessment'}" target="window" />
-            
-       <invoker type="home.action" caption="BP Assessment Analyzer" action="init" index="1" target="window"/>
-            
+            visibleWhen="#{ruleset == 'bpassessment'}" target="window" role="ASSESSOR,RULE_AUTHOR"/>
+       <invoker type="home.action" caption="BP Rules Analyzer" action="init" index="1" target="window" role="ASSESSOR,RULE_AUTHOR"/>
        <invoker type="formActions" caption="Close" action="_close" immediate="true"/>
        <invoker type="formActions" caption="Get Info" action="getInfo"/>
        <invoker type="formActions" caption="Get Tax Fees" action="getTaxFees"/>
@@ -25,6 +23,8 @@
             class BPAssessmentAnalyzerController extends BPApplication {
                 
                 String title = "Business Rule Assessment Simulator";
+                
+                String entityName = "bpassessment:analyzer";
                 
                 void init() {
                     lobAssessmentTypes = LOV.LOB_ASSESSMENT_TYPES*.key;

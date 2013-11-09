@@ -162,7 +162,6 @@ public class BPApplicationService extends ActiveCrudListService {
 
 
 	public void afterOpen( def p ) {
-		println "aftre open";
 		p.lobs = em.getLobs(p);
 		p.infos = em.getInfos(p);
 		p.taxfees = em.getTaxfees(p);
@@ -241,6 +240,10 @@ public class BPApplicationService extends ActiveCrudListService {
 	*********************************/
 	@ProxyMethod
 	public def calculateTaxfees(o) {
+		def z = o.infos.findAll{it.value==null};
+		if(z) {
+			throw new Exception("Please provide the ff. info : \n" + z.collect{ it.attribute.caption }.join( "\n" ));	
+		}	
 		def result = bpAssessment.execute(o);
 		def taxfees = result.taxfees;
 		//retrieve also other taxfees
@@ -255,11 +258,6 @@ public class BPApplicationService extends ActiveCrudListService {
 	************************/
 	@ProxyMethod
 	public void submitForAssessment(def p) {
-		def z = p.infos.findAll{it.value==null};
-		if(z) {
-			throw new Exception("Please provide the ff. info : \n" + z.collect{ it.attribute.caption }.join( "\n" ));	
-		}	
-		saveInfos(p);
 		em.changeState( [objid:p.objid, state:'forassessment'] );
 	}
 

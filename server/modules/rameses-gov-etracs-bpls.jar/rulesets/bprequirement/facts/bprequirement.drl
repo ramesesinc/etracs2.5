@@ -1,5 +1,0 @@
-package bprequirement;
-
-declare BPRequirement
-	orgtype:		String
-end

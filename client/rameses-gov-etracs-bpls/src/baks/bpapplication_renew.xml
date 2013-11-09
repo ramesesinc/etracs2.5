@@ -1,0 +1,91 @@
+<workunit>
+    <invokers>
+        <invoker folderid="/explorer/txn/bpls/app" caption="Renewal" action="start" index="2"/>
+    </invokers>
+    
+    <code>
+        <![CDATA[    
+        import com.rameses.rcp.annotations.*
+        import com.rameses.rcp.common.*
+        import com.rameses.osiris2.client.*
+        import com.rameses.osiris2.common.*
+        import com.rameses.gov.etracs.bpls.application.*;
+        
+        class  RenewBPApplication extends BPApplicationController {
+        
+            @Service("BusinessRenewalService")
+            def renewalSvc;
+            
+            def selectedLob;
+            def alerts = [];
+            
+            def redFlagOpener;
+            def _redFlagOpener = new Opener(outcome:'redflag');
+
+            def getLookupBusiness() {
+                return InvokerUtil.lookupOpener( "businessrenewal:lookup", [
+                    onselect: { o->
+                        entity = o;
+                        binding.refresh();
+                    }
+                ]);
+            }
+            
+            def start() {
+                return super.start();
+            }
+            
+            void fetchEntity() {
+                if(!entity)
+                    throw new Exception("Please select business to renew");
+                entity = renewalSvc.open(entity);
+                alerts.clear();
+                redFlagOpener = null;
+                if(entity.redflags && entity.redflags.size()>0) {
+                    alerts = entity.remove("redflags");
+                    redFlagOpener =  _redFlagOpener;
+                }
+            }
+            
+            def showRedFlags() {
+                return InvokerUtil.lookupOpener("redflag:viewer", [alerts:alerts] );
+            }
+            
+        }
+        ]]>
+        
+    </code>
+    <pageflow>
+        <start>
+            <transition to="initial"/>
+        </start>
+        <page name="initial" title="Select Business for Renewal">
+            <transition to="end" caption="Close"/>
+            <transition to="specify-lob" caption="Next" action="fetchEntity"/>
+        </page>
+        <page name="specify-lob" title="Specify Line of Business">
+            <transition to="end" caption="Close"/>
+            <transition to="initial" caption="Back"/>
+        </page>
+        <!--
+        <process name="check-late-renewal">
+            <transition to="initial" cond="#{selectedEntity.laterenewal!=1}" />
+            <transition to="late-renewal" cond="#{selectedEntity.laterenewal==1}" />
+        </process>
+        <page name="late-renewal" title="Late Renewal">
+            <transition to="end" caption="Close"/>
+            <transition to="select-business" caption="Back"/>
+        </page>
+        -->
+        <end/>
+    </pageflow>
+    <pages>
+        
+        <page name="initial" template="com.rameses.gov.etracs.bpls.application.RenewalInitialPage"/>
+        <page name="specify-lob" template="com.rameses.gov.etracs.bpls.application.RenewalLOBPage"/>
+        <page name="late-renewal" template="com.rameses.gov.etracs.bpls.application.LateRenewalPage"/>
+        <!-- openers -->
+        <page name="redflag" template="com.rameses.gov.etracs.bpls.application.RedflagPanel"/>
+    </pages>
+    
+</workunit>

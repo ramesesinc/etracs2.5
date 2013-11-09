@@ -1,0 +1,155 @@
+<workunit>
+    <invokers>
+       <invoker type="bpassessment:analyzer:formActions" caption="Billing" action="init"/>
+       <invoker type="formActions" caption="Back" action="_close" immediate="true"/>
+    </invokers>
+    <code>
+        <![CDATA[
+            import com.rameses.rcp.common.*
+            import com.rameses.rcp.annotations.*
+            import com.rameses.osiris2.client.*
+            import com.rameses.osiris2.common.*
+            import com.rameses.rulemgmt.constraint.*;
+            import com.rameses.rulemgmt.*;
+            import java.rmi.server.*;
+            import com.rameses.gov.etracs.bpls.*;
+            
+            class BPBillingAnalyzerController  {
+            
+                @Service("BPBillingService")
+                def billSvc;
+                
+                @Binding
+                def binding;
+                
+                String title = "BP Billing Simulator";
+                
+                def entity;    
+                def query = [:];
+                
+                def qtrs = (1..4);
+                def payOptions = LOV.BP_PAYOPTIONS*.key
+                def result = [:];
+                
+                def payment = [:];
+                
+                def pmtOpener = new Opener(id:"pmt", outcome:"payment", target:"popup");
+                
+                def selectedPayment;
+                def payments = [];
+                def taxfees;
+                
+                void init() {
+                    if( !entity.taxfees )
+                        throw new Exception("Please run first tax fee calculation" );
+                    def d = new java.text.SimpleDateFormat("yyyy-MM-dd");
+                    query.billdate = d.format(new Date());
+                    taxfees = entity.taxfees;
+                    taxfees.each {
+                        it.amtpaid = 0;
+                    }
+                }
+                
+                void runBilling() {
+                    query.entity = entity;
+                    query.receivables = taxfees.findAll{ (it.amount - it.amtpaid) > 0 };
+                    result = billSvc.getBillItems( query );
+                    result.items.each {
+                        it.balancedue = it.total;
+                    }
+                    listModel.reload();
+                    payments.clear();
+                    selectedPayment = null;
+                    paymentModel.reload();
+                    binding.refresh("result.*");
+                }
+                
+                //billing
+                def listModel = [
+                    fetchList: { o->
+                        return result.items;
+                    }
+                ] as BasicListModel;
+                
+                def paymentModel = [
+                    fetchList: {
+                        if(!selectedPayment) return [];
+                        return selectedPayment.items;
+                    }
+                ] as BasicListModel;
+                
+                def addPayment() {
+                    payment.pmtdate = query.billdate;
+                    return pmtOpener;
+                }
+                
+                //accept the payment.
+                def doOk() {
+                    def q = [:];
+                    q.entity = entity;
+                    q.billdate = query.billdate;
+                    q.payoption = query.payoption;
+                    q.qtr = query.qtr;
+                    payment.minamt = result.total_amtdue;
+                    q.payment = payment;
+                    q.receivables = taxfees.findAll{ (it.amount - it.amtpaid) >0 };
+                    selectedPayment = billSvc.getBillItems( q );
+                    selectedPayment.receiptno = payment.receiptno;
+                    selectedPayment.pmtdate = payment.pmtdate;
+                    paymentModel.reload();
+                    binding.refresh();
+                    return "_close";
+                }
+                
+                def doCancel() {
+                    payment = [:];
+                    return "_close";
+                }
+                
+                void resetAll() {
+                    result = [ items: []];
+                    payments.clear();
+                    taxfees.each {
+                        it.amtpaid = 0;
+                    }
+                    selectedPayment = null;
+                    paymentModel.reload();
+                    listModel.reload();
+                    binding.refresh();
+                }
+                
+                void updateLedger() {
+                    //update each taxfees
+                    
+                    selectedPayment.items.each { t->
+                        def r = null;
+                        if(t.lob) {
+                            r = taxfees.find{ it.lob.objid==t.lob.objid && it.account.objid==t.account.objid };
+                        }
+                        else {
+                            r = taxfees.find{ it.account.objid==t.account.objid };
+                        }
+                        r.amtpaid += t.amtdue;
+                        r.balance = r.amount - r.amtpaid;
+                    }
+                    
+                    taxfees.each {
+                        println it.account.title + " " + it.amount + " amtpaid:"+it.amtpaid+ " bal:" + it.balance;
+                    }
+                
+                    result = [ items: []];
+                    selectedPayment = null;
+                    paymentModel.reload();
+                    listModel.reload();
+                    binding.refresh();
+                }
+                
+                
+            }
+        ]]>    
+    </code>
+    <pages>
+        <page template="com.rameses.gov.etracs.rules.bpls.BPBillingAnalyzerPage"/>
+        <page name="payment" template="com.rameses.gov.etracs.rules.bpls.PaymentPage"/>
+    </pages>
+</workunit>

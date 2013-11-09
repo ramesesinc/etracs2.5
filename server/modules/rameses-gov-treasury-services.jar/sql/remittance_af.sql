@@ -162,8 +162,10 @@ FROM
    MAX( ad.endingendseries ) AS endingendseries
 FROM afserial_inventory_detail ad 
 INNER JOIN afserial_inventory ai ON ad.controlid=ai.objid
+LEFT JOIN afserialcapture ac on ac.controlid = ai.objid   
 INNER JOIN remittance_afserial r ON r.objid=ad.objid
 WHERE r.remittanceid = $P{objid}
+  and ac.controlid is null 
 GROUP BY ai.afid, ad.controlid) a
 order by a.formno, a.endingstartseries
 

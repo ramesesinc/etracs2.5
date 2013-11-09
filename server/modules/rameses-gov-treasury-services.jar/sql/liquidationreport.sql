@@ -1,10 +1,12 @@
 [getLiquidationInfo]
 select 
-  l.txnno, l.dtposted, l.liquidatingofficer_name, l.liquidatingofficer_title, 
-  lc.fund_title, lc.cashier_name, 'CASHIER' as cashier_title, lc.amount
+  l.txnno, l.dtposted, l.liquidatingofficer_name, l.liquidatingofficer_title, l.denomination, 
+  lc.fund_title, lc.cashier_name, su.jobtitle as cashier_title, lc.amount, l.cashbreakdown
 from liquidation l  
    inner join liquidation_cashier_fund lc on lc.liquidationid = l.objid 
-where l.objid =$P{liquidationid} and lc.fund_objid=$P{fundname} 
+   inner join sys_user su on su.objid = lc.cashier_objid  
+where l.objid =$P{liquidationid} 
+  and lc.fund_objid =$P{fundname} 
 
 [getRCDRemittances]
 select 
@@ -12,22 +14,36 @@ select
 from liquidation_remittance lr 
 inner join remittance r on r.objid = lr.objid
 inner join remittance_fund rf ON rf.remittanceid=r.objid 
-where lr.liquidationid = $P{liquidationid}  and rf.fund_objid =$P{fundname} 
+where lr.liquidationid = $P{liquidationid}  and rf.fund_objid  like $P{fundname} 
+order by r.txnno 
+
+[getRCDRemittancesSummary]
+select 
+    r.collector_name as collectorname, r.txnno as txnno,
+    r.dtposted as dtposted, rf.amount as amount 
+from liquidation_remittance lr 
+inner join remittance r on r.objid = lr.objid
+inner join remittance_fund rf ON rf.remittanceid=r.objid 
+where lr.liquidationid = $P{liquidationid} 
+group by lr.objid 
+order by txnno 
+
 
 [getRCDCollectionSummary]
 select  
-   concat('AF#' , a.objid ,  ': ' , ct.title )  as particulars, 
-   sum( case when crv.objid is null then cri.amount else 0.0 end ) as amount 
+  ( 'AF#' + a.objid +  ': ' + ct.title + ' - ' + ri.fund_title )  as particulars,  
+  sum( case when crv.objid is null then cri.amount else 0.0 end ) as amount 
 from liquidation_remittance  lr 
    inner join remittance_cashreceipt rc  on rc.remittanceid = lr.objid 
    inner join cashreceipt cr on rc.objid = cr.objid 
    left join cashreceipt_void crv on crv.receiptid = cr.objid 
-   inner join collectionform a  on a.objid = cr.formno 
+   inner join collectionform a on a.objid = cr.formno 
    inner join collectiontype ct on ct.objid = cr.collectiontype_objid 
    inner join cashreceiptitem cri on cri.receiptid = cr.objid
    inner join revenueitem ri on ri.objid = cri.item_objid 
-where lr.liquidationid=$P{liquidationid} and ri.fund_objid =$P{fundname}
-group by a.objid, ri.fund_objid, ct.objid
+where lr.liquidationid=$P{liquidationid} and ri.fund_objid  like $P{fundname}
+group by  a.objid, ri.fund_objid, ct.objid
+
 
 [getRCDSerialRemittedForms]
 SELECT a.*, 
@@ -89,7 +105,7 @@ from liquidation_remittance  lr
    left join cashreceipt_void crv on crv.receiptid = cr.objid 
    inner join cashreceiptitem cri on cri.receiptid = cr.objid
    inner join revenueitem ri on ri.objid = cri.item_objid   
-where lr.liquidationid=$P{liquidationid} and ri.fund_objid =$P{fundname} 
+where lr.liquidationid=$P{liquidationid} and ri.fund_objid  like $P{fundname} 
   and crv.objid is null 
 
 
@@ -101,3 +117,9 @@ where liquidationid=$P{liquidationid}
 [getFundSummaries]
 SELECT * FROM liquidation_cashier_fund WHERE liquidationid = $P{liquidationid}
 
+[getLiquidationCashierList]
+select 
+  distinct f.cashier_name as name, su.jobtitle 
+from liquidation_cashier_fund f 
+  inner join sys_user su on su.objid = f.cashier_objid 
+where liquidationid = $P{liquidationid}  

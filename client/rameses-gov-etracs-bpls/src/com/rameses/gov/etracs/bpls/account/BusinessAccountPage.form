@@ -8,7 +8,7 @@
       </PropertyBean>
     </Property>
     <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-      <Dimension value="[400, 177]"/>
+      <Dimension value="[451, 177]"/>
     </Property>
   </Properties>
   <AuxValues>
@@ -24,8 +24,8 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="xFormPanel1" min="-2" pref="338" max="-2" attributes="1"/>
-              <EmptySpace pref="48" max="32767" attributes="0"/>
+              <Component id="xFormPanel1" min="-2" pref="427" max="-2" attributes="1"/>
+              <EmptySpace max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -33,8 +33,8 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="xFormPanel1" min="-2" pref="109" max="-2" attributes="0"/>
-              <EmptySpace pref="35" max="32767" attributes="0"/>
+              <Component id="xFormPanel1" min="-2" pref="121" max="-2" attributes="0"/>
+              <EmptySpace pref="21" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -70,6 +70,28 @@
             <Property name="items" type="java.lang.String" value="paymentModes"/>
             <Property name="name" type="java.lang.String" value="entity.paymentmode"/>
             <Property name="required" type="boolean" value="true"/>
+          </Properties>
+        </Component>
+        <Component class="com.rameses.rcp.control.XLookupField" name="xLookupField2">
+          <Properties>
+            <Property name="caption" type="java.lang.String" value="Surcharge Account"/>
+            <Property name="expression" type="java.lang.String" value="#{entity.surcharge.code} #{entity.surcharge.title}"/>
+            <Property name="handler" type="java.lang.String" value="lookupSurchargeAccount"/>
+            <Property name="name" type="java.lang.String" value="entity.surcharge"/>
+            <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+              <Dimension value="[0, 20]"/>
+            </Property>
+          </Properties>
+        </Component>
+        <Component class="com.rameses.rcp.control.XLookupField" name="xLookupField3">
+          <Properties>
+            <Property name="caption" type="java.lang.String" value="Interest Account"/>
+            <Property name="expression" type="java.lang.String" value="#{entity.interest.code} #{entity.interest.title}"/>
+            <Property name="handler" type="java.lang.String" value="lookupInterestAccount"/>
+            <Property name="name" type="java.lang.String" value="entity.interest"/>
+            <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+              <Dimension value="[0, 20]"/>
+            </Property>
           </Properties>
         </Component>
       </SubComponents>

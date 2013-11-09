@@ -1,6 +1,7 @@
 <workunit extends="wtemplates/ListController.xml">
         
    <invokers>
+        <invoker type="home.action" caption="Collector AF Serial" index="1" action="init" role="COLLECTOR"/>
         <invoker folderid="/explorer/txn/treasury" caption="Collector AF Serial" index="1" action="init" role="COLLECTOR"/>
         
         <!-- OWN TOOLBARS -->

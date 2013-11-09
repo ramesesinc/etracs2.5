@@ -1,7 +1,7 @@
 <workunit>
     
    <invokers>
-         <invoker type="liquidation:reports" caption="Liquidation Report By Fund " action="init" index="2" target="self"/>
+         <invoker type="liquidation:reports" caption="Liquidation Report By Fund " action="init" index="3" target="self"/>
          
          <invoker type="formActions" caption="Back" action="_close" mnemonic="b" shortcut="ctrl B"/>
    </invokers>

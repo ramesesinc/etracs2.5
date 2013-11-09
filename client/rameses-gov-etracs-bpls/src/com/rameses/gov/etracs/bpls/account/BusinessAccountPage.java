@@ -34,11 +34,13 @@ public class BusinessAccountPage extends javax.swing.JPanel {
         xLookupField1 = new com.rameses.rcp.control.XLookupField();
         xComboBox1 = new com.rameses.rcp.control.XComboBox();
         xComboBox2 = new com.rameses.rcp.control.XComboBox();
+        xLookupField2 = new com.rameses.rcp.control.XLookupField();
+        xLookupField3 = new com.rameses.rcp.control.XLookupField();
 
         com.rameses.rcp.control.border.XTitledBorder xTitledBorder1 = new com.rameses.rcp.control.border.XTitledBorder();
         xTitledBorder1.setTitle("Business Account");
         setBorder(xTitledBorder1);
-        setPreferredSize(new java.awt.Dimension(400, 177));
+        setPreferredSize(new java.awt.Dimension(451, 177));
 
         xFormPanel1.setCaptionWidth(120);
         xLookupField1.setCaption("Account");
@@ -60,33 +62,46 @@ public class BusinessAccountPage extends javax.swing.JPanel {
         xComboBox2.setRequired(true);
         xFormPanel1.add(xComboBox2);
 
+        xLookupField2.setCaption("Surcharge Account");
+        xLookupField2.setExpression("#{entity.surcharge.code} #{entity.surcharge.title}");
+        xLookupField2.setHandler("lookupSurchargeAccount");
+        xLookupField2.setName("entity.surcharge");
+        xLookupField2.setPreferredSize(new java.awt.Dimension(0, 20));
+        xFormPanel1.add(xLookupField2);
+
+        xLookupField3.setCaption("Interest Account");
+        xLookupField3.setExpression("#{entity.interest.code} #{entity.interest.title}");
+        xLookupField3.setHandler("lookupInterestAccount");
+        xLookupField3.setName("entity.interest");
+        xLookupField3.setPreferredSize(new java.awt.Dimension(0, 20));
+        xFormPanel1.add(xLookupField3);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(xFormPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 338, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(48, Short.MAX_VALUE))
+                .addComponent(xFormPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 427, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(xFormPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(35, Short.MAX_VALUE))
+                .addComponent(xFormPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(21, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
     
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
-    private javax.swing.JPanel jPanel3;
     private com.rameses.rcp.control.XComboBox xComboBox1;
     private com.rameses.rcp.control.XComboBox xComboBox2;
     private com.rameses.rcp.control.XFormPanel xFormPanel1;
     private com.rameses.rcp.control.XLookupField xLookupField1;
+    private com.rameses.rcp.control.XLookupField xLookupField2;
+    private com.rameses.rcp.control.XLookupField xLookupField3;
     // End of variables declaration//GEN-END:variables
     
 }

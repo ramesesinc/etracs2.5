@@ -13,6 +13,9 @@ class LiquidationReportService  {
 	@Service("NumberService")
 	def numSvc;
 
+	@Service("LiquidationService")
+	def liqSvc
+
 	def decformat = new DecimalFormat("#,##0.00");
 
 	@ProxyMethod 
@@ -29,6 +32,32 @@ class LiquidationReportService  {
 		liquidation.amountinwords = numSvc.doubleToWords( liquidation.amount )
 		return liquidation;
 	}
+
+	@ProxyMethod 
+	def getRCDSummaryData( params ) {
+		def liquidation = liqSvc.open([objid:params.liquidationid])
+		if(! liquidation ) throw new Exception("Could not open liquidation with objid " + params.liquidationid )
+
+		params.fundname = '%'
+		liquidation.remittances = em.sqlContext.createNamedQuery('liquidationreport:getRCDRemittancesSummary').setParameters(params ).resultList
+		liquidation.collectionsummaries = em.sqlContext.createNamedQuery('liquidationreport:getRCDCollectionSummary').setParameters(params ).resultList
+		liquidation.remittedforms = getRemittedSerials(params)
+		liquidation.otherpayments = liquidation.checks
+		liquidation.nonserialremittances = em.sqlContext.createNamedQuery('liquidationreport:getRCDNonSerialRemittedForms').setParameters(params ).resultList
+		liquidation.nonserialsummary = em.sqlContext.createNamedQuery('liquidationreport:getRCDNonSerialRemittedForms').setParameters(params ).resultList
+		liquidation.amountinwords = numSvc.doubleToWords( liquidation.amount )
+		liquidation.cashbreakdown.each { it.qty = it.qty.toString() }
+		def cashiers = em.sqlContext.createNamedQuery('liquidationreport:getLiquidationCashierList').setParameters( params).resultList;
+		liquidation.cashier = [
+			name: cashiers.name.join("/"),
+			title: cashiers.jobtitle.join("/")
+		]
+
+		return liquidation;
+	}
+
+
+	
 
 	@ProxyMethod 
 	def getFundlist( liquidationid ) {

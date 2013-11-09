@@ -1,6 +1,6 @@
 <workunit extends="wtemplates/ListController.xml">
     <invokers>
-        <invoker folderid="/explorer/master/bpls" caption="Business Accounts"  index="3" />
+        <invoker folderid="/explorer/master/bpls" caption="Business Accounts"  index="3" role="MASTER_ENCODER"/>
     </invokers>
     
     <code>

@@ -1,8 +1,9 @@
 <workunit >
     <invokers>
+        <!--
        <invoker type="home.action" caption="BP Assessment" action="viewReport" target="window"/>
-       
        <invoker type="formActions" caption="Back" action="_close" mnemonic="b" shortcut="ctrl B" /> 
+       -->
     </invokers>
     
     <code>

@@ -1,7 +1,7 @@
 <workunit>
     
    <invokers>
-         <invoker type="liquidation:reports" caption="Report on Collection and Deposits (RCD)" action="init" index="1" target="self"/>
+         <invoker type="liquidation:reports" caption="Report on Collection and Deposits (RCD) By Fund" action="init" index="1" target="self"/>
          
          <invoker type="formActions" caption="Back" action="_close" mnemonic="b" shortcut="ctrl B"/>
    </invokers>
@@ -27,7 +27,7 @@
             @Service("ReportParameterService")
             def paramsvc
             
-            String title = "Liquidation RCD";
+            String title = "Report on Collection and Deposits (RCD) By Fund";
             
             def reportdata;
             def reportPath = "com/rameses/gov/treasury/liquidation/report/rcd/"

@@ -12,7 +12,7 @@ import com.rameses.rcp.ui.annotations.Template;
 
 @Template(value=SerialCashReceiptPage.class, target="content")
 @StyleSheet()
-public class RPTReceiptPage extends javax.swing.JPanel {
+public class RPTReceiptPage extends javax.swing.JPanel { 
     
     /** Creates new form GeneralCollectionPage */
     public RPTReceiptPage() {

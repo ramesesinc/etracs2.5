@@ -13,7 +13,7 @@ class AbstractBusinessController  {
 
     def entity = [lobs:[]];
     def officeTypes = LOV.BUSINESS_OFFICE_TYPES;
-    def orgTypes = LOV.BUSINESS_ORG_TYPES;
+    def orgTypes = LOV.ORG_TYPES;
     def selectedLob;
 
     def getLookupPermitees() {

@@ -1,0 +1,13 @@
+"query.amtpaid" [ query.payoption != 'PARTIAL_PMT' ] {
+    visible: false;
+}
+"query.amtpaid" [ query.payoption == 'PARTIAL_PMT' ] {
+    visible: true;
+}
+"query.qtr" [ query.payoption != 'FULLQTR' ] {
+    visible: false;
+}
+"query.qtr" [ query.payoption == 'FULLQTR' ] {
+    visible: true;
+}
+

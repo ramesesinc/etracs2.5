@@ -26,6 +26,9 @@ public class BPAssessmentService  {
 	@Service("DateService")
 	def dateSvc;
 
+	@Service("NumberService")
+	def numberSvc;
+
 	String RULESET = "bpassessment";
 
 	def factBuilder = { dtype, objid, name, lob, value, factName ->
@@ -138,7 +141,7 @@ public class BPAssessmentService  {
 		app.apptype = o.apptype;
 		app.orgtype = o.orgtype;
 		app.officetype = o.officetype;
-		app.barangayid = o.barangay.objid;
+		app.barangayid = o.barangay?.objid;
 		app.txnmode = o.txnmode;
 		facts << app;
 		o.lobs.each {
@@ -166,7 +169,7 @@ public class BPAssessmentService  {
 		def actions = new RuleAction();
 		actions.addCommand( "ask_business_info", new AskBusinessInfo( infoBuilder: infoBuilder, request:request ));
 		actions.addCommand( "assert_business_info", new AssertBusinessInfo(request:request, infoBuilder: infoBuilder, factBuilder:factBuilder, comparator: comparator));
-		actions.addCommand( "compute_taxfee", new ComputeTaxFee( request:request, BA:ba ) );
+		actions.addCommand( "compute_taxfee", new ComputeTaxFee( request:request, BA:ba, NA: numberSvc) );
 		actions.addCommand( "assert_taxfee", new AssertTaxFee( request:request, ruleSvc: ruleSvc));
 		actions.addCommand( "update_taxfee", new UpdateTaxFee(request:request));
 		actions.addCommand( "add_sysvar", new AddSysVar(request:request, comparator: comparator));
@@ -248,6 +251,7 @@ public class AssertBusinessInfo implements RuleActionHandler {
 public class ComputeTaxFee implements RuleActionHandler {
 	def request;
 	def BA;
+	def NA;
 
 	public void execute(def params, def drools) {
 		def entity = request.entity;
@@ -272,8 +276,9 @@ public class ComputeTaxFee implements RuleActionHandler {
 				info.lob = [objid:lob.objid, name:lob.name];
 			}
 			info.taxfeetype = info.account.taxfeetype;
-			info.assessedvalue = amt;
-			info.amount = amt;
+			info.paymentmode = info.account.paymentmode;
+			info.assessedvalue = NA.round(amt);
+			info.amount = NA.round(amt);
 			info.rulename = drools.rule.name;
 			taxfees << info;
 		}
