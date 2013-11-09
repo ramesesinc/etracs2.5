@@ -96,11 +96,11 @@
             
             
             def doExport(){
-                return InvokerUtil.lookupOpener('afserialcontrol:export', [:])
+                return InvokerUtil.lookupOpener('afcontrol:export', [:])
             }
             
             def doImport(){
-                return InvokerUtil.lookupOpener('afserialcontrol:import', [:])
+                return InvokerUtil.lookupOpener('afcontrol:import', [:])
             }
             
             def listHandler = [

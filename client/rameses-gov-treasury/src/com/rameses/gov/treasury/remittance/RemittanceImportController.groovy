@@ -51,6 +51,8 @@ class RemittanceImportController
             data.state = 'POSTED';
             receiptListHandler.reload();
             afcontrolListHandler.reload();
+            ctListHandler.reload();
+            checkListHandler.reload();
             mode = MODE_READ;
         }      
     }
@@ -69,6 +71,14 @@ class RemittanceImportController
     
     def afcontrolListHandler = [
             fetchList    : { return data.afserialinventories; },
+    ] as BasicListModel;
+            
+    def ctListHandler = [
+            fetchList    : { return data.ctinventories; },
+    ] as BasicListModel;      
+            
+    def checkListHandler = [
+            fetchList    : { return data.checkpayments; },
     ] as BasicListModel;
     
 }

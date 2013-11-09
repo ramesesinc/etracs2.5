@@ -1,7 +1,7 @@
 <workunit>
         
    <invokers>
-        <invoker type="afserialcontrol:export" action="init" caption="Export AF Controls" />
+        <invoker type="afcontrol:export" action="init" caption="Export AF Controls" />
         
         <invoker type="formActions" caption="Close" action="_close" icon="images/toolbars/cancel.png"/>
         <invoker type="formActions" caption="Export" action="doExport" />
@@ -17,7 +17,7 @@ import com.rameses.osiris2.client.*;
 import javax.swing.*;
 import com.rameses.io.*;
 
-class AFSerialControlExportController 
+class AFControlExportController 
 {
     @Binding
     def binding;
@@ -28,7 +28,7 @@ class AFSerialControlExportController
     @Service("CollectionFormService")
     def formSvc;
     
-    @Service('AFSerialControlExportImportService')
+    @Service('AFControlExportImportService')
     def exportSvc 
             
     
@@ -48,6 +48,7 @@ class AFSerialControlExportController
     
     def afcontrols;
     def exportedcontrols;
+    def exportedcashtickets;
     
     def aftypes = [];
     
@@ -55,6 +56,7 @@ class AFSerialControlExportController
         aftypes = formSvc.getList([formtype:'serial']);
         afcontrols = [];
         exportedcontrols = [];
+        exportedcashtickets = exportSvc.getCashTickets();
     }
     
     
@@ -69,11 +71,14 @@ class AFSerialControlExportController
     
     
     def buildExportedControls(){
-        def list = []
+        def data = [serials:[], cashtickets:[]]
         exportedcontrols.each{
-            list << exportSvc.getAfSerialControlInfo(it);
+            data.serials << exportSvc.getAfSerialControlInfo(it);
         }
-        return list;
+        exportedcashtickets.findAll{it.export == true}.each{ ct ->
+            data.cashtickets << exportSvc.getCashTicketInfo(ct);
+        }
+        return data;
     }
     
     
@@ -128,6 +133,11 @@ class AFSerialControlExportController
     def exportListHandler = [
         fetchList  : { return exportedcontrols; }
     ] as BasicListModel;
+    
+    
+    def cashticketListHandler = [
+        fetchList : { return exportedcashtickets; }
+    ] as EditorListModel;
 
     
 } 
@@ -136,7 +146,7 @@ class AFSerialControlExportController
    </code>
    
    <pages>
-       <page template="com.rameses.gov.treasury.af.AFControlSerialExportPage"/>
+       <page template="com.rameses.gov.treasury.af.AFControlExportPage"/>
    </pages>
    
 </workunit>
