@@ -1,8 +1,8 @@
 [create]
 INSERT INTO specialaccountsetting 
-	(objid, collectiontypeid, item_objid, amount)
+	(objid, collectiontypeid, item_objid, amount, revtype)
 VALUES
-	($P{objid}, $P{collectiontypeid}, $P{item_objid}, $P{amount})
+	($P{objid}, $P{collectiontypeid}, $P{item_objid}, $P{amount}, $P{revtype})
 
 [update]	
 UPDATE specialaccountsetting SET
