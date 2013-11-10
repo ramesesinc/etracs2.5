@@ -4,7 +4,7 @@
  * Created on November 10, 2013, 10:35 AM
  */
 
-package com.rameses.gov.treasury.cashreceipt;
+package com.rameses.gov.treasury.collection.pos;
 
 /**
  *
