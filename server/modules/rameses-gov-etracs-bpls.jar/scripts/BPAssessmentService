@@ -172,6 +172,9 @@ public class BPAssessmentService  {
 		actions.addCommand( "compute_taxfee", new ComputeTaxFee( request:request, BA:ba, NA: numberSvc) );
 		actions.addCommand( "assert_taxfee", new AssertTaxFee( request:request, ruleSvc: ruleSvc));
 		actions.addCommand( "update_taxfee", new UpdateTaxFee(request:request));
+		actions.addCommand( "remove_taxfee", new RemoveTaxFee(request:request));
+		actions.addCommand( "select_taxfee", new SelectTaxFee(request:request));
+
 		actions.addCommand( "add_sysvar", new AddSysVar(request:request, comparator: comparator));
 		actions.addCommand( "assert_sysvars", new AssertSysVars(request:request, factBuilder:factBuilder));
 		actions.addCommand( "add_requirement", new AddRequirement(request:request, BR: br));
@@ -184,7 +187,7 @@ public class BPAssessmentService  {
 	public def execute(def o) throws Exception {
 		if(!o.lobs)
 			throw new Exception("Please provide at least one line of business");
-		def request = [newinfos:[], taxfees:[], lobMap:[:], vars:[:], entity: o, requirements:[] ]; 
+		def request = [newinfos:[], taxfees:[], lobMap:[:], vars:[:], taxfeefacts:[], entity: o, requirements:[] ]; 
 		request.facts = buildFacts(request);
 		request.actions = buildActions( request );
 		
@@ -193,9 +196,11 @@ public class BPAssessmentService  {
 		for( g in grps ) { 
 			request.phase = phase;
 			request.vars.clear();
+			request.taxfeefacts.clear();
+
 			ruleSvc.execute( RULESET, request.facts, request.actions, g.name );
 			//if first phase and there is entry in newinfos break it.
-			if(phase==0 && request.newinfos) break;
+			if(phase <= 1 && request.newinfos) break;
 			phase++;
 		}
 		
@@ -213,9 +218,11 @@ public class AskBusinessInfo implements RuleActionHandler {
 	public void execute(def params, def drools) {
 		def lob = params.lob;
 		def attrid = params.attribute.key;
+		def defvalue = params.defaultvalue;
 		def entity = request.entity;
 		def newinfos = request.newinfos;
-		infoBuilder( entity, newinfos, lob, attrid, null, request.phase );
+		def info = infoBuilder( entity, newinfos, lob, attrid, null, request.phase );
+		if(info) info.defaultvalue = defvalue;
 	}
 }
 
@@ -256,6 +263,7 @@ public class ComputeTaxFee implements RuleActionHandler {
 	public void execute(def params, def drools) {
 		def entity = request.entity;
 		def taxfees = request.taxfees;
+		def taxfeefacts = request.taxfeefacts;
 		def lob = params.lob;
 		def acctid = params.account.key;
 		def amt = params.amount.doubleValue;
@@ -281,6 +289,7 @@ public class ComputeTaxFee implements RuleActionHandler {
 			info.amount = NA.round(amt);
 			info.rulename = drools.rule.name;
 			taxfees << info;
+			taxfeefacts << info;
 		}
 		else {
 			//add rule history so we can trace rules that executed the account.
@@ -303,10 +312,10 @@ public class AssertTaxFee implements RuleActionHandler {
 		def facts = request.facts;
 		def taxfees = request.taxfees;
 		def lobMap = request.lobMap;
+		def taxfeefacts = request.taxfeefacts;
 		
-		def list = taxfees.findAll{ it.account.taxfeetype == type };
 		def tmp = [:];
-		list.each {
+		taxfeefacts.each {
 			def bt = ruleSvc.createFact( "bpassessment", "bpassessment.TaxFeeAccount");
 			bt.objid = it.objid;
 			bt.acctid = it.account.objid;
@@ -353,6 +362,76 @@ public class UpdateTaxFee implements RuleActionHandler {
 			list.min{it.amount}.lowest = true;
 			list.max{it.amount}.highest = true;
 		}
+	}
+}
+
+public class SelectTaxFee implements RuleActionHandler {
+	def request;
+	public void execute(def params, def drools) {
+		def taxfeefacts = request.taxfeefacts;
+		def tf = params.taxfeeaccount;
+		def selectoption = params.selectoption;
+
+		def data = tf.data;
+		data.lob = null;
+		def test = taxfeefacts.find{ it.account?.objid == tf.acctid };
+		if(!test) {
+			taxfeefacts << data;
+		}
+		else {
+			def torep=null;
+			if(selectoption == "MIN" ) {
+				if(test.amount > data.amount) {
+					taxfeefacts.remove( test );	
+					taxfeefacts << data;				
+					torep = test;
+				}
+				else {
+					torep = data;
+				}	
+			}
+			else {
+				if(test.amount < data.amount ) {
+					taxfeefacts.remove(test);
+					taxfeefacts << data;
+					torep = test;
+				}	
+				else {
+					torep = data;
+				}	
+			}
+			def z = request.taxfees.find{ it.objid == torep.objid };
+			request.taxfees.remove(z);
+			//remove from facts
+			def f = request.facts.findAll{ it.class.name == "bpassessment.TaxFeeAccount" }.find{ it.objid == torep.objid };
+			request.facts.remove(f);
+		}
+	}
+}
+
+
+
+public class RemoveTaxFee implements RuleActionHandler {
+	def request;
+	public void execute(def params, def drools) {
+		
+		def tf = params.taxfee;
+		def acctid = tf.acctid;
+		def lob = tf.lob;
+
+		def taxfees = request.taxfees;
+		def facts = request.facts;
+		facts.remove(tf);
+		def test;
+		if( !lob ) {
+			test = taxfees.findAll{it.lob?.objid==null}.find{it.account.objid == acctid};
+		}
+		else {
+			test = taxfees.findAll{it.lob?.objid!=null}.find{ it.lob.objid == lob.objid && it.account.objid == acctid };
+		}
+		if(test) {
+			taxfees.remove(test);
+		}	
 	}
 }
 
@@ -415,6 +494,7 @@ public class AddRequirement implements RuleActionHandler {
 	}
 
 }
+
 
 public class PrintTest implements RuleActionHandler {
 

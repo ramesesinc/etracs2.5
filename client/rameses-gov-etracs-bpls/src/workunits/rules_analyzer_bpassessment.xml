@@ -18,7 +18,7 @@
             import com.rameses.rulemgmt.constraint.*;
             import com.rameses.rulemgmt.*;
             import java.rmi.server.*;
-            import com.rameses.gov.etracs.bpls.*;
+            import com.rameses.gov.etracs.bpls.application.*;
             
             class BPAssessmentAnalyzerController extends BPApplication {
                 
@@ -30,43 +30,9 @@
                     lobAssessmentTypes = LOV.LOB_ASSESSMENT_TYPES*.key;
                 }
                 
-                def getInfo() {
-                    loadInfos();
-                    //pass to the looper
-                    def opener = InvokerUtil.lookupOpener( "bpassessment:info",
-                          [ formInfos:formInfos,
-                            lobs:entity.lobs,
-                            handler:{   
-                                addInfos();
-                                loadInfos();
-                                if(infos) 
-                                    return formInfos;
-                                else
-                                    return null;
-                           }]
-                    );    
-                    opener.target = "popup";
-                    return opener;
-                }
-                
-                def getTaxFees() {
-                    infos = entity.infos.findAll{ it.phase != 0};
-                    buildFormInfos();
-                    def opener = InvokerUtil.lookupOpener( "bpassessment:info",
-                        [formInfos:formInfos, lobs:entity.lobs,
-                            handler:{
-                                calculateTaxfees();
-                            }
-                        ]
-                    );   
-                    opener.target = "popup";
-                    return opener;
-                }
-                
                 void reset() {
                     initNew();
                 }
-                
                 
             }
         ]]>    

@@ -12,30 +12,10 @@ rule "assert-variables"
 		action.execute( "assert_sysvars", null, drools);
 end
 
-rule "assert-business-tax"
-	agenda-group "businesstax"
+rule "assert-taxfees"
 	salience -100
 	no-loop
 	when
 	then
-		action.execute( "assert_taxfee", "TAX", drools);
+		action.execute( "assert_taxfee", null, drools);
 end
-
-rule "assert-regfee"
-	agenda-group "regfee"
-	salience -100
-	no-loop
-	when
-	then
-		action.execute( "assert_taxfee", "REGFEE", drools);
-end
-
-rule "assert-othercharge"
-	agenda-group "othercharge"
-	salience -100
-	no-loop
-	when
-	then
-		action.execute( "assert_taxfee", "OTHERCHARGE", drools);
-end
-

@@ -3,7 +3,7 @@
         <invoker type="remittance:reports" caption="Remittance Summary of Collection By SRE" action="viewSRE" target="self" index="9"/>
         <invoker type="remittance:reports" caption="Remittance Summary of Collection By NGAS" action="viewNGAS" target="self" index="10"/>
         
-        <invoker type="formActions" caption="Back" action="_close" mnemonic="b" shortcut="ctrl B"/>
+        <invoker type="formActions" caption="Back" action="_close" mnemonic="b" shortcut="ctrl B" icon="images/toolbars/arrow_left.png"/>
     </invokers>
     
     <code>

@@ -14,10 +14,10 @@ import com.rameses.rcp.ui.annotations.Template;
  * @author  Elmo
  */
 @Template(OKCancelPage.class)
-public class BPRequirementData extends javax.swing.JPanel {
+public class BPRequirementDocument extends javax.swing.JPanel {
     
     /** Creates new form NewBPApplicationInitPage */
-    public BPRequirementData() {
+    public BPRequirementDocument() {
         initComponents();
     }
     

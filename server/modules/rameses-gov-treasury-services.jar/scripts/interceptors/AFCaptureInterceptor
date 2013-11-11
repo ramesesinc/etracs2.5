@@ -19,4 +19,14 @@ class AFCaptureInterceptor {
 		em.sqlContext.createExecutor("delete from afserialcapture where controlid='${evt.args[0].controlid}'").execute() 
 	}	
 
+	@After(pattern="AFSerialControlService.changeMode", eval="#{args[0].txnmode != 'CAPTURE'}")
+	public void deleteAFSerialCapture( def evt ) { 
+		em.sqlContext.createExecutor("delete from afserialcapture where controlid='${evt.args[0].objid}'").execute() 
+	}	
+
+	@After(pattern="AFSerialControlService.unassign")
+	public void deleteAFSerialCaptureOnUnnassign( def evt ) { 
+		em.sqlContext.createExecutor("delete from afserialcapture where controlid='${evt.args[0].objid}'").execute() 
+	}	
+
 }

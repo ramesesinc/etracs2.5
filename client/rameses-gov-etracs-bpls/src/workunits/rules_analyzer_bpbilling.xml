@@ -46,7 +46,7 @@
                     query.billdate = d.format(new Date());
                     taxfees = entity.taxfees;
                     taxfees.each {
-                        it.amtpaid = 0;
+                        if(!it.amtpaid) it.amtpaid = 0;
                     }
                 }
                 

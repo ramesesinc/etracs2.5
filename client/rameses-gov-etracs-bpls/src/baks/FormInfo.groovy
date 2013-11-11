@@ -34,7 +34,8 @@ class FormInfo {
             if(i.type == "boolean") {
                 i.type = "subform";
                 i.handler = "bpassessment:yesno";
-                i.properties = [item:x];
+                i.required = true;
+                i.properties = [item:x, required:true];
             }
             else if(i.type == "string_array") {
                 i.type = "combo";
