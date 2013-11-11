@@ -3,5 +3,7 @@
 		<field name="objid" primary="true"/>
 		<field name="taxfeetype" required="true"/>
 		<field name="paymentmode" required="true"/>
+		<field name="surcharge_objid" />
+		<field name="interest_objid" />
 	</element>
 </schema>

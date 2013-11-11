@@ -36,6 +36,7 @@ public class BusinessRequirementPage extends javax.swing.JPanel {
         xTextField2 = new com.rameses.rcp.control.XTextField();
         xComboBox1 = new com.rameses.rcp.control.XComboBox();
         xLookupField1 = new com.rameses.rcp.control.XLookupField();
+        xTextField3 = new com.rameses.rcp.control.XTextField();
 
         com.rameses.rcp.control.border.XTitledBorder xTitledBorder1 = new com.rameses.rcp.control.border.XTitledBorder();
         xTitledBorder1.setTitle("General Info");
@@ -66,6 +67,14 @@ public class BusinessRequirementPage extends javax.swing.JPanel {
         xLookupField1.setPreferredSize(new java.awt.Dimension(0, 20));
         xFormPanel1.add(xLookupField1);
 
+        xTextField3.setText("entity.department");
+        xTextField3.setCaption("Department");
+        xTextField3.setDepends(new String[] {"entity.type"});
+        xTextField3.setName("entity.department");
+        xTextField3.setPreferredSize(new java.awt.Dimension(0, 20));
+        xTextField3.setSpaceChar('_');
+        xFormPanel1.add(xTextField3);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -91,6 +100,7 @@ public class BusinessRequirementPage extends javax.swing.JPanel {
     private com.rameses.rcp.control.XLookupField xLookupField1;
     private com.rameses.rcp.control.XTextField xTextField1;
     private com.rameses.rcp.control.XTextField xTextField2;
+    private com.rameses.rcp.control.XTextField xTextField3;
     // End of variables declaration//GEN-END:variables
     
 }

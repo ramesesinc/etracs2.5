@@ -1,0 +1,60 @@
+import com.rameses.annotations.*;
+import com.rameses.util.*;
+import java.rmi.server.*;
+import com.rameses.common.*
+import com.rameses.services.extended.*
+
+public class DirectCashCollectionService extends ActiveCrudService 
+{
+	
+	@ActiveDB("directcash_collection")
+	def em
+
+	def SCHEMA_NAME = 'directcash_collection'
+	def SCHEMA_ITEM = 'item'
+
+
+	@ProxyMethod
+	public void afterCreate( entity ) {
+		entity.items.each{
+			it.parentid = entity.objid 
+			em.create(it, SCHEMA_ITEM)
+		}	
+	}
+
+	@ProxyMethod
+	public void afterUpdate( entity ) {
+		entity.items.each{
+			it.parentid = entity.objid 
+			em.save(it, SCHEMA_ITEM)
+		}	
+	}
+
+	@ProxyMethod
+	public void afterOpen( entity ) {
+		println 'pass'
+		entity.items = em.getItems(entity)
+		println entity.items 
+	}
+
+	@ProxyMethod
+	public void beforeRemoveEntity( entity ) {
+		entity.items.each{
+			em.delete(it, SCHEMA_ITEM)
+		}	
+	}
+
+	@ProxyMethod
+	public void removeItem( item ) {
+		em.delete(item, SCHEMA_ITEM)
+	}
+
+	@ProxyMethod
+	public void doApprove( entity ) {
+		if (entity.amount <= 0.0)
+			throw new Exception('Amount must be greater than zero.')
+		if (entity.amount != entity.items.amount.sum() )
+			throw new Exception('Amount must be equal to items total amount.')
+		super.approve(entity)
+	}
+}

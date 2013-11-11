@@ -257,6 +257,23 @@ public class RPTLedgerController
         ])
     }
     
+    def fixLedgerFaas(){
+        if (!selectedItem) 
+            throw new Exception('Ledger FAAS to fix is required.')
+            
+        return InvokerUtil.lookupOpener('rptledger:fixledgerfaas', [
+            entity : selectedItem,
+                
+            svc    : svc, 
+                
+            oncomplete : {
+                if (it.toqtr == null) it.toqtr = 0
+                selectedItem.putAll(it);
+                debitListHandler.refreshSelectedItem()
+            }
+        ])
+    }
+    
     def generateNotice(){
         return InvokerUtil.lookupOpener('rptledger:nod', [
             entity : entity,

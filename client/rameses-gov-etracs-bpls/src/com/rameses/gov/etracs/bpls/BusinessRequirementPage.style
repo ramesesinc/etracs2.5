@@ -5,3 +5,11 @@
 "entity.account" [ entity.type != 'OTHERFEE'  ] {
     visible: false;
 }
+
+"entity.department" [ entity.type == 'WORKFLOW' ] {
+    visible: true;
+}
+
+"entity.department" [ entity.type != 'WORKFLOW'  ] {
+    visible: false;
+}

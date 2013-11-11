@@ -11,20 +11,88 @@
         import com.rameses.osiris2.common.*
         import com.rameses.gov.etracs.bpls.application.*;
         
-        class SpecifyInformationController extends PageFlowController {
+        class BusinessInfoController  {
         
             @Service("BPAssessmentService")
             def service;
+            
+            @Binding
+            def binding;
         
             def entity;
-            def formInfos;
-            def infos;
-            def taxfees;
-            
+            def formInfos = [];
+            def infos = [];
             boolean completed;
+            def handler;
+            def query = [:];
             
-            void reload() {
-                formInfos = [];
+            void start() {
+                query.putAll( entity );
+                query.infos = [];
+                query.taxfees = [];
+                query.requirements = [];
+                completed = false;
+                callRule();
+            }
+
+            def sortInfos(sinfos) {
+                return sinfos.findAll{it.lob?.objid==null} + sinfos.findAll{ it.lob?.objid!=null }.sort{ it.lob.name };
+            }
+            
+            def findValue( info ) {
+                if(info.lob?.objid!=null) {
+                    def filter = entity.infos.findAll{ it.lob?.objid!=null };
+                    def m = filter.find{ it.lob.objid==info.lob.objid && it.attribute.objid == info.attribute.objid };
+                    if(m) return m.value;
+                }
+                else {
+                    def filter = entity.infos.findAll{ it.lob?.objid==null };
+                    def m = filter.find{ it.attribute.objid == info.attribute.objid };
+                    if(m) {
+                        return m.value;
+                    }    
+                }
+                return null;
+            }
+            
+            //return true if there is still more info, false if none.
+            boolean callRule() {
+                infos.clear();
+                def result = service.execute(query);
+                //phase 0 is the looping phase.  
+                if( result.phase > 1 ) {
+                    query.infos.addAll(result.infos);
+                    query.requirements = result.requirements;
+                    infos.clear();
+                    return false;
+                }
+                else {
+                    //check if there is already values for this info
+                    result.infos.each {
+                        it.value = findValue(it);
+                    }
+                    infos.addAll( result.infos );
+                    query.infos.addAll(infos);
+                    buildFormInfos();
+                    return true;
+                }
+            }
+
+            def doNext() {
+                boolean test = callRule();
+                if( !test ) {
+                    sortInfos( query.infos );
+                    handler(query.infos, query.requirements);
+                    return "_close";
+                }
+                else {
+                    return null;
+                }
+            }
+            
+            def buildFormInfos() {
+                formInfos.clear();
+                infos = sortInfos( infos );
                 infos.each {x->
                     def i = [
                         type:x.attribute.datatype, 
@@ -32,16 +100,18 @@
                         categoryid:x.lob?.objid, 
                         name:x.attribute.name, 
                         bean: x,
-                        properties: [:]
+                        properties: [:],
+                        value: x.value
                     ];
                     //fix the datatype
                     x.datatype = x.attribute.datatype;
-                    x.required = true;
                     if(x.datatype.indexOf("_")>0) {
                         x.datatype = x.datatype.substring(0, x.datatype.indexOf("_"));
                     }
                     if(i.type == "boolean") {
-                        i.type = "checkbox";
+                        i.type = "subform";
+                        i.handler = "bpapplication:yesno";
+                        i.properties = [item:x];
                     }
                     else if(i.type == "string_array") {
                         i.type = "combo";
@@ -49,20 +119,12 @@
                     }
                     formInfos << i;
                 }
-            }
-            
-            
-            def start() {
-                completed = false;
-                infos = [];
-                callRule();
-                return super.start();
-            }
-            
+             }
+             
             def formPanel = [
                 getCategory: { lobid->
                     if(!lobid) return "";
-                    return entity.lobs.find{ it.lobid == lobid }?.name
+                    return query.lobs.find{ it.lobid == lobid }?.name
                 },
                 updateBean: {name,value,item->
                     item.bean.value = value;
@@ -72,36 +134,11 @@
                 }
             ] as FormPanelModel;
    
-            void callRule() {
-                def result = service.execute(entity);
-                if( !result.infos ) {
-                    entity.taxfees = result.taxfees;
-                    completed = true;
-                }                
-                else {
-                    infos = result.infos;   //this is for the display.
-                    entity.infos.addAll( infos );
-                    reload();
-                }
-            }
-            
         }
         ]]>
         
     </code>
-    <pageflow>
-        <start>
-            <transition to="initial"/>
-        </start>
-        <page name="initial" title="Business Information">
-            <transition to="callrule" caption="Next" action="callRule" />
-        </page>
-        <process name="callrule">
-            <transition to="end" cond="#{completed==true}"  />
-            <transition to="initial" cond="#{completed==false}" />
-        </process>
-        <end/>
-    </pageflow>
+    
     <pages>
         <page name="initial" template="com.rameses.gov.etracs.bpls.application.AddInfoPage"/>
     </pages>

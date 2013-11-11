@@ -21,6 +21,7 @@
             @Service("BusinessLedgerService")
             def service;
         
+            def entityName = "businessledger";
             def entity;
             String title = "Business Ledger"
 

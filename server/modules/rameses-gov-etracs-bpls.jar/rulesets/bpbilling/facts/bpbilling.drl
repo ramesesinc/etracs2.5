@@ -1,5 +1,67 @@
 package bpbilling;
 
+import java.util.Date;
+
 declare BPApplication
 	orgtype:		String
+	officetype:		String
+	apptype:		String
+	txnmode:		String
+	barangayid:		String
 end
+
+declare BillingDate
+	date:		Date
+	year:		int
+	month:		int
+	day:		int
+	qtr:		int
+end
+
+declare PayOption
+	type:		String
+	qtr:		int
+end
+
+declare Payment 
+	pmtdate:	Date
+	amtpaid:	double
+	minamt:		double
+	balance: 	double
+end
+
+
+declare QtrDeadline
+	qtr:		int
+	deadline:	Date
+	month:  	int
+	year:		int
+	day:		int
+end
+
+declare BPLedger
+	tradename:	String	
+	appyear:	int
+end
+
+declare TaxFeeAccount
+	objid:			String
+	acctid:			String
+	ledger:			BPLedger
+	type:			String
+	expired:		boolean
+	deadline:		Date
+	amtdue:			double
+	surcharge:		double
+	interest:		double
+	discount:		double
+	total:			double
+	lob:			Object
+	account:		Object
+	year:			int
+	qtr:			int
+	paypriority:	int
+	balance:		double
+end
+
+

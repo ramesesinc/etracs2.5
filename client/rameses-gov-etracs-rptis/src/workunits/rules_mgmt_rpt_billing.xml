@@ -1,8 +1,7 @@
 
 <workunit extends="workunits/rulemgmt.xml">
     <invokers>
-        <invoker folderid="/rules" action="init" caption="RPT Billing Rules"  
-            index="1" ruleset="rptbilling"/>
+        <invoker folderid="/rules" action="init" caption="RPT Billing Rules" index="1" ruleset="rptbilling" role="LANDTAX"/>
             
         <invoker type="formActions" caption="Add" action="create" />    
         <invoker type="formActions" caption="Open" action="open" />

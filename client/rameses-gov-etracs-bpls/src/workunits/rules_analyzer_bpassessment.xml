@@ -1,0 +1,43 @@
+<workunit>
+    <invokers>
+       <invoker type="rulemgmt:formActions" caption="Analyzer" action="init"
+            visibleWhen="#{ruleset == 'bpassessment'}" target="window" role="ASSESSOR,RULE_AUTHOR"/>
+       <invoker type="home.action" caption="BP Rules Analyzer" action="init" index="1" target="window" role="ASSESSOR,RULE_AUTHOR"/>
+       <invoker type="formActions" caption="Close" action="_close" immediate="true"/>
+       <invoker type="formActions" caption="Get Info" action="getInfo"/>
+       <invoker type="formActions" caption="Get Tax Fees" action="getTaxFees"/>
+       <invoker type="formActions" caption="Clear Infos" action="clearInfos" immediate="true"/>
+       
+    </invokers>
+    <code>
+        <![CDATA[
+            import com.rameses.rcp.common.*
+            import com.rameses.rcp.annotations.*
+            import com.rameses.osiris2.client.*
+            import com.rameses.osiris2.common.*
+            import com.rameses.rulemgmt.constraint.*;
+            import com.rameses.rulemgmt.*;
+            import java.rmi.server.*;
+            import com.rameses.gov.etracs.bpls.application.*;
+            
+            class BPAssessmentAnalyzerController extends BPApplication {
+                
+                String title = "Business Rule Assessment Simulator";
+                
+                String entityName = "bpassessment:analyzer";
+                
+                void init() {
+                    lobAssessmentTypes = LOV.LOB_ASSESSMENT_TYPES*.key;
+                }
+                
+                void reset() {
+                    initNew();
+                }
+                
+            }
+        ]]>    
+    </code>
+    <pages>
+        <page template="com.rameses.gov.etracs.rules.bpls.BPAssessmentAnalyzerPage"/>
+    </pages>
+</workunit>

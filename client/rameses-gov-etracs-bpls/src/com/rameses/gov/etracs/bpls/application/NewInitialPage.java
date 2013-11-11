@@ -32,11 +32,11 @@ public class NewInitialPage extends javax.swing.JPanel {
     private void initComponents() {
         jPanel1 = new javax.swing.JPanel();
         xFormPanel1 = new com.rameses.rcp.control.XFormPanel();
-        xTextField2 = new com.rameses.rcp.control.XTextField();
+        xComboBox1 = new com.rameses.rcp.control.XComboBox();
         xLookupField1 = new com.rameses.rcp.control.XLookupField();
+        xTextField2 = new com.rameses.rcp.control.XTextField();
         xTextField1 = new com.rameses.rcp.control.XTextField();
         xLookupField3 = new com.rameses.rcp.control.XLookupField();
-        xComboBox1 = new com.rameses.rcp.control.XComboBox();
         xComboBox2 = new com.rameses.rcp.control.XComboBox();
         xTextField3 = new com.rameses.rcp.control.XTextField();
         xFormPanel3 = new com.rameses.rcp.control.XFormPanel();
@@ -49,25 +49,36 @@ public class NewInitialPage extends javax.swing.JPanel {
         xFormPanel2 = new com.rameses.rcp.control.XFormPanel();
         xLookupField2 = new com.rameses.rcp.control.XLookupField();
         xDataTable1 = new com.rameses.rcp.control.XDataTable();
+        xButton1 = new com.rameses.rcp.control.XButton();
 
         com.rameses.rcp.control.border.XTitledBorder xTitledBorder1 = new com.rameses.rcp.control.border.XTitledBorder();
         xTitledBorder1.setTitle("General Information");
         jPanel1.setBorder(xTitledBorder1);
 
         xFormPanel1.setCaptionWidth(150);
-        xTextField2.setCaption("Trade Name");
-        xTextField2.setName("entity.tradename");
-        xTextField2.setPreferredSize(new java.awt.Dimension(0, 20));
-        xTextField2.setRequired(true);
-        xFormPanel1.add(xTextField2);
+        xComboBox1.setCaption("Org Type");
+        xComboBox1.setExpression("#{item.value}");
+        xComboBox1.setItemKey("key");
+        xComboBox1.setItems("orgTypes");
+        xComboBox1.setName("entity.orgtype");
+        xComboBox1.setPreferredSize(new java.awt.Dimension(250, 22));
+        xComboBox1.setRequired(true);
+        xFormPanel1.add(xComboBox1);
 
         xLookupField1.setCaption("Permitee");
+        xLookupField1.setDepends(new String[] {"entity.orgtype"});
         xLookupField1.setExpression("#{item.name}");
         xLookupField1.setHandler("lookupPermitees");
         xLookupField1.setName("entity.permitee");
         xLookupField1.setPreferredSize(new java.awt.Dimension(0, 20));
         xLookupField1.setRequired(true);
         xFormPanel1.add(xLookupField1);
+
+        xTextField2.setCaption("Trade Name");
+        xTextField2.setName("entity.tradename");
+        xTextField2.setPreferredSize(new java.awt.Dimension(0, 20));
+        xTextField2.setRequired(true);
+        xFormPanel1.add(xTextField2);
 
         xTextField1.setCaption("Business Address");
         xTextField1.setName("entity.businessaddress");
@@ -80,17 +91,7 @@ public class NewInitialPage extends javax.swing.JPanel {
         xLookupField3.setHandler("barangay:lookup");
         xLookupField3.setName("entity.barangay");
         xLookupField3.setPreferredSize(new java.awt.Dimension(0, 20));
-        xLookupField3.setRequired(true);
         xFormPanel1.add(xLookupField3);
-
-        xComboBox1.setCaption("Org Types");
-        xComboBox1.setExpression("#{item.value}");
-        xComboBox1.setItemKey("key");
-        xComboBox1.setItems("orgTypes");
-        xComboBox1.setName("entity.orgtype");
-        xComboBox1.setPreferredSize(new java.awt.Dimension(250, 22));
-        xComboBox1.setRequired(true);
-        xFormPanel1.add(xComboBox1);
 
         xComboBox2.setCaption("Office Types");
         xComboBox2.setExpression("#{item.value}");
@@ -144,16 +145,16 @@ public class NewInitialPage extends javax.swing.JPanel {
                 .addContainerGap()
                 .addComponent(xFormPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 549, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(xFormPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 218, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(100, Short.MAX_VALUE))
+                .addComponent(xFormPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(88, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(xFormPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, 146, Short.MAX_VALUE)
-                .addContainerGap())
             .addComponent(xFormPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 168, Short.MAX_VALUE)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(11, 11, 11)
+                .addComponent(xFormPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, 146, Short.MAX_VALUE)
+                .addGap(11, 11, 11))
         );
 
         com.rameses.rcp.control.border.XTitledBorder xTitledBorder2 = new com.rameses.rcp.control.border.XTitledBorder();
@@ -197,6 +198,10 @@ public class NewInitialPage extends javax.swing.JPanel {
             })
         });
         xDataTable1.setHandler("lobModel");
+        xDataTable1.setName("selectedLob");
+
+        xButton1.setName("removeLob");
+        xButton1.setText("Remove");
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -205,8 +210,9 @@ public class NewInitialPage extends javax.swing.JPanel {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(xDataTable1, javax.swing.GroupLayout.PREFERRED_SIZE, 862, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(xFormPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 503, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(xDataTable1, javax.swing.GroupLayout.PREFERRED_SIZE, 862, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(xButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(11, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
@@ -215,8 +221,10 @@ public class NewInitialPage extends javax.swing.JPanel {
                 .addContainerGap()
                 .addComponent(xFormPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(xDataTable1, javax.swing.GroupLayout.DEFAULT_SIZE, 189, Short.MAX_VALUE)
-                .addContainerGap())
+                .addComponent(xDataTable1, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(xButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(14, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -245,6 +253,7 @@ public class NewInitialPage extends javax.swing.JPanel {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private com.rameses.rcp.control.XButton xButton1;
     private com.rameses.rcp.control.XComboBox xComboBox1;
     private com.rameses.rcp.control.XComboBox xComboBox2;
     private com.rameses.rcp.control.XDataTable xDataTable1;
