@@ -1,4 +1,4 @@
-package com.rameses.gov.etracs.bpls;
+package com.rameses.gov.etracs.bpls.application;
 import com.rameses.rcp.common.*
 import com.rameses.rcp.annotations.*
 import com.rameses.osiris2.client.*
@@ -22,10 +22,8 @@ class BPApplication extends PageFlowController {
 
     def appTypes = LOV.BUSINESS_APP_TYPES;
     def txnmodes = ["ONLINE", "CAPTURE"];
-    
-    def infos = [];      //used for storing temp info 
-    def formInfos = [];  //controls
-    boolean hasMoreInfo = false;
+    def selectedLob;
+
 
     void initNew() {
 	entity = [:];
@@ -75,21 +73,27 @@ class BPApplication extends PageFlowController {
         ]);
     }
 
+    
     def lobModel = [
         fetchList: { o->
             return entity.lobs;
         },
-        onRemoveItem: { o->
-            if(o.assessmenttype != "NEW" ) 
-                throw new Exception("Only new lines of business can be removed");
-            entity.lobs.remove(o);
-        }
     ] as EditorListModel;
+
+    void removeLob() {
+        if(!selectedLob) return;
+        if(selectedLob.assessmenttype != "NEW" ) 
+            throw new Exception("Only new lines of business can be removed");
+        entity.lobs.remove(selectedLob);
+    }
+
+    def sortInfos(sinfos) {
+        return sinfos.findAll{it.lob?.objid==null} + sinfos.findAll{ it.lob?.objid!=null }.sort{ it.lob.name };
+    }
 
     def infoModel = [
         fetchList: { o-> 
-            entity.infos = sortInfos( entity.infos );
-            return entity.infos; 
+            return sortInfos(entity.infos); 
         }
     ] as BasicListModel;
             
@@ -97,100 +101,36 @@ class BPApplication extends PageFlowController {
         fetchList: { o-> return entity.taxfees  },
         onOpenItem: { o,col->
             MsgBox.alert( o._taxfees );
-        }
-    ]as BasicListModel;
-
+        },
+       
+    ]as EditorListModel;
 
     def requirementModel = [
         fetchList: { o-> return entity.requirements; }
     ] as BasicListModel;
 
-    //this is called when infos are needed.
-    void loadInfos() {
-        infos.clear();
-        def result = service.execute(entity);
-        //phase 0 is the looping phase.    
-        if( result.phase != 0 ) {
-            hasMoreInfo = false;
-            entity.infos.addAll(result.infos);
-            entity.requirements.addAll(result.requirements);
-            infos.clear();
-            infoModel.reload();
-            requirementModel.reload();
-        }
-        else {
-            hasMoreInfo = true;
-            infos.addAll( result.infos );
-            buildFormInfos();
-        }
-     }
-
-     void calculateTaxfees() {
-        def result = service.execute(entity);
-        entity.taxfees = result.taxfees;
-        //if(result.infos) entity.infos.addAll( result.infos );
-        //if(result.requirements) entity.requirements = result.requirements;
-        //infoModel.reload();
-        taxfeeModel.reload();
-        //requirementModel.reload();
-     }
-
-    public def sortInfos(sinfos) {
-        return sinfos.findAll{it.lob?.objid==null} + sinfos.findAll{ it.lob?.objid!=null }.sort{ it.lob.name };
+    def getInfo() {
+        def opener = InvokerUtil.lookupOpener("bpapplication:info", [
+            entity: entity, 
+            handler: { infos, reqs ->
+                //after updating make sure to clean up taxes and fees too.
+                entity.infos = infos;
+                entity.requirements = reqs;
+                entity.taxfees.clear();    
+                infoModel.reload();
+                requirementModel.reload();
+                taxfeeModel.reload();
+            }
+        ]);    
+        opener.target = "popup";
+        return opener;
     }
 
-    public def buildFormInfos() {
-        formInfos = [];
-        infos.each {x->
-            def i = [
-                type:x.attribute.datatype, 
-                caption:x.attribute.caption, 
-                categoryid:x.lob?.objid, 
-                name:x.attribute.name, 
-                bean: x,
-                properties: [:],
-                value: x.value
-            ];
-            //fix the datatype
-            x.datatype = x.attribute.datatype;
-            if(x.datatype.indexOf("_")>0) {
-                x.datatype = x.datatype.substring(0, x.datatype.indexOf("_"));
-            }
-            if(i.type == "boolean") {
-                i.type = "subform";
-                i.handler = "bpassessment:yesno";
-                i.properties = [item:x];
-            }
-            else if(i.type == "string_array") {
-                i.type = "combo";
-                i.itemsObject = x.attribute.arrayvalues;
-            }
-            formInfos << i;
-        }
-     }
-
-     //routine to add editing infos to the entity.infos
-     void addInfos() {
-        entity.infos.addAll(infos);
-        infos.clear();
-     }
-
-     void updateInfos() {
-        infoModel.reload();
-     }
-
-     def formPanel = [
-        getCategory: { lobid->
-            if(!lobid) return "";
-            return entity.lobs.find{ it.lobid == lobid }?.name
-        },
-        updateBean: {name,value,item->
-            item.bean.value = value;
-        },
-        getControlList: {
-            return formInfos;
-        }
-     ] as FormPanelModel;
+    def getTaxFees() {
+        def result = service.execute(entity);
+        entity.taxfees = result.taxfees;
+        taxfeeModel.reload();
+    }
 
      void clearInfos() {
         entity.infos.clear();

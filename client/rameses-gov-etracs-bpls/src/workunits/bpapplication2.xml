@@ -1,0 +1,221 @@
+<workunit>
+    <invokers>
+        <invoker type="bpapplication:create" action="start" target="window"/>
+        <invoker type="bpapplication:open" caption="Open BP Application" action="startOpen" target="window"/>
+        
+        <!-- extended actions -->
+        <invoker type="extActions" caption="Update Info" action="showUpdateInfo" visibleWhen="#{state.matches('new|forassessment|pending')}"/>
+        <invoker type="extActions" caption="Refresh" action="refresh" visibleWhen="#{state.matches('forassessment')}"/>
+        
+        <invoker type="extActions" caption="Print Application" action="printApp" visibleWhen="#{state.matches('pending|forassessment')}"/>
+        <invoker type="extActions" caption="Print" action="print" visibleWhen="#{state=='view-assessment'}"/>
+        <invoker type="extActions" caption="Print Billing" action="printBilling" visibleWhen="#{state=='forpayment'}"/>
+    </invokers>
+    
+    <code>
+        <![CDATA[    
+        import com.rameses.rcp.annotations.*
+        import com.rameses.rcp.common.*
+        import com.rameses.osiris2.client.*
+        import com.rameses.osiris2.common.*
+        import java.rmi.server.*;
+        import com.rameses.gov.etracs.bpls.application.*;
+        
+        class BPApplicationController extends BPApplication {
+        
+             
+             
+             @FormTitle
+             String windowTitle;
+        
+             @FormId
+             def windowId;
+             
+             def start() {
+                initNew();
+                windowTitle = "New BP Application";
+                windowId = entity.objid;
+                return  super.start("create");
+             }
+             
+             def startOpen() {
+                entity = appSvc.open([objid:entity.objid]);
+                windowTitle = entity.appno;
+                windowId = entity.objid;
+                return  super.start("open");
+             }
+             
+             
+             /*****************************************************************
+             * for renewal section
+             *****************************************************************/
+            
+             /*****************************************************************
+             * 
+             *****************************************************************/
+             void saveCreate() {
+                entity = appSvc.create( entity );
+                MsgBox.alert("Application No " + entity.appno + " is created");
+             }
+             
+             void printApp() {
+                MsgBox.alert("Print application not yet supported");
+             }
+             
+             void initAppInfo() {
+                def tmp = entity.infos.findAll{it.phase != 0 };
+                infos = tmp.findAll{ it.phase == 1 };
+                buildFormInfos();
+             }
+             
+             void submitForAssessment() {
+                appSvc.submitForAssessment(entity);
+             }
+             
+             def showUpdateInfo() {
+                initAppInfo();
+                def opener = InvokerUtil.lookupOpener( "bpassessment:info", [
+                    lobs: entity.lobs,
+                    formInfos: formInfos,
+                    handler: {
+                        infoModel.reload();
+                        return null;
+                    }
+                ]);
+                opener.target = "popup";
+                return opener;
+             }
+             
+             def selectedRequirement;
+             def editRequirement() {
+                if( entity.state == "new" ) {
+                    throw new Exception("Please save the application first");
+                }
+                if(selectedRequirement?.filetype) {
+                    return InvokerUtil.lookupOpener( selectedRequirement.filetype, [
+                        entity:selectedRequirement,
+                        handler: { o->
+                            selectedRequirement.putAll(o);
+                            requirementModel.reload();
+                        }
+                    ]);
+                }
+             }
+             
+             void refresh() {
+                entity = appSvc.open([objid:entity.objid]);
+                windowTitle = entity.appno;
+                windowId = entity.objid;
+                infoModel.reload();
+                requirementModel.reload();
+             }
+             
+             void notSupported() {
+                throw new Exception("Feature not yet supported");
+             }
+             
+             void calcTaxfees() {
+                entity.taxfees = appSvc.calculateTaxfees(entity);
+                entity.totaltaxes = entity.taxfees.findAll{ it.taxfeetype == 'TAX' }*.amount.sum();
+                entity.totalregfees = entity.taxfees.findAll{ it.taxfeetype == 'REGFEE' }*.amount.sum();
+                entity.totalothercharges = entity.taxfees.findAll{ it.taxfeetype.matches('OTHER.*') }*.amount.sum();
+                entity.total = entity.taxfees*.amount.sum();
+                taxfeeModel.reload();
+             }
+             
+             void submitForPayment() {
+                appSvc.submitForPayment(entity);
+             }
+        }
+        ]]>
+        
+    </code>
+    <pageflow>
+        
+        <start>
+            <transition to="select-new" name="create"/>
+            <transition to="#{entity.state}" name="open"/>
+        </start>
+        
+        <page name="select-new" title="Select Type of Application">
+            <transition to="end" caption="Close"/>
+            <transition to="chooseNew" caption="Next" mnemonic="N" immediate="false"/>
+        </page>
+
+        <process name="chooseNew">
+            <transition name="t1" to="initial" cond="#{entity.apptype=='NEW'}"/>
+            <transition name="t2" to="initial" cond="#{entity.apptype=='RENEW' &amp;&amp; entity.txnmode == 'CAPTURE'}"/>
+            <transition to="select-renewal" cond="#{entity.apptype=='RENEW' &amp;&amp; entity.txnmode=='ONLINE'}"/>
+            <transition name="t3" to="initial" action="notSupported"/>
+        </process>
+        
+        <page name="select-renewal" title="Select for Renewal">
+            <transition to="end" caption="Close"/>
+            <transition to="initial" caption="Next" action="loadRecordForRenewal"/>
+        </page>
+        
+        <page name="initial" title="BP Application (#{entity.apptype} - #{entity.txnmode})">
+            <transition to="end" caption="Close"/>
+            <transition to="select-new" caption="Back"/>
+            <transition to="loadInfos" caption="Next" mnemonic="N" action="validateInitialInfo" immediate="false"/>
+        </page>
+        
+        <!-- process to call the -->
+        <process name="loadInfos" action="loadInfos">
+            <transition to="specify-pre-app-info" cond="#{hasMoreInfo == true}"/>
+            <transition to="#{entity.state}" cond="#{hasMoreInfo == false}"/>
+        </process>
+        
+        <page name="specify-pre-app-info" title="Specify Application Information">
+            <transition to="initial" caption="Back" action="clearInfos" />
+            <transition to="loadInfos" caption="Next" action="addInfos" />
+        </page>
+        
+        <page name="new" title="Application Info">
+            <transition to="end" caption="Close"/>
+            <transition to="initial" caption="Back" action="clearInfos"/>
+            <transition to="pending" caption="Save" action="saveCreate" confirm="You are about to save this application. Continue?"/>
+        </page>
+        
+        <!-- page states (only 4) pending, forassessment, forpayment, forrelease -->
+        <page name="pending" title="Application Info (Pending)">
+            <transition to="end" caption="Close"/>
+            <transition to="forassessment" caption="Submit for Assessment" action="submitForAssessment" confirm="You are about to submit this for assessment. Continue?"/>
+        </page>
+        
+        <page name="forassessment" title="Application Info (For Assessment)">
+            <transition to="end" caption="Close"/>
+            <transition to="view-assessment" caption="Assess" action="calcTaxfees"/>
+        </page>
+
+        <page name="view-assessment" title="Assessment">
+            <transition to="#{entity.state}" caption="Back"/>
+            <transition to="forpayment" caption="Submit for Payment" action="submitForPayment" confirm="You are about to send this application for payment. Continue?"/>
+        </page>
+        
+        <page name="forpayment" title="Application Info (For Payment)">
+            <transition to="end" caption="Close"/>
+        </page>
+        
+        <page name="forrelease" title="Application Info (For Release)">
+            <transition to="end" caption="Close"/>
+        </page>
+
+        <end/>
+    </pageflow>
+    <pages>
+        <page name="select-new" template="com.rameses.gov.etracs.bpls.application.SelectNewApplication"/>
+        <page name="select-renewal" template="com.rameses.gov.etracs.bpls.application.SelectApplication"/>
+        
+        <page name="initial" template="com.rameses.gov.etracs.bpls.application.NewInitialPage"/>
+        <page name="specify-pre-app-info" template="com.rameses.gov.etracs.bpls.application.AddInfoPage"/>
+        <page name="new" template="com.rameses.gov.etracs.bpls.application.ApplicationInfoPage"/>
+        <page name="view-assessment" template="com.rameses.gov.etracs.bpls.application.AssessmentPage"/>
+        
+        <page name="pending" template="com.rameses.gov.etracs.bpls.application.ApplicationInfoPage"/>
+        <page name="forassessment" template="com.rameses.gov.etracs.bpls.application.ApplicationInfoPage"/>
+        <page name="forpayment" template="com.rameses.gov.etracs.bpls.application.ApplicationInfoPage"/>
+        <page name="forrelease" template="com.rameses.gov.etracs.bpls.application.ApplicationInfoPage"/>
+    </pages>
+    
+</workunit>

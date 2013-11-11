@@ -1,6 +1,6 @@
 <workunit>
     <invokers>
-       <invoker type="bpassessment:yesno" action="init" />
+       <invoker type="bpapplication:yesno" action="init" />
     </invokers>
     <code>
         <![CDATA[
@@ -12,7 +12,7 @@
             import com.rameses.rulemgmt.*;
             import java.rmi.server.*;
             
-            class BPAssessmentYesNoInfoController  {
+            class BPApplicationYesNoInfoController  {
             
                 @Binding
                 def binding;
@@ -20,13 +20,21 @@
                 def item;
                 
                 void init() {
-                    if( item.value == null ) item.value = false;
+                    if(item.value == null ) {
+                        item.value = false;
+                        if( item.defaultvalue ) {
+                            try {
+                                item.value = Boolean.parseBoolean(item.defaultvalue+"");
+                            }
+                            catch(e) {;}
+                        }
+                    }    
                 }
                 
             }
         ]]>    
     </code>
     <pages>
-        <page template="com.rameses.gov.etracs.bpls.BooleanHandler" />
+        <page template="com.rameses.gov.etracs.bpls.application.BooleanHandler" />
     </pages>
 </workunit>

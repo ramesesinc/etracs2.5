@@ -4,7 +4,7 @@
  * Created on August 29, 2013, 12:15 PM
  */
 
-package com.rameses.gov.etracs.rules.bpls;
+package baks;
 
 import com.rameses.osiris2.themes.FormPage;
 import com.rameses.rcp.ui.annotations.StyleSheet;

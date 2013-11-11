@@ -2,7 +2,6 @@
 	<element tablename="business">
 		<field name="objid" primary="true"/>
 		<field name="state" required="true"/>
-		
 		<field name="permitee_name" required="true"/>
 		<field name="permitee_objid" required="true"/>
 		<field name="barangay_objid" />
@@ -12,8 +11,6 @@
 		<field name="orgtype" required="true"/>
 		<field name="officetype" required="true"/>
 		<field name="branchname" />
-
-		<field name="bin" />
 		<field name="yearstarted" required="true"/>
 		<field name="activeyear" required="true"/>
 		<field name="unpaidbalance" required="true"/>
@@ -53,7 +50,8 @@
 		<field name="objid" primary="true"/>
 		<field name="receivableid" required="true"/>
 		<field name="businessid" required="true"/>
-		<field name="iqtr" required="true"/>
+		<field name="qtr" required="true"/>
+		<field name="year" required="true"/>
 		<field name="refno" required="true"/>
 		<field name="reftype" />
 		<field name="refdate" />
@@ -64,9 +62,10 @@
 		<field name="discount" required="true"/>
 	</element>	
 
-	<element name="attribute" tablename="business_attribute">
+	<element name="info" tablename="business_info">
 		<field name="objid" primary="true"/>
 		<field name="businessid" required="true"/>
+		<field name="applicationid" />
 		<field name="attribute_objid" required="true"/>
 		<field name="attribute_name" required="true"/>
 		<field name="decimalvalue" required="true"/>
@@ -75,6 +74,9 @@
 		<field name="boolvalue" required="true"/>
 		<complex name="listvalue" type="list" serializer="default"/>
 	</element>	
+
+
+
 
 	<element name="case" tablename="business_case">
 		<field name="objid" primary="true"/>
@@ -106,21 +108,6 @@
 		<field name="issuedby_name" required="true"/>
 	</element>
 
-	<element name="info" tablename="business_info">
-		<field name="objid" primary="true"/>
-		<field name="businessid" required="true"/>
-		<field name="applicationid" required="true"/>
-		<field name="permitid" required="false"/>
-		<field name="attribute_objid" required="true"/>
-		<field name="attribute_name" required="true"/>
-		<field name="lob_objid" />
-		<field name="lob_name" />
-		<field name="decimalvalue" />
-		<field name="intvalue" />
-		<field name="stringvalue" />
-		<field name="boolvalue" />
-		<complex name="listvalue" type="list" serializer="default"/>
-	</element>		
 
 	<element name="redflag" tablename="business_redflag">
 		<field name="objid" primary="true"/>

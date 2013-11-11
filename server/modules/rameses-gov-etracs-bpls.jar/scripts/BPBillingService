@@ -79,8 +79,7 @@ public class BPBillingService  {
 	}
 
 	private def createItems(def receivables, def year) { 
-		def createTaxFee = { z, q ->
-			def amt = numberSvc.round(z.amount);
+		def createTaxFee = { z, q, amt ->
 			def tf = ruleSvc.createFact( RULESET, RULESET + ".TaxFeeAccount" );
 			tf.acctid = z.account.objid;
 			tf.type = z.account.taxfeetype;
@@ -95,20 +94,43 @@ public class BPBillingService  {
 		}
 		def taxfees = [];
 		receivables.each { x->
+			//determine the qtrs based on amount and total amtpaid;
+			double amount = x.amount;
+			double amtpaid = (x.amtpaid==null)? 0: x.amtpaid;
+			double unpaid = numberSvc.round(amount - amtpaid);
+
 			if( x.paymentmode == "QTR") {
-				def amt = numberSvc.round((x.amount / 4));
-				def remainder = numberSvc.round(x.amount);
-				(1..4).each { q->
-					def m = [:];
-					m.putAll( x );
-					m.amount = (q==4) ? remainder : amt;
-					remainder -= amt;
-					def tf =  createTaxFee(m, q );
-					taxfees << tf;
+				double divisor = numberSvc.round(amount / 4.00);
+				//create an array of qtrs and amt for each.
+				def qtrs = [];
+				(1..4).each { i->
+				    qtrs << ((i==4) ? amount : divisor);
+				    amount = numberSvc.round(amount-divisor);  
+				}
+				if(amtpaid > 0.0 ) {
+				    def newarr = [];
+				    qtrs.eachWithIndex {o,q->
+				        if(amtpaid >= o) {
+				            newarr << 0.0; 
+				            amtpaid = numberSvc.round(amtpaid-o);            
+				        }    
+				        else {
+				            newarr << numberSvc.round(o - amtpaid);   
+				            amtpaid = 0;
+				        }
+				    }
+				    qtrs = newarr;
+				}
+				def m = [:];
+				m.putAll( x );
+				qtrs.eachWithIndex { o,q->
+					if(o > 0.0)	 {
+						taxfees << createTaxFee( m, q+1, o );
+					}   
 				}
 			}
 			else {
-				taxfees << createTaxFee(x, 1);
+				taxfees << createTaxFee(x, 1, unpaid);
 			}
 		}
 		//we need to sort the taxfees
@@ -154,11 +176,9 @@ public class BPBillingService  {
 		if(!o.billdate)
 			throw new Exception("Please specify billdate");
 		def billdate = dateSvc.parseDate( o.billdate, null );	
-		println "billdate " + billdate;
 		//this will be used in excess payment. do not remove.
 		def paymentFact = createPayment( o.payment, billdate.date );	
-		println paymentFact;
-
+		
 		def facts = [];
 		facts << createApplication( o.entity );
 		facts << new EffectiveDate( billdate.date );
@@ -170,16 +190,19 @@ public class BPBillingService  {
 		facts << createQtrDeadline( billdate.year, 4 );
 		facts << paymentFact;
 
-		println "payoption " + createPayOption( o.payoption, o.qtr, paymentFact );
 		facts << createPayOption( o.payoption, o.qtr, paymentFact );
 
 		facts.addAll( createItems(o.receivables, billdate.year )  );
-
+		
 		def request = [items: []];
 		def actions = buildActions( request );
 
+		
 		//******************* EXECUTE RULES *******************************************
+
 		def grps = ruleDB.getRulegroups( [ruleset: RULESET] );
+		
+
 		ruleSvc.execute( RULESET, facts, actions, "initial" );
 		for( g in grps ) { 
 			ruleSvc.execute( RULESET, facts, actions, g.name );
@@ -199,9 +222,9 @@ public class BPBillingService  {
 		];	
 
 		//calc totals
-		//result.total_businesstax = (result.total_businesstax==null) ? 0 : result.total_businesstax;
-		//result.total_regfee = (result.total_regfee==null)? 0 : result.total_regfee;
-		//result.total_othercharge = (result.total_othercharge==null)? 0 : result.total_othercharge;
+		result.total_businesstax = (result.total_businesstax==null) ? 0 : result.total_businesstax;
+		result.total_regfee = (result.total_regfee==null)? 0 : result.total_regfee;
+		result.total_othercharge = (result.total_othercharge==null)? 0 : result.total_othercharge;
 		result.total_amtdue = numberSvc.round( result.total_businesstax + result.total_regfee + result.total_othercharge );
 		result.excesspayment = 0;
 		if(paymentFact) result.excesspayment = paymentFact.balance;
