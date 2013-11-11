@@ -2,7 +2,7 @@
     <invokers>
         <invoker type="bankdeposit:reports"  caption="Report on Collection and Deposits By Bank Account" action="init"  target="self" index="-1"/>
         
-         <invoker type="formActions" caption="Back" action="_close" mnemonic="b" shortcut="ctrl B"/>
+         <invoker type="formActions" caption="Back" action="_close" mnemonic="b" shortcut="ctrl B" icon="images/toolbars/arrow_left.png"/>
     </invokers>
     <code>
         <![CDATA[    
