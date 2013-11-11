@@ -1,7 +1,8 @@
 <workunit>
     <invokers>
         <invoker type="remittance:formActions" caption="View AF" immediate="true" action="init" index="6" visibleWhen="#{mode != 'initial' }"/>
-        <invoker type="formActions" caption="Back" action="_close" />
+        
+        <invoker type="formActions" caption="Back" action="_close" mnemonic="b" shortcut="ctrl B" icon="images/toolbars/arrow_left.png"/>
     </invokers>
     
     <code>
