@@ -1,0 +1,20 @@
+<workunit>
+    <invokers>
+        <invoker type="quick_launcher" code="EXP01" action="init" caption="Remote Server Data" role="ETRACS_ADMIN"/>
+        
+        <invoker type="remoteserverdata:create" action="init" caption="Remote Server Data" role="ETRACS_ADMIN"/>
+        <invoker type="remoteserverdata:open" action="open" caption="Remote Server Data" role="ETRACS_ADMIN"/>
+        
+        <invoker type="formActions" action="_close" caption="Close" mnemonic="c" immediate="true" icon="images/toolbars/cancel.png" />
+        <invoker type="formActions" action="save" caption="Save" mnemonic="s" shortcut="ctrl S" icon="images/toolbars/save.png" visibleWhen="#{mode != 'read'}" />
+        <invoker type="formActions" action="edit" caption="Edit" mnemonic="e" shortcut="ctrl E" visibleWhen="#{mode == 'read'}" />
+        <invoker type="formActions" action="export" caption="Export" mnemonic="x" visibleWhen="#{mode == 'read'}" />
+    </invokers>
+    
+    <code class="com.rameses.gov.etracs.tools.exporter.RemoteServerDataController">
+    </code> 
+    
+    <pages>
+        <page template="com.rameses.gov.etracs.tools.exporter.RemoteServerDataPage"/>
+    </pages>
+</workunit>

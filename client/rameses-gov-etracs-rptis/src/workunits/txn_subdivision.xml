@@ -3,7 +3,7 @@
     <invokers>
         <invoker type="subdivision:open" action="open" caption="Subdivision" target="window"  />
            
-        <invoker folderid="/menu/txn/rpt/faas" action="init"  caption="Subdivision" index="20"
+        <invoker folderid="/explorer/txn/rpt/txn" action="init"  caption="Subdivision" index="20"
             txntypeid="SD" txntype="Subdivision" newledger="true" newrpu="true"
             role="APPRAISER" permission="subdivision.create"/>
 
