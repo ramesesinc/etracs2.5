@@ -21,6 +21,17 @@ class CashTicketControlService {
 	}
 
 	@ProxyMethod
+	public def getControlForCapture(def p) {
+		def c = [afid: p.formno , ownerid: p.collector.objid ];
+		def z = em.findOwnCashTicket(c);
+		if(!z)
+			throw new Exception("Cash ticket not available");
+		z.org = [objid:env.ORGID, name:env.ORGNAME]
+		z.user = [objid: env.USERID, name:env.USER]
+		return z;	
+	}
+
+	@ProxyMethod
 	public def getIssuances(def p) {
 		return  em.getSubcollectorIssuances([controlid: p.controlid]);	
 	}

@@ -4,8 +4,10 @@ SELECT ad.objid, $P{remittanceid}
 FROM afserial_inventory_detail ad
 INNER JOIN afserial_inventory ai ON ai.objid=ad.controlid
 LEFT JOIN remittance_afserial af ON af.objid=ad.objid
+LEFT JOIN afserialcapture ac on ac.controlid = ai.objid
 WHERE ai.respcenter_objid = $P{collectorid}
 AND af.objid IS NULL
+AND ac.controlid is null 
 
 [updateRemittanceCashTicket]
 INSERT INTO remittance_cashticket (objid,remittanceid)
@@ -77,6 +79,8 @@ AND c.collector_objid =  $P{collectorid}
 AND c.formtype = 'serial'
 GROUP BY c.formno, c.controlid) a
 GROUP BY a.formno, a.controlid) b
+  left join afserialcapture ac on ac.controlid = b.controlid 
+where ac.controlid is null 
 
 [getUnremittedCashTickets]
 SELECT b.*,  

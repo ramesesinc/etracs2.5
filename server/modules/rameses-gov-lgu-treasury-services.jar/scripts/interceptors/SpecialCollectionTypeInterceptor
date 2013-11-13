@@ -34,36 +34,37 @@ class SpecialCollectionTypeInterceptor
 	public def updateSpecialCollectionType(def evt) { 
 		svc.update(evt.result);
 	}
+
+
+
+
+
+
+
 	
 	@After(pattern="CollectionTypeService.create", eval="result.handler.matches('slaughter')")
-	public def createSpecialCollectionTypeSlaughter(def evt) { 
+	public def createSpecialCollectionTypeWithItems(def evt) { 
 		def ct = evt.result; 
 		ct.items?.each {
-			it.putAll( createSpecialAcct( ct.objid, it.item ) );
+			if (it.item) {
+				it.putAll( createSpecialAcct( ct.objid, it ) );
+			}
 		}
 	}
 	
-	def createSpecialAcct( collectiontypeid, item ) {
-		def sa = [
-			specialacctobj : 'CI' + new UID(),
-			objid  : collectiontypeid,
-			item   : item,
-			amount : 0.00,
-			state  : 'SAVED'
-		];
-		
-		svc.create( sa );
-		return sa;
-	}
 	
 	@After(pattern="CollectionTypeService.update", eval="result.handler.matches('slaughter')")
-	public def updateSpecialCollectionTypeSlaughter(def evt) { 
+	public def updateSpecialCollectionTypeWithItems(def evt) { 
 		def ct = evt.result; 
 		ct.items?.each { itm ->
-			if( itm.state == 'SAVED' )
+			if (itm.state == 'SAVED'){
 				svc.update( itm );
-			else 
-				itm.putAll( createSpecialAcct( ct.objid, itm.item ) );
+			}
+			else {
+				if (itm.item )
+					itm.putAll( createSpecialAcct( ct.objid, itm ) );
+			}
+				
 		}
 		
 		ct.itemsToDelete?.each {
@@ -72,23 +73,31 @@ class SpecialCollectionTypeInterceptor
 	}
 	
 	@After(pattern="CollectionTypeService.open", eval="result.handler.matches('slaughter')")
-	public def openSpecialCollectionTypeSlaughter(def evt) { 
+	public def openSpecialCollectionTypeWithItems(def evt) { 
 		def ct = evt.result; 
-		def settings = svc.openList(ct.objid);
-		
-		def items = [];
-		settings?.each {
-			items << [specialacctobj:it.objid, item:it.item, amount:it.amount, state:'SAVED'];
-		}
-		
-		if( items ) ct.items = items;
+		ct.items = svc.getList(ct.objid);
 	}
 	
 	@Before(pattern="CollectionTypeService.removeEntity", eval="args[0].handler.matches('slaughter')")
-	public def deleteSpecialCollectionTypeSlaughter(def evt) {
+	public def deleteSpecialCollectionTypeWithItems(def evt) {
 		def ct = evt.args[0]; 
 		ct.items?.each {
-			svc.delete( it.specialacctobj );
+			svc.delete( it.objid );
 		}
+	}
+
+
+	def createSpecialAcct( collectiontypeid, item ) {
+		def sa = [
+			objid 				: 'CI' + new UID(),
+			collectiontypeid  	: collectiontypeid,
+			item   				: item.item,
+			amount 				: item.amount,
+			state  				: 'SAVED',
+			revtype 			: item.revtype
+		];
+		
+		svc.create( sa );
+		return sa;
 	}
 }

@@ -1,7 +1,8 @@
 <workunit>
     <invokers>
        <invoker type="remittance:reports" caption="Remittance Report By Collection Type" action="init" target="self" index="2"/>
-       <invoker type="formActions" caption="Back" action="_close" mnemonic="b" shortcut="ctrl B"/>
+       
+      <invoker type="formActions" caption="Back" action="_close" mnemonic="b" shortcut="ctrl B" icon="images/toolbars/arrow_left.png"/>
     </invokers>
     
     <code>

@@ -165,7 +165,7 @@ public class BatchCaptureController  {
 
     public String formatSeries( series ) {
         def p = (entity.prefix)?entity.prefix:'';
-        def s = (entity.suffix)?entity.sufix:'';
+        def s = (entity.suffix)?entity.suffix:'';
         return p + series.toString().padLeft(entity.serieslength, '0') + s;
     }
 
