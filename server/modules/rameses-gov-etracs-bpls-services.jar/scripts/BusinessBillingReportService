@@ -1,0 +1,87 @@
+import com.rameses.annotations.*;
+import com.rameses.util.*;
+import java.rmi.server.*;
+import com.rameses.services.extended.*
+import java.math.*;
+
+public class BusinessBillingReportService  {
+
+	@Service("BPBillingService")
+	def billingSvc;
+	
+	@ActiveDB("businessaccount")
+	def ba;
+
+	@ActiveDB("business")
+	def biz;
+	
+	@Service("NumberService")
+	def numberSvc;
+
+	@Service("DateService")
+	def dateSvc;
+
+	@ProxyMethod
+	public def getReport(def o) throws Exception {
+		def m = [:];
+		m.putAll(o);
+		m.payoption = 'FULLYEAR';
+		m.entity = biz.read( [objid:o.businessid] );
+		m.billdate = dateSvc.serverDate;
+
+		m.receivables = biz.getUnpaidReceivables(o);
+		if(!m.receivables)
+			throw new Exception("No receivables found for this application");
+		def z = billingSvc.getBillItems(m);	
+		def result = [:];	
+		result.billitems = z.items;
+		result.total_tax = z.total_tax;
+		result.total_regfee = z.total_regfee;
+		result.total_othercharge = z.total_othercharge;
+		result.total_amtdue = z.total_amtdue;
+		result.excesspayment = z.excesspayment;
+
+        def  data = [
+           taxpayername: m.entity.permitee.name, 
+           taxpayeraddress: m.entity.businessaddress, 
+           billdate: m.billdate, 
+           expirydate:null,
+           grandtotal:result.total_amtdue];
+
+        data.items = [];
+        def app = [:]
+        app.appno = "XXX";
+        app.txntype = "RENEW";
+		app.docstate = "APPROVED";
+		app.txndate = java.sql.Date.valueOf("2013-02-01"); 
+		app.tradename = m.entity.tradename;
+		app.businessaddress = m.entity.businessaddress;
+		app.barcode = "11212";
+		app.first_qtr_total = new BigDecimal(2500.0); 
+        app.second_qtr_total = new BigDecimal(2500.0);
+        app.third_qtr_total = new BigDecimal(2500.0); 
+        app.fourth_qtr_total = new BigDecimal(2500.0);  
+        app.totalamount = new BigDecimal(10000.0); 
+        app.totalsurcharge = new BigDecimal(0.0); 
+        app.totalinterest = new BigDecimal(0.0); 
+        app.grandtotal = new BigDecimal(0.0);
+        app.taxfees = result.billitems.collect {
+        	[
+        		year:it.year,
+        		qtr:it.qtr,
+        		lobname: it.lob?.name,
+        		applicationtype: it.assessmenttype,
+        		accttitle: it.account.title,
+        		duedate: it.deadline,
+        		amount: new BigDecimal(it.amtdue),
+        		surcharge: new BigDecimal(it.surcharge),
+        		interest: new BigDecimal(it.interest),
+        		total: new BigDecimal(it.total)
+        	]
+        }
+        data.items << app;
+		return  data;
+	}
+
+
+}

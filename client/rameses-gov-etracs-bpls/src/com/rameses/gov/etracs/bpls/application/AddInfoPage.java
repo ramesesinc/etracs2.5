@@ -42,6 +42,7 @@ public class AddInfoPage extends javax.swing.JPanel {
         xFormPanel5.setName("formPanel");
         xFormPanel5.setShowCategory(true);
 
+        xButton1.setMnemonic('N');
         xButton1.setName("doNext");
         xButton1.setText("Next");
 

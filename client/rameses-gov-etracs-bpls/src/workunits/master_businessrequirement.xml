@@ -16,6 +16,8 @@
             def service;
             String entityName  = 'businessrequirement'
             def types = LOV.BP_REQUIREMENT_TYPES*.key;
+            def extDepts = LOV.BUSINESS_EXT_DEPT;
+            
         }
         ]]>        
         

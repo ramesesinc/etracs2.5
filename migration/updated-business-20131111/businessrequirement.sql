@@ -27,3 +27,21 @@ GO
 
 SET ANSI_PADDING OFF
 GO
+
+ALTER TABLE business ADD activeyear int;
+ALTER TABLE business ADD branchname varchar(255);
+
+ALTER TABLE business DROP CONSTRAINT DF__business__bin__4EB3945D;
+ALTER TABLE business DROP CONSTRAINT uid_bin;
+ALTER TABLE business DROP COLUMN bin;
+
+ALTER TABLE business DROP CONSTRAINT DF__business__unpaid__5E7FE7D2;
+ALTER TABLE business DROP CONSTRAINT DF__business__lastqt__5F740C0B;
+ALTER TABLE business DROP CONSTRAINT DF__business__lastye__60683044;
+
+
+ALTER TABLE business DROP COLUMN unpaidbalance;
+ALTER TABLE business DROP COLUMN lastqtrpaid;
+ALTER TABLE business DROP COLUMN lastyearpaid;
+
+

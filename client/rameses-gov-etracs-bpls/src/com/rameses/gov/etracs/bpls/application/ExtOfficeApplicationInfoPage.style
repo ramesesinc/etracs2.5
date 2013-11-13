@@ -1,0 +1,9 @@
+"addFee" [ submitted == true ] {
+    visible:false;
+}
+"addFee" [ submitted == false ] {
+    visible:true;
+}
+"taxfeeModel.*" [ submitted == false ] {
+    editable: false;
+} 

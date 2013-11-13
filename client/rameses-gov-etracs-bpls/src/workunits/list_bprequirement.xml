@@ -1,6 +1,6 @@
-<workunit extends="wtemplates/ExplorerViewController.xml" serviceName="BPApplicationRequirementService" 
-     defaultFileType="bprequirement" autoSelect="true">
+<workunit extends="wtemplates/ListController.xml" serviceName="BusinessRequirementService" 
+    entityName="businessrequirement">
     <invokers>
-        <invoker folderid="/explorer/txn/bpls" caption="BP Application Requirements" index="4" role="ASSESSOR"/>
+        <invoker folderid="/explorer/master/bpls" caption="Business Requirements" index="4" role="MASTER_ENCODER"/>
     </invokers>
 </workunit>

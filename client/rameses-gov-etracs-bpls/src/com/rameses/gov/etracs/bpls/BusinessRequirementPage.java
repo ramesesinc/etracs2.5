@@ -36,7 +36,7 @@ public class BusinessRequirementPage extends javax.swing.JPanel {
         xTextField2 = new com.rameses.rcp.control.XTextField();
         xComboBox1 = new com.rameses.rcp.control.XComboBox();
         xLookupField1 = new com.rameses.rcp.control.XLookupField();
-        xTextField3 = new com.rameses.rcp.control.XTextField();
+        xComboBox3 = new com.rameses.rcp.control.XComboBox();
 
         com.rameses.rcp.control.border.XTitledBorder xTitledBorder1 = new com.rameses.rcp.control.border.XTitledBorder();
         xTitledBorder1.setTitle("General Info");
@@ -67,13 +67,14 @@ public class BusinessRequirementPage extends javax.swing.JPanel {
         xLookupField1.setPreferredSize(new java.awt.Dimension(0, 20));
         xFormPanel1.add(xLookupField1);
 
-        xTextField3.setText("entity.department");
-        xTextField3.setCaption("Department");
-        xTextField3.setDepends(new String[] {"entity.type"});
-        xTextField3.setName("entity.department");
-        xTextField3.setPreferredSize(new java.awt.Dimension(0, 20));
-        xTextField3.setSpaceChar('_');
-        xFormPanel1.add(xTextField3);
+        xComboBox3.setCaption("Department");
+        xComboBox3.setExpression("#{item.value}");
+        xComboBox3.setItemKey("key");
+        xComboBox3.setItems("extDepts");
+        xComboBox3.setName("entity.department");
+        xComboBox3.setPreferredSize(new java.awt.Dimension(0, 22));
+        xComboBox3.setRequired(true);
+        xFormPanel1.add(xComboBox3);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -96,11 +97,11 @@ public class BusinessRequirementPage extends javax.swing.JPanel {
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private com.rameses.rcp.control.XComboBox xComboBox1;
+    private com.rameses.rcp.control.XComboBox xComboBox3;
     private com.rameses.rcp.control.XFormPanel xFormPanel1;
     private com.rameses.rcp.control.XLookupField xLookupField1;
     private com.rameses.rcp.control.XTextField xTextField1;
     private com.rameses.rcp.control.XTextField xTextField2;
-    private com.rameses.rcp.control.XTextField xTextField3;
     // End of variables declaration//GEN-END:variables
     
 }

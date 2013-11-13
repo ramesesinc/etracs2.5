@@ -1,0 +1,313 @@
+import com.rameses.annotations.*;
+import com.rameses.util.*;
+import java.rmi.server.*;
+import com.rameses.services.extended.*;
+import com.rameses.rules.common.*;
+
+public class BPBillingService  {
+
+	@ActiveDB("bpbilling")
+	def em;
+
+	@Resource("RuleService")
+	def ruleSvc;
+
+	@ActiveDB("rule")
+	def ruleDB;
+
+	@Service("DateService")
+	def dateSvc;
+
+	@Service("NumberService")
+	def numberSvc;
+
+	@ActiveDB("bpexpirydate")
+	def expiryDate;
+
+	@Env
+	def env;
+
+	String RULESET = "bpbilling";
+
+	
+	private def createApplication(o) { 
+		def app = ruleSvc.createFact( RULESET, RULESET+".BPApplication", o);
+		app.barangayid = o.barangay?.objid;
+		return app;
+	}
+
+	private def createBillDate (dt) {
+		return ruleSvc.createFact( RULESET, RULESET + ".BillingDate", dt );
+	}
+
+	//check if there is expiry date specified, if not use the default date of 21
+	private def createQtrDeadline( y, q ) { 
+		def bd = dateSvc.getBeginningQtrDate( q, y, 1 );
+		def qtrDate = dateSvc.parseDate( bd, null );
+		def ed = expiryDate.findExpiryDate([year:y, qtr: q]);
+		if(ed) {
+			qtrDate.deadline = ed.expirydate;
+		}	
+		else {
+			int mon = qtrDate.month;
+			def smon = "-"+mon+"-";
+			if( mon < 10) smon = "-0"+mon+"-"; 
+			qtrDate.deadline = dateSvc.parseDate(y+smon+"20", null).date;
+		}
+		return ruleSvc.createFact( RULESET, RULESET + ".QtrDeadline", qtrDate );
+	}
+
+	private def createPayment(payment, billdate) {
+		def m = [amtpaid:0,minamt:0,pmtdate:billdate,balance:0];
+		if(payment?.amount) {
+			m.amtpaid = payment.amount;
+			m.balance = payment.amount;
+			if(payment.minamt) m.minamt = payment.minamt;
+		}
+		if( payment?.pmtdate ) {
+			m.pmtdate = dateSvc.parseDate( payment.pmtdate, null ).date;
+		}	
+		return ruleSvc.createFact( RULESET, RULESET + ".Payment", m );
+	}
+
+	//if payment does not reach the min. amt, disqualify FULLYEAR or FULLQTR
+	private def createPayOption(type, qtr, paymentFact ) {
+		def m = [ type:type, qtr:qtr  ];
+		if(m.qtr!=null && m.qtr==4) m.type = "FULLYEAR";
+		if(paymentFact.amtpaid < paymentFact.minamt) m.type = null;		
+		return ruleSvc.createFact( RULESET, RULESET + ".PayOption", m );
+	}
+
+	private def createItems(def receivables, def year, apptype) { 
+		def createTaxFee = { z, q, amt ->
+			def tf = ruleSvc.createFact( RULESET, RULESET + ".TaxFeeAccount" );
+			tf.acctid = z.account.objid;
+			tf.type = z.account.taxfeetype;
+			tf.amtdue = amt;
+			tf.total = amt;
+			tf.qtr = q;
+			tf.year = year;
+			tf.expired = false;
+			tf.account = z.account;
+			tf.lob = z.lob;
+			tf.receivableid = z.receivableid;
+			return tf;
+		}
+		def taxfees = [];
+		receivables.each { x->
+			//determine the qtrs based on amount and total amtpaid;
+			double amount = x.amount;
+			double amtpaid = (x.amtpaid==null)? 0: x.amtpaid;
+			double unpaid = numberSvc.round(amount - amtpaid);
+
+			if( x.paymentmode == "QTR" && apptype !="NEW") {
+				double divisor = numberSvc.round(amount / 4.00);
+				//create an array of qtrs and amt for each.
+				def qtrs = [];
+				(1..4).each { i->
+				    qtrs << ((i==4) ? amount : divisor);
+				    amount = numberSvc.round(amount-divisor);  
+				}
+				if(amtpaid > 0.0 ) {
+				    def newarr = [];
+				    qtrs.eachWithIndex {o,q->
+				        if(amtpaid >= o) {
+				            newarr << 0.0; 
+				            amtpaid = numberSvc.round(amtpaid-o);            
+				        }    
+				        else {
+				            newarr << numberSvc.round(o - amtpaid);   
+				            amtpaid = 0;
+				        }
+				    }
+				    qtrs = newarr;
+				}
+				def m = [:];
+				m.putAll( x );
+				qtrs.eachWithIndex { o,q->
+					if(o > 0.0)	 {
+						taxfees << createTaxFee( m, q+1, o );
+					}   
+				}
+			}
+			else {
+				taxfees << createTaxFee(x, 0, unpaid);
+			}
+		}
+		//we need to sort the taxfees
+		taxfees = taxfees.sort{ (it.qtr*10) +  ((it.type == "TAX") ? 3 : ((it.type=="REGFEE")?2:1)) };
+		def facts = [];
+		taxfees.eachWithIndex { tf, idx->
+			tf.paypriority = idx;
+			facts << tf;
+		}
+		return facts;
+	}
+
+	def buildActions(def req) {
+		def addItems = { tf, request ->
+			request.items << [
+				year: tf.year,
+				qtr: tf.qtr,
+				lob: tf.lob,
+				account: tf.account,
+				taxfeetype: tf.account.taxfeetype,
+				amtdue: tf.amtdue,
+				surcharge: tf.surcharge,
+				interest: tf.interest,
+				discount: tf.discount,
+				total: tf.total,
+				paypriority: tf.paypriority,
+				deadline: tf.deadline,
+				balance: tf.balance,
+				receivableid: tf.receivableid
+			];	
+		}	
+		def actions = new RuleAction();
+		actions.addCommand( "calc_surcharge", new CalcSurcharge( request:req, NS:numberSvc ));
+		actions.addCommand( "calc_interest",  new CalcInterest( request:req, NS:numberSvc ));
+		actions.addCommand( "calc_discount",  new CalcDiscount( request:req, NS:numberSvc ));
+		actions.addCommand( "collect_full",  new CollectFullPayment( request:req, addItems: addItems ));
+		actions.addCommand( "collect_partial",  new CollectPartialPayment( request:req, addItems: addItems, NS:numberSvc ));
+		return actions;
+	}
+
+	@ProxyMethod
+	public def getBillItems(def o) throws Exception {
+		if(!o.billdate)
+			throw new Exception("Please specify billdate");
+		if(!o.entity)
+			throw new Exception("Please specify entity");
+		if(!o.payoption)
+			throw new Exception("Please specify payoption");
+
+		def billdate = dateSvc.parseDate( o.billdate, null );	
+
+		//this will be used in excess payment. do not remove.
+		def paymentFact = createPayment( o.payment, billdate.date );	
+		
+		def facts = [];
+		facts << createApplication( o.entity );
+		facts << new EffectiveDate( billdate.date );
+		facts << new CurrentDate( dateSvc.serverDate );
+		facts << createBillDate( billdate );
+		facts << createQtrDeadline( billdate.year, 1 );
+		facts << createQtrDeadline( billdate.year, 2 );
+		facts << createQtrDeadline( billdate.year, 3 );
+		facts << createQtrDeadline( billdate.year, 4 );
+		facts << paymentFact;
+
+		facts << createPayOption( o.payoption, o.qtr, paymentFact );
+
+		//this is a temporary solution. This should be replaced with rules
+		def apptype = o.entity.apptype;
+		if(apptype==null) apptype = "NEW";
+		facts.addAll( createItems(o.receivables, billdate.year, apptype )  );
+		
+		def request = [items: []];
+		def actions = buildActions( request );
+
+		
+		//******************* EXECUTE RULES *******************************************
+
+		def grps = ruleDB.getRulegroups( [ruleset: RULESET] );
+		
+
+		ruleSvc.execute( RULESET, facts, actions, "initial" );
+		for( g in grps ) { 
+			ruleSvc.execute( RULESET, facts, actions, g.name );
+		}
+		ruleSvc.execute( RULESET, facts, actions, "apply-payment" );
+		//****************************************************************************
+
+		//sort the output
+		def items = request.items?.sort{ 
+			(it.qtr*10) +  ((it.taxfeetype == "TAX") ? 1 : ((it.taxfeetype=="REGFEE")?2:3)) 
+		};
+		def result = [
+			items: items,
+			total_tax : items.findAll{ it.taxfeetype == "TAX" }?.sum{it.total},
+			total_regfee : items.findAll{ it.taxfeetype == "REGFEE" }?.sum{it.total},
+			total_othercharge : items.findAll{ it.taxfeetype == "OTHERCHARGE" }?.sum{it.total}
+		];	
+
+		//calc totals
+		result.total_tax = (result.total_tax==null) ? 0 : result.total_tax;
+		result.total_regfee = (result.total_regfee==null)? 0 : result.total_regfee;
+		result.total_othercharge = (result.total_othercharge==null)? 0 : result.total_othercharge;
+		result.total_amtdue = numberSvc.round( result.total_tax + result.total_regfee + result.total_othercharge );
+		result.excesspayment = 0;
+		if(paymentFact) result.excesspayment = paymentFact.balance;
+
+		return result;
+	}
+
+}	
+
+//Loads each variable and 
+public class CalcSurcharge implements RuleActionHandler {
+	def request;
+	def NS;
+	public void execute(def params, def drools) {
+		def tf = params.taxfeeaccount;
+		def amt = params.amount.doubleValue;
+		tf.surcharge = NS.round(amt);
+		tf.total += NS.round( tf.surcharge );
+	}
+}
+
+public class CalcInterest implements RuleActionHandler {
+	def request;
+	def NS;
+	public void execute(def params, def drools) {
+		def tf = params.taxfeeaccount;
+		def amt = params.amount.doubleValue;
+		tf.interest = NS.round(amt);
+		tf.total += NS.round( tf.interest );
+	}
+}
+
+public class CalcDiscount implements RuleActionHandler {
+	def request;
+	def NS;
+	public void execute(def params, def drools) {
+		def tf = params.taxfeeaccount;
+		def amt = params.amount.doubleValue;
+		tf.discount = NS.round(amt);
+		tf.total -= NS.round( tf.discount );
+	}
+}
+
+public class CollectFullPayment implements RuleActionHandler {
+	def request;
+	def addItems;
+	public void execute(def tf, def drools) {
+		addItems( tf, request );
+	}
+}
+
+public class CollectPartialPayment implements RuleActionHandler {
+	def request;
+	def addItems;
+	def NS;
+	public void execute(def m, def drools) {
+		def tf = m.taxfeeaccount;
+		def partialpmt = m.amtpaid;
+		def oldAmt = tf.total;
+
+		//distribute amount partially
+		tf.amtdue = NS.round( tf.amtdue / tf.total * partialpmt );
+		if( tf.surcharge > 0.0 ) {
+			tf.surcharge = NS.round( tf.surcharge / tf.total * partialpmt );
+		}
+		if( tf.interest > 0.0 ) {
+			tf.interest = NS.round( partialpmt - tf.amtdue - tf.surcharge );
+		}
+		if( tf.discount > 0.0 ) tf.discount = NS.round( tf.discount / tf.total * partialpmt )
+		tf.total = NS.round( tf.amtdue + tf.surcharge + tf.interest - tf.discount );
+		tf.balance = NS.round( oldAmt - tf.total );
+
+		addItems( tf, request );
+	}
+}
+

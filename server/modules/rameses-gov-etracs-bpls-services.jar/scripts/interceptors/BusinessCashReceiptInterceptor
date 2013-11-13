@@ -1,0 +1,84 @@
+import com.rameses.annotations.*;
+import com.rameses.util.*;
+import java.rmi.server.*;
+
+public class BusinessCashReceiptInterceptor {
+
+	@ActiveDB("businesscashreceipt")
+	def cashRct;
+	
+	@ActiveDB("business")
+	def biz;
+
+	@Service("NumberService")
+	def numberSvc;
+
+	@After(pattern="CashReceiptService.open", eval="#{result.collectiontype.handler == 'bpls'}") 
+	public void onOpen(def evt) {
+		def p = evt.result;
+		def b = cashRct.read( p );
+		if(!b) b = [tradename:'']; 	
+		p.paidby = p.paidby + " ( " + b.tradename + " ) ";
+	}	
+
+	@After(pattern="CashReceiptService.post", eval="#{result.collectiontype.handler == 'bpls'}")
+	public void postBusiness(def evt) {
+		def result = evt.result;
+
+		//for printing purposes:
+		result.payerdetails = result.paidby + " (" + result.tradename + ") " + "\n" + result.paidbyaddress;
+
+		cashRct.save( result );
+		result.items.each {
+			it.parentid = result.objid;
+			cashRct.save(it, "item");
+		}
+
+		result.billitems.each {
+			def m = [:]
+			m.objid = "BPRCVPMT"+ new UID();
+			m.receivableid = it.receivableid;
+			m.businessid = result.businessid;
+			m.iyear = it.year;
+			m.iqtr = it.qtr;
+			m.refno = result.receiptno;
+			m.reftype = "cashreceipt";
+			m.refdate = result.receiptdate;
+			m.refid = result.objid;
+			m.amtpaid = it.amtdue;
+			m.surchargepaid = it.surcharge;
+			m.interestpaid = it.interest;
+			m.discount = it.discount;
+			m.voided = 0;
+			biz.create( m, "receivable_payment");
+		}
+		
+		//summarize by receivableid
+		def grps = result.billitems.groupBy{ it.receivableid };
+		grps.each { k,v->
+			def discount = numberSvc.round( v.sum{ it.discount } );
+			def amtpaid = numberSvc.round( v.sum{ it.amtdue} );
+			if(!discount) discount = 0;
+			if(!amtpaid) amtpaid = 0;
+			biz.updateReceivablePayment( [receivableid: k, amtpaid:amtpaid, discount: discount] );
+		}
+	}
+
+	//hook for void cash receipts
+	@After(pattern="CashReceiptVoidService.post", eval="#{result.receipt.collectiontype.handler == 'bpls'}")
+	public void voidTxn(def evt) {
+		def rct = evt.result.receipt;
+		def list = biz.getReceivablePaymentForVoiding(  [receiptid: rct.objid ] );
+		def grps = list.groupBy{ it.receivableid }
+		grps.each {k,v->
+			def z = [ receivableid: k, 
+					 amtpaid: numberSvc.round( v.sum{ it.amtpaid } ),
+					 discount: numberSvc.round( v.sum{ it.discount } ),
+				   ];
+			biz.reverseReceivablePayment(z);
+		}
+		biz.updateReceivablePaymentForVoiding(  [receiptid: rct.objid ] );
+	}
+
+
+}

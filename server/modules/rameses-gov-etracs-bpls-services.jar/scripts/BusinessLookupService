@@ -1,0 +1,27 @@
+import com.rameses.annotations.*;
+import com.rameses.util.*;
+import java.rmi.server.*;
+import com.rameses.services.extended.*
+
+public class BusinessLookupService extends ActiveCrudListService {
+
+	@ActiveDB("business")
+	def em;
+	
+	String listMethod = "getLookup";
+
+	public def getColumns(def o) {
+		return [
+			[name:"tradename", caption:"Tradename"],
+			[name:"permitee.name", caption:"Permitee"],
+			[name:"bin", caption:"BIN"],
+		];
+	}
+
+	public void beforeList(o) {
+		if( o.permiteeid ) {
+			o._listMethod = "getLookupByPermitee";
+		}
+	}
+
+}

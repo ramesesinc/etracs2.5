@@ -23,16 +23,22 @@ class BPApplication extends PageFlowController {
     def appTypes = LOV.BUSINESS_APP_TYPES;
     def txnmodes = ["ONLINE", "CAPTURE"];
     def selectedLob;
-
+    def step;
+    def infoLoaded = true;
 
     void initNew() {
+        step = "new";
 	entity = [:];
         entity.objid = "BPAPP"+new UID();
-        entity.state = "new";
+        entity.state = "info";
         entity.infos = [];
         entity.taxfees = [];
         entity.requirements = [];
         entity.lobs = [];
+        lobModel.reload();
+        requirementModel.reload();
+        infoModel.reload();
+        taxfeeModel.reload();
     }
     
     @PropertyChangeListener
@@ -67,6 +73,7 @@ class BPApplication extends PageFlowController {
                 m.classification = o.classification;
                 m.assessmenttype = "NEW";
                 entity.lobs << m; 
+                infoLoaded = false;
                 lobModel.reload();
                 binding.focus("lob");
             }
@@ -85,6 +92,7 @@ class BPApplication extends PageFlowController {
         if(selectedLob.assessmenttype != "NEW" ) 
             throw new Exception("Only new lines of business can be removed");
         entity.lobs.remove(selectedLob);
+        infoLoaded = false;
     }
 
     def sortInfos(sinfos) {
@@ -115,11 +123,14 @@ class BPApplication extends PageFlowController {
             handler: { infos, reqs ->
                 //after updating make sure to clean up taxes and fees too.
                 entity.infos = infos;
-                entity.requirements = reqs;
+                if(entity.state == "info") {
+                    entity.requirements = reqs;
+                    requirementModel.reload();
+                }
                 entity.taxfees.clear();    
                 infoModel.reload();
-                requirementModel.reload();
                 taxfeeModel.reload();
+                infoLoaded = true;
             }
         ]);    
         opener.target = "popup";
@@ -127,9 +138,16 @@ class BPApplication extends PageFlowController {
     }
 
     def getTaxFees() {
+        def unedited = entity.infos.findAll{ it.value == null };
+        if( unedited ) 
+            throw new Exception("Some info(s) are not filled up. Please complete" ); 
+        if(!infoLoaded)
+            throw new Exception("Info is not updated. You need to run get info again");
         def result = service.execute(entity);
         entity.taxfees = result.taxfees;
+        entity.putAll( result.totals );
         taxfeeModel.reload();
+        binding.refresh();
     }
 
      void clearInfos() {
@@ -141,9 +159,14 @@ class BPApplication extends PageFlowController {
         requirementModel.reload();
      }
 
-     void validateInitialInfo() {
+     void validateLOB() {
         if( !entity.lobs)
             throw new Exception("Please provide at least one line of business");
      }
      
+     void validateInfo() {
+        if( !entity.infos)
+            throw new Exception("Please provide at least one information for the business");
+     }
+
 }
