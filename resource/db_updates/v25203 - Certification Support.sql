@@ -30,7 +30,7 @@ CREATE TABLE [dbo].[certification](
 	[createdby] [varchar](150) NOT NULL,
 	[createdbytitle] [varchar](50) NOT NULL,
 	[office] [varchar](50) NULL,
-	[info] [varchar](500) NULL,
+	[info] [varchar](2000) NULL,
 PRIMARY KEY CLUSTERED 
 (
 	[objid] ASC
