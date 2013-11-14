@@ -31,6 +31,8 @@
                 "entity.amount": { o->
                     if( ( (double)o % (double)entity.denomination)!=0) {
                         MsgBox.err("Amount must be exact by denomination");
+                        entity.amount = 0.0
+                        binding.refresh("entity.amount")
                         return false;
                     }    
                     entity.qtyissued = (int)  ((double)o / (double)entity.denomination);
