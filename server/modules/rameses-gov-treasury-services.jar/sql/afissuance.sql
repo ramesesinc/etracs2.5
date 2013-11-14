@@ -12,7 +12,7 @@ where afc.currentseries <= afi.endseries
 union
 
 select 
-	afc.controlid as objid, afi.afid, afi.respcenter_name as respcentername  null as startseries, null as endseries,
+	afc.controlid as objid, afi.afid, afi.respcenter_name as respcentername,  null as startseries, null as endseries,
 	null as stubno, 'CASHTICKET' as aftype, afc.qtyin as qtyreceived, afc.qtybalance as balance, 
 	null as currentseries, 'ONLINE' AS txnmode, 0 as serieslength, afc.assignee_name as assigneename
 from cashticket_control afc 

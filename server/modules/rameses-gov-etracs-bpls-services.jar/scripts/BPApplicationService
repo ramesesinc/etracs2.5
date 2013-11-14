@@ -107,6 +107,9 @@ public class BPApplicationService extends ActiveCrudListService {
 	}
 
 	public void afterOpen(o) {
+		//get the taxpayer info also.
+		def permiteeInfo = biz.findPermiteeInfo([objid: o.permitee.objid ]);
+		if(permiteeInfo!=null) o.permitee.putAll( permiteeInfo );
 		def formatter = { x->
 			switch(x.attribute.datatype) {
 				case "decimal" : return x.decimalvalue; break;
@@ -208,6 +211,7 @@ public class BPApplicationService extends ActiveCrudListService {
 		def fees = em.getExternalOfficeFees(o);
 		taxfees.addAll( fees );
 
+		/*
 		def totals = result.totals;
 		totals.total_tax = taxfees.findAll{ it.account.taxfeetype == 'TAX'}.sum{it.amount};
 		if(!totals.total_tax) totals.total_tax = 0;
@@ -218,11 +222,11 @@ public class BPApplicationService extends ActiveCrudListService {
 		totals.total_othercharge = taxfees.findAll{ it.account.taxfeetype == 'OTHERCHARGE'}.sum{it.amount};
 		if(!totals.total_othercharge) totals.total_othercharge = 0;
 
-		println totals.total_othercharge;
 		
 		totals.total = totals.total_tax + totals.total_regfee + totals.total_othercharge;
-		println "totals is " + totals.total;
+		*/
 		return result;
 	}
+
 
 }	

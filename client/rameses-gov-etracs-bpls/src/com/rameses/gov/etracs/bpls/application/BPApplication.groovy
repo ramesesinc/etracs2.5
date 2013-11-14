@@ -168,5 +168,6 @@ class BPApplication extends PageFlowController {
         if( !entity.infos)
             throw new Exception("Please provide at least one information for the business");
      }
-
+     
+    
 }

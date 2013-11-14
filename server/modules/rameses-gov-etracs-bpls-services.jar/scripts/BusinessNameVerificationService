@@ -31,6 +31,6 @@ class BusinessNameVerificationService {
                 matchList.add( it );
             }
         }
-		return matchList;
+		return matchList.sort{ it.weight * -1 };
 	}
 }

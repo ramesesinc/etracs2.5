@@ -17,6 +17,8 @@
             @Service("BusinessCashReceiptService")
             def billSvc;
             
+            @Service("BusinessLookupService")
+            def bizLookup;
         
             String entityName = "cashreceipt:business";
             
@@ -33,7 +35,7 @@
             def barcodeid;
             
             void initBarcode() {
-                MsgBox.alert( barcodeid );
+                def m = bizLookup.findBusiness( barcodeid );
             }
             
             @PropertyChangeListener

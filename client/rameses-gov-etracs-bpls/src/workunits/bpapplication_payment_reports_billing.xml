@@ -1,6 +1,6 @@
 <workunit>
     <invokers>
-        <invoker type="bpapplication:payment:reports" caption="Billing Statement" action="viewReport" target="window" index="0"/>
+        <invoker type="bpapplication:payment:reports" caption="Billing Statement" action="viewReport" target="window" index="2"/>
        <invoker type="formActions" caption="Back" action="_close" mnemonic="b" shortcut="ctrl B" /> 
     </invokers>
     

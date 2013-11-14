@@ -107,6 +107,12 @@ SET amtpaid = amtpaid + $P{amtpaid},
 discount=discount + $P{discount} 
 WHERE objid=$P{receivableid}
 
+[getReceivableBalances]
+SELECT br.applicationid, br.businessid, SUM( br.amount - br.amtpaid ) AS balance
+FROM business_receivable br 
+WHERE br.objid IN (${receivableids}) 
+GROUP BY br.applicationid, br.businessid
+
 
 ###############################################
 # used by BusinessCashReceiptInterceptor .Void
@@ -150,10 +156,16 @@ SELECT objid, tradename, permitee_name, businessaddress, state, activeyear FROM 
 ) a
 ORDER BY a.permitee_name
 
-
-
+[changeState]
+UPDATE business SET state = $P{state} WHERE objid = $P{objid}
 
 [getListByPermitee]
 SELECT objid,permitee_name,tradename
 FROM business WHERE permitee_objid=$P{permiteeid} AND tradename LIKE $P{searchtext}
 
+
+################################################
+# This is a temporary solution just for today
+###############################################
+[findPermiteeInfo]
+SELECT entityno, address FROM entity WHERE objid=$P{objid}
