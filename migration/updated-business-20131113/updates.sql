@@ -168,3 +168,24 @@ ALTER TABLE business_receivable ADD  remarks varchar(255);
 
 ALTER TABLE business_receivable_payment ADD  iyear int DEFAULT 0; 
 ALTER TABLE business_receivable_payment ADD voided int DEFAULT 0;
+
+CREATE TABLE [dbo].[business_bin](
+	[objid] [varchar](50) NOT NULL,
+	[bin] [varchar](50) NOT NULL,
+ CONSTRAINT [PK_business_bin] PRIMARY KEY CLUSTERED 
+(
+	[objid] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+
+  INSERT INTO sys_usergroup 
+  (objid,title,domain,userclass,orgclass,role)
+  VALUES
+  ('BPLS.CITY_ENGINEER','CITY ENGINEER(BUSINESS)','BPLS','usergroup',NULL,'CITY_ENGINEER');
+  
+  INSERT INTO sys_usergroup 
+  (objid,title,domain,userclass,orgclass,role)
+  VALUES
+  ('BPLS.BUSINESSINFO','BUSINESS INFORMATION','BPLS','usergroup',NULL,'BUSINESSINFO');
+  
