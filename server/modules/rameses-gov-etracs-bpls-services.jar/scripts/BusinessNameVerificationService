@@ -1,0 +1,36 @@
+import com.rameses.annotations.*;
+import com.rameses.services.extended.*;
+import com.rameses.util.JaroWinkler;
+
+class BusinessNameVerificationService {
+
+	@ActiveDB("business")
+	def em;
+
+	
+	@ProxyMethod
+	public def getList(o) {
+		int numChars = 2;
+		double weightThreshold = 88.0
+
+		def wtThreshold = weightThreshold / 100.0; 
+		JaroWinkler jw = new JaroWinkler( weightThreshold, numChars);
+
+		//get the first 2 letters for query and then apply jarowinkler.
+		def m = [:];
+		m.tradename = o.substring(0,numChars) + "%";
+		def list = em.getListForVerification(m);
+
+		int i = 0;
+		def matchList = [];
+		def tdname = o.replaceAll("\\s{1,}", "_");
+        list.each {
+            def wt = jw.compare( o, it.tradename.replaceAll("\\s{1,}","_") );
+            if( wt  >= wtThreshold) {
+                it.weight = (int)( wt * 100)
+                matchList.add( it );
+            }
+        }
+		return matchList;
+	}
+}

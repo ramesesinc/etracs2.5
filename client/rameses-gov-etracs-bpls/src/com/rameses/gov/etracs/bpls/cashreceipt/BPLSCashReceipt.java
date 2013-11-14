@@ -33,11 +33,16 @@ public class BPLSCashReceipt extends javax.swing.JPanel {
         jPanel1 = new javax.swing.JPanel();
         xFormPanel2 = new com.rameses.rcp.control.XFormPanel();
         xLookupField1 = new com.rameses.rcp.control.XLookupField();
-        xFormPanel1 = new com.rameses.rcp.control.XFormPanel();
+        xButton2 = new com.rameses.rcp.control.XButton();
+        xFormPanel3 = new com.rameses.rcp.control.XFormPanel();
         xComboBox1 = new com.rameses.rcp.control.XComboBox();
         xComboBox2 = new com.rameses.rcp.control.XComboBox();
-        xButton2 = new com.rameses.rcp.control.XButton();
         xDataTable1 = new com.rameses.rcp.control.XDataTable();
+        xFormPanel4 = new com.rameses.rcp.control.XFormPanel();
+        xDecimalField2 = new com.rameses.rcp.control.XDecimalField();
+        xDecimalField3 = new com.rameses.rcp.control.XDecimalField();
+        xDecimalField4 = new com.rameses.rcp.control.XDecimalField();
+        xDecimalField5 = new com.rameses.rcp.control.XDecimalField();
 
         setPreferredSize(new java.awt.Dimension(628, 325));
         com.rameses.rcp.control.border.XTitledBorder xTitledBorder1 = new com.rameses.rcp.control.border.XTitledBorder();
@@ -50,44 +55,48 @@ public class BPLSCashReceipt extends javax.swing.JPanel {
         xLookupField1.setPreferredSize(new java.awt.Dimension(0, 19));
         xFormPanel2.add(xLookupField1);
 
-        xFormPanel1.setCellspacing(30);
-        xFormPanel1.setOrientation(com.rameses.rcp.constant.UIConstants.HORIZONTAL);
-        xComboBox1.setCaption("Year");
-        xComboBox1.setCaptionWidth(50);
-        xComboBox1.setItems("years");
-        xComboBox1.setName("year");
-        xComboBox1.setPreferredSize(new java.awt.Dimension(50, 22));
-        xFormPanel1.add(xComboBox1);
-
-        xComboBox2.setCaption("Qtr");
-        xComboBox2.setCaptionWidth(50);
-        xComboBox2.setItems("qtrs");
-        xComboBox2.setName("qtr");
-        xComboBox2.setPreferredSize(new java.awt.Dimension(50, 22));
-        xFormPanel1.add(xComboBox2);
-
         xButton2.setName("runBilling");
         xButton2.setText("Run Billing");
+
+        xFormPanel3.setCaptionWidth(100);
+        xFormPanel3.setCellspacing(10);
+        xFormPanel3.setOrientation(com.rameses.rcp.constant.UIConstants.HORIZONTAL);
+        xComboBox1.setCaption("Pay Option");
+        xComboBox1.setCaptionWidth(80);
+        xComboBox1.setItems("payOptions");
+        xComboBox1.setName("query.payoption");
+        xComboBox1.setPreferredSize(new java.awt.Dimension(100, 22));
+        xComboBox1.setRequired(true);
+        xFormPanel3.add(xComboBox1);
+
+        xComboBox2.setCaption("Qtr");
+        xComboBox2.setCaptionWidth(40);
+        xComboBox2.setDepends(new String[] {"query.payoption"});
+        xComboBox2.setItems("qtrs");
+        xComboBox2.setName("query.qtr");
+        xComboBox2.setRequired(true);
+        xFormPanel3.add(xComboBox2);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
                 .addComponent(xFormPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 370, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(26, 26, 26)
-                .addComponent(xFormPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 240, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(xFormPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 317, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(31, 31, 31)
                 .addComponent(xButton2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(36, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(xFormPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(xButton2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(xFormPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(xFormPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(xFormPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(xButton2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -104,7 +113,21 @@ public class BPLSCashReceipt extends javax.swing.JPanel {
                 , new Object[]{"editable", false}
                 , new Object[]{"alignment", "CENTER"}
                 , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
-                , new Object[]{"typeHandler", new com.rameses.rcp.common.TextColumnHandler()}
+                , new Object[]{"expression", "#{item.year}-#{item.qtr}"}
+                , new Object[]{"typeHandler", new com.rameses.rcp.common.LabelColumnHandler()}
+            }),
+            new com.rameses.rcp.common.Column(new Object[]{
+                new Object[]{"name", "deadline"}
+                , new Object[]{"caption", "Deadline"}
+                , new Object[]{"width", 100}
+                , new Object[]{"minWidth", 100}
+                , new Object[]{"maxWidth", 100}
+                , new Object[]{"required", false}
+                , new Object[]{"resizable", true}
+                , new Object[]{"nullWhenEmpty", true}
+                , new Object[]{"editable", false}
+                , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
+                , new Object[]{"typeHandler", new com.rameses.rcp.common.DateColumnHandler(null, "yyyy-MM-dd", null)}
             }),
             new com.rameses.rcp.common.Column(new Object[]{
                 new Object[]{"name", null}
@@ -135,7 +158,7 @@ public class BPLSCashReceipt extends javax.swing.JPanel {
                 , new Object[]{"typeHandler", new com.rameses.rcp.common.LabelColumnHandler()}
             }),
             new com.rameses.rcp.common.Column(new Object[]{
-                new Object[]{"name", "amtpaid"}
+                new Object[]{"name", "amtdue"}
                 , new Object[]{"caption", "Amount Due"}
                 , new Object[]{"width", 100}
                 , new Object[]{"minWidth", 100}
@@ -149,7 +172,7 @@ public class BPLSCashReceipt extends javax.swing.JPanel {
                 , new Object[]{"typeHandler", new com.rameses.rcp.common.TextColumnHandler()}
             }),
             new com.rameses.rcp.common.Column(new Object[]{
-                new Object[]{"name", "surchargepaid"}
+                new Object[]{"name", "surcharge"}
                 , new Object[]{"caption", "Surcharge"}
                 , new Object[]{"width", 100}
                 , new Object[]{"minWidth", 100}
@@ -163,7 +186,7 @@ public class BPLSCashReceipt extends javax.swing.JPanel {
                 , new Object[]{"typeHandler", new com.rameses.rcp.common.DecimalColumnHandler("#,##0.00", -1.0, -1.0, false, 0)}
             }),
             new com.rameses.rcp.common.Column(new Object[]{
-                new Object[]{"name", "interestpaid"}
+                new Object[]{"name", "interest"}
                 , new Object[]{"caption", "Interest"}
                 , new Object[]{"width", 100}
                 , new Object[]{"minWidth", 100}
@@ -206,20 +229,67 @@ public class BPLSCashReceipt extends javax.swing.JPanel {
             })
         });
         xDataTable1.setHandler("billingListModel");
+        xDataTable1.setPreferredSize(new java.awt.Dimension(0, 80));
+
+        xFormPanel4.setCellspacing(10);
+        xFormPanel4.setOrientation(com.rameses.rcp.constant.UIConstants.HORIZONTAL);
+        xDecimalField2.setCaption("Total Business Tax");
+        xDecimalField2.setCaptionWidth(120);
+        xDecimalField2.setEnabled(false);
+        xDecimalField2.setFont(new java.awt.Font("Courier New", 1, 14));
+        xDecimalField2.setForeground(new java.awt.Color(0, 0, 204));
+        xDecimalField2.setName("total_tax");
+        xFormPanel4.add(xDecimalField2);
+
+        xDecimalField3.setCaption("Total Reg. Fee");
+        xDecimalField3.setCaptionWidth(90);
+        xDecimalField3.setEnabled(false);
+        xDecimalField3.setFont(new java.awt.Font("Courier New", 1, 14));
+        xDecimalField3.setForeground(new java.awt.Color(0, 0, 204));
+        xDecimalField3.setName("total_regfee");
+        xFormPanel4.add(xDecimalField3);
+
+        xDecimalField4.setCaption("Total Other Charge");
+        xDecimalField4.setCaptionWidth(120);
+        xDecimalField4.setEnabled(false);
+        xDecimalField4.setFont(new java.awt.Font("Courier New", 1, 14));
+        xDecimalField4.setForeground(new java.awt.Color(0, 0, 204));
+        xDecimalField4.setName("total_othercharge");
+        xFormPanel4.add(xDecimalField4);
+
+        xDecimalField5.setCaption("Total Amt Due");
+        xDecimalField5.setCaptionWidth(90);
+        xDecimalField5.setEnabled(false);
+        xDecimalField5.setFont(new java.awt.Font("Courier New", 1, 14));
+        xDecimalField5.setForeground(new java.awt.Color(0, 0, 204));
+        xDecimalField5.setName("total_amtdue");
+        xFormPanel4.add(xDecimalField5);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 628, Short.MAX_VALUE)
-            .addComponent(xDataTable1, javax.swing.GroupLayout.DEFAULT_SIZE, 628, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(xFormPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, 855, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(10, 10, 10)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(xDataTable1, javax.swing.GroupLayout.DEFAULT_SIZE, 855, Short.MAX_VALUE)
+                            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(xDataTable1, javax.swing.GroupLayout.DEFAULT_SIZE, 260, Short.MAX_VALUE))
+                .addComponent(xDataTable1, javax.swing.GroupLayout.PREFERRED_SIZE, 209, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(xFormPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
     
@@ -230,8 +300,13 @@ public class BPLSCashReceipt extends javax.swing.JPanel {
     private com.rameses.rcp.control.XComboBox xComboBox1;
     private com.rameses.rcp.control.XComboBox xComboBox2;
     private com.rameses.rcp.control.XDataTable xDataTable1;
-    private com.rameses.rcp.control.XFormPanel xFormPanel1;
+    private com.rameses.rcp.control.XDecimalField xDecimalField2;
+    private com.rameses.rcp.control.XDecimalField xDecimalField3;
+    private com.rameses.rcp.control.XDecimalField xDecimalField4;
+    private com.rameses.rcp.control.XDecimalField xDecimalField5;
     private com.rameses.rcp.control.XFormPanel xFormPanel2;
+    private com.rameses.rcp.control.XFormPanel xFormPanel3;
+    private com.rameses.rcp.control.XFormPanel xFormPanel4;
     private com.rameses.rcp.control.XLookupField xLookupField1;
     // End of variables declaration//GEN-END:variables
     

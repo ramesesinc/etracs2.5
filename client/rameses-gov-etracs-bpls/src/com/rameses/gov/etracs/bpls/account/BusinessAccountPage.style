@@ -1,11 +1,11 @@
 "entity.*"[ mode != 'read' ] {
-    editable: true;
+    enabled: true;
 }
 
 "entity.*"[  mode == 'read' ] {
-    editable: false;
+    enabled: false;
 }
 
 "entity.objid"[  mode != 'create' ] {
-    editable: false;
+    enabled: false;
 }

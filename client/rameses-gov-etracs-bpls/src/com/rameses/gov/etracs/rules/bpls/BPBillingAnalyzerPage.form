@@ -219,7 +219,7 @@
                   <Properties>
                     <Property name="caption" type="java.lang.String" value="Total Business Tax"/>
                     <Property name="captionWidth" type="int" value="120"/>
-                    <Property name="name" type="java.lang.String" value="result.total_businesstax"/>
+                    <Property name="name" type="java.lang.String" value="result.total_tax"/>
                   </Properties>
                 </Component>
                 <Component class="com.rameses.rcp.control.XDecimalField" name="xDecimalField3">

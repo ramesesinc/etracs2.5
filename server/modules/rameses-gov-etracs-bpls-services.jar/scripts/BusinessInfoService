@@ -1,0 +1,136 @@
+import com.rameses.annotations.*;
+import com.rameses.util.*;
+import java.rmi.server.*;
+import com.rameses.services.extended.*;
+
+public class BusinessInfoService extends ActiveCrudListService {
+
+	@ActiveDB("business")
+	def em;
+
+	@Service("SequenceService")
+	def seqSvc;
+
+	@Env
+	def env;
+
+	@ProxyMethod
+	public def getNodes(o) {
+		return [
+			[name:'active', caption:'Active', state:'ACTIVE', leaf:true, folder:true, allowSearch:true],
+			[name:'inactive', caption:'Inactive', state:'INACTIVE', leaf:true, folder:true, allowSearch:true],
+			[name:'pending', caption:'Pending', state:'PENDING', leaf:true, folder:true, allowSearch:true],
+			[name:'payment', caption:'Payment Pending', state:'PAYMENT', leaf:true, folder:true, allowSearch:true],
+			[name:'retired', caption:'Retired', state:'RETIRED', leaf:true, folder:true, allowSearch:true],
+		];
+	}	
+
+	@ProxyMethod
+	public def getColumns(o) {
+		return [
+			[name:'tradename', caption:'Trade Name'],
+			[name:'permitee.name', caption:'Permitee'],
+			[name:'businessaddress', caption:'Business Address'],
+			[name:'bin', caption:'BIN'],
+			[name:'state', caption:'State'],
+			[name:'activeyear', caption:'Year'],
+		];
+	}
+
+	void beforeList(o) {
+		if( o.permiteeid) {
+			o._listMethod = "getListByPermitee";
+		}
+		else {
+			o._pagingKeys = "a.objid";
+			if(o.name=="search") {
+				if( o.searchtext == "%") o.searchtext ="?";
+				o._listMethod = "getListSearch";
+			}	
+		}
+	}
+
+	void beforeCreate(o) {
+		o.activeyear = o.yearstarted;
+		o.credits = 0;
+		o.user = [objid:env.USERID];
+		o.state = 'PENDING';
+	}
+
+	void afterCreate(o) {
+		saveLobs(o);
+		saveInfos(o);
+	}
+
+	void afterUpdate(o) {
+		saveLobs(o);
+		saveInfos(o);
+	}
+
+	@ProxyMethod
+	public void saveLobs(o) {
+		em.removeLobs(o);
+		o.lobs?.each {
+			it.applicationid = o.applicationid;
+			it.businessid = o.objid;
+			it.iyear = o.activeyear;
+			em.save( it, "lob" );
+		}
+	}
+
+	@ProxyMethod
+	public void saveInfos(o) {
+		em.removeInfos(o);
+		//update infos
+		o.infos?.each {
+			it.applicationid = o.applicationid;
+			it.businessid = o.objid;
+			convertInfo(it);
+			em.save( it, "info" );
+		}
+	}
+
+	@ProxyMethod
+	public void postReceivables(o) {
+		o.receivables?.each {
+			it.applicationid = o.applicationid;
+			it.businessid = o.objid;
+			it.iyear = o.iyear;
+			it.amtpaid = 0;
+			it.discount = 0;
+			em.save( it, "receivable" );
+		}
+		em.updateStatePaymentPending(o);
+	}
+
+	private void convertInfo(o) {
+		def value = o.value;
+		if( value == null ) return;
+
+		switch(o.attribute.datatype) {
+			case "decimal":
+				o.decimalvalue = Double.parseDouble(value+"");
+				break;
+			case "integer":
+				o.intvalue = Integer.parseInt(value+"");
+				break;
+			case "string_array":	
+			case "string":
+				o.stringvalue = (String)value;
+				break;
+			case "boolean":
+				value = ( value == 1 || value == true ) ? "true" : "false";
+				boolean b =  Boolean.parseBoolean(value);
+				o.boolvalue = (b) ? 1 : 0; 
+				break;
+		} 
+	}
+
+	void afterOpen(o) {
+		o.lobs = em.getLobs(o);
+		o.infos = em.getLobs(o);
+		o.receivables = em.getReceivables(o);
+	}
+
+	
+}

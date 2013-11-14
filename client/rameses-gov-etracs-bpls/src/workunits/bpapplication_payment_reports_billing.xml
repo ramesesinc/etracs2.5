@@ -1,0 +1,52 @@
+<workunit>
+    <invokers>
+        <invoker type="bpapplication:payment:reports" caption="Billing Statement" action="viewReport" target="window" index="0"/>
+       <invoker type="formActions" caption="Back" action="_close" mnemonic="b" shortcut="ctrl B" /> 
+    </invokers>
+    
+    <code>
+        <![CDATA[    
+        import com.rameses.rcp.annotations.*
+        import com.rameses.rcp.common.*
+        import com.rameses.osiris2.client.*
+        import com.rameses.osiris2.common.*
+        import java.rmi.server.*;
+        import com.rameses.osiris2.reports.*;
+        
+        class  BPBillingReportController  {
+        
+            @Service("ReportParameterService") 
+            def paramsvc
+            
+            @Service("BusinessBillingReportService") 
+            def reportSvc;
+            
+            def entity;
+            def data;
+            def title = "BP Billing"
+            def reportPath = "com/rameses/gov/etracs/bpls/reports/billing/"
+            
+            void viewReport() {
+                data = reportSvc.getReport(entity);    
+                report.viewReport();
+            } 
+            
+            def report = [
+                getReportName : { return reportPath + "BPBilling.jasper" },
+                getReportData : { return  data },
+                getParameters : { return paramsvc.getStandardParameter() },
+                getSubReports : { return [
+                        new SubReport("BPBillingBusiness", reportPath + "BPBillingBusiness.jasper"),
+                        new SubReport("BPBillingBusinessItem", reportPath + "BPBillingBusinessItem2.jasper")
+                    ] as SubReport[];
+                }
+            ] as ReportModel
+         }   
+        ]]>
+    </code>
+    
+    <pages>
+        <page template="com.rameses.osiris2.common.ui.ReportPreviewPage"/>
+    </pages>
+    
+</workunit>

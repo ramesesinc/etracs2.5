@@ -1,0 +1,169 @@
+<workunit>
+    <invokers>
+        <invoker type="bpapplication:create" action="start" target="window"/>
+        <invoker type="bpapplication:open" caption="Open BP Application" action="startOpen" target="window"/>
+        
+        <!-- extended actions -->
+        <invoker type="extActions" caption="Update Info" action="showUpdateInfo" visibleWhen="#{state.matches('new|forassessment|pending')}"/>
+        <invoker type="extActions" caption="Refresh" action="refresh" visibleWhen="#{state.matches('forassessment')}"/>
+        
+        <invoker type="extActions" caption="Print Application" action="printApp" visibleWhen="#{state.matches('pending|forassessment')}"/>
+        <invoker type="extActions" caption="Print" action="print" visibleWhen="#{state=='view-assessment'}"/>
+        <invoker type="extActions" caption="Print Billing" action="printBilling" visibleWhen="#{state=='forpayment'}"/>
+    </invokers>
+    
+    <code>
+        <![CDATA[    
+        import com.rameses.rcp.annotations.*
+        import com.rameses.rcp.common.*
+        import com.rameses.osiris2.client.*
+        import com.rameses.osiris2.common.*
+        import java.rmi.server.*;
+        import com.rameses.gov.etracs.bpls.*;
+        
+        class BPApplicationController extends BPApplication {
+        
+             @Service("BPApplicationService")
+             def appSvc;
+             
+             @FormTitle
+             String windowTitle;
+        
+             @FormId
+             def windowId;
+             
+             def start() {
+                initNew();
+                windowTitle = "New BP Application";
+                windowId = entity.objid;
+                return  super.start("create");
+             }
+             
+             def startOpen() {
+                entity = appSvc.open([objid:entity.objid]);
+                windowTitle = entity.appno;
+                windowId = entity.objid;
+                return  super.start("open");
+             }
+             
+             
+             /*****************************************************************
+             * for renewal section
+             *****************************************************************/
+             def query = [:];
+             def selectedApplication;
+             def searchList;
+             void doSearch() {
+                searchList = appSvc.getForRenewalList(query);
+                renewalListModel.reload();
+             }
+             def renewalListModel = [
+                fetchList: { o->return searchList;}
+             ] as BasicListModel;
+             
+             void loadRecordForRenewal() {
+                if(!selectedApplication) 
+                    throw new Exception("Please select an application to renew");
+                entity = appSvc.loadRecordForRenewal(selectedApplication);    
+             }
+             
+             /*****************************************************************
+             * 
+             *****************************************************************/
+             void saveCreate() {
+                entity = appSvc.create( entity );
+                MsgBox.alert("Application No " + entity.appno + " is created");
+             }
+             
+             void printApp() {
+                MsgBox.alert("Print application not yet supported");
+             }
+             
+             
+             void submitForAssessment() {
+                appSvc.submitForAssessment(entity);
+             }
+             
+             
+             void refresh() {
+                entity = appSvc.open([objid:entity.objid]);
+                windowTitle = entity.appno;
+                windowId = entity.objid;
+                infoModel.reload();
+                requirementModel.reload();
+             }
+             
+             void notSupported() {
+                throw new Exception("Feature not yet supported");
+             }
+             
+             void submitForPayment() {
+                appSvc.submitForPayment(entity);
+             }
+        }
+        ]]>
+        
+    </code>
+    <pageflow>
+        <start>
+            <transition to="initial" name="create"/>
+            <transition to="#{entity.state}" name="open"/>
+        </start>
+        <page name="initial" title="Select Type of Application">
+            <transition to="end" caption="Close"/>
+            <transition to="chooseNew" caption="Next" mnemonic="N" immediate="false"/>
+        </page>
+        
+        <process name="chooseNew">
+            <transition name="t1" to="initial-new-info" cond="#{entity.apptype=='NEW'}"/>
+            <transition name="t2" to="initial" cond="#{entity.apptype=='RENEW' &amp;&amp; entity.txnmode == 'CAPTURE'}"/>
+            <transition to="select-renewal" cond="#{entity.apptype=='RENEW' &amp;&amp; entity.txnmode=='ONLINE'}"/>
+            <transition name="t3" to="initial" action="notSupported"/>
+        </process>
+        <page name="initial-new-info" title="Specify Business Info">
+            <transition to="end" caption="Close"/>
+            <transition to="chooseNew" caption="Next" mnemonic="N" immediate="false"/>
+        </page>
+        <page name="initial" title="BP Application (#{entity.apptype} - #{entity.txnmode})">
+            <transition to="end" caption="Close"/>
+            <transition to="select-new" caption="Back"/>
+            <transition to="loadInfos" caption="Next" mnemonic="N" action="validateInitialInfo" immediate="false"/>
+        </page>
+        <page name="select-renewal" title="Select for Renewal">
+            <transition to="end" caption="Close"/>
+            <transition to="initial" caption="Next" action="loadRecordForRenewal"/>
+        </page>
+        <!--
+        <page name="initial" title="BP Application (#{entity.apptype} - #{entity.txnmode})">
+            <transition to="end" caption="Close"/>
+            <transition to="select-new" caption="Back"/>
+            <transition to="loadInfos" caption="Next" mnemonic="N" action="validateInitialInfo" immediate="false"/>
+        </page>
+        -->
+        
+
+        <end/>
+    </pageflow>
+    <pages>
+        <page name="initial" template="com.rameses.gov.etracs.bpls.application.SelectApplicationType"/>
+        
+        
+        <page name="select-renewal" template="com.rameses.gov.etracs.bpls.application.SelectApplication"/>
+        
+        
+        
+        <page name="initial" template="com.rameses.gov.etracs.bpls.application.NewInitialPage"/>
+        
+        
+        
+        <page name="specify-pre-app-info" template="com.rameses.gov.etracs.bpls.application.AddInfoPage"/>
+        <page name="new" template="com.rameses.gov.etracs.bpls.application.ApplicationInfoPage"/>
+        <page name="view-assessment" template="com.rameses.gov.etracs.bpls.application.AssessmentPage"/>
+        
+        <page name="pending" template="com.rameses.gov.etracs.bpls.application.ApplicationInfoPage"/>
+        <page name="forassessment" template="com.rameses.gov.etracs.bpls.application.ApplicationInfoPage"/>
+        <page name="forpayment" template="com.rameses.gov.etracs.bpls.application.ApplicationInfoPage"/>
+        <page name="forrelease" template="com.rameses.gov.etracs.bpls.application.ApplicationInfoPage"/>
+    </pages>
+    
+</workunit>

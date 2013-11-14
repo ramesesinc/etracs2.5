@@ -17,21 +17,17 @@
         
         class  BPRequirementDocumentController {
         
-            @Service("BPApplicationService")
-            def service;
-            
             def handler;
             def entity;
             def info = [:];
             
             void init() {
-                info.objid = "BPREQDATA"+new UID();
-                info.refid = entity.objid;
+               info.putAll(entity);
             }
             
             def doOk() {
-                def z = service.submitDataRequirement( info );
-                handler(z);
+                info.completed = 1;
+                handler(info);
                 return "_close";
             }
             

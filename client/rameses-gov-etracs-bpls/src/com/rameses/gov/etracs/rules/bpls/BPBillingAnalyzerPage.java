@@ -266,7 +266,7 @@ public class BPBillingAnalyzerPage extends javax.swing.JPanel {
         xFormPanel3.setOrientation(com.rameses.rcp.constant.UIConstants.HORIZONTAL);
         xDecimalField2.setCaption("Total Business Tax");
         xDecimalField2.setCaptionWidth(120);
-        xDecimalField2.setName("result.total_businesstax");
+        xDecimalField2.setName("result.total_tax");
         xFormPanel3.add(xDecimalField2);
 
         xDecimalField3.setCaption("Total Reg. Fee");

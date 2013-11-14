@@ -20,6 +20,7 @@
             
             def taxfeeTypes = ["TAX", "REGFEE", "OTHERCHARGE"];
             def paymentModes = ["YEAR", "QTR"];
+            def extDepts = LOV.BUSINESS_EXT_DEPT;
             
             def getLookupAccount() {
                 return InvokerUtil.lookupOpener("revenueitem:lookup", [

@@ -1,0 +1,25 @@
+<workunit>
+    <invokers>
+        <invoker type="bpapplication:payment:reports" caption="Assessment" action="init" target="window" index="0"/>
+       
+    </invokers>
+    
+    <code>
+        <![CDATA[    
+        import com.rameses.rcp.annotations.*
+        import com.rameses.rcp.common.*
+        import com.rameses.osiris2.client.*
+        import com.rameses.osiris2.common.*
+        import java.rmi.server.*;
+        import com.rameses.gov.etracs.bpls.application.*;
+        
+        class BPApplicationPaymentReportController  {
+             
+        }
+        ]]>
+    </code>
+    <pages>
+        <page name="payment" template="com.rameses.gov.etracs.bpls.application.ApplicationInfoPage"/>
+    </pages>
+    
+</workunit>

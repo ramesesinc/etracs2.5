@@ -14,15 +14,21 @@
         
         class  BusinessCashReceiptController extends BasicCashReceipt {
             
-            @Service("BPBillingService")
+            @Service("BusinessCashReceiptService")
             def billSvc;
-        
-            int startyear = 2013;
             
-            def qtrs = [1,2,3,4];
-            def years = startyear..1980;
-            int year;
-            int qtr;
+        
+            String entityName = "cashreceipt:business";
+            
+            def query = [:]
+            
+            def qtrs = (1..4);
+            def payOptions = LOV.BP_PAYOPTIONS*.key;
+                
+            def total_tax = 0;
+            def total_regfee = 0;
+            def total_othercharge = 0;
+            def total_amtdue = 0;
             
             def barcodeid;
             
@@ -30,14 +36,30 @@
                 MsgBox.alert( barcodeid );
             }
             
-            public void payerChanged( o ) {
-                entity.tradename = null;
-                entity.appid = null;
+            @PropertyChangeListener
+            def listener = [
+                "query.payoption":{ o->clearBilling();},
+                "query.qtr":{ o->clearBilling();}
+            ]
+            
+            void clearBilling() {
                 entity.billitems?.clear();
                 entity.items.clear();
+                total_tax = 0;
+                total_regfee = 0;
+                total_othercharge = 0;
+                total_amtdue = 0;
+                binding.refresh("total.*");
                 entity.amount = 0;
-                binding.refresh( "entity.tradename" );
                 billingListModel.reload();
+            }
+            
+            public void payerChanged( o ) {
+                entity.tradename = null;
+                entity.applicationid = null;
+                entity.businessid = null;
+                binding.refresh( "entity.tradename" );
+                clearBilling();
                 super.clearAllPayments();
                 super.updateBalances();
             }
@@ -48,9 +70,10 @@
                 }    
                 return InvokerUtil.lookupOpener( "business:lookup", [
                     "query.permiteeid":entity.payer.objid,
+                    "query.state": "PAYMENT",
                     onselect: { o->
                         entity.tradename = o.tradename;
-                        entity.businessid = o.objid;
+                        entity.businessid = o.businessid;
                         entity.billitems = [];
                         entity.items = [];
                         billingListModel.reload();
@@ -59,18 +82,31 @@
             }
             
             void runBilling() {
-                def m = [year:year,qtr:qtr,businessid:entity.businessid];
-                def result = billSvc.getBillItems( m );
+                def m = [:];
+                m.qtr = query.qtr;
+                m.businessid = entity.businessid;
+                m.payoption = query.payoption;
+                m.billdate = entity.receiptdate;
+                def result = billSvc.getBilling( m );
                 if(result.billitems.size()==0)
                     throw new Exception("No open items for payment found for the criteria specified" );
                 entity.billitems = result.billitems;
                 billingListModel.reload();
+                
+                //fix the receipt items
+                entity.payoption = query.payoption;
+                entity.qtr = query.qtr;
                 entity.items.clear();
                 entity.items.addAll( result.receiptitems );
                 entity.amount = 0;
                 if(entity.items) {
                     entity.amount = entity.items.sum{ it.amount };
                 }
+                total_tax = result.total_tax;
+                total_regfee = result.total_regfee;
+                total_othercharge = result.total_othercharge;
+                total_amtdue = result.total_amtdue;
+                binding.refresh("total.*");
                 super.updateBalances();
             }
             

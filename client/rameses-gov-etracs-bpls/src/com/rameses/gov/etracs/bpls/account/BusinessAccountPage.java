@@ -36,11 +36,12 @@ public class BusinessAccountPage extends javax.swing.JPanel {
         xComboBox2 = new com.rameses.rcp.control.XComboBox();
         xLookupField2 = new com.rameses.rcp.control.XLookupField();
         xLookupField3 = new com.rameses.rcp.control.XLookupField();
+        xComboBox3 = new com.rameses.rcp.control.XComboBox();
 
         com.rameses.rcp.control.border.XTitledBorder xTitledBorder1 = new com.rameses.rcp.control.border.XTitledBorder();
         xTitledBorder1.setTitle("Business Account");
         setBorder(xTitledBorder1);
-        setPreferredSize(new java.awt.Dimension(451, 177));
+        setPreferredSize(new java.awt.Dimension(451, 221));
 
         xFormPanel1.setCaptionWidth(120);
         xLookupField1.setCaption("Account");
@@ -76,6 +77,15 @@ public class BusinessAccountPage extends javax.swing.JPanel {
         xLookupField3.setPreferredSize(new java.awt.Dimension(0, 20));
         xFormPanel1.add(xLookupField3);
 
+        xComboBox3.setCaption("Ext. Dept");
+        xComboBox3.setExpression("#{item.value}");
+        xComboBox3.setItemKey("key");
+        xComboBox3.setItems("extDepts");
+        xComboBox3.setName("entity.department");
+        xComboBox3.setPreferredSize(new java.awt.Dimension(0, 22));
+        xComboBox3.setRequired(true);
+        xFormPanel1.add(xComboBox3);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -89,8 +99,8 @@ public class BusinessAccountPage extends javax.swing.JPanel {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(xFormPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(21, Short.MAX_VALUE))
+                .addComponent(xFormPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 156, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(30, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
     
@@ -98,6 +108,7 @@ public class BusinessAccountPage extends javax.swing.JPanel {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private com.rameses.rcp.control.XComboBox xComboBox1;
     private com.rameses.rcp.control.XComboBox xComboBox2;
+    private com.rameses.rcp.control.XComboBox xComboBox3;
     private com.rameses.rcp.control.XFormPanel xFormPanel1;
     private com.rameses.rcp.control.XLookupField xLookupField1;
     private com.rameses.rcp.control.XLookupField xLookupField2;
