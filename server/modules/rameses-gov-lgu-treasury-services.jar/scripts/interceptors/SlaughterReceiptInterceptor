@@ -10,7 +10,7 @@ class SlaughterReceiptInterceptor {
 	@PersistenceContext("main")
 	def em
 	
-	@After(pattern="CashReceiptService.post", eval="#{result.formno=='57'}")
+	@After(pattern="CashReceiptService.post", eval="#{result.formno=='57' && result.txnmode != 'CAPTURE'}")
 	public def postToSpecificTable(def evt) { 
 		def cs = [:];
 		cs.putAll( evt.result );	

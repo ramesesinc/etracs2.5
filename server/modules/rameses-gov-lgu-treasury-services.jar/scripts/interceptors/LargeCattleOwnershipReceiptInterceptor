@@ -28,13 +28,13 @@ class LargeCattleOwnershipInterceptor {
 		}
 	}
 	
-	@After(pattern="CashReceiptService.post", eval="#{result.formno=='53'}")
+	@After(pattern="CashReceiptService.post", eval="#{result.formno=='53' && result.txnmode != 'CAPTURE'}")
 	public def postToSpecificTable(def evt) { 
 		def cs = evt.result;	
 		em.create("cashreceipt_largecattleownership:cashreceipt_largecattleownership", cs);
 	}
 
-	@After(pattern="CashReceiptService.open", eval="#{result.formno=='53'}")
+	@After(pattern="CashReceiptService.open", eval="#{result.formno=='53' && result.txnmode != 'CAPTURE'}")
 	public def onOpenReceipt(def evt) { 
 		def cs = em.read("cashreceipt_largecattleownership:cashreceipt_largecattleownership", evt.result)
 		evt.result.putAll( cs );
