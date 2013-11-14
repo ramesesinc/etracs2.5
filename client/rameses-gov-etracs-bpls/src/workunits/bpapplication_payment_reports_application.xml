@@ -1,6 +1,8 @@
 <workunit>
     <invokers>
-        <invoker type="bpapplication:payment:reports" caption="Assessment" action="viewReport" target="window" index="1"/>
+        <invoker type="bpapplication:payment:reports" caption="Application" action="viewReport" target="window" index="0"/>
+        <invoker type="bpapplication:report" caption="Application" action="viewReport" target="window" index="0"/>
+        
         <invoker type="formActions" caption="Close" action="_close"/>
     </invokers>
     
@@ -13,60 +15,65 @@
         import java.rmi.server.*;
          import com.rameses.osiris2.reports.*;
         
-        class  BPAssessmentReportController  {
+        class  BPApplicationReportController  {
         
             def data;
             def entity;
-            def title = "BP Assessement"
+            def title = "BP Application"
             
-            def reportPath = "com/rameses/gov/etracs/bpls/reports/assessment/"
+            def reportPath = "com/rameses/gov/etracs/bpls/reports/application/"
+            def orgtypes = LOV.ORG_TYPES;    
             
             @Service("ReportParameterService") 
             def paramsvc
          
             void viewReport() {
-                def taxfees = entity.taxfees.collect{ 
+                def format = { x->
+                    if(x==null) return "";
+                    else if(x==true) return "Yes";
+                    else if(x==false) return "No";
+                    else return x+"";
+                }
+                def infos = entity.infos.collect{ 
                     [
-                      lobname:it.lob?.name, 
-                      accttitle: it.account.title,
-                      amtdue: new BigDecimal(it.amount), 
-                      amount: new BigDecimal(it.amount), 
-                      assessmenttype:it.assessmenttype,
-                      taxfeetype: it.taxfeetype
+                      category:it.lob?.name, 
+                      name: it.attribute.name,
+                      value: format(it.value)
                     ]  
                  };
+                 
                 //ctcno: "CCI2012-191919191", 
                 //ctcdate: java.sql.Date.valueOf("2013-02-01"),
-               data = [
-                   txnno: entity.appno, 
+                data = [
+                   refno: entity.appno, 
+                   appdate: entity.dtfiled,
                    tradename: entity.tradename, 
+                   businessorgtype: orgtypes.find{ it.key == entity.orgtype}?.value,
                    businessaddress: entity.businessaddress,
-                   taxpayername: entity.permitee.name, 
-                   taxpayerno: entity.permitee.entityno,
-                   taxpayeraddress: entity.permitee.address,
+                   permiteename: entity.permitee.name, 
+                   permiteeno: entity.permitee.entityno,
+                   permiteeaddress: entity.permitee.address,
                    txndate: entity.dtfiled, 
                    totaltax: new BigDecimal(entity.total_tax+""), 
                    totalregfee: new BigDecimal(entity.total_regfee+""), 
                    totalcharge: new BigDecimal(entity.total_othercharge+""), 
                    totalamount: new BigDecimal(entity.total+""), 
                    laterenewal:"0", 
-                   applications: [
-                        taxes: taxfees.findAll{ it.taxfeetype == "TAX" },  
-                        regfees:taxfees.findAll{ it.taxfeetype == "REGFEE" },  
-                        charges:taxfees.findAll{ it.taxfeetype == "OTHERCHARGE" },  
-                    ]
+                   infos:infos,
+                   requierements:[],
+                   signatories:[],
                 ]
                 report.viewReport();
             } 
             
             def report = [
-                getReportName : { return reportPath + "Assessment.jasper" },
+                getReportName : { return reportPath + "bppermitapplication.jasper" },
                 getReportData : { return  data },
                 getParameters : { return paramsvc.getStandardParameter() },
                 getSubReports : { return [
-                        new SubReport("AssessmentItem", reportPath + "AssessmentItem.jasper"),
-                        new SubReport("SignatoryItem", reportPath + "SignatoryItem.jasper"),
-                        new SubReport("AssessmentNonTax", reportPath + "AssessmentNonTax.jasper")
+                        new SubReport("APPINFO", reportPath + "appinfoitem.jasper"),
+                        new SubReport("REQUIREMENT", reportPath + "requirement.jasper"),
+                        new SubReport("SIGNATORIES", reportPath + "signatories.jasper")
                     ] as SubReport[];
                 }
             ] as ReportModel

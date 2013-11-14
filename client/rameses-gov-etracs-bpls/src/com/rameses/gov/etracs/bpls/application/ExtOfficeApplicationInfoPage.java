@@ -219,6 +219,7 @@ public class ExtOfficeApplicationInfoPage extends javax.swing.JPanel {
                 , new Object[]{"typeHandler", new com.rameses.rcp.common.TextColumnHandler()}
             })
         });
+        xDataTable3.setDynamic(true);
         xDataTable3.setHandler("taxfeeModel");
 
         com.rameses.rcp.control.border.XTitledBorder xTitledBorder1 = new com.rameses.rcp.control.border.XTitledBorder();

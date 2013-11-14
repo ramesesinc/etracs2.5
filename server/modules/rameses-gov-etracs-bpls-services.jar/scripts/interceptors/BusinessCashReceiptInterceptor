@@ -10,6 +10,9 @@ public class BusinessCashReceiptInterceptor {
 	@ActiveDB("business")
 	def biz;
 
+	@ActiveDB("bpapplication")
+	def application;
+
 	@Service("NumberService")
 	def numberSvc;
 
@@ -22,7 +25,7 @@ public class BusinessCashReceiptInterceptor {
 	}	
 
 	@After(pattern="CashReceiptService.post", eval="#{result.collectiontype.handler == 'bpls'}")
-	public void postBusiness(def evt) {
+	public void postBusinessPayment(def evt) {
 		def result = evt.result;
 
 		//for printing purposes:
@@ -55,12 +58,27 @@ public class BusinessCashReceiptInterceptor {
 		
 		//summarize by receivableid
 		def grps = result.billitems.groupBy{ it.receivableid };
+		def ids = [];
 		grps.each { k,v->
 			def discount = numberSvc.round( v.sum{ it.discount } );
 			def amtpaid = numberSvc.round( v.sum{ it.amtdue} );
 			if(!discount) discount = 0;
 			if(!amtpaid) amtpaid = 0;
 			biz.updateReceivablePayment( [receivableid: k, amtpaid:amtpaid, discount: discount] );
+			ids << k;
+		}
+
+		/* 
+		* check unpaid balance in the application
+		*   if 0 then change state of application to release.
+		*/
+		String receivableIds = "'" + ids.join("','") + "'";
+		def list = biz.getReceivableBalances( [receivableids: receivableIds] );
+		for( app in list ) {
+			if( app.balance <= 0 ) {
+				application.changeState( [state:'release', objid: app.applicationid ] );
+				biz.changeState( [state:'ACTIVE', objid: app.businessid ] );
+			}
 		}
 	}
 

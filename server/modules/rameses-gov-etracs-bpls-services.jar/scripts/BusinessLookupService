@@ -24,4 +24,9 @@ public class BusinessLookupService extends ActiveCrudListService {
 		}
 	}
 
+	@ProxyMethod
+	public def findBusiness(def id) {
+		throw new Exception( "lookup for business not yet supported"  );
+	}
+
 }

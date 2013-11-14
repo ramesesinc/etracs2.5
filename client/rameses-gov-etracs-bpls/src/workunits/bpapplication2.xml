@@ -1,12 +1,16 @@
 <workunit>
     <invokers>
-        <invoker type="bpapplication:create" action="start" target="window"/>
-        <invoker type="home.action" caption="New Business Application"  action="start" target="window"/>
-        <invoker type="bpapplication:open" caption="Open BP Application" action="startOpen" target="window"/>
+        <invoker type="bpapplication:create" action="start" target="window" role="BUSINESSINFO,LICENSING"/>
+        <invoker type="home.action" caption="New Business Application"  action="start" target="window"  role="BUSINESSINFO,LICENSING"/>
+        <invoker type="bpapplication:open" caption="Open BP Application" action="startOpen" target="window"  role="BUSINESSINFO,LICENSING"/>
         
         <!-- extended actions -->
-        <invoker type="extActions" caption="Edit Info" action="getInfo" visibleWhen="#{state.matches('assessment')}"/>
-        <invoker type="extActions" caption="Save" action="saveApplication" visibleWhen="#{state.matches('assessment')}"/>
+        <invoker type="extActions" caption="Print" action="printApp" visibleWhen="#{state.matches('success-save')}"/>
+        <invoker type="extActions" caption="Issue BIN" action="issueBin" visibleWhen="#{state.matches('release')}"/>
+        <invoker type="extActions" caption="Issue Permit" action="issuePermit" visibleWhen="#{state.matches('release')}"/>
+        
+        <invoker type="extActions" caption="Edit Info" action="getInfo" visibleWhen="#{state.matches('assessment')}" role="ASSESSOR"/>
+        <invoker type="extActions" caption="Save" action="saveApplication" visibleWhen="#{state.matches('assessment')}" role="ASSESSOR"/>
         <invoker type="extActions" caption="Reports" name="popupReports"   
             visibleWhen="#{state.matches('payment')}" category="bpapplication:payment:reports" />
     </invokers>
@@ -24,6 +28,9 @@
         
              @Service("BusinessNameVerificationService")
              def nameSvc;
+             
+             @Service("BusinessInfoService")
+             def businessInfoSvc;
             
              @FormTitle
              String windowTitle;
@@ -45,6 +52,7 @@
                 entity = appSvc.open([objid:entity.objid]);
                 windowTitle = entity.appno;
                 windowId = entity.objid;
+                updateBalances();
                 return  super.start("open");
              }
              
@@ -74,8 +82,8 @@
                 appSvc.update( entity );
              }
 
-             void printApp() {
-                MsgBox.alert("Print application not yet supported");
+             def printApp() {
+                return InvokerUtil.lookupOpener( "bpapplication:report", [entity: entity] );
              }
              
              void submitForPayment() {
@@ -91,7 +99,21 @@
                 appSvc.validateRequirements( entity.requirements, "info" );  
              }
              
+             void issueBin() {
+                if(MsgBox.confirm("You are about to issue BIN for this business. Proceed?")) {
+                    def b = businessInfoSvc.issueBin( entity );
+                    MsgBox.alert("Assigned BIN No. " + b.bin );
+                    entity.bin = b.bin;
+                    binding.refresh("entity.bin");
+                }
+             }
              
+             void issuePermit() {
+                if(MsgBox.confirm("You are about to issue BIN for this business. Proceed?")) {
+                    def b = businessInfoSvc.issuePermit( entity );
+                    entity.permit = b.permit;
+                }
+             }
              
         }
         ]]>
@@ -164,8 +186,8 @@
         
         <page name="assessment" title="Business Application">
             <transition to="end" caption="Close"/>
-            <transition to="view-assessment" caption="Assess" mnemonic="S" immediate="false" action="assess"/>
-            <transition to="change-lob" caption="Change LOB" immediate="false" />
+            <transition to="view-assessment" caption="Assess" mnemonic="S" immediate="false" action="assess" role="ASSESSOR"/>
+            <transition to="change-lob" caption="Change Line of Business" immediate="false" role="ASSESSOR"/>
         </page>    
         
          <page name="change-lob" title="Change Lines of Business">
@@ -179,6 +201,10 @@
         </page>    
 
         <page name="payment" title="For Payment">
+            <transition to="end" caption="Close" />
+        </page>
+        
+        <page name="release" title="For Release">
             <transition to="end" caption="Close" />
         </page>
         
@@ -200,6 +226,7 @@
         <page name="draft" template="com.rameses.gov.etracs.bpls.application.ApplicationInfoPage"/>
         <page name="assessment" template="com.rameses.gov.etracs.bpls.application.ApplicationInfoPage"/>
         <page name="payment" template="com.rameses.gov.etracs.bpls.application.ApplicationInfoPage"/>
+        <page name="release" template="com.rameses.gov.etracs.bpls.application.ApplicationInfoPage"/>
         
 
     </pages>

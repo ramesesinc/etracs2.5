@@ -11,6 +11,9 @@ public class BusinessInfoService extends ActiveCrudListService {
 	@Service("SequenceService")
 	def seqSvc;
 
+	@Service("DateService")
+	def dateSvc;
+
 	@Env
 	def env;
 
@@ -133,4 +136,21 @@ public class BusinessInfoService extends ActiveCrudListService {
 	}
 
 	
+	@ProxyMethod
+	public def issueBin( o ) {
+		def z = [objid: o.objid];
+		def yr = dateSvc.serverYear;
+		def mnth = dateSvc.serverMonth;
+		def smon = ( mnth < 10 ) ? "0"+mnth : mnth+"";
+		def prefix = "BIN"+yr+smon;
+		z.bin = prefix+seqSvc.getNextFormattedSeries(prefix);
+		em.create(z,  "bin");
+		return z;
+	}
+
+	@ProxyMethod
+	public def issuePermit( o ) {
+		
+	}
+
 }

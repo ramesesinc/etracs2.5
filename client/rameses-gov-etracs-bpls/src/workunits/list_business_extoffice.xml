@@ -1,6 +1,6 @@
 <workunit extends="wtemplates/ExplorerViewController.xml" serviceName="BusinessExtOfficeService" 
     defaultFileType="bpapplication_extoffice" autoSelect="true">
     <invokers>
-        <invoker folderid="/explorer/txn/bpls" caption="Business External Office" target="window" index="11" role="ASSESSOR"/>
+        <invoker folderid="/explorer/txn/bpls" caption="Business External Office" target="window" index="11" role="CITY_ENGINEER,ASSESSOR"/>
     </invokers>
 </workunit>

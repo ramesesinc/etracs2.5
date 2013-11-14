@@ -86,7 +86,9 @@
                     department: department,
                     refid: refid,
                     reftype: reftype,
-                    handler: { o->   
+                    handler: { o->
+                        if( taxfees.find{it.account.objid==o.account.objid} )
+                            throw new Exception("Account already added");
                         o.objid = "BPTAXFEE" + new UID();
                         o.applicationid = entity.objid;
                         o.businessid = entity.businessid;

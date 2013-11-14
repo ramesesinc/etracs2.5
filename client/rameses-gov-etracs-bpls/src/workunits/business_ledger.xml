@@ -1,7 +1,7 @@
 <workunit>
     <invokers>
         <invoker type="business:formActions" caption="Ledger" index="5" 
-            visibleWhen="#{mode == 'read'}" />
+            visibleWhen="#{mode == 'read'}" role="ASSESSOR"/>
         
         <invoker type="formActions" caption="Back" action="_close" />
         

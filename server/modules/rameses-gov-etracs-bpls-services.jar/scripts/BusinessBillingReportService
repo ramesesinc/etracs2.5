@@ -23,52 +23,62 @@ public class BusinessBillingReportService  {
 
 	@ProxyMethod
 	public def getReport(def o) throws Exception {
+
+		/**
+		* To calculate next due date do the following:
+		* For new business, next due date would mean January 1 of next year. 
+		* For renew business, next due date is the nearest qtr deadline or month 
+		* nearest to actual date. 
+		* Example: 
+		*    If date is Mar 25 next due date would be April 1
+		*    If date is April 2 next due date would be April 20. 
+		*/
+		
 		def m = [:];
 		m.putAll(o);
 		m.payoption = 'FULLYEAR';
-		m.entity = biz.read( [objid:o.businessid] );
 		m.billdate = dateSvc.serverDate;
-
+		m.entity = o;
 		m.receivables = biz.getUnpaidReceivables(o);
+
 		if(!m.receivables)
 			throw new Exception("No receivables found for this application");
 		def z = billingSvc.getBillItems(m);	
 		def result = [:];	
+
 		result.billitems = z.items;
+
+		/*
 		result.total_tax = z.total_tax;
 		result.total_regfee = z.total_regfee;
 		result.total_othercharge = z.total_othercharge;
 		result.total_amtdue = z.total_amtdue;
 		result.excesspayment = z.excesspayment;
+		*/
 
         def  data = [
-           taxpayername: m.entity.permitee.name, 
-           taxpayeraddress: m.entity.businessaddress, 
+           taxpayername: m.permitee.name, 
+           taxpayeraddress: m.permitee.address, 
            billdate: m.billdate, 
            expirydate:null,
-           grandtotal:result.total_amtdue];
+           grandtotal: 1123.0
+        ];
 
         data.items = [];
         def app = [:]
-        app.appno = "XXX";
-        app.txntype = "RENEW";
+        app.appno = m.appno;
+        app.txntype = m.apptype;
 		app.docstate = "APPROVED";
-		app.txndate = java.sql.Date.valueOf("2013-02-01"); 
-		app.tradename = m.entity.tradename;
-		app.businessaddress = m.entity.businessaddress;
-		app.barcode = "11212";
-		app.first_qtr_total = new BigDecimal(2500.0); 
-        app.second_qtr_total = new BigDecimal(2500.0);
-        app.third_qtr_total = new BigDecimal(2500.0); 
-        app.fourth_qtr_total = new BigDecimal(2500.0);  
-        app.totalamount = new BigDecimal(10000.0); 
-        app.totalsurcharge = new BigDecimal(0.0); 
-        app.totalinterest = new BigDecimal(0.0); 
-        app.grandtotal = new BigDecimal(0.0);
+		app.txndate = m.dtfiled; 
+		app.tradename = m.tradename;
+		app.address = m.businessaddress;
+
+		app.barcode = "51005:"+m.appno;
+
         app.taxfees = result.billitems.collect {
         	[
         		year:it.year,
-        		qtr:it.qtr,
+        		qtr:((it.qtr==0)?null:it.qtr),
         		lobname: it.lob?.name,
         		applicationtype: it.assessmenttype,
         		accttitle: it.account.title,
@@ -79,6 +89,31 @@ public class BusinessBillingReportService  {
         		total: new BigDecimal(it.total)
         	]
         }
+
+        //calculate quarter totals
+		app.first_qtr_total = app.taxfees.findAll{ it.qtr <= 1}?.sum{ it.total }; 
+		if(app.first_qtr_total==null) app.first_qtr_total = 0.0;
+
+        app.second_qtr_total = app.taxfees.findAll{ it.qtr == 2}?.sum{ it.total }; 
+        if(app.second_qtr_total==null) app.second_qtr_total = 0.0;
+
+        app.third_qtr_total = app.taxfees.findAll{ it.qtr == 3}?.sum{ it.total };  
+        if(app.third_qtr_total==null) app.third_qtr_total = 0.0;
+
+        app.fourth_qtr_total = app.taxfees.findAll{ it.qtr == 4}?.sum{ it.total };   
+        if(app.fourth_qtr_total==null) app.fourth_qtr_total = 0.0; 
+
+		app.totalamount = app.taxfees.sum{ it.amount }; 
+		if(app.totalamount==null)app.totalamount = 0.0;
+		app.totalsurcharge = app.taxfees.sum{ it.surcharge }; 
+        if(app.totalsurcharge==null) app.totalsurcharge = 0.0;
+        app.totalinterest = app.taxfees.sum{ it.interest };
+        if(app.totalinterest==null) app.totalinterest = 0.0;
+        app.grandtotal = app.taxfees.sum{ it.total };
+        if(app.grandtotal==null) app.grandtotal = 0.0;
+        
+        data.grandtotal = app.grandtotal;
+        
         data.items << app;
 		return  data;
 	}
