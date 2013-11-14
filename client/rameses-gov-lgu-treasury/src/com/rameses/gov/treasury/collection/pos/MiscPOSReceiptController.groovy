@@ -18,7 +18,12 @@ class  MiscPOSReceiptController extends AbstractCashReceipt
     def collectionTypeSvc;
     
     @Service('CashReceiptMiscPosService')
-    def miscSvc
+    def miscSvc;
+    
+    @Service('ReportParameterService')
+    def paramSvc;
+            
+    def paidbyaddress;
     
             
     String getTitle(){
@@ -30,6 +35,10 @@ class  MiscPOSReceiptController extends AbstractCashReceipt
     def listener = [
         "entity.totalcash": { o->
             calcChange();
+        },
+        "entity.amount" : {
+            entity.totalcash = entity.amount;
+            binding.refresh('entity.totalcash');
         },
     ];
         
@@ -47,7 +56,8 @@ class  MiscPOSReceiptController extends AbstractCashReceipt
                 
     def doInit(){
         completed = false;
-        entity = [txnmode:'ONLINE'];
+        if (!paidbyaddress) paidbyaddress = paramSvc.standardParameter.LGUADDRESS;
+        entity = [txnmode:'ONLINE', paidbyaddress:paidbyaddress, remarks:''];
         initFormInfo();
         initCollectionType();
         return initCollection();
@@ -89,19 +99,30 @@ class  MiscPOSReceiptController extends AbstractCashReceipt
 
 
     public void validateBeforePost() {
+        if (includePaidInfoInRemarks == 'YES') {
+            if ( ! entity.remarks ) entity.remarks = ''
+            if ( entity.remarks ) entity.remarks += '    '
+            if ( includePaidInfoInRemarks == 'YES') {
+                entity.remarks +=  '( ' + entity.paidby + ' )'
+            }
+            
+        }
         entity.items << [
             objid  :  'CI' + new java.rmi.server.UID(),
             item   : entity.item,
             amount : entity.amount,
         ];
-        
-        println 'entity.collectiontype -> ' + entity.collectiontype
     }
 
 
     def close(){
         return '_close'
     }
+ 
     
+    def optionList = ['YES', 'NO'];
     
+    def includePaidInfoInRemarks = 'YES';
+    
+            
 }
