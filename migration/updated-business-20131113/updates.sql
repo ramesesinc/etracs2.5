@@ -188,6 +188,13 @@ CREATE TABLE [dbo].[business_bin](
   (objid,title,domain,userclass,orgclass,role)
   VALUES
   ('BPLS.BUSINESSINFO','BUSINESS INFORMATION','BPLS','usergroup',NULL,'BUSINESSINFO');
+
+
+  INSERT INTO sys_usergroup 
+  (objid,title,domain,userclass,orgclass,role)
+  VALUES
+  ('BPLS.APPROVER','BUSINESS APPROVER','BPLS','usergroup',NULL,'APPROVER');
+
   
 
 USE [etracs_iligan]

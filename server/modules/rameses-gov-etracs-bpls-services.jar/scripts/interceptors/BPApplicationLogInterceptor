@@ -15,6 +15,7 @@ public class BPApplicationLogInterceptor {
 	def dateSvc;
 
 	private void log( def appid, def step, def action ) {
+		//println "log " + step + " " + action;
 		def m = [:];
 		m.objid = "BPLOG"+new UID();
 		m.user = [ objid: env.USERID, name: env.USER ];
@@ -31,16 +32,22 @@ public class BPApplicationLogInterceptor {
 		log( o.objid, "info", "create" );
 	}
 
-	@After(pattern="BPApplicationService.submitForAssessment")
+	@After(pattern="BPApplicationService.submitForApproval")
 	public def logSubmitForAssessment(def evt) { 
 		def o = evt.args[0];
-		log( o.objid, "assessment", "submit" );
+		log( o.objid, "approval", "forward" );
+	}
+
+	@After(pattern="BPApplicationService.sendBackToAssessment")
+	public def logSendBackToAssessment(def evt) { 
+		def o = evt.args[0];
+		log( o.objid, "assessment", "return" );
 	}
 
 	@After(pattern="BPApplicationService.submitForPayment")
 	public def logSubmitForPayment(def evt) { 
 		def o = evt.args[0];
-		log( o.objid, "payment", "submit" );
+		log( o.objid, "payment", "approve" );
 	}
 
 	@After(pattern="BPApplicationService.issueBIN")

@@ -1,6 +1,6 @@
 <workunit>
     <invokers>
-        <invoker type="bpapplication:payment:reports" caption="Application" action="viewReport" target="window" index="0"/>
+        <invoker type="bpapplication:payment:report" caption="Application" action="viewReport" target="window" index="0"/>
         <invoker type="bpapplication:application:report" caption="Application" action="viewReport" target="window" index="0"/>
         
         <invoker type="formActions" caption="Close" action="_close"/>

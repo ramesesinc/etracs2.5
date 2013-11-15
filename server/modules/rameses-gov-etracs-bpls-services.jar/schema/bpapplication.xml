@@ -48,6 +48,11 @@
 	</element>	
 
 
+	<element name="bin" tablename="business_bin">
+		<field name="objid" primary="true"/>
+		<field name="bin" required="true"/>
+	</element>	
+
 	<element name="log" tablename="business_application_log">
 		<field name="objid" primary="true"/>
 		<field name="appid" required="true"/>
