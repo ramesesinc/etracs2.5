@@ -25,6 +25,9 @@ class RemoteServerDataDeployerService
 
 	@ProxyMethod
 	public void deployUpdates( entity ) {
+		entity.data.funds.each{
+			adb.insertFund(it)
+		}
 		entity.data.colltypes.each{
 			collTypeSvc.save(it);
 		}
@@ -38,8 +41,11 @@ class RemoteServerDataDeployerService
 				cashbookSvc.save(cb);
 			}
 			it.memberships.each{m->
-				m = EntityUtil.mapToField(m)
-				adb.insertUserMembership(m)
+				try{
+					m = EntityUtil.mapToField(m)
+					adb.insertUserMembership(m)
+				}
+				catch(e){}
 			}
 		}
 	}
