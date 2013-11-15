@@ -1,0 +1,31 @@
+import com.rameses.annotations.*;
+import com.rameses.util.*;
+import java.rmi.server.*;
+import com.rameses.services.extended.*
+
+public class BPExpiryDateService2 {
+
+	@ActiveDB("bpexpirydate")
+	def em;
+	
+	@ProxyMethod
+	public def getBPExpiryDates() {
+		def year = dtService.parseCurrentDate().year;
+	
+		def data = [surcharge:[:], discount:[:]];
+		def list = em.sqlContext.createNamedQuery( 'bpexpirysetting:getBPExpiryList' )
+					 .setParameter('iyear', year)
+					 .resultList.each{
+						def date = dtService.parseDate(it.expirydate,null);
+						if( 'SURCHARGE'.equals( it.expirytype ) ){
+							data.surcharge.put("qtr" + it.iqtr + "month", date.month )
+							data.surcharge.put("qtr" + it.iqtr + "day", date.day )
+						}else if( 'DISCOUNT'.equals( it.expirytype ) ) {
+							data.discount.put("qtr" + it.iqtr + "month", date.month )
+							data.discount.put("qtr" + it.iqtr + "day", date.day )
+						} 
+					 };
+		
+		return data;
+	}	
+}
