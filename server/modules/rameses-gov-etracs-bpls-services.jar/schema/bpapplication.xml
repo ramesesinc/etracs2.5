@@ -46,5 +46,16 @@
 		<field name="placeissued" />
 		<field name="remarks" />
 	</element>	
+
+
+	<element name="log" tablename="business_application_log">
+		<field name="objid" primary="true"/>
+		<field name="appid" required="true"/>
+		<field name="step" required="true"/>
+		<field name="action" required="true"/>
+		<field name="txndate" required="true"/>
+		<field name="user_objid" required="true"/>
+		<field name="user_name" required="true"/>
+	</element>	
 	
 </schema>

@@ -5,7 +5,7 @@
         <invoker type="bpapplication:open" caption="Open BP Application" action="startOpen" target="window"  role="BUSINESSINFO,LICENSING"/>
         
         <!-- extended actions -->
-        <invoker type="extActions" caption="Print" action="printApp" visibleWhen="#{state.matches('success-save')}"/>
+        <invoker type="extActions" caption="Print" action="printApp" visibleWhen="#{state.matches('success-save|assessment')}"/>
         <invoker type="extActions" caption="Issue BIN" action="issueBin" visibleWhen="#{state.matches('release')}"/>
         <invoker type="extActions" caption="Issue Permit" action="issuePermit" visibleWhen="#{state.matches('release')}"/>
         
@@ -29,9 +29,6 @@
              @Service("BusinessNameVerificationService")
              def nameSvc;
              
-             @Service("BusinessInfoService")
-             def businessInfoSvc;
-            
              @FormTitle
              String windowTitle;
         
@@ -53,6 +50,7 @@
                 windowTitle = entity.appno;
                 windowId = entity.objid;
                 updateBalances();
+                entity.orgtypename = orgTypes.find{ it.key == entity.orgtype}?.value;
                 return  super.start("open");
              }
              
@@ -83,7 +81,7 @@
              }
 
              def printApp() {
-                return InvokerUtil.lookupOpener( "bpapplication:report", [entity: entity] );
+                return InvokerUtil.lookupOpener( "bpapplication:application:report", [entity: entity] );
              }
              
              void submitForPayment() {
@@ -101,7 +99,7 @@
              
              void issueBin() {
                 if(MsgBox.confirm("You are about to issue BIN for this business. Proceed?")) {
-                    def b = businessInfoSvc.issueBin( entity );
+                    def b = appSvc.issueBin( entity );
                     MsgBox.alert("Assigned BIN No. " + b.bin );
                     entity.bin = b.bin;
                     binding.refresh("entity.bin");
@@ -110,7 +108,7 @@
              
              void issuePermit() {
                 if(MsgBox.confirm("You are about to issue BIN for this business. Proceed?")) {
-                    def b = businessInfoSvc.issuePermit( entity );
+                    def b = appSvc.issuePermit( entity );
                     entity.permit = b.permit;
                 }
              }

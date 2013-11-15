@@ -189,3 +189,125 @@ CREATE TABLE [dbo].[business_bin](
   VALUES
   ('BPLS.BUSINESSINFO','BUSINESS INFORMATION','BPLS','usergroup',NULL,'BUSINESSINFO');
   
+
+USE [etracs_iligan]
+GO
+
+/****** Object:  Table [dbo].[cashreceipt_business]    Script Date: 11/15/2013 08:28:51 ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+SET ANSI_PADDING ON
+GO
+
+CREATE TABLE [dbo].[cashreceipt_business](
+	[objid] [varchar](50) NOT NULL,
+	[businessid] [varchar](50) NULL,
+	[applicationid] [varchar](50) NULL,
+	[tradename] [varchar](255) NULL,
+	[payoption] [varchar](50) NULL,
+	[qtr] [int] NULL,
+ CONSTRAINT [PK_cashreceipt_business] PRIMARY KEY CLUSTERED 
+(
+	[objid] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+
+SET ANSI_PADDING OFF
+GO
+
+ALTER TABLE [dbo].[cashreceipt_business]  WITH CHECK ADD  CONSTRAINT [FK_cashreceipt_business_cashreceipt] FOREIGN KEY([objid])
+REFERENCES [dbo].[cashreceipt] ([objid])
+GO
+
+ALTER TABLE [dbo].[cashreceipt_business] CHECK CONSTRAINT [FK_cashreceipt_business_cashreceipt]
+GO
+
+
+
+/****** Object:  Table [dbo].[cashreceipt_business_item]    Script Date: 11/15/2013 08:31:20 ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+SET ANSI_PADDING ON
+GO
+
+CREATE TABLE [dbo].[cashreceipt_business_item](
+	[objid] [varchar](50) NOT NULL,
+	[parentid] [varchar](50) NULL,
+	[fromqtr] [int] NULL,
+	[toqtr] [int] NULL,
+	[lob_objid] [varchar](50) NULL,
+	[lob_name] [varchar](255) NULL,
+	[year] [int] NULL,
+	[paymentmode] [varchar](50) NULL,
+ CONSTRAINT [PK_cashreceipt_business_item] PRIMARY KEY CLUSTERED 
+(
+	[objid] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+
+SET ANSI_PADDING OFF
+GO
+
+ALTER TABLE [dbo].[cashreceipt_business_item]  WITH CHECK ADD  CONSTRAINT [FK_cashreceipt_business_item_cashreceipt_business] FOREIGN KEY([parentid])
+REFERENCES [dbo].[cashreceipt_business] ([objid])
+GO
+
+ALTER TABLE [dbo].[cashreceipt_business_item] CHECK CONSTRAINT [FK_cashreceipt_business_item_cashreceipt_business]
+GO
+
+ALTER TABLE [dbo].[cashreceipt_business_item]  WITH CHECK ADD  CONSTRAINT [FK_cashreceipt_business_item_cashreceipt_business_item] FOREIGN KEY([objid])
+REFERENCES [dbo].[cashreceiptitem] ([objid])
+GO
+
+ALTER TABLE [dbo].[cashreceipt_business_item] CHECK CONSTRAINT [FK_cashreceipt_business_item_cashreceipt_business_item]
+GO
+
+
+/****** Object:  Table [dbo].[business_application_log]    Script Date: 11/15/2013 08:32:42 ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+SET ANSI_PADDING ON
+GO
+
+CREATE TABLE [dbo].[business_application_log](
+	[objid] [varchar](50) NOT NULL,
+	[appid] [varchar](50) NULL,
+	[step] [varchar](20) NULL,
+	[action] [varchar](50) NULL,
+	[txndate] [datetime] NULL,
+	[user_objid] [varchar](50) NULL,
+	[user_name] [varchar](100) NULL,
+ CONSTRAINT [PK_business_application_log] PRIMARY KEY CLUSTERED 
+(
+	[objid] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+
+SET ANSI_PADDING OFF
+GO
+
+ALTER TABLE [dbo].[business_application_log]  WITH CHECK ADD  CONSTRAINT [FK_business_application_log_business_application] FOREIGN KEY([appid])
+REFERENCES [dbo].[business_application] ([objid])
+GO
+
+ALTER TABLE [dbo].[business_application_log] CHECK CONSTRAINT [FK_business_application_log_business_application]
+GO
+
