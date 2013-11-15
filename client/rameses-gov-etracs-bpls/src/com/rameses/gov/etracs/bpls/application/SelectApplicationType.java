@@ -42,6 +42,7 @@ public class SelectApplicationType extends javax.swing.JPanel {
         xComboBox1.setRequired(true);
         xFormPanel1.add(xComboBox1);
 
+        xComboBox2.setAllowNull(false);
         xComboBox2.setCaption("Txn Mode");
         xComboBox2.setItems("txnmodes");
         xComboBox2.setName("entity.txnmode");

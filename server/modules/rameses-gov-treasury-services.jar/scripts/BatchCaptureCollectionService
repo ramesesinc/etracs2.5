@@ -159,7 +159,7 @@ public class BatchCaptureCollectionService extends ActiveCrudService {
 			}
 			it.acctinfo = (it.items.size() > 1) ? '( Multiple Accounts )' : it.items[0].item.title 
 			it.remarks = it.items[0].remarks;
-			it.paymentitems = (it.paymentitems ? pem.serializer.read(it.paymentitems)  : it.paymentitems)
+			it.paymentitems = (it.paymentitems ? pem.serializer.read(it.paymentitems)  : [])
 		}
 	}
 

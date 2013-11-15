@@ -1,7 +1,7 @@
 <workunit>
     <invokers>
-        <invoker type="bpapplication:payment:reports" caption="Assessment" action="init" target="window" index="0"/>
-       
+        <invoker type="bpapplication:assessment:report" caption="Assessment" action="viewReport" target="window" index="1"/>
+        <invoker type="formActions" caption="Close" action="_close"/>
     </invokers>
     
     <code>
@@ -11,15 +11,72 @@
         import com.rameses.osiris2.client.*
         import com.rameses.osiris2.common.*
         import java.rmi.server.*;
-        import com.rameses.gov.etracs.bpls.application.*;
+         import com.rameses.osiris2.reports.*;
         
-        class BPApplicationPaymentReportController  {
-             
+        class  BPAssessmentReportController  {
+        
+            def data;
+            def entity;
+            def title = "BP Assessement"
+            
+            def reportPath = "com/rameses/gov/etracs/bpls/reports/assessment/"
+            
+            @Service("ReportParameterService") 
+            def paramsvc
+         
+            void viewReport() {
+                def taxfees = entity.taxfees.collect{ 
+                    [
+                      lobname:it.lob?.name, 
+                      accttitle: it.account.title,
+                      amtdue: new BigDecimal(it.amount), 
+                      amount: new BigDecimal(it.amount), 
+                      assessmenttype:it.assessmenttype,
+                      taxfeetype: it.taxfeetype
+                    ]  
+                 };
+                //ctcno: "CCI2012-191919191", 
+                //ctcdate: java.sql.Date.valueOf("2013-02-01"),
+               data = [
+                   txnno: entity.appno, 
+                   tradename: entity.tradename, 
+                   businessaddress: entity.businessaddress,
+                   taxpayername: entity.permitee.name, 
+                   taxpayerno: entity.permitee.entityno,
+                   taxpayeraddress: entity.permitee.address,
+                   txndate: entity.dtfiled, 
+                   totaltax: new BigDecimal(entity.total_tax+""), 
+                   totalregfee: new BigDecimal(entity.total_regfee+""), 
+                   totalcharge: new BigDecimal(entity.total_othercharge+""), 
+                   totalamount: new BigDecimal(entity.total+""), 
+                   laterenewal:"0", 
+                   applications: [
+                        taxes: taxfees.findAll{ it.taxfeetype == "TAX" },  
+                        regfees:taxfees.findAll{ it.taxfeetype == "REGFEE" },  
+                        charges:taxfees.findAll{ it.taxfeetype == "OTHERCHARGE" },  
+                    ]
+                ]
+                report.viewReport();
+            } 
+            
+            def report = [
+                getReportName : { return reportPath + "Assessment.jasper" },
+                getReportData : { return  data },
+                getParameters : { return paramsvc.getStandardParameter() },
+                getSubReports : { return [
+                        new SubReport("AssessmentItem", reportPath + "AssessmentItem.jasper"),
+                        new SubReport("SignatoryItem", reportPath + "SignatoryItem.jasper"),
+                        new SubReport("AssessmentNonTax", reportPath + "AssessmentNonTax.jasper")
+                    ] as SubReport[];
+                }
+            ] as ReportModel
+           
         }
         ]]>
     </code>
+    
     <pages>
-        <page name="payment" template="com.rameses.gov.etracs.bpls.application.ApplicationInfoPage"/>
+        <page template="com.rameses.osiris2.common.ui.ReportPreviewPage"/>
     </pages>
     
 </workunit>

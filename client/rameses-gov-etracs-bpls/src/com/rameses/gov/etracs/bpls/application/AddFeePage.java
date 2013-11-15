@@ -41,10 +41,12 @@ public class AddFeePage extends javax.swing.JPanel {
         xLookupField1.setHandler("lookupAccount");
         xLookupField1.setName("entity.objid");
         xLookupField1.setPreferredSize(new java.awt.Dimension(0, 20));
+        xLookupField1.setRequired(true);
         xFormPanel1.add(xLookupField1);
 
         xDecimalField1.setCaption("Amount");
         xDecimalField1.setName("entity.amount");
+        xDecimalField1.setRequired(true);
         xFormPanel1.add(xDecimalField1);
 
         jScrollPane1.setPreferredSize(new java.awt.Dimension(0, 60));

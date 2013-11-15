@@ -45,6 +45,7 @@ class BPApplication extends PageFlowController {
     def listener = [
         "entity.orgtype" : { o->
             entity.permitee = null;
+            entity.orgtypename = orgTypes.find{ it.key == o}?.value;
         }
     ]
 
@@ -168,5 +169,6 @@ class BPApplication extends PageFlowController {
         if( !entity.infos)
             throw new Exception("Please provide at least one information for the business");
      }
-
+     
+    
 }

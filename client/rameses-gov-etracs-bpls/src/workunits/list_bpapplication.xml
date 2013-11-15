@@ -1,7 +1,7 @@
 <workunit extends="wtemplates/ExplorerViewController.xml" serviceName="BPApplicationService" 
 defaultFileType="bpapplication" autoSelect="true">
     <invokers>
-        <invoker folderid="/explorer/txn/bpls" caption="Business Applications"  index="3" role="ASSESSOR"/>
-        <invoker type="home.action" caption="Business Applications"  index="3" role="ASSESSOR"/>
+        <invoker folderid="/explorer/txn/bpls" caption="Business Applications"  index="3" role="BUSINESSINFO,LICENSING,ASSESSOR"/>
+        <invoker type="home.action" caption="Business Applications"  index="3" role="BUSINESSINFO,LICENSING,ASSESSOR"/>
     </invokers>
 </workunit>

@@ -61,6 +61,17 @@ class BPApplicationExtended extends BPApplication {
         return popupMenu;
     }
 
+    void updateBalances() {
+        def taxfees = entity.taxfees;
+        entity.total_tax = taxfees.findAll{ it.taxfeetype == 'TAX'}.sum{it.amount};
+        if(!entity.total_tax) entity.total_tax = 0.0;
+        entity.total_regfee = taxfees.findAll{ it.taxfeetype == 'REGFEE'}.sum{it.amount};
+        if(!entity.total_regfee) entity.total_regfee = 0.0;
+        entity.total_othercharge = taxfees.findAll{ it.taxfeetype == 'OTHERCHARGE'}.sum{it.amount};
+        if(!entity.total_othercharge) entity.total_othercharge = 0.0;
+        entity.total = entity.total_tax + entity.total_regfee + entity.total_othercharge;
+     }
+
     void assess() {
         def unedited = entity.infos.findAll{ it.value == null };
         if( unedited ) 
@@ -71,6 +82,7 @@ class BPApplicationExtended extends BPApplication {
         entity.taxfees = result.taxfees;
         entity.putAll( result.totals );
         taxfeeModel.reload();
+        updateBalances();
         binding.refresh();
      }
 

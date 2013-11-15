@@ -11,6 +11,9 @@ public class BusinessInfoService extends ActiveCrudListService {
 	@Service("SequenceService")
 	def seqSvc;
 
+	@Service("DateService")
+	def dateSvc;
+
 	@Env
 	def env;
 
@@ -133,4 +136,6 @@ public class BusinessInfoService extends ActiveCrudListService {
 	}
 
 	
+	
+
 }

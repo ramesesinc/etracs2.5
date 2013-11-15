@@ -32,14 +32,14 @@ class LargeCattleTransferInterceptor {
 		}
 	}
 	
-	@After(pattern="CashReceiptService.post", eval="#{result.formno=='52'}")
+	@After(pattern="CashReceiptService.post", eval="#{result.formno=='52' && result.txnmode != 'CAPTURE'}")
 	public def postToSpecificTable(def evt) { 
 		def cs = evt.result;	
 		cs.issuedate = dateService.parse( 'yyyy-MM-dd', cs.issuedate)
 		em.create("cashreceipt_largecattletranfer:cashreceipt_largecattletranfer", cs);
 	}
 
-	@After(pattern="CashReceiptService.open", eval="#{result.formno=='52'}")
+	@After(pattern="CashReceiptService.open", eval="#{result.formno=='52' && result.txnmode != 'CAPTURE'}")
 	public def onOpenReceipt(def evt) { 
 		def cs = em.read("cashreceipt_largecattletranfer:cashreceipt_largecattletranfer", evt.result)
 		evt.result.putAll( cs );

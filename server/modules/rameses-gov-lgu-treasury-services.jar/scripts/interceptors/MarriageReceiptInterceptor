@@ -28,13 +28,13 @@ class MarriageReceiptInterceptor {
 		}
 	}
 	
-	@After(pattern="CashReceiptService.post", eval="#{result.formno=='54'}")
+	@After(pattern="CashReceiptService.post", eval="#{result.formno=='54' && result.txnmode != 'CAPTURE'}")
 	public def postToSpecificTable(def evt) { 
 		def cs = evt.result;	
 		em.create("cashreceiptmarriage:cashreceiptmarriage", cs);
 	}
 
-	@After(pattern="CashReceiptService.open", eval="#{result.formno=='54'}")
+	@After(pattern="CashReceiptService.open", eval="#{result.formno=='54' && result.txnmode != 'CAPTURE'}")
 	public def onOpenReceipt(def evt) { 
 		def cs = em.read("cashreceiptmarriage:cashreceiptmarriage", evt.result)
 		evt.result.putAll( cs );

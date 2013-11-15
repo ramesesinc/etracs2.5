@@ -66,7 +66,7 @@ INNER JOIN revenueitem r ON  r.objid=ba.objid
 WHERE applicationid=$P{objid} 
 
 [getExternalOfficeFees]
-SELECT br.*, r.code AS account_code,  ba.taxfeetype AS account_taxfeetype
+SELECT br.*, r.code AS account_code,  ba.taxfeetype AS account_taxfeetype, ba.taxfeetype
 FROM business_receivable br 
 INNER JOIN businessaccount ba ON br.account_objid = ba.objid
 INNER JOIN revenueitem r ON  r.objid=ba.objid 
@@ -84,8 +84,6 @@ FROM business_application_requirement_data b
 WHERE b.objid=$P{objid}
 
 
-[changeState]
-UPDATE business_application SET state = $P{state} WHERE objid = $P{objid}
 
 [getRequirementsForValidation]
 SELECT br.title AS caption     
@@ -101,3 +99,6 @@ dtcompleted=$P{dtcompleted}, remarks = $P{remarks}
 WHERE objid=$P{objid}
 
 	
+[changeState]
+UPDATE business_application SET state = $P{state} WHERE objid = $P{objid}
+

@@ -1,8 +1,7 @@
 <workunit>
     <invokers>
-        <invoker type="business:create" caption="Capture Inactive Business" action="create" target="window"/>
-        
-        <invoker type="business:open" caption="Business Info" action="open" target="window"/>
+        <invoker type="business:create" caption="Capture Inactive Business" action="create" target="window" role="BUSINESSINFO,ASSESSOR,LICENSING"/>
+        <invoker type="business:open" caption="Business Info" action="open" target="window" role="BUSINESSINFO,ASSESSOR,LICENSING"/>
         
         <invoker type="formActions" caption="Close" action="_close" visibleWhen="#{mode !='edit'}" immediate="true" />
         <invoker type="formActions" caption="Cancel" action="cancelEdit" visibleWhen="#{mode=='edit'}" immediate="true"/>

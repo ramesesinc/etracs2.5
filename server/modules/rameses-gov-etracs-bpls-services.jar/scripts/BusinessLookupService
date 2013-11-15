@@ -19,9 +19,14 @@ public class BusinessLookupService extends ActiveCrudListService {
 	}
 
 	public void beforeList(o) {
-		if( o.permiteeid ) {
+		if( o.state!=null &&  o.state.toUpperCase() == "PAYMENT" ) {
 			o._listMethod = "getLookupByPermitee";
 		}
+	}
+
+	@ProxyMethod
+	public def findBusiness(def id) {
+		throw new Exception( "lookup for business not yet supported"  );
 	}
 
 }

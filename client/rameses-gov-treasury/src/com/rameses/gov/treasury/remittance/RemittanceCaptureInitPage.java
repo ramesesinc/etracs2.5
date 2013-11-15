@@ -35,7 +35,6 @@ public class RemittanceCaptureInitPage extends javax.swing.JPanel {
         xNumberField1 = new com.rameses.rcp.control.XNumberField();
         jPanel2 = new javax.swing.JPanel();
         formPanel3 = new com.rameses.rcp.util.FormPanel();
-        xTextField1 = new com.rameses.rcp.control.XTextField();
         xDateField1 = new com.rameses.rcp.control.XDateField();
         xComboBox1 = new com.rameses.rcp.control.XComboBox();
         xLookupField2 = new com.rameses.rcp.control.XLookupField();
@@ -123,7 +122,7 @@ public class RemittanceCaptureInitPage extends javax.swing.JPanel {
         });
         xDataTable1.setHandler("listModel");
         jPanel1.add(xDataTable1);
-        xDataTable1.setBounds(10, 140, 560, 280);
+        xDataTable1.setBounds(10, 120, 560, 300);
 
         formPanel2.setCaptionFont(new java.awt.Font("Arial", 1, 14));
         xNumberField1.setCaption("Total");
@@ -144,13 +143,6 @@ public class RemittanceCaptureInitPage extends javax.swing.JPanel {
         com.rameses.rcp.control.border.XTitledBorder xTitledBorder2 = new com.rameses.rcp.control.border.XTitledBorder();
         xTitledBorder2.setTitle("Remittance Information");
         jPanel2.setBorder(xTitledBorder2);
-
-        xTextField1.setCaption("Ref No.");
-        xTextField1.setCaptionWidth(120);
-        xTextField1.setName("entity.txnno");
-        xTextField1.setPreferredSize(new java.awt.Dimension(150, 21));
-        xTextField1.setRequired(true);
-        formPanel3.add(xTextField1);
 
         xDateField1.setCaption("Remittance Date");
         xDateField1.setCaptionWidth(120);
@@ -178,10 +170,10 @@ public class RemittanceCaptureInitPage extends javax.swing.JPanel {
         formPanel3.add(xLookupField2);
 
         jPanel2.add(formPanel3);
-        formPanel3.setBounds(10, 20, 540, 100);
+        formPanel3.setBounds(10, 20, 540, 90);
 
         jPanel1.add(jPanel2);
-        jPanel2.setBounds(10, 10, 560, 130);
+        jPanel2.setBounds(10, 10, 560, 110);
 
         xButton1.setMnemonic('s');
         xButton1.setImmediate(true);
@@ -214,7 +206,6 @@ public class RemittanceCaptureInitPage extends javax.swing.JPanel {
     private com.rameses.rcp.control.XDateField xDateField1;
     private com.rameses.rcp.control.XLookupField xLookupField2;
     private com.rameses.rcp.control.XNumberField xNumberField1;
-    private com.rameses.rcp.control.XTextField xTextField1;
     // End of variables declaration//GEN-END:variables
     
 }
