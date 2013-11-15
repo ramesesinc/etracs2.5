@@ -27,6 +27,8 @@ public class BatchCaptureController  {
     def collectionTypes;
     def collectiontype;
     def lookupexpression;
+
+    def copyprevinfo
     
     def onPost; //handler
             
@@ -111,7 +113,8 @@ public class BatchCaptureController  {
         }
         binding?.refresh('entity.*'); 
     }
-            
+     
+    def prevEntity = [:]
     def listModel = [
         fetchList: { o->
             return batchItems;
@@ -131,6 +134,15 @@ public class BatchCaptureController  {
             m.collector = entity.collector;
             m.paymentitems = []
             m.voided = 0
+            if( copyprevinfo ) {
+                if(prevEntity && prevEntity.items.size() == 1) {
+                    def item =  prevEntity.items[0];
+                    item.amount = 0.0 
+                    m.items = [ item ]
+                    m.acctinfo = prevEntity.acctinfo;
+                }
+                m.paidbyaddress = prevEntity.paidbyaddress;
+            }        
             return m;
         },
 
@@ -141,6 +153,7 @@ public class BatchCaptureController  {
             ]; 
         },
         onAddItem: { o->
+            prevEntity = o;
             batchItems << o; 
             moveNext();
         },
@@ -200,6 +213,7 @@ public class BatchCaptureController  {
     def next() {
         entity = svc.initBatchCapture(entity);
         entity.totalamount = 0.0
+        copyprevinfo = false
         mode='create'
         return 'main';
     }
