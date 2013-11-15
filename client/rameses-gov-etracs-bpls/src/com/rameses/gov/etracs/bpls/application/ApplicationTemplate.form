@@ -241,7 +241,7 @@
                       </PropertyBean>
                     </Property>
                     <Property name="caption" type="java.lang.String" value="Bus. Org Type"/>
-                    <Property name="expression" type="java.lang.String" value="#{entity.orgtype}"/>
+                    <Property name="expression" type="java.lang.String" value="#{entity.orgtypename}"/>
                     <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                       <Dimension value="[0, 18]"/>
                     </Property>

@@ -45,6 +45,7 @@ class BPApplication extends PageFlowController {
     def listener = [
         "entity.orgtype" : { o->
             entity.permitee = null;
+            entity.orgtypename = orgTypes.find{ it.key == o}?.value;
         }
     ]
 

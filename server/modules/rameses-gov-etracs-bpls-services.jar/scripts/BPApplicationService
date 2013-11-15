@@ -210,23 +210,24 @@ public class BPApplicationService extends ActiveCrudListService {
 		def taxfees = result.taxfees;
 		def fees = em.getExternalOfficeFees(o);
 		taxfees.addAll( fees );
-
-		/*
-		def totals = result.totals;
-		totals.total_tax = taxfees.findAll{ it.account.taxfeetype == 'TAX'}.sum{it.amount};
-		if(!totals.total_tax) totals.total_tax = 0;
-
-		totals.total_regfee = taxfees.findAll{ it.account.taxfeetype == 'REGFEE'}.sum{it.amount};
-		if(!totals.total_regfee) totals.total_regfee = 0;
-
-		totals.total_othercharge = taxfees.findAll{ it.account.taxfeetype == 'OTHERCHARGE'}.sum{it.amount};
-		if(!totals.total_othercharge) totals.total_othercharge = 0;
-
-		
-		totals.total = totals.total_tax + totals.total_regfee + totals.total_othercharge;
-		*/
 		return result;
 	}
 
+	@ProxyMethod
+	public def issueBin( o ) {
+		def z = [objid: o.businessid];
+		def yr = dateSvc.serverYear;
+		def mnth = dateSvc.serverMonth;
+		def smon = ( mnth < 10 ) ? "0"+mnth : mnth+"";
+		def prefix = "BIN"+yr+smon;
+		z.bin = prefix+seqSvc.getNextFormattedSeries(prefix);
+		em.create(z,  "bin");
+		return z;
+	}
+
+	@ProxyMethod
+	public def issuePermit( o ) {
+		
+	}
 
 }	
