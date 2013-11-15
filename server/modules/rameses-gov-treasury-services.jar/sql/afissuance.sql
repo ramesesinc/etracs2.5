@@ -8,7 +8,6 @@ from afserial_control afc
   inner join afserial af on af.objid = afi.afid 
 where afc.currentseries <= afi.endseries
     and afi.respcenter_objid like $P{collectorid}
-    and ifnull(afc.assignee_objid, '') like $P{subcollectorid}
 
 union
 
@@ -20,5 +19,4 @@ from cashticket_control afc
   inner join cashticket_inventory afi on afc.controlid = afi.objid 
 where afc.qtybalance > 0
     and afi.respcenter_objid like $P{collectorid} 
-    and ifnull(afc.assignee_objid, '') like $P{subcollectorid} 
 

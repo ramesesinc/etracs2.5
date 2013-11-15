@@ -29,8 +29,12 @@ public class AFIssuanceListService {
 
 	@ProxyMethod 
 	public def getList( def params )  {
-		return em.sqlContext.createNamedQuery('afissuance:getList')
+		def qry  = em.sqlContext.createNamedQuery('afissuance:getList')
 				.setParameters(params)
-				.resultList;
+		// qry.setPagingKeys( pagingKeys );
+		if( params._start) qry.setFirstResult( params._start )		
+		if( params._limit) qry.setMaxResults( params._limit )		
+
+		return qry.resultList				
 	}
 }
