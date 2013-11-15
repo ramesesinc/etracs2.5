@@ -5,14 +5,20 @@
         <invoker type="bpapplication:open" caption="Open BP Application" action="startOpen" target="window"  role="BUSINESSINFO,LICENSING"/>
         
         <!-- extended actions -->
-        <invoker type="extActions" caption="Print" action="printApp" visibleWhen="#{state.matches('success-save|assessment')}"/>
+        <invoker type="extActions" caption="Print Application" action="printApp" visibleWhen="#{state.matches('success-save|assessment')}"/>
+        <invoker type="extActions" caption="Print Assessment" action="printAssessment" visibleWhen="#{state.matches('payment')}"/>
+        <invoker type="extActions" caption="Print Billing" action="printBilling" visibleWhen="#{state.matches('payment')}"/>
+        
         <invoker type="extActions" caption="Issue BIN" action="issueBin" visibleWhen="#{state.matches('release')}"/>
         <invoker type="extActions" caption="Issue Permit" action="issuePermit" visibleWhen="#{state.matches('release')}"/>
         
         <invoker type="extActions" caption="Edit Info" action="getInfo" visibleWhen="#{state.matches('assessment')}" role="ASSESSOR"/>
         <invoker type="extActions" caption="Save" action="saveApplication" visibleWhen="#{state.matches('assessment')}" role="ASSESSOR"/>
+        
+        <!--
         <invoker type="extActions" caption="Reports" name="popupReports"   
-            visibleWhen="#{state.matches('payment')}" category="bpapplication:payment:reports" />
+            visibleWhen="#{state.matches('approval|view-info')}" category="bpapplication:payment:reports" />
+        -->    
     </invokers>
     
     <code>
@@ -47,6 +53,10 @@
              
              def startOpen() {
                 entity = appSvc.open([objid:entity.objid]);
+                if(entity.state=="approval") {
+                    def result = appSvc.assess(entity);
+                    entity.taxfees = result.taxfees;
+                }
                 windowTitle = entity.appno;
                 windowId = entity.objid;
                 updateBalances();
@@ -84,8 +94,24 @@
                 return InvokerUtil.lookupOpener( "bpapplication:application:report", [entity: entity] );
              }
              
+             def printAssessment() {
+                return InvokerUtil.lookupOpener( "bpapplication:assessment:report", [entity: entity] );
+             }
+             
+             def printBilling() {
+                return InvokerUtil.lookupOpener( "bpapplication:billing:report", [entity: entity] );
+             }
+             
+             void submitForApproval() {
+                appSvc.submitForApproval(entity);
+             }
+             
              void submitForPayment() {
                 appSvc.submitForPayment(entity);
+             }
+             
+             void sendBackToAssessment() {
+                appSvc.sendBackToAssessment(entity);
              }
              
              void notSupported() {
@@ -188,16 +214,29 @@
             <transition to="change-lob" caption="Change Line of Business" immediate="false" role="ASSESSOR"/>
         </page>    
         
-         <page name="change-lob" title="Change Lines of Business">
+        <page name="change-lob" title="Change Lines of Business">
             <transition to="assessment" caption="Back" />
         </page>
         
         <page name="view-assessment" title="Assessment">
             <transition to="assessment" caption="Back"/>
-            <transition to="payment" caption="Submit for Payment" mnemonic="S" action="submitForPayment" 
-                immediate="false" confirm="You are about to submit this for payment. Proceed?"/>
+            <transition to="view-info" caption="Submit for Approval" mnemonic="A" action="submitForApproval"
+                immediate="false" confirm="You are about to submit this for approval. Proceed?"/>
         </page>    
 
+        <page name="view-info" title="Business Application">
+            <transition to="end" caption="Close" />
+        </page>
+        
+        <page name="approval" title="For Approval">
+            <transition to="end" caption="Close" />
+            <transition to="view-info" caption="Return to Assessment" mnemonic="R" action="sendBackToAssessment" 
+                immediate="false" confirm="You are about to return this for assessment. Proceed?" role="APPROVER"/>
+            <transition to="payment" caption="Submit for Payment" mnemonic="S" action="submitForPayment" 
+                immediate="false" confirm="You are about to submit this for payment. Proceed?" role="APPROVER"/>
+        </page>
+        
+        
         <page name="payment" title="For Payment">
             <transition to="end" caption="Close" />
         </page>
@@ -205,6 +244,7 @@
         <page name="release" title="For Release">
             <transition to="end" caption="Close" />
         </page>
+        
         
         <end/>
     </pageflow>
@@ -224,8 +264,9 @@
         <page name="draft" template="com.rameses.gov.etracs.bpls.application.ApplicationInfoPage"/>
         <page name="assessment" template="com.rameses.gov.etracs.bpls.application.ApplicationInfoPage"/>
         <page name="payment" template="com.rameses.gov.etracs.bpls.application.ApplicationInfoPage"/>
+        <page name="approval" template="com.rameses.gov.etracs.bpls.application.ApplicationInfoPage"/>
         <page name="release" template="com.rameses.gov.etracs.bpls.application.ApplicationInfoPage"/>
-        
+        <page name="view-info" template="com.rameses.gov.etracs.bpls.application.ApplicationInfoPage"/>
 
     </pages>
     
