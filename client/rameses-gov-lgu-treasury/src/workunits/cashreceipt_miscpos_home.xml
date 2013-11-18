@@ -1,7 +1,8 @@
 <workunit> 
     <invokers>
-        <invoker type="quick_launcher" action="init" code="POS" caption="Collection" role="COLLECTOR" />
-        <invoker folderid="/explorer/txn/treasury" action="init" caption="Collections Touch" role="COLLECTOR" index="100"/>
+        <invoker type="quick_launcher" action="init" code="POS" caption="Collection (TS)" role="COLLECTOR,SUBCOLLECTOR" />
+        <invoker type="home.action" action="init" code="POS" caption="Collection (TS)" role="COLLECTOR,SUBCOLLECTOR" index="600"/>
+        <invoker folderid="/explorer/txn/treasury" action="init" caption="Collections (TS)" role="COLLECTOR,SUBCOLLECTOR" index="100"/>
         <invoker type="formActions" action="_close" caption="Close" icon="images/toolbars/cancel.png" immediate="true" />
     </invokers>    
     <code> 
