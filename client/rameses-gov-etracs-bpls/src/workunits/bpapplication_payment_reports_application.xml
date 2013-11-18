@@ -1,7 +1,7 @@
 <workunit>
     <invokers>
-        <invoker type="bpapplication:payment:reports" caption="Application" action="viewReport" target="window" index="0"/>
-        <invoker type="bpapplication:report" caption="Application" action="viewReport" target="window" index="0"/>
+        <invoker type="bpapplication:payment:report" caption="Application" action="viewReport" target="window" index="0"/>
+        <invoker type="bpapplication:application:report" caption="Application" action="viewReport" target="window" index="0"/>
         
         <invoker type="formActions" caption="Close" action="_close"/>
     </invokers>
@@ -54,10 +54,6 @@
                    permiteeno: entity.permitee.entityno,
                    permiteeaddress: entity.permitee.address,
                    txndate: entity.dtfiled, 
-                   totaltax: new BigDecimal(entity.total_tax+""), 
-                   totalregfee: new BigDecimal(entity.total_regfee+""), 
-                   totalcharge: new BigDecimal(entity.total_othercharge+""), 
-                   totalamount: new BigDecimal(entity.total+""), 
                    laterenewal:"0", 
                    infos:infos,
                    requierements:[],

@@ -134,7 +134,7 @@ public class ApplicationTemplate extends javax.swing.JPanel {
         xLineBorder8.setLineColor(new java.awt.Color(204, 204, 204));
         xLabel9.setBorder(xLineBorder8);
         xLabel9.setCaption("Bus. Org Type");
-        xLabel9.setExpression("#{entity.orgtype}");
+        xLabel9.setExpression("#{entity.orgtypename}");
         xLabel9.setPreferredSize(new java.awt.Dimension(0, 18));
         xFormPanel2.add(xLabel9);
 

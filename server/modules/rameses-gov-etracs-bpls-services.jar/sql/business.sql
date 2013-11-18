@@ -82,7 +82,7 @@ DELETE FROM business_receivable WHERE businessid=$P{objid}
 [getLookupByPermitee]
 SELECT objid, apptype, permitee_name, tradename, objid AS businessid 
 FROM business 
-WHERE state = $P{state} AND permitee_objid=$P{permiteeid}
+WHERE state = $P{state} AND permitee_objid=$P{permiteeid} AND tradename LIKE $P{searchtext}
 
 
 ###########################################

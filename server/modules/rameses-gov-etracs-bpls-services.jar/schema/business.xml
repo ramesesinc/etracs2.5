@@ -93,10 +93,6 @@
 		<field name="description" required="true"/>
 	</element>	
 
-	<element name="bin" tablename="business_bin">
-		<field name="objid" primary="true"/>
-		<field name="bin" required="true"/>
-	</element>	
 
 	<element name="permit" tablename="business_permit">
 		<field name="objid" primary="true"/>

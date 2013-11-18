@@ -1,0 +1,57 @@
+[getList]
+SELECT * FROM liquidation 
+where txnno like $P{txnno} and state ='CAPTURE'
+
+[getUnliquidatedRemittances]
+SELECT 
+	r.objid, 
+	r.txnno AS remittanceno,
+	r.dtposted AS remittancedate,
+	r.collector_name,
+	r.totalcash,
+	r.totalnoncash,
+	r.amount 
+FROM remittance r
+LEFT JOIN liquidation_remittance lr ON r.objid=lr.objid
+WHERE r.liquidatingofficer_objid  = $P{liquidatingofficerid}
+	and r.state = 'CAPTURE'
+	AND lr.objid IS NULL 
+
+[getLiquidatingOfficers]
+select 
+	distinct r.liquidatingofficer_objid as objid,
+	r.liquidatingofficer_name as name, r.liquidatingofficer_title as title 
+from remittance r 
+	left join liquidation_remittance lr on lr.objid = r.objid 
+where lr.objid is null 
+   and r.state = 'CAPTURE'
+
+[getUnliquidatedFundSummary]  
+SELECT a.fund_objid, a.fund_code, a.fund_title, 
+SUM(a.amount) AS amount
+FROM 
+(SELECT 
+	cb.fund_objid,	
+    cb.fund_code,
+    cb.fund_title,
+    cbe.cr AS amount
+FROM remittance r
+LEFT JOIN liquidation_remittance lr ON r.objid=lr.objid
+INNER JOIN cashbook_entry cbe ON cbe.refid=r.objid
+INNER JOIN cashbook cb ON cb.objid = cbe.parentid 
+WHERE r.objid in ( ${remittances} )
+AND lr.objid IS NULL ) a
+GROUP BY a.fund_objid, a.fund_code, a.fund_title 
+
+[getUnliquidatedChecks]
+SELECT pc.objid, pc.checkno, pc.checkdate, pc.particulars,
+CASE WHEN cv.objid IS NULL THEN pc.amount ELSE 0 END AS amount,
+CASE WHEN cv.objid IS NULL THEN 0 ELSE 1 END AS voided
+FROM remittance_checkpayment rcp 
+INNER JOIN cashreceiptpayment_check pc ON rcp.objid=pc.objid
+INNER JOIN remittance r ON rcp.remittanceid=r.objid
+LEFT JOIN cashreceipt_void cv ON cv.receiptid=pc.receiptid
+LEFT JOIN liquidation_remittance lr ON r.objid=lr.objid
+WHERE r.objid in ( ${remittances} ) 
+	and r.state = 'CAPTURE'
+	AND lr.objid IS NULL 

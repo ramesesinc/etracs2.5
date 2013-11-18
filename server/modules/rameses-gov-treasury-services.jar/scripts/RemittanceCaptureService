@@ -15,6 +15,13 @@ class RemittanceCaptureService  {
 	@Service("CashBookPostService")
 	def cashBook;
 
+	@ActiveDB("collector")
+	def collector; 
+
+
+	@Service("SequenceService")
+	def seqSvc;
+
 	String schemaName = "remittance";
 	String pagingKeys = "r.objid"
 
@@ -60,6 +67,11 @@ class RemittanceCaptureService  {
 	public def post(def o ) {
 		if( o.amount == 0 ) 
 			throw new Exception("There is no amount to remit");
+
+		def z = collector.findUserTxnCode( [userid: o.collector.objid] );
+		def txncode = "REM";	
+		if(z?.usertxncode) txncode = z.usertxncode; 	
+		o.txnno = txncode + seqSvc.getNextFormattedSeries(txncode);	
 		remittanceEm.create( o );
 
 		//insert the cash receipts

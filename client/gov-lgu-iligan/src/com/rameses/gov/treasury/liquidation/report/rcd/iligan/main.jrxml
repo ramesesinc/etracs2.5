@@ -1093,7 +1093,7 @@ Form
 		<group  name="receiptGroup" >
 			<groupExpression><![CDATA[null]]></groupExpression>
 			<groupHeader>
-			<band height="87"  isSplitAllowed="true" >
+			<band height="86"  isSplitAllowed="true" >
 				<rectangle>
 					<reportElement
 						x="0"
@@ -1743,7 +1743,7 @@ Form
 					</textElement>
 				<text><![CDATA[Date]]></text>
 				</staticText>
-				<textField isStretchWithOverflow="false" pattern="dd-MMM-yy" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+				<textField isStretchWithOverflow="false" pattern="MM/dd/yyyy" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						mode="Transparent"
 						x="186"

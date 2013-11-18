@@ -45,6 +45,11 @@ class RemoteServerDataService
 	}
 
 
+
+	@ProxyMethod
+	public def getFunds(  ) {
+		return adb.getFunds()	
+	}
 	@ProxyMethod
 	public def getUserMemberships(userid) {
 		return adb.getUserMemberships([userid:userid])
