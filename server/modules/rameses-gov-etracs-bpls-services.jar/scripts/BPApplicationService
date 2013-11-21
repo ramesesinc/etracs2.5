@@ -107,6 +107,12 @@ public class BPApplicationService extends ActiveCrudListService {
 		}
 	}
 
+	@ProxyMethod
+	public def openByAppno(o) {
+		def z = em.findApplicationByAppNo( [appno:o.appno] );	
+		return open( [objid: z.applicationid ] );
+	}
+
 	public void afterOpen(o) {
 		//get the taxpayer info also.
 		def permiteeInfo = biz.findPermiteeInfo([objid: o.permitee.objid ]);
