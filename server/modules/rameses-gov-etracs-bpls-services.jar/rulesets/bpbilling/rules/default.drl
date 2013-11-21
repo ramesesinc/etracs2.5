@@ -6,16 +6,19 @@ import java.math.*;
 
 global RuleAction action;
 
-rule "determine-expiry"
+rule "set-deadline"
 	agenda-group "initial"
+	salience -40
 	no-loop
 	when
 		BillingDate( $date: date )
-		QtrDeadline( $qtr:qtr, $deadline: deadline < $date)
+		QtrDeadline( $qtr:qtr, $deadline: deadline)
 		TF: TaxFeeAccount( qtr == $qtr )
 	then
-		TF.setExpired(true);
 		TF.setDeadline( $deadline );
+		if( $date.after($deadline) ) {
+			TF.setExpired(true);
+		}
 end
 
 #######################################

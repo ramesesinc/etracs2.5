@@ -28,7 +28,15 @@
             def title = "BP Billing"
             def reportPath = "com/rameses/gov/etracs/bpls/reports/billing/"
             
+            @FormId
+            def formId;
+            
+            @FormTitle
+            def formTitle;
+            
             void viewReport() {
+                formId = "BILL-" + entity.objid;
+                formTitle = "BILL-" + entity.appno;
                 data = reportSvc.getReport(entity);    
                 report.viewReport();
             } 

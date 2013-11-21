@@ -24,17 +24,14 @@ public class BPBillingService  {
 	@ActiveDB("bpexpirydate")
 	def expiryDate;
 
+	@Service("BPApplicationFactBuilder")
+	def appFactBuilder;
+
+
 	@Env
 	def env;
 
 	String RULESET = "bpbilling";
-
-	
-	private def createApplication(o) { 
-		def app = ruleSvc.createFact( RULESET, RULESET+".BPApplication", o);
-		app.barangayid = o.barangay?.objid;
-		return app;
-	}
 
 	private def createBillDate (dt) {
 		return ruleSvc.createFact( RULESET, RULESET + ".BillingDate", dt );
@@ -78,72 +75,7 @@ public class BPBillingService  {
 		return ruleSvc.createFact( RULESET, RULESET + ".PayOption", m );
 	}
 
-	private def createItems(def receivables, def year, apptype) { 
-		def createTaxFee = { z, q, amt ->
-			def tf = ruleSvc.createFact( RULESET, RULESET + ".TaxFeeAccount" );
-			tf.acctid = z.account.objid;
-			tf.type = z.account.taxfeetype;
-			tf.amtdue = amt;
-			tf.total = amt;
-			tf.qtr = q;
-			tf.year = year;
-			tf.expired = false;
-			tf.account = z.account;
-			tf.lob = z.lob;
-			tf.receivableid = z.receivableid;
-			return tf;
-		}
-		def taxfees = [];
-		receivables.each { x->
-			//determine the qtrs based on amount and total amtpaid;
-			double amount = x.amount;
-			double amtpaid = (x.amtpaid==null)? 0: x.amtpaid;
-			double unpaid = numberSvc.round(amount - amtpaid);
-
-			if( x.paymentmode == "QTR" && apptype !="NEW") {
-				double divisor = numberSvc.round(amount / 4.00);
-				//create an array of qtrs and amt for each.
-				def qtrs = [];
-				(1..4).each { i->
-				    qtrs << ((i==4) ? amount : divisor);
-				    amount = numberSvc.round(amount-divisor);  
-				}
-				if(amtpaid > 0.0 ) {
-				    def newarr = [];
-				    qtrs.eachWithIndex {o,q->
-				        if(amtpaid >= o) {
-				            newarr << 0.0; 
-				            amtpaid = numberSvc.round(amtpaid-o);            
-				        }    
-				        else {
-				            newarr << numberSvc.round(o - amtpaid);   
-				            amtpaid = 0;
-				        }
-				    }
-				    qtrs = newarr;
-				}
-				def m = [:];
-				m.putAll( x );
-				qtrs.eachWithIndex { o,q->
-					if(o > 0.0)	 {
-						taxfees << createTaxFee( m, q+1, o );
-					}   
-				}
-			}
-			else {
-				taxfees << createTaxFee(x, 0, unpaid);
-			}
-		}
-		//we need to sort the taxfees
-		taxfees = taxfees.sort{ (it.qtr*10) +  ((it.type == "TAX") ? 3 : ((it.type=="REGFEE")?2:1)) };
-		def facts = [];
-		taxfees.eachWithIndex { tf, idx->
-			tf.paypriority = idx;
-			facts << tf;
-		}
-		return facts;
-	}
-
+	
 	def buildActions(def req) {
 		def addItems = { tf, request ->
 			request.items << [
@@ -164,6 +96,7 @@ public class BPBillingService  {
 			];	
 		}	
 		def actions = new RuleAction();
+		actions.addCommand( "split_by_qtr", new SplitByQtr( request:req, NS:numberSvc, ruleSvc: ruleSvc, RULESET:RULESET ));
 		actions.addCommand( "calc_surcharge", new CalcSurcharge( request:req, NS:numberSvc ));
 		actions.addCommand( "calc_interest",  new CalcInterest( request:req, NS:numberSvc ));
 		actions.addCommand( "calc_discount",  new CalcDiscount( request:req, NS:numberSvc ));
@@ -172,14 +105,20 @@ public class BPBillingService  {
 		return actions;
 	}
 
+
+	/**********************************************
+	* The parameter here is the application
+	**********************************************/
 	@ProxyMethod
 	public def getBillItems(def o) throws Exception {
 		if(!o.billdate)
 			throw new Exception("Please specify billdate");
-		if(!o.entity)
-			throw new Exception("Please specify entity");
+		if(!o.application)
+			throw new Exception("Please specify application");
 		if(!o.payoption)
 			throw new Exception("Please specify payoption");
+		if(!o.application.taxfees || !o.application.taxfees.findAll{ (it.amount-it.amtpaid) > 0 }  )
+			throw new Exception("No receivables found for this application");
 
 		def billdate = dateSvc.parseDate( o.billdate, null );	
 
@@ -187,7 +126,9 @@ public class BPBillingService  {
 		def paymentFact = createPayment( o.payment, billdate.date );	
 		
 		def facts = [];
-		facts << createApplication( o.entity );
+		def appFacts = appFactBuilder.buildFact( RULESET, o.application );
+		facts.addAll( appFacts );
+
 		facts << new EffectiveDate( billdate.date );
 		facts << new CurrentDate( dateSvc.serverDate );
 		facts << createBillDate( billdate );
@@ -196,24 +137,13 @@ public class BPBillingService  {
 		facts << createQtrDeadline( billdate.year, 3 );
 		facts << createQtrDeadline( billdate.year, 4 );
 		facts << paymentFact;
-
 		facts << createPayOption( o.payoption, o.qtr, paymentFact );
-
-		//this is a temporary solution. This should be replaced with rules
-		def apptype = o.entity.apptype;
-		if(apptype==null) apptype = "NEW";
-		facts.addAll( createItems(o.receivables, billdate.year, apptype )  );
 		
-		def request = [items: []];
+		def request = [items: [], facts: facts];
 		def actions = buildActions( request );
 
-		
 		//******************* EXECUTE RULES *******************************************
-
 		def grps = ruleDB.getRulegroups( [ruleset: RULESET] );
-		
-
-		ruleSvc.execute( RULESET, facts, actions, "initial" );
 		for( g in grps ) { 
 			ruleSvc.execute( RULESET, facts, actions, g.name );
 		}
@@ -226,9 +156,9 @@ public class BPBillingService  {
 		};
 		def result = [
 			items: items,
-			total_tax : items.findAll{ it.taxfeetype == "TAX" }?.sum{it.total},
-			total_regfee : items.findAll{ it.taxfeetype == "REGFEE" }?.sum{it.total},
-			total_othercharge : items.findAll{ it.taxfeetype == "OTHERCHARGE" }?.sum{it.total}
+			total_tax : items.findAll{ it.taxfeetype == "TAX" }?.sum{it.amtdue},
+			total_regfee : items.findAll{ it.taxfeetype == "REGFEE" }?.sum{it.amtdue},
+			total_othercharge : items.findAll{ it.taxfeetype == "OTHERCHARGE" }?.sum{it.amtdue}
 		];	
 
 		//calc totals
@@ -243,6 +173,52 @@ public class BPBillingService  {
 	}
 
 }	
+
+/********************************************************
+* specify which taxfees will be penalized in qtr basis
+*********************************************************/
+public class SplitByQtr implements RuleActionHandler {
+	def request;
+	def NS;
+	def ruleSvc;
+	String RULESET;
+	public void execute(def params, def drools) {
+		def tf = params.taxfeeaccount;
+		drools.retract( tf );
+		request.facts.remove( tf );
+
+		def amount = tf.amount;
+		def amtpaid = tf.amtpaid;
+		def divisor = NS.round( amount / 4 );
+
+		for( int i=1; i<=4; i++) { 
+			def amt = ((i==4) ? amount : divisor);
+			amount = NS.round(amount-divisor);  
+			if( amtpaid >= amt ) {
+				amtpaid = NS.round(amtpaid - amt);
+				continue;
+			}	
+			def _tf = ruleSvc.createFact( RULESET, RULESET + ".TaxFeeAccount" );
+			_tf.acctid = tf.acctid;
+			_tf.type = tf.type;
+			_tf.amount = amt;
+			_tf.amtpaid = amtpaid;
+			_tf.amtdue = amt - amtpaid;
+			_tf.total = amt - amtpaid;
+			_tf.qtr = i;
+			_tf.year = tf.year;
+			_tf.expired = false;
+			_tf.account = tf.account;
+			_tf.lob = tf.lob;
+			_tf.receivableid = tf.receivableid;
+			_tf.paypriority = tf.paypriority;
+			request.facts << _tf;
+			drools.insert( _tf );
+			amtpaid = 0;		    
+		}
+	}
+}
+
 
 //Loads each variable and 
 public class CalcSurcharge implements RuleActionHandler {

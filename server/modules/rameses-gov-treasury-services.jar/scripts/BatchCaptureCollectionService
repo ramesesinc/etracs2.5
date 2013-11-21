@@ -28,7 +28,7 @@ public class BatchCaptureCollectionService extends ActiveCrudService {
 		em.deleteBatchEntryItem(entity);
 		em.deleteBatchEntry(entity);
 		em.deleteBatch(entity);
-		
+
 	}
 
 	protected void beforeRemoveEntity(entity) {

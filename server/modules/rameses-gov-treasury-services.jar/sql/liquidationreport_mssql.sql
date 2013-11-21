@@ -20,19 +20,11 @@ order by r.txnno
 
 [getRCDRemittancesSummary]
 select 
-    min(r.collector_name) as collectorname, min(r.txnno) as txnno, min(r.dtposted) as dtposted , sum(r.amount) as amount 
+    min(r.collector_name) as collectorname, min(r.txnno) as txnno, min(r.dtposted) as dtposted , min(r.amount) as amount 
 from liquidation_remittance lr 
 inner join remittance r on r.objid = lr.objid
 where lr.liquidationid = $P{liquidationid}
-group by lr.objid 
-order by txnno 
-
-select 
-    min(r.collector_name) as collectorname, min(r.txnno) as txnno, min(r.dtposted) as dtposted , sum(r.amount) as amount 
-from liquidation_remittance lr 
-inner join remittance r on r.objid = lr.objid
-where lr.liquidationid = $P{liquidationid} 
-group by lr.objid 
+group by lr.objid   
 order by txnno 
 
 

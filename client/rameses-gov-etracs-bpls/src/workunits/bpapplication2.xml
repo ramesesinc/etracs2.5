@@ -2,7 +2,9 @@
     <invokers>
         <invoker type="bpapplication:create" action="start" target="window" role="BUSINESSINFO,LICENSING"/>
         <invoker type="home.action" caption="New Business Application"  action="start" target="window"  role="BUSINESSINFO,LICENSING"/>
-        <invoker type="bpapplication:open" caption="Open BP Application" action="startOpen" target="window"  role="BUSINESSINFO,LICENSING"/>
+        <invoker type="bpapplication:open" caption="BP Application" action="startOpen" target="window"  role="BUSINESSINFO,LICENSING"/>
+        <invoker type="bpapplication:openByAppno" caption="BP Application" action="startOpenByAppno" target="window" role="BUSINESSINFO,LICENSING"/>
+        <invoker type="global:barcode:51005" caption="BP Application" action="startOpenByAppno" target="window"  role="BUSINESSINFO,LICENSING"/>
         
         <!-- extended actions -->
         <invoker type="extActions" caption="Print Application" action="printApp" visibleWhen="#{state.matches('success-save|assessment')}"/>
@@ -13,7 +15,7 @@
         <invoker type="extActions" caption="Issue Permit" action="issuePermit" visibleWhen="#{state.matches('release')}"/>
         
         <invoker type="extActions" caption="Edit Info" action="getInfo" visibleWhen="#{state.matches('assessment')}" role="ASSESSOR"/>
-        <invoker type="extActions" caption="Save" action="saveApplication" visibleWhen="#{state.matches('assessment')}" role="ASSESSOR"/>
+        <invoker type="extActions" caption="Save"  action="save" visibleWhen="#{state.matches('assessment')}" role="ASSESSOR"/>
         
         <!--
         <invoker type="extActions" caption="Reports" name="popupReports"   
@@ -43,6 +45,7 @@
              
              def searchNamePass = true;
              def message;
+             def barcodeid;
              
              def start() {
                 initNew();
@@ -53,6 +56,19 @@
              
              def startOpen() {
                 entity = appSvc.open([objid:entity.objid]);
+                if(entity.state=="approval") {
+                    def result = appSvc.assess(entity);
+                    entity.taxfees = result.taxfees;
+                }
+                windowTitle = entity.appno;
+                windowId = entity.objid;
+                updateBalances();
+                entity.orgtypename = orgTypes.find{ it.key == entity.orgtype}?.value;
+                return  super.start("open");
+             }
+             
+             def startOpenByAppno() {
+                entity = appSvc.openByAppno([appno:barcodeid]);
                 if(entity.state=="approval") {
                     def result = appSvc.assess(entity);
                     entity.taxfees = result.taxfees;
@@ -86,7 +102,7 @@
                 entity = appSvc.create( entity );
              }
              
-             void saveApplication() {
+             void save() {
                 appSvc.update( entity );
              }
 

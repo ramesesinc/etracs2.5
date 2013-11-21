@@ -1,5 +1,5 @@
 <workunit extends="wtemplates/ListController.xml" serviceName="LiquidationCaptureService" entityName="liquidationcapture">
     <invokers>
-        <invoker folderid="/explorer/txn/treasury" caption="Liquidations (Capture)" index="40" role="BATCH_MANAGEMENT"/>
+        <invoker folderid="/explorer/txn/treasury" caption="Liquidations (Capture)" index="31" role="BATCH_MANAGEMENT"/>
     </invokers>
 </workunit>

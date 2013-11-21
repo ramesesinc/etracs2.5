@@ -33,48 +33,37 @@ public class BusinessBillingReportService  {
 		*    If date is Mar 25 next due date would be April 1
 		*    If date is April 2 next due date would be April 20. 
 		*/
-		
 		def m = [:];
-		m.putAll(o);
 		m.payoption = 'FULLYEAR';
 		m.billdate = dateSvc.serverDate;
-		m.entity = o;
-		m.receivables = biz.getUnpaidReceivables(o);
+		m.application = o;
 
-		if(!m.receivables)
-			throw new Exception("No receivables found for this application");
+
 		def z = billingSvc.getBillItems(m);	
 		def result = [:];	
 
 		result.billitems = z.items;
 
-		/*
-		result.total_tax = z.total_tax;
-		result.total_regfee = z.total_regfee;
-		result.total_othercharge = z.total_othercharge;
-		result.total_amtdue = z.total_amtdue;
-		result.excesspayment = z.excesspayment;
-		*/
+		def barcode = "51005:"+o.appno;
 
         def  data = [
-           taxpayername: m.permitee.name, 
-           taxpayeraddress: m.permitee.address, 
+           taxpayername: o.permitee.name, 
+           taxpayeraddress: o.permitee.address, 
            billdate: m.billdate, 
            expirydate:null,
-           grandtotal: 1123.0
+           barcode: barcode
         ];
 
         data.items = [];
         def app = [:]
-        app.appno = m.appno;
-        app.txntype = m.apptype;
+        app.appno = o.appno;
+        app.txntype = o.apptype;
 		app.docstate = "APPROVED";
-		app.txndate = m.dtfiled; 
-		app.tradename = m.tradename;
-		app.address = m.businessaddress;
+		app.txndate = o.dtfiled; 
+		app.tradename = o.tradename;
+		app.address = o.businessaddress;
 
-		app.barcode = "51005:"+m.appno;
-
+		app.barcode = barcode;
         app.taxfees = result.billitems.collect {
         	[
         		year:it.year,

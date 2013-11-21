@@ -21,8 +21,12 @@
             def selectedItem;
             def payment = [:]
             
+            @Binding 
+            def binding
+            
             void init(){    
                 if( entity.paymentitems) payment = entity.paymentitems[0]
+
             }
 
             def getLookupPayer() {
@@ -53,6 +57,7 @@
                 },
                 
                 onAddItem: {o-> 
+                    o.uid = "ITM" + new UID();
                     entity.items << o;
                 },
                 
@@ -61,7 +66,19 @@
                     entity.items.each{ 
                         entity.amount += (it.amount? it.amount: 0.0); 
                     }
-                }
+                },
+                onRemoveItem:{o-> 
+                    if(!MsgBox.confirm("You are about to remove this entry. Proceed?")) 
+                        return false;
+                    
+                    entity.items.remove( o );
+                    entity.amount = 0.0 
+                    entity.items.each{ 
+                        entity.amount += (it.amount? it.amount: 0.0); 
+                    }
+                    binding.refresh("entity.amount");
+                    return true;
+                } 
             ] as EditorListModel;
             
             void validateCheckPayment() {
@@ -78,6 +95,8 @@
             }
             
             def doOk() {
+                entity.items.each { if( ! it.item ) throw new Exception("Account is required. ") } 
+                
                 validateCheckPayment()
                 if( payment ) {
                     entity.totalnoncash = payment.amount 
