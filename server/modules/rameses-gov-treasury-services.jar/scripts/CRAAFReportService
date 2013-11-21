@@ -48,12 +48,7 @@ class CRAAFReportService
 	def getSerialCraafData(params) {
 		def list = adb.getCraafData([year:params.year, month:params.month.index])
 		def data = []
-		data += list.findAll{it.type == 'AFO'}.each{ 
-			if (it.qtyreceived == 0){
-				it.qtyreceived = null
-			}
-		}
-
+		
 		def afidgroups = list.findAll{it.type == 'COLLECTOR'}.groupBy{it.afid}
 
 		afidgroups.each{k, afids ->
@@ -64,10 +59,18 @@ class CRAAFReportService
 		}
 
 		data.sort{ a,b -> 
-		    def sa = a.afid + a.endingstartseries
-		    def sb = b.afid + b.endingstartseries    
+		    def sa = a.afid + a.beginstartseries
+		    def sb = b.afid + b.beginstartseries    
 		    return sa <=> sb
 		}
+
+		data += list.findAll{it.type == 'AFO'}.each{ 
+			if (it.qtyreceived == 0){
+				it.qtyreceived = null
+			}
+		}
+
+
 		return data;
 	}	
 
