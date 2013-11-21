@@ -165,7 +165,7 @@ FROM (
       SELECT 
          t.*,
          (SELECT qtyending FROM cashticket_inventory_detail WHERE controlid = t.objid AND [lineno] = t.maxlineno) AS qtyending,
-         (SELECT qtyending FROM cashticket_inventory_detail WHERE controlid = t.objid AND [lineno] = t.minlineno - 1) AS qtybegin
+         (SELECT qtyending + qtyissued + qtybegin FROM cashticket_inventory_detail WHERE controlid = t.objid AND [lineno] = t.minlineno AND txntype <> 'ISSUE-RECEIPT') AS qtybegin
       FROM (
          SELECT 
            'B' AS idx,
