@@ -10,6 +10,25 @@ declare BPApplication
 	barangayid:		String
 end
 
+declare LOB 
+	objid: 			String
+	lobid:			String
+	name:			String
+	classification: 	String
+	attributes:			String
+	assessmenttype:		String
+end
+
+declare BusinessInfo 
+	objid: 			String
+	lob:			LOB
+	name:			String
+	stringvalue:	String
+	intvalue:		int
+	booleanvalue:	boolean
+	decimalvalue:	double
+end
+
 declare BillingDate
 	date:		Date
 	year:		int
@@ -51,6 +70,8 @@ declare TaxFeeAccount
 	type:			String
 	expired:		boolean
 	deadline:		Date
+	amount:			double
+	amtpaid:		double
 	amtdue:			double
 	surcharge:		double
 	interest:		double

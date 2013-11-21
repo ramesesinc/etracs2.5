@@ -15,7 +15,6 @@ public class BPApplicationLogInterceptor {
 	def dateSvc;
 
 	private void log( def appid, def step, def action ) {
-		//println "log " + step + " " + action;
 		def m = [:];
 		m.objid = "BPLOG"+new UID();
 		m.user = [ objid: env.USERID, name: env.USER ];

@@ -14,11 +14,14 @@
         
         class  BusinessCashReceiptController extends BasicCashReceipt {
             
+            @Service("CashReceiptService")
+            def cashReceiptSvc;
+        
             @Service("BusinessCashReceiptService")
             def billSvc;
             
-            @Service("BusinessLookupService")
-            def bizLookup;
+            @Service("BPApplicationLookupService")
+            def appLookup;
         
             String entityName = "cashreceipt:business";
             
@@ -33,9 +36,28 @@
             def total_amtdue = 0;
             
             def barcodeid;
+            boolean barcode = false;
             
             void initBarcode() {
-                def m = bizLookup.findBusiness( barcodeid );
+                def param = [prefix: "51005", barcode: barcodeid ]; 
+            
+                def m = appLookup.findByBarcode( param );
+                entity = [formtype: "serial", formno:"51", txnmode: 'ONLINE'];
+                entity = cashReceiptSvc.init( entity );
+                entity.payer = [objid: m.permitee.objid, name: m.permitee.name];
+                entity.paidby = m.tradename;
+                entity.paidbyaddress = m.businessaddress;
+                entity.tradename = m.tradename;
+                entity.applicationid = m.applicationid;
+                entity.businessid = m.businessid;
+                entity.collectiontype = m.collectiontype;
+                entity.billitems = [];
+                entity.items = [];
+                query.payoption = payOptions[0];
+                barcode = true;
+                
+                super.init();
+                runBilling();
             }
             
             @PropertyChangeListener
@@ -56,45 +78,50 @@
                 billingListModel.reload();
             }
             
-            public void payerChanged( o ) {
+            public def payerChanged( permitee ) {
                 entity.tradename = null;
                 entity.applicationid = null;
                 entity.businessid = null;
-                binding.refresh( "entity.tradename" );
+                entity.paidby = null;
+                entity.paidbyaddress = null;
+                query.payoption = payOptions[0];
+                binding.refresh( "entity.(tradename|paidby.*)" );
                 clearBilling();
                 super.clearAllPayments();
                 super.updateBalances();
-            }
-            
-            def getLookupBusiness() {
-                if(!entity.payer) {
-                    return new Exception("Please select a payer first");
-                }    
-                return InvokerUtil.lookupOpener( "business:lookup", [
-                    "query.permiteeid":entity.payer.objid,
+                def opener = InvokerUtil.lookupOpener( "bpapplication:lookup", [
+                    "query.permiteeid":permitee.objid,
                     "query.state": "PAYMENT",
                     onselect: { o->
+                        entity.applicationid = o.applicationid;
                         entity.tradename = o.tradename;
                         entity.businessid = o.businessid;
+                        entity.paidby = o.tradename;
+                        entity.paidbyaddress = o.businessaddress;
                         entity.billitems = [];
                         entity.items = [];
-                        billingListModel.reload();
+                        query.payoption = payOptions[0];
+                        runBilling();
                     }
                 ]);
+                opener.async = true;
+                return opener;
             }
+            
             
             void runBilling() {
                 def m = [:];
                 m.qtr = query.qtr;
+                m.applicationid = entity.applicationid;
                 m.businessid = entity.businessid;
                 m.payoption = query.payoption;
                 m.billdate = entity.receiptdate;
+                
                 def result = billSvc.getBilling( m );
                 if(result.billitems.size()==0)
                     throw new Exception("No open items for payment found for the criteria specified" );
                 entity.billitems = result.billitems;
                 billingListModel.reload();
-                
                 //fix the receipt items
                 entity.payoption = query.payoption;
                 entity.qtr = query.qtr;
@@ -108,7 +135,9 @@
                 total_regfee = result.total_regfee;
                 total_othercharge = result.total_othercharge;
                 total_amtdue = result.total_amtdue;
-                binding.refresh("total.*");
+                if(binding) {
+                    binding.refresh("total.*|query.*|entity.paidby.*|entity.paidby");
+                }
                 super.updateBalances();
             }
             

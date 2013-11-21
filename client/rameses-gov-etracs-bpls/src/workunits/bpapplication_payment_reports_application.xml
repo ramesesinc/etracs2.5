@@ -42,6 +42,8 @@
                     ]  
                  };
                  
+                 
+                 
                 //ctcno: "CCI2012-191919191", 
                 //ctcdate: java.sql.Date.valueOf("2013-02-01"),
                 data = [
@@ -58,6 +60,7 @@
                    infos:infos,
                    requierements:[],
                    signatories:[],
+                   barcode: "51005:"+entity.appno
                 ]
                 report.viewReport();
             } 
