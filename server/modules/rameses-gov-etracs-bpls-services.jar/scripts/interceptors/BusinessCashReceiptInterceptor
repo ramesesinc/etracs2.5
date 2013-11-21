@@ -77,7 +77,6 @@ public class BusinessCashReceiptInterceptor {
 		for( app in list ) {
 			if( app.balance <= 0 ) {
 				application.changeState( [state:'release', objid: app.applicationid ] );
-				biz.changeState( [state:'ACTIVE', objid: app.businessid ] );
 			}
 		}
 	}

@@ -51,8 +51,7 @@
                 }
                 
                 void runBilling() {
-                    query.entity = entity;
-                    query.receivables = taxfees.findAll{ (it.amount - it.amtpaid) > 0 };
+                    query.application = entity;
                     result = billSvc.getBillItems( query );
                     result.items.each {
                         it.balancedue = it.total;

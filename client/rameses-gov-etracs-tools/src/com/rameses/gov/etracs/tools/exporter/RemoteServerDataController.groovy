@@ -63,6 +63,7 @@ class RemoteServerDataExportController
     }
     
     void loadUserOtherData(){
+        entity.data.funds = svc.getFunds();
         entity.data.users.each{
             it.memberships = svc.getUserMemberships(it.user.objid)
             it.cashbooks = svc.getUserCashBooks(it.user.objid)

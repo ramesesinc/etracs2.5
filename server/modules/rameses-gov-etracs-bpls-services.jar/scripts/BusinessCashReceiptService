@@ -8,27 +8,23 @@ public class BusinessCashReceiptService  {
 	@Service("BPBillingService")
 	def billingSvc;
 	
+	@Service("BPApplicationService")
+	def appSvc;
 	
 	@ActiveDB("businessaccount")
 	def ba;
 
-	@ActiveDB("business")
-	def biz;
-	
 	@Service("NumberService")
 	def numberSvc;
 
 	@ProxyMethod
 	public def getBilling(def o) throws Exception {
-		//retrieve business ledger
 		def m = [:];
-		m.putAll(o);
-		m.entity = biz.read( [objid:o.businessid] );
+		m.application = appSvc.open( [objid: o.applicationid ]); 
 		m.billdate = o.billdate;
-		println o.businessid
-		m.receivables = biz.getUnpaidReceivables(o);
-		if(!m.receivables)
-			throw new Exception("No receivables found for this application");
+		m.payoption = o.payoption;
+		m.qtr = o.qtr;
+
 		def z = billingSvc.getBillItems(m);	
 		def result = [:];	
 		result.billitems = z.items;

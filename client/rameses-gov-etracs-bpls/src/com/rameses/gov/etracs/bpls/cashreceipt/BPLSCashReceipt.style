@@ -19,3 +19,12 @@
 "query.qtr" [ query.payoption == 'FULLQTR' ] {
     visible: true;
 }
+"entity.payer.*"[ barcode == true ] {
+    enabled: false;
+}
+"entity.payer.*"[ barcode == false ] {
+    enabled: true;
+}
+"entity.paidby.*"[ 1 == 1] {
+    enabled:false;
+}

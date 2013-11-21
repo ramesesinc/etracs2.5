@@ -25,20 +25,39 @@
             def paramsvc
          
             void viewReport() {
-                def taxfees = entity.taxfees.collect{ 
+                 def findAssessmentType = { o->
+                    if(!o?.objid) return "";
+                    return entity.lobs.find{ it.lobid == o.objid }?.assessmenttype;
+                 }
+                 def findCapital = { o->
+                    if( o.taxfeetype != "TAX" ) return null;
+                    def val = entity.infos.find{ it.attribute.name == 'CAPITAL' && it.lob.objid == o.lob.objid }?.value;
+                    if(!val) return null;
+                    return new BigDecimal(val+"");
+                 }
+                 def findGross = { o->
+                    if( o.taxfeetype != "TAX" ) return null;
+                    def val = entity.infos.find{ it.attribute.name == 'GROSS' && it.lob.objid == o.lob.objid }?.value;
+                    if(!val) return null;
+                    return new BigDecimal(val+"");
+                 }
+                 def taxfees = entity.taxfees.collect{ 
                     [
                       lobname:it.lob?.name, 
                       accttitle: it.account.title,
                       amtdue: new BigDecimal(it.amount), 
                       amount: new BigDecimal(it.amount), 
-                      assessmenttype:it.assessmenttype,
-                      taxfeetype: it.taxfeetype
+                      assessmenttype: findAssessmentType(it.lob),
+                      taxfeetype: it.taxfeetype,
+                      capital: findCapital(it),
+                      gross: findGross(it)
                     ]  
                  };
                 //ctcno: "CCI2012-191919191", 
                 //ctcdate: java.sql.Date.valueOf("2013-02-01"),
                data = [
                    txnno: entity.appno, 
+                   barcode: "51005:"+entity.appno,
                    tradename: entity.tradename, 
                    businessaddress: entity.businessaddress,
                    taxpayername: entity.permitee.name, 

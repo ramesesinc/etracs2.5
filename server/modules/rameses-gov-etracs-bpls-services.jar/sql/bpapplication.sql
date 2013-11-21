@@ -38,12 +38,23 @@ completedby_objid=$P{userid}, completedby_name=$P{username}, dtcompleted=$P{dtco
 WHERE objid=$P{objid}
 
 
-
-
+####################################
+# used to lookup application
+####################################
 [getLookupByPermitee]
-SELECT objid AS applicationid, appno, apptype, permitee_name, tradename, businessid 
-FROM business_application 
-WHERE state = $P{state} AND permitee_objid=$P{permiteeid}
+SELECT ba.objid AS applicationid, ba.appno, ba.apptype, ba.permitee_name, 
+ba.tradename, ba.businessid, b.bin, ba.businessaddress 
+FROM business_application ba 
+LEFT JOIN business_bin b ON b.objid=ba.businessid
+WHERE ba.state = $P{state} AND ba.permitee_objid=$P{permiteeid}
+
+[findApplicationByAppNo]
+SELECT ba.objid AS applicationid, ba.appno, ba.apptype, ba.permitee_objid, ba.permitee_name, 
+ba.tradename, ba.businessid, b.bin, ba.businessaddress 
+FROM business_application ba 
+LEFT JOIN business_bin b ON b.objid=ba.businessid
+WHERE  ba.appno=$P{appno}
+
 
 [getLobs]
 SELECT *, lc.name AS classification_name, lc.objid as classification_objid   
@@ -59,7 +70,7 @@ INNER JOIN businessvariable b ON b.objid=bi.attribute_objid
 WHERE bi.applicationid=$P{objid}
 
 [getTaxfees]
-SELECT br.*, r.code AS account_code, ba.taxfeetype 
+SELECT br.*, r.code AS account_code, ba.taxfeetype, ba.taxfeetype AS account_taxfeetype 
 FROM business_receivable br 
 INNER JOIN businessaccount ba ON br.account_objid = ba.objid
 INNER JOIN revenueitem r ON  r.objid=ba.objid 

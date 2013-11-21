@@ -3,7 +3,7 @@ import com.rameses.common.*;
 import com.rameses.services.extended.*;
 import com.rameses.util.*;
 
-class RemoteServerDataDeployerService
+class RemoteServerDataDeployerService 
 {
 	@PersistenceContext('main')
 	def em
@@ -25,11 +25,24 @@ class RemoteServerDataDeployerService
 
 	@ProxyMethod
 	public void deployUpdates( entity ) {
+		entity.data.funds.each{
+			def fund = EntityUtil.mapToField(it)
+			try{
+				adb.insertFund(fund)
+			}
+			catch(e){
+			}
+		}
 		entity.data.colltypes.each{
 			collTypeSvc.save(it);
 		}
 		entity.data.revitems.each{
-			revSvc.save(it.item);
+			try{
+				revSvc.create(it.item);
+			}
+			catch(e){
+				revSvc.update(it.item);
+			}
 		}
 		entity.data.users.each{ 
 			userSvc.save(it.user);
@@ -38,8 +51,11 @@ class RemoteServerDataDeployerService
 				cashbookSvc.save(cb);
 			}
 			it.memberships.each{m->
-				m = EntityUtil.mapToField(m)
-				adb.insertUserMembership(m)
+				try{
+					m = EntityUtil.mapToField(m)
+					adb.insertUserMembership(m)
+				}
+				catch(e){}
 			}
 		}
 	}
