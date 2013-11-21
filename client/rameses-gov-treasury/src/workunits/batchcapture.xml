@@ -7,7 +7,7 @@
         <invoker type="batchcapture:create" caption="Batch Capture" action="init" role="SUBCOLLECTOR" target="window"/>
         <invoker type="batchcapture:open" caption="Batch Capture" action="open" role="SUBCOLLECTOR" target="window"/>
        
-        <invoker type="formActions" caption="Cancel" action="_close" visibleWhen="#{mode != 'posted'}" immediate="true" mnemonic="c" shortcut="ctrl C" icon="images/toolbars/cancel.png"/>
+        <invoker type="formActions" caption="Cancel" action="doCancel" visibleWhen="#{mode != 'posted'}" immediate="true" mnemonic="c" shortcut="ctrl C" icon="images/toolbars/cancel.png"/>
         <invoker type="formActions" caption="Close" action="_close" visibleWhen="#{mode == 'posted'}" immediate="true" mnemonic="c" shortcut="ctrl C" icon="images/toolbars/cancel.png"/>
         <invoker type="formActions" caption="Next" action="next" visibleWhen="#{mode == 'init'}" mnemonic="n" shortcut="ctrl N" icon="images/toolbars/arrow_right.png"/>
         <invoker type="formActions" caption="Save" action="save" visibleWhen="#{mode == 'create'}" mnemonic="s" shortcut="ctrl S" icon="images/toolbars/save.png"/>

@@ -104,8 +104,6 @@ public class BatchCaptureController  {
         entity.totalamount = 0.0
         batchItems.each {
             if( it.voided == 0) {
-                if( ! it.totalnoncash) it.totalcash= it.amount;
-
                 entity.totalcash += it.totalcash
                 entity.totalnoncash += it.totalnoncash
                 entity.totalamount += it.amount 
@@ -136,7 +134,7 @@ public class BatchCaptureController  {
             m.voided = 0
             if( copyprevinfo ) {
                 if(prevEntity && prevEntity.items.size() == 1) {
-                    def item =  prevEntity.items[0];
+                    def item =  prevEntity.items[0].clone();
                     item.amount = 0.0 
                     m.items = [ item ]
                     m.acctinfo = prevEntity.acctinfo;
@@ -153,7 +151,7 @@ public class BatchCaptureController  {
             ]; 
         },
         onAddItem: { o->
-            prevEntity = o;
+            prevEntity = o.clone();
             batchItems << o; 
             moveNext();
         },
@@ -169,10 +167,13 @@ public class BatchCaptureController  {
         },
 
         onColumnUpdate: {item, colname-> 
-            if (colname == 'amount')
+            if (colname == 'amount') {
                 item.items[0].amount = item[colname]; 
-                
+                item.totalcash = item.amount
+                item.totalnoncash = 0.0 
+            }  
         }
+        
     ] as EditorListModel;
 
 
@@ -246,6 +247,14 @@ public class BatchCaptureController  {
     
     void disapprove(){
         entity = svc.disapproved( entity);
+    }
+
+    def doCancel() {
+        if(mode != 'create') return "_close"
+
+        if(!MsgBox.confirm("Discard changes? ")) return null;
+
+        return "_close"
     }
 
     void post() {
