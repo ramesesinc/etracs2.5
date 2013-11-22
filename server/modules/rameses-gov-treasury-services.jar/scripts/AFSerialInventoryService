@@ -92,8 +92,8 @@ class AFSerialInventoryService {
 		detail.txntype = o.txntype;
 		detail.issuedstartseries = o.startseries;
 		detail.issuedendseries = o.endseries;
-		detail.endingstartseries = (o.endseries==head.endseries)? head.endseries: o.endseries+1; 
-		detail.endingendseries = head.endseries; 
+		detail.endingstartseries = (o.endseries==head.endseries)? null : o.endseries+1; 
+		detail.endingendseries = (o.endseries==head.endseries)? null : head.endseries;
 		detail.qtyissued = o.qty;
 		detail.qtyending = head.qtybalance;
 		detail.remarks = o.remarks;

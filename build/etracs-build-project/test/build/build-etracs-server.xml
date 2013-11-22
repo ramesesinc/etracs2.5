@@ -131,6 +131,40 @@
     
     
     <!--=====================================================
+    = UPDATE OSIRIS-SERVER LIBS
+    =======================================================-->
+    <target name="update-osiris-server-libs">
+        <antcall target="do-update-osiris-server-libs">
+            <param name="sourcefile" value="rameses-common2"/>
+        </antcall>
+        <antcall target="do-update-osiris-server-libs">
+            <param name="sourcefile" value="rameses-osiris3-core2"/>
+        </antcall>
+        <antcall target="do-update-osiris-server-libs">
+            <param name="sourcefile" value="rameses-osiris3-rules"/>
+        </antcall>
+        <antcall target="do-update-osiris-server-libs">
+            <param name="sourcefile" value="rameses-services-extended"/>
+        </antcall>
+        <antcall target="do-update-osiris-server-libs">
+            <param name="sourcefile" value="rameses-custom-impl"/>
+        </antcall>
+        <antcall target="do-update-osiris-server-libs">
+            <param name="sourcefile" value="rameses-osiris3-server"/>
+        </antcall>
+    </target>
+    
+    <target name="do-update-osiris-server-libs">
+        <property name="sourcejar" value="${incubation.dir}/${sourcefile}/dist/${sourcefile}.jar"/>
+
+        <echo message="====> Copying ${sourcefile}" />
+        <copy file="${sourcejar}" todir="${target.server.dir}/lib" failonerror="false"/>
+    </target>
+    
+    
+    
+    
+    <!--=====================================================
     = DEPLOY ETRACS JAR 
     =======================================================-->
     <target name="deploy-etracs-client-jars">
@@ -194,7 +228,7 @@
         </copy>
     </target>
 
-    <target name="build-server" depends="init,cleanup,copy-osiris3-server,copy-etracs-platform,deploy-etracs-server,deploy-project-shared, deploy-etracs-client-jars, copy-incubation-jars-to-devlibs, deploy-devlibs">
+    <target name="build-server" depends="init, cleanup, copy-osiris3-server, copy-etracs-platform, deploy-etracs-server, deploy-project-shared, deploy-etracs-client-jars, copy-incubation-jars-to-devlibs, deploy-devlibs, update-osiris-server-libs">
     </target>
 
     <target name="xxbuild-server" depends="init,cleanup,copy-osiris3-server,copy-etracs-platform,deploy-etracs-server,deploy-project-shared, deploy-etracs-client-jars, copy-incubation-jars-to-devlibs, deploy-devlibs">

@@ -99,14 +99,16 @@ class  MiscPOSReceiptController extends AbstractCashReceipt
 
 
     public void validateBeforePost() {
+        if (entity.amount > entity.totalcash)
+            throw new Exception('Cash Received must be greater than or equal to Amount.')
         if (includePaidInfoInRemarks == 'YES') {
             if ( ! entity.remarks ) entity.remarks = ''
             if ( entity.remarks ) entity.remarks += '    '
             if ( includePaidInfoInRemarks == 'YES') {
                 entity.remarks +=  '( ' + entity.paidby + ' )'
-            }
-            
+            }   
         }
+        entity.items = []
         entity.items << [
             objid  :  'CI' + new java.rmi.server.UID(),
             item   : entity.item,
