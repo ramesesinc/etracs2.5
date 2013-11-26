@@ -76,7 +76,7 @@
 		</background>
 		<title>
 			<band height="677"  isSplitAllowed="true" >
-				<textField isStretchWithOverflow="true" pattern="MMMMM dd, yyyy hh:MM:ss" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						mode="Transparent"
 						x="28"
@@ -94,7 +94,7 @@
 					<textElement textAlignment="Left" verticalAlignment="Bottom" rotation="None" lineSpacing="Single">
 						<font fontName="SansSerif" pdfFontName="Helvetica" size="9" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 					</textElement>
-				<textFieldExpression   class="java.util.Date"><![CDATA[$F{receiptdate}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[new SimpleDateFormat("MMMMM dd, yyyy").format($F{receiptdate}) + "\n" + new SimpleDateFormat("h:mm:ss a").format($F{receiptdate})]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement

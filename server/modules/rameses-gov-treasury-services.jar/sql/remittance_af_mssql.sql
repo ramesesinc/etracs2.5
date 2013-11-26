@@ -151,19 +151,18 @@ SELECT a.*,
     (a.receivedendseries-a.receivedstartseries+1) AS qtyreceived,
     (a.beginendseries-a.beginstartseries+1) AS qtybegin,
     (a.issuedendseries-a.issuedstartseries+1) AS qtyissued,
-    case when a.issuedendseries = a.endingstartseries then 0 
-    else  (a.endingendseries-a.endingstartseries+1) end AS qtyending
+    aid.endingstartseries, aid.endingendseries, aid.qtyending 
 FROM
 (SELECT 
-   ai.afid AS formno,		
+   ai.afid AS formno, 
+   MIN(ai.objid) as controlid,
    MIN( ad.receivedstartseries ) AS receivedstartseries,
    MAX( ad.receivedendseries ) AS receivedendseries,
    MAX( ad.beginstartseries ) AS beginstartseries,
    MAX( ad.beginendseries ) AS beginendseries,
    MAX( ad.issuedstartseries ) AS issuedstartseries,
    MAX( ad.issuedendseries ) AS issuedendseries,
-   MAX( ad.endingstartseries ) AS endingstartseries,
-   MAX( ad.endingendseries ) AS endingendseries
+   MAX(ad.[lineno]) AS maxlineno
 FROM afserial_inventory_detail ad 
 INNER JOIN afserial_inventory ai ON ad.controlid=ai.objid
 LEFT JOIN afserialcapture ac on ac.controlid = ai.objid   
@@ -171,8 +170,10 @@ INNER JOIN remittance_afserial r ON r.objid=ad.objid
 WHERE r.remittanceid = $P{objid} 
   and ac.controlid is null   
 GROUP BY ai.afid, ad.controlid 
-) a 
-order by a.formno, a.endingstartseries
+) a
+INNER JOIN afserial_inventory_detail aid ON aid.controlid = a.controlid and aid.[lineno] = a.maxlineno 
+order by a.formno, aid.endingendseries
+
 
 [getRemittedCashTickets]
 SELECT a.*, 
