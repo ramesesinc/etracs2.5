@@ -37,3 +37,8 @@ go
 alter table fund add special int default 1 not null 
 go
 
+
+alter table collectiontype add barcodekey varchar(50)
+go
+
+
