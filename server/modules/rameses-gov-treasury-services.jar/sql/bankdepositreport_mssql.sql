@@ -34,7 +34,7 @@ group by a.objid, ct.objid, ri.fund_title
 select 
     bd.cashier_name as cashier, 
     (ba.bank_code + ' - Cash D/S: Account ' + be.bankaccount_code ) as depositref, 
-    be.totalcash as depositamt 
+    NULL as depositamt 
 from bankdeposit bd 
  inner join bankdeposit_entry be on bd.objid = be.parentid 
  inner join bankaccount ba on ba.objid = be.bankaccount_objid 
@@ -46,7 +46,7 @@ where bd.objid=$P{bankdepositid} and ba.fund_objid=$P{fundname}
 select 
     bd.cashier_name as cashier, 
     (ba.bank_code + ' - Check D/S: Account ' + be.bankaccount_code ) as depositref, 
-    be.totalnoncash as depositamt 
+    NULL AS depositamt 
 from bankdeposit bd 
  inner join bankdeposit_entry be on bd.objid = be.parentid 
  inner join bankaccount ba on ba.objid = be.bankaccount_objid 
@@ -114,3 +114,16 @@ from  bankdeposit_entry be
    inner join bankaccount ba on be.bankaccount_objid = ba.objid 
 where be.parentid = $P{bankdepositid} 
   and be.bankaccount_objid=$P{bankaccountid}
+
+
+
+[getDepositSlipSummaryByFund]
+select 
+  bd.cashier_name as cashier, 
+    (ba.bank_code + ' - Cash D/S: Account ' + be.bankaccount_code ) as depositref, 
+    NULL as depositamt 
+from bankdeposit bd 
+ inner join bankdeposit_entry be on bd.objid = be.parentid 
+ inner join bankaccount ba on ba.objid = be.bankaccount_objid 
+ inner join fund f on ba.fund_objid = f.parentid
+where bd.objid=$P{bankdepositid} and f.objid = $P{fundname}
