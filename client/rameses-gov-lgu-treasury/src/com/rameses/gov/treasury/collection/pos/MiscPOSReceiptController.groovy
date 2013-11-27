@@ -38,6 +38,7 @@ class  MiscPOSReceiptController extends AbstractCashReceipt
         },
         "entity.amount" : {
             entity.totalcash = entity.amount;
+            entity.cashchange = 0.0;
             binding.refresh('entity.totalcash');
         },
     ];
