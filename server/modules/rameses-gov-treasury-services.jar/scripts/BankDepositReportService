@@ -9,6 +9,9 @@ class BankDepositReportService  {
 	@PersistenceContext("main")
 	def em; 
 
+	@ActiveDB('bankdepositreport')
+	def adb;
+
 	@Service("NumberService")
 	def numSvc;
 
@@ -28,6 +31,10 @@ class BankDepositReportService  {
 		data.remittancedeposits =  []
 		data.remittancedeposits.addAll( em.sqlContext.createNamedQuery('bankdepositreport:getCashFundSummary').setParameters(params ).resultList )
 		data.remittancedeposits.addAll(em.sqlContext.createNamedQuery('bankdepositreport:getCheckFundSummary').setParameters(params ).resultList)
+
+		if ( ! data.remittancedeposits ){
+			data.remittancedeposits.addAll(adb.getDepositSlipSummaryByFund(params))
+		}
 
 		data.remittedforms=[]
 		/** 
