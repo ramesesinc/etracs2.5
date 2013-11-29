@@ -65,7 +65,7 @@ select
   case when cv.objid IS null then 0 else 1 end as voided,
   c.formno as afid 
 from( 
-  select 
+  select
     distinct lf.liquidationid
   from bankdeposit b 
     inner join bankdeposit_liquidation bl on b.objid = bl.bankdepositid
@@ -77,6 +77,28 @@ from(
   inner join cashreceipt c on c.objid = rc.objid 
   inner join cashreceiptitem ci on ci.receiptid = c.objid
   left join cashreceipt_void cv on cv.receiptid = c.objid 
+
+[getRevenueItemSummaryByFund]
+select 
+  ri.fund_title as fundname, cri.item_objid as acctid, cri.item_title as acctname,
+  cri.item_code as acctcode, sum( cri.amount ) as amount 
+from( 
+  select
+    distinct lf.liquidationid
+  from bankdeposit b 
+    inner join bankdeposit_liquidation bl on b.objid = bl.bankdepositid
+    inner join liquidation_cashier_fund lf on lf.objid = bl.objid 
+  where b.objid=$P{bankdepositid} 
+  ) a 
+  inner join liquidation_remittance lr on lr.liquidationid = a.liquidationid 
+  inner join remittance_cashreceipt rc on rc.remittanceid = lr.objid 
+  inner join cashreceipt c on c.objid = rc.objid 
+  inner join cashreceiptitem cri on cri.receiptid = c.objid
+  inner join revenueitem ri on ri.objid = cri.item_objid
+  left join cashreceipt_void cv on cv.receiptid = c.objid 
+group by ri.fund_title, cri.item_objid, cri.item_code, cri.item_title 
+order by fundname, acctname  
+
 
 [getSerialRemittedForms]
 SELECT a.*, 

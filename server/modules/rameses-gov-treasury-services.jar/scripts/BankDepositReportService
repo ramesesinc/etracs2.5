@@ -152,6 +152,16 @@ class BankDepositReportService  {
 	}
 
 	@ProxyMethod 
+	def generateReportByRevenueItem( deposit ) {
+		def data = deposit.clone();
+		def params = [ bankdepositid: deposit.objid ]
+		data.acctsummaries = em.sqlContext.createNamedQuery('bankdepositreport:getRevenueItemSummaryByFund').setParameters(params ).resultList
+		if( ! data.acctsummaries ) throw new Exception("No record(s) found ");
+		return data;
+	}
+
+
+	@ProxyMethod 
 	def getFundlist( bankdepositid ) {
 		return em.sqlContext.createNamedQuery('bankdepositreport:getFundlist').setParameter('bankdepositid', bankdepositid ).resultList
 	}
