@@ -19,6 +19,7 @@
         <invoker type="formActions" action="capturePayment" caption="Capture Payment" mnemonic="c" visibleWhen="#{mode=='read' &amp;&amp; ledger.state=='APPROVED'}"  role="LANDTAX" permission="rptledger.capturepayment" />
         <invoker type="formActions" action="fixLedger" caption="Fix Ledger" mnemonic="f" visibleWhen="#{mode=='read' &amp;&amp; ledger.state=='APPROVED'}"  role="LANDTAX" permission="rptledger.fixledger" />
         <invoker type="formActions" action="fixLedgerFaas" caption="Fix Ledger FAAS Data" mnemonic="d" visibleWhen="#{mode=='read' &amp;&amp; ledger.state=='APPROVED'}"  role="LANDTAX" permission="rptledger.fixledger" />
+        <invoker type="formActions" action="changeState" caption="Change Ledger State" mnemonic="l" visibleWhen="#{mode=='read'}"  role="LANDTAX" permission="rptledger.changestate" />
         
         
     </invokers>

@@ -79,6 +79,11 @@ class RPTLedgerService
         return ledger 
     }
 
+    @ProxyMethod
+    public void updateState(ledger){
+        em.updateState(ledger)
+    }
+
     
     @ProxyMethod
     public def saveLedgerFaas(ledgerfaas){
