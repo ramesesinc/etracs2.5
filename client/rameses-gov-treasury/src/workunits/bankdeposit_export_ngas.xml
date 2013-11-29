@@ -1,6 +1,6 @@
 <workunit>
     <invokers>
-        <invoker type="bankdeposit:formActions"  caption="Export to eNGAS(CSV)" action="generateCvs"  target="process" />
+        <invoker type="bankdeposit:formActions"  caption="Export to eNGAS(CSV)" action="generateCvs"  target="process" visibleWhen="#{mode=='read'}" />
     </invokers>
     <code>
         <![CDATA[    
