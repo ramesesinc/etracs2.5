@@ -14,10 +14,10 @@ import com.rameses.rcp.ui.annotations.Template;
  * @author  Rameses
  */
 @Template(FormPage.class)
-public class RPTLedgerFaasFixPage extends javax.swing.JPanel {
+public class RPTLedgerChangeStatePage extends javax.swing.JPanel {
     
     /** Creates new form RPTLedgerFixPage */
-    public RPTLedgerFaasFixPage() {
+    public RPTLedgerChangeStatePage() {
         initComponents();
     }
     
@@ -30,11 +30,8 @@ public class RPTLedgerFaasFixPage extends javax.swing.JPanel {
     private void initComponents() {
         xButton1 = new com.rameses.rcp.control.XButton();
         xFormPanel2 = new com.rameses.rcp.control.XFormPanel();
-        xIntegerField1 = new com.rameses.rcp.control.XIntegerField();
-        xComboBox1 = new com.rameses.rcp.control.XComboBox();
-        xIntegerField2 = new com.rameses.rcp.control.XIntegerField();
+        xLabel1 = new com.rameses.rcp.control.XLabel();
         xComboBox2 = new com.rameses.rcp.control.XComboBox();
-        xDecimalField1 = new com.rameses.rcp.control.XDecimalField();
         xButton2 = new com.rameses.rcp.control.XButton();
 
         xButton1.setMnemonic('c');
@@ -42,48 +39,29 @@ public class RPTLedgerFaasFixPage extends javax.swing.JPanel {
         xButton1.setText("Cancel");
 
         com.rameses.rcp.control.border.XTitledBorder xTitledBorder1 = new com.rameses.rcp.control.border.XTitledBorder();
-        xTitledBorder1.setTitle("FAAS Information");
+        xTitledBorder1.setTitle("Ledger State Information");
         xFormPanel2.setBorder(xTitledBorder1);
-        xIntegerField1.setCaption("From Year");
-        xIntegerField1.setCaptionWidth(110);
-        xIntegerField1.setCellPadding(new java.awt.Insets(10, 0, 0, 0));
-        xIntegerField1.setName("entity.fromyear");
-        xIntegerField1.setPreferredSize(new java.awt.Dimension(80, 20));
-        xIntegerField1.setRequired(true);
-        xFormPanel2.add(xIntegerField1);
+        com.rameses.rcp.control.border.XLineBorder xLineBorder1 = new com.rameses.rcp.control.border.XLineBorder();
+        xLineBorder1.setLineColor(new java.awt.Color(153, 153, 153));
+        xLabel1.setBorder(xLineBorder1);
+        xLabel1.setCaption("Current State");
+        xLabel1.setCaptionWidth(110);
+        xLabel1.setCellPadding(new java.awt.Insets(10, 0, 0, 0));
+        xLabel1.setExpression("#{currentstate}");
+        xLabel1.setFont(new java.awt.Font("Tahoma", 1, 11));
+        xLabel1.setPreferredSize(new java.awt.Dimension(150, 21));
+        xFormPanel2.add(xLabel1);
 
-        xComboBox1.setCaption("From Qtr.");
-        xComboBox1.setCaptionWidth(110);
-        xComboBox1.setItems("quarters");
-        xComboBox1.setName("entity.fromqtr");
-        xComboBox1.setPreferredSize(new java.awt.Dimension(80, 20));
-        xComboBox1.setRequired(true);
-        xFormPanel2.add(xComboBox1);
-
-        xIntegerField2.setCaption("To Year");
-        xIntegerField2.setCaptionWidth(110);
-        xIntegerField2.setName("entity.toyear");
-        xIntegerField2.setPreferredSize(new java.awt.Dimension(80, 20));
-        xIntegerField2.setRequired(true);
-        xFormPanel2.add(xIntegerField2);
-
-        xComboBox2.setCaption("To Qtr.");
+        xComboBox2.setCaption("New State");
         xComboBox2.setCaptionWidth(110);
-        xComboBox2.setEmptyText("0");
-        xComboBox2.setItems("quarters");
-        xComboBox2.setName("entity.toqtr");
-        xComboBox2.setPreferredSize(new java.awt.Dimension(80, 20));
+        xComboBox2.setItems("states");
+        xComboBox2.setName("entity.state");
+        xComboBox2.setPreferredSize(new java.awt.Dimension(150, 20));
+        xComboBox2.setRequired(true);
         xFormPanel2.add(xComboBox2);
 
-        xDecimalField1.setCaption("Assessed Value");
-        xDecimalField1.setCaptionWidth(110);
-        xDecimalField1.setName("entity.assessedvalue");
-        xDecimalField1.setPreferredSize(new java.awt.Dimension(130, 20));
-        xDecimalField1.setRequired(true);
-        xFormPanel2.add(xDecimalField1);
-
         xButton2.setMnemonic('u');
-        xButton2.setName("doUpdate");
+        xButton2.setName("update");
         xButton2.setText("Update");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -117,12 +95,9 @@ public class RPTLedgerFaasFixPage extends javax.swing.JPanel {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private com.rameses.rcp.control.XButton xButton1;
     private com.rameses.rcp.control.XButton xButton2;
-    private com.rameses.rcp.control.XComboBox xComboBox1;
     private com.rameses.rcp.control.XComboBox xComboBox2;
-    private com.rameses.rcp.control.XDecimalField xDecimalField1;
     private com.rameses.rcp.control.XFormPanel xFormPanel2;
-    private com.rameses.rcp.control.XIntegerField xIntegerField1;
-    private com.rameses.rcp.control.XIntegerField xIntegerField2;
+    private com.rameses.rcp.control.XLabel xLabel1;
     // End of variables declaration//GEN-END:variables
     
 }

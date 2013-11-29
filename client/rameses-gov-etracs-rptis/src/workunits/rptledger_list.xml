@@ -38,6 +38,7 @@
                     new Column(name:"totalav", caption:"Assessed Value", width:100, type:'decimal', format:'#,##0.00'),
                     new Column(name:"lastyearpaid", caption:"Last Year Paid", width:80, type:'integer', format:'0000'),
                     new Column(name:"lastqtrpaid", caption:"Last Qtr Paid", width:80, type:'integer', format:'0'),
+                    new Column(name:"taxable", caption:"Taxable", width:80, type:'boolean'),
                 ]
             }
             

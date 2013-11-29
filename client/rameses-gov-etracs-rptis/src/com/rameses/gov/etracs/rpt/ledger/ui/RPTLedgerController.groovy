@@ -273,6 +273,19 @@ public class RPTLedgerController
             }
         ])
     }
+        
+    def changeState(){
+        return InvokerUtil.lookupOpener('rptledger:changestate', [
+            entity : entity,
+                
+            svc    : svc, 
+                
+            oncomplete : {
+                entity.state = it.state
+                binding.refresh('.*')
+            }
+        ])
+    }
     
     def generateNotice(){
         return InvokerUtil.lookupOpener('rptledger:nod', [

@@ -412,3 +412,8 @@ DELETE FROM rptledgeritem_qtrly WHERE rptledgerid = $P{rptledgerid}
 
 [updateLedgerItemLastQtrPaid]
 UPDATE rptledgeritem SET lastqtrpaid = ${lastqtrpaid} WHERE rptledgerid = $P{rptledgerid} and year = $P{lastyearpaid}
+
+
+[updateState]
+UPDATE rptledger SET state = $P{state} WHERE objid = $P{objid}
+
