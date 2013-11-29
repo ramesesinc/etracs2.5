@@ -136,7 +136,7 @@ GROUP BY ai.afid, ad.controlid) a
 
 [getDepositAmount]
 select 
-     be.totalcash, be.totalnoncash, ba.bank_code as bankcode, ba.fund_title as fund, be.amount 
+     be.totalcash, be.totalnoncash, ba.code AS bankacctno, ba.bank_code as bankcode, ba.fund_title as fund, be.amount 
 from  bankdeposit_entry be 
    inner join bankaccount ba on be.bankaccount_objid = ba.objid 
 where be.parentid = $P{bankdepositid} 

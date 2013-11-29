@@ -68,17 +68,17 @@ class BankDepositReportService  {
 			data.amountinwords = numSvc.doubleToWords( info.amount )
 			if( info.totalcash > 0.0) {
 				data.cashier1 = deposit.cashier.name
-				data.depositref1 = info.bankcode + ' - Cash Deposit D/S _______________ '
+				data.depositref1 = info.bankcode + ' - Cash Deposit D/S ' + info.bankacctno
 				data.depositamt1 = info.totalcash
 			}
 
 			if( info.totalnoncash > 0.0 && data.cashier1 ) {
 				data.cashier2 = deposit.cashier.name
-				data.depositref2 = info.bankcode + ' - Check Deposit D/S _______________ '
+				data.depositref2 = info.bankcode + ' - Check Deposit D/S ' + info.bankacctno
 				data.depositamt2 = info.totalnoncash
 			} else if ( info.totalnoncash > 0.0  ) { 
 				data.cashier1 = deposit.cashier.name
-				data.depositref1 = info.bankcode + ' - Check Deposit D/S _______________ '
+				data.depositref1 = info.bankcode + ' - Check Deposit D/S '  + info.bankacctno
 				data.depositamt1 = info.totalnoncash
 			}
 
