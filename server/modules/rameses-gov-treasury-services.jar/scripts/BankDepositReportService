@@ -56,11 +56,12 @@ class BankDepositReportService  {
 			dtposted: deposit.dtposted,
             txnno : deposit.txnno,
             cashiername: deposit.cashier.name,
-            cashiertitle: deposit.cashier.title 
+            cashiertitle: deposit.cashier.title,
 		]
 		def info = em.sqlContext.createNamedQuery('bankdepositreport:getDepositAmount')
 					.setParameters([bankdepositid: deposit.objid, bankaccountid: bankaccount.objid] )
 					.singleResult
+		data.summaries = em.serializer.read(info.summaries)
 		
 		if( info) {
 			data.fund = info.fund

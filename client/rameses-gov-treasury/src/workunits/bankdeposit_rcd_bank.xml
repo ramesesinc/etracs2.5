@@ -57,6 +57,11 @@
                 getReportName : { return reportPath + 'rcdbybankaccout.jasper' },
                 getReportData : { return reportdata }, 
                 getParameters : { return paramsvc.getStandardParameter() },
+                getSubReports : {
+                    return [ 
+                        new SubReport("collectionsummary", reportPath + "collectionsummary.jasper"),
+                    ] as SubReport[];    
+                 }
             ] as ReportModel
         }
         ]]>
