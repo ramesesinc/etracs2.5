@@ -83,7 +83,6 @@ public class BusinessAccountPage extends javax.swing.JPanel {
         xComboBox3.setItems("extDepts");
         xComboBox3.setName("entity.department");
         xComboBox3.setPreferredSize(new java.awt.Dimension(0, 22));
-        xComboBox3.setRequired(true);
         xFormPanel1.add(xComboBox3);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
