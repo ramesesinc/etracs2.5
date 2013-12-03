@@ -53,16 +53,19 @@ SELECT
 	CASE WHEN t.lastqtrpaid = 4 THEN 1 ELSE t.lastqtrpaid + 1 END AS fromqtr,
 	$P{billtoyear} AS toyear,
 	$P{billtoqtr} AS toqtr,
-	SUM(t.amount) AS amount
+	SUM(t.basic) AS totalbasic,
+	SUM(t.sef) AS totalsef,
+	SUM(t.basic + t.sef + t.firecode) AS amount
 FROM (
 	SELECT
 		rl.objid AS rptledgerid, f.tdno, 
 		rl.lastyearpaid, rl.lastqtrpaid,
-		SUM(rli.basic - rli.basicpaid - rli.basicamnesty - rli.basicdisc + 
-		rli.basicint - rli.basicintpaid - rli.basicintamnesty + 
-		rli.sef - rli.sefpaid - rli.sefamnesty - rli.sefdisc + 
-		rli.sefint - rli.sefintpaid - rli.sefintamnesty  +
-		rli.firecode - rli.firecodepaid) AS amount
+		SUM(rli.basic - rli.basicpaid - rli.basicdisc + 
+		rli.basicint - rli.basicintpaid) AS basic,
+
+		SUM(rli.sef - rli.sefpaid -  rli.sefdisc + 
+		rli.sefint - rli.sefintpaid) AS sef,
+		SUM(rli.firecode - rli.firecodepaid) AS firecode 
 	FROM rptledger rl
 		INNER JOIN faas f ON rl.faasid = f.objid 
 		INNER JOIN rptledgeritem rli ON rl.objid = rli.rptledgerid
@@ -77,10 +80,10 @@ FROM (
 		rl.objid AS rptledgerid, f.tdno, 
 		rl.lastyearpaid, rl.lastqtrpaid,
 		SUM(rliq.basic - rliq.basicpaid - rliq.basicdisc +
-		rliq.basicint - rliq.basicintpaid + 
-		rliq.sef - rliq.sefpaid - rliq.sefdisc + 
-		rliq.sefint - rliq.sefintpaid  +
-		rliq.firecode - rliq.firecodepaid) AS amount
+		rliq.basicint - rliq.basicintpaid ) AS basic, 
+		SUM(rliq.sef - rliq.sefpaid - rliq.sefdisc + 
+		rliq.sefint - rliq.sefintpaid) AS sef,
+		SUM(rliq.firecode - rliq.firecodepaid) AS firecode 
 	FROM rptledger rl
 		INNER JOIN faas f ON rl.faasid = f.objid 
 		INNER JOIN rptledgeritem rli ON rl.objid = rli.rptledgerid
@@ -123,7 +126,8 @@ INSERT INTO `cashreceiptitem_rpt`
              `firecode`,
              `firecodeacct_objid`,
              `revtype`,
-             `qtrly`)
+             `qtrly`,
+             `partialled`)
 SELECT 
 	CONCAT($P{objid},'-', rli.year) AS objid,
 	$P{rptreceiptid} AS rptreceiptid,
@@ -152,7 +156,8 @@ SELECT
 	rli.firecode - rli.firecodepaid AS firecode,
 	rli.firecodeacct_objid,
 	rli.revtype,
-	rli.qtrly
+	rli.qtrly,
+	0 AS partialled
 FROM rptledger rl
 		INNER JOIN rptledgeritem rli ON rl.objid = rli.rptledgerid
 WHERE rl.objid = $P{rptledgerid}
@@ -189,7 +194,8 @@ SELECT
 	rliq.firecode - rliq.firecodepaid AS firecode,
 	rli.firecodeacct_objid,
 	rliq.revtype,
-	rli.qtrly
+	rli.qtrly,
+	rliq.partial AS partialled 
 FROM rptledger rl
 		INNER JOIN rptledgeritem rli ON rl.objid = rli.rptledgerid
 		INNER JOIN rptledgeritem_qtrly rliq ON rli.objid = rliq.rptledgeritemid 
@@ -590,7 +596,7 @@ SELECT
 			THEN CONCAT(MIN(t.fromqtr), 'Q,', MIN(t.fromyear), '-',MAX(t.toyear))
 		ELSE
 			CONCAT(MIN(t.fromqtr), 'Q,', MIN(t.fromyear), '-', MAX(t.toqtr), 'Q,', MAX(t.toyear))
-	END AS period,
+	END + (CASE WHEN t.partialled = 0 THEN '' ELSE '*P*' END) AS period,
 	SUM(t.basic) AS basic, 
 	SUM(t.basicdisc) AS basicdisc, 
 	SUM(t.basicint) AS basicint, 
@@ -651,4 +657,5 @@ GROUP BY
 		t.totalav, t.fullpin,
 		t.cadastrallotno,
 		t.classcode,
-		t.barangay
+		t.barangay,
+		t.partialled

@@ -306,6 +306,9 @@ public class RPTBillingService
 		def idx = 0
 		def pitem = null 
 
+		def totalbasic = 0.0
+		def totalsef = 0.0
+
 		//find the item to partial and breakdown to quarterly
 		def pmt = payment
 		for(; idx < paiditems.size(); idx++)
@@ -342,6 +345,8 @@ public class RPTBillingService
 			def amtdue = pitem.total 
 			if ( payment >= amtdue){
 				payment -= amtdue 
+				totalbasic += (pitem.basic + pitem.basicint)
+				totalsef += (pitem.sef + pitem.sefint)
 			}
 			else 
 			{
@@ -390,6 +395,8 @@ public class RPTBillingService
 						partialsefint 		: partialsefint,
 						partialsefdisc 		: partialsefdisc,
 					]
+					totalbasic += (partialbasic + partialbasicint)
+					totalsef += (partialsef + partialsefint)
 					em.updatePartialInfo(partialinfo)
 					payment = 0.0
 					break;
@@ -401,7 +408,7 @@ public class RPTBillingService
 			em.resetLedgerItemForPaymentFlag(pitem)
 			em.resetQuarterlyLedgerItemForPaymentFlag(pitem)
 		}
-		return [amount:partial, toyear:pitem?.year, toqtr:pitem?.qtr]
+		return [amount:partial, toyear:pitem?.year, toqtr:pitem?.qtr, totalbasic:totalbasic, totalsef:totalsef]
 	}
 
 	def createFacts(bill){

@@ -59,6 +59,7 @@ class RPTReceiptNoLedgerController extends com.rameses.enterprise.treasury.cashr
         if (entity.amount == null) 
             entity.amount = 0.0
         updateBalances();
+        binding.refresh('totalBasic|totalSef')
     }
         
     def addLedger(){
@@ -104,6 +105,17 @@ class RPTReceiptNoLedgerController extends com.rameses.enterprise.treasury.cashr
         return InvokerUtil.lookupOpener('rptreceipt:printdetail',[entity:entity])
     }
     
-                
+
+        
+    
+    def getTotalBasic(){
+        return ledgers.basicnet.sum()
+    }
+    
+    def getTotalSef(){
+        return ledgers.sefnet.sum()
+    }
+    
+    
 }
 

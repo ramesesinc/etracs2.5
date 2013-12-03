@@ -201,6 +201,7 @@ class RPTReceiptController extends com.rameses.enterprise.treasury.cashreceipt.A
     
     void fullPayment(){
         updateItemDue(selectedItem);
+        selectedItem.partialled = false;
     }
     
     def partialPayment(){
@@ -224,6 +225,7 @@ class RPTReceiptController extends com.rameses.enterprise.treasury.cashreceipt.A
             entity.amount = paiditems.amount.sum();
             updateBalances();
         }
+        binding.refresh('totalBasic|totalSef')
     }
     
     
@@ -240,6 +242,15 @@ class RPTReceiptController extends com.rameses.enterprise.treasury.cashreceipt.A
     
     def printDetail(){
         return InvokerUtil.lookupOpener('rptreceipt:printdetail',[entity:entity])
+    }
+    
+    
+    def getTotalBasic(){
+        return itemsforpayment.findAll{it.pay == true}.totalbasic.sum()
+    }
+    
+    def getTotalSef(){
+        return itemsforpayment.findAll{it.pay == true}.totalsef.sum()
     }
     
             

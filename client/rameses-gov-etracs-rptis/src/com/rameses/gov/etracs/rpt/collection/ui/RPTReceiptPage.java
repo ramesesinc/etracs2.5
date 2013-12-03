@@ -34,6 +34,9 @@ public class RPTReceiptPage extends javax.swing.JPanel {
         xButton2 = new com.rameses.rcp.control.XButton();
         xButton3 = new com.rameses.rcp.control.XButton();
         xButton4 = new com.rameses.rcp.control.XButton();
+        xFormPanel1 = new com.rameses.rcp.control.XFormPanel();
+        xDecimalField1 = new com.rameses.rcp.control.XDecimalField();
+        xDecimalField2 = new com.rameses.rcp.control.XDecimalField();
         jPanel8 = new javax.swing.JPanel();
         xDataTable1 = new com.rameses.rcp.control.XDataTable();
         jPanel9 = new javax.swing.JPanel();
@@ -68,6 +71,28 @@ public class RPTReceiptPage extends javax.swing.JPanel {
         xButton4.setName("partialPayment");
         xButton4.setText("Partial Payment");
 
+        xFormPanel1.setOrientation(com.rameses.rcp.constant.UIConstants.HORIZONTAL);
+        xDecimalField1.setCaption("Total BASIC");
+        xDecimalField1.setCellPadding(new java.awt.Insets(0, 0, 0, 10));
+        xDecimalField1.setDepends(new String[] {"selectedItem", "selectAll", "deselectAll", "fullPayment", "partialPayment", "ledger"});
+        xDecimalField1.setDisabledTextColor(new java.awt.Color(0, 0, 0));
+        xDecimalField1.setEnabled(false);
+        xDecimalField1.setFont(new java.awt.Font("Courier New", 1, 18));
+        xDecimalField1.setName("totalBasic");
+        xDecimalField1.setPreferredSize(new java.awt.Dimension(150, 24));
+        xFormPanel1.add(xDecimalField1);
+
+        xDecimalField2.setActionCommand(" ");
+        xDecimalField2.setCaption("SEF");
+        xDecimalField2.setCaptionWidth(40);
+        xDecimalField2.setDepends(new String[] {"selectedItem", "selectAll", "deselectAll", "fullPayment", "partialPayment", "ledger"});
+        xDecimalField2.setDisabledTextColor(new java.awt.Color(0, 0, 0));
+        xDecimalField2.setEnabled(false);
+        xDecimalField2.setFont(new java.awt.Font("Courier New", 1, 18));
+        xDecimalField2.setName("totalSef");
+        xDecimalField2.setPreferredSize(new java.awt.Dimension(150, 24));
+        xFormPanel1.add(xDecimalField2);
+
         org.jdesktop.layout.GroupLayout jPanel7Layout = new org.jdesktop.layout.GroupLayout(jPanel7);
         jPanel7.setLayout(jPanel7Layout);
         jPanel7Layout.setHorizontalGroup(
@@ -80,18 +105,22 @@ public class RPTReceiptPage extends javax.swing.JPanel {
                 .add(xButton3, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(xButton4, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(332, Short.MAX_VALUE))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 24, Short.MAX_VALUE)
+                .add(xFormPanel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 439, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
         );
         jPanel7Layout.setVerticalGroup(
             jPanel7Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanel7Layout.createSequentialGroup()
-                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .add(jPanel7Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(xButton1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(xButton2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(xButton3, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(xButton4, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap())
+            .add(jPanel7Layout.createSequentialGroup()
+                .addContainerGap(27, Short.MAX_VALUE)
+                .add(jPanel7Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanel7Layout.createSequentialGroup()
+                        .add(jPanel7Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                            .add(xButton1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                            .add(xButton2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                            .add(xButton3, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                            .add(xButton4, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                        .addContainerGap())
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, xFormPanel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 34, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
         );
         jPanel6.add(jPanel7, java.awt.BorderLayout.SOUTH);
 
@@ -213,6 +242,7 @@ public class RPTReceiptPage extends javax.swing.JPanel {
         xLookupField1.setHandler("lookupLedger");
         xLookupField1.setIndex(-500);
         xLookupField1.setName("ledger");
+        xLookupField1.setNullWhenEmpty(false);
         xLookupField1.setPreferredSize(new java.awt.Dimension(0, 19));
         formPanel6.add(xLookupField1);
 
@@ -244,6 +274,9 @@ public class RPTReceiptPage extends javax.swing.JPanel {
     private com.rameses.rcp.control.XButton xButton3;
     private com.rameses.rcp.control.XButton xButton4;
     private com.rameses.rcp.control.XDataTable xDataTable1;
+    private com.rameses.rcp.control.XDecimalField xDecimalField1;
+    private com.rameses.rcp.control.XDecimalField xDecimalField2;
+    private com.rameses.rcp.control.XFormPanel xFormPanel1;
     private com.rameses.rcp.control.XLookupField xLookupField1;
     // End of variables declaration//GEN-END:variables
     
