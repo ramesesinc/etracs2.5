@@ -49,7 +49,7 @@ from(
   inner join revenueitem ri on ri.objid = cri.item_objid
   left join cashreceipt_void cv on cv.receiptid = c.objid 
 group by ri.fund_title, cri.item_objid, cri.item_code, cri.item_title 
-order by fundname, acctname  
+order by fundname, acctcode, acctname  
 
 
 [getCashFundSummary]
@@ -157,7 +157,7 @@ GROUP BY ai.afid, ad.controlid) a
 
 [getDepositAmount]
 select 
-     be.totalcash, be.totalnoncash, ba.bank_code as bankcode, ba.fund_title as fund, be.amount 
+     be.totalcash, be.totalnoncash, ba.code AS bankacctno, ba.bank_code as bankcode, ba.fund_title as fund, be.amount 
 from  bankdeposit_entry be 
    inner join bankaccount ba on be.bankaccount_objid = ba.objid 
 where be.parentid = $P{bankdepositid} 
