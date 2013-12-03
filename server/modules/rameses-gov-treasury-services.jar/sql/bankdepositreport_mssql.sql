@@ -97,7 +97,7 @@ from(
   inner join revenueitem ri on ri.objid = cri.item_objid
   left join cashreceipt_void cv on cv.receiptid = c.objid 
 group by ri.fund_title, cri.item_objid, cri.item_code, cri.item_title 
-order by fundname, acctname  
+order by fundname, acctcode, acctname  
 
 
 [getSerialRemittedForms]
