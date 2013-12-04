@@ -47,8 +47,8 @@ public class VerifyBusinessName extends javax.swing.JPanel {
                 , new Object[]{"typeHandler", new com.rameses.rcp.common.TextColumnHandler()}
             }),
             new com.rameses.rcp.common.Column(new Object[]{
-                new Object[]{"name", "permitee.name"}
-                , new Object[]{"caption", "Permitee"}
+                new Object[]{"name", "owner.name"}
+                , new Object[]{"caption", "Owner"}
                 , new Object[]{"width", 100}
                 , new Object[]{"minWidth", 0}
                 , new Object[]{"maxWidth", 0}

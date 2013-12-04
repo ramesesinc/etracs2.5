@@ -92,8 +92,8 @@ public class BusinessInfoPage extends javax.swing.JPanel {
         jPanel1.setBorder(xTitledBorder1);
 
         xFormPanel1.setCaptionWidth(120);
-        xLabel1.setCaption("Permitee");
-        xLabel1.setExpression("#{entity.permitee.name}");
+        xLabel1.setCaption("Owner");
+        xLabel1.setExpression("#{entity.owner.name}");
         xLabel1.setPreferredSize(new java.awt.Dimension(0, 16));
         xFormPanel1.add(xLabel1);
 

@@ -1,0 +1,31 @@
+import com.rameses.annotations.*;
+import com.rameses.util.*;
+import java.rmi.server.*;
+import com.rameses.services.extended.*;
+
+public class CityEngineerBPApplicationService  {
+
+	@Service("BPApplicationService")
+	def appSvc;
+
+	@Service("SequenceService")
+	def seqSvc;
+
+	@Service("DateService")
+	def dateSvc;
+
+	@Env
+	def env;
+
+	@ProxyMethod
+	public def open(def o) {
+		return appSvc.open(o);
+	}
+	
+	@ProxyMethod
+	public def addTaxFee(def o) {
+			
+	}
+	
+
+}

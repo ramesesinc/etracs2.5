@@ -5,8 +5,7 @@
        <invoker type="home.action" caption="BP Rules Analyzer" action="init" index="1" target="window" role="ASSESSOR,RULE_AUTHOR"/>
        
        <invoker type="formActions" caption="Close" action="_close" immediate="true"/>
-       <invoker type="formActions" caption="Get Info" action="getInfo"/>
-       <invoker type="formActions" caption="Get Tax Fees" action="getTaxFees"/>
+       <invoker type="formActions" caption="Run" action="run"/>
        <invoker type="formActions" caption="Clear Infos" action="clearInfos" immediate="true"/>
        
     </invokers>
@@ -22,18 +21,78 @@
             import com.rameses.gov.etracs.bpls.application.*;
             
             class BPAssessmentAnalyzerController extends BPApplication {
+            
+                @Service("BPAssessmentRuleService")
+                def bpSvc;
                 
+                @Service("DateService")
+                def dateSvc;
+            
                 String title = "Business Rule Assessment Simulator";
-                
                 String entityName = "bpassessment:analyzer";
                 
                 void init() {
                     lobAssessmentTypes = LOV.LOB_ASSESSMENT_TYPES*.key;
+                    entity.appyear = dateSvc.serverYear;
                 }
                 
                 void reset() {
                     initNew();
                 }
+                
+                def getLookupLob() {
+                    return InvokerUtil.lookupOpener( "lob:lookup", [
+                        onselect: { o->
+                            if(entity.lobs.find{ it.lobid == o.objid }!=null) 
+                                throw new Exception("Item already added");
+                            def m = [:];
+                            m.objid = "BPLOB"+new UID();
+                            m.lobid = o.objid;
+                            m.name = o.name;
+                            m.classification = o.classification;
+                            m.assessmenttype = "NEW";
+                            entity.lobs << m; 
+                            lobModel.reload();
+                            binding.focus("lob");
+                        }
+                    ]);
+                }
+
+                void removeLob() {
+                    if(!selectedLob) return;
+                    if(selectedLob.assessmenttype != "NEW" ) 
+                        throw new Exception("Only new lines of business can be removed");
+                    entity.lobs.remove(selectedLob);
+                    infoLoaded = false;
+                }
+                
+                def run() {
+                    if(!entity.lobs)
+                        throw new Exception("Please indicate at least one line of business");
+                    return InvokerUtil.lookupOpener( "bpapplicationinfo:edit", [
+                        entity: entity, 
+                        initial: 'info',
+                        service: bpSvc,
+                        handler:{ query ->
+                            entity.infos = query.infos;
+                            entity.requirements = query.requirements;
+                            entity.taxfees = query.taxfees;
+                            taxfeeModel.reload();
+                            infoModel.reload();
+                            requirementModel.reload();
+                            taxfeeModel.reload();
+                        }
+                    ]);
+                 }
+                 
+                 void clearInfos() {
+                    entity.infos.clear();
+                    entity.requirements.clear();
+                    entity.taxfees.clear();
+                    infoModel.reload();
+                    taxfeeModel.reload();
+                    requirementModel.reload();
+                 }
                 
             }
         ]]>    

@@ -17,14 +17,14 @@ public class BPApplicationLookupService extends ActiveCrudListService {
 		return [
 			[name:"appno", caption:"Application No"],
 			[name:"tradename", caption:"Tradename"],
-			[name:"permitee.name", caption:"Permitee"],
+			[name:"owner.name", caption:"Owner"],
 			[name:"bin", caption:"BIN"],
 		];
 	}
 
 	public void beforeList(o) {
 		if( o.state!=null &&  o.state.toUpperCase() == "PAYMENT" ) {
-			o._listMethod = "getLookupByPermitee";
+			o._listMethod = "getLookupByOwner";
 			o._pagingKeys = "ba.objid";
 		}
 	}

@@ -1,0 +1,31 @@
+import com.rameses.annotations.*;
+import com.rameses.util.*;
+import java.rmi.server.*;
+import com.rameses.services.extended.*;
+
+public class BusinessCaptureService  {
+
+	//@ActiveDB(value="businesscapture", em="tracs")
+	//def em;
+
+	@ProxyMethod
+	public def getSearchList(o) {
+		println o;
+		return [
+			[objid:'BUS001', tradename: 'XYZ Laundry', owner: [name: 'EMN'], address:'CEBU 1'],
+			[objid:'BUS002', tradename: 'XYZ Bakery', owner: [name: 'EMN'], address:'CEBU 2'],
+		]
+		//return em.getSearchList(o);
+	}
+
+	@ProxyMethod
+	public def open(o) {
+		println "opening " + o;
+		//[em.findLob]
+		o.infos = [];
+		o.infos << [ lob:[name:'SARI SARI'], attribute:[caption:'CAPITAL'], value: 15000.0 ];
+		return o;
+
+	}
+
+}

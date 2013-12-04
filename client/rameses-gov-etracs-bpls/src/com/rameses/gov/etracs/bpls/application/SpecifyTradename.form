@@ -53,8 +53,8 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="xFormPanel1" min="-2" pref="227" max="-2" attributes="1"/>
-                  <EmptySpace max="32767" attributes="0"/>
+                  <Component id="xFormPanel1" min="-2" pref="213" max="-2" attributes="1"/>
+                  <EmptySpace pref="25" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -80,15 +80,41 @@
             </Component>
             <Component class="com.rameses.rcp.control.XLookupField" name="xLookupField1">
               <Properties>
-                <Property name="caption" type="java.lang.String" value="Permitee"/>
+                <Property name="caption" type="java.lang.String" value="Owner"/>
                 <Property name="depends" type="[Ljava.lang.String;" editor="org.netbeans.beaninfo.editors.StringArrayEditor">
                   <StringArray count="1">
                     <StringItem index="0" value="entity.orgtype"/>
                   </StringArray>
                 </Property>
                 <Property name="expression" type="java.lang.String" value="#{item.name}"/>
-                <Property name="handler" type="java.lang.String" value="lookupPermitees"/>
-                <Property name="name" type="java.lang.String" value="entity.permitee"/>
+                <Property name="handler" type="java.lang.String" value="lookupOwners"/>
+                <Property name="name" type="java.lang.String" value="entity.owner"/>
+                <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                  <Dimension value="[0, 20]"/>
+                </Property>
+                <Property name="required" type="boolean" value="true"/>
+              </Properties>
+            </Component>
+            <Component class="com.rameses.rcp.control.XTextField" name="xTextField4">
+              <Properties>
+                <Property name="caption" type="java.lang.String" value="Address"/>
+                <Property name="enabled" type="boolean" value="false"/>
+                <Property name="name" type="java.lang.String" value="entity.owner.address"/>
+                <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                  <Dimension value="[0, 20]"/>
+                </Property>
+                <Property name="required" type="boolean" value="true"/>
+              </Properties>
+            </Component>
+            <Component class="com.rameses.rcp.control.XTextField" name="xTextField3">
+              <Properties>
+                <Property name="caption" type="java.lang.String" value="Business Name"/>
+                <Property name="depends" type="[Ljava.lang.String;" editor="org.netbeans.beaninfo.editors.StringArrayEditor">
+                  <StringArray count="1">
+                    <StringItem index="0" value="entity.businessname"/>
+                  </StringArray>
+                </Property>
+                <Property name="name" type="java.lang.String" value="entity.businessname"/>
                 <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                   <Dimension value="[0, 20]"/>
                 </Property>
@@ -124,35 +150,6 @@
                 <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                   <Dimension value="[0, 20]"/>
                 </Property>
-              </Properties>
-            </Component>
-            <Component class="com.rameses.rcp.control.XComboBox" name="xComboBox2">
-              <Properties>
-                <Property name="caption" type="java.lang.String" value="Office Type"/>
-                <Property name="expression" type="java.lang.String" value="#{item.value}"/>
-                <Property name="itemKey" type="java.lang.String" value="key"/>
-                <Property name="items" type="java.lang.String" value="officeTypes"/>
-                <Property name="name" type="java.lang.String" value="entity.officetype"/>
-                <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                  <Dimension value="[250, 22]"/>
-                </Property>
-                <Property name="required" type="boolean" value="true"/>
-              </Properties>
-            </Component>
-            <Component class="com.rameses.rcp.control.XTextField" name="xTextField3">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="entity.branchname"/>
-                <Property name="caption" type="java.lang.String" value="Branch Name"/>
-                <Property name="depends" type="[Ljava.lang.String;" editor="org.netbeans.beaninfo.editors.StringArrayEditor">
-                  <StringArray count="1">
-                    <StringItem index="0" value="entity.officetype"/>
-                  </StringArray>
-                </Property>
-                <Property name="name" type="java.lang.String" value="entity.branchname"/>
-                <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                  <Dimension value="[0, 20]"/>
-                </Property>
-                <Property name="required" type="boolean" value="true"/>
               </Properties>
             </Component>
           </SubComponents>

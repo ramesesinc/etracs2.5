@@ -47,8 +47,8 @@ public class BusinessBillingReportService  {
 		def barcode = "51005:"+o.appno;
 
         def  data = [
-           taxpayername: o.permitee.name, 
-           taxpayeraddress: o.permitee.address, 
+           taxpayername: o.owner.name, 
+           taxpayeraddress: o.owner.address, 
            billdate: m.billdate, 
            expirydate:null,
            barcode: barcode

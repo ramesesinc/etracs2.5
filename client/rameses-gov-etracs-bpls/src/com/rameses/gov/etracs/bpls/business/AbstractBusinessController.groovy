@@ -16,10 +16,10 @@ class AbstractBusinessController  {
     def orgTypes = LOV.ORG_TYPES;
     def selectedLob;
 
-    def getLookupPermitees() {
+    def getLookupOwners() {
         return InvokerUtil.lookupOpener( "entity:lookup", [
             onselect: { o->
-                entity.permitee = o;
+                entity.owner = o;
             }
         ]);
     }

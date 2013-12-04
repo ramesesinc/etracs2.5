@@ -48,10 +48,10 @@ public class EditBusinessPage extends javax.swing.JPanel {
         jPanel1.setBorder(xTitledBorder1);
 
         xFormPanel1.setCaptionWidth(150);
-        xLookupField1.setCaption("Permitee");
+        xLookupField1.setCaption("Owner");
         xLookupField1.setExpression("#{item.name}");
-        xLookupField1.setHandler("lookupPermitees");
-        xLookupField1.setName("entity.permitee");
+        xLookupField1.setHandler("lookupOwners");
+        xLookupField1.setName("entity.owner");
         xLookupField1.setPreferredSize(new java.awt.Dimension(0, 20));
         xLookupField1.setRequired(true);
         xFormPanel1.add(xLookupField1);

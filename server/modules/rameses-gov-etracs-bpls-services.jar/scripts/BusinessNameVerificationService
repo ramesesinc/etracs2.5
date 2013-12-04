@@ -19,7 +19,9 @@ class BusinessNameVerificationService {
 		//get the first 2 letters for query and then apply jarowinkler.
 		def m = [:];
 		m.tradename = o.substring(0,numChars) + "%";
+
 		def list = em.getListForVerification(m);
+		println list.size();
 
 		int i = 0;
 		def matchList = [];
@@ -31,6 +33,6 @@ class BusinessNameVerificationService {
                 matchList.add( it );
             }
         }
-		return matchList.sort{ it.weight * -1 };
+        return matchList.sort{ it.weight * -1 };
 	}
 }

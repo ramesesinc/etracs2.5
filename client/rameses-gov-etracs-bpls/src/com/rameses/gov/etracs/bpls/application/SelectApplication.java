@@ -47,8 +47,8 @@ public class SelectApplication extends javax.swing.JPanel {
         xTextField1.setPreferredSize(new java.awt.Dimension(0, 20));
         xFormPanel1.add(xTextField1);
 
-        xTextField2.setCaption("Permitee");
-        xTextField2.setName("query.permiteename");
+        xTextField2.setCaption("Owner");
+        xTextField2.setName("query.ownername");
         xTextField2.setPreferredSize(new java.awt.Dimension(0, 20));
         xFormPanel1.add(xTextField2);
 
@@ -96,8 +96,8 @@ public class SelectApplication extends javax.swing.JPanel {
                 , new Object[]{"typeHandler", new com.rameses.rcp.common.TextColumnHandler()}
             }),
             new com.rameses.rcp.common.Column(new Object[]{
-                new Object[]{"name", "permitee.name"}
-                , new Object[]{"caption", "Permitee"}
+                new Object[]{"name", "owner.name"}
+                , new Object[]{"caption", "Owner"}
                 , new Object[]{"width", 100}
                 , new Object[]{"minWidth", 0}
                 , new Object[]{"maxWidth", 0}

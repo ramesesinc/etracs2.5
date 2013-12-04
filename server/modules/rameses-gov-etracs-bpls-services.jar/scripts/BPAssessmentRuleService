@@ -1,0 +1,471 @@
+import com.rameses.annotations.*;
+import com.rameses.util.*;
+import java.rmi.server.*;
+import com.rameses.rules.common.*;
+
+import bpls.facts.*;
+
+
+public class BPAssessmentRuleService  {
+
+	@Resource("RuleService")	
+	def ruleSvc;
+
+	@ActiveDB("rule")
+	def ruleDB;
+
+	@ActiveDB("lob")
+	def lob;
+
+	@ActiveDB("businessaccount")
+	def ba;
+
+	@ActiveDB("businessvariable")
+	def bv;
+
+	@ActiveDB("businessrequirement")
+	def br;
+
+	@Service("DateService")
+	def dateSvc;
+
+	@Service("NumberService")
+	def numberSvc;
+
+	@Service("BPFactBuilder")
+	def bpFacts;
+
+
+	String RULESET = "bpassessment";
+
+	def infoBuilder = { def entity, def newinfos, def lob, def attrid, def val, def phase, def laterenewal ->
+		//check first if info already exists. test is a list
+		def test = null;
+		if( !lob ) {
+			test = entity.infos.findAll{ it.lob?.objid == null && it.attribute.objid == attrid };
+			if(!test) {
+				test = newinfos.findAll{it.lob?.objid==null && it.attribute.objid == attrid };
+			}	
+		}
+		else {
+			test = entity.infos.findAll{ it.lob?.objid!=null && it.lob.objid == lob.objid && it.attribute.objid == attrid };
+			if(!test) {
+				test =  newinfos.findAll{ it.lob?.objid!=null && it.lob.objid == lob.objid && it.attribute.objid == attrid };
+			}
+		}
+		if(laterenewal) {
+			test = test.findAll{ it.year == laterenewal.year };
+		}
+		else {
+			test = test.findAll{ !it.year || it.year == entity.appyear };
+		}
+
+		if(test) return null;
+			
+		def info = [objid:"BPINFO"+new UID()];
+		info.phase = phase;
+		info.attribute = bv.read( [objid: attrid ] );
+		if(lob) {
+			info.lob = [objid:lob.objid, name:lob.name];
+		}
+		info.datatype = info.attribute.datatype;
+		if(laterenewal) info.year = laterenewal.year;
+		if(val) {
+			String datatype = info.attribute.datatype;
+			switch(datatype) {
+				case "integer":
+					info.value = val.intValue;
+					break;
+				case "decimal":
+					info.value = val.doubleValue;
+					break;
+				case "string":	
+					info.value = val.stringValue;
+					break;
+				case "boolean":	
+					info.value = val.booleanValue;
+					break;
+			}
+		}			
+		newinfos << info;
+		return info;
+	}
+
+	def comparator = { agg, oldvalue, newvalue ->
+		switch(agg) {
+			case "COUNT":
+				return (oldvalue + 1);
+
+			case "SUM":
+				return oldvalue + newvalue;
+
+			case "MIN":
+				if( oldvalue <= newvalue  )		
+					return oldvalue;
+				else
+					return newvalue;
+			case "MAX":
+				if( oldvalue >= newvalue  )		
+					return oldvalue;
+				else
+					return newvalue;
+		}
+		return 0;
+	}
+
+	def buildFacts( request ) {
+		def o = request.entity;
+		
+		def facts = [];
+		def currDate = dateSvc.serverDate;
+		def dt = currDate;
+		if(o.dtfiled && !(o.dtfiled instanceof java.util.Date)) {
+			dt = java.sql.Date.valueOf( o.dtfiled );
+		}
+		facts << new EffectiveDate( dt );
+		facts << new CurrentDate(currDate);
+
+		/***
+		* if there is lastrenewal year, for every years diff add a LastRenewal fact.
+		* provided the year must not be below 1990 (arbitrary number) 
+		**/
+		if( o.lastrenewal &&  (o.lastrenewal < o.appyear) ) {
+			if( o.lastrenewal <  (o.appyear-10) )
+				throw new Exception("Last renewal year not be more than 10 years");
+			(o.lastrenewal..(o.appyear-1)).each {
+				facts << new LateRenewal( it );
+			}
+		}
+
+		bpFacts.buildApplication( o, facts );
+		return facts;
+	}
+
+	def buildActions(def request) {
+		def actions = new RuleAction();
+		actions.addCommand( "ask_business_info", new AskBusinessInfo( infoBuilder: infoBuilder, request:request ));
+		actions.addCommand( "assert_business_info", new AssertBusinessInfo(request:request, infoBuilder: infoBuilder,  comparator: comparator));
+		actions.addCommand( "compute_taxfee", new ComputeTaxFee( request:request, BA:ba, NA: numberSvc) );
+		actions.addCommand( "assert_taxfee", new AssertTaxFee( request:request, ruleSvc: ruleSvc));
+		actions.addCommand( "update_taxfee", new UpdateTaxFee(request:request));
+		actions.addCommand( "remove_taxfee", new RemoveTaxFee(request:request));
+		actions.addCommand( "select_taxfee", new SelectTaxFee(request:request));
+
+		actions.addCommand( "add_sysvar", new AddSysVar(request:request, comparator: comparator));
+		actions.addCommand( "assert_sysvars", new AssertSysVars(request:request));
+		actions.addCommand( "add_requirement", new AddRequirement(request:request, BR: br));
+		actions.addCommand( "print_test", new PrintTest());
+		return actions;
+	}
+
+
+	@ProxyMethod
+	public def execute(def o) throws Exception {
+		if(!o.lobs)
+			throw new Exception("Please provide at least one line of business");
+		def request = [newinfos:[], taxfees:[], lobMap:[:], vars:[:], taxfeefacts:[], entity: o, requirements:[] ]; 
+		request.facts = buildFacts(request);
+		request.actions = buildActions( request );
+		
+		def grps = ruleDB.getRulegroups( [ruleset: RULESET] );
+		int phase = 0;
+		for( g in grps ) { 
+			request.phase = phase;
+			request.vars.clear();
+			request.taxfeefacts.clear();
+
+			ruleSvc.execute( RULESET, request.facts, request.actions, g.name );
+			//if first phase and there is entry in newinfos break it.
+			if(phase <= 1 && request.newinfos) break;
+			phase++;
+		}
+		
+		//sort taxfees before returning to the client. check also if there are extended taxfees
+		//calculate also the totals
+		def totals = [:]	
+		if(request.taxfees) {
+			if(o.taxfees) {
+				request.taxfees.addAll(o.taxfees);
+			}
+			request.taxfees = request.taxfees.findAll{ it.lob?.objid!=null }.sort{ it.lob } + request.taxfees.findAll{it.lob?.objid==null};
+			totals.total_tax = request.taxfees.findAll{ it.account.taxfeetype == 'TAX'}.sum{it.amount};
+			if(!totals.total_tax) totals.total_tax = 0;
+			totals.total_regfee = request.taxfees.findAll{ it.account.taxfeetype == 'REGFEE'}.sum{it.amount};
+			if(!totals.total_regfee) totals.total_regfee = 0;
+			totals.total_othercharge = request.taxfees.findAll{ it.account.taxfeetype == 'OTHERCHARGE'}.sum{it.amount};
+			if(!totals.total_othercharge) totals.total_othercharge = 0;
+			totals.total = totals.total_tax + totals.total_regfee + totals.total_othercharge;
+		}		
+		return [infos:request.newinfos, taxfees: request.taxfees, phase: phase, requirements:request.requirements, totals:totals];
+	}
+}
+
+public class AskBusinessInfo implements RuleActionHandler {
+	def infoBuilder;
+	def request;
+	public void execute(def params, def drools) {
+		def lob = params.lob;
+		def attrid = params.attribute.key;
+		def defvalue = params.defaultvalue;
+		def laterenewal = params.laterenewal;
+		def entity = request.entity;
+		def newinfos = request.newinfos;
+
+		def info = infoBuilder( entity, newinfos, lob, attrid, null, request.phase, laterenewal );
+		if(info) info.defaultvalue = defvalue;
+	}
+}
+
+public class AssertBusinessInfo implements RuleActionHandler {
+	def request;
+	def infoBuilder;
+	def comparator;
+
+	public void execute(def params, def drools) {
+		def lob = params.lob;
+		def attrid = params.attribute.key;
+		def val = params.value;
+		def facts = request.facts;
+		def laterenewal = params.laterenewal;
+
+		//check if fact already exists
+		def info = infoBuilder( request.entity, request.newinfos, lob, attrid, val, request.phase, laterenewal );
+		if(info!=null) {
+			def dtype = info.attribute.datatype;
+			def f = new BusinessInfo(dtype, info.value);
+			f.objid = info.objid;
+			f.name = info.attribute.name;
+			f.lob = lob;
+			facts << f;
+		}
+	}
+}
+
+
+/***
+* This has a different implementation than the old rules. The higher the number is prioritized
+*/
+public class ComputeTaxFee implements RuleActionHandler {
+	def request;
+	def BA;
+	def NA;
+
+	public void execute(def params, def drools) {
+		def entity = request.entity;
+		def taxfees = request.taxfees;
+		def taxfeefacts = request.taxfeefacts;
+		def lob = params.lob;
+		def acctid = params.account.key;
+		def amt = params.amount.doubleValue;
+		def test = null;
+		
+ 		if( !lob ) {
+			test = taxfees.find{it.lob?.objid==null && it.account.objid == acctid};
+		}
+		else {
+			test = taxfees.find{it.lob?.objid!=null && it.lob.objid == lob.objid && it.account.objid == acctid };
+		}
+
+		//if account already exists, do not override.
+		if(!test) {
+			def info = [objid:"BPTXFEE"+new UID()];
+			info.account = BA.findAccount( [objid: acctid] );
+			if(lob) {
+				info.lob = [objid:lob.objid, name:lob.name];
+			}
+			info.taxfeetype = info.account.taxfeetype;
+			info.paymentmode = info.account.paymentmode;
+			info.assessedvalue = NA.round(amt);
+			info.amount = NA.round(amt);
+			info.rulename = drools.rule.name;
+			taxfees << info;
+			taxfeefacts << info;
+		}
+		else {
+			//add rule history so we can trace rules that executed the account.
+			if( test._taxfees == null ) test._taxfees = [];
+			def hist = [rulename: drools.rule.name, amount: amt];
+			if( lob!=null) hist.lob = [objid:lob.objid, name:lob.name];
+			test._taxfees << hist;
+		}
+	}
+}
+
+public class AssertTaxFee implements RuleActionHandler {
+	def ruleSvc;
+	def request;
+	
+	public void execute(def type, def drools) {
+		def facts = request.facts;
+		def taxfees = request.taxfees;
+		def taxfeefacts = request.taxfeefacts;
+		for(it in taxfeefacts) {
+			def bt = new TaxFeeAccount();
+			bt.objid = it.objid;
+			bt.acctid = it.account.objid;
+			if(it.lob?.objid) {
+				//find the LOB
+				bt.lob = facts.find{ z-> (z instanceof bpls.facts.LOB) && z.lobid==it.lob.objid };
+			} 
+			bt.name = it.account.title;
+			bt.amount = it.amount;
+			bt.type = it.account.taxfeetype;
+			bt.assessedvalue = it.assessedvalue;
+			bt.data = it;
+			facts << bt;
+		}
+		
+	}
+}
+
+
+public class UpdateTaxFee implements RuleActionHandler {
+	def request;
+	public void execute(def params, def drools) {
+		def amt = params.amount.doubleValue;
+		def tf = params.taxfee;
+		tf.amount = amt
+		params.taxfee.data.amount = amt;
+	}
+}
+
+public class SelectTaxFee implements RuleActionHandler {
+	def request;
+	public void execute(def params, def drools) {
+		def taxfeefacts = request.taxfeefacts;
+		def tf = params.taxfeeaccount;
+		def selectoption = params.selectoption;
+
+		def data = tf.data;
+		data.lob = null;
+		def test = taxfeefacts.find{ it.account?.objid == tf.acctid };
+		if(!test) {
+			taxfeefacts << data;
+		}
+		else {
+			def torep=null;
+			if(selectoption == "MIN" ) {
+				if(test.amount > data.amount) {
+					taxfeefacts.remove( test );	
+					taxfeefacts << data;				
+					torep = test;
+				}
+				else {
+					torep = data;
+				}	
+			}
+			else {
+				if(test.amount < data.amount ) {
+					taxfeefacts.remove(test);
+					taxfeefacts << data;
+					torep = test;
+				}	
+				else {
+					torep = data;
+				}	
+			}
+			def z = request.taxfees.find{ it.objid == torep.objid };
+			request.taxfees.remove(z);
+			//remove from facts
+			def f = request.facts.findAll{ it.class.name == "bpassessment.TaxFeeAccount" }.find{ it.objid == torep.objid };
+			request.facts.remove(f);
+		}
+	}
+}
+
+
+
+public class RemoveTaxFee implements RuleActionHandler {
+	def request;
+	public void execute(def params, def drools) {
+		
+		def tf = params.taxfee;
+		def acctid = tf.acctid;
+		def lob = tf.lob;
+
+		def taxfees = request.taxfees;
+		def facts = request.facts;
+		facts.remove(tf);
+		def test;
+		if( !lob ) {
+			test = taxfees.findAll{it.lob?.objid==null}.find{it.account.objid == acctid};
+		}
+		else {
+			test = taxfees.findAll{it.lob?.objid!=null}.find{ it.lob.objid == lob.objid && it.account.objid == acctid };
+		}
+		if(test) {
+			taxfees.remove(test);
+		}	
+	}
+}
+
+public class AddSysVar implements RuleActionHandler {
+	def request;
+	def comparator;
+
+	public void execute(def params, def drools) {
+		def vars = request.vars;
+		String name = params.name;
+		String agg = params.aggregate;
+		String dtype = params.datatype;
+		def value = params.value;
+		if( agg == "COUNT") dtype = "integer";
+		
+		def var = vars[name];
+		if( var == null ) {
+			var = [datatype:dtype, name: name ];
+			vars[name] = var;
+		}
+		def newAmt = 0;
+		if( agg !="COUNT") {
+			newAmt = (dtype=="integer") ? value.intValue : value.doubleValue;
+		}
+		
+		def oldAmt = (var.value==null) ? 0 : var.value;
+		var.value = comparator( agg, oldAmt, newAmt );
+ 		
+	}
+}
+
+//Loads each variable and 
+public class AssertSysVars implements RuleActionHandler {
+	def request;
+	public void execute(def params, def drools) {
+		def vars = request.vars;
+		def facts = request.facts;
+		vars.each { k,v->
+			def f = new SysVariable(v.datatype, v.value);
+			f.name = v.name;
+			facts << f;
+		}
+		vars.clear();
+	}
+
+}
+
+public class AddRequirement implements RuleActionHandler {
+	def request;
+	def BR;
+	public void execute(def params, def drools) {
+		def type = params.type;
+		def step = params.step;
+		if( !request.requirements.find{it.refid == type.key}) {
+			def z = BR.findReq([objid: type.key])
+			def filetype=null;
+			if(z.type=="DATA") filetype = "bprequirement:DATA";
+			request.requirements << [refid: type.key, type:z.type, filetype:filetype, title: type.value, step: step ]; 
+		}
+	}
+
+}
+
+
+public class PrintTest implements RuleActionHandler {
+
+	public void execute(def params, def drools) {
+		def msg = params.message;
+		println "-------------- Print Message ------------------";
+		println msg.stringValue; 
+	}
+
+}

@@ -1,0 +1,33 @@
+import com.rameses.annotations.*;
+import com.rameses.util.*;
+import java.rmi.server.*;
+import com.rameses.services.extended.*;
+
+public class BusinessInfoService extends ActiveCrudListService {
+
+	@ActiveDB("business")
+	def em;
+
+	@Service("SequenceService")
+	def seqSvc;
+
+	@Service("DateService")
+	def dateSvc;
+
+	@Env
+	def env;
+
+
+	@ProxyMethod
+	public void saveInfo(app) {
+		
+
+	}
+
+	
+
+	
+
+	
+
+}

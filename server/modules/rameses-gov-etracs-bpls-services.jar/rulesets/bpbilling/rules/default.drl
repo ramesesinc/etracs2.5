@@ -6,6 +6,19 @@ import java.math.*;
 
 global RuleAction action;
 
+rule "set-deadline-newbusiness"
+	agenda-group "initial"
+	salience -40
+	no-loop
+	when
+		BPApplication($year: appyear)
+		TF: TaxFeeAccount( qtr == 0 )
+	then
+		if( $year > 0) {
+			TF.setDeadline( java.sql.Date.valueOf( ($year+1)+"-01-01") );
+		}
+end
+
 rule "set-deadline"
 	agenda-group "initial"
 	salience -40

@@ -72,16 +72,16 @@ public class ApplicationTemplate extends javax.swing.JPanel {
         com.rameses.rcp.control.border.XLineBorder xLineBorder1 = new com.rameses.rcp.control.border.XLineBorder();
         xLineBorder1.setLineColor(new java.awt.Color(204, 204, 204));
         xLabel2.setBorder(xLineBorder1);
-        xLabel2.setCaption("Permittee");
-        xLabel2.setExpression("#{entity.permitee.name}");
+        xLabel2.setCaption("Owner");
+        xLabel2.setExpression("#{entity.owner.name}");
         xLabel2.setPreferredSize(new java.awt.Dimension(0, 18));
         xFormPanel1.add(xLabel2);
 
         com.rameses.rcp.control.border.XLineBorder xLineBorder2 = new com.rameses.rcp.control.border.XLineBorder();
         xLineBorder2.setLineColor(new java.awt.Color(204, 204, 204));
         xLabel16.setBorder(xLineBorder2);
-        xLabel16.setCaption("Address");
-        xLabel16.setExpression("#{entity.permitee.address}");
+        xLabel16.setCaption("Owner Address");
+        xLabel16.setExpression("#{entity.owner.address}");
         xLabel16.setPreferredSize(new java.awt.Dimension(0, 18));
         xFormPanel1.add(xLabel16);
 

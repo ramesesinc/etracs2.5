@@ -1,0 +1,7 @@
+<workunit extends="wtemplates/ExplorerViewController.xml" serviceName="CityEngineerBPApplicationListService" 
+    defaultFileType="bpapplication_ceo" autoSelect="true">
+    <invokers>
+        <invoker folderid="/explorer/txn/bpls" caption="Business Applications (City Engineers)" target="window" index="11" role="ASSESSOR"/>
+        <invoker type="home.action" caption="Business Applications (City Engineers)" target="window" index="11" role="ASSESSOR"/>
+    </invokers>
+</workunit>

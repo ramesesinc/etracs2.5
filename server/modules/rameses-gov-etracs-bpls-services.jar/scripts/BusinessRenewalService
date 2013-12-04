@@ -15,7 +15,7 @@ public class BusinessRenewalService  {
 	public def getColumns(o) {
 		return [
 			[name:'tradename', caption:'Trade Name1'],
-			[name:'permitee.name', caption:'Permitee'],
+			[name:'owner.name', caption:'Owner'],
 			[name:'businessaddress', caption:'Business Address'],
 			[name:'bin', caption:'BIN'],
 			[name:'activeyear', caption:'Year'],

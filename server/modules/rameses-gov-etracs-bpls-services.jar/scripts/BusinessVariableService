@@ -11,11 +11,17 @@ class BusinessVariableService extends ActiveCrudListService {
 		return [
 			[name:"name", caption:"Name"],
 			[name:"caption", caption:"Caption"],
-			[name:"datatype", caption:"Data Type"]
+			[name:"datatype", caption:"Data Type"],
+			[name:"system", caption:"System", type:'checkbox', checkedValue:1, uncheckedValue:0, width:50],
 		]
 	}
 
 	void beforeCreate(o) {
 		o.objid = o.name;
 	}
+	
+	void beforeUpdate(o) {
+		o.objid = o.name;
+	}
+
 }

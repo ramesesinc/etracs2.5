@@ -1,71 +1,43 @@
+#######################################
+# BPApplicationListService
+#######################################
 [getList]
 SELECT DISTINCT a.* FROM 
-(SELECT * FROM business_application WHERE state=$P{state} AND permitee_name LIKE $P{searchtext}
+(SELECT * FROM bpapplication WHERE owner_name LIKE $P{searchtext}
 UNION
-SELECT * FROM business_application WHERE state=$P{state} AND tradename LIKE $P{searchtext}
+SELECT * FROM bpapplication WHERE tradename LIKE $P{searchtext}
 UNION
-SELECT * FROM business_application WHERE state=$P{state} AND appno LIKE $P{searchtext}) a
+SELECT * FROM bpapplication WHERE appno LIKE $P{searchtext}) a
+WHERE a.state=$P{state}
 ORDER BY a.appno
 
-[getListSearch]
+[getSearchList]
 SELECT DISTINCT a.* FROM 
-(SELECT * FROM business_application WHERE permitee_name LIKE $P{searchtext}
+(SELECT * FROM bpapplication WHERE owner_name LIKE $P{searchtext}
 UNION
-SELECT * FROM business_application WHERE tradename LIKE $P{searchtext}
+SELECT * FROM bpapplication WHERE tradename LIKE $P{searchtext}
 UNION
-SELECT * FROM business_application WHERE appno LIKE $P{searchtext}) a
+SELECT * FROM bpapplication WHERE appno LIKE $P{searchtext}) a
 ORDER BY a.appno
 
-[getExtOfficeList]
-SELECT DISTINCT a.*, br.department, ba.objid AS refid, ba.objid AS reftype,
-CASE WHEN ba.status = 'completed' THEN 1 ELSE 0 END AS completed
-FROM 
-(
-	SELECT * FROM business_application WHERE state=$P{state} AND permitee_name LIKE $P{searchtext}
-	UNION
-	SELECT * FROM business_application WHERE state=$P{state} AND tradename LIKE $P{searchtext}
-	UNION
-	SELECT * FROM business_application WHERE state=$P{state} AND appno LIKE $P{searchtext}
-) a
-INNER JOIN business_application_requirement ba ON  a.objid=ba.applicationid
-INNER JOIN businessrequirement br ON ba.refid=br.objid
-ORDER BY a.appno
-
-[submitExternalOfficeFees]
-UPDATE business_application_requirement 
-SET status = 'completed', 
-completedby_objid=$P{userid}, completedby_name=$P{username}, dtcompleted=$P{dtcompleted} 
-WHERE objid=$P{objid}
-
-
-####################################
-# used to lookup application
-####################################
-[getLookupByPermitee]
-SELECT ba.objid AS applicationid, ba.appno, ba.apptype, ba.permitee_name, 
-ba.tradename, ba.businessid, b.bin, ba.businessaddress 
-FROM business_application ba 
-LEFT JOIN business_bin b ON b.objid=ba.businessid
-WHERE ba.state = $P{state} AND ba.permitee_objid=$P{permiteeid}
-
-[findApplicationByAppNo]
-SELECT ba.objid AS applicationid, ba.appno, ba.apptype, ba.permitee_objid, ba.permitee_name, 
-ba.tradename, ba.businessid, b.bin, ba.businessaddress 
-FROM business_application ba 
-LEFT JOIN business_bin b ON b.objid=ba.businessid
-WHERE  ba.appno=$P{appno}
-
-
+#######################################
+# used for retrieving the application
+#######################################
 [getLobs]
 SELECT *, lc.name AS classification_name, lc.objid as classification_objid   
-FROM business_lob bl
+FROM bpapplication_lob bl
 INNER JOIN lob ON bl.lobid=lob.objid
 INNER JOIN lobclassification lc ON lob.classification_objid=lc.objid 
-WHERE bl.applicationid=$P{objid}
+WHERE bl.applicationid = $P{objid}
 
 [getInfos]
-SELECT bi.*, b.caption  AS attribute_caption, b.datatype AS attribute_datatype
-FROM business_info bi 
+SELECT bi.*, 
+b.caption  AS attribute_caption, 
+b.datatype AS attribute_datatype, 
+b.sortorder AS attribute_sortorder,
+b.category AS attribute_category,
+b.handler AS attribute_handler
+FROM bpapplication_info bi 
 INNER JOIN businessvariable b ON b.objid=bi.attribute_objid
 WHERE bi.applicationid=$P{objid}
 
@@ -74,42 +46,48 @@ SELECT br.*, r.code AS account_code, ba.taxfeetype, ba.taxfeetype AS account_tax
 FROM business_receivable br 
 INNER JOIN businessaccount ba ON br.account_objid = ba.objid
 INNER JOIN revenueitem r ON  r.objid=ba.objid 
-WHERE applicationid=$P{objid} 
-
-[getExternalOfficeFees]
-SELECT br.*, r.code AS account_code,  ba.taxfeetype AS account_taxfeetype, ba.taxfeetype
-FROM business_receivable br 
-INNER JOIN businessaccount ba ON br.account_objid = ba.objid
-INNER JOIN revenueitem r ON  r.objid=ba.objid 
-WHERE applicationid=$P{objid} AND NOT(refid IS NULL)
+WHERE br.applicationid=$P{objid} 
 
 [getRequirements]
-SELECT bpr.*, br.type  
-FROM business_application_requirement bpr
-INNER JOIN businessrequirement br ON bpr.refid=br.objid 
+SELECT bpr.*, br.type, bd.*  
+FROM bpapplication_requirement bpr
+INNER JOIN businessrequirement br ON bpr.refid=br.objid
+LEFT JOIN  bpapplication_requirement_data bd ON bd.objid=br.objid
 WHERE bpr.applicationid=$P{objid}
 
 [getDocRequirements]
 SELECT * 
-FROM business_application_requirement_data b
+FROM bpapplication_requirement_data b
 WHERE b.objid=$P{objid}
 
+[findApplicationByAppNo]
+SELECT ba.objid AS applicationid, ba.appno, ba.apptype, ba.owner_objid, ba.owner_name, 
+ba.tradename, ba.businessid, b.bin, ba.businessaddress 
+FROM bpapplication ba 
+LEFT JOIN business_bin b ON b.objid=ba.businessid
+WHERE  ba.appno=$P{appno}
+
+####################################
+# used for update infos.
+####################################
+[removeLobs]
+DELETE FROM bpapplication_lob WHERE applicationid=$P{objid}
+
+[removeInfos]
+DELETE FROM bpapplication_info WHERE applicationid=$P{objid}
 
 
-[getRequirementsForValidation]
-SELECT br.title AS caption     
-FROM bpapplication_requirement bp
-INNER JOIN business_requirement br ON bp.refid=br.objid 
-WHERE  bp.parentid=$P{objid} AND NOT(status='completed') 
-AND bp.step = $P{step}
+####################################
+# used to lookup application
+####################################
+[getLookupByOwner]
+SELECT ba.objid AS applicationid, ba.appno, ba.apptype, ba.owner_name, 
+ba.tradename, ba.businessid, b.bin, ba.businessaddress 
+FROM bpapplication ba 
+LEFT JOIN business_bin b ON b.objid=ba.businessid
+WHERE ba.state = $P{state} AND ba.owner_objid=$P{ownerid}
 
-[completeRequirement]
-UPDATE bpapplication_requirement 
-SET status='completed', completedby_objid=$P{userid}, completedby_name=$P{username},
-dtcompleted=$P{dtcompleted}, remarks = $P{remarks} 
-WHERE objid=$P{objid}
-
-	
 [changeState]
-UPDATE business_application SET state = $P{state} WHERE objid = $P{objid}
+UPDATE bpapplication SET state = $P{state} WHERE objid = $P{objid}
+
 

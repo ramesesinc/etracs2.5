@@ -1,7 +1,7 @@
 <workunit>
     <invokers>
-        <invoker type="businessvariable:create" action="init" caption="Variable"/>
-        <invoker type="businessvariable:open" action="open" caption="Variable"/>
+        <invoker type="businessvariable:create" action="init" caption="Business Variable"/>
+        <invoker type="businessvariable:open" action="open" caption="Business Variable"/>
     </invokers>
     <code>
         <![CDATA[
@@ -9,8 +9,15 @@
             import com.rameses.rcp.annotations.*;
             import com.rameses.osiris2.common.*;
             
-            class BusinessVariableController extends CRUDController
-            {
+            class BusinessVariableController extends CRUDController {
+            
+                String serviceName = 'BusinessVariableService'
+                String entityName = 'businessvariable'
+                String prefixId = 'BV'
+                def arrayvalue
+                def datatypes = LOV.VAR_DATA_TYPES
+                def vartype = 'USER-DEFINED';
+                
                 @PropertyChangeListener
                 def listener = [
                     "entity.datatype": {o->
@@ -19,15 +26,28 @@
                     }
                 ]
                 
-                String serviceName = 'BusinessVariableService'
-                String entityName = 'businessvariable'
-                String prefixId = 'BV'
+                public boolean isAllowEdit() {
+                    return (entity.system==1) ? false: super.isAllowEdit();
+                }
                 
-                def arrayvalue
-                def datatypes = LOV.VAR_DATA_TYPES
+                public boolean isAllowCreate() {
+                    return (entity.system==1) ? false: super.isAllowCreate();
+                }
+
+                public boolean isAllowApprove() {
+                    return (entity.system==1) ? false: super.isAllowApprove();
+                }
+                
+                public boolean isAllowDelete() {
+                    return (entity.system==1) ? false: super.isAllowDelete();
+                }
+
+                void afterOpen(o) {
+                    vartype = (o.system==1) ? 'SYSTEM' : 'USER-DEFINED';  
+                }
                 
                 Map createEntity() {
-                    return [ arrayvalues:[] ]
+                    return [ system:0, arrayvalues:[] ]
                 }
                 
                 void addArrayValue() {
@@ -49,6 +69,6 @@
         ]]>
     </code>
     <pages>
-        <page template="com.rameses.gov.etracs.bpls.lob.BusinessVariablePage"/>
+        <page template="com.rameses.gov.etracs.bpls.BusinessVariablePage"/>
     </pages>
 </workunit>

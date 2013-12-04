@@ -44,14 +44,14 @@
 
 	<field name="barcode" class="java.lang.String"/>
 	<field name="barcodeurl" class="java.lang.String"/>
-	<field name="permiteeaddress" class="java.lang.String"/>
+	<field name="owneraddress" class="java.lang.String"/>
 	<field name="orlist" class="java.lang.Object"/>
 	<field name="validity" class="java.util.Date"/>
 	<field name="appdate" class="java.util.Date"/>
 	<field name="apptype" class="java.lang.String"/>
 	<field name="iyear" class="java.lang.String"/>
 	<field name="lobs" class="java.lang.Object"/>
-	<field name="permiteename" class="java.lang.String"/>
+	<field name="ownername" class="java.lang.String"/>
 	<field name="businessaddress" class="java.lang.String"/>
 	<field name="tradename" class="java.lang.String"/>
 	<field name="permitno" class="java.lang.String"/>
@@ -310,7 +310,7 @@
 					<textElement textAlignment="Left" verticalAlignment="Bottom" rotation="None" lineSpacing="Single">
 						<font fontName="Tahoma" pdfFontName="Helvetica" size="11" isBold="true" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{permiteename}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{ownername}]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement

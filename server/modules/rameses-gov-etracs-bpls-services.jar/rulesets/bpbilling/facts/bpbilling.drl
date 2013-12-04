@@ -4,6 +4,7 @@ import java.util.Date;
 
 declare BPApplication
 	orgtype:		String
+	appyear:		int
 	officetype:		String
 	apptype:		String
 	txnmode:		String

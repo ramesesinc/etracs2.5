@@ -3,13 +3,10 @@ import com.rameses.util.*;
 import java.rmi.server.*;
 import com.rameses.services.extended.*;
 
-public class BPApplicationService extends ActiveCrudListService {
+public class BPApplicationService extends ActiveCrudService {
 
 	@ActiveDB("bpapplication")
 	def em;
-
-	@ActiveDB("businessaccount")
-	def ba;
 
 	@Service("SequenceService")
 	def seqSvc;
@@ -17,51 +14,16 @@ public class BPApplicationService extends ActiveCrudListService {
 	@Service("DateService")
 	def dateSvc;
 
-	@Service("BusinessInfoService")
-	def bizSvc;
-
-	@ActiveDB("business")
-	def biz;
-
-	@Service("BPAssessmentService")
+	@Service("BPAssessmentRuleService")
 	def assessmentSvc;
 
 	@Env
 	def env;
 
-	@ProxyMethod
-	public def getNodes(o) {
-		return [
-			[name:'assessment', caption:'For Assessment', state:'assessment', leaf:true, folder:true, allowSearch:true],
-			[name:'approval', caption:'For Approval', state:'approval', leaf:true, folder:true, allowSearch:true],
-			[name:'payment', caption:'For Payment', state:'payment', leaf:true, folder:true, allowSearch:true],
-			[name:'release', caption:'For Release', state:'release', leaf:true, folder:true, allowSearch:true]
-		];
-	}	
-
-	@ProxyMethod
-	public def getColumns(o) {
-		return [
-			[name:'appno', caption:'Application No', width:120, resizable:false],
-			[name:'apptype', caption:'App. Type', width:80, resizable:false],
-			[name:'permitee.name', caption:'Permitee'],
-			[name:'tradename', caption:'Trade Name', expression: "#{item.tradename} #{((item.branchname) ? '( '+item.branchname+' )' : '')}", type:'label'],
-			[name:'state', caption:'State', width:120, resizable:false],
-			[name:'txnmode', caption:'Txn Mode', width:120, resizable:false],
-		];
-	}
-
-	void beforeList(o) {
-		o._pagingKeys = "a.objid";
-		if(o.name=="search") {
-			//do not fire search if specifics not defined
-			if( o.searchtext == "%") o.searchtext ="?";
-			o._listMethod = "getListSearch";
-		}	
-	}
-
 	
 	public void beforeCreate(o) {
+		validateRequirements(o.requirements, "info");
+
 		if(!o.txnmode)
 			throw new Exception("Please specify txnmode");
 
@@ -71,34 +33,48 @@ public class BPApplicationService extends ActiveCrudListService {
 			o.appyear = yr;
 			o.yearstarted = yr;
 		}
-
-		//create the business if there is none referenced
-		if( !o.businessid ) {
-			def m = [:];
-			m.putAll( o );
-			m.activeyear = o.appyear;
-			m.applicationid = o.objid;
-			def b = bizSvc.create(m);
-			o.businessid = b.objid;
-		}
-		else {
-			bizSvc.updateActiveStatus( [objid: o.businessid, year:o.appyear ]);
-		}
 		def mnth = dateSvc.serverMonth;
 		def smon = ( mnth < 10 ) ? "0"+mnth : mnth+"";
 		def prefix = "BP"+o.appyear+smon;
 		o.appno = prefix+seqSvc.getNextFormattedSeries(prefix);
 		o.txndate = dateSvc.serverDate;
 		o.createdby = env.USERID;
-		o.state = "assessment";		
+		o.state = "info";		
 	}
 
+	/*************************************************************************
+	* after create, create also ledger where we can post our taxes and fees. 
+	**************************************************************************/
 	public void afterCreate(o) {
+		saveLobs(o);
+		saveInfos(o);
+		saveRequirements(o);
+	}
+	
+	public void saveLobs(o) {
+		o.lobs.each {
+			it.applicationid = o.objid;
+			if(o.businessid) it.businessid = o.businessid;
+			it.iyear = o.appyear;
+			em.save( it, "lob" );
+		}
+	}
+
+	public void saveInfos(o) {
+		o.infos.each {
+			it.applicationid = o.objid;
+			if(o.businessid) it.businessid = o.businessid;
+			it.iyear = o.appyear;
+			convertInfo(it);
+			em.save( it, "info" );
+		}
+	}
+
+	public void saveRequirements(o) {
 		//create the requirements
 		for(x in o.requirements) {
 			if(!x.status) x.status = "open";
 			x.objid = "BAREQ" + new UID();
-			x.businessid = o.businessid;
 			x.applicationid = o.objid;
 			em.create( x, "requirement");
 			if(x.refno) {
@@ -107,52 +83,34 @@ public class BPApplicationService extends ActiveCrudListService {
 		}
 	}
 
-	@ProxyMethod
-	public def openByAppno(o) {
-		def z = em.findApplicationByAppNo( [appno:o.appno] );	
-		return open( [objid: z.applicationid ] );
+
+	private void convertInfo(o) {
+		def value = o.value;
+		if( value == null ) return;
+		switch(o.attribute.datatype) {
+			case "decimal":
+				o.decimalvalue = Double.parseDouble(value+"");
+				break;
+			case "integer":
+				o.intvalue = Integer.parseInt(value+"");
+				break;
+			case "string_array":	
+			case "string":
+				o.stringvalue = (String)value;
+				break;
+			case "boolean":
+				value = ( value == 1 || value == true ) ? "true" : "false";
+				boolean b =  Boolean.parseBoolean(value);
+				o.boolvalue = (b) ? 1 : 0; 
+				break;
+		} 
 	}
 
-	public void afterOpen(o) {
-		//get the taxpayer info also.
-		def permiteeInfo = biz.findPermiteeInfo([objid: o.permitee.objid ]);
-		if(permiteeInfo!=null) o.permitee.putAll( permiteeInfo );
-		def formatter = { x->
-			switch(x.attribute.datatype) {
-				case "decimal" : return x.decimalvalue; break;
-				case "integer" : return x.intvalue; break;
-				case "string"  : return x.stringvalue; break;
-				case "boolean" : 
-					if(x.boolvalue == 0) return false;
-					if(x.boolvalue == 1) return true;
-					return x.boolvalue; 
-					break;
-			}
-		}
-		o.lobs = em.getLobs(o);
-		o.infos = em.getInfos(o);
-		o.infos.each { it.value = formatter(it); }
-		o.taxfees = em.getTaxfees(o);
-		o.requirements = em.getRequirements(o);
-		o.requirements.each {
-			if(it.type == "DOC" ){
-				def d = em.getDocRequirements(it);
-				it.putAll( d );
-			} 
-			if(it.status == 'completed') it.completed = 1;
-		}
-	}
 
-	public void afterUpdate( o ) {
-		def m = [objid:o.businessid, applicationid:o.objid, activeyear: o.appyear];
-		m.lobs = o.lobs;
-		m.infos = o.infos;
-		bizSvc.saveLobs(m);
-		bizSvc.saveInfos(m);
-	}
-
-	
-
+	/**********************************************************
+	* This is called in many aspects of the application. during
+	* create, approval of assessment, etc.
+	***********************************************************/
 	@ProxyMethod
 	public void validateRequirements(def reqs, def step) {
 		def buffer = new StringBuffer();
@@ -168,91 +126,111 @@ public class BPApplicationService extends ActiveCrudListService {
 	}
 
 	@ProxyMethod
-	public def addExternalFee(o) {
-		if(!o.department)
-			throw new Exception("Department is required in external fees");
-		if(!o.refid)	
-			throw new Exception("Refid to the requirement is required in external fees");
-
-		o.amtpaid = 0;
-		o.discount = 0;	
-		biz.create( o , "receivable" );
+	public def openByAppno(o) {
+		def z = em.findApplicationByAppNo( [appno:o.appno] );	
+		if(!z)
+			throw new Exception("Doc not found");
+		return open( [objid: z.applicationid ] );
 	}
 
+	public void afterOpen(o) {
+		def formatter = { x->
+			switch(x.attribute.datatype) {
+				case "decimal" : return x.decimalvalue; break;
+				case "integer" : return x.intvalue; break;
+				case "string"  : return x.stringvalue; break;
+				case "boolean" : 
+					if(x.boolvalue == 0) return false;
+					if(x.boolvalue == 1) return true;
+					return x.boolvalue; 
+					break;
+			}
+		}
+		o.lobs = em.getLobs(o);
+		o.infos = em.getInfos(o);
+		o.requirements = em.getRequirements(o);
+		o.infos.each { it.value = formatter(it) };
+		o.requirements.each {
+			if(it.type == "DOC" ){
+				def d = em.getDocRequirements(it);
+				it.putAll( d );
+			} 
+			if(it.status == 'completed') it.completed = 1;
+		}
+		//if state is for approval, include the taxfees.
+		if( o.state == 'approval') {
+			def result = assess(o);	 
+			o.taxfees = result.taxfees;
+			o.total_tax = result.totals.total_tax;
+			o.total_regfee = result.totals.total_regfee;
+			o.total_othercharge = result.totals.total_othercharge;
+			o.total = result.totals.total;
+		}
+		else {
+			o.taxfees = em.getTaxfees(o);	
+			o.total_tax = o.taxfees.findAll{ it.account.taxfeetype == 'TAX'}.sum{it.amount};
+			o.total_regfee = o.taxfees.findAll{ it.account.taxfeetype == 'REGFEE'}.sum{it.amount};
+			o.total_othercharge = o.taxfees.findAll{ it.account.taxfeetype == 'OTHERCHARGE'}.sum{it.amount};
+			if(!o.total_tax) o.total_tax = 0;
+			if(!o.total_regfee) o.total_regfee = 0;
+			if(!o.total_othercharge) o.total_othercharge = 0;
+			o.total = o.total_tax + o.total_regfee + o.total_othercharge;
+		}
+	}
+
+	/*************************************************************************
+	* update info saves lines of business and fees   
+	**************************************************************************/
 	@ProxyMethod
-	public def removeExternalFee(o) {
-		biz.delete( o , "receivable" );
+	public def updateInfos(o) {
+		em.removeLobs(o);
+		em.removeInfos(o);
+		saveInfos(o);
+		saveLobs(o);
 	}
 
+	/*************************************************************************
+	* assess   
+	**************************************************************************/
 	@ProxyMethod
-	public def submitExternalFees(o) {
-		if(!o.refid)
-			throw new Exception("Submit external fees require refid");
-		def m = [:];
-		m.objid = o.refid;
-		m.userid = env.USERID;
-		m.username = env.USERNAME;
-		m.dtcompleted = dateSvc.serverDate;
-		em.submitExternalOfficeFees( m );	
+	public def submitForAssessment(o) {
+		o.state = "asessment";
+		em.changeState( o );
 	}
+
 
 	@ProxyMethod
 	public def assess(o) {
-		def result = assessmentSvc.execute(o);		
-		def taxfees = result.taxfees;
-		def fees = em.getExternalOfficeFees(o);
-		taxfees.addAll( fees );
-		return result;
+		return assessmentSvc.execute(o);		
 	}
 
 	@ProxyMethod
 	public def submitForApproval(o) {
 		validateRequirements( o.requirements, "payment" );
 		o.state = "approval";
-		update(o);
-		def m = [objid:o.businessid, applicationid:o.objid, iyear: o.appyear, iqtr:1];
-		m.lobs = o.lobs;
-		m.infos = o.infos;
-		bizSvc.saveLobs(m);
-		bizSvc.saveInfos(m);
+		em.changeState( o );
 	}
 
 	@ProxyMethod
 	public void sendBackToAssessment(o) {
 		o.state = "assessment";
-		update(o);
+		em.changeState( o );
 	}
 
 	@ProxyMethod
 	public void submitForPayment(o) {
-		o.state = "payment";
-		update(o);
-		def m = [objid:o.businessid, applicationid:o.objid, iyear: o.appyear, iqtr:1];
-		//save data for executing
-		m.lobs = o.lobs;
-		m.infos = o.infos;
-		bizSvc.saveLobs(m);
-		bizSvc.saveInfos(m);
-		m.receivables = o.taxfees;
-		bizSvc.postReceivables(m);		
-		update(o);
-	}
-
-	@ProxyMethod
-	public def issueBin( o ) {
-		def z = [objid: o.businessid];
-		def yr = dateSvc.serverYear;
-		def mnth = dateSvc.serverMonth;
-		def smon = ( mnth < 10 ) ? "0"+mnth : mnth+"";
-		def prefix = "BIN"+yr+smon;
-		z.bin = prefix+seqSvc.getNextFormattedSeries(prefix);
-		em.create(z,  "bin");
-		return z;
-	}
-
-	@ProxyMethod
-	public def issuePermit( o ) {
-		
+		def m = [objid: o.objid ];
+		m.applicationid = o.objid;
+		em.create( m, "ledger" );
+		o.taxfees.each {
+			it.ledgerid = m.objid;
+			it.applicationid = o.objid;
+			it.iyear = o.appyear;
+			it.amtpaid = 0;
+			it.discount = 0;
+			em.create( it, "receivable" );
+		}
+		em.changeState( [objid:o.objid, state:'payment']);
 	}
 
 }	

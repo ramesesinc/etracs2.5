@@ -4,23 +4,27 @@
         <invoker type="home.action" caption="New Business Application"  action="start" target="window"  role="BUSINESSINFO,LICENSING"/>
         <invoker type="bpapplication:open" caption="BP Application" action="startOpen" target="window"  role="BUSINESSINFO,LICENSING"/>
         <invoker type="bpapplication:openByAppno" caption="BP Application" action="startOpenByAppno" target="window" role="BUSINESSINFO,LICENSING"/>
-        <invoker type="global:barcode:51005" caption="BP Application" action="startOpenByAppno" target="window"  role="BUSINESSINFO,LICENSING"/>
+        <invoker type="global:barcode:51005" caption="BP Application" action="startOpenByAppno" target="window"  srole="BUSINESSINFO,LICENSING"/>
         
         <!-- extended actions -->
-        <invoker type="extActions" caption="Print Application" action="printApp" visibleWhen="#{state.matches('success-save|assessment')}"/>
-        <invoker type="extActions" caption="Print Assessment" action="printAssessment" visibleWhen="#{state.matches('payment')}"/>
-        <invoker type="extActions" caption="Print Billing" action="printBilling" visibleWhen="#{state.matches('payment')}"/>
         
         <invoker type="extActions" caption="Issue BIN" action="issueBin" visibleWhen="#{state.matches('release')}"/>
         <invoker type="extActions" caption="Issue Permit" action="issuePermit" visibleWhen="#{state.matches('release')}"/>
         
-        <invoker type="extActions" caption="Edit Info" action="getInfo" visibleWhen="#{state.matches('assessment')}" role="ASSESSOR"/>
-        <invoker type="extActions" caption="Save"  action="save" visibleWhen="#{state.matches('assessment')}" role="ASSESSOR"/>
+        <!-- For Business Info -->
+        <invoker type="infoActions" caption="Add Line of Business" action="addLOB" visibleWhen="#{entity.state.matches('draft|info')}" role="BUSINESSINFO"/>
         
-        <!--
+        <!-- For Assessors -->
+        <invoker type="infoActions" caption="Change Line of Business" action="changeLOB" visibleWhen="#{entity.state=='assessment'}" role="ASSESSOR"/>
+        <invoker type="infoActions" caption="Update Info" action="updateInfo" visibleWhen="#{entity.state=='assessment'}" role="ASSESSOR"/>
+        <invoker type="infoActions" caption="Calculate Tax Fees" action="calculateTaxfee" visibleWhen="#{entity.state=='assessment'}" role="ASSESSOR"/>
+
+        <!-- For Approvers -->
+        <invoker type="infoActions" caption="Change Line of Business" action="changeLOB" visibleWhen="#{entity.state=='approval'}" role="APPROVER"/>
+        <invoker type="infoActions" caption="Update Info" action="updateInfo" visibleWhen="#{entity.state=='approval'}" role="APPROVER"/>
+
         <invoker type="extActions" caption="Reports" name="popupReports"   
-            visibleWhen="#{state.matches('approval|view-info')}" category="bpapplication:payment:reports" />
-        -->    
+            visibleWhen="#{entity.state!='draft'}" category="bpapplication:report" />
     </invokers>
     
     <code>
@@ -32,10 +36,13 @@
         import java.rmi.server.*;
         import com.rameses.gov.etracs.bpls.application.*;
         
-        class BPApplicationController extends BPApplicationExtended {
+        class BPApplicationController extends BPApplication {
         
              @Service("BusinessNameVerificationService")
              def nameSvc;
+             
+             @Service("BPApplicationService")
+             def appSvc;
              
              @FormTitle
              String windowTitle;
@@ -44,8 +51,8 @@
              def windowId;
              
              def searchNamePass = true;
-             def message;
              def barcodeid;
+             def dirty = false;
              
              def start() {
                 initNew();
@@ -56,30 +63,25 @@
              
              def startOpen() {
                 entity = appSvc.open([objid:entity.objid]);
-                if(entity.state=="approval") {
-                    def result = appSvc.assess(entity);
-                    entity.taxfees = result.taxfees;
-                }
                 windowTitle = entity.appno;
                 windowId = entity.objid;
-                updateBalances();
                 entity.orgtypename = orgTypes.find{ it.key == entity.orgtype}?.value;
                 return  super.start("open");
              }
              
+             //used by barcode
              def startOpenByAppno() {
                 entity = appSvc.openByAppno([appno:barcodeid]);
-                if(entity.state=="approval") {
-                    def result = appSvc.assess(entity);
-                    entity.taxfees = result.taxfees;
-                }
                 windowTitle = entity.appno;
                 windowId = entity.objid;
-                updateBalances();
                 entity.orgtypename = orgTypes.find{ it.key == entity.orgtype}?.value;
                 return  super.start("open");
              }
              
+             
+             /******************************************************************
+             * for verifying the business name
+             ******************************************************************/
              void checkBusinessName() {
                  searchList  = nameSvc.getList(entity.tradename); 
                  if(searchList) {
@@ -90,55 +92,129 @@
                     searchNamePass = true;
                  }
              }
+             
+             /******************************************************************
+             * invoked by new business application
+             ******************************************************************/
+             def addLOB() {
+                return InvokerUtil.lookupOpener( "bpapplicationinfo:edit", [
+                    entity: entity, 
+                    service: [execute: { o-> appSvc.assess(o); } ],
+                    handler:{ result ->
+                        entity.infos = result.infos;
+                        entity.requirements = result.requirements;
+                        lobModel.reload();
+                        infoModel.reload();
+                        requirementModel.reload();
+                    }
+                ]);
+             }
 
-             String getMessage() {
-                if( state == "confirm-save" )
-                    return "Please check that all entries are valid. Click Submit when completed.";
-                else
-                    return null;
+             /******************************************************************
+             * invoked during assessment
+             ******************************************************************/
+             void _updateAssessmentResult(result) {
+                def unedited = result.infos.findAll{ it.value == null };
+                if( unedited ) 
+                    throw new Exception("Some info(s) are not filled up. Please complete" ); 
+                entity.infos = result.infos;
+                entity.taxfees = result.taxfees;
+                entity.total_tax = result.totals.total_tax;
+                entity.total_regfee = result.totals.total_regfee;
+                entity.total_othercharge = result.totals.total_othercharge;
+                entity.total = result.totals.total;
+                infoModel.reload();
+                taxfeeModel.reload();
+                binding.refresh("entity.total.*");
+                //we need to save the data so it will be preserved.
+                appSvc.updateInfos( entity );
+                dirty = true;
              }
              
+             def changeLOB() {
+                return InvokerUtil.lookupOpener( "bpapplicationinfo:edit", [
+                    entity: entity, 
+                    service: [execute: { o-> appSvc.assess(o); } ],
+                    handler:{ result ->
+                        _updateAssessmentResult(result);
+                    }
+                ]);
+             }
+             
+             def updateInfo() {
+                return InvokerUtil.lookupOpener( "bpapplicationinfo:edit", [
+                    entity: entity, 
+                    initial: 'input',
+                    service: [execute: { o-> appSvc.assess(o); } ],
+                    handler:{ result ->
+                        _updateAssessmentResult(result);
+                    }
+                ]);
+             }
+             
+             void calculateTaxfee() {
+                def unedited = entity.infos.findAll{ it.value == null };
+                if( unedited ) 
+                    throw new Exception("Some info(s) are not filled up. Please complete" ); 
+                def result = appSvc.assess(entity);    
+                entity.taxfees = result.taxfees;
+                entity.total_tax = result.totals.total_tax;
+                entity.total_regfee = result.totals.total_regfee;
+                entity.total_othercharge = result.totals.total_othercharge;
+                entity.total = result.totals.total;
+                taxfeeModel.reload();
+                binding.refresh("entity.total.*");
+             }
+             
+             /*******************************************************************
+             * For saving new information
+             *******************************************************************/
+             
              void createApplication() {
+                if( !entity.lobs ) {
+                    throw new Exception("Please provide at least one line of business. Click on Add Line of Business Info");
+                }
+                if( !entity.infos) {
+                    throw new Exception("Please provide at least one business information. Click on Edit Info");
+                }
                 entity = appSvc.create( entity );
              }
              
              void save() {
                 appSvc.update( entity );
              }
-
-             def printApp() {
-                return InvokerUtil.lookupOpener( "bpapplication:application:report", [entity: entity] );
-             }
-             
-             def printAssessment() {
-                return InvokerUtil.lookupOpener( "bpapplication:assessment:report", [entity: entity] );
-             }
-             
-             def printBilling() {
-                return InvokerUtil.lookupOpener( "bpapplication:billing:report", [entity: entity] );
+             //*****************************************************************
+            
+            
+             /******************************************************************
+             * WORKFLOW
+             ******************************************************************/
+             void submitForAssessment() {
+                appSvc.submitForAssessment(entity);
+                entity.state = "assessment";
              }
              
              void submitForApproval() {
+                if(!entity.taxfees)
+                    throw new Exception("Please indicate at least one taxfee item");
                 appSvc.submitForApproval(entity);
+                entity.state = "approval";
              }
              
              void submitForPayment() {
                 appSvc.submitForPayment(entity);
+                entity.state = "payment";
              }
              
              void sendBackToAssessment() {
                 appSvc.sendBackToAssessment(entity);
+                entity.state = "assessment";
              }
              
              void notSupported() {
                 throw new Exception("Feature not yet supported");
              }
-             
-             void validateRequirements() {
-                //check step 
-                appSvc.validateRequirements( entity.requirements, "info" );  
-             }
-             
+   
              void issueBin() {
                 if(MsgBox.confirm("You are about to issue BIN for this business. Proceed?")) {
                     def b = appSvc.issueBin( entity );
@@ -155,6 +231,31 @@
                 }
              }
              
+             def selectedRequirement;
+             
+             def editRequirement() {
+                if(selectedRequirement?.type) {
+                    try {
+                     def opener = InvokerUtil.lookupOpener( "bprequirement:" + selectedRequirement.type, [
+                        entity:selectedRequirement,
+                        handler: { o->
+                            selectedRequirement.putAll(o);
+                            selectedRequirement.status = "completed";
+                            requirementModel.reload();
+                        }]);
+                      return opener;  
+                    }
+                    catch(Exception e) {;}
+                }
+             }
+             
+             def validateClose() {
+                if(dirty) {
+                    MsgBox.alert("data is dirty");
+                    throw new com.rameses.util.BreakException();
+                }    
+             }
+             
         }
         ]]>
         
@@ -166,7 +267,7 @@
         </start>
         
         <page name="initial" title="Select Type of Application">
-            <transition to="end" caption="Close"  confirm="Data will not be saved. Proceed?"/>
+            <transition to="end" caption="Close" />
             <transition to="select-type" caption="Next" mnemonic="N"  immediate="false"/>
         </page>
 
@@ -178,82 +279,49 @@
         </process>
 
         <page name="specify-tradename" title="Specify Trade Name">
-            <transition to="end" caption="Close"  confirm="Data will not be saved. Proceed?"/>
-            <transition to="check-business-name" caption="Next" mnemonic="N" immediate="false"/>
+            <transition to="initial" caption="Back" mnemonic="B" name="back"/>
+            <transition to="check-business-name" caption="Next" name="next" mnemonic="N" immediate="false"/>
         </page>
         
         <process name="check-business-name" action="checkBusinessName">
             <transition to="verify-business-name" cond="#{searchNamePass==false}"/>
-            <transition to="specify-lob" cond="#{searchNamePass==true}"/>
+            <transition to="specify-info" cond="#{searchNamePass==true}"/>
         </process>
             
         <page name="verify-business-name" title="Business Name Verification">
-            <transition to="end" caption="Close" confirm="Data will not be saved. Proceed?"/>
             <transition to="specify-tradename" caption="Back" mnemonic="B"/>
-            <transition to="specify-lob" caption="Next" mnemonic="N"/>
+            <transition to="specify-info" caption="Next" name="next" mnemonic="N"/>
         </page>
 
-        <page name="specify-lob" title="Specify Lines of Business">
-            <transition to="end" caption="Close" confirm="Data will not be saved. Proceed?"/>
-            <transition to="specify-tradename" caption="Back" mnemonic="B"/>
-            <transition to="specify-info" caption="Next" mnemonic="N" action="validateLOB"/>
-        </page>
-        
         <page name="specify-info" title="Specify Business Information">
-            <transition to="end" caption="Close" confirm="Data will not be saved. Proceed?"/>
-            <transition to="specify-lob" caption="Back" mnemonic="B"/>
-            <transition to="specify-requirement" caption="Next" mnemonic="N" action="validateInfo"/>
-        </page>
-        
-        <page name="specify-requirement" title="Specify Requirements">
-            <transition to="end" caption="Close" confirm="Data will not be saved. Proceed?"/>
-            <transition to="specify-info" caption="Back" mnemonic="B"/>
-            <transition to="confirm-save" caption="Next" mnemonic="N" action="validateRequirements"/>
-        </page>
-        
-        <page name="confirm-save" title="Confirm Business Application">
-            <transition to="end" caption="Close" confirm="Data will not be saved. Proceed?"/>
-            <transition to="specify-requirement" caption="Back" mnemonic="B"/>
-            <transition to="success-save" caption="Submit" mnemonic="S" immediate="false" 
+            <transition to="specify-tradename" caption="Back" mnemonic="B" name="back"/>
+            <transition to="info" caption="Submit" mnemonic="S" name="submit" 
                 confirm="You are about to submit this application. Proceed?"
                 action="createApplication"/>
-        </page>    
-
-        <page name="success-save" title="Business Application">
+        </page>
+        
+        <page name="info" title="Business Application">
             <transition to="end" caption="Close"/>
             <transition to="initial" caption="Add Another" action="initNew"/>
+            <transition to="assessment" caption="Submit for Assessment" action="submitForAssessment"/>
         </page>    
         
-        <page name="assessment" title="Business Application">
-            <transition to="end" caption="Close"/>
-            <transition to="view-assessment" caption="Assess" mnemonic="S" immediate="false" action="assess" role="ASSESSOR"/>
-            <transition to="change-lob" caption="Change Line of Business" immediate="false" role="ASSESSOR"/>
+        <page name="assessment" title="Business Application (For Assessment)">
+            <transition to="end" caption="Close" action="validateClose"/>
+            <transition to="approval" caption="Submit for Approval" 
+                confirm="You are about to submit this application for approval. Proceed?"
+                name="next" mnemonic="S" action="submitForApproval" role="ASSESSOR"/>
         </page>    
         
-        <page name="change-lob" title="Change Lines of Business">
-            <transition to="assessment" caption="Back" />
-        </page>
-        
-        <page name="view-assessment" title="Assessment">
-            <transition to="assessment" caption="Back"/>
-            <transition to="view-info" caption="Submit for Approval" mnemonic="A" action="submitForApproval"
-                immediate="false" confirm="You are about to submit this for approval. Proceed?"/>
-        </page>    
-
-        <page name="view-info" title="Business Application">
-            <transition to="end" caption="Close" />
-        </page>
-        
-        <page name="approval" title="For Approval">
-            <transition to="end" caption="Close" />
-            <transition to="view-info" caption="Return to Assessment" mnemonic="R" action="sendBackToAssessment" 
-                immediate="false" confirm="You are about to return this for assessment. Proceed?" role="APPROVER"/>
+        <page name="approval" title="Business Application (For Approval)">
+            <transition to="end" caption="Close" action="validateClose"/>
+            <transition to="assessment" caption="Return to Assessment" mnemonic="R" action="sendBackToAssessment" 
+                confirm="You are about to return this for assessment. Proceed?" role="APPROVER"/>
             <transition to="payment" caption="Submit for Payment" mnemonic="S" action="submitForPayment" 
-                immediate="false" confirm="You are about to submit this for payment. Proceed?" role="APPROVER"/>
+                confirm="You are about to submit this for payment. Proceed?" role="APPROVER"/>
         </page>
         
-        
-        <page name="payment" title="For Payment">
+        <page name="payment" title="Business Application (For Payment)">
             <transition to="end" caption="Close" />
         </page>
         
@@ -268,22 +336,15 @@
         <page name="initial" template="com.rameses.gov.etracs.bpls.application.SelectApplicationType"/>
         <page name="specify-tradename" template="com.rameses.gov.etracs.bpls.application.SpecifyTradename"/>
         <page name="verify-business-name" template="com.rameses.gov.etracs.bpls.application.VerifyBusinessName"/>
-
-        <page name="specify-lob" template="com.rameses.gov.etracs.bpls.application.SpecifyLOB"/>
-        <page name="change-lob" template="com.rameses.gov.etracs.bpls.application.SpecifyLOB"/>
-        <page name="specify-info" template="com.rameses.gov.etracs.bpls.application.SpecifyInfo"/>
-        <page name="specify-requirement" template="com.rameses.gov.etracs.bpls.application.SpecifyRequirement"/>
-        <page name="confirm-save" template="com.rameses.gov.etracs.bpls.application.ApplicationInfoPage"/>
-        <page name="success-save" template="com.rameses.gov.etracs.bpls.application.SuccessPage"/>
-        <page name="view-assessment" template="com.rameses.gov.etracs.bpls.application.ViewAssessmentPage"/>
+        <page name="specify-info" template="com.rameses.gov.etracs.bpls.application.ApplicationInfoPage"/>
         
-        <page name="draft" template="com.rameses.gov.etracs.bpls.application.ApplicationInfoPage"/>
-        <page name="assessment" template="com.rameses.gov.etracs.bpls.application.ApplicationInfoPage"/>
-        <page name="payment" template="com.rameses.gov.etracs.bpls.application.ApplicationInfoPage"/>
-        <page name="approval" template="com.rameses.gov.etracs.bpls.application.ApplicationInfoPage"/>
-        <page name="release" template="com.rameses.gov.etracs.bpls.application.ApplicationInfoPage"/>
+        <page name="info" template="com.rameses.gov.etracs.bpls.application.ApplicationInfoPage"/>
+        <page name="assessment" template="com.rameses.gov.etracs.bpls.application.ViewAssessmentPage"/>
+        <page name="approval" template="com.rameses.gov.etracs.bpls.application.ViewAssessmentPage"/>
+        
+        <page name="payment" template="com.rameses.gov.etracs.bpls.application.ViewAssessmentPage"/>
+        <page name="release" template="com.rameses.gov.etracs.bpls.application.ViewAssessmentPage"/>
         <page name="view-info" template="com.rameses.gov.etracs.bpls.application.ApplicationInfoPage"/>
-
     </pages>
     
 </workunit>

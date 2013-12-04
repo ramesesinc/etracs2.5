@@ -2,6 +2,19 @@ import com.rameses.annotations.*;
 import com.rameses.util.*;
 import java.rmi.server.*;
 
+
+/**********************************************************
+* This routine is hooked in the CashReceiptService and 
+* CashReceiptVoidService services. It will update each
+* receivable based on amount paid. It sufficient amount 
+* is paid, the application is changed from 'payment' to 
+* 'release' state. How to determine how much amount is
+* sufficient ? One method is by looking at the deadline 
+* for each billing item compared with the receipt date. 
+* We get the first expiry date, which is 1st qtr date for
+* renew. If all items are paid prior to this date, then
+* application will be released.      
+**********************************************************/
 public class BusinessCashReceiptInterceptor {
 
 	@ActiveDB("businesscashreceipt")
@@ -38,6 +51,7 @@ public class BusinessCashReceiptInterceptor {
 		}
 
 		result.billitems.each {
+			println "DEADLINE IS " + it.deadline;
 			def m = [:]
 			m.objid = "BPRCVPMT"+ new UID();
 			m.receivableid = it.receivableid;
@@ -56,6 +70,8 @@ public class BusinessCashReceiptInterceptor {
 			biz.create( m, "receivable_payment");
 		}
 		
+		throw new Exception("break it!");
+
 		//summarize by receivableid
 		def grps = result.billitems.groupBy{ it.receivableid };
 		def ids = [];
@@ -87,14 +103,23 @@ public class BusinessCashReceiptInterceptor {
 		def rct = evt.result.receipt;
 		def list = biz.getReceivablePaymentForVoiding(  [receiptid: rct.objid ] );
 		def grps = list.groupBy{ it.receivableid }
+		def ids = [];
 		grps.each {k,v->
 			def z = [ receivableid: k, 
 					 amtpaid: numberSvc.round( v.sum{ it.amtpaid } ),
 					 discount: numberSvc.round( v.sum{ it.discount } ),
 				   ];
 			biz.reverseReceivablePayment(z);
+			ids << k;
 		}
 		biz.updateReceivablePaymentForVoiding(  [receiptid: rct.objid ] );
+		//reverse the application back to paymet status.
+		String receivableIds = "'" + ids.join("','") + "'";
+		def applist = biz.getReceivableBalances( [receivableids: receivableIds] );
+		for( app in applist ) {
+			application.changeState( [state:'payment', objid: app.applicationid ] );
+		}
+
 	}
 
 

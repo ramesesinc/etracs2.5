@@ -1,7 +1,8 @@
 <schema>
-	<element tablename="business_application">
+	
+	<element tablename="bpapplication">
 		<field name="objid" primary="true"/>
-		<field name="businessid" required="true"/>
+		<field name="businessid" />
 		<field name="state" required="true"/>
 		<field name="appno" required="true"/>
 		<field name="apptype" required="true"/>
@@ -10,22 +11,48 @@
 		<field name="dtfiled" required="true"/>
 		<field name="txnmode" required="true"/>
 		<field name="txndate" required="true"/>
-		<field name="permitee_name" required="true"/>
-		<field name="permitee_objid" required="true"/>
+		<field name="owner_name" required="true"/>
+		<field name="owner_objid" required="true"/>
+		<field name="owner_address" required="true"/>
 		<field name="barangay_objid" />
 		<field name="barangay_name" />
 		<field name="tradename" required="true"/>
+		<field name="businessname" />
 		<field name="businessaddress" required="true"/>
 		<field name="orgtype" required="true"/>
-		<field name="officetype" required="true"/>
 		<field name="createdby" required="true"/>
-		<field name="branchname" />
 	</element>	
 
-	<element name="requirement" tablename="business_application_requirement">
+	<element name="lob" tablename="bpapplication_lob">
 		<field name="objid" primary="true"/>
-		<field name="businessid" required="true"/>
 		<field name="applicationid" />
+		<field name="permitid" />
+		<field name="iyear" />
+		<field name="lobid" required="true"/>
+		<field name="name" required="true"/>
+		<field name="assessmenttype" required="true"/>
+	</element>
+
+	<element name="info" tablename="bpapplication_info">
+		<field name="objid" primary="true"/>
+		<field name="applicationid" />
+		<field name="iyear"/>
+		<field name="iqtr"/>
+		<field name="attribute_objid" required="true"/>
+		<field name="attribute_name" required="true"/>
+		<field name="lob_objid" />
+		<field name="lob_name" />
+		<field name="decimalvalue" />
+		<field name="intvalue" />
+		<field name="stringvalue" />
+		<field name="boolvalue" />
+		<field name="phase" required="true"/>
+		<field name="level"  />
+	</element>	
+
+	<element name="requirement" tablename="bpapplication_requirement">
+		<field name="objid" primary="true"/>
+		<field name="applicationid" required="true"/>
 		<field name="reftype" />
 		<field name="refid" required="true"/>
 		<field name="refno" />
@@ -38,7 +65,7 @@
 		<field name="dtcompleted"/>
 	</element>
 
-	<element name="requirement_data" tablename="business_application_requirement_data">
+	<element name="requirement_data" tablename="bpapplication_requirement_data">
 		<field name="objid" primary="true"/>
 		<field name="refno" required="true"/>
 		<field name="dtissued" />
@@ -47,20 +74,14 @@
 		<field name="remarks" />
 	</element>	
 
-
-	<element name="bin" tablename="business_bin">
+	<element name="log" tablename="bpapplication_log">
 		<field name="objid" primary="true"/>
-		<field name="bin" required="true"/>
-	</element>	
-
-	<element name="log" tablename="business_application_log">
-		<field name="objid" primary="true"/>
-		<field name="appid" required="true"/>
+		<field name="applicationid" required="true"/>
 		<field name="step" required="true"/>
 		<field name="action" required="true"/>
 		<field name="txndate" required="true"/>
 		<field name="user_objid" required="true"/>
 		<field name="user_name" required="true"/>
 	</element>	
-	
+
 </schema>

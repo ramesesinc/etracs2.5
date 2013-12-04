@@ -1,0 +1,47 @@
+import com.rameses.annotations.*;
+import com.rameses.util.*;
+import java.rmi.server.*;
+import com.rameses.services.extended.*;
+
+public class BPApplicationListService extends ActiveListService {
+
+	@ActiveDB("bpapplication")
+	def em;
+
+	@Service("LOVService")
+	def LOV;
+
+	@ProxyMethod
+	public def getNodes(o) {
+		return [
+			[caption:'For Info', state:'info', leaf:true, folder:true, allowSearch:true],
+			[caption:'For Assessment', state:'assessment', leaf:true, folder:true, allowSearch:true],
+			[caption:'For Approval', state:'approval', leaf:true, folder:true, allowSearch:true],
+			[caption:'For Payment', state:'payment', leaf:true, folder:true, allowSearch:true],
+			[caption:'For Release', state:'release', leaf:true, folder:true, allowSearch:true]
+		];
+	}	
+
+	@ProxyMethod
+	public def getColumns(o) {
+		return [
+			[name:'appno', caption:'Application No', width:120, resizable:false],
+			[name:'apptype', caption:'App. Type', width:80, resizable:false],
+			[name:'owner.name', caption:'Owner'],
+			[name:'businessname', caption:'Business Name'],
+			[name:'state', caption:'State', width:120, resizable:false],
+			[name:'txnmode', caption:'Txn Mode', width:120, resizable:false],
+		];
+	}
+
+	void beforeList(o) {
+		o._pagingKeys = "a.objid";
+		if(o.name=="search") {
+			o._listMethod = "getSearchList";
+			if( o.searchtext == "%") o.searchtext ="?";
+		}	
+	}
+
+	
+	
+}	

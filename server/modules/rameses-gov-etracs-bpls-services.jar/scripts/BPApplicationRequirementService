@@ -35,7 +35,7 @@ public class BPApplicationRequirementService extends ActiveCrudListService {
 		return [
 			[name:"appno", caption:"App No"],
 			[name:"tradename", caption:"Tradename"],
-			[name:"permitee.name", caption:"Permitee"],
+			[name:"owner.name", caption:"Owner"],
 		];
 	}
 

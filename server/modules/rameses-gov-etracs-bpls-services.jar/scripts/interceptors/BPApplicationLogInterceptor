@@ -19,7 +19,7 @@ public class BPApplicationLogInterceptor {
 		m.objid = "BPLOG"+new UID();
 		m.user = [ objid: env.USERID, name: env.USER ];
 		m.txndate = dateSvc.serverDate; 
-		m.appid = appid;
+		m.applicationid = appid;
 		m.step = step;
 		m.action = action;
 		em.create( m, "log" );
