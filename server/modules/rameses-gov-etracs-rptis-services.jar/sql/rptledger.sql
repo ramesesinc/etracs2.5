@@ -255,3 +255,7 @@ WHERE rli.rptledgerid = $P{rptledgerid}
   AND rli.qtrly = 1 
 
 
+[updateState]
+UPDATE rptledger SET state = $P{state} WHERE objid = $P{objid}
+
+

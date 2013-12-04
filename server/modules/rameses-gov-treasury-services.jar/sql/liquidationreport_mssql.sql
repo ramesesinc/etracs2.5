@@ -27,8 +27,24 @@ where lr.liquidationid = $P{liquidationid}
 group by lr.objid   
 order by txnno 
 
-
 [getRCDCollectionSummary]
+select  
+   min(ri.fund_title)   as particulars,  
+  sum( cri.amount) as amount 
+from liquidation_remittance  lr 
+   inner join remittance_cashreceipt rc  on rc.remittanceid = lr.objid 
+   inner join cashreceipt cr on rc.objid = cr.objid 
+   left join cashreceipt_void crv on crv.receiptid = cr.objid 
+   inner join collectionform a on a.objid = cr.formno 
+   inner join collectiontype ct on ct.objid = cr.collectiontype_objid 
+   inner join cashreceiptitem cri on cri.receiptid = cr.objid
+   inner join revenueitem ri on ri.objid = cri.item_objid 
+where lr.liquidationid=$P{liquidationid} and ri.fund_objid  like $P{fundname}
+  and crv.objid is null 
+group by ri.fund_objid 
+
+
+[getRCDCollectionSummary_bak]
 select  
   ( 'AF#' + a.objid +  ': ' + min(ct.title) + ' - ' + min(ri.fund_title) )  as particulars,  
   sum( case when crv.objid is null then cri.amount else 0.0 end ) as amount 

@@ -1,0 +1,55 @@
+<workunit>
+    <invokers>
+        <invoker type="rptledger:changestate" action="init" caption="Change Ledger State" target="popup" index="100" />        
+    </invokers>
+    
+    <code lang="groovy">
+        <![CDATA[
+        
+import com.rameses.rcp.common.*
+import com.rameses.rcp.annotations.*
+import com.rameses.osiris2.client.*
+
+
+public class ChangeLedgerStateController 
+{
+    
+    @Binding
+    def binding
+    
+    def svc 
+    
+    def oncomplete
+    
+    def entity 
+    
+    String title = 'Change Ledger State'
+    
+    def currentstate;
+    
+    def states = ['PENDING', 'APPROVED', 'CANCELLED'];
+    
+    
+    void init(){
+        currentstate = entity.state;
+    }
+    
+    
+    def update(){
+        if (MsgBox.confirm('Update ledger state?')){
+            svc.updateState(entity);
+            if (oncomplete) oncomplete(entity)
+            return '_close'
+        }
+    }
+    
+}
+
+
+]]>
+    </code>
+    
+    <pages>
+        <page template="com.rameses.gov.etracs.rpt.ledger.ui.RPTLedgerChangeStatePage" />
+    </pages>
+</workunit>

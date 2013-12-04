@@ -30,12 +30,33 @@ from bankdeposit_liquidation bl
 where bl.bankdepositid=$P{bankdepositid}  and ri.fund_objid = $P{fundname}
 group by a.objid, ct.objid, ri.fund_title
 
+[getRevenueItemSummaryByFund]
+select 
+  ri.fund_title as fundname, cri.item_objid as acctid, cri.item_title as acctname,
+  cri.item_code as acctcode, sum( cri.amount ) as amount 
+from( 
+  select
+    distinct lf.liquidationid
+  from bankdeposit b 
+    inner join bankdeposit_liquidation bl on b.objid = bl.bankdepositid
+    inner join liquidation_cashier_fund lf on lf.objid = bl.objid 
+  where b.objid=$P{bankdepositid} 
+  ) a 
+  inner join liquidation_remittance lr on lr.liquidationid = a.liquidationid 
+  inner join remittance_cashreceipt rc on rc.remittanceid = lr.objid 
+  inner join cashreceipt c on c.objid = rc.objid 
+  inner join cashreceiptitem cri on cri.receiptid = c.objid
+  inner join revenueitem ri on ri.objid = cri.item_objid
+  left join cashreceipt_void cv on cv.receiptid = c.objid 
+group by ri.fund_title, cri.item_objid, cri.item_code, cri.item_title 
+order by fundname, acctcode, acctname  
+
 
 [getCashFundSummary]
 select 
     bd.cashier_name as cashier, 
     concat(ba.bank_code, ' - Cash D/S: Account ' , be.bankaccount_code ) as depositref, 
-    be.totalcash as depositamt 
+    NULL as depositamt 
 from bankdeposit bd 
  inner join bankdeposit_entry be on bd.objid = be.parentid 
  inner join bankaccount ba on ba.objid = be.bankaccount_objid 
@@ -47,12 +68,39 @@ where bd.objid=$P{bankdepositid} and ba.fund_objid=$P{fundname}
 select 
     bd.cashier_name as cashier, 
     concat(ba.bank_code, ' - Check D/S: Account ' , be.bankaccount_code ) as depositref, 
-    be.totalnoncash as depositamt 
+    NULL as depositamt 
 from bankdeposit bd 
  inner join bankdeposit_entry be on bd.objid = be.parentid 
  inner join bankaccount ba on ba.objid = be.bankaccount_objid 
 where bd.objid=$P{bankdepositid} and ba.fund_objid=$P{fundname}
   and be.totalnoncash > 0.0 
+
+[getCashReceiptByBankdepositid]
+select 
+  c.collector_name as collectorname,  
+  c.receiptdate as receiptdate,  
+  c.receiptno as serialno, 
+  c.paidby as payorname,  
+  ci.item_title as accttitle,  
+  ci.amount as amount, 
+  ci.item_code as acctno,
+  case when cv.objid IS null then 0 else 1 end as voided,
+  c.formno as afid 
+from( 
+  select 
+    distinct lf.liquidationid
+  from bankdeposit b 
+    inner join bankdeposit_liquidation bl on b.objid = bl.bankdepositid
+    inner join liquidation_cashier_fund lf on lf.objid = bl.objid 
+  where b.objid=$P{bankdepositid} 
+  ) a 
+  inner join liquidation_remittance lr on lr.liquidationid = a.liquidationid 
+  inner join remittance_cashreceipt rc on rc.remittanceid = lr.objid 
+  inner join cashreceipt c on c.objid = rc.objid 
+  inner join cashreceiptitem ci on ci.receiptid = c.objid
+  left join cashreceipt_void cv on cv.receiptid = c.objid 
+
+
 
 [getSerialRemittedForms]
 SELECT a.*, 
@@ -109,8 +157,19 @@ GROUP BY ai.afid, ad.controlid) a
 
 [getDepositAmount]
 select 
-     be.totalcash, be.totalnoncash, ba.bank_code as bankcode, ba.fund_title as fund, be.amount 
+     be.totalcash, be.totalnoncash, ba.code AS bankacctno, ba.bank_code as bankcode, ba.fund_title as fund, be.amount 
 from  bankdeposit_entry be 
    inner join bankaccount ba on be.bankaccount_objid = ba.objid 
 where be.parentid = $P{bankdepositid} 
   and be.bankaccount_objid=$P{bankaccountid}
+
+[getDepositSlipSummaryByFund]
+select 
+  bd.cashier_name as cashier, 
+    (ba.bank_code + ' - Cash D/S: Account ' + be.bankaccount_code ) as depositref, 
+    NULL as depositamt 
+from bankdeposit bd 
+ inner join bankdeposit_entry be on bd.objid = be.parentid 
+ inner join bankaccount ba on ba.objid = be.bankaccount_objid 
+ inner join fund f on ba.fund_objid = f.parentid
+where bd.objid=$P{bankdepositid} and f.objid = $P{fundname}

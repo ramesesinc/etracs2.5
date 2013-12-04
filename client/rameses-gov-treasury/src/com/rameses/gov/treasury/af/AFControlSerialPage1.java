@@ -15,11 +15,11 @@ import com.rameses.rcp.ui.annotations.Template;
  * @author  arnel
  */
 @Template(FormPage.class)
-@StyleSheet
-public class AFControlSerialPage extends javax.swing.JPanel {
+@StyleSheet()
+public class AFControlSerialPage1 extends javax.swing.JPanel {
     
     /** Creates new form AFControlSerialPage */
-    public AFControlSerialPage() {
+    public AFControlSerialPage1() {
         initComponents();
     }
     
@@ -35,10 +35,9 @@ public class AFControlSerialPage extends javax.swing.JPanel {
         xComboBox2 = new com.rameses.rcp.control.XComboBox();
         xDateField1 = new com.rameses.rcp.control.XDateField();
         xSeparator1 = new com.rameses.rcp.control.XSeparator();
-        xNumberField1 = new com.rameses.rcp.control.XNumberField();
         xTextField1 = new com.rameses.rcp.control.XTextField();
         xTextField2 = new com.rameses.rcp.control.XTextField();
-        xSeparator2 = new com.rameses.rcp.control.XSeparator();
+        xNumberField1 = new com.rameses.rcp.control.XNumberField();
         xNumberField3 = new com.rameses.rcp.control.XNumberField();
         xNumberField4 = new com.rameses.rcp.control.XNumberField();
 
@@ -82,13 +81,6 @@ public class AFControlSerialPage extends javax.swing.JPanel {
         );
         formPanel1.add(xSeparator1);
 
-        xNumberField1.setCaption("Stub No");
-        xNumberField1.setFieldType(Integer.class);
-        xNumberField1.setName("entity.stub");
-        xNumberField1.setPreferredSize(new java.awt.Dimension(150, 20));
-        xNumberField1.setRequired(true);
-        formPanel1.add(xNumberField1);
-
         xTextField1.setCaption("Prefix");
         xTextField1.setName("entity.prefix");
         xTextField1.setPreferredSize(new java.awt.Dimension(150, 20));
@@ -99,18 +91,12 @@ public class AFControlSerialPage extends javax.swing.JPanel {
         xTextField2.setPreferredSize(new java.awt.Dimension(150, 20));
         formPanel1.add(xTextField2);
 
-        xSeparator2.setPreferredSize(new java.awt.Dimension(0, 20));
-        javax.swing.GroupLayout xSeparator2Layout = new javax.swing.GroupLayout(xSeparator2);
-        xSeparator2.setLayout(xSeparator2Layout);
-        xSeparator2Layout.setHorizontalGroup(
-            xSeparator2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 407, Short.MAX_VALUE)
-        );
-        xSeparator2Layout.setVerticalGroup(
-            xSeparator2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 20, Short.MAX_VALUE)
-        );
-        formPanel1.add(xSeparator2);
+        xNumberField1.setCaption("Start Stub");
+        xNumberField1.setFieldType(Integer.class);
+        xNumberField1.setName("entity.stub");
+        xNumberField1.setPreferredSize(new java.awt.Dimension(150, 20));
+        xNumberField1.setRequired(true);
+        formPanel1.add(xNumberField1);
 
         xNumberField3.setCaption("Start Series");
         xNumberField3.setFieldType(Integer.class);
@@ -154,7 +140,6 @@ public class AFControlSerialPage extends javax.swing.JPanel {
     private com.rameses.rcp.control.XNumberField xNumberField3;
     private com.rameses.rcp.control.XNumberField xNumberField4;
     private com.rameses.rcp.control.XSeparator xSeparator1;
-    private com.rameses.rcp.control.XSeparator xSeparator2;
     private com.rameses.rcp.control.XTextField xTextField1;
     private com.rameses.rcp.control.XTextField xTextField2;
     // End of variables declaration//GEN-END:variables
