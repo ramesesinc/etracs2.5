@@ -1,5 +1,4 @@
-<workunit extends="wtemplates/ExplorerViewController.xml" 
-serviceName="BusinessInfoService"  defaultFileType="business" autoSelect="true">
+<workunit extends="wtemplates/ExplorerViewController.xml" serviceName="ActiveBusinessService" defaultFileType="business" autoSelect="true">
     <invokers>
         <invoker folderid="/explorer/txn/bpls" caption="List of Business"  index="4" role="MASTER_ENCODER"/>
         <invoker type="home.action" caption="List of Business"  index="3" role="MASTER_ENCODER"/>

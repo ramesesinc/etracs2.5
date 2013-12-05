@@ -64,14 +64,6 @@
             <Property name="required" type="boolean" value="true"/>
           </Properties>
         </Component>
-        <Component class="com.rameses.rcp.control.XComboBox" name="xComboBox2">
-          <Properties>
-            <Property name="caption" type="java.lang.String" value="Payment Mode"/>
-            <Property name="items" type="java.lang.String" value="paymentModes"/>
-            <Property name="name" type="java.lang.String" value="entity.paymentmode"/>
-            <Property name="required" type="boolean" value="true"/>
-          </Properties>
-        </Component>
         <Component class="com.rameses.rcp.control.XLookupField" name="xLookupField2">
           <Properties>
             <Property name="caption" type="java.lang.String" value="Surcharge Account"/>

@@ -6,6 +6,7 @@
 
 package com.rameses.gov.etracs.bpls.application;
 
+import com.rameses.osiris2.themes.FormPage;
 import com.rameses.rcp.ui.annotations.StyleSheet;
 import com.rameses.rcp.ui.annotations.Template;
 
@@ -13,7 +14,7 @@ import com.rameses.rcp.ui.annotations.Template;
  *
  * @author  Elmo
  */
-@Template(ApplicationTemplate.class)
+@Template(FormPage.class)
 @StyleSheet
 public class ViewAssessmentPage extends javax.swing.JPanel {
     
@@ -35,6 +36,21 @@ public class ViewAssessmentPage extends javax.swing.JPanel {
         xDecimalField2 = new com.rameses.rcp.control.XDecimalField();
         xDecimalField3 = new com.rameses.rcp.control.XDecimalField();
         xDecimalField4 = new com.rameses.rcp.control.XDecimalField();
+        xDataTable2 = new com.rameses.rcp.control.XDataTable();
+        xFormPanel4 = new com.rameses.rcp.control.XFormPanel();
+        xLabel4 = new com.rameses.rcp.control.XLabel();
+        xLabel3 = new com.rameses.rcp.control.XLabel();
+        xLabel15 = new com.rameses.rcp.control.XLabel();
+        xLabel5 = new com.rameses.rcp.control.XLabel();
+        xLabel9 = new com.rameses.rcp.control.XLabel();
+        xLabel11 = new com.rameses.rcp.control.XLabel();
+        xLabel10 = new com.rameses.rcp.control.XLabel();
+        xLabel2 = new com.rameses.rcp.control.XLabel();
+        xLabel6 = new com.rameses.rcp.control.XLabel();
+        xLabel7 = new com.rameses.rcp.control.XLabel();
+        xLabel12 = new com.rameses.rcp.control.XLabel();
+        jLabel1 = new javax.swing.JLabel();
+        xActionBar1 = new com.rameses.rcp.control.XActionBar();
 
         xDataTable3.setColumns(new com.rameses.rcp.common.Column[]{
             new com.rameses.rcp.common.Column(new Object[]{
@@ -143,36 +159,216 @@ public class ViewAssessmentPage extends javax.swing.JPanel {
         xDecimalField4.setPreferredSize(new java.awt.Dimension(120, 20));
         xFormPanel3.add(xDecimalField4);
 
+        xDataTable2.setColumns(new com.rameses.rcp.common.Column[]{
+            new com.rameses.rcp.common.Column(new Object[]{
+                new Object[]{"name", "lob.name"}
+                , new Object[]{"caption", "Line of business"}
+                , new Object[]{"width", 100}
+                , new Object[]{"minWidth", 0}
+                , new Object[]{"maxWidth", 0}
+                , new Object[]{"required", false}
+                , new Object[]{"resizable", true}
+                , new Object[]{"nullWhenEmpty", true}
+                , new Object[]{"editable", false}
+                , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
+                , new Object[]{"typeHandler", new com.rameses.rcp.common.LabelColumnHandler()}
+            }),
+            new com.rameses.rcp.common.Column(new Object[]{
+                new Object[]{"name", "attribute.caption"}
+                , new Object[]{"caption", "Attribute Name"}
+                , new Object[]{"width", 250}
+                , new Object[]{"minWidth", 250}
+                , new Object[]{"maxWidth", 250}
+                , new Object[]{"required", false}
+                , new Object[]{"resizable", true}
+                , new Object[]{"nullWhenEmpty", true}
+                , new Object[]{"editable", false}
+                , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
+                , new Object[]{"typeHandler", new com.rameses.rcp.common.TextColumnHandler()}
+            }),
+            new com.rameses.rcp.common.Column(new Object[]{
+                new Object[]{"name", "value"}
+                , new Object[]{"caption", "Value"}
+                , new Object[]{"width", 150}
+                , new Object[]{"minWidth", 150}
+                , new Object[]{"maxWidth", 150}
+                , new Object[]{"required", false}
+                , new Object[]{"resizable", true}
+                , new Object[]{"nullWhenEmpty", true}
+                , new Object[]{"editable", false}
+                , new Object[]{"alignment", "RIGHT"}
+                , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
+                , new Object[]{"typeHandler", new com.rameses.rcp.common.TextColumnHandler()}
+            })
+        });
+        xDataTable2.setHandler("infoModel");
+
+        xFormPanel4.setCaptionWidth(100);
+        xFormPanel4.setShowCaption(false);
+        xLabel4.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
+        xLabel4.setCaption("App No");
+        xLabel4.setExpression("#{ entity.appno  } (#{entity.apptype})");
+        xLabel4.setFont(new java.awt.Font("Tahoma", 1, 12));
+        xLabel4.setPreferredSize(new java.awt.Dimension(0, 20));
+        xFormPanel4.add(xLabel4);
+
+        com.rameses.rcp.control.border.XLineBorder xLineBorder1 = new com.rameses.rcp.control.border.XLineBorder();
+        xLineBorder1.setLineColor(new java.awt.Color(204, 204, 204));
+        xLabel3.setBorder(xLineBorder1);
+        xLabel3.setCaption("Date");
+        xLabel3.setExpression("#{entity.dtfiled}");
+        xLabel3.setPreferredSize(new java.awt.Dimension(0, 20));
+        xFormPanel4.add(xLabel3);
+
+        com.rameses.rcp.control.border.XLineBorder xLineBorder2 = new com.rameses.rcp.control.border.XLineBorder();
+        xLineBorder2.setLineColor(new java.awt.Color(204, 204, 204));
+        xLabel15.setBorder(xLineBorder2);
+        xLabel15.setCaption("BIN");
+        xLabel15.setExpression("#{entity.bin}");
+        xLabel15.setPreferredSize(new java.awt.Dimension(0, 20));
+        xFormPanel4.add(xLabel15);
+
+        com.rameses.rcp.control.border.XLineBorder xLineBorder3 = new com.rameses.rcp.control.border.XLineBorder();
+        xLineBorder3.setLineColor(new java.awt.Color(204, 204, 204));
+        xLabel5.setBorder(xLineBorder3);
+        xLabel5.setCaption("Applicable Year");
+        xLabel5.setCaptionWidth(100);
+        xLabel5.setExpression("#{entity.appyear}");
+        xLabel5.setName("application.year");
+        xLabel5.setPreferredSize(new java.awt.Dimension(0, 20));
+        xFormPanel4.add(xLabel5);
+
+        com.rameses.rcp.control.border.XLineBorder xLineBorder4 = new com.rameses.rcp.control.border.XLineBorder();
+        xLineBorder4.setLineColor(new java.awt.Color(204, 204, 204));
+        xLabel9.setBorder(xLineBorder4);
+        xLabel9.setCaption("Bus. Org Type");
+        xLabel9.setExpression("#{entity.orgtypename}");
+        xLabel9.setPreferredSize(new java.awt.Dimension(0, 20));
+        xFormPanel4.add(xLabel9);
+
+        com.rameses.rcp.control.border.XLineBorder xLineBorder5 = new com.rameses.rcp.control.border.XLineBorder();
+        xLineBorder5.setLineColor(new java.awt.Color(204, 204, 204));
+        xLabel11.setBorder(xLineBorder5);
+        xLabel11.setCaption("Office Type");
+        xLabel11.setExpression("#{entity.officetype}");
+        xLabel11.setPreferredSize(new java.awt.Dimension(0, 20));
+        xFormPanel4.add(xLabel11);
+
+        com.rameses.rcp.control.border.XLineBorder xLineBorder6 = new com.rameses.rcp.control.border.XLineBorder();
+        xLineBorder6.setLineColor(new java.awt.Color(204, 204, 204));
+        xLabel10.setBorder(xLineBorder6);
+        xLabel10.setCaption("Barangay");
+        xLabel10.setExpression("#{entity.barangay.name}");
+        xLabel10.setName("application.info.taxpayeraddress");
+        xLabel10.setPreferredSize(new java.awt.Dimension(0, 20));
+        xFormPanel4.add(xLabel10);
+
+        com.rameses.rcp.control.border.XLineBorder xLineBorder7 = new com.rameses.rcp.control.border.XLineBorder();
+        xLineBorder7.setLineColor(new java.awt.Color(204, 204, 204));
+        xLabel2.setBorder(xLineBorder7);
+        xLabel2.setCaption("Owner");
+        xLabel2.setExpression("#{entity.owner.name}");
+        xLabel2.setPreferredSize(new java.awt.Dimension(0, 18));
+        xFormPanel4.add(xLabel2);
+
+        com.rameses.rcp.control.border.XLineBorder xLineBorder8 = new com.rameses.rcp.control.border.XLineBorder();
+        xLineBorder8.setLineColor(new java.awt.Color(204, 204, 204));
+        xLabel6.setBorder(xLineBorder8);
+        xLabel6.setCaption("Trade Name");
+        xLabel6.setExpression("#{entity.tradename}");
+        xLabel6.setPreferredSize(new java.awt.Dimension(0, 18));
+        xFormPanel4.add(xLabel6);
+
+        com.rameses.rcp.control.border.XLineBorder xLineBorder9 = new com.rameses.rcp.control.border.XLineBorder();
+        xLineBorder9.setLineColor(new java.awt.Color(204, 204, 204));
+        xLabel7.setBorder(xLineBorder9);
+        xLabel7.setCaption("Address");
+        xLabel7.setExpression("#{entity.businessaddress}");
+        xLabel7.setName("application.info.taxpayeraddress");
+        xLabel7.setPreferredSize(new java.awt.Dimension(0, 18));
+        xFormPanel4.add(xLabel7);
+
+        com.rameses.rcp.control.border.XLineBorder xLineBorder10 = new com.rameses.rcp.control.border.XLineBorder();
+        xLineBorder10.setLineColor(new java.awt.Color(204, 204, 204));
+        xLabel12.setBorder(xLineBorder10);
+        xLabel12.setCaption("Branch Name");
+        xLabel12.setExpression("#{entity.branchname}");
+        xLabel12.setName("entity.branchname");
+        xLabel12.setPreferredSize(new java.awt.Dimension(0, 18));
+        xFormPanel4.add(xLabel12);
+
+        jLabel1.setFont(new java.awt.Font("Tahoma", 1, 11));
+        jLabel1.setText("Taxes and Fees Assessment");
+
+        xActionBar1.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        xActionBar1.setDynamic(true);
+        xActionBar1.setName("infoActions");
+        xActionBar1.setUseToolBar(false);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(xDataTable3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(xFormPanel3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 916, Short.MAX_VALUE))
-                .addGap(232, 232, 232))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(xDataTable3, javax.swing.GroupLayout.PREFERRED_SIZE, 916, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(xFormPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 916, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(xFormPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, 348, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jLabel1))
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                .addComponent(xDataTable2, javax.swing.GroupLayout.DEFAULT_SIZE, 562, Short.MAX_VALUE)
+                                .addComponent(xActionBar1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))))
+                .addContainerGap(24, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(xDataTable3, javax.swing.GroupLayout.DEFAULT_SIZE, 272, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(xDataTable2, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(xActionBar1, 0, 24, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(xFormPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, 238, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel1)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(xDataTable3, javax.swing.GroupLayout.DEFAULT_SIZE, 206, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(xFormPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(27, 27, 27))
+                .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
     
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel jLabel1;
+    private com.rameses.rcp.control.XActionBar xActionBar1;
+    private com.rameses.rcp.control.XDataTable xDataTable2;
     private com.rameses.rcp.control.XDataTable xDataTable3;
     private com.rameses.rcp.control.XDecimalField xDecimalField1;
     private com.rameses.rcp.control.XDecimalField xDecimalField2;
     private com.rameses.rcp.control.XDecimalField xDecimalField3;
     private com.rameses.rcp.control.XDecimalField xDecimalField4;
     private com.rameses.rcp.control.XFormPanel xFormPanel3;
+    private com.rameses.rcp.control.XFormPanel xFormPanel4;
+    private com.rameses.rcp.control.XLabel xLabel10;
+    private com.rameses.rcp.control.XLabel xLabel11;
+    private com.rameses.rcp.control.XLabel xLabel12;
+    private com.rameses.rcp.control.XLabel xLabel15;
+    private com.rameses.rcp.control.XLabel xLabel2;
+    private com.rameses.rcp.control.XLabel xLabel3;
+    private com.rameses.rcp.control.XLabel xLabel4;
+    private com.rameses.rcp.control.XLabel xLabel5;
+    private com.rameses.rcp.control.XLabel xLabel6;
+    private com.rameses.rcp.control.XLabel xLabel7;
+    private com.rameses.rcp.control.XLabel xLabel9;
     // End of variables declaration//GEN-END:variables
     
 }

@@ -8,5 +8,9 @@
 		<field name="account_code" />
 		<field name="account_title" />
 		<field name="department" />
+		<!--
+		<field name="role" />
+		<field name="handler" />
+		-->
 	</element>	
 </schema>

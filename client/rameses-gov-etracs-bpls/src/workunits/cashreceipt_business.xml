@@ -44,7 +44,7 @@
                 def m = appLookup.findByBarcode( param );
                 entity = [formtype: "serial", formno:"51", txnmode: 'ONLINE'];
                 entity = cashReceiptSvc.init( entity );
-                entity.payer = [objid: m.permitee.objid, name: m.permitee.name];
+                entity.payer = [objid: m.owner.objid, name: m.owner.name];
                 entity.paidby = m.tradename;
                 entity.paidbyaddress = m.businessaddress;
                 entity.tradename = m.tradename;
@@ -78,7 +78,7 @@
                 billingListModel.reload();
             }
             
-            public def payerChanged( permitee ) {
+            public def payerChanged( owner ) {
                 entity.tradename = null;
                 entity.applicationid = null;
                 entity.businessid = null;
@@ -90,7 +90,7 @@
                 super.clearAllPayments();
                 super.updateBalances();
                 def opener = InvokerUtil.lookupOpener( "bpapplication:lookup", [
-                    "query.permiteeid":permitee.objid,
+                    "query.ownerid":owner.objid,
                     "query.state": "PAYMENT",
                     onselect: { o->
                         entity.applicationid = o.applicationid;

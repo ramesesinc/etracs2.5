@@ -1,0 +1,21 @@
+import com.rameses.annotations.*;
+import com.rameses.util.*;
+import java.rmi.server.*;
+import com.rameses.services.extended.*;
+
+public class CityEngineerBPApplicationInterceptor {
+
+	/***
+	* add additional fees from city engineer
+	***/
+	@Before( pattern="BPApplicationService.assess" )
+	public void fireAssess(evt) {
+		def o = evt.args[0];		
+		println "intercept assessment from city engineer";
+		if(!o.taxfees) o.taxfees = [];
+		o.taxfees << [objid:'p1', account:[code:'555', title: 'Electrical Fees'], amount:250.00];
+	}	
+
+	
+
+}

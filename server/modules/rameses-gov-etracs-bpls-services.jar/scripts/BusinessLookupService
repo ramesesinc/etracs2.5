@@ -13,14 +13,14 @@ public class BusinessLookupService extends ActiveCrudListService {
 	public def getColumns(def o) {
 		return [
 			[name:"tradename", caption:"Tradename"],
-			[name:"permitee.name", caption:"Permitee"],
+			[name:"owner.name", caption:"Owner"],
 			[name:"bin", caption:"BIN"],
 		];
 	}
 
 	public void beforeList(o) {
 		if( o.state!=null &&  o.state.toUpperCase() == "PAYMENT" ) {
-			o._listMethod = "getLookupByPermitee";
+			o._listMethod = "getLookupByOwner";
 		}
 	}
 

@@ -17,6 +17,7 @@ class BusinessVariableLookupService extends ActiveListService {
 	}
 
 	public void beforeList( o ) {
+		o.searchtext = "%"+ o.searchtext + "%";
 		if(o._tag) {
 			o.datatype = o._tag;
 			o._listMethod = "getLookupByType";

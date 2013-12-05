@@ -34,11 +34,11 @@ public class SpecifyTradename extends javax.swing.JPanel {
         xFormPanel1 = new com.rameses.rcp.control.XFormPanel();
         xComboBox1 = new com.rameses.rcp.control.XComboBox();
         xLookupField1 = new com.rameses.rcp.control.XLookupField();
+        xTextField4 = new com.rameses.rcp.control.XTextField();
+        xTextField3 = new com.rameses.rcp.control.XTextField();
         xTextField2 = new com.rameses.rcp.control.XTextField();
         xTextField1 = new com.rameses.rcp.control.XTextField();
         xLookupField3 = new com.rameses.rcp.control.XLookupField();
-        xComboBox2 = new com.rameses.rcp.control.XComboBox();
-        xTextField3 = new com.rameses.rcp.control.XTextField();
 
         com.rameses.rcp.control.border.XTitledBorder xTitledBorder1 = new com.rameses.rcp.control.border.XTitledBorder();
         xTitledBorder1.setTitle("General Information");
@@ -54,14 +54,28 @@ public class SpecifyTradename extends javax.swing.JPanel {
         xComboBox1.setRequired(true);
         xFormPanel1.add(xComboBox1);
 
-        xLookupField1.setCaption("Permitee");
+        xLookupField1.setCaption("Owner");
         xLookupField1.setDepends(new String[] {"entity.orgtype"});
         xLookupField1.setExpression("#{item.name}");
-        xLookupField1.setHandler("lookupPermitees");
-        xLookupField1.setName("entity.permitee");
+        xLookupField1.setHandler("lookupOwners");
+        xLookupField1.setName("entity.owner");
         xLookupField1.setPreferredSize(new java.awt.Dimension(0, 20));
         xLookupField1.setRequired(true);
         xFormPanel1.add(xLookupField1);
+
+        xTextField4.setCaption("Address");
+        xTextField4.setEnabled(false);
+        xTextField4.setName("entity.owner.address");
+        xTextField4.setPreferredSize(new java.awt.Dimension(0, 20));
+        xTextField4.setRequired(true);
+        xFormPanel1.add(xTextField4);
+
+        xTextField3.setCaption("Business Name");
+        xTextField3.setDepends(new String[] {"entity.businessname"});
+        xTextField3.setName("entity.businessname");
+        xTextField3.setPreferredSize(new java.awt.Dimension(0, 20));
+        xTextField3.setRequired(true);
+        xFormPanel1.add(xTextField3);
 
         xTextField2.setCaption("Trade Name");
         xTextField2.setName("entity.tradename");
@@ -82,23 +96,6 @@ public class SpecifyTradename extends javax.swing.JPanel {
         xLookupField3.setPreferredSize(new java.awt.Dimension(0, 20));
         xFormPanel1.add(xLookupField3);
 
-        xComboBox2.setCaption("Office Type");
-        xComboBox2.setExpression("#{item.value}");
-        xComboBox2.setItemKey("key");
-        xComboBox2.setItems("officeTypes");
-        xComboBox2.setName("entity.officetype");
-        xComboBox2.setPreferredSize(new java.awt.Dimension(250, 22));
-        xComboBox2.setRequired(true);
-        xFormPanel1.add(xComboBox2);
-
-        xTextField3.setText("entity.branchname");
-        xTextField3.setCaption("Branch Name");
-        xTextField3.setDepends(new String[] {"entity.officetype"});
-        xTextField3.setName("entity.branchname");
-        xTextField3.setPreferredSize(new java.awt.Dimension(0, 20));
-        xTextField3.setRequired(true);
-        xFormPanel1.add(xTextField3);
-
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -112,8 +109,8 @@ public class SpecifyTradename extends javax.swing.JPanel {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(xFormPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 227, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(xFormPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 213, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(25, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -138,13 +135,13 @@ public class SpecifyTradename extends javax.swing.JPanel {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel jPanel1;
     private com.rameses.rcp.control.XComboBox xComboBox1;
-    private com.rameses.rcp.control.XComboBox xComboBox2;
     private com.rameses.rcp.control.XFormPanel xFormPanel1;
     private com.rameses.rcp.control.XLookupField xLookupField1;
     private com.rameses.rcp.control.XLookupField xLookupField3;
     private com.rameses.rcp.control.XTextField xTextField1;
     private com.rameses.rcp.control.XTextField xTextField2;
     private com.rameses.rcp.control.XTextField xTextField3;
+    private com.rameses.rcp.control.XTextField xTextField4;
     // End of variables declaration//GEN-END:variables
     
 }

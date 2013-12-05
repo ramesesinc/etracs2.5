@@ -2,6 +2,7 @@
 SELECT *
 FROM businessvariable
 WHERE name LIKE $P{searchtext}
+ORDER BY system DESC, sortorder ASC, objid ASC
 
 [approve]
 UPDATE businessvariable 
@@ -12,9 +13,11 @@ WHERE objid = $P{objid}
 SELECT *
 FROM businessvariable
 WHERE name LIKE $P{searchtext}
+ORDER BY system DESC, sortorder ASC, objid ASC
 
 [getLookupByType]
 SELECT *
 FROM businessvariable
 WHERE name LIKE $P{searchtext}
 AND datatype = $P{datatype}
+ORDER BY system DESC, sortorder ASC, objid ASC

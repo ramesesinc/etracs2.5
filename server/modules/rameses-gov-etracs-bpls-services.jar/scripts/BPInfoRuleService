@@ -1,0 +1,173 @@
+import com.rameses.annotations.*;
+import com.rameses.util.*;
+import java.rmi.server.*;
+import com.rameses.rules.common.*;
+
+import bpls.facts.*;
+
+public class BPInfoRuleService  {
+
+	@Resource("RuleService")	
+	def ruleSvc;
+
+	@ActiveDB("rule")
+	def ruleDB;
+
+	@ActiveDB("lob")
+	def lob;
+
+	@ActiveDB("businessvariable")
+	def bv;
+
+	@ActiveDB("businessrequirement")
+	def br;
+
+	@Service("DateService")
+	def dateSvc;
+
+	@Service("NumberService")
+	def numberSvc;
+
+	@Service("BPFactBuilder")
+	def bpFacts;
+
+
+	String RULESET = "bpinfo";
+
+	def infoBuilder = { def entity, def newinfos, def lob, def attrid, def val, def phase, def laterenewal ->
+		//check first if info already exists. test is a list
+		def test = null;
+		if( !lob ) {
+			test = entity.infos.findAll{ it.lob?.objid == null && it.attribute.objid == attrid };
+			if(!test) {
+				test = newinfos.findAll{it.lob?.objid==null && it.attribute.objid == attrid };
+			}	
+		}
+		else {
+			test = entity.infos.findAll{ it.lob?.objid!=null && it.lob.objid == lob.objid && it.attribute.objid == attrid };
+			if(!test) {
+				test =  newinfos.findAll{ it.lob?.objid!=null && it.lob.objid == lob.objid && it.attribute.objid == attrid };
+			}
+		}
+		if(laterenewal) {
+			test = test.findAll{ it.year == laterenewal.year };
+		}
+		else {
+			test = test.findAll{ !it.year || it.year == entity.appyear };
+		}
+
+		if(test) return null;
+			
+		def info = [objid:"BPINFO"+new UID()];
+		info.phase = phase;
+		info.attribute = bv.read( [objid: attrid ] );
+		if(lob) {
+			info.lob = [objid:lob.objid, name:lob.name];
+		}
+		info.datatype = info.attribute.datatype;
+		if(laterenewal) info.year = laterenewal.year;
+		if(val) {
+			String datatype = info.attribute.datatype;
+			switch(datatype) {
+				case "integer":
+					info.value = val.intValue;
+					break;
+				case "decimal":
+					info.value = val.doubleValue;
+					break;
+				case "string":	
+					info.value = val.stringValue;
+					break;
+				case "boolean":	
+					info.value = val.booleanValue;
+					break;
+			}
+		}			
+		newinfos << info;
+		return info;
+	}
+
+	def buildFacts( request ) {
+		def o = request.entity;
+		def facts = [];
+		def currDate = dateSvc.serverDate;
+		def dt = currDate;
+		if(o.dtfiled && !(o.dtfiled instanceof java.util.Date)) {
+			dt = java.sql.Date.valueOf( o.dtfiled );
+		}
+		facts << new EffectiveDate( dt );
+		facts << new CurrentDate(currDate);
+		bpFacts.buildApplication( o, facts );
+		return facts;
+	}
+
+	def buildActions(def request) {
+		def actions = new RuleAction();
+		actions.addCommand( "ask_business_info", new AskBusinessInfo( infoBuilder: infoBuilder, request:request ));
+		actions.addCommand( "add_requirement", new AddRequirement(request:request, BR: br));
+		actions.addCommand( "print_test", new PrintTest());
+		return actions;
+	}
+
+
+	@ProxyMethod
+	public def execute(def o) throws Exception {
+		if(!o.lobs)
+			throw new Exception("Please provide at least one line of business");
+		def request = [newinfos:[],  vars:[:], entity: o, requirements:[] ]; 
+		request.facts = buildFacts(request);
+		request.actions = buildActions( request );
+		
+		def grps = ruleDB.getRulegroups( [ruleset: RULESET] );
+		int phase = 0;
+		for( g in grps ) { 
+			request.phase = phase;
+			request.vars.clear();
+			ruleSvc.execute( RULESET, request.facts, request.actions, g.name );
+			//if first phase and there is entry in newinfos break it.
+			if(phase <= 1 && request.newinfos) break;
+			phase++;
+		}
+		return [infos:request.newinfos, phase: phase, requirements:request.requirements];
+	}
+}
+
+public class AskBusinessInfo implements RuleActionHandler {
+	def infoBuilder;
+	def request;
+	public void execute(def params, def drools) {
+		def lob = params.lob;
+		def attrid = params.attribute.key;
+		def defvalue = params.defaultvalue;
+		def laterenewal = params.laterenewal;
+		def entity = request.entity;
+		def newinfos = request.newinfos;
+		def info = infoBuilder( entity, newinfos, lob, attrid, null, request.phase, laterenewal );
+		if(info) info.defaultvalue = defvalue;
+	}
+}
+
+public class AddRequirement implements RuleActionHandler {
+	def request;
+	def BR;
+	public void execute(def params, def drools) {
+		def type = params.type;
+		def step = params.step;
+		if( !request.requirements.find{it.refid == type.key}) {
+			def z = BR.findReq([objid: type.key])
+			def filetype=null;
+			if(z.type=="DATA") filetype = "bprequirement:DATA";
+			request.requirements << [refid: type.key, type:z.type, filetype:filetype, title: type.value, step: step ]; 
+		}
+	}
+
+}
+
+public class PrintTest implements RuleActionHandler {
+	public void execute(def params, def drools) {
+		def msg = params.message;
+		println "-------------- Print Message ------------------";
+		println msg.stringValue; 
+	}
+
+}

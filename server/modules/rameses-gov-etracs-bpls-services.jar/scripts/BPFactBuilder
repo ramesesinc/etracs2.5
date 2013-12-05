@@ -1,0 +1,98 @@
+import com.rameses.annotations.*;
+import com.rameses.util.*;
+import java.rmi.server.*;
+import com.rameses.services.extended.*
+import bpls.facts.*;
+
+import org.apache.commons.beanutils.BeanUtils;
+
+
+/*****************************************************************
+* This is a service to build facts from the application source
+******************************************************************/
+public class BPApplicationFactBuilder  {
+
+	@Resource("RuleService")	
+	def ruleSvc;
+
+	@ActiveDB("rule")
+	def ruleDB;
+
+	@ActiveDB("lob")
+	def lobEm;
+
+	@Service("NumberService")
+	def numberSvc;
+
+	/**
+	* this builds the application and collects to to the facts list
+	**/
+	@ProxyMethod
+	public def buildApplication( def app, def facts ) {
+		def lobMap = [:];
+
+		def fapp = new BPApplication();
+		BeanUtils.copyProperties( fapp, app );
+		fapp.barangayid = app.barangay?.objid;
+		facts << fapp;
+
+		app.lobs?.each {
+			def LOB = new LOB();
+			LOB.objid = it.lobid;
+			LOB.lobid = it.lobid;
+			LOB.name = it.name;
+			LOB.assessmenttype = it.assessmenttype;
+			LOB.classification = it.classification?.objid;
+			LOB.attributes = "-" + lobEm.getAttributes( [lobid: it.lobid ] )*.name.join("-") + "-";
+			facts << LOB;
+			lobMap.put( it.lobid, LOB );
+		}
+		app.infos?.each {
+			def dtype = it.attribute.datatype;
+			def f = new BusinessInfo(dtype, it.value);
+			f.objid = it.objid;
+			f.name = it.attribute.name;
+			if(it.lob) f.lob = lobMap[ it.lob.objid ];
+			facts << f;
+		}
+		app.taxfees?.each {
+			def tf = createTaxFeeAccount( it );
+			if(app.appyear) tf.year = app.appyear;
+			tf.qtr = 0;
+			if( tf.amtdue > 0 ) {
+				facts << tf;
+			}
+		}
+		return facts;
+	}
+
+
+	@ProxyMethod
+	public def createTaxFeeAccount(def x) {
+		if(x.amtpaid==null) x.amtpaid = 0;
+		def tf = new TaxFeeAccount();
+		tf.acctid = x.account.objid;
+		tf.type = x.account.taxfeetype;
+		tf.amount = numberSvc.round(x.amount);
+		tf.amtpaid = numberSvc.round(x.amtpaid);
+		tf.amtdue = numberSvc.round(x.amount - x.amtpaid);
+		tf.total = tf.amtdue;
+		tf.account = x.account;
+		tf.lob = x.lob;
+		tf.receivableid = x.receivableid;
+		if(tf.type == "TAX") {
+			tf.paypriority = 3;
+		}
+		else if(tf.type == "REGFEE") {
+			tf.paypriority = 2;
+		}
+		else {
+			tf.paypriority = 1;
+		}		
+		return tf;
+	}
+
+
+
+
+}

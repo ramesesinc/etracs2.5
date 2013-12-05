@@ -110,8 +110,8 @@
                         </Property>
                       </PropertyBean>
                     </Property>
-                    <Property name="caption" type="java.lang.String" value="Permittee"/>
-                    <Property name="expression" type="java.lang.String" value="#{entity.permitee.name}"/>
+                    <Property name="caption" type="java.lang.String" value="Owner"/>
+                    <Property name="expression" type="java.lang.String" value="#{entity.owner.name}"/>
                     <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                       <Dimension value="[0, 18]"/>
                     </Property>
@@ -126,8 +126,8 @@
                         </Property>
                       </PropertyBean>
                     </Property>
-                    <Property name="caption" type="java.lang.String" value="Address"/>
-                    <Property name="expression" type="java.lang.String" value="#{entity.permitee.address}"/>
+                    <Property name="caption" type="java.lang.String" value="Owner Address"/>
+                    <Property name="expression" type="java.lang.String" value="#{entity.owner.address}"/>
                     <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                       <Dimension value="[0, 18]"/>
                     </Property>

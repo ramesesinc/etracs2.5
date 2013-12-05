@@ -23,8 +23,8 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="xFormPanel1" min="-2" pref="152" max="-2" attributes="0"/>
-              <EmptySpace pref="21" max="32767" attributes="0"/>
+              <Component id="xFormPanel1" pref="196" max="32767" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -94,6 +94,20 @@
               <Dimension value="[0, 22]"/>
             </Property>
             <Property name="required" type="boolean" value="true"/>
+          </Properties>
+        </Component>
+        <Component class="com.rameses.rcp.control.XTextField" name="xTextField3">
+          <Properties>
+            <Property name="caption" type="java.lang.String" value="Role"/>
+            <Property name="name" type="java.lang.String" value="entity.role"/>
+            <Property name="spaceChar" type="char" value="_"/>
+          </Properties>
+        </Component>
+        <Component class="com.rameses.rcp.control.XTextField" name="xTextField4">
+          <Properties>
+            <Property name="caption" type="java.lang.String" value="Handler"/>
+            <Property name="name" type="java.lang.String" value="entity.handler"/>
+            <Property name="spaceChar" type="char" value="_"/>
           </Properties>
         </Component>
       </SubComponents>

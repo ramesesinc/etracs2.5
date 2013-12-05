@@ -123,8 +123,8 @@
           <SubComponents>
             <Component class="com.rameses.rcp.control.XLabel" name="xLabel1">
               <Properties>
-                <Property name="caption" type="java.lang.String" value="Permitee"/>
-                <Property name="expression" type="java.lang.String" value="#{entity.permitee.name}"/>
+                <Property name="caption" type="java.lang.String" value="Owner"/>
+                <Property name="expression" type="java.lang.String" value="#{entity.owner.name}"/>
                 <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                   <Dimension value="[0, 16]"/>
                 </Property>

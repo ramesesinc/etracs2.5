@@ -33,13 +33,12 @@
 	<parameter name="PRINTDATE" isForPrompting="false" class="java.util.Date"/>
 
 	<field name="billdate" class="java.util.Date"/>
-	<field name="taxpayeraddress" class="java.lang.String"/>
-	<field name="taxpayername" class="java.lang.String"/>
+	<field name="owneraddress" class="java.lang.String"/>
+	<field name="ownername" class="java.lang.String"/>
 	<field name="items" class="java.lang.Object"/>
 	<field name="grandtotal" class="java.math.BigDecimal"/>
 	<field name="printedby" class="java.lang.String"/>
 	<field name="expirydate" class="java.util.Date"/>
-	<field name="taxpayerno" class="java.lang.String"/>
 	<field name="barcode" class="java.lang.String"/>
 
 		<background>
@@ -166,7 +165,7 @@
 					<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
 						<font fontName="Tahoma" pdfFontName="Helvetica" size="8" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{taxpayeraddress}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{owneraddress}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -186,7 +185,7 @@
 					<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
 						<font fontName="Tahoma" pdfFontName="Helvetica" size="8" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{taxpayername}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{ownername}]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement

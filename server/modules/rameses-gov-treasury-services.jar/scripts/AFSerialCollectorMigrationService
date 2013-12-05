@@ -20,6 +20,9 @@ class AFSerialCollectorMigrationService  {
 	@Service("SequenceService") 
 	def seqSvc;
 
+	@PersistenceContext("main")
+	def em; 
+
 	/**********************************************************
 	* pass the ff. parameters:
 	*    collector [objid, name]
@@ -39,6 +42,11 @@ class AFSerialCollectorMigrationService  {
 	**********************************************************/
 	@ProxyMethod
 	public void post( def m ) {
+		def d = em.sqlContext.createQuery('select objid from afserial_inventory where endseries=?')
+				  .setParameter(1, m.endseries)
+				  .resultList 
+		if(d ) throw new Exception("Series ${m.startseries} already exists. ");
+
 		if(! m.refno) m.refno = 'SYSTEM' + seqSvc.getNextFormattedSeries("AFSERIALFORWARD")
 
 		def sb = new StringBuffer();

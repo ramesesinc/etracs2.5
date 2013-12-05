@@ -1,0 +1,41 @@
+import com.rameses.annotations.*;
+import com.rameses.util.*;
+import java.rmi.server.*;
+import com.rameses.services.extended.*;
+
+class BusinessExtOfficeService extends ActiveCrudListService {
+
+	@ActiveDB("bpapplication")
+	def em;
+
+	String listMethod = "getExtOfficeList";
+	String pagingKeys = "a.objid";
+
+	@ProxyMethod
+	public def getNodes(o) {
+		return [
+			[name:'assessment', caption:'For Assessment', state:'assessment', leaf:true, folder:true, allowSearch:true],
+			[name:'payment', caption:'For Payment', state:'payment', leaf:true, folder:true, allowSearch:true],
+			[name:'release', caption:'For Release', state:'release', leaf:true, folder:true, allowSearch:true]
+		];
+	}	
+
+	@ProxyMethod
+	public def getColumns(o) {
+		return [
+			[name:'appno', caption:'Application No', width:120, resizable:false],
+			[name:'apptype', caption:'App. Type', width:80, resizable:false],
+			[name:'owner.name', caption:'Owner'],
+			[name:'tradename', caption:'Trade Name', expression: "#{item.tradename} #{((item.branchname) ? '( '+item.branchname+' )' : '')}", type:'label'],
+			[name:'state', caption:'State', width:120, resizable:false],
+			[name:'txnmode', caption:'Txn Mode', width:150, resizable:false],
+			[name:'department', caption:'Department', width:150, resizable:false],
+			[name:'completed', caption:'Completed', width:120, resizable:false, type:'checkbox', checkedValue:1, uncheckedValue:0],
+		];
+	}
+
+
+	
+
+
+}

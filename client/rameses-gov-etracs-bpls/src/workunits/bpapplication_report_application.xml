@@ -1,0 +1,98 @@
+<workunit>
+    <invokers>
+        <invoker type="bpapplication:report" caption="Application" action="viewReport" target="window" index="0"/>
+        <invoker type="bpapplication:application:report" caption="Application" action="viewReport" 
+            target="window" index="0" states="assessment|approval|payment"/>
+        
+        <invoker type="formActions" caption="Close" action="_close"/>
+    </invokers>
+    
+    <code>
+        <![CDATA[    
+        import com.rameses.rcp.annotations.*
+        import com.rameses.rcp.common.*
+        import com.rameses.osiris2.client.*
+        import com.rameses.osiris2.common.*
+        import java.rmi.server.*;
+         import com.rameses.osiris2.reports.*;
+        
+        class  BPApplicationReportController  {
+        
+            def data;
+            def entity;
+            def title = "BP Application"
+            
+            def reportPath = "com/rameses/gov/etracs/bpls/reports/application/"
+            def orgtypes = LOV.ORG_TYPES;    
+            
+            @Service("ReportParameterService") 
+            def paramsvc
+         
+            @FormId
+            String formId;
+            
+            @FormTitle
+            String formTitle;
+            
+            void viewReport() {
+                formTitle = "App "+ entity.appno; 
+                formId = "APPRPT:"+entity.objid;
+            
+                def format = { x->
+                    if(x==null) return "";
+                    else if(x==true) return "Yes";
+                    else if(x==false) return "No";
+                    else return x+"";
+                }
+                def infos = entity.infos.collect{ 
+                    [
+                      category:it.lob?.name, 
+                      name: it.attribute.caption,
+                      value: format(it.value)
+                    ]  
+                 };
+                 
+                 
+                 
+                //ctcno: "CCI2012-191919191", 
+                //ctcdate: java.sql.Date.valueOf("2013-02-01"),
+                data = [
+                   refno: entity.appno, 
+                   appdate: entity.dtfiled,
+                   tradename: entity.tradename, 
+                   businessorgtype: orgtypes.find{ it.key == entity.orgtype}?.value,
+                   businessaddress: entity.businessaddress,
+                   ownername: entity.owner.name, 
+                   ownerno: entity.owner.entityno,
+                   owneraddress: entity.owner.address,
+                   txndate: entity.dtfiled, 
+                   laterenewal:"0", 
+                   infos:infos,
+                   requierements:[],
+                   signatories:[],
+                   barcode: "51005:"+entity.appno
+                ]
+                report.viewReport();
+            } 
+            
+            def report = [
+                getReportName : { return reportPath + "bpapplication.jasper" },
+                getReportData : { return  data },
+                getParameters : { return paramsvc.getStandardParameter() },
+                getSubReports : { return [
+                        new SubReport("APPINFO", reportPath + "appinfoitem.jasper"),
+                        new SubReport("REQUIREMENT", reportPath + "requirement.jasper"),
+                        new SubReport("SIGNATORIES", reportPath + "signatories.jasper")
+                    ] as SubReport[];
+                }
+            ] as ReportModel
+           
+        }
+        ]]>
+    </code>
+    
+    <pages>
+        <page template="com.rameses.osiris2.common.ui.ReportPreviewPage"/>
+    </pages>
+    
+</workunit>

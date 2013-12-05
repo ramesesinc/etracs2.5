@@ -33,10 +33,11 @@ public class BPAssessmentAnalyzerPage extends javax.swing.JPanel {
         jPanel2 = new javax.swing.JPanel();
         xFormPanel1 = new com.rameses.rcp.control.XFormPanel();
         xComboBox2 = new com.rameses.rcp.control.XComboBox();
-        xComboBox3 = new com.rameses.rcp.control.XComboBox();
         xLookupField3 = new com.rameses.rcp.control.XLookupField();
         xComboBox4 = new com.rameses.rcp.control.XComboBox();
         xComboBox5 = new com.rameses.rcp.control.XComboBox();
+        xIntegerField1 = new com.rameses.rcp.control.XIntegerField();
+        xIntegerField2 = new com.rameses.rcp.control.XIntegerField();
         jTabbedPane1 = new javax.swing.JTabbedPane();
         jPanel6 = new javax.swing.JPanel();
         xDataTable3 = new com.rameses.rcp.control.XDataTable();
@@ -63,16 +64,6 @@ public class BPAssessmentAnalyzerPage extends javax.swing.JPanel {
         xComboBox2.setRequired(true);
         xFormPanel1.add(xComboBox2);
 
-        xComboBox3.setCaption("Office Type");
-        xComboBox3.setCaptionWidth(130);
-        xComboBox3.setExpression("#{item.value}");
-        xComboBox3.setItemKey("key");
-        xComboBox3.setItems("officeTypes");
-        xComboBox3.setName("entity.officetype");
-        xComboBox3.setPreferredSize(new java.awt.Dimension(0, 22));
-        xComboBox3.setRequired(true);
-        xFormPanel1.add(xComboBox3);
-
         xLookupField3.setCaption("Barangay");
         xLookupField3.setCaptionWidth(130);
         xLookupField3.setExpression("#{entity.barangay.name}");
@@ -98,6 +89,16 @@ public class BPAssessmentAnalyzerPage extends javax.swing.JPanel {
         xComboBox5.setPreferredSize(new java.awt.Dimension(0, 22));
         xComboBox5.setRequired(true);
         xFormPanel1.add(xComboBox5);
+
+        xIntegerField1.setCaption("Year");
+        xIntegerField1.setCaptionWidth(130);
+        xIntegerField1.setName("entity.appyear");
+        xFormPanel1.add(xIntegerField1);
+
+        xIntegerField2.setCaption("Last Year Renewed");
+        xIntegerField2.setCaptionWidth(130);
+        xIntegerField2.setName("entity.lastrenewal");
+        xFormPanel1.add(xIntegerField2);
 
         xDataTable3.setColumns(new com.rameses.rcp.common.Column[]{
             new com.rameses.rcp.common.Column(new Object[]{
@@ -209,7 +210,7 @@ public class BPAssessmentAnalyzerPage extends javax.swing.JPanel {
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel6Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(xDataTable3, javax.swing.GroupLayout.DEFAULT_SIZE, 249, Short.MAX_VALUE)
+                .addComponent(xDataTable3, javax.swing.GroupLayout.DEFAULT_SIZE, 242, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jTabbedPane1.addTab("Taxes and Fees", jPanel6);
@@ -284,7 +285,7 @@ public class BPAssessmentAnalyzerPage extends javax.swing.JPanel {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(xDataTable2, javax.swing.GroupLayout.DEFAULT_SIZE, 249, Short.MAX_VALUE)
+                .addComponent(xDataTable2, javax.swing.GroupLayout.DEFAULT_SIZE, 242, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jTabbedPane1.addTab("Infos", jPanel1);
@@ -345,7 +346,7 @@ public class BPAssessmentAnalyzerPage extends javax.swing.JPanel {
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(xDataTable4, javax.swing.GroupLayout.DEFAULT_SIZE, 249, Short.MAX_VALUE)
+                .addComponent(xDataTable4, javax.swing.GroupLayout.DEFAULT_SIZE, 242, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jTabbedPane1.addTab("Requirements", jPanel4);
@@ -446,10 +447,10 @@ public class BPAssessmentAnalyzerPage extends javax.swing.JPanel {
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jPanel5, 0, 159, Short.MAX_VALUE)
-                    .addComponent(xFormPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 159, Short.MAX_VALUE))
+                    .addComponent(jPanel5, 0, 166, Short.MAX_VALUE)
+                    .addComponent(xFormPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 159, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 299, Short.MAX_VALUE)
+                .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 292, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -480,7 +481,6 @@ public class BPAssessmentAnalyzerPage extends javax.swing.JPanel {
     private javax.swing.JTabbedPane jTabbedPane1;
     private com.rameses.rcp.control.XButton xButton1;
     private com.rameses.rcp.control.XComboBox xComboBox2;
-    private com.rameses.rcp.control.XComboBox xComboBox3;
     private com.rameses.rcp.control.XComboBox xComboBox4;
     private com.rameses.rcp.control.XComboBox xComboBox5;
     private com.rameses.rcp.control.XDataTable xDataTable1;
@@ -488,6 +488,8 @@ public class BPAssessmentAnalyzerPage extends javax.swing.JPanel {
     private com.rameses.rcp.control.XDataTable xDataTable3;
     private com.rameses.rcp.control.XDataTable xDataTable4;
     private com.rameses.rcp.control.XFormPanel xFormPanel1;
+    private com.rameses.rcp.control.XIntegerField xIntegerField1;
+    private com.rameses.rcp.control.XIntegerField xIntegerField2;
     private com.rameses.rcp.control.XLookupField xLookupField1;
     private com.rameses.rcp.control.XLookupField xLookupField3;
     // End of variables declaration//GEN-END:variables

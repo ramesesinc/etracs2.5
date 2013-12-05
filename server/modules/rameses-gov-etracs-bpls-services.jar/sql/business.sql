@@ -1,28 +1,32 @@
 [getList]
 SELECT DISTINCT a.* FROM 
-(SELECT objid,state,permitee_name,tradename,businessaddress,activeyear
-FROM business WHERE state=$P{state} AND permitee_name LIKE $P{searchtext}
+(SELECT objid,state,owner_name,tradename,businessaddress,activeyear
+FROM business WHERE state=$P{state} AND owner_name LIKE $P{searchtext}
 UNION 
-SELECT objid,state,permitee_name,tradename,businessaddress,activeyear
+SELECT objid,state,owner_name,tradename,businessaddress,activeyear
 FROM business WHERE state=$P{state} AND tradename LIKE $P{searchtext}
 ) a
 ORDER BY a.tradename
 
 [getListSearch]
 SELECT DISTINCT a.* FROM 
-(SELECT objid,state,permitee_name,tradename,businessaddress,activeyear
-FROM business WHERE permitee_name LIKE $P{searchtext}
+(SELECT objid,state,owner_name,tradename,businessaddress,activeyear
+FROM business WHERE owner_name LIKE $P{searchtext}
 UNION 
-SELECT objid,state,permitee_name,tradename,businessaddress,activeyear
+SELECT objid,state,owner_name,tradename,businessaddress,activeyear
 FROM business WHERE tradename LIKE $P{searchtext}
 ) a
 ORDER BY a.tradename
+
+
+
+
 
 ########################################################
 # BusinessNameVerificationService
 #########################################################
 [getListForVerification]
-SELECT TOP 500 objid,state,permitee_name,tradename,businessaddress,activeyear
+SELECT TOP 500 objid,state,owner_name,tradename,businessaddress,activeyear
 FROM business 
 WHERE tradename LIKE $P{tradename}
 ORDER BY tradename
@@ -79,10 +83,10 @@ DELETE FROM business_receivable WHERE businessid=$P{objid}
 ################################################
 # used in lookup in cash receipts
 ################################################
-[getLookupByPermitee]
-SELECT objid, apptype, permitee_name, tradename, objid AS businessid 
+[getLookupByOwner]
+SELECT objid, apptype, owner_name, tradename, objid AS businessid 
 FROM business 
-WHERE state = $P{state} AND permitee_objid=$P{permiteeid} AND tradename LIKE $P{searchtext}
+WHERE state = $P{state} AND owner_objid=$P{ownerid} AND tradename LIKE $P{searchtext}
 
 
 ###########################################
@@ -148,24 +152,19 @@ AND (amount - amtpaid - discount) > 0
 SELECT a.*, 
 CASE WHEN a.activeyear=$P{year} THEN 0 ELSE 1 END AS laterenewal
 FROM (
-SELECT objid, tradename, permitee_name, businessaddress, state, activeyear FROM business WHERE state NOT IN ('RETIRED','PENDING','PAYMENT_PENDING') 
-	AND permitee_name LIKE $P{permiteename} AND activeyear < $P{year}
+SELECT objid, tradename, owner_name, businessaddress, state, activeyear FROM business WHERE state NOT IN ('RETIRED','PENDING','PAYMENT_PENDING') 
+	AND owner_name LIKE $P{ownername} AND activeyear < $P{year}
 UNION
-SELECT objid, tradename, permitee_name, businessaddress, state, activeyear FROM business WHERE state NOT IN ('RETIRED','PENDING','PAYMENT_PENDING') 
+SELECT objid, tradename, owner_name, businessaddress, state, activeyear FROM business WHERE state NOT IN ('RETIRED','PENDING','PAYMENT_PENDING') 
 	AND tradename LIKE $P{tradename} AND activeyear < $P{year}
 ) a
-ORDER BY a.permitee_name
+ORDER BY a.owner_name
 
 [changeState]
 UPDATE business SET state = $P{state} WHERE objid = $P{objid}
 
-[getListByPermitee]
-SELECT objid,permitee_name,tradename
-FROM business WHERE permitee_objid=$P{permiteeid} AND tradename LIKE $P{searchtext}
+[getListByOwner]
+SELECT objid,owner_name,tradename
+FROM business WHERE owner_objid=$P{ownerid} AND tradename LIKE $P{searchtext}
 
 
-################################################
-# This is a temporary solution just for today
-###############################################
-[findPermiteeInfo]
-SELECT entityno, address FROM entity WHERE objid=$P{objid}

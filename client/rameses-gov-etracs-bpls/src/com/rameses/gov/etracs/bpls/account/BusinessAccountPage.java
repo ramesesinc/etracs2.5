@@ -33,7 +33,6 @@ public class BusinessAccountPage extends javax.swing.JPanel {
         xFormPanel1 = new com.rameses.rcp.control.XFormPanel();
         xLookupField1 = new com.rameses.rcp.control.XLookupField();
         xComboBox1 = new com.rameses.rcp.control.XComboBox();
-        xComboBox2 = new com.rameses.rcp.control.XComboBox();
         xLookupField2 = new com.rameses.rcp.control.XLookupField();
         xLookupField3 = new com.rameses.rcp.control.XLookupField();
         xComboBox3 = new com.rameses.rcp.control.XComboBox();
@@ -56,12 +55,6 @@ public class BusinessAccountPage extends javax.swing.JPanel {
         xComboBox1.setName("entity.taxfeetype");
         xComboBox1.setRequired(true);
         xFormPanel1.add(xComboBox1);
-
-        xComboBox2.setCaption("Payment Mode");
-        xComboBox2.setItems("paymentModes");
-        xComboBox2.setName("entity.paymentmode");
-        xComboBox2.setRequired(true);
-        xFormPanel1.add(xComboBox2);
 
         xLookupField2.setCaption("Surcharge Account");
         xLookupField2.setExpression("#{entity.surcharge.code} #{entity.surcharge.title}");
@@ -106,7 +99,6 @@ public class BusinessAccountPage extends javax.swing.JPanel {
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private com.rameses.rcp.control.XComboBox xComboBox1;
-    private com.rameses.rcp.control.XComboBox xComboBox2;
     private com.rameses.rcp.control.XComboBox xComboBox3;
     private com.rameses.rcp.control.XFormPanel xFormPanel1;
     private com.rameses.rcp.control.XLookupField xLookupField1;

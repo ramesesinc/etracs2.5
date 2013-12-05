@@ -102,6 +102,8 @@ class ReportParameterService{
 			SECRETARYNAME				: var.secretary_name,
 			SECRETRAYTITLE				: var.secretary_title, 
 
+			ACCOUNTANTOFFICENAME		: var.accountant_officename, 
+
 			CASHIERHEADNAME				: var.cashierhead_name,
 			CASHIERHEADTITLE			: var.cashierhead_title, 
 
