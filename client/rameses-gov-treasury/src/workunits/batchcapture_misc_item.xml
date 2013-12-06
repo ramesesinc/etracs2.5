@@ -126,6 +126,24 @@
             def doCancel() {
                 return "_close";
             }
+            
+            
+            def getLookupBank(){
+                return InvokerUtil.lookupOpener('bank:lookup', [
+                    onselect : {
+                        payment.bankid = it.objid;
+                        payment.bank   = it.code;
+                        payment.deposittype = it.deposittype;
+                    },
+                    
+                    onempty  : {
+                        payment.bankid = null;
+                        payment.bank   = null;
+                        payment.deposittype = null;
+                    }
+                ])
+            }
+            
         }
         ]]>
         

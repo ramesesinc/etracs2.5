@@ -39,7 +39,7 @@ public class BatchCollectionItemPage extends javax.swing.JPanel {
         xLabel1 = new com.rameses.rcp.control.XLabel();
         xDecimalField1 = new com.rameses.rcp.control.XDecimalField();
         formPanel1 = new com.rameses.rcp.util.FormPanel();
-        xTextField1 = new com.rameses.rcp.control.XTextField();
+        xLookupField2 = new com.rameses.rcp.control.XLookupField();
         xTextField4 = new com.rameses.rcp.control.XTextField();
         xDateField1 = new com.rameses.rcp.control.XDateField();
         xNumberField1 = new com.rameses.rcp.control.XNumberField();
@@ -162,10 +162,11 @@ public class BatchCollectionItemPage extends javax.swing.JPanel {
         com.rameses.rcp.control.border.XTitledBorder xTitledBorder3 = new com.rameses.rcp.control.border.XTitledBorder();
         xTitledBorder3.setTitle("Check Payment");
         formPanel1.setBorder(xTitledBorder3);
-        xTextField1.setCaption("Bank");
-        xTextField1.setName("payment.bank");
-        xTextField1.setPreferredSize(new java.awt.Dimension(200, 20));
-        formPanel1.add(xTextField1);
+        xLookupField2.setCaption("Bank");
+        xLookupField2.setExpression("#{payment.bank}");
+        xLookupField2.setHandler("lookupBank");
+        xLookupField2.setPreferredSize(new java.awt.Dimension(200, 20));
+        formPanel1.add(xLookupField2);
 
         xTextField4.setCaption("Check No");
         xTextField4.setName("payment.checkno");
@@ -203,7 +204,7 @@ public class BatchCollectionItemPage extends javax.swing.JPanel {
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(jPanel2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(formPanel1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 120, Short.MAX_VALUE)
+                .add(formPanel1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 142, Short.MAX_VALUE)
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -219,8 +220,8 @@ public class BatchCollectionItemPage extends javax.swing.JPanel {
     private com.rameses.rcp.control.XFormPanel xFormPanel1;
     private com.rameses.rcp.control.XLabel xLabel1;
     private com.rameses.rcp.control.XLookupField xLookupField1;
+    private com.rameses.rcp.control.XLookupField xLookupField2;
     private com.rameses.rcp.control.XNumberField xNumberField1;
-    private com.rameses.rcp.control.XTextField xTextField1;
     private com.rameses.rcp.control.XTextField xTextField2;
     private com.rameses.rcp.control.XTextField xTextField3;
     private com.rameses.rcp.control.XTextField xTextField4;
