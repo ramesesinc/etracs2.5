@@ -3,8 +3,7 @@
 <!DOCTYPE jasperReport PUBLIC "//JasperReports//DTD Report Design//EN" "http://jasperreports.sourceforge.net/dtds/jasperreport.dtd">
 <jasperReport
 		 name="main"
-
-		 language="groovy"		 columnCount="1"
+		 columnCount="1"
 		 printOrder="Vertical"
 		 orientation="Portrait"
 		 pageWidth="612"
@@ -29,7 +28,7 @@
 	<parameter name="LOGOLGU" isForPrompting="false" class="java.lang.String"/>
 	<parameter name="PRINTEDBY" isForPrompting="false" class="java.lang.String"/>
 	<parameter name="PRINTDATE" isForPrompting="false" class="java.util.Date"/>
-	<parameter name="APPINFO" isForPrompting="false" class="java.lang.Object"/>
+	<parameter name="ITEM" isForPrompting="false" class="java.lang.Object"/>
 	<parameter name="SIGNATORIES" isForPrompting="false" class="java.lang.Object"/>
 	<parameter name="REQUIREMENT" isForPrompting="false" class="java.lang.Object"/>
 	<parameter name="USERNAME" isForPrompting="false" class="java.lang.String"/>
@@ -43,7 +42,7 @@
 	<field name="ownername" class="java.lang.String"/>
 	<field name="tradename" class="java.lang.String"/>
 	<field name="businessaddress" class="java.lang.String"/>
-	<field name="owneraddress" class="java.lang.String"/>
+	<field name="permiteeaddress" class="java.lang.String"/>
 	<field name="apptype" class="java.lang.String"/>
 	<field name="appno" class="java.lang.String"/>
 	<field name="requirements" class="java.lang.Object"/>
@@ -52,7 +51,7 @@
 	<field name="ctcno" class="java.lang.String"/>
 	<field name="ctcplaceissued" class="java.lang.String"/>
 	<field name="ctcdateissued" class="java.util.Date"/>
-	<field name="businessorgtype" class="java.lang.String"/>
+	<field name="orgtype" class="java.lang.String"/>
 	<field name="officetype" class="java.lang.String"/>
 	<field name="tin" class="java.lang.String"/>
 	<field name="sss" class="java.lang.String"/>
@@ -62,39 +61,62 @@
 	<field name="refno" class="java.lang.String"/>
 	<field name="barcodeurl" class="java.lang.String"/>
 	<field name="barcode" class="java.lang.String"/>
+	<field name="permiteeno" class="java.lang.String"/>
 	<field name="regtype" class="java.lang.String"/>
-	<field name="regno" class="java.lang.String"/>
-	<field name="regdate" class="java.util.Date"/>
-	<field name="branchname" class="java.lang.String"/>
-	<field name="pin" class="java.lang.String"/>
-	<field name="area_in_sqmeter" class="java.lang.Double"/>
+	<field name="reqdate" class="java.util.Date"/>
+	<field name="reqno" class="java.lang.String"/>
+	<field name="tax_incentive" class="java.lang.String"/>
+	<field name="businessname" class="java.lang.String"/>
+	<field name="company_president" class="java.lang.String"/>
+	<field name="company_treasurer" class="java.lang.String"/>
+	<field name="businessbarangay" class="java.lang.String"/>
+	<field name="businessphone" class="java.lang.String"/>
+	<field name="businessemail" class="java.lang.String"/>
+	<field name="businesspin" class="java.lang.String"/>
+	<field name="ownersaddress" class="java.lang.String"/>
+	<field name="ownersphone" class="java.lang.String"/>
+	<field name="ownersemail" class="java.lang.String"/>
+	<field name="area_sqm" class="java.lang.Double"/>
 	<field name="num_employee_male" class="java.lang.Integer"/>
 	<field name="num_employee_female" class="java.lang.Integer"/>
 	<field name="num_employee_resident" class="java.lang.Integer"/>
-	<field name="lessorname" class="java.lang.String"/>
-	<field name="monthlyrental" class="java.lang.Double"/>
-	<field name="lessoraddress" class="java.lang.String"/>
+	<field name="monthly_rental" class="java.math.BigDecimal"/>
+	<field name="lessor_name" class="java.lang.String"/>
+	<field name="lessor_address" class="java.lang.String"/>
 
 
 		<group  name="generalinfo" >
 			<groupExpression><![CDATA[]]></groupExpression>
 			<groupHeader>
-			<band height="284"  isSplitAllowed="true" >
+			<band height="302"  isSplitAllowed="true" >
 				<line direction="TopDown">
 					<reportElement
 						x="0"
-						y="23"
+						y="12"
 						width="540"
 						height="0"
 						key="line-1"/>
 					<graphicElement stretchType="NoStretch"/>
 				</line>
+				<staticText>
+					<reportElement
+						x="2"
+						y="0"
+						width="83"
+						height="11"
+						key="staticText-2"/>
+					<box></box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="Tahoma" pdfFontName="Helvetica" size="8" isBold="false"/>
+					</textElement>
+				<text><![CDATA[Application Type :]]></text>
+				</staticText>
 				<line direction="TopDown">
 					<reportElement
 						x="0"
-						y="-8"
+						y="0"
 						width="0"
-						height="200"
+						height="302"
 						key="line-6"
 						stretchType="RelativeToBandHeight"/>
 					<graphicElement stretchType="RelativeToBandHeight"/>
@@ -102,9 +124,9 @@
 				<line direction="TopDown">
 					<reportElement
 						x="540"
-						y="-8"
+						y="0"
 						width="0"
-						height="200"
+						height="302"
 						key="line-7"
 						stretchType="RelativeToBandHeight"/>
 					<graphicElement stretchType="RelativeToBandHeight"/>
@@ -112,7 +134,7 @@
 				<line direction="TopDown">
 					<reportElement
 						x="0"
-						y="51"
+						y="28"
 						width="540"
 						height="0"
 						key="line-9"/>
@@ -121,8 +143,8 @@
 				<staticText>
 					<reportElement
 						x="2"
-						y="38"
-						width="78"
+						y="14"
+						width="83"
 						height="13"
 						key="staticText-11"/>
 					<box></box>
@@ -134,8 +156,8 @@
 				<staticText>
 					<reportElement
 						x="2"
-						y="52"
-						width="78"
+						y="29"
+						width="83"
 						height="13"
 						key="staticText-12"/>
 					<box></box>
@@ -147,7 +169,7 @@
 				<line direction="TopDown">
 					<reportElement
 						x="0"
-						y="65"
+						y="42"
 						width="540"
 						height="0"
 						key="line-10"/>
@@ -156,8 +178,8 @@
 				<staticText>
 					<reportElement
 						x="2"
-						y="66"
-						width="78"
+						y="43"
+						width="83"
 						height="13"
 						key="staticText-13"/>
 					<box></box>
@@ -169,128 +191,58 @@
 				<line direction="TopDown">
 					<reportElement
 						x="0"
-						y="78"
+						y="56"
 						width="540"
 						height="0"
 						key="line-11"/>
 					<graphicElement stretchType="NoStretch"/>
 				</line>
-				<line direction="TopDown">
-					<reportElement
-						x="0"
-						y="92"
-						width="540"
-						height="0"
-						key="line-12"/>
-					<graphicElement stretchType="NoStretch"/>
-				</line>
-				<staticText>
-					<reportElement
-						x="8"
-						y="79"
-						width="78"
-						height="13"
-						key="staticText-15"/>
-					<box></box>
-					<textElement verticalAlignment="Middle">
-						<font fontName="Tahoma" pdfFontName="Helvetica-Bold" size="8" isBold="true"/>
-					</textElement>
-				<text><![CDATA[Taxpayer Info]]></text>
-				</staticText>
 				<staticText>
 					<reportElement
 						x="2"
-						y="107"
-						width="37"
+						y="70"
+						width="83"
 						height="13"
 						key="staticText-16"/>
 					<box></box>
 					<textElement verticalAlignment="Middle">
 						<font fontName="Tahoma" size="8"/>
 					</textElement>
-				<text><![CDATA[Name:]]></text>
+				<text><![CDATA[Name of Taxpayer:]]></text>
 				</staticText>
 				<line direction="TopDown">
 					<reportElement
 						x="0"
-						y="107"
+						y="83"
 						width="540"
 						height="0"
 						key="line-14"/>
 					<graphicElement stretchType="NoStretch"/>
 				</line>
-				<staticText>
-					<reportElement
-						x="2"
-						y="94"
-						width="37"
-						height="13"
-						key="staticText-17"/>
-					<box></box>
-					<textElement verticalAlignment="Middle">
-						<font fontName="Tahoma" size="8"/>
-					</textElement>
-				<text><![CDATA[Address:]]></text>
-				</staticText>
 				<line direction="TopDown">
 					<reportElement
 						x="0"
-						y="121"
+						y="97"
 						width="540"
 						height="0"
 						key="line-15"/>
 					<graphicElement stretchType="NoStretch"/>
 				</line>
-				<staticText>
-					<reportElement
-						x="8"
-						y="24"
-						width="78"
-						height="13"
-						key="staticText-18"/>
-					<box></box>
-					<textElement verticalAlignment="Middle">
-						<font fontName="Tahoma" pdfFontName="Helvetica-Bold" size="8" isBold="true"/>
-					</textElement>
-				<text><![CDATA[General Info]]></text>
-				</staticText>
 				<line direction="TopDown">
 					<reportElement
-						x="0"
-						y="37"
-						width="540"
-						height="0"
-						key="line-16"/>
-					<graphicElement stretchType="NoStretch"/>
-				</line>
-				<line direction="TopDown">
-					<reportElement
-						x="338"
-						y="38"
-						width="0"
-						height="54"
+						x="270"
+						y="12"
+						width="1"
+						height="45"
 						key="line-17"/>
 					<graphicElement stretchType="NoStretch"/>
 				</line>
 				<staticText>
 					<reportElement
-						x="345"
-						y="51"
-						width="72"
-						height="13"
-						key="staticText-20"/>
-					<box></box>
-					<textElement verticalAlignment="Middle">
-						<font fontName="Tahoma" size="8"/>
-					</textElement>
-				<text><![CDATA[Date registered:]]></text>
-				</staticText>
-				<staticText>
-					<reportElement
-						x="345"
-						y="65"
+						x="272"
+						y="43"
 						width="34"
-						height="11"
+						height="13"
 						key="staticText-21"/>
 					<box></box>
 					<textElement verticalAlignment="Middle">
@@ -300,10 +252,10 @@
 				</staticText>
 				<staticText>
 					<reportElement
-						x="344"
-						y="79"
+						x="409"
+						y="43"
 						width="21"
-						height="11"
+						height="13"
 						key="staticText-22"/>
 					<box></box>
 					<textElement verticalAlignment="Middle">
@@ -311,23 +263,10 @@
 					</textElement>
 				<text><![CDATA[TIN:]]></text>
 				</staticText>
-				<staticText>
-					<reportElement
-						x="8"
-						y="122"
-						width="78"
-						height="13"
-						key="staticText-23"/>
-					<box></box>
-					<textElement verticalAlignment="Middle">
-						<font fontName="Tahoma" pdfFontName="Helvetica-Bold" size="8" isBold="true"/>
-					</textElement>
-				<text><![CDATA[Business Info]]></text>
-				</staticText>
 				<line direction="TopDown">
 					<reportElement
 						x="0"
-						y="135"
+						y="111"
 						width="540"
 						height="0"
 						key="line-18"/>
@@ -336,205 +275,123 @@
 				<staticText>
 					<reportElement
 						x="2"
-						y="136"
-						width="50"
+						y="98"
+						width="90"
 						height="13"
 						key="staticText-24"/>
 					<box></box>
 					<textElement verticalAlignment="Middle">
 						<font fontName="Tahoma" size="8"/>
 					</textElement>
-				<text><![CDATA[Trade Name:]]></text>
+				<text><![CDATA[Trade Name/Franchise:]]></text>
 				</staticText>
 				<staticText>
 					<reportElement
 						x="2"
-						y="150"
-						width="37"
+						y="126"
+						width="90"
 						height="13"
 						key="staticText-25"/>
 					<box></box>
 					<textElement verticalAlignment="Middle">
 						<font fontName="Tahoma" size="8"/>
 					</textElement>
-				<text><![CDATA[Address:]]></text>
+				<text><![CDATA[Business Address:]]></text>
 				</staticText>
 				<line direction="TopDown">
 					<reportElement
 						x="0"
-						y="149"
+						y="125"
 						width="540"
 						height="0"
 						key="line-19"/>
 					<graphicElement stretchType="NoStretch"/>
 				</line>
-				<line direction="TopDown">
-					<reportElement
-						x="0"
-						y="163"
-						width="540"
-						height="0"
-						key="line-20"/>
-					<graphicElement stretchType="NoStretch"/>
-				</line>
-				<staticText>
-					<reportElement
-						x="2"
-						y="164"
-						width="58"
-						height="13"
-						key="staticText-26"/>
-					<box></box>
-					<textElement verticalAlignment="Middle">
-						<font fontName="Tahoma" size="8"/>
-					</textElement>
-				<text><![CDATA[Administrator:]]></text>
-				</staticText>
-				<line direction="TopDown">
-					<reportElement
-						x="0"
-						y="177"
-						width="540"
-						height="0"
-						key="line-21"/>
-					<graphicElement stretchType="NoStretch"/>
-				</line>
-				<staticText>
-					<reportElement
-						x="2"
-						y="178"
-						width="90"
-						height="13"
-						key="staticText-27"/>
-					<box></box>
-					<textElement verticalAlignment="Middle">
-						<font fontName="Tahoma" size="8"/>
-					</textElement>
-				<text><![CDATA[Administrator Address:]]></text>
-				</staticText>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="39"
-						y="95"
-						width="501"
-						height="11"
+						x="85"
+						y="70"
+						width="455"
+						height="13"
 						key="textField"/>
 					<box></box>
-					<textElement>
+					<textElement verticalAlignment="Middle">
 						<font fontName="Tahoma" size="8"/>
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[$F{ownername}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="39"
-						y="108"
-						width="501"
-						height="11"
-						key="textField-6"/>
-					<box></box>
-					<textElement>
-						<font fontName="Tahoma" size="8"/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{owneraddress}]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="52"
-						y="137"
-						width="264"
-						height="11"
+						x="92"
+						y="98"
+						width="441"
+						height="13"
 						key="textField-7"/>
 					<box></box>
-					<textElement>
+					<textElement verticalAlignment="Middle">
 						<font fontName="Tahoma" size="8"/>
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[$F{tradename}]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="39"
-						y="151"
-						width="501"
-						height="11"
-						key="textField-8"/>
+						x="1"
+						y="140"
+						width="269"
+						height="13"
+						key="textField-8"
+						positionType="Float"/>
 					<box></box>
-					<textElement>
+					<textElement verticalAlignment="Middle">
 						<font fontName="Tahoma" size="8"/>
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[$F{businessaddress}]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="59"
-						y="165"
-						width="481"
-						height="11"
-						key="textField-9"/>
-					<box></box>
-					<textElement>
-						<font fontName="Tahoma" size="8"/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{administratorname}]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="92"
-						y="179"
-						width="448"
-						height="11"
-						key="textField-10"/>
-					<box></box>
-					<textElement>
-						<font fontName="Tahoma" size="8"/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{administratoraddress}]]></textFieldExpression>
-				</textField>
 				<textField isStretchWithOverflow="false" pattern="MMMM dd, yyyy" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="80"
-						y="39"
+						x="85"
+						y="14"
 						width="122"
-						height="11"
+						height="13"
 						key="textField-11"/>
 					<box></box>
-					<textElement>
+					<textElement verticalAlignment="Middle">
 						<font fontName="Tahoma" size="8"/>
 					</textElement>
 				<textFieldExpression   class="java.util.Date"><![CDATA[$F{appdate}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="80"
-						y="53"
+						x="85"
+						y="29"
 						width="122"
-						height="11"
+						height="13"
 						key="textField-12"/>
 					<box></box>
-					<textElement>
+					<textElement verticalAlignment="Middle">
 						<font fontName="Tahoma" size="8"/>
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[$F{refno}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="80"
-						y="67"
+						x="85"
+						y="43"
 						width="122"
-						height="11"
+						height="13"
 						key="textField-13"/>
 					<box></box>
-					<textElement>
+					<textElement verticalAlignment="Middle">
 						<font fontName="Tahoma" size="8"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{businessorgtype}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{orgtype}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="393"
-						y="65"
-						width="114"
-						height="11"
+						x="306"
+						y="43"
+						width="99"
+						height="13"
 						key="textField-14"/>
 					<box></box>
 					<textElement>
@@ -544,299 +401,725 @@
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="393"
-						y="79"
-						width="114"
-						height="11"
+						x="430"
+						y="43"
+						width="107"
+						height="13"
 						key="textField-15"/>
 					<box></box>
-					<textElement>
+					<textElement verticalAlignment="Middle">
 						<font fontName="Tahoma" size="8"/>
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[$F{tin}]]></textFieldExpression>
 				</textField>
-				<line direction="TopDown">
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="0"
-						y="193"
-						width="540"
-						height="0"
-						key="line-30"/>
-					<graphicElement stretchType="NoStretch"/>
-				</line>
+						x="85"
+						y="0"
+						width="122"
+						height="11"
+						key="textField-23"/>
+					<box></box>
+					<textElement>
+						<font fontName="Tahoma" size="8"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{apptype}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="272"
+						y="14"
+						width="142"
+						height="13"
+						key="textField-24"/>
+					<box></box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Tahoma" size="8"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{regtype} + " Registration No. : "]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="272"
+						y="29"
+						width="141"
+						height="13"
+						key="textField-25"/>
+					<box></box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Tahoma" size="8"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{regtype} + " Date of Registration : "]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="yyyy-MM-dd" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="413"
+						y="29"
+						width="127"
+						height="13"
+						key="textField-26"/>
+					<box></box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Tahoma" size="8"/>
+					</textElement>
+				<textFieldExpression   class="java.util.Date"><![CDATA[$F{reqdate}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="413"
+						y="14"
+						width="127"
+						height="13"
+						key="textField-27"/>
+					<box></box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Tahoma" size="8"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{reqno}]]></textFieldExpression>
+				</textField>
 				<staticText>
 					<reportElement
-						x="0"
-						y="0"
-						width="78"
+						x="2"
+						y="57"
+						width="83"
 						height="13"
 						key="staticText-35"/>
 					<box></box>
 					<textElement verticalAlignment="Middle">
 						<font fontName="Tahoma" size="8"/>
 					</textElement>
-				<text><![CDATA[Type of Application:]]></text>
+				<text><![CDATA[Tax Incentive :]]></text>
 				</staticText>
-				<textField isStretchWithOverflow="false" pattern="MMMM dd, yyyy" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="80"
-						y="0"
-						width="63"
-						height="14"
-						key="textField-23"/>
+						x="85"
+						y="57"
+						width="455"
+						height="13"
+						key="textField-28"/>
 					<box></box>
-					<textElement>
+					<textElement verticalAlignment="Middle">
 						<font fontName="Tahoma" size="8"/>
 					</textElement>
-				<textFieldExpression   class="java.util.Date"><![CDATA[$F{apptype}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{tax_incentive}]]></textFieldExpression>
 				</textField>
+				<line direction="TopDown">
+					<reportElement
+						x="0"
+						y="70"
+						width="540"
+						height="0"
+						key="line-40"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
 				<staticText>
 					<reportElement
-						x="345"
-						y="38"
-						width="84"
+						x="2"
+						y="84"
+						width="83"
 						height="13"
 						key="staticText-36"/>
 					<box></box>
 					<textElement verticalAlignment="Middle">
 						<font fontName="Tahoma" size="8"/>
 					</textElement>
-				<text><![CDATA[Registration Type/No:]]></text>
+				<text><![CDATA[Business Name:]]></text>
 				</staticText>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="429"
-						y="38"
-						width="111"
-						height="11"
-						key="textField-24"/>
+						x="85"
+						y="84"
+						width="455"
+						height="13"
+						key="textField-29"/>
 					<box></box>
-					<textElement>
+					<textElement verticalAlignment="Middle">
 						<font fontName="Tahoma" size="8"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{regtype} + ' ' + $F{regno}]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="false" pattern="dd-MMM-yyyy" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="429"
-						y="51"
-						width="78"
-						height="11"
-						key="textField-25"/>
-					<box></box>
-					<textElement>
-						<font fontName="Tahoma" size="8"/>
-					</textElement>
-				<textFieldExpression   class="java.util.Date"><![CDATA[$F{regdate}]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="326"
-						y="135"
-						width="214"
-						height="14"
-						key="textField-26"/>
-					<box></box>
-					<textElement>
-						<font fontName="Tahoma" size="8"/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{branchname}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{businessname}]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement
-						x="0"
-						y="201"
-						width="98"
+						x="2"
+						y="112"
+						width="165"
 						height="13"
 						key="staticText-37"/>
 					<box></box>
 					<textElement verticalAlignment="Middle">
 						<font fontName="Tahoma" size="8"/>
 					</textElement>
-				<text><![CDATA[Property Index No (PIN):]]></text>
+				<text><![CDATA[Name of President/Treasurer of Corporation:]]></text>
 				</staticText>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="98"
-						y="201"
-						width="92"
-						height="11"
-						key="textField-27"/>
+						x="167"
+						y="112"
+						width="369"
+						height="13"
+						key="textField-30"/>
 					<box></box>
-					<textElement>
+					<textElement verticalAlignment="Middle">
 						<font fontName="Tahoma" size="8"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{pin}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[( $F{company_president} != null && $F{company_treasurer} != null ) ? $F{company_president} + " / " + $F{company_treasurer} : ( $F{company_president} !=  null ? $F{company_president} : $F{company_treasurer} )]]></textFieldExpression>
 				</textField>
+				<line direction="TopDown">
+					<reportElement
+						x="270"
+						y="125"
+						width="1"
+						height="108"
+						key="line-41"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
 				<staticText>
 					<reportElement
-						x="0"
-						y="214"
-						width="98"
+						x="272"
+						y="126"
+						width="90"
 						height="13"
 						key="staticText-38"/>
 					<box></box>
 					<textElement verticalAlignment="Middle">
 						<font fontName="Tahoma" size="8"/>
 					</textElement>
-				<text><![CDATA[Business Area:]]></text>
+				<text><![CDATA[Owner's Address:]]></text>
 				</staticText>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="98"
-						y="214"
-						width="92"
-						height="11"
-						key="textField-28"/>
+						x="271"
+						y="140"
+						width="269"
+						height="13"
+						key="textField-31"
+						positionType="Float"/>
 					<box></box>
-					<textElement>
+					<textElement verticalAlignment="Middle">
 						<font fontName="Tahoma" size="8"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{area_in_sqmeter}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{ownersaddress}]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement
-						x="0"
-						y="227"
-						width="143"
+						x="2"
+						y="180"
+						width="42"
 						height="13"
 						key="staticText-39"/>
 					<box></box>
 					<textElement verticalAlignment="Middle">
 						<font fontName="Tahoma" size="8"/>
 					</textElement>
-				<text><![CDATA[No of Employees In Establishment:]]></text>
+				<text><![CDATA[Barangay :]]></text>
 				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="44"
+						y="180"
+						width="225"
+						height="13"
+						key="textField-32"/>
+					<box></box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Tahoma" size="8"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{businessbarangay}]]></textFieldExpression>
+				</textField>
 				<staticText>
 					<reportElement
-						x="150"
-						y="227"
-						width="28"
+						x="2"
+						y="193"
+						width="59"
 						height="13"
 						key="staticText-40"/>
 					<box></box>
 					<textElement verticalAlignment="Middle">
 						<font fontName="Tahoma" size="8"/>
 					</textElement>
-				<text><![CDATA[Male:]]></text>
+				<text><![CDATA[Telephone No :]]></text>
 				</staticText>
 				<staticText>
 					<reportElement
-						x="228"
-						y="227"
-						width="28"
+						x="2"
+						y="207"
+						width="59"
 						height="13"
 						key="staticText-41"/>
 					<box></box>
 					<textElement verticalAlignment="Middle">
 						<font fontName="Tahoma" size="8"/>
 					</textElement>
-				<text><![CDATA[Female:]]></text>
+				<text><![CDATA[Email Address :]]></text>
 				</staticText>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="178"
-						y="227"
-						width="40"
-						height="11"
-						key="textField-29"/>
-					<box></box>
-					<textElement>
-						<font fontName="Tahoma" size="8"/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{num_employee_male}]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="256"
-						y="227"
-						width="40"
-						height="11"
-						key="textField-30"/>
-					<box></box>
-					<textElement>
-						<font fontName="Tahoma" size="8"/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{num_employee_female}]]></textFieldExpression>
-				</textField>
 				<staticText>
 					<reportElement
-						x="308"
-						y="227"
-						width="144"
+						x="2"
+						y="221"
+						width="112"
 						height="13"
 						key="staticText-42"/>
 					<box></box>
 					<textElement verticalAlignment="Middle">
 						<font fontName="Tahoma" size="8"/>
 					</textElement>
-				<text><![CDATA[No. of Employees Residing in LGU:]]></text>
+				<text><![CDATA[Property Index Number (PIN) ]]></text>
 				</staticText>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="452"
-						y="227"
-						width="40"
-						height="11"
-						key="textField-31"/>
+						x="61"
+						y="193"
+						width="209"
+						height="13"
+						key="textField-33"/>
 					<box></box>
-					<textElement>
+					<textElement verticalAlignment="Middle">
 						<font fontName="Tahoma" size="8"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{num_employee_resident}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{businessphone}]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="150"
-						y="240"
-						width="228"
-						height="11"
-						key="textField-32"/>
+						x="60"
+						y="207"
+						width="209"
+						height="13"
+						key="textField-34"/>
 					<box></box>
-					<textElement>
+					<textElement verticalAlignment="Middle">
 						<font fontName="Tahoma" size="8"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{lessorname}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{businessemail}]]></textFieldExpression>
 				</textField>
-				<staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="114"
+						y="221"
+						width="156"
+						height="13"
+						key="textField-35"/>
+					<box></box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Tahoma" size="8"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{businesspin}]]></textFieldExpression>
+				</textField>
+				<line direction="TopDown">
 					<reportElement
 						x="0"
-						y="240"
-						width="143"
+						y="139"
+						width="540"
+						height="0"
+						key="line-42"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="0"
+						y="153"
+						width="540"
+						height="0"
+						key="line-43"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="0"
+						y="166"
+						width="540"
+						height="0"
+						key="line-44"
+						positionType="Float"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="0"
+						y="179"
+						width="540"
+						height="0"
+						key="line-45"
+						positionType="Float"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="0"
+						y="192"
+						width="540"
+						height="0"
+						key="line-46"
+						positionType="Float"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="0"
+						y="205"
+						width="540"
+						height="0"
+						key="line-47"
+						positionType="Float"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="0"
+						y="220"
+						width="540"
+						height="0"
+						key="line-48"
+						positionType="Float"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="0"
+						y="233"
+						width="540"
+						height="0"
+						key="line-49"
+						positionType="Float"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<staticText>
+					<reportElement
+						x="272"
+						y="193"
+						width="59"
 						height="13"
 						key="staticText-43"/>
 					<box></box>
 					<textElement verticalAlignment="Middle">
 						<font fontName="Tahoma" size="8"/>
 					</textElement>
-				<text><![CDATA[If rented, name of lessor:]]></text>
+				<text><![CDATA[Telephone No :]]></text>
 				</staticText>
-				<textField isStretchWithOverflow="false" pattern="##0.00" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="387"
-						y="240"
-						width="94"
-						height="11"
-						key="textField"/>
+						x="331"
+						y="193"
+						width="209"
+						height="13"
+						key="textField-36"/>
 					<box></box>
-					<textElement>
-						<font size="8"/>
-					</textElement>
-				<textFieldExpression   class="java.lang.Double"><![CDATA[$F{monthlyrental}]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="150"
-						y="253"
-						width="228"
-						height="11"
-						key="textField-33"/>
-					<box></box>
-					<textElement>
+					<textElement verticalAlignment="Middle">
 						<font fontName="Tahoma" size="8"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{lessoraddress}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{ownersphone}]]></textFieldExpression>
 				</textField>
+				<staticText>
+					<reportElement
+						x="272"
+						y="207"
+						width="59"
+						height="13"
+						key="staticText-44"/>
+					<box></box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Tahoma" size="8"/>
+					</textElement>
+				<text><![CDATA[Email Address :]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="330"
+						y="207"
+						width="209"
+						height="13"
+						key="textField-37"/>
+					<box></box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Tahoma" size="8"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{ownersemail}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement
+						x="2"
+						y="152"
+						width="143"
+						height="13"
+						key="staticText-45"/>
+					<box></box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Tahoma" size="8"/>
+					</textElement>
+				<text><![CDATA[Business Area (in Sq. m)]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="146"
+						y="234"
+						width="221"
+						height="13"
+						key="staticText-46"/>
+					<box></box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Tahoma" size="8"/>
+					</textElement>
+				<text><![CDATA[Total no. of Employees in Establishment]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="368"
+						y="234"
+						width="172"
+						height="13"
+						key="staticText-47"/>
+					<box></box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Tahoma" size="8"/>
+					</textElement>
+				<text><![CDATA[# of Employees Residing in LGU:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="22"
+						y="247"
+						width="123"
+						height="13"
+						key="textField-38"/>
+					<box></box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Tahoma" size="8"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.Double"><![CDATA[$F{area_sqm}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement
+						x="155"
+						y="247"
+						width="24"
+						height="13"
+						key="staticText-48"/>
+					<box></box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Tahoma" size="8"/>
+					</textElement>
+				<text><![CDATA[Male ]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="244"
+						y="247"
+						width="32"
+						height="13"
+						key="staticText-49"/>
+					<box></box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Tahoma" size="8"/>
+					</textElement>
+				<text><![CDATA[Female ]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="178"
+						y="247"
+						width="62"
+						height="13"
+						key="textField-39"/>
+					<box>					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+</box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Tahoma" size="8"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.Integer"><![CDATA[$F{num_employee_male}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="276"
+						y="247"
+						width="62"
+						height="13"
+						key="textField-40"/>
+					<box>					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+</box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Tahoma" size="8"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.Integer"><![CDATA[$F{num_employee_female}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="395"
+						y="247"
+						width="62"
+						height="13"
+						key="textField-41"/>
+					<box></box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Tahoma" size="8"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.Integer"><![CDATA[$F{num_employee_resident}]]></textFieldExpression>
+				</textField>
+				<line direction="TopDown">
+					<reportElement
+						x="0"
+						y="260"
+						width="540"
+						height="0"
+						key="line-50"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="145"
+						y="233"
+						width="1"
+						height="27"
+						key="line-51"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="367"
+						y="233"
+						width="1"
+						height="27"
+						key="line-52"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<staticText>
+					<reportElement
+						x="2"
+						y="261"
+						width="421"
+						height="13"
+						key="staticText-50"/>
+					<box></box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Tahoma" size="8"/>
+					</textElement>
+				<text><![CDATA[If Place of Business is Rented, please identify the following :        ]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="429"
+						y="260"
+						width="109"
+						height="13"
+						key="staticText-51"/>
+					<box></box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Tahoma" size="8"/>
+					</textElement>
+				<text><![CDATA[Monthly Rental :]]></text>
+				</staticText>
+				<line direction="TopDown">
+					<reportElement
+						x="427"
+						y="261"
+						width="1"
+						height="27"
+						key="line-53"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<staticText>
+					<reportElement
+						x="2"
+						y="274"
+						width="59"
+						height="13"
+						key="staticText-52"/>
+					<box></box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Tahoma" size="8"/>
+					</textElement>
+				<text><![CDATA[Lessor Name :]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="61"
+						y="274"
+						width="361"
+						height="13"
+						key="textField-42"/>
+					<box></box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Tahoma" size="8"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{lessor_name}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement
+						x="2"
+						y="288"
+						width="65"
+						height="13"
+						key="staticText-53"/>
+					<box></box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Tahoma" size="8"/>
+					</textElement>
+				<text><![CDATA[Lessor Address :]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="66"
+						y="288"
+						width="473"
+						height="13"
+						key="textField-43"/>
+					<box></box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Tahoma" size="8"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{lessor_name}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="434"
+						y="274"
+						width="98"
+						height="13"
+						key="textField-44"/>
+					<box></box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Tahoma" size="8"/>
+					</textElement>
+				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{monthly_rental}]]></textFieldExpression>
+				</textField>
+				<line direction="TopDown">
+					<reportElement
+						x="0"
+						y="287"
+						width="540"
+						height="0"
+						key="line-54"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="0"
+						y="273"
+						width="428"
+						height="0"
+						key="line-55"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="0"
+						y="301"
+						width="540"
+						height="0"
+						key="line-56"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<staticText>
+					<reportElement
+						x="2"
+						y="234"
+						width="136"
+						height="13"
+						key="staticText-54"/>
+					<box></box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Tahoma" size="8"/>
+					</textElement>
+				<text><![CDATA[Business Area ( in Sq. m )]]></text>
+				</staticText>
 			</band>
 			</groupHeader>
 			<groupFooter>
@@ -850,24 +1133,42 @@
 			<band height="30"  isSplitAllowed="true" >
 				<line direction="TopDown">
 					<reportElement
+						x="0"
+						y="0"
+						width="0"
+						height="30"
+						key="line-57"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
 						x="540"
 						y="0"
 						width="0"
-						height="29"
-						key="line-35"
-						stretchType="RelativeToBandHeight"/>
-					<graphicElement stretchType="RelativeToBandHeight"/>
+						height="30"
+						key="line-58"/>
+					<graphicElement stretchType="NoStretch"/>
 				</line>
 				<line direction="TopDown">
 					<reportElement
 						x="0"
-						y="0"
-						width="0"
-						height="29"
-						key="line-36"
-						stretchType="RelativeToBandHeight"/>
-					<graphicElement stretchType="RelativeToBandHeight"/>
+						y="29"
+						width="540"
+						height="0"
+						key="line-59"/>
+					<graphicElement stretchType="NoStretch"/>
 				</line>
+				<subreport  isUsingCache="true">
+					<reportElement
+						x="0"
+						y="0"
+						width="540"
+						height="30"
+						key="subreport-1"
+						positionType="Float"/>
+					<dataSourceExpression><![CDATA[$F{infos}]]></dataSourceExpression>
+					<subreportExpression  class="net.sf.jasperreports.engine.JasperReport"><![CDATA[$P{ITEM}]]></subreportExpression>
+				</subreport>
 			</band>
 			</groupHeader>
 			<groupFooter>
@@ -878,27 +1179,7 @@
 		<group  name="requirementinfo" >
 			<groupExpression><![CDATA[]]></groupExpression>
 			<groupHeader>
-			<band height="30"  isSplitAllowed="true" >
-				<line direction="TopDown">
-					<reportElement
-						x="540"
-						y="0"
-						width="0"
-						height="29"
-						key="line-37"
-						stretchType="RelativeToBandHeight"/>
-					<graphicElement stretchType="RelativeToBandHeight"/>
-				</line>
-				<line direction="TopDown">
-					<reportElement
-						x="0"
-						y="0"
-						width="0"
-						height="29"
-						key="line-38"
-						stretchType="RelativeToBandHeight"/>
-					<graphicElement stretchType="RelativeToBandHeight"/>
-				</line>
+			<band height="0"  isSplitAllowed="true" >
 			</band>
 			</groupHeader>
 			<groupFooter>
@@ -910,26 +1191,6 @@
 			<groupExpression><![CDATA[]]></groupExpression>
 			<groupHeader>
 			<band height="0"  isSplitAllowed="true" >
-				<line direction="TopDown">
-					<reportElement
-						x="540"
-						y="-30"
-						width="0"
-						height="29"
-						key="line-33"
-						stretchType="RelativeToBandHeight"/>
-					<graphicElement stretchType="RelativeToBandHeight"/>
-				</line>
-				<line direction="TopDown">
-					<reportElement
-						x="0"
-						y="-30"
-						width="0"
-						height="29"
-						key="line-34"
-						stretchType="RelativeToBandHeight"/>
-					<graphicElement stretchType="RelativeToBandHeight"/>
-				</line>
 			</band>
 			</groupHeader>
 			<groupFooter>
@@ -940,7 +1201,16 @@
 		<group  name="applicantSignatory" >
 			<groupExpression><![CDATA[]]></groupExpression>
 			<groupHeader>
-			<band height="125"  isSplitAllowed="true" >
+			<band height="129"  isSplitAllowed="true" >
+				<line direction="TopDown">
+					<reportElement
+						x="0"
+						y="11"
+						width="540"
+						height="0"
+						key="line-30"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						mode="Transparent"
@@ -1077,18 +1347,18 @@
 				<line direction="TopDown">
 					<reportElement
 						x="0"
-						y="2"
+						y="0"
 						width="0"
-						height="61"
+						height="63"
 						key="line-28"/>
 					<graphicElement stretchType="NoStretch"/>
 				</line>
 				<line direction="TopDown">
 					<reportElement
 						x="540"
-						y="2"
+						y="0"
 						width="0"
-						height="61"
+						height="63"
 						key="line-29"/>
 					<graphicElement stretchType="NoStretch"/>
 				</line>
@@ -1118,15 +1388,6 @@
 					</textElement>
 				<text><![CDATA[POSITION/TITLE]]></text>
 				</staticText>
-				<line direction="TopDown">
-					<reportElement
-						x="0"
-						y="0"
-						width="540"
-						height="0"
-						key="line-39"/>
-					<graphicElement stretchType="NoStretch"/>
-				</line>
 			</band>
 			</groupHeader>
 			<groupFooter>
@@ -1209,6 +1470,24 @@
 						key="line-3"/>
 					<graphicElement stretchType="NoStretch"/>
 				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="540"
+						y="0"
+						width="0"
+						height="64"
+						key="line-4"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="0"
+						y="0"
+						width="0"
+						height="64"
+						key="line-5"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
 				<staticText>
 					<reportElement
 						x="0"
@@ -1241,12 +1520,12 @@
 			</band>
 		</columnFooter>
 		<pageFooter>
-			<band height="71"  isSplitAllowed="true" >
+			<band height="64"  isSplitAllowed="true" >
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						mode="Transparent"
 						x="0"
-						y="55"
+						y="54"
 						width="405"
 						height="10"
 						forecolor="#000000"
@@ -1266,7 +1545,7 @@
 					<reportElement
 						mode="Transparent"
 						x="417"
-						y="55"
+						y="54"
 						width="100"
 						height="10"
 						forecolor="#000000"
@@ -1286,7 +1565,7 @@
 					<reportElement
 						mode="Transparent"
 						x="517"
-						y="55"
+						y="54"
 						width="23"
 						height="10"
 						forecolor="#000000"
@@ -1305,7 +1584,7 @@
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="326"
-						y="33"
+						y="34"
 						width="181"
 						height="11"
 						key="textField"/>
@@ -1319,7 +1598,7 @@
 					<reportElement
 						mode="Opaque"
 						x="326"
-						y="4"
+						y="5"
 						width="181"
 						height="28"
 						forecolor="#000000"

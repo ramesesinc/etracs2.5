@@ -80,7 +80,9 @@
                 getReportName : { return reportPath + "main.jasper" },
                 getReportData : { return  data },
                 getParameters : { return paramsvc.getStandardParameter() },
-                getSubReports : { return []; }
+                getSubReports : { return [
+                    new SubReport("ITEM", reportPath + "item.jasper")
+                ] as SubReport[]; }
             ] as ReportModel
            
         }
