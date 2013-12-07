@@ -31,11 +31,11 @@ public abstract class CertificationController
     def entity;
     def mode;
     
-    abstract String getType();
-    abstract String getOfficeName();
     abstract String getReportName();
+    abstract String getType();
     
     
+    String officeName = 'treasury';
         
     def getReportData(){
         return entity;
@@ -51,7 +51,7 @@ public abstract class CertificationController
 
     
     def getTitle(){
-        return 'Certification of ' + inv.caption 
+        return inv.caption 
     }
 
     void afterCreate(entity){

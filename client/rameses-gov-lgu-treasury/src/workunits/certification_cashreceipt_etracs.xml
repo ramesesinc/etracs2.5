@@ -1,7 +1,7 @@
 <workunit extends="wtemplates/gov/treasury/CertificationController.xml">
     <invokers>
-        <invoker folderid="/explorer/txn/treasury/certs" action="init" caption="Cash Receipt Certification"  target="self" index="10" role="TREASURY_REPORT"/>
-        <invoker type="cashreceipt_certification:open" action="open" caption="Cash Receipt Certification" target="self" />
+        <invoker type="treasury-certification" caption="ETRACS Collection Certification" role="TREASURY_REPORT" certificationType="cashreceipt_etracs" />
+        <invoker type="treasury-certification:cashreceipt_etracs:create" action="init" caption="ETRACS Collection Certification"  target="self" index="10" role="TREASURY_REPORT"/>
     </invokers>
     
     <code>
@@ -14,15 +14,14 @@ import com.rameses.osiris2.common.*
 import com.rameses.gov.treasury.certification.*;
 import com.rameses.osiris2.reports.*;
 
-class  CashReceiptCertificationController extends CertificationController 
+class  ETRACSCashReceiptCertificationController extends CertificationController
 {
     @Service('CashReceiptService')
     def crSvc;
     
-    String type        = 'cashreceipt_certification'
-    String officeName  = 'treasury'
-    
     def receipt;
+    
+    String type = ''
 
     def getLookupReceipt(){
         return InvokerUtil.lookupOpener('cashreceipt:lookup', [
