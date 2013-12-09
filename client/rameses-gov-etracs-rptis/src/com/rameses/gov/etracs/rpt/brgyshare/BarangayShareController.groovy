@@ -74,13 +74,14 @@ class BarangayShareController
     
     def listHandler = [
         fetchList : { return entity.items },
+        getColumnList : { return svc.getColumns(entity) }
     ] as EditorListModel
     
         
                 
     def reportdata 
     def preview(){
-        reportdata = svc.generateBrgyShareReport(entity.year, entity.mon.index)
+        reportdata = svc.generateBrgyShareReport(entity)
         report.viewReport();
         mode = MODE_PREVIEW;
         return 'preview'
@@ -97,7 +98,7 @@ class BarangayShareController
         getReportData : { return reportdata.items },
         getParameters : { 
             def params = paramSvc.getStandardParameter() 
-            params.PERIOD = 'For the Month of ' + entity.smonth + ', ' + entity.year;
+            params.PERIOD = 'For the Month of ' + getMonth(entity.month) + ', ' + entity.year;
             params.CURRENTRATE = reportdata.rate
             params.PREVIOUSRATE = reportdata.rate
             return params;
@@ -108,5 +109,13 @@ class BarangayShareController
     List getMonths(){
         return svc.getMonths();
     }
+    
+    List getSharetypes(){
+        return ['BASIC', 'COMMON_SHARE']
+    }
             
+    
+    def getMonth(monthid){
+        return getMonths().find{it.index == monthid}.caption
+    }
 }

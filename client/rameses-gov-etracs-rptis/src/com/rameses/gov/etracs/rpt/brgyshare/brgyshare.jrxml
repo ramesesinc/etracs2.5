@@ -41,9 +41,10 @@
 	<field name="basiccurrent" class="java.math.BigDecimal"/>
 	<field name="basicprevious" class="java.math.BigDecimal"/>
 	<field name="basictotal" class="java.math.BigDecimal"/>
-	<field name="basiccurrentshare" class="java.math.BigDecimal"/>
-	<field name="basicpreviousshare" class="java.math.BigDecimal"/>
+	<field name="basicshare" class="java.math.BigDecimal"/>
+	<field name="basicintshare" class="java.math.BigDecimal"/>
 	<field name="totalshare" class="java.math.BigDecimal"/>
+	<field name="commonshare" class="java.math.BigDecimal"/>
 
 	<variable name="TBASICAMOUNT" class="java.math.BigDecimal" resetType="Report" calculation="Sum">
 		<variableExpression><![CDATA[$F{basiccurrent}]]></variableExpression>
@@ -55,13 +56,16 @@
 		<variableExpression><![CDATA[$F{basictotal}]]></variableExpression>
 	</variable>
 	<variable name="TBASICSHARE" class="java.math.BigDecimal" resetType="Report" calculation="Sum">
-		<variableExpression><![CDATA[$F{basiccurrentshare}]]></variableExpression>
+		<variableExpression><![CDATA[$F{basicshare}.add($F{basicintshare})]]></variableExpression>
 	</variable>
 	<variable name="TBASICPRIORSHARE" class="java.math.BigDecimal" resetType="Report" calculation="Sum">
-		<variableExpression><![CDATA[$F{basicpreviousshare}]]></variableExpression>
+		<variableExpression><![CDATA[$F{basicintshare}]]></variableExpression>
 	</variable>
 	<variable name="TTOTALSHARE" class="java.math.BigDecimal" resetType="Report" calculation="Sum">
 		<variableExpression><![CDATA[$F{totalshare}]]></variableExpression>
+	</variable>
+	<variable name="TCOMMONSHARE" class="java.math.BigDecimal" resetType="Report" calculation="Sum">
+		<variableExpression><![CDATA[$F{commonshare}]]></variableExpression>
 	</variable>
 		<background>
 			<band height="0"  isSplitAllowed="true" >
@@ -269,8 +273,8 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
 						<font fontName="Tahoma" pdfFontName="Helvetica" size="8" isBold="true" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 					</textElement>
-				<text><![CDATA[CURRENT
-YEAR]]></text>
+				<text><![CDATA[BASIC
+CURRENT]]></text>
 				</staticText>
 				<staticText>
 					<reportElement
@@ -290,8 +294,8 @@ YEAR]]></text>
 					<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
 						<font fontName="Tahoma" pdfFontName="Helvetica" size="8" isBold="true" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 					</textElement>
-				<text><![CDATA[PREVIOUS 
-YEARS]]></text>
+				<text><![CDATA[BASIC
+PREVIOUS]]></text>
 				</staticText>
 				<staticText>
 					<reportElement
@@ -414,7 +418,7 @@ Barangay]]></text>
 					<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
 						<font fontName="Tahoma" pdfFontName="Helvetica" size="8" isBold="true" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[(new DecimalFormat("#,##0").format($P{CURRENTRATE})) + "%\nSHARE"]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA["BASIC SHARE"]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00;(#,##0.00)" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -434,7 +438,7 @@ Barangay]]></text>
 					<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
 						<font fontName="Tahoma" pdfFontName="Helvetica" size="8" isBold="true" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[(new DecimalFormat("#,##0").format($P{PREVIOUSRATE})) + "%\nSHARE"]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA["COMMON SHARE"]]></textFieldExpression>
 				</textField>
 			</band>
 		</columnHeader>
@@ -538,7 +542,7 @@ Barangay]]></text>
 					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
 						<font fontName="Tahoma" pdfFontName="Helvetica" size="8" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 					</textElement>
-				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{basiccurrentshare}]]></textFieldExpression>
+				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{basicshare}.add($F{basicintshare})]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00;(#,##0.00)" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -558,7 +562,7 @@ Barangay]]></text>
 					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
 						<font fontName="Tahoma" pdfFontName="Helvetica" size="8" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 					</textElement>
-				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{basicpreviousshare}]]></textFieldExpression>
+				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{commonshare}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00;(#,##0.00)" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -798,7 +802,7 @@ Barangay]]></text>
 					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
 						<font fontName="Tahoma" pdfFontName="Helvetica" size="8" isBold="true" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 					</textElement>
-				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$V{TBASICPRIORSHARE}]]></textFieldExpression>
+				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$V{TCOMMONSHARE}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
