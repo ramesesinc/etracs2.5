@@ -31,17 +31,18 @@ SELECT a.fund_objid, a.fund_code, a.fund_title,
 SUM(a.amount) AS amount
 FROM 
 (SELECT 
-	cb.fund_objid,	
-    cb.fund_code,
-    cb.fund_title,
-    cbe.cr AS amount
+	rf.fund_objid,	
+    f.code as fund_code,
+    rf.fund_title,
+    rf.amount AS amount
 FROM remittance r
+inner join remittance_fund rf on rf.remittanceid = r.objid 
+inner join fund f on f.objid = rf.fund_objid 
 LEFT JOIN liquidation_remittance lr ON r.objid=lr.objid
-INNER JOIN cashbook_entry cbe ON cbe.refid=r.objid
-INNER JOIN cashbook cb ON cb.objid = cbe.parentid 
-WHERE r.objid in ( ${remittances} )
+WHERE r.objid in ( ${remittances} )  
 AND lr.objid IS NULL ) a
-GROUP BY a.fund_objid, a.fund_code, a.fund_title 
+GROUP BY a.fund_objid, a.fund_code, a.fund_title  
+
 
 [getUnliquidatedChecks]
 SELECT pc.objid, pc.checkno, pc.checkdate, pc.particulars,
