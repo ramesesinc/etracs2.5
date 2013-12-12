@@ -17,7 +17,7 @@
             @Service("CashReceiptService")
             def cashReceiptSvc;
         
-            @Service("BusinessCashReceiptService")
+            @Service("BPCashReceiptService")
             def billSvc;
             
             @Service("BPApplicationLookupService")
@@ -28,26 +28,32 @@
             def query = [:]
             
             def qtrs = (1..4);
-            def payOptions = LOV.BP_PAYOPTIONS*.key;
+            def payOptions = LOV.BP_PAYOPTIONS*.key + ["PARTIAL"];
                 
-            def total_tax = 0;
-            def total_regfee = 0;
-            def total_othercharge = 0;
-            def total_amtdue = 0;
+            def prevbalance = 0;
+            def total_q1 = 0;
+            def total_q2 = 0;
+            def total_q3 = 0;
+            def total_q4 = 0;
+            def total = 0;
+            def partialpmt = 0;
+            
+            //indicate full amount for each qtr. this is used to determine 
+            //which quarter was fully paid. This is run during the first load.
+            def qtr_due_totals;
             
             def barcodeid;
             boolean barcode = false;
             
             void initBarcode() {
                 def param = [prefix: "51005", barcode: barcodeid ]; 
-            
                 def m = appLookup.findByBarcode( param );
                 entity = [formtype: "serial", formno:"51", txnmode: 'ONLINE'];
                 entity = cashReceiptSvc.init( entity );
                 entity.payer = [objid: m.owner.objid, name: m.owner.name];
-                entity.paidby = m.tradename;
+                entity.paidby = m.businessname;
                 entity.paidbyaddress = m.businessaddress;
-                entity.tradename = m.tradename;
+                entity.businessname = m.businessname;
                 entity.applicationid = m.applicationid;
                 entity.businessid = m.businessid;
                 entity.collectiontype = m.collectiontype;
@@ -55,7 +61,6 @@
                 entity.items = [];
                 query.payoption = payOptions[0];
                 barcode = true;
-                
                 super.init();
                 runBilling();
             }
@@ -69,38 +74,46 @@
             void clearBilling() {
                 entity.billitems?.clear();
                 entity.items.clear();
-                total_tax = 0;
-                total_regfee = 0;
-                total_othercharge = 0;
-                total_amtdue = 0;
-                binding.refresh("total.*");
+                total_q1 = 0;
+                total_q2 = 0;
+                total_q3 = 0;
+                total_q4 = 0;
+                total = 0;
+                entity.qtr = 0;
+                partialpmt = 0;
+                binding.refresh("total.*|entity.qtr|partialpmt");
                 entity.amount = 0;
                 billingListModel.reload();
+                super.updateBalances();
             }
             
             public def payerChanged( owner ) {
-                entity.tradename = null;
+                entity.businessname = null;
                 entity.applicationid = null;
                 entity.businessid = null;
                 entity.paidby = null;
                 entity.paidbyaddress = null;
                 query.payoption = payOptions[0];
-                binding.refresh( "entity.(tradename|paidby.*)" );
+                binding.refresh( "entity.(businessname|paidby.*)" );
                 clearBilling();
                 super.clearAllPayments();
                 super.updateBalances();
                 def opener = InvokerUtil.lookupOpener( "bpapplication:lookup", [
                     "query.ownerid":owner.objid,
-                    "query.state": "PAYMENT",
+                    "query.state": "payment",
                     onselect: { o->
                         entity.applicationid = o.applicationid;
-                        entity.tradename = o.tradename;
+                        entity.businessname = o.businessname;
                         entity.businessid = o.businessid;
-                        entity.paidby = o.tradename;
+                        entity.paidby = o.businessname;
                         entity.paidbyaddress = o.businessaddress;
                         entity.billitems = [];
                         entity.items = [];
                         query.payoption = payOptions[0];
+                        
+                        //null this only at this point
+                        qtr_due_totals = null;   
+                        binding.refresh("total.*|query.*|entity.paidby.*|entity.paidby|entity.qtr");
                         runBilling();
                     }
                 ]);
@@ -108,14 +121,17 @@
                 return opener;
             }
             
-            
             void runBilling() {
+                if(query.payoption=="PARTIAL" && partialpmt <= 0 ) {
+                    throw new Exception("Please specify partial amount for partial payment option");
+                }
                 def m = [:];
                 m.qtr = query.qtr;
                 m.applicationid = entity.applicationid;
                 m.businessid = entity.businessid;
                 m.payoption = query.payoption;
                 m.billdate = entity.receiptdate;
+                m.partialpmt = partialpmt;
                 
                 def result = billSvc.getBilling( m );
                 if(result.billitems.size()==0)
@@ -131,12 +147,30 @@
                 if(entity.items) {
                     entity.amount = entity.items.sum{ it.amount };
                 }
-                total_tax = result.total_tax;
-                total_regfee = result.total_regfee;
-                total_othercharge = result.total_othercharge;
-                total_amtdue = result.total_amtdue;
+                total_q1= result.total_q1;
+                total_q2 = result.total_q2;
+                total_q3 = result.total_q3;
+                total_q4 = result.total_q4;
+                total = result.total;
+                
+                //calculate qtr dues. Run only the first time.
+                if( !qtr_due_totals ) {
+                    qtr_due_totals = [:];
+                    qtr_due_totals.q1= result.total_q1;
+                    qtr_due_totals.q2 = result.total_q2;
+                    qtr_due_totals.q3 = result.total_q3;
+                    qtr_due_totals.q4 = result.total_q4;
+                }
+
+                //determine which quarter was fully paid and tag in payment.
+                entity.qtr = 0;    
+                if( total_q4 > 0 && total_q4 == qtr_due_totals.q4 ) entity.qtr = 4;
+                else if( total_q3 > 0 && total_q3 == qtr_due_totals.q3 ) entity.qtr = 3;
+                else if( total_q2 > 0 && total_q2 == qtr_due_totals.q2 ) entity.qtr = 2;
+                else if( total_q1 > 0 && total_q1 == qtr_due_totals.q1 ) entity.qtr = 1;
+                
                 if(binding) {
-                    binding.refresh("total.*|query.*|entity.paidby.*|entity.paidby");
+                    binding.refresh("total.*|query.*|entity.paidby.*|entity.paidby|entity.qtr");
                 }
                 super.updateBalances();
             }

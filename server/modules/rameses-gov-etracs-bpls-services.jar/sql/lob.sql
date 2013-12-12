@@ -25,6 +25,9 @@ ORDER BY lob.name
 DELETE FROM lob_lobattribute
 WHERE lobid = $P{lobid}
 
+[findInfo]
+SELECT name, classification_objid  FROM lob WHERE objid=$P{objid}
+
 [getAttributes]
 SELECT lla.*, la.name 
 FROM lob_lobattribute lla

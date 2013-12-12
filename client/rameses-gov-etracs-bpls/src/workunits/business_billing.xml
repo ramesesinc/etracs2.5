@@ -15,7 +15,7 @@
         
         class  BusinessBillingController {
             
-            @Service("BPBillingService")
+            @Service("BPBillingRuleService")
             def service;
         
             String title = "Business Billing"

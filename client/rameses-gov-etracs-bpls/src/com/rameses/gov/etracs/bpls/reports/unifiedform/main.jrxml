@@ -3,7 +3,8 @@
 <!DOCTYPE jasperReport PUBLIC "//JasperReports//DTD Report Design//EN" "http://jasperreports.sourceforge.net/dtds/jasperreport.dtd">
 <jasperReport
 		 name="main"
-		 columnCount="1"
+
+		 language="groovy"		 columnCount="1"
 		 printOrder="Vertical"
 		 orientation="Portrait"
 		 pageWidth="612"
@@ -13,7 +14,7 @@
 		 leftMargin="36"
 		 rightMargin="36"
 		 topMargin="20"
-		 bottomMargin="20"
+		 bottomMargin="108"
 		 whenNoDataType="AllSectionsNoDetail"
 		 isTitleNewPage="false"
 		 isSummaryNewPage="false">
@@ -42,7 +43,6 @@
 	<field name="ownername" class="java.lang.String"/>
 	<field name="tradename" class="java.lang.String"/>
 	<field name="businessaddress" class="java.lang.String"/>
-	<field name="permiteeaddress" class="java.lang.String"/>
 	<field name="apptype" class="java.lang.String"/>
 	<field name="appno" class="java.lang.String"/>
 	<field name="requirements" class="java.lang.Object"/>
@@ -56,31 +56,27 @@
 	<field name="tin" class="java.lang.String"/>
 	<field name="sss" class="java.lang.String"/>
 	<field name="infos" class="java.lang.Object"/>
-	<field name="administratorname" class="java.lang.String"/>
-	<field name="administratoraddress" class="java.lang.String"/>
 	<field name="refno" class="java.lang.String"/>
-	<field name="barcodeurl" class="java.lang.String"/>
 	<field name="barcode" class="java.lang.String"/>
-	<field name="permiteeno" class="java.lang.String"/>
 	<field name="regtype" class="java.lang.String"/>
 	<field name="reqdate" class="java.util.Date"/>
 	<field name="reqno" class="java.lang.String"/>
 	<field name="tax_incentive" class="java.lang.String"/>
 	<field name="businessname" class="java.lang.String"/>
-	<field name="company_president" class="java.lang.String"/>
-	<field name="company_treasurer" class="java.lang.String"/>
-	<field name="businessbarangay" class="java.lang.String"/>
+	<field name="administrator_name" class="java.lang.String"/>
+	<field name="administrator_position" class="java.lang.String"/>
+	<field name="barangay" class="java.lang.String"/>
 	<field name="businessphone" class="java.lang.String"/>
 	<field name="businessemail" class="java.lang.String"/>
 	<field name="businesspin" class="java.lang.String"/>
-	<field name="ownersaddress" class="java.lang.String"/>
-	<field name="ownersphone" class="java.lang.String"/>
-	<field name="ownersemail" class="java.lang.String"/>
+	<field name="owneraddress" class="java.lang.String"/>
+	<field name="ownerphone" class="java.lang.String"/>
+	<field name="owneremail" class="java.lang.String"/>
 	<field name="area_sqm" class="java.lang.Double"/>
 	<field name="num_employee_male" class="java.lang.Integer"/>
 	<field name="num_employee_female" class="java.lang.Integer"/>
 	<field name="num_employee_resident" class="java.lang.Integer"/>
-	<field name="monthly_rental" class="java.math.BigDecimal"/>
+	<field name="monthly_rental" class="java.lang.Double"/>
 	<field name="lessor_name" class="java.lang.String"/>
 	<field name="lessor_address" class="java.lang.String"/>
 
@@ -551,19 +547,6 @@
 					</textElement>
 				<text><![CDATA[Name of President/Treasurer of Corporation:]]></text>
 				</staticText>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="167"
-						y="112"
-						width="369"
-						height="13"
-						key="textField-30"/>
-					<box></box>
-					<textElement verticalAlignment="Middle">
-						<font fontName="Tahoma" size="8"/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[( $F{company_president} != null && $F{company_treasurer} != null ) ? $F{company_president} + " / " + $F{company_treasurer} : ( $F{company_president} !=  null ? $F{company_president} : $F{company_treasurer} )]]></textFieldExpression>
-				</textField>
 				<line direction="TopDown">
 					<reportElement
 						x="270"
@@ -598,7 +581,7 @@
 					<textElement verticalAlignment="Middle">
 						<font fontName="Tahoma" size="8"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{ownersaddress}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{owneraddress}]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement
@@ -624,7 +607,7 @@
 					<textElement verticalAlignment="Middle">
 						<font fontName="Tahoma" size="8"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{businessbarangay}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{barangay}]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement
@@ -806,7 +789,7 @@
 					<textElement verticalAlignment="Middle">
 						<font fontName="Tahoma" size="8"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{ownersphone}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{ownerphone}]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement
@@ -832,21 +815,8 @@
 					<textElement verticalAlignment="Middle">
 						<font fontName="Tahoma" size="8"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{ownersemail}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{owneremail}]]></textFieldExpression>
 				</textField>
-				<staticText>
-					<reportElement
-						x="2"
-						y="152"
-						width="143"
-						height="13"
-						key="staticText-45"/>
-					<box></box>
-					<textElement verticalAlignment="Middle">
-						<font fontName="Tahoma" size="8"/>
-					</textElement>
-				<text><![CDATA[Business Area (in Sq. m)]]></text>
-				</staticText>
 				<staticText>
 					<reportElement
 						x="146"
@@ -1065,7 +1035,7 @@
 					<textElement verticalAlignment="Middle">
 						<font fontName="Tahoma" size="8"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{lessor_name}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{lessor_address}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -1078,7 +1048,7 @@
 					<textElement verticalAlignment="Middle">
 						<font fontName="Tahoma" size="8"/>
 					</textElement>
-				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{monthly_rental}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.Double"><![CDATA[$F{monthly_rental}]]></textFieldExpression>
 				</textField>
 				<line direction="TopDown">
 					<reportElement
@@ -1120,6 +1090,21 @@
 					</textElement>
 				<text><![CDATA[Business Area ( in Sq. m )]]></text>
 				</staticText>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="172"
+						y="111"
+						width="361"
+						height="13"
+						key="textField-45">
+							<printWhenExpression><![CDATA[$F{administrator_name}!=null]]></printWhenExpression>
+						</reportElement>
+					<box></box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Tahoma" size="8"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{administrator_name} + ' (' + $F{administrator_position} + ')']]></textFieldExpression>
+				</textField>
 			</band>
 			</groupHeader>
 			<groupFooter>

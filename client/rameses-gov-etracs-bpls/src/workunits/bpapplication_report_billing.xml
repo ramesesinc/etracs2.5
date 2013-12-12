@@ -1,7 +1,7 @@
 <workunit>
     <invokers>
         <invoker type="bpapplication:report" caption="Billing Statement" index="2"  
-            action="viewReport" target="window" states="payment"/>
+            action="viewReport" target="window" states="payment" />
         
        <invoker type="formActions" caption="Back" action="_close" mnemonic="b" shortcut="ctrl B" /> 
     </invokers>
@@ -20,7 +20,7 @@
             @Service("ReportParameterService") 
             def paramsvc
             
-            @Service("BusinessBillingReportService") 
+            @Service("BPBillingReportService") 
             def reportSvc;
             
             def entity;

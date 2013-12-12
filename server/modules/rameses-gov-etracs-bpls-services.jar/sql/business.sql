@@ -1,26 +1,115 @@
+########################################################
+# BusinessInfoService
+#########################################################
 [getList]
-SELECT DISTINCT a.* FROM 
-(SELECT objid,state,owner_name,tradename,businessaddress,activeyear
-FROM business WHERE state=$P{state} AND owner_name LIKE $P{searchtext}
+SELECT DISTINCT a.*
+FROM 
+(
+	SELECT xb.objid,xb.state,xb.owner_name,xb.businessname,xb.businessaddress,xb.activeyear,xbb.bin
+	FROM business xb
+	LEFT JOIN business_bin xbb ON xb.objid=xbb.objid 
+	WHERE xb.state=$P{state} AND xb.activeyear=$P{currentyear} AND xb.businessname LIKE $P{searchtext} 
 UNION 
-SELECT objid,state,owner_name,tradename,businessaddress,activeyear
-FROM business WHERE state=$P{state} AND tradename LIKE $P{searchtext}
+	SELECT xb.objid,xb.state,xb.owner_name,xb.businessname,xb.businessaddress,xb.activeyear,xbb.bin
+	FROM business xb
+	LEFT JOIN business_bin xbb ON xb.objid=xbb.objid 
+	WHERE xb.state=$P{state} AND xb.activeyear=$P{currentyear} AND xb.businessname LIKE $P{searchtext}
+UNION
+	SELECT xb.objid,xb.state,xb.owner_name,xb.businessname,xb.businessaddress,xb.activeyear,xbb.bin
+	FROM business xb
+	LEFT JOIN business_bin xbb ON xb.objid=xbb.objid 
+	WHERE xb.state=$P{state} AND xb.activeyear=$P{currentyear} AND xbb.bin LIKE $P{searchtext}
 ) a
-ORDER BY a.tradename
+ORDER BY a.businessname
 
 [getListSearch]
-SELECT DISTINCT a.* FROM 
-(SELECT objid,state,owner_name,tradename,businessaddress,activeyear
-FROM business WHERE owner_name LIKE $P{searchtext}
+SELECT DISTINCT a.*  
+FROM 
+(
+	SELECT xb.objid,xb.state,xb.owner_name,xb.businessname,xb.businessaddress,xb.activeyear,xbb.bin
+	FROM business xb
+	LEFT JOIN business_bin xbb ON xb.objid=xbb.objid 
+	WHERE xb.owner_name LIKE $P{searchtext}
 UNION 
-SELECT objid,state,owner_name,tradename,businessaddress,activeyear
-FROM business WHERE tradename LIKE $P{searchtext}
+	SELECT xb.objid,xb.state,xb.owner_name,xb.businessname,xb.businessaddress,xb.activeyear,xbb.bin
+	FROM business xb
+	LEFT JOIN business_bin xbb ON xb.objid=xbb.objid 
+	WHERE xb.businessname LIKE $P{searchtext}
+UNION
+	SELECT xb.objid,xb.state,xb.owner_name,xb.businessname,xb.businessaddress,xb.activeyear,xbb.bin
+	FROM business xb
+	LEFT JOIN business_bin xbb ON xb.objid=xbb.objid 
+	WHERE xbb.bin LIKE $P{searchtext}
 ) a
-ORDER BY a.tradename
+ORDER BY a.businessname
+
+[getListForRenewal]
+SELECT DISTINCT a.*
+FROM (
+	SELECT xb.objid,xb.state,xb.owner_name,xb.businessname,xb.businessaddress,xb.activeyear,xbb.bin  
+	FROM business xb
+	LEFT JOIN business_bin xbb ON xb.objid=xbb.objid
+	WHERE xb.state = 'ACTIVE' AND xb.activeyear = $P{prevyear} AND xbb.bin LIKE $P{searchtext} 
+UNION
+	SELECT xb.objid,xb.state,xb.owner_name,xb.businessname,xb.businessaddress,xb.activeyear,xbb.bin  
+	FROM business xb
+	LEFT JOIN business_bin xbb ON xb.objid=xbb.objid
+	WHERE xb.state = 'ACTIVE' AND xb.activeyear = $P{prevyear}  AND xb.owner_name LIKE $P{searchtext} 
+UNION
+	SELECT xb.objid,xb.state,xb.owner_name,xb.businessname,xb.businessaddress,xb.activeyear,xbb.bin  
+	FROM business xb
+	LEFT JOIN business_bin xbb ON xb.objid=xbb.objid
+	WHERE xb.state = 'ACTIVE' AND xb.activeyear = $P{prevyear} AND xb.businessname LIKE $P{searchtext} 
+) a
+ORDER BY a.businessname
+
+[getListForLateRenewal]
+SELECT DISTINCT a.*
+FROM (
+	SELECT xb.objid,xb.state,xb.owner_name,xb.businessname,xb.businessaddress,xb.activeyear,xbb.bin 
+	FROM business xb
+	LEFT JOIN business_bin xbb ON xb.objid=xbb.objid
+	WHERE xb.state = 'ACTIVE' AND xb.activeyear < $P{prevyear} AND xbb.bin LIKE $P{searchtext} 
+UNION
+	SELECT xb.objid,xb.state,xb.owner_name,xb.businessname,xb.businessaddress,xb.activeyear,xbb.bin 
+	FROM business xb
+	LEFT JOIN business_bin xbb ON xb.objid=xbb.objid
+	WHERE xb.state = 'ACTIVE' AND xb.activeyear < $P{prevyear} AND xb.owner_name LIKE $P{searchtext} 
+UNION
+	SELECT xb.objid,xb.state,xb.owner_name,xb.businessname,xb.businessaddress,xb.activeyear,xbb.bin 
+	FROM business xb
+	LEFT JOIN business_bin xbb ON xb.objid=xbb.objid
+	WHERE xb.state = 'ACTIVE' AND xb.activeyear < $P{prevyear} AND xb.businessname LIKE $P{searchtext}
+) a
+ORDER BY a.businessname
 
 
+########################################################
+# BusinessRenewalService
+#########################################################
+[getAllListForRenewal]
+SELECT DISTINCT a.*
+FROM (
+	SELECT xb.objid,xb.state,xb.owner_name,xb.businessname,xb.businessaddress,xb.activeyear,xbb.bin 
+	FROM business xb
+	LEFT JOIN business_bin xbb ON xb.objid=xbb.objid
+	WHERE xb.state = 'ACTIVE' AND xb.activeyear <= $P{prevyear} AND xbb.bin LIKE $P{bin} 
+UNION
+	SELECT xb.objid,xb.state,xb.owner_name,xb.businessname,xb.businessaddress,xb.activeyear,xbb.bin 
+	FROM business xb
+	LEFT JOIN business_bin xbb ON xb.objid=xbb.objid
+	WHERE xb.state = 'ACTIVE' AND xb.activeyear <= $P{prevyear} AND xb.owner_name LIKE $P{ownername} 
+UNION
+	SELECT xb.objid,xb.state,xb.owner_name,xb.businessname,xb.businessaddress,xb.activeyear,xbb.bin 
+	FROM business xb
+	LEFT JOIN business_bin xbb ON xb.objid=xbb.objid
+	WHERE xb.state = 'ACTIVE' AND xb.activeyear <= $P{prevyear} AND xb.businessname LIKE $P{businessname} 
+) a
+ORDER BY a.businessname
 
-
+[findExistingApplication]
+SELECT appno,state,appversion 
+FROM bpapplication WHERE businessid=$P{objid} AND appyear=$P{appyear}
 
 ########################################################
 # BusinessNameVerificationService
@@ -31,140 +120,71 @@ FROM business
 WHERE tradename LIKE $P{tradename}
 ORDER BY tradename
 
-[approve]
-UPDATE business 
-SET state = 'APPROVED'
-WHERE objid = $P{objid}
-
-
 ########################################################
-# BusinessInfoService.postReceivables
+# BusinessInfoService
 #########################################################
-[updateStatePaymentPending]
-UPDATE business SET state='PAYMENT' WHERE objid=$P{objid}
-
 [getLobs]
-SELECT * 
-FROM business_lob 
-WHERE businessid = $P{objid}
+SELECT bl.*, lc.name AS classification_name, lc.objid as classification_objid   
+FROM business_lob bl
+INNER JOIN lob ON bl.lobid=lob.objid
+INNER JOIN lobclassification lc ON lob.classification_objid=lc.objid 
+WHERE bl.businessid = $P{objid}
 
-[getInfos]
-SELECT * 
-FROM business_info 
-WHERE businessid = $P{objid}
+[getAppInfos]
+SELECT bi.*, 
+b.caption  AS attribute_caption, 
+b.datatype AS attribute_datatype, 
+b.sortorder AS attribute_sortorder,
+b.category AS attribute_category,
+b.handler AS attribute_handler
+FROM business_info bi 
+INNER JOIN businessvariable b ON b.objid=bi.attribute_objid
+WHERE bi.businessid=$P{objid}
+ORDER BY b.category, b.sortorder 
 
-[getReceivables]
-SELECT * 
-FROM business_receivable
-WHERE businessid = $P{objid}
+[getAssessmentInfos]
+SELECT bi.*, 
+b.caption  AS attribute_caption, 
+b.datatype AS attribute_datatype, 
+b.sortorder AS attribute_sortorder,
+b.category AS attribute_category,
+b.handler AS attribute_handler
+FROM business_assessment_info bi 
+INNER JOIN businessvariable b ON b.objid=bi.attribute_objid
+WHERE bi.businessid=$P{objid}
+ORDER BY b.category, b.sortorder 
 
-[getReceivablePayments]
-SELECT * 
-FROM business_receivable_payment 
-WHERE receivableid = $P{objid}
 
 ################################################
-# BPApplicationService
+# BusinessInfoService.create and changeState
 ################################################
+[removeInfos]
+DELETE FROM business_info WHERE businessid=$P{objid}
+
+[removeLOB]
+DELETE FROM business_lob WHERE applicationid=$P{objid}
+
+[removeAssessmentInfos]
+DELETE FROM business_assessment_info WHERE applicationid=$P{objid}
+
+
 [updateActiveStatus]
 UPDATE business 
 SET activeyear=$P{year},apptype='RENEW' 
 WHERE objid=$P{objid}
 
-[removeLobs]
-DELETE FROM business_lob WHERE businessid=$P{objid}
-
-[removeInfos]
-DELETE FROM business_info WHERE businessid=$P{objid}
-
-[removeReceivables]
-DELETE FROM business_receivable WHERE businessid=$P{objid}
-
-################################################
-# used in lookup in cash receipts
-################################################
-[getLookupByOwner]
-SELECT objid, apptype, owner_name, tradename, objid AS businessid 
-FROM business 
-WHERE state = $P{state} AND owner_objid=$P{ownerid} AND tradename LIKE $P{searchtext}
-
-
-###########################################
-# used by BPApplicationCashReceiptService
-###########################################
-[getUnpaidReceivables]
-SELECT br.objid, br.businessid, br.objid AS receivableid, 
-r.code as account_code, br.account_title, br.account_objid, ba.taxfeetype AS account_taxfeetype,
-br.lob_objid,br.lob_name,
-ba.paymentmode, br.amount, br.amtpaid
-FROM business_receivable br
-INNER JOIN revenueitem r ON br.account_objid=r.objid 
-LEFT JOIN businessaccount ba ON ba.objid=r.objid 
-WHERE br.businessid=$P{businessid}  AND ((br.amount-br.amtpaid) > 0) 
-
-##########################################
-# used by BusinessCashReceiptInterceptor
-##########################################
-[updateReceivablePayment]
-UPDATE business_receivable 
-SET amtpaid = amtpaid + $P{amtpaid}, 
-discount=discount + $P{discount} 
-WHERE objid=$P{receivableid}
-
-[getReceivableBalances]
-SELECT br.applicationid, br.businessid, SUM( br.amount - br.amtpaid ) AS balance
-FROM business_receivable br 
-WHERE br.objid IN (${receivableids}) 
-GROUP BY br.applicationid, br.businessid
-
-
-###############################################
-# used by BusinessCashReceiptInterceptor .Void
-###############################################
-[getReceivablePaymentForVoiding]
-SELECT * 
-FROM business_receivable_payment 
-WHERE refid=$P{receiptid}
-
-[reverseReceivablePayment]
-UPDATE business_receivable 
-SET amtpaid = amtpaid - $P{amtpaid}, 
-discount=discount - $P{discount} 
-WHERE objid=$P{receivableid}
-
-[updateReceivablePaymentForVoiding]
-UPDATE business_receivable_payment 
-SET voided = 1 
-WHERE refid=$P{receiptid}
-
-
-
-############################################################
-# not sure who uses this service. schedule for deprecation
-############################################################
-[getUnpaid]
-SELECT *
-FROM business_receivable
-WHERE businessid=$P{objid}
-AND (amount - amtpaid - discount) > 0
-
-[getListForRenewal]
-SELECT a.*, 
-CASE WHEN a.activeyear=$P{year} THEN 0 ELSE 1 END AS laterenewal
-FROM (
-SELECT objid, tradename, owner_name, businessaddress, state, activeyear FROM business WHERE state NOT IN ('RETIRED','PENDING','PAYMENT_PENDING') 
-	AND owner_name LIKE $P{ownername} AND activeyear < $P{year}
-UNION
-SELECT objid, tradename, owner_name, businessaddress, state, activeyear FROM business WHERE state NOT IN ('RETIRED','PENDING','PAYMENT_PENDING') 
-	AND tradename LIKE $P{tradename} AND activeyear < $P{year}
-) a
-ORDER BY a.owner_name
-
 [changeState]
 UPDATE business SET state = $P{state} WHERE objid = $P{objid}
 
-[getListByOwner]
-SELECT objid,owner_name,tradename
-FROM business WHERE owner_objid=$P{ownerid} AND tradename LIKE $P{searchtext}
+[findBIN]
+SELECT bin FROM business_bin WHERE objid=$P{objid}
 
 
+################################################################
+# BusinessRenewalService. Used for checking if there is balance
+################################################################
+[findIfBusinessHasBalance]
+SELECT 1
+FROM bpreceivable 
+WHERE businessid=$P{objid}
+AND amount-amtpaid-discount > 0

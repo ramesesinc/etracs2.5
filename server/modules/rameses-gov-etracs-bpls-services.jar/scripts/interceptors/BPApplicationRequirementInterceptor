@@ -9,10 +9,10 @@ public class BPApplicationRequirementInterceptor {
 	def em;
 
 	private void checkValidation(o) {
-		def list = em.getRequirementsForValidation(o);
-		if(list) {
-			throw new Exception( "The ff. requirements must be fulfilled: \n" + list*.caption.join("\n") );
-		}
+		//def list = em.getRequirementsForValidation(o);
+		//if(list) {
+		//	throw new Exception( "The ff. requirements must be fulfilled: \n" + list*.caption.join("\n") );
+		//}
 	}
 
 	@Before(pattern="BPApplicationService.submitForAssessment.*")
@@ -26,6 +26,5 @@ public class BPApplicationRequirementInterceptor {
 		def o = evt.args[0];
 		//checkValidation( [objid: o.objid, step: 'payment' ]);
 	}
-
 
 }

@@ -64,7 +64,11 @@ public class BPAssessmentRuleService  {
 			
 		def info = [objid:"BPINFO"+new UID()];
 		info.phase = phase;
+		info.infotype = "assessment";
 		info.attribute = bv.read( [objid: attrid ] );
+		//remove desc, state and system.
+		info.attribute.remove("description");info.attribute.remove("state");info.attribute.remove("system");
+
 		if(lob) {
 			info.lob = [objid:lob.objid, name:lob.name];
 		}
@@ -125,18 +129,6 @@ public class BPAssessmentRuleService  {
 		facts << new EffectiveDate( dt );
 		facts << new CurrentDate(currDate);
 
-		/***
-		* if there is lastrenewal year, for every years diff add a LastRenewal fact.
-		* provided the year must not be below 1990 (arbitrary number) 
-		**/
-		if( o.lastrenewal &&  (o.lastrenewal < o.appyear) ) {
-			if( o.lastrenewal <  (o.appyear-10) )
-				throw new Exception("Last renewal year not be more than 10 years");
-			(o.lastrenewal..(o.appyear-1)).each {
-				facts << new LateRenewal( it );
-			}
-		}
-
 		bpFacts.buildApplication( o, facts );
 		return facts;
 	}
@@ -150,7 +142,6 @@ public class BPAssessmentRuleService  {
 		actions.addCommand( "update_taxfee", new UpdateTaxFee(request:request));
 		actions.addCommand( "remove_taxfee", new RemoveTaxFee(request:request));
 		actions.addCommand( "select_taxfee", new SelectTaxFee(request:request));
-
 		actions.addCommand( "add_sysvar", new AddSysVar(request:request, comparator: comparator));
 		actions.addCommand( "assert_sysvars", new AssertSysVars(request:request));
 		actions.addCommand( "add_requirement", new AddRequirement(request:request, BR: br));
@@ -163,6 +154,10 @@ public class BPAssessmentRuleService  {
 	public def execute(def o) throws Exception {
 		if(!o.lobs)
 			throw new Exception("Please provide at least one line of business");
+
+		//this is so we will not process derived infos.	
+		o.infos.removeAll( o.infos.findAll{it.phase==null || it.phase > 1} );
+
 		def request = [newinfos:[], taxfees:[], lobMap:[:], vars:[:], taxfeefacts:[], entity: o, requirements:[] ]; 
 		request.facts = buildFacts(request);
 		request.actions = buildActions( request );
@@ -193,6 +188,7 @@ public class BPAssessmentRuleService  {
 			totals.total_regfee = request.taxfees.findAll{ it.account.taxfeetype == 'REGFEE'}.sum{it.amount};
 			if(!totals.total_regfee) totals.total_regfee = 0;
 			totals.total_othercharge = request.taxfees.findAll{ it.account.taxfeetype == 'OTHERCHARGE'}.sum{it.amount};
+
 			if(!totals.total_othercharge) totals.total_othercharge = 0;
 			totals.total = totals.total_tax + totals.total_regfee + totals.total_othercharge;
 		}		
@@ -210,7 +206,6 @@ public class AskBusinessInfo implements RuleActionHandler {
 		def laterenewal = params.laterenewal;
 		def entity = request.entity;
 		def newinfos = request.newinfos;
-
 		def info = infoBuilder( entity, newinfos, lob, attrid, null, request.phase, laterenewal );
 		if(info) info.defaultvalue = defvalue;
 	}

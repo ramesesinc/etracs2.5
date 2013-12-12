@@ -1,0 +1,143 @@
+<workunit>
+    <invokers>
+        <invoker type="bpapplication_cityengineer:open" action="open" target="window"/>
+        <invoker type="formActions" caption="Close" action="_close" />
+        <invoker type="formActions" caption="Submit" action="submit" visibleWhen="#{submitted==false}"/>
+    </invokers>
+    
+    <code>
+        <![CDATA[    
+        import com.rameses.rcp.annotations.*
+        import com.rameses.rcp.common.*
+        import com.rameses.osiris2.client.*
+        import com.rameses.osiris2.common.*
+        import java.rmi.server.*;
+        import com.rameses.gov.etracs.bpls.application.*;
+        
+        class BPApplicationCityEngineerController  {
+            
+            @Service("CityEngineerBPApplicationService")
+            def appSvc;
+        
+            @Binding
+            def binding;
+            
+            @FormId
+            def windowId;
+            
+            @FormTitle
+            def windowTitle;
+            
+            String title = "Business Application ";
+            def deptList = LOV.BUSINESS_EXT_DEPT;
+            def orgTypes = LOV.ORG_TYPES;
+            
+            def entity;
+            def department;
+            def total = 0;
+            def submitted = false;
+            def selectedFee;
+            
+            void open() {
+                department = entity.department;
+                entity = appSvc.open( entity );
+                title = title + "-" + entity.appno;
+                windowTitle = entity.appno + " " + entity.departmentname;
+                windowId = "BPCEO" + entity.objid;
+            }
+          
+            def sortInfos(sinfos) {
+                def list = sinfos.findAll{it.lob?.objid==null && it.attribute.category==null}?.sort{it.attribute.sortorder};
+                def catGrp = sinfos.findAll{it.lob?.objid==null && it.attribute.category!=null};
+                if(catGrp) {
+                    def grpList = catGrp.groupBy{ it.attribute.category };
+                    grpList.each { k,v->
+                        v.sort{ it.attribute.sortorder }.each{z->
+                            list.add( z );
+                        }
+                    }
+                }
+                list = list + sinfos.findAll{ it.lob?.objid!=null }?.sort{ [it.lob.name, it.attribute.sortorder] }; 
+                return list; 
+            }
+    
+            def appInfoModel = [
+                fetchList: { o-> 
+                    return sortInfos(entity.appinfos); 
+                }
+            ] as BasicListModel;
+
+            def assessmentInfoModel = [
+                fetchList: { o-> 
+                    return sortInfos(entity.assessmentinfos); 
+                }
+            ] as BasicListModel;
+
+            //show only fees related to department
+            def taxfeeModel = [
+                fetchList: { o-> return entity.taxfees;  },
+            ] as BasicListModel;
+         
+            def removeFee() {
+                if(!selectedFee)
+                    throw new Exception("Please select a fee item");
+                if(MsgBox.confirm("Remove this entry?")) {
+                    appSvc.removeFee(selectedFee);
+                    entity.taxfees.remove(selectedFee);
+                    total = entity.taxfees.sum{ it.amount };
+                    binding.refresh("total");
+                    taxfeeModel.reload();
+                }
+            }
+            
+            def addFee() {
+                return InvokerUtil.lookupOpener("bpapplication_cityengineer:addfee", [
+                    department: department,
+                    handler: { o->
+                        if( entity.taxfees.find{it.account.objid==o.account.objid} )
+                            throw new Exception("Account already added");
+                        o.applicationid = entity.objid;
+                        o.businessid = entity.businessid;
+                        appSvc.addFee( o );
+                        entity.taxfees << o;
+                        total = entity.taxfees.sum{ it.amount };
+                        taxfeeModel.reload();
+                        binding.refresh("total");
+                    }
+                ]);
+            }
+            
+            def editFee() {
+                if(!selectedFee)
+                    throw new Exception("Fee must be selected");
+                return InvokerUtil.lookupOpener("bpapplication_cityengineer:editfee", [
+                    entity: selectedFee,
+                    handler: { o->
+                        appSvc.updateFee( o );
+                        total = entity.taxfees.sum{ it.amount };
+                        taxfeeModel.reload();
+                        binding.refresh("total");
+                    }
+                ]);
+            }
+            
+            def submit() {
+                if(!entity.taxfees)
+                    throw new Exception("Please add at least one fee");
+                if(MsgBox.confirm( "You are about to submit this transaction. Please ensure all fees are correct" )) {
+                    appSvc.submitFees(entity);
+                    MsgBox.alert("submit succeeded");
+                    return "_close";
+                }
+            }
+            
+        }
+        ]]>
+        
+    </code>
+   
+    <pages>
+        <page template="com.rameses.gov.etracs.bpls.ceo.ViewAssessmentPage"/>
+    </pages>
+    
+</workunit>

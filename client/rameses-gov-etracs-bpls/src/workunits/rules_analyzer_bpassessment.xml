@@ -5,7 +5,8 @@
        <invoker type="home.action" caption="BP Rules Analyzer" action="init" index="1" target="window" role="ASSESSOR,RULE_AUTHOR"/>
        
        <invoker type="formActions" caption="Close" action="_close" immediate="true"/>
-       <invoker type="formActions" caption="Run" action="run"/>
+       <invoker type="formActions" caption="Run Info" action="runInfo"/>
+       <invoker type="formActions" caption="Run Assessment" action="run"/>
        <invoker type="formActions" caption="Clear Infos" action="clearInfos" immediate="true"/>
        
     </invokers>
@@ -20,14 +21,30 @@
             import java.rmi.server.*;
             import com.rameses.gov.etracs.bpls.application.*;
             
-            class BPAssessmentAnalyzerController extends BPApplication {
+            class BPAssessmentAnalyzerController {
             
                 @Service("BPAssessmentRuleService")
                 def bpSvc;
                 
+                @Service("BPInfoRuleService")
+                def bpInfoSvc;
+                
                 @Service("DateService")
                 def dateSvc;
             
+                @Binding
+                def binding;
+
+                def entity = [lobs:[], taxfees:[], requirements:[], appinfos:[], assessmentinfos:[]];
+                def officeTypes = LOV.BUSINESS_OFFICE_TYPES;
+                def orgTypes = LOV.ORG_TYPES;
+                def lobAssessmentTypes = ["RENEW", "RETIRE"];
+
+                def appTypes = LOV.BUSINESS_APP_TYPES;
+                def txnmodes = ["ONLINE", "CAPTURE"];
+                def selectedLob;
+                def step;
+                
                 String title = "Business Rule Assessment Simulator";
                 String entityName = "bpassessment:analyzer";
                 
@@ -36,9 +53,47 @@
                     entity.appyear = dateSvc.serverYear;
                 }
                 
+                
                 void reset() {
                     initNew();
                 }
+                
+                def lobModel = [
+                    fetchList: { o->
+                        return entity.lobs;
+                    },
+                ] as EditorListModel;
+
+                def sortInfos(sinfos) {
+                    def list = sinfos.findAll{it.lob?.objid==null && it.attribute.category==null};
+                    list = list + sinfos.findAll{it.lob?.objid==null && it.attribute.category!=null}.sort{ it.attribute.caption + it.attribute.sortorder };
+                    list = list + sinfos.findAll{ it.lob?.objid!=null }.sort{ it.lob.name + it.attribute.sortorder }; 
+                    return list;
+                }
+
+                def appInfoModel = [
+                    fetchList: { o-> 
+                        return sortInfos(entity.appinfos); 
+                    }
+                ] as BasicListModel;
+
+                def assessmentInfoModel = [
+                    fetchList: { o-> 
+                        return sortInfos(entity.assessmentinfos); 
+                    }
+                ] as BasicListModel;
+
+                def taxfeeModel = [
+                    fetchList: { o-> return entity.taxfees  },
+                    onOpenItem: { o,col->
+                        MsgBox.alert( o._taxfees );
+                    },
+
+                ]as EditorListModel;
+
+                def requirementModel = [
+                    fetchList: { o-> return entity.requirements; }
+                ] as BasicListModel;
                 
                 def getLookupLob() {
                     return InvokerUtil.lookupOpener( "lob:lookup", [
@@ -66,19 +121,40 @@
                     infoLoaded = false;
                 }
                 
+                def runInfo() {
+                    if(!entity.lobs)
+                        throw new Exception("Please indicate at least one line of business");
+                    return InvokerUtil.lookupOpener( "bpapplicationinfo:edit", [
+                        entity: entity, 
+                        initial: 'info',
+                        service: bpInfoSvc,
+                        existingInfos: entity.appinfos,
+                        handler:{ query ->
+                            entity.appinfos = query.infos;
+                            entity.requirements = query.requirements;
+                            appInfoModel.reload();
+                            requirementModel.reload();
+                            taxfeeModel.reload();
+                        }
+                    ]);
+                }
+                
                 def run() {
                     if(!entity.lobs)
                         throw new Exception("Please indicate at least one line of business");
                     return InvokerUtil.lookupOpener( "bpapplicationinfo:edit", [
                         entity: entity, 
                         initial: 'info',
+                        initialInfos: entity.appinfos.collect{it},
+                        existingInfos: entity.assessmentinfos,
                         service: bpSvc,
                         handler:{ query ->
-                            entity.infos = query.infos;
+                            entity.assessmentinfos = query.infos.findAll{it.infotype=='assessment'};
                             entity.requirements = query.requirements;
                             entity.taxfees = query.taxfees;
                             taxfeeModel.reload();
-                            infoModel.reload();
+                            assessmentInfoModel.reload();
+                            appInfoModel.reload();
                             requirementModel.reload();
                             taxfeeModel.reload();
                         }
@@ -86,14 +162,15 @@
                  }
                  
                  void clearInfos() {
-                    entity.infos.clear();
+                    entity.appinfos.clear();
+                    entity.assessmentinfos.clear();
                     entity.requirements.clear();
                     entity.taxfees.clear();
-                    infoModel.reload();
+                    appInfoModel.reload();
+                    assessmentInfoModel.reload();
                     taxfeeModel.reload();
                     requirementModel.reload();
                  }
-                
             }
         ]]>    
     </code>

@@ -1,0 +1,131 @@
+import com.rameses.annotations.*;
+import com.rameses.util.*;
+import java.rmi.server.*;
+import com.rameses.services.extended.*;
+
+public class BusinessInfoService extends ActiveCrudService {
+
+	@ActiveDB("business")
+	def em;
+
+	@Service("SequenceService")
+	def seqSvc;
+
+	@Service("DateService")
+	def dateSvc;
+
+	@Env
+	def env;
+
+	public void beforeCreate(o) {
+		o.activeyear = o.appyear;
+		o.state = "PENDING";
+		o.taxcredit = 0;
+		o.user = [objid: o.createdby];
+	}
+
+	//o is the application
+
+	@ProxyMethod
+	public void updateApprovedInfo(o) {
+		em.update(o);
+		em.removeInfos(o);
+		o.infos.each {
+			it.businessid = o.objid;
+			if(o.applicationid) it.applicationid = o.applicationid;
+			convertInfo(it);
+			em.create(it, "info");
+		}
+		o.lobs.each {
+			it.businessid = o.objid;	
+			if(o.applicationid) it.applicationid = o.applicationid;
+			it.iyear = o.activeyear;
+			em.create(it, "lob");
+		}
+		o.assessmentinfos.each {
+			it.businessid = o.objid;
+			if(o.applicationid) it.applicationid = o.applicationid;
+			it.iyear = o.activeyear;
+			convertInfo(it);
+			em.create(it, "assessment_info");
+		}		
+	}
+
+	
+	@ProxyMethod
+	def createBIN( def o ) {
+		def lgucode = 169;
+		//generate the id of the business {LGUCODE,3}{YEAR,2}{MONTH,2}{SEQ,5}
+		def ay = (o.activeyear+"")[2..3];
+		def mnth = dateSvc.serverMonth;
+		def smon = ( mnth < 10 ) ? "0"+mnth : mnth+"";
+		def prefix = "B"+lgucode+ay+smon;
+		o.bin = prefix+seqSvc.getNextFormattedSeries(prefix);
+		o.txndate = dateSvc.serverDate;
+		o.user = [objid:env.USERID];
+		o.state = 'ACTIVE';
+		em.create(o, "bin");
+		em.changeState( [objid:o.objid, state:'ACTIVE'] );
+		return o;
+	}
+
+	@ProxyMethod
+	def release( def o ) {
+		o.txndate = dateSvc.serverDate;
+		o.user = [objid:env.USERID];
+		o.state = 'ACTIVE';
+		em.update(o);
+		return o;
+	}
+
+	private void convertInfo(o) {
+		def value = o.value;
+		if( value == null ) return;
+		switch(o.attribute.datatype) {
+			case "decimal":
+				o.decimalvalue = Double.parseDouble(value+"");
+				break;
+			case "integer":
+				o.intvalue = Integer.parseInt(value+"");
+				break;
+			case "string_array":	
+			case "string":
+				o.stringvalue = (String)value;
+				break;
+			case "boolean":
+				value = ( value == 1 || value == true ) ? "true" : "false";
+				boolean b =  Boolean.parseBoolean(value);
+				o.boolvalue = (b) ? 1 : 0; 
+				break;
+		} 
+	}
+
+	public void afterOpen(o) {
+		o.bin = em.findBIN(o)?.bin;
+		o.lobs = em.getLobs(o);
+		o.appinfos = em.getAppInfos(o);
+		o.appinfos.each {
+			it.value = formatInfo(it);
+		}
+		o.assessmentinfos = em.getAssessmentInfos(o);
+		o.assessmentinfos.each {
+			it.value = formatInfo(it);
+		}
+	}
+
+	private def formatInfo(x)  {
+		switch(x.attribute.datatype) {
+			case "decimal" : return x.decimalvalue; break;
+			case "integer" : return x.intvalue; break;
+			case "string_array" : return x.stringvalue; break;
+			case "string"  : return x.stringvalue; break;
+			case "boolean" : 
+				if(x.boolvalue == 0) return false;
+				if(x.boolvalue == 1) return true;
+				return x.boolvalue; 
+				break;
+		}
+	}
+
+
+}

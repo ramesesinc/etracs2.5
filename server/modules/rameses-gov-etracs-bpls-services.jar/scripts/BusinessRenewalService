@@ -3,51 +3,58 @@ import com.rameses.util.*;
 import java.rmi.server.*;
 import com.rameses.services.extended.*;
 
-public class BusinessRenewalService  {
+public class BusinessRenewalService {
 
 	@ActiveDB("business")
 	def em;
+
+	@Service("BusinessInfoService")
+	def businessInfoSvc;
 
 	@Service("DateService")
 	def dateSvc;
 
 	@ProxyMethod
-	public def getColumns(o) {
-		return [
-			[name:'tradename', caption:'Trade Name1'],
-			[name:'owner.name', caption:'Owner'],
-			[name:'businessaddress', caption:'Business Address'],
-			[name:'bin', caption:'BIN'],
-			[name:'activeyear', caption:'Year'],
-			[name:'laterenewal', caption:'Late Renewal', type:'checkbox', checkedValue:1,uncheckedValue:0],
-		];
-	}
-
-	@ProxyMethod
 	public def getList(o) {
-		if(!o.activeyear) {
-			o.activeyear = dateSvc.serverYear;
-		}
-		o.previousyear = o.activeyear - 1;	
-		o._pagingKeys = "b.objid";
-		return em.getListForRenewal(o);
+		o.activeyear = dateSvc.serverYear;
+		o.prevyear = o.activeyear - 1;	
+		o._limit = 50;
+		return em.getAllListForRenewal(o);
 	}
 
 	@ProxyMethod
 	public def open(o) {
-		o = em.read( o );
-		o.lobs = em.getLobs(o);
-		o.lobs.each { it.assessmenttype = 'RENEW'}
-		o.redflags= [];
+		def yr = dateSvc.serverYear;
 
-		//apply standard red flags
-		if( o.activeyear < (dateSvc.serverYear-1) ) {
-			o.redflags << [message:'Late Renewal. Last year renewed:' + o.activeyear];
+		//check if there is existing application running...
+		def z = em.findExistingApplication([objid:o.objid, appyear:yr]);
+		if(z)	{
+			String s = "An application already exists for this business. Details as follows:\n";
+			s += "Application No: " + z.appno + " status:" + z.state;
+			throw new Exception( s );
 		}
-		
-		//check if there are pending cases
 
-		return o;
+		def v = businessInfoSvc.open( o );
+		//check if this application has late renewals
+		if(v.activeyear < (yr-1) ) {
+			String s = "This application was last renewed on " + v.activeyear + ". Please settle first the previous years balances";
+			throw new Exception(s);
+		}
+		//check if there are balances
+		//check if business has balance
+		def chk = em.findIfBusinessHasBalance( v );		
+		if(chk) {
+			throw new Exception( "There are still unpaid balance for this business. Please settle balance first.");
+		}
+		v.businessid = v.objid;
+		v.objid = "APPRW"+new UID();
+		v.apptype = 'RENEW';
+		v.appyear = yr;
+		v.txnmode = 'ONLINE';
+		v.lobs.each { it.assessmenttype = 'RENEW'};
+		v.assessmentinfos = [];
+		v.redflags= [];
+		return v;
 	}
 
 }

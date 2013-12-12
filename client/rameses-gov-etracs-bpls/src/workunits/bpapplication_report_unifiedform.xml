@@ -39,20 +39,31 @@
                 formId = "APPRPT:"+entity.objid;
             
                 def format = { x->
-                    if(x==null) return "";
-                    else if(x==true) return "Yes";
-                    else if(x==false) return "No";
-                    else return x+"";
+                    def dtype = x.attribute.datatype;
+                    if( dtype == 'decimal') {
+                        if(!x.value) return null;
+                        return new Double( x.value + "" );
+                    }
+                    else if( dtype == "integer") {
+                        if(!x.value) return null;
+                        return new Integer( x.value + "" );
+                    }
+                    else if( dtype == "boolean" ) {
+                        return x.value;
+                    }
+                    else {
+                        if(!x.value) return null;
+                        return x.value;
+                    }
                 }
-                def infos = entity.infos.collect{ 
+                
+                
+                def infos = entity.assessmentinfos.findAll{it.lob?.objid!=null}.collect{ 
                     [
-                      category:it.lob?.name, 
-                      name: it.attribute.caption,
-                      value: format(it.value)
+                      lob:it.lob?.name, 
+                      (it.attribute.name.toLowerCase()): format(it)
                     ]  
                  };
-                 
-                 
                  
                 //ctcno: "CCI2012-191919191", 
                 //ctcdate: java.sql.Date.valueOf("2013-02-01"),
@@ -60,8 +71,10 @@
                    apptype: entity.apptype,
                    refno: entity.appno, 
                    appdate: entity.dtfiled,
-                   tradename: entity.tradename, 
-                   businessorgtype: orgtypes.find{ it.key == entity.orgtype}?.value,
+                   tradename: entity.tradename,
+                   businessname: entity.businessname,
+                   barangay: entity.barangay.name,
+                   orgtype: orgtypes.find{ it.key == entity.orgtype}?.value,
                    businessaddress: entity.businessaddress,
                    ownername: entity.owner.name, 
                    ownerno: entity.owner.entityno,
@@ -69,10 +82,18 @@
                    txndate: entity.dtfiled, 
                    laterenewal:"0", 
                    infos:infos,
-                   requierements:[],
+                   requirements:[],
                    signatories:[],
                    barcode: "51005:"+entity.appno
-                ]
+                ];
+                
+                entity.appinfos.each {
+                    data[ it.attribute.name.toLowerCase() ] = format(it); 
+                }
+                entity.assessmentinfos.findAll{it.lob?.objid==null}.each {
+                    data[ it.attribute.name.toLowerCase() ] = format(it); 
+                }
+                
                 report.viewReport();
             } 
             

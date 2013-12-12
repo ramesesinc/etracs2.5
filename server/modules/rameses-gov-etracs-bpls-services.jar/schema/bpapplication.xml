@@ -2,11 +2,13 @@
 	
 	<element tablename="bpapplication">
 		<field name="objid" primary="true"/>
-		<field name="businessid" />
+		<field name="businessid" required="true"/>
 		<field name="state" required="true"/>
 		<field name="appno" required="true"/>
 		<field name="apptype" required="true"/>
 		<field name="appyear" required="true"/>
+		<field name="appversion" required="true"/>
+		<field name="applicationrefid" />
 		<field name="yearstarted" required="true"/>
 		<field name="dtfiled" required="true"/>
 		<field name="txnmode" required="true"/>
@@ -17,38 +19,21 @@
 		<field name="barangay_objid" />
 		<field name="barangay_name" />
 		<field name="tradename" required="true"/>
-		<field name="businessname" />
+		<field name="businessname" required="true"/>
 		<field name="businessaddress" required="true"/>
 		<field name="orgtype" required="true"/>
 		<field name="createdby" required="true"/>
+		<complex name="lobs" type="list" serializer="default" required="true"/>
+		<complex name="appinfos" type="list" serializer="default" required="true"/>
+		<complex name="assessmentinfos" type="list" serializer="default" required="true"/>
 	</element>	
 
-	<element name="lob" tablename="bpapplication_lob">
+	<element name="laterenewal" tablename="bpapplication_laterenewal">
 		<field name="objid" primary="true"/>
-		<field name="applicationid" />
-		<field name="permitid" />
-		<field name="iyear" />
-		<field name="lobid" required="true"/>
-		<field name="name" required="true"/>
-		<field name="assessmenttype" required="true"/>
+		<field name="appyear" required="true"/>
+		<field name="refid" required="true"/>
+		<complex name="assessmentinfos" type="list" serializer="default" required="true"/>
 	</element>
-
-	<element name="info" tablename="bpapplication_info">
-		<field name="objid" primary="true"/>
-		<field name="applicationid" />
-		<field name="iyear"/>
-		<field name="iqtr"/>
-		<field name="attribute_objid" required="true"/>
-		<field name="attribute_name" required="true"/>
-		<field name="lob_objid" />
-		<field name="lob_name" />
-		<field name="decimalvalue" />
-		<field name="intvalue" />
-		<field name="stringvalue" />
-		<field name="boolvalue" />
-		<field name="phase" required="true"/>
-		<field name="level"  />
-	</element>	
 
 	<element name="requirement" tablename="bpapplication_requirement">
 		<field name="objid" primary="true"/>

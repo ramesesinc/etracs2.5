@@ -46,13 +46,13 @@
                  }
                  def findCapital = { o->
                     if( o.taxfeetype != "TAX" ) return null;
-                    def val = entity.infos.find{ it.attribute.name == 'CAPITAL' && it.lob.objid == o.lob.objid }?.value;
+                    def val = entity.assessmentinfos.find{ it.attribute.name == 'CAPITAL' && it.lob.objid == o.lob.objid }?.value;
                     if(!val) return null;
                     return new BigDecimal(val+"");
                  }
                  def findGross = { o->
                     if( o.taxfeetype != "TAX" ) return null;
-                    def val = entity.infos.find{ it.attribute.name == 'GROSS' && it.lob.objid == o.lob.objid }?.value;
+                    def val = entity.assessmentinfos.find{ it.attribute.name == 'GROSS' && it.lob.objid == o.lob.objid }?.value;
                     if(!val) return null;
                     return new BigDecimal(val+"");
                  }
@@ -70,6 +70,7 @@
                  };
                 //ctcno: "CCI2012-191919191", 
                 //ctcdate: java.sql.Date.valueOf("2013-02-01"),
+                  
                data = [
                    temporary: ( entity.state == 'assessment' || entity.state == 'approval' ),
                    txnno: entity.appno, 

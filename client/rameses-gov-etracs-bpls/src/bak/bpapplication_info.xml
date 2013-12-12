@@ -1,0 +1,246 @@
+<workunit>
+    
+    <invokers>
+        <invoker type="bpapplicationinfo:edit" caption="Business Info" action="start" target="popup"/>
+    </invokers>
+    
+    <code>
+        <![CDATA[    
+        import com.rameses.rcp.annotations.*
+        import com.rameses.rcp.common.*
+        import com.rameses.osiris2.client.*
+        import com.rameses.osiris2.common.*
+        import java.rmi.server.*;
+        import com.rameses.gov.etracs.bpls.application.*;
+        
+        class BPEditInfoController extends PageFlowController {
+
+            def service;
+
+            @Binding
+            def binding;
+        
+            def entity;
+            def lobAssessmentTypes = ["RENEW", "RETIRE"];
+            def selectedLob;
+            def infoLoaded = true;
+            def handler;
+            def formInfos = [];
+            def infos = [];
+            boolean completed;
+            def query = [:];
+            def initial = "lob";
+            def initialInfos = [];
+            def existingInfos = [];
+            
+            int level = 0;
+            
+            def start() {
+                if(!service) {
+                   throw new Exception("service not specified");
+                }
+                query.putAll( entity );
+                query.infos = initialInfos;
+                query.taxfees = [];
+                query.requirements = [];
+                completed = false;
+                if(initial=="input") {
+                    initial = "info";
+                }
+                return super.start(initial);
+            }
+             
+             def getLookupLob() {
+                return InvokerUtil.lookupOpener( "lob:lookup", [
+                    onselect: { o->
+                        if(entity.lobs.find{ it.lobid == o.objid }!=null) 
+                            throw new Exception("Item already added");
+                        def m = [:];
+                        m.objid = "BPLOB"+new UID();
+                        m.lobid = o.objid;
+                        m.name = o.name;
+                        m.classification = o.classification;
+                        m.assessmenttype = "NEW";
+                        entity.lobs << m; 
+                        infoLoaded = false;
+                        lobModel.reload();
+                        binding.focus("lob");
+                    }
+                ]);
+            }
+             
+            def lobModel = [
+                fetchList: { o->
+                    return entity.lobs;
+                },
+            ] as EditorListModel;
+
+            void removeLob() {
+                if(!selectedLob) return;
+                if(selectedLob.assessmenttype != "NEW" ) 
+                    throw new Exception("Only new lines of business can be removed");
+                entity.lobs.remove(selectedLob);
+                infoLoaded = false;
+            }
+            
+            def formPanel = [
+                getCategory: { key->
+                    if(!key) return "";
+                    def lobname = entity.lobs.find{ it.lobid == key }?.name    
+                    return ((lobname) ? lobname : key);
+                },
+                updateBean: {name,value,item->
+                    item.bean.value = value;
+                },
+                getControlList: {
+                    return formInfos;
+                }
+            ] as FormPanelModel;
+            
+            def sortInfos(sinfos) {
+                def list = sinfos.findAll{it.lob?.objid==null && it.attribute.category==null}?.sort{it.attribute.sortorder};
+                def catGrp = sinfos.findAll{it.lob?.objid==null && it.attribute.category!=null};
+                if(catGrp) {
+                    def grpList = catGrp.groupBy{ it.attribute.category };
+                    grpList.each { k,v->
+                        v.sort{ it.attribute.sortorder }.each{z->
+                            list.add( z );
+                        }
+                    }
+                }
+                list = list + sinfos.findAll{ it.lob?.objid!=null }?.sort{ [it.lob.name, it.attribute.sortorder] }; 
+                return list; 
+            }
+            
+            def findValue( info ) {
+                if(info.lob?.objid!=null) {
+                    def filter = existingInfos.findAll{ it.lob?.objid!=null };
+                    def m = filter.find{ it.lob.objid==info.lob.objid && it.attribute.objid == info.attribute.objid };
+                    if(m) return m.value;
+                }
+                else {
+                    def filter = existingInfos.findAll{ it.lob?.objid==null };
+                    def m = filter.find{ it.attribute.objid == info.attribute.objid };
+                    if(m) {
+                        return m.value;
+                    }    
+                }
+                return null;
+            }
+            
+             def buildFormInfos() {
+                formInfos.clear();
+                infos = sortInfos( infos );
+                infos.each {x->
+                    def i = [
+                        type:x.attribute.datatype, 
+                        caption:x.attribute.caption + ((x.year)?' ('+x.year+')':''), 
+                        categoryid:  ((x.lob?.objid!=null) ? x.lob.objid : x.attribute.category),
+                        handler: x.attribute.handler,
+                        name:x.attribute.name, 
+                        bean: x,
+                        properties: [:],
+                        value: x.value
+                    ];
+                    //fix the datatype
+                    x.datatype = x.attribute.datatype;
+                    if(x.datatype.indexOf("_")>0) {
+                        x.datatype = x.datatype.substring(0, x.datatype.indexOf("_"));
+                    }
+                    if(i.type == "boolean") {
+                        i.type = "subform";
+                        i.handler = "bpapplication:yesno";
+                        i.properties = [item:x];
+                    }
+                    else if(i.type == "string_array") {
+                        i.type = "combo";
+                        i.itemsObject = x.attribute.arrayvalues;
+                    }
+                    else if( i.type == "string" ) {
+                        i.type = "text";
+                    }
+                    else if( i.type == "info") {
+                        i.type = "subform";
+                        i.properties = [item:i.bean];
+                        i.showCaption = false;
+                    }
+                    formInfos << i;
+                }
+             }
+             
+             void loadInfos() {
+                infos.clear();
+                def result = service.execute(query);
+                //phase 0 is the looping phase.  
+                if( result.phase > 1 ) {
+                    query.infos.addAll(result.infos);
+                    query.requirements = result.requirements;
+                    query.taxfees = result.taxfees;
+                    query.totals = result.totals;
+                    infos.clear();
+                    completed = true;
+                    handler( query );
+                }
+                else {
+                    //check if there is already values for this info
+                    result.infos.each {
+                        it.value = findValue(it);
+                        it.level = level;
+                    }
+                    level++;
+                    infos.addAll( result.infos );
+                    query.infos.addAll(infos);
+                    buildFormInfos();
+                    completed = false;
+                }
+            }
+
+            void reset() {
+                completed = false;
+            }
+            
+            void goBack() {
+                infos.clear();
+                level--;
+                def rem = query.infos.findAll{ it.level == level };
+                query.infos.removeAll(rem);
+                infos = query.infos.findAll{ it.level == (level-1) };
+                buildFormInfos();
+                completed = false;
+            }
+        }
+        ]]>
+        
+    </code>
+    
+    <pageflow>
+        <start>
+            <transition to="specify-lob" name="lob"/>
+            <transition to="getInfo" name="info"/>
+        </start>
+        
+        <page name="specify-lob" title="Specify Line of Business">
+            <transition to="end" caption="Close"/>
+            <transition to="getInfo" caption="Next" mnemonic="N"  immediate="false" />
+        </page>
+
+        <process name="getInfo" action="loadInfos">
+            <transition to="specify-info" cond="#{completed==false}"/>
+            <transition to="end" cond="#{completed==true}" />
+        </process>
+        
+        <page name="specify-info" title="Specify Info">
+            <transition to="end" caption="Close" confirm="Data will not be saved. Continue?"/>
+            <transition to="specify-info" name="back" caption="Back" mnemonic="B" action="goBack" visibleWhen="level&gt;1"/>
+            <transition to="getInfo" name="next" caption="Next" mnemonic="N"  immediate="false" />
+        </page>
+
+        <end/>
+    </pageflow>
+    
+    <pages>
+        <page name="specify-lob" template="com.rameses.gov.etracs.bpls.application.SpecifyLOBPage"/>
+        <page name="specify-info" template="com.rameses.gov.etracs.bpls.application.SpecifyInfoPage"/>
+    </pages>
+    
+</workunit>

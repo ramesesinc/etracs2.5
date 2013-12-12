@@ -1,14 +1,8 @@
 <schema>
 	
-	<element tablename="business_ledger">
+	<element name="receivable" tablename="bpreceivable">
 		<field name="objid" primary="true"/>
-		<field name="businessid"/>
-		<field name="applicationid"/>
-	</element>	
-
-	<element name="receivable" tablename="business_receivable">
-		<field name="objid" primary="true"/>
-		<field name="ledgerid" required="true"/>
+		<field name="businessid" required="true"/>
 		<field name="applicationid" />
 		<field name="iyear" required="true"/>
 		<field name="iqtr" />
@@ -19,23 +13,19 @@
 		<field name="amount" required="true"/>
 		<field name="amtpaid" required="true"/>
 		<field name="discount" required="true"/>
-		<field name="paymentmode" />
 		<field name="refid" />
 		<field name="reftype" />
 		<field name="department" />
 		<field name="remarks" />
 	</element>	
 
-	<element name="receivable_payment" tablename="business_receivable_payment">
+	<element name="receivableitem" tablename="bpreceivable_item">
 		<field name="objid" primary="true"/>
 		<field name="receivableid" required="true"/>
 		<field name="businessid" required="true"/>
+		<field name="paymentid" required="true"/>
 		<field name="iqtr" />
 		<field name="iyear"/>
-		<field name="refno" required="true"/>
-		<field name="reftype" />
-		<field name="refdate" />
-		<field name="refid" />
 		<field name="amtpaid" required="true"/>
 		<field name="surchargepaid" required="true"/>
 		<field name="interestpaid" required="true"/>
@@ -43,5 +33,18 @@
 		<field name="voided" required="true"/>
 	</element>	
 
+	<element name="payment" tablename="bppayment">
+		<field name="objid" primary="true"/>
+		<field name="businessid" required="true"/>
+		<field name="applicationid" required="true"/>
+		<field name="receiptid" required="true"/>
+		<field name="payoption" required="true"/>
+		<field name="qtr" />
+		<field name="refno" required="true"/>
+		<field name="refdate" required="true"/>
+		<field name="amount" required="true"/>
+		<field name="remarks" />
+		<field name="voided" required="true"/>
+	</element>	
 
 </schema>

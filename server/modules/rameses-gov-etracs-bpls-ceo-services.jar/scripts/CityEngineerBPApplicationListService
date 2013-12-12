@@ -5,16 +5,14 @@ import com.rameses.services.extended.*;
 
 public class CityEngineerBPApplicationListService extends ActiveListService {
 
-	@ActiveDB("bpapplication_ceo")
+	@ActiveDB("business_cityengineer")
 	def em;
 
 	@ProxyMethod
 	public def getNodes(o) {
 		return [
-			[caption:'For Assessment', state:'assessment', leaf:true, folder:true, allowSearch:true],
-			[caption:'For Approval', state:'approval', leaf:true, folder:true, allowSearch:true],
-			[caption:'For Payment', state:'payment', leaf:true, folder:true, allowSearch:true],
-			[caption:'For Release', state:'release', leaf:true, folder:true, allowSearch:true]
+			[caption:'For Assessment', state:'pending', leaf:true, folder:true, allowSearch:true],
+			[caption:'Active', state:'active', leaf:true, folder:true, allowSearch:true],
 		];
 	}	
 
@@ -23,10 +21,10 @@ public class CityEngineerBPApplicationListService extends ActiveListService {
 		return [
 			[name:'appno', caption:'Application No', width:120, resizable:false],
 			[name:'apptype', caption:'App. Type', width:80, resizable:false],
-			[name:'permitee.name', caption:'Permitee'],
-			[name:'tradename', caption:'Trade Name', expression: "#{item.tradename} #{((item.branchname) ? '( '+item.branchname+' )' : '')}", type:'label'],
-			[name:'state', caption:'State', width:120, resizable:false],
-			[name:'txnmode', caption:'Txn Mode', width:120, resizable:false],
+			[name:'businessname', caption:'Business Name' ],
+			[name:'businessaddress', caption:'Business Address' ],
+			[name:'owner.name', caption:'Owner'],
+			[name:'state', caption:'State', width:120, resizable:false]
 		];
 	}
 

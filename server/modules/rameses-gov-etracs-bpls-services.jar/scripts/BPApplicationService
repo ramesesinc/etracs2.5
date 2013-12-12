@@ -17,13 +17,17 @@ public class BPApplicationService extends ActiveCrudService {
 	@Service("BPAssessmentRuleService")
 	def assessmentSvc;
 
+	@Service("BPLedgerService")
+	def ledgerSvc;
+
+	@Service("BusinessInfoService")
+	def businessInfoSvc;
+
 	@Env
 	def env;
 
-	
 	public void beforeCreate(o) {
 		validateRequirements(o.requirements, "info");
-
 		if(!o.txnmode)
 			throw new Exception("Please specify txnmode");
 
@@ -37,36 +41,24 @@ public class BPApplicationService extends ActiveCrudService {
 		def smon = ( mnth < 10 ) ? "0"+mnth : mnth+"";
 		def prefix = "BP"+o.appyear+smon;
 		o.appno = prefix+seqSvc.getNextFormattedSeries(prefix);
+		o.appversion = 0;
+		o.activeyear = o.appyear;
 		o.txndate = dateSvc.serverDate;
 		o.createdby = env.USERID;
-		o.state = "info";		
-	}
 
-	/*************************************************************************
-	* after create, create also ledger where we can post our taxes and fees. 
-	**************************************************************************/
-	public void afterCreate(o) {
-		saveLobs(o);
-		saveInfos(o);
-		saveRequirements(o);
+		//check first if there is a businessid else create one if not.
+		if(!o.businessid) {
+			def g = businessInfoSvc.create(o);
+			o.businessid = g.objid;
+		}
+		o.state = "info";	
 	}
 	
-	public void saveLobs(o) {
-		o.lobs.each {
-			it.applicationid = o.objid;
-			if(o.businessid) it.businessid = o.businessid;
-			it.iyear = o.appyear;
-			em.save( it, "lob" );
-		}
-	}
-
-	public void saveInfos(o) {
-		o.infos.each {
-			it.applicationid = o.objid;
-			if(o.businessid) it.businessid = o.businessid;
-			it.iyear = o.appyear;
-			convertInfo(it);
-			em.save( it, "info" );
+	public void afterCreate(o) {
+		o.laterenewals.each {
+			it.appyear = it.year;
+			it.refid = o.objid;
+			em.create(it, "laterenewal");
 		}
 	}
 
@@ -82,30 +74,6 @@ public class BPApplicationService extends ActiveCrudService {
 			}
 		}
 	}
-
-
-	private void convertInfo(o) {
-		def value = o.value;
-		if( value == null ) return;
-		switch(o.attribute.datatype) {
-			case "decimal":
-				o.decimalvalue = Double.parseDouble(value+"");
-				break;
-			case "integer":
-				o.intvalue = Integer.parseInt(value+"");
-				break;
-			case "string_array":	
-			case "string":
-				o.stringvalue = (String)value;
-				break;
-			case "boolean":
-				value = ( value == 1 || value == true ) ? "true" : "false";
-				boolean b =  Boolean.parseBoolean(value);
-				o.boolvalue = (b) ? 1 : 0; 
-				break;
-		} 
-	}
-
 
 	/**********************************************************
 	* This is called in many aspects of the application. during
@@ -127,29 +95,14 @@ public class BPApplicationService extends ActiveCrudService {
 
 	@ProxyMethod
 	public def openByAppno(o) {
-		def z = em.findApplicationByAppNo( [appno:o.appno] );	
+		def z = em.findApplicationByAppNo( [appno:o.appno] );
 		if(!z)
-			throw new Exception("Doc not found");
+			throw new Exception("Application not found");
 		return open( [objid: z.applicationid ] );
 	}
 
 	public void afterOpen(o) {
-		def formatter = { x->
-			switch(x.attribute.datatype) {
-				case "decimal" : return x.decimalvalue; break;
-				case "integer" : return x.intvalue; break;
-				case "string"  : return x.stringvalue; break;
-				case "boolean" : 
-					if(x.boolvalue == 0) return false;
-					if(x.boolvalue == 1) return true;
-					return x.boolvalue; 
-					break;
-			}
-		}
-		o.lobs = em.getLobs(o);
-		o.infos = em.getInfos(o);
 		o.requirements = em.getRequirements(o);
-		o.infos.each { it.value = formatter(it) };
 		o.requirements.each {
 			if(it.type == "DOC" ){
 				def d = em.getDocRequirements(it);
@@ -157,16 +110,19 @@ public class BPApplicationService extends ActiveCrudService {
 			} 
 			if(it.status == 'completed') it.completed = 1;
 		}
+
+		o.bin = em.findBIN([businessid: o.businessid])?.bin;
+
 		//if state is for approval, include the taxfees.
 		if( o.state == 'approval') {
-			def result = assess(o);	 
+			def result = callAssessmentRule(o);	
 			o.taxfees = result.taxfees;
 			o.total_tax = result.totals.total_tax;
 			o.total_regfee = result.totals.total_regfee;
 			o.total_othercharge = result.totals.total_othercharge;
-			o.total = result.totals.total;
+			o.total = result.totals.total; 
 		}
-		else {
+		else if( o.state == 'payment' || o.state == 'release') {
 			o.taxfees = em.getTaxfees(o);	
 			o.total_tax = o.taxfees.findAll{ it.account.taxfeetype == 'TAX'}.sum{it.amount};
 			o.total_regfee = o.taxfees.findAll{ it.account.taxfeetype == 'REGFEE'}.sum{it.amount};
@@ -176,61 +132,120 @@ public class BPApplicationService extends ActiveCrudService {
 			if(!o.total_othercharge) o.total_othercharge = 0;
 			o.total = o.total_tax + o.total_regfee + o.total_othercharge;
 		}
+		//retrieve also if there are late renewals
+		def laterenewals = em.getLateRenewals(o);
+		if(laterenewals) {
+			laterenewals.each {
+				it.assessmentinfos = em.entityManager.serializer.read( it.assessmentinfos );
+			}
+			o.laterenewals = laterenewals;
+		}
+
 	}
 
 	/*************************************************************************
 	* update info saves lines of business and fees   
 	**************************************************************************/
-	@ProxyMethod
-	public def updateInfos(o) {
-		em.removeLobs(o);
-		em.removeInfos(o);
-		saveInfos(o);
-		saveLobs(o);
-	}
-
-	/*************************************************************************
-	* assess   
-	**************************************************************************/
-	@ProxyMethod
-	public def submitForAssessment(o) {
-		o.state = "asessment";
-		em.changeState( o );
-	}
-
-
-	@ProxyMethod
-	public def assess(o) {
+	def callAssessmentRule(o) {
+		o.infos = o.appinfos + o.assessmentinfos;
 		return assessmentSvc.execute(o);		
 	}
 
 	@ProxyMethod
-	public def submitForApproval(o) {
-		validateRequirements( o.requirements, "payment" );
-		o.state = "approval";
-		em.changeState( o );
+	public def assess(o) {
+		def result = callAssessmentRule(o);
+		result.total_tax = result.totals.total_tax;
+		result.total_regfee = result.totals.total_regfee;
+		result.total_othercharge = result.totals.total_othercharge;
+		result.total = result.totals.total; 
+		println "total ->"+result.total;		
+		return result;
 	}
 
+	/*************************************************************************
+	* workflow   
+	**************************************************************************/
 	@ProxyMethod
-	public void sendBackToAssessment(o) {
+	public def submitForAssessment(o) {
 		o.state = "assessment";
 		em.changeState( o );
+		return o;
 	}
 
 	@ProxyMethod
-	public void submitForPayment(o) {
-		def m = [objid: o.objid ];
+	public def submitForApproval(o) {
+	 	if(!o.taxfees)
+            throw new Exception("Please indicate at least one taxfee item");
+		o.state = "approval";
+		em.changeState( o );
+		return o;
+	}
+
+	@ProxyMethod
+	public def approveApplication(o) {
+		if(!o.taxfees)
+			throw new Exception("Please indicate at least one taxfee item");
+
+		def m = [:];
+		m.putAll( o );
+		m.objid = o.businessid;
 		m.applicationid = o.objid;
-		em.create( m, "ledger" );
-		o.taxfees.each {
-			it.ledgerid = m.objid;
+		m.infos = o.appinfos;
+		m.assessmentinfos = o.assessmentinfos;
+		m.lobs = o.lobs;
+		m.state = 'approved';
+		m.activeyear = o.appyear;
+		businessInfoSvc.updateApprovedInfo(m);
+		
+		def ledger = [:];
+		ledger.items = o.taxfees;
+		ledger.items.each {
 			it.applicationid = o.objid;
+			it.businessid = o.businessid;
 			it.iyear = o.appyear;
 			it.amtpaid = 0;
 			it.discount = 0;
-			em.create( it, "receivable" );
 		}
-		em.changeState( [objid:o.objid, state:'payment']);
+		ledgerSvc.postReceivables(ledger);
+		o.state = 'payment';
+		em.changeState( o );
+		return o;
+	}
+
+
+	@ProxyMethod
+	public def returnForInfo(o) {
+		o.state = "info";
+		em.changeState( o );
+		return o;
+	}
+
+	@ProxyMethod
+	public def returnForAssessment(o) {
+		o.state = "assessment";
+		em.changeState( o );
+		return o;
+	}
+
+	@ProxyMethod
+	public def issueBIN(o) {
+		def m = [:];
+		m.objid = o.businessid;
+		m.activeyear = o.appyear;
+		m.applicationid = o.objid;
+		def b = businessInfoSvc.createBIN( m );
+		o.bin = b.bin;
+		return o;
+	}
+
+	@ProxyMethod
+	public def release(o) {
+		def m = [:];
+		m.objid = o.businessid;
+		m.activeyear = o.appyear;
+		m.applicationid = o.objid;
+		def b = businessInfoSvc.release( m );
+		return o;
 	}
 
 }	

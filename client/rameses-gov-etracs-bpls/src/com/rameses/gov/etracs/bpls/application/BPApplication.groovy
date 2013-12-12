@@ -7,107 +7,177 @@ import com.rameses.rulemgmt.constraint.*;
 import com.rameses.rulemgmt.*;
 import java.rmi.server.*;
 
-class BPApplication extends PageFlowController {
+class BPApplication extends AbstractBPApplication {
 
-    @Binding
-    def binding;
+    @FormTitle
+    String windowTitle;
+        
+    @FormId
+    def windowId;
 
-    def entity = [lobs:[], taxfees:[], requirements:[], infos:[]];
-    def officeTypes = LOV.BUSINESS_OFFICE_TYPES;
-    def orgTypes = LOV.ORG_TYPES;
-    def lobAssessmentTypes = ["RENEW", "RETIRE"];
-
-    def appTypes = LOV.BUSINESS_APP_TYPES;
-    def txnmodes = ["ONLINE", "CAPTURE"];
-    def selectedLob;
+    def barcodeid;
     def step;
-
-    void initNew() {
-        step = "new";
-	entity = [:];
-        entity.objid = "BPAPP"+new UID();
-        entity.state = "draft";
-        entity.infos = [];
-        entity.taxfees = [];
-        entity.requirements = [];
-        entity.lobs = [];
-        lobModel.reload();
-        requirementModel.reload();
-        infoModel.reload();
-        taxfeeModel.reload();
-    }
     
-    @PropertyChangeListener
-    def listener = [
-        "entity.orgtype" : { o->
-            entity.owner = null;
-            entity.orgtypename = orgTypes.find{ it.key == o}?.value;
-        }
-    ]
 
-    def getLookupOwners() {
-        if( !entity.orgtype ) {
-            MsgBox.err("Please select an orgtype first.");
-            return null;
-        }    
-        return InvokerUtil.lookupOpener( "entity:lookup", [
-            "query.orgtype": entity.orgtype,
-            onselect: { o->
-                entity.owner = o;
-                binding.refresh("entity.owner.address");
+    def _initOpen() {
+        windowTitle = entity.appno;
+        windowId = entity.objid;
+        entity.orgtypename = orgTypes.find{ it.key == entity.orgtype}?.value;
+        appInfoModel.reload();
+        assessmentInfoModel.reload();
+        return super.start("open");
+    }
+
+    def startOpen() {
+        entity = appSvc.open([objid:entity.objid]);
+        return _initOpen(); 
+    }
+             
+     //used by barcode
+    def startOpenByAppno() {
+        entity = appSvc.openByAppno([appno:barcodeid]);
+        return _initOpen();
+    }
+
+    def updateLOB() {
+        return InvokerUtil.lookupOpener("bpapplicationinfo:updatelob", [entity:entity,
+            handler:{ lobs->
+                entity.lobs = lobs;
+                lobUpdated = true;
+                lobModel.reload();
             }
         ]);
     }
-    
-    def lobModel = [
-        fetchList: { o->
-            return entity.lobs;
-        },
-    ] as EditorListModel;
 
-    def sortInfos(sinfos) {
-        def list = sinfos.findAll{it.lob?.objid==null && it.attribute.category==null};
-        list = list + sinfos.findAll{it.lob?.objid==null && it.attribute.category!=null}.sort{ it.attribute.caption + it.attribute.sortorder };
-        list = list + sinfos.findAll{ it.lob?.objid!=null }.sort{ it.lob.name + it.attribute.sortorder }; 
-        return list;
+  
+    
+     /******************************************************************
+     * invoked during assessment
+     ******************************************************************/
+    def updateAssessmentInfo() {
+        if( entity.laterenewals ) {
+            return InvokerUtil.lookupOpener( "bpapplicationinfo:laterenewal", [ 
+                lateRenewalYears: entity.laterenewals,
+                entity:entity,
+                assessmentRuleSvc: assessmentRuleSvc
+            ] );
+        }
+        else {
+            return super.updateAssessmentInfo();
+        }
     }
 
-    def infoModel = [
-        fetchList: { o-> 
-            return sortInfos(entity.infos); 
-        }
-    ] as BasicListModel;
+
+     void calculateTaxfee() {
+        if(entity.taxfees==null) entity.taxfees = [];
+        entity.taxfees.clear();
+        def unedited = entity.assessmentinfos.findAll{ it.value == null };
+        if( unedited ) 
+            throw new Exception("Some info(s) are not filled up. Please complete" ); 
+        def result = appSvc.assess(entity);    
+        entity.taxfees = result.taxfees;
+        entity.total_tax = result.totals.total_tax;
+        entity.total_regfee = result.totals.total_regfee;
+        entity.total_othercharge = result.totals.total_othercharge;
+        entity.total = result.totals.total;
+        taxfeeModel.reload();
+        binding.refresh("entity.total.*");
+     }
+             
             
-    def taxfeeModel = [
-        fetchList: { o-> return entity.taxfees  },
-        onOpenItem: { o,col->
-            MsgBox.alert( o._taxfees );
-        },
-       
-    ]as EditorListModel;
-
-    def requirementModel = [
-        fetchList: { o-> return entity.requirements; }
-    ] as BasicListModel;
-
+     /******************************************************************
+     * WORKFLOW
+     ******************************************************************/
+     void submitForAssessment() {
+        if(dirty) throw new Exception("Please save the application first");
+        verifyLOB();
+        verifyAssessmentInfo();
+        entity = appSvc.submitForAssessment(entity);
+     }
+             
+     void submitForApproval() {
+        if(dirty) throw new Exception("Please save the application first");
+        verifyLOB();
+        verifyAssessmentInfo();
+        entity = appSvc.submitForApproval(entity);
+     }
+             
+     void approve() {
+        if(dirty) throw new Exception("Please save the application first");
+        verifyLOB();
+        verifyAssessmentInfo();
+        entity = appSvc.approveApplication(entity);
+     }
+         
+     void returnForInfo() {
+        if(dirty) throw new Exception("Please save the application first");
+        entity = appSvc.returnForInfo(entity);
+     }
     
-    def popupReports(def inv) {
-        def popupMenu = new PopupMenuOpener();
-        def list = InvokerUtil.lookupOpeners( inv.properties.category, [entity:entity] );
-        list.each {
-            String states = it.properties.states;
-            if(!states || entity.state.matches(states)) {
-                popupMenu.add( it );
-            }
+     void returnForAssessment() {
+        if(dirty) throw new Exception("Please save the application first");
+        entity = appSvc.returnForAssessment(entity);
+     }
+
+    /******************************************************************
+    * FOR PERMITTING
+    ******************************************************************/
+    void release() {
+        if(MsgBox.confirm("You are about to release this application. Proceed?")) {
+            def b = appSvc.release( entity );
+            MsgBox.alert("Application successfully released" );
         }
-        return popupMenu;
+     }
+
+     void issueBIN() {
+        if(MsgBox.confirm("You are about to issue a new BIN for this business. Proceed?")) {
+            def b = appSvc.issueBIN( entity );
+            MsgBox.alert("Assigned BIN No. " + b.bin );
+            entity.bin = b.bin;
+            binding.refresh("entity.bin");
+        }
+     }
+             
+     def issuePermit() {
+        return InvokerUtil.lookupOpener( "businesspermit:create", [entity: entity, handler:{ o->
+            MsgBox.alert( " issued " + o.permitno);
+        }]); 
+     }
+             
+     def selectedRequirement;
+
+     def editRequirement() {
+        if(selectedRequirement?.type) {
+            try {
+             def opener = InvokerUtil.lookupOpener( "bprequirement:" + selectedRequirement.type, [
+                entity:selectedRequirement,
+                handler: { o->
+                    selectedRequirement.putAll(o);
+                    selectedRequirement.status = "completed";
+                    requirementModel.reload();
+                }]);
+              return opener;  
+            }
+            catch(Exception e) {;}
+        }
+     }
+             
+     def validateClose() {
+        if(dirty) {
+            if( !MsgBox.confirm("Record is not saved. Proceed?") ) {
+                throw new com.rameses.util.BreakException();
+            }
+        }    
+     }
+
+     void saveUpdate() {
+        appSvc.update( entity );
+        dirty = false;
+        MsgBox.alert("Record updated");
+     }
+
+    def viewPrevAssessments() {
+        throw new Exception("Feature not yet supported");
     }
-    
-     def searchList;
 
-     def searchListModel = [
-        fetchList: { o->return searchList;}
-     ] as BasicListModel;
-
-    
 }
