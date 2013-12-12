@@ -26,7 +26,6 @@
             
             void init(){    
                 if( entity.paymentitems) payment = entity.paymentitems[0]
-
             }
 
             def getLookupPayer() {

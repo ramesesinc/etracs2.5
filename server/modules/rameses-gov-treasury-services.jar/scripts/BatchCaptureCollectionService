@@ -150,7 +150,7 @@ public class BatchCaptureCollectionService extends ActiveCrudService {
 
 	protected void afterOpen(def entity) {
 		entity.batchitems = em.getBatchEntry(entity);
-		entity.currentseries = entity.batchitems[-1].series+1
+		entity.currentseries =  entity.batchitems ? entity.batchitems[-1].series+1 : entity.startseries
 		entity.batchitems.each {
 			it._filetype = "batchcapture:misc"
 			it.items = em.getBatchEntryItems(it)
@@ -160,6 +160,8 @@ public class BatchCaptureCollectionService extends ActiveCrudService {
 			it.acctinfo = (it.items.size() > 1) ? '( Multiple Accounts )' : it.items[0].item.title 
 			it.remarks = it.items[0].remarks;
 			it.paymentitems = (it.paymentitems ? pem.serializer.read(it.paymentitems)  : [])
+
+			it.collector = entity.collector
 		}
 	}
 

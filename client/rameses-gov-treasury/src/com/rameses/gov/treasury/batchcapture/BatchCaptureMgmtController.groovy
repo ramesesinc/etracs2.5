@@ -13,7 +13,7 @@ public class BatchCaptureController
     
     @Service('BatchCaptureManagementService')
     def svc; 
-            
+        
     @PropertyChangeListener
     def listener = [
         'info.*' : { 
@@ -23,10 +23,10 @@ public class BatchCaptureController
         'info.collector|info.afserial' : {
             info.currentseries = null;
             binding.refresh('info.currentseries');
-        },
-            
-        'collector.*' : {
-            loadCapturedItems();
+        } ,
+        
+        'collector|startseries' : {
+            loadCapturedItems()
         }
     ]
                 
@@ -37,10 +37,12 @@ public class BatchCaptureController
     def selectedAfControl;
     def selectedAssignedItem;
     
+    
     def afcontrols;
     def assignedcontrols;
     def batchcaptures;
             
+    
     
     void init(){
         info = [:];
@@ -137,17 +139,19 @@ public class BatchCaptureController
     def collector;
     def selectedCaptured;
     def captureditems = []
+    def startseries
     
     
     def capturedListHandler = [
             fetchList : { return captureditems },
     ] as BasicListModel;
-            
     
+
     void loadCapturedItems(){
         captureditems.clear();
         if ( collector ) {
-            captureditems = svc.getSubmittedBatchCapturedReceipts(collector);
+             def params = [ collectorid: collector.objid,  startseries : startseries  ]
+             captureditems = svc.getSubmittedBatchCapturedReceipts(params);
         }
         capturedListHandler.reload();
     }
