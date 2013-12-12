@@ -1,26 +1,26 @@
 /*
- * SREAccountPage.java
+ * AccountPage.java
  *
- * Created on August 20, 2013, 10:07 AM
+ * Created on February 27, 2011, 12:48 PM
  */
 
 package com.rameses.gov.treasury.accounts;
 
 
-import com.rameses.common.ExpressionResolver;
 import com.rameses.osiris2.themes.FormPage;
-import com.rameses.rcp.common.Node;
 import com.rameses.rcp.ui.annotations.StyleSheet;
 import com.rameses.rcp.ui.annotations.Template;
 
+
 /**
  *
- * @author  wflores
+ * @author  jzamss
  */
 @Template(FormPage.class)
-public class SREAccountPage extends javax.swing.JPanel {
+public class SREAccountlEditPage extends javax.swing.JPanel {
     
-    public SREAccountPage() {
+    /** Creates new form AccountPage */
+    public SREAccountlEditPage() {
         initComponents();
     }
     /** This method is called from within the constructor to
@@ -30,13 +30,17 @@ public class SREAccountPage extends javax.swing.JPanel {
      */
     // <editor-fold defaultstate="collapsed" desc=" Generated Code ">//GEN-BEGIN:initComponents
     private void initComponents() {
+        jPanel1 = new javax.swing.JPanel();
         xFormPanel1 = new com.rameses.rcp.control.XFormPanel();
         xTextField1 = new com.rameses.rcp.control.XTextField();
         xTextField2 = new com.rameses.rcp.control.XTextField();
-        xLabel1 = new com.rameses.rcp.control.XLabel();
 
-        setPreferredSize(new java.awt.Dimension(542, 207));
+        setPreferredSize(new java.awt.Dimension(542, 387));
+        com.rameses.rcp.control.border.XTitledBorder xTitledBorder1 = new com.rameses.rcp.control.border.XTitledBorder();
+        xTitledBorder1.setTitle("Edit Account");
+        jPanel1.setBorder(xTitledBorder1);
 
+        xFormPanel1.setCaptionWidth(120);
         xTextField1.setCaption("Acct Code");
         xTextField1.setName("entity.code");
         xTextField1.setPreferredSize(new java.awt.Dimension(150, 19));
@@ -50,11 +54,22 @@ public class SREAccountPage extends javax.swing.JPanel {
         xTextField2.setRequired(true);
         xFormPanel1.add(xTextField2);
 
-        xLabel1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
-        xLabel1.setCaption("Parent");
-        xLabel1.setExpression("#{entity.parent.code} - #{entity.parent.title}");
-        xLabel1.setPreferredSize(new java.awt.Dimension(300, 25));
-        xFormPanel1.add(xLabel1);
+        org.jdesktop.layout.GroupLayout jPanel1Layout = new org.jdesktop.layout.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap(13, Short.MAX_VALUE)
+                .add(xFormPanel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 495, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .add(xFormPanel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 69, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(42, Short.MAX_VALUE))
+        );
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(this);
         this.setLayout(layout);
@@ -62,22 +77,22 @@ public class SREAccountPage extends javax.swing.JPanel {
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(layout.createSequentialGroup()
                 .addContainerGap()
-                .add(xFormPanel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 392, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(140, Short.MAX_VALUE))
+                .add(jPanel1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(layout.createSequentialGroup()
                 .addContainerGap()
-                .add(xFormPanel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 118, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(78, Short.MAX_VALUE))
+                .add(jPanel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(55, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
     
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPanel jPanel1;
     private com.rameses.rcp.control.XFormPanel xFormPanel1;
-    private com.rameses.rcp.control.XLabel xLabel1;
     private com.rameses.rcp.control.XTextField xTextField1;
     private com.rameses.rcp.control.XTextField xTextField2;
     // End of variables declaration//GEN-END:variables
