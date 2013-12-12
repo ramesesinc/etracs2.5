@@ -168,7 +168,8 @@ FROM rptledger rl
 	INNER JOIN barangay b ON rp.barangayid = b.objid 
 	INNER JOIN propertyclassification pc ON r.classification_objid = pc.objid 
 WHERE ${filters}
- AND rl.state = 'APPROVED'
+ AND rl.state = 'APPROVED' 
+ and r.taxable = 1
  AND ( rl.lastyearpaid < $P{billtoyear} OR ( rl.lastyearpaid = $P{billtoyear} AND rl.lastqtrpaid <= $P{billtoqtr}))
 
 
