@@ -20,26 +20,29 @@
             def selectedItem;
             def query = [:];
             
+            def orgTypes = LOV.ORG_TYPES;
+            
             void searchBusiness() {
                 searchListModel.reload();
             }
              
             def searchListModel = [
                 fetchList: { o->
-                    return svc.getSearchList(query);
+                    o.putAll( query )
+                    return svc.getSearchList(o);
                 }
             ] as BasicListModel;
             
             void openEntry() {
                 if(!selectedItem) return;
                 entity = svc.open(selectedItem);
-            }
+             }
             
             def infoModel = [
                 fetchList: { o->
                     return entity.infos;
                 }
-            ] as BasicListModel;
+            ] as BasicListModel
             
         }
         ]]>
