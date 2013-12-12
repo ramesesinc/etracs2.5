@@ -22,14 +22,16 @@ class LiquidationReportService  {
 	def getRCDReportData( params ) {
 		def liquidation = em.sqlContext.createNamedQuery('liquidationreport:getLiquidationInfo').setParameters(params ).singleResult
 		if(! liquidation ) throw new Exception("Could not open liquidation with objid " + params.liquidationid )
+		liquidation.cashbreakdown= em.serializer.read( liquidation.cashbreakdown ).each { it.qty = it.qty.toString() }
 
 		liquidation.remittances = em.sqlContext.createNamedQuery('liquidationreport:getRCDRemittances').setParameters(params ).resultList
 		liquidation.collectionsummaries = em.sqlContext.createNamedQuery('liquidationreport:getRCDCollectionSummary').setParameters(params ).resultList
 		liquidation.remittedforms = getRemittedSerials(params)
-		liquidation.otherpayments = em.sqlContext.createNamedQuery('liquidationreport:getRCDOtherPayments').setParameters(params ).resultList
+		liquidation.otherpayments = em.sqlContext.createNamedQuery('liquidationreport:getRCDOtherPayments').setParameters( liquidation ).resultList
 		liquidation.nonserialremittances = em.sqlContext.createNamedQuery('liquidationreport:getRCDNonSerialRemittedForms').setParameters(params ).resultList
 		liquidation.nonserialsummary = em.sqlContext.createNamedQuery('liquidationreport:getRCDNonSerialRemittedForms').setParameters(params ).resultList
 		liquidation.amountinwords = numSvc.doubleToWords( liquidation.amount )
+
 		return liquidation;
 	}
 
