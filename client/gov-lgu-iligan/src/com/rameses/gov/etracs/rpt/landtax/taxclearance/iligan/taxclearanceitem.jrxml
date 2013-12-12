@@ -32,6 +32,7 @@
 	<field name="rputype" class="java.lang.String"/>
 	<field name="cadastrallotno" class="java.lang.String"/>
 	<field name="payments" class="java.lang.Object"/>
+	<field name="totalareasqm" class="java.math.BigDecimal"/>
 
 		<background>
 			<band height="0"  isSplitAllowed="true" >
@@ -50,7 +51,7 @@
 				<staticText>
 					<reportElement
 						mode="Transparent"
-						x="184"
+						x="166"
 						y="0"
 						width="65"
 						height="26"
@@ -72,7 +73,7 @@
 						mode="Transparent"
 						x="0"
 						y="0"
-						width="76"
+						width="70"
 						height="26"
 						forecolor="#000000"
 						backcolor="#FFFFFF"
@@ -90,7 +91,7 @@
 				<staticText>
 					<reportElement
 						mode="Transparent"
-						x="160"
+						x="142"
 						y="0"
 						width="24"
 						height="26"
@@ -110,9 +111,9 @@
 				<staticText>
 					<reportElement
 						mode="Transparent"
-						x="76"
+						x="70"
 						y="0"
-						width="84"
+						width="72"
 						height="26"
 						forecolor="#000000"
 						backcolor="#FFFFFF"
@@ -130,9 +131,9 @@
 				<staticText>
 					<reportElement
 						mode="Transparent"
-						x="349"
+						x="360"
 						y="0"
-						width="57"
+						width="52"
 						height="26"
 						forecolor="#000000"
 						backcolor="#FFFFFF"
@@ -150,9 +151,9 @@
 				<staticText>
 					<reportElement
 						mode="Transparent"
-						x="458"
+						x="464"
 						y="0"
-						width="75"
+						width="69"
 						height="26"
 						forecolor="#000000"
 						backcolor="#FFFFFF"
@@ -171,7 +172,7 @@ COVERED]]></text>
 				<staticText>
 					<reportElement
 						mode="Transparent"
-						x="406"
+						x="412"
 						y="0"
 						width="52"
 						height="26"
@@ -191,7 +192,7 @@ COVERED]]></text>
 				<staticText>
 					<reportElement
 						mode="Transparent"
-						x="249"
+						x="260"
 						y="0"
 						width="50"
 						height="26"
@@ -212,7 +213,7 @@ VALUE]]></text>
 				<staticText>
 					<reportElement
 						mode="Transparent"
-						x="299"
+						x="310"
 						y="0"
 						width="50"
 						height="26"
@@ -230,6 +231,26 @@ VALUE]]></text>
 				<text><![CDATA[AMOUNT
 PAID]]></text>
 				</staticText>
+				<staticText>
+					<reportElement
+						mode="Transparent"
+						x="231"
+						y="0"
+						width="29"
+						height="26"
+						forecolor="#000000"
+						backcolor="#FFFFFF"
+						key="staticText-10"/>
+					<box>					<topPen lineWidth="0.25" lineStyle="Solid"/>
+					<leftPen lineWidth="0.25" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.25" lineStyle="Solid"/>
+					<rightPen lineWidth="0.25" lineStyle="Solid"/>
+</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
+						<font fontName="Tahoma" pdfFontName="Helvetica" size="8" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
+					</textElement>
+				<text><![CDATA[Area (sqm)]]></text>
+				</staticText>
 			</band>
 		</columnHeader>
 		<detail>
@@ -237,9 +258,9 @@ PAID]]></text>
 				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						mode="Transparent"
-						x="76"
+						x="70"
 						y="0"
-						width="84"
+						width="72"
 						height="15"
 						forecolor="#000000"
 						backcolor="#FFFFFF"
@@ -260,7 +281,7 @@ PAID]]></text>
 						mode="Transparent"
 						x="0"
 						y="0"
-						width="76"
+						width="70"
 						height="15"
 						forecolor="#000000"
 						backcolor="#FFFFFF"
@@ -280,7 +301,7 @@ PAID]]></text>
 				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						mode="Transparent"
-						x="184"
+						x="166"
 						y="0"
 						width="65"
 						height="15"
@@ -301,7 +322,7 @@ PAID]]></text>
 				<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						mode="Transparent"
-						x="249"
+						x="260"
 						y="0"
 						width="50"
 						height="15"
@@ -322,7 +343,7 @@ PAID]]></text>
 				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						mode="Transparent"
-						x="160"
+						x="142"
 						y="0"
 						width="24"
 						height="15"
@@ -342,15 +363,36 @@ PAID]]></text>
 				</textField>
 				<subreport  isUsingCache="true">
 					<reportElement
-						x="299"
+						x="310"
 						y="0"
-						width="238"
+						width="223"
 						height="15"
 						key="subreport-1"
 						stretchType="RelativeToBandHeight"/>
 					<dataSourceExpression><![CDATA[$F{payments}]]></dataSourceExpression>
 					<subreportExpression  class="net.sf.jasperreports.engine.JasperReport"><![CDATA[$P{taxclearanceitempayment}]]></subreportExpression>
 				</subreport>
+				<textField isStretchWithOverflow="true" pattern="#,##0.0000" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						mode="Transparent"
+						x="231"
+						y="0"
+						width="29"
+						height="15"
+						forecolor="#000000"
+						backcolor="#FFFFFF"
+						key="textField-1"
+						stretchType="RelativeToBandHeight"/>
+					<box>					<topPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
+</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
+						<font fontName="Tahoma" pdfFontName="Helvetica" size="8" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
+					</textElement>
+				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{totalareasqm}]]></textFieldExpression>
+				</textField>
 			</band>
 		</detail>
 		<columnFooter>
