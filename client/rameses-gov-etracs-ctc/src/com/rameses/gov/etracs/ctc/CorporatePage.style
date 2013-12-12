@@ -33,6 +33,7 @@
 }
 
 
+
 "entity.payer.tin" [ hastin == true ]{
     enabled:false;
 }
@@ -53,6 +54,32 @@
 "entity.payer.placeregistered" [ hasplaceregistered == true ]{
     enabled:false;
 }
+
+
+
+"entity.payer.tin" [ hastin == false ]{
+    enabled:true;
+}
+
+
+"entity.payer.orgtype" [ hasorgtype == false ]{
+    enabled:true;
+}
+
+"entity.payer.nature" [ hasnature == false ]{
+    enabled:true;
+}
+
+"entity.payer.dtregistered" [ hasdtregistered == false ]{
+    enabled:true;
+}
+
+"entity.payer.placeregistered" [ hasplaceregistered == false ]{
+    enabled:true;
+}
+
+
+
 
 
 "entity.realpropertyav|entity.businessgross"[entity.additional == true]{

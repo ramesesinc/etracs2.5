@@ -110,3 +110,47 @@ go
 
 alter table entityjuridical add placeregistered varchar(100)
 go
+
+
+alter table entityindividual add acr varchar(50)
+go
+
+
+
+create table cashreceipt_ctc_individual
+(
+	objid varchar(50) primary key,
+	payer_profession varchar(50),
+	payer_citizenship varchar(50),
+	payer_civilstatus varchar(25),
+	payer_height varchar(25),
+	payer_weight varchar(25),
+	additional_remarks varchar(100),
+	businessgross numeric(16,2) not null,
+	annualsalary numeric(16,2) not null,
+	propertyincome numeric(16,2) not null,
+	basictax numeric(16,2) not null,
+	salarytax numeric(16,2) not null,
+	businessgrosstax numeric(16,2) not null,
+	propertyincometax numeric(16,2) not null,
+	additionaltax numeric(16,2) not null,
+	totaltax numeric(16,2) not null,
+	interest numeric(16,2) not null,
+	amountdue numeric(16,2) not null,
+	interestdue numeric(16,2) not null,
+	
+	barangay_objid varchar(50),
+	barangay_name varchar(50),
+	brgytaxshare numeric(16,2) not null,
+	brgyinterestshare numeric(16,2) not null
+)
+go
+
+
+
+alter table cashreceipt_ctc_individual
+	add constraint FK_cashreceiptctcindividual_cashreceipt foreign key (objid)
+	references cashreceipt (objid)
+go
+
+
