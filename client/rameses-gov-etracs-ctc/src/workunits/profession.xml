@@ -29,7 +29,7 @@
    </code>
    
    <pages>
-       <page template="com.rameses.gov.ctc.ProfessionPage" />
+       <page template="com.rameses.gov.etracs.ctc.ProfessionPage" />
    </pages>
    
 </workunit>

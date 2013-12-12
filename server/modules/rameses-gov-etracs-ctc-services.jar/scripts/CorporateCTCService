@@ -23,9 +23,26 @@ public class CorporateCTCService
 	@Resource("RuleService")
 	def ruleSvc;
 
+	@Service('RevenueItemAccountService')
+	def revSvc
+
 	def RULESET = 'ctccorporate'
 	def FACT_PACKAGE = 'ctccorporate.'
 	
+
+	@ProxyMethod
+	public def getCtcRelatedPayerData(entity){
+		// info fields required:
+		// newbusiness, realpropertyav, businessgross
+		def property = em.findRealPropertyAv(entity)
+		def business = em.findBusinessGross(entity)
+		def info = [
+			newbusiness 	: (business.apptype == 'NEW'),
+			businessgross 	: business.totalgross,
+			realpropertyav  : property.totalav,
+		]
+		return info 
+	}
 
 	@ProxyMethod
 	public def calculateTax(ctc){
@@ -35,7 +52,23 @@ public class CorporateCTCService
 		grps.each{g ->
 			ruleSvc.execute( RULESET, data.facts, actions, g.name);
 		}
+		buildItems(data.ctc)
 		return data.ctc 
+	}
+
+	void buildItems(ctc){
+		ctc.items = []
+		ctc.items << buildItem(ctc.acctid, ctc.totaltax)
+		if (ctc.interest > 0.0)
+			ctc.items << buildItem(ctc.interest_acctid, ctc.interest)
+	}
+
+	def buildItem(acctid, amount){
+		return [
+			objid : 'CI' + new java.rmi.server.UID(),
+			item  : revSvc.open([objid:acctid]),
+			amount : amount,
+		]
 	}
 
 
@@ -53,7 +86,6 @@ public class CorporateCTCService
 	def createFacts(ctc)
 	{
 		ctc.basictax = 0.0
-		ctc.salarytax = 0.0
 		ctc.businessgrosstax = 0.0
 		ctc.propertyavtax = 0.0
 		ctc.additionaltax = 0.0
@@ -101,7 +133,7 @@ public class CalculateTax implements RuleActionHandler {
 			ctc.basictax = tax
 			params.ctc.basictax = tax
 			ctc.acctid = params.acct.key 
-			ctc.accttitle = params.acct.value
+			ctc.accttitle = params.acct.value 
 		}
 		else if (actiontype == 'calc-businessgross-tax'){
 			ctc.businessgrosstax = tax
@@ -112,14 +144,8 @@ public class CalculateTax implements RuleActionHandler {
 			params.ctc.propertyavtax = tax
 		}
 		else if (actiontype == 'calc-additional-tax'){
-			ctc.additionaltax = tax
 			ctc.basictax = 0.0
-			ctc.businessgrosstax = 0.0
-			ctc.propertyavtax = 0.0
-			params.ctc.additionaltax = tax
 			params.ctc.basictax = 0.0
-			params.ctc.businessgrosstax = 0.0
-			params.ctc.propertyavtax = 0.0
 		}
 		else if (actiontype == 'calc-interest'){
 			ctc.interest = tax
@@ -129,8 +155,10 @@ public class CalculateTax implements RuleActionHandler {
 		}
 
 		ctc.totaltax = ctc.basictax + ctc.businessgrosstax + ctc.propertyavtax + ctc.additionaltax 
+		ctc.amountdue = ctc.totaltax + ctc.interest 
+		ctc.amount = ctc.totaltax + ctc.interest 
+		
 		params.ctc.totaltax = ctc.totaltax 
-		ctc.amountdue = ctc.totaltax + + ctc.interest 
 		params.ctc.amountdue = ctc.amount
 	}
 }	

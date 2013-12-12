@@ -79,3 +79,34 @@ insert into sys_rulegroup (name, ruleset, title, sortorder)
 values ('INTEREST', 'ctccorporate', 'Interest Computation', 4)
 go
 
+
+
+create table cashreceipt_ctc_corporate
+(
+	objid varchar(50) primary key,
+	payer_tin varchar(50),
+	payer_orgtype varchar(50),
+	payer_nature varchar(50),
+	payer_dtregistered datetime,
+	payer_placeregistered varchar(100),
+	additional_remarks varchar(100),
+	realpropertyav numeric(16,2) not null,
+	businessgross numeric(16,2) not null,
+	basictax numeric(16,2) not null,
+	propertyavtax numeric(16,2) not null,
+	businessgrosstax numeric(16,2) not null,
+	totaltax numeric(16,2) not null,
+	interest numeric(16,2) not null,
+	amountdue numeric(16,2) not null
+)
+go
+
+alter table cashreceipt_ctc_corporate 
+	add constraint FK_cashreceiptctccorporate_cashreceipt foreign key (objid)
+	references cashreceipt (objid)
+go
+
+
+
+alter table entityjuridical add placeregistered varchar(100)
+go
