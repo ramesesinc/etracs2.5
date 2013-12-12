@@ -13,17 +13,21 @@
 		<field name="postedbyid" />
 		<field name="postedby" />
 		<field name="postedbytitle" />
+		<field name="sharetype" />
 	</element>
 
 	<element name="item" tablename="brgyshareitem">
 		<field name="objid" primary="true" />
 		<field name="brgyshareid" required="true" />
 		<field name="barangayid" required="true" />
+		<field name="basiccurrent" required="true" type="decimal" />
+		<field name="basicprevious" required="true" type="decimal" />
 		<field name="basic" required="true" type="decimal" />
 		<field name="basicint" required="true" type="decimal" />
 		<field name="basicdisc" required="true" type="decimal" />
 		<field name="basicshare" required="true" type="decimal" />
 		<field name="basicintshare" required="true" type="decimal" />
+		<field name="commonshare" required="true" type="decimal" />
 	</element>
 
 </schema>

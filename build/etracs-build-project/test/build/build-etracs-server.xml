@@ -193,6 +193,9 @@
         <antcall target="deploy-etracs-jars-to-platform">
             <param name="sourcefile" value="rameses-gov-etracs-tools"/>
         </antcall>
+        <antcall target="deploy-etracs-jars-to-platform">
+            <param name="sourcefile" value="rameses-gov-etracs-ctc"/>
+        </antcall>
     </target>
     
     <target name="deploy-etracs-jars-to-platform">

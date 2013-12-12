@@ -31,10 +31,12 @@ public class BrgyShareInitPage extends javax.swing.JPanel {
         formPanel1 = new com.rameses.rcp.util.FormPanel();
         xNumberField1 = new com.rameses.rcp.control.XNumberField();
         xComboBox2 = new com.rameses.rcp.control.XComboBox();
+        xComboBox1 = new com.rameses.rcp.control.XComboBox();
 
         com.rameses.rcp.control.border.XTitledBorder xTitledBorder1 = new com.rameses.rcp.control.border.XTitledBorder();
         xTitledBorder1.setTitle("Report Period Information");
         formPanel1.setBorder(xTitledBorder1);
+        formPanel1.setCaptionWidth(90);
         xNumberField1.setCaption("Year");
         xNumberField1.setFieldType(Integer.class);
         xNumberField1.setIndex(-10);
@@ -48,9 +50,16 @@ public class BrgyShareInitPage extends javax.swing.JPanel {
         xComboBox2.setImmediate(true);
         xComboBox2.setItems("months");
         xComboBox2.setName("entity.mon");
-        xComboBox2.setPreferredSize(new java.awt.Dimension(200, 22));
+        xComboBox2.setPreferredSize(new java.awt.Dimension(0, 22));
         xComboBox2.setRequired(true);
         formPanel1.add(xComboBox2);
+
+        xComboBox1.setCaption("Share Type");
+        xComboBox1.setItems("sharetypes");
+        xComboBox1.setName("entity.sharetype");
+        xComboBox1.setPreferredSize(new java.awt.Dimension(0, 22));
+        xComboBox1.setRequired(true);
+        formPanel1.add(xComboBox1);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -73,6 +82,7 @@ public class BrgyShareInitPage extends javax.swing.JPanel {
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private com.rameses.rcp.util.FormPanel formPanel1;
+    private com.rameses.rcp.control.XComboBox xComboBox1;
     private com.rameses.rcp.control.XComboBox xComboBox2;
     private com.rameses.rcp.control.XNumberField xNumberField1;
     // End of variables declaration//GEN-END:variables
