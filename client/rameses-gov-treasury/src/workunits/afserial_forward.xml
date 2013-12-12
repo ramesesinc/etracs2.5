@@ -76,8 +76,6 @@
             
             public void save() {
                 validateSeries( entity.startseries);
-                if( entity.endseries.mod(50) != 0 )  
-                    throw new Exception("End series must divisible by 50");
                 
                 if( entity.startseries > entity.endseries) 
                     throw new Exception("Start series must not greater than end series. ")
