@@ -91,7 +91,7 @@ public class SearchBusiness extends javax.swing.JPanel {
                 , new Object[]{"typeHandler", new com.rameses.rcp.common.TextColumnHandler()}
             }),
             new com.rameses.rcp.common.Column(new Object[]{
-                new Object[]{"name", "address"}
+                new Object[]{"name", "businessaddress"}
                 , new Object[]{"caption", "Address"}
                 , new Object[]{"width", 100}
                 , new Object[]{"minWidth", 0}
