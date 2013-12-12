@@ -20,7 +20,8 @@ WHERE objid = $P{objid}
 
 [getItems]
 SELECT
-	ori.id, ori.curamount AS amount, tfa.stracctcode AS item_code, tfa.strdescription AS item_title
+	ori.id, ori.curamount AS amount, tfa.stracctcode AS item_code, 
+	tfa.strdescription AS item_title, strRemarks as remarks  
 FROM tbloritem ori
 INNER JOIN tbltaxfeeaccount tfa on tfa.objid = ori.stracctid
 WHERE ori.parentid = $P{objid}
