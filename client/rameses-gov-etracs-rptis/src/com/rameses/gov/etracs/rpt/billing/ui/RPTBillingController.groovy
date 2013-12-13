@@ -18,6 +18,9 @@ public class RPTBillingController
     
     @Service("RPTBillingService")
     def svc;
+    
+    @Service("RPTBillingReportService")
+    def billReportSvc;
 
     @Service("ReportParameterService")
     def reportSvc;
@@ -33,7 +36,7 @@ public class RPTBillingController
     
     void init() {
         mode = 'init'
-        bill = svc.initBill()
+        bill = svc.initBill(null)
     }
     
     def back() {
@@ -46,6 +49,7 @@ public class RPTBillingController
             onselect : {
                 bill.taxpayer = it;
                 clearLoadedProperties();
+                loadProperties();
             },
                 
             onempty : {
@@ -55,14 +59,40 @@ public class RPTBillingController
         ] )
     }
     
-    void buildBillReportInfo(){
-        bill.forprinting = true;
-        def selectedItems = items.findAll{it.bill == true}
-        if (selectedItems){
-            bill.ledgerids.clear();
-            bill.ledgerids.addAll(selectedItems.objid);
+    def selectedItems 
+    void updateLedgerBillStatement(){
+        if (items) {
+            selectedItems = items.findAll{it.bill == true}
+            if (!selectedItems) selectedItems = items;
+            selectedItems.each{
+                bill.rptledgerid = it.objid 
+                svc.generateBill(bill);
+            }
         }
-        bill = svc.generateBill( bill )
+        else {
+            // if no items, this is invoke from outside 
+            svc.generateBill(bill);
+        }
+        
+    }
+    
+    void buildBillReportInfo(){
+        updateLedgerBillStatement();
+        bill.ledgers = [];
+        if (items) {
+            selectedItems = items.findAll{it.bill == true}
+            if (!selectedItems) selectedItems = items;
+            selectedItems.each{
+                bill.rptledgerid = it.objid 
+                bill.ledgers << billReportSvc.generateReportByLedgerId(bill.rptledgerid )
+            }
+        }
+        else {
+            bill.ledgers << billReportSvc.generateReportByLedgerId(bill.rptledgerid )
+        }
+        
+        updateBillInfo()
+        
         report.viewReport()
     }
     
@@ -76,6 +106,27 @@ public class RPTBillingController
         mode = 'view'
         return 'preview'
     }
+
+    void updateBillInfo(){
+            //set expirty
+            bill.validuntil = bill.ledgers[0].expirydate
+                    
+            //summarize totals
+            bill.totalbasic     = sumListField(bill.ledgers, 'basic')
+            bill.totalbasicdp	= sumListField(bill.ledgers, 'basicdp')
+            bill.totalbasicnet	= sumListField(bill.ledgers, 'basicnet')
+            bill.totalsef	= sumListField(bill.ledgers, 'sef')
+            bill.totalsefdp	= sumListField(bill.ledgers, 'sefdp')
+            bill.totalsefnet	= sumListField(bill.ledgers, 'sefnet')
+            bill.totalfirecode  = sumListField(bill.ledgers, 'firecode')
+            bill.grandtotal     = sumListField(bill.ledgers, 'total')
+    }
+    
+    def sumListField(list, field){
+        return list."${field}".sum();
+    }
+
+        
                       
     def reportpath = 'com/rameses/gov/etracs/rpt/report/billing/'
             
@@ -134,7 +185,6 @@ public class RPTBillingController
         if (!bill.taxpayer) {
             throw new Exception('Taxpayer is required.')
         }
-        bill.ledgerids.clear();
         items = svc.loadProperties(bill).each{ it.bill = true }
         listHandler.reload();
     }

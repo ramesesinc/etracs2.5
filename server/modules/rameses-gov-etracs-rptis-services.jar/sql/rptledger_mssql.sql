@@ -78,65 +78,32 @@ WHERE rlf.rptledgerid =  $P{rptledgerid}
   AND rlf.state ='APPROVED'
 
 
-[getLedgerItems]
-SELECT t.*
-FROM ( 
-	SELECT
-		rl.objid AS rptledgerid, lf.tdno, rli.year, lf.assessedvalue,
-		rli.basic - rli.basicpaid AS basic, 
-		rli.basicint - rli.basicintpaid AS basicint, 
-		rli.basicdisc - rli.basicdisctaken AS basicdisc, 
-		rli.basicamnesty + rli.basicintamnesty AS basictotalamnesty,
+[getLedgerBillItems]
+SELECT
+	rl.objid AS rptledgerid,  lf.tdno, bi.year, lf.assessedvalue, 
+	SUM(bi.basic - bi.basicpaid) AS basic, 
+	SUM(bi.basicint - bi.basicintpaid) AS basicint, 
+	SUM(bi.basicdisc - bi.basicdisctaken) AS basicdisc, 
+	SUM(bi.basicamnesty + bi.basicintamnesty) AS basictotalamnesty,
 
-		rli.sef - rli.sefpaid AS sef, 
-		rli.sefint - rli.sefintpaid AS sefint, 
-		rli.sefdisc - rli.sefdisctaken AS sefdisc, 
-		rli.sefamnesty + rli.sefintamnesty AS seftotalamnesty,
+	SUM(bi.sef - bi.sefpaid) AS sef, 
+	SUM(bi.sefint - bi.sefintpaid) AS sefint, 
+	SUM(bi.sefdisc - bi.sefdisctaken) AS sefdisc, 
+	SUM(bi.sefamnesty + bi.sefintamnesty) AS seftotalamnesty,
+	SUM(bi.firecode - bi.firecodepaid) AS firecode,
 
-		rli.firecode - rli.firecodepaid AS firecode,
+	SUM(bi.basic - bi.basicpaid -  bi.basicdisc + 
+	bi.basicint - bi.basicintpaid  + 
+	bi.sef - bi.sefpaid -  bi.sefdisc + 
+	bi.sefint - bi.sefintpaid  +
+	bi.firecode - bi.firecodepaid) AS total 
 
-		rli.basic - rli.basicpaid -  rli.basicdisc + 
-		rli.basicint - rli.basicintpaid  + 
-		rli.sef - rli.sefpaid -  rli.sefdisc + 
-		rli.sefint - rli.sefintpaid  +
-		rli.firecode - rli.firecodepaid AS total 
-	FROM rptledger rl
-		INNER JOIN rptledgerfaas lf ON rl.objid = lf.rptledgerid
-		INNER JOIN rptledgeritem rli ON lf.objid = rli.rptledgerfaasid
-	WHERE rl.objid = $P{rptledgerid} 
-	  AND rli.state = 'OPEN'
-	  AND rli.qtrly = 0
-
-	UNION
-
-	SELECT
-		rl.objid AS rptledgerid,  lf.tdno, rli.year, lf.assessedvalue, 
-		SUM(rliq.basic - rliq.basicpaid) AS basic, 
-		SUM(rliq.basicint - rliq.basicintpaid) AS basicint, 
-		SUM(rliq.basicdisc - rliq.basicdisctaken) AS basicdisc, 
-		SUM(rliq.basicamnesty + rliq.basicintamnesty) AS basictotalamnesty,
-
-		SUM(rliq.sef - rliq.sefpaid) AS sef, 
-		SUM(rliq.sefint - rliq.sefintpaid) AS sefint, 
-		SUM(rliq.sefdisc - rliq.sefdisctaken) AS sefdisc, 
-		SUM(rliq.sefamnesty + rliq.sefintamnesty) AS seftotalamnesty,
-		SUM(rliq.firecode - rliq.firecodepaid) AS firecode,
-
-		SUM(rliq.basic - rliq.basicpaid -  rliq.basicdisc + 
-		rliq.basicint - rliq.basicintpaid  + 
-		rliq.sef - rliq.sefpaid -  rliq.sefdisc + 
-		rliq.sefint - rliq.sefintpaid  +
-		rliq.firecode - rliq.firecodepaid) AS total 
-
-	FROM rptledger rl
-		INNER JOIN rptledgerfaas lf ON rl.objid = lf.rptledgerid
-		INNER JOIN rptledgeritem rli ON lf.objid = rli.rptledgerfaasid
-		INNER JOIN rptledgeritem_qtrly rliq ON rli.objid = rliq.rptledgeritemid 
-	WHERE rl.objid = $P{rptledgerid} 
-	  AND rliq.state = 'OPEN'
-	GROUP BY rl.objid, lf.tdno, rli.year, lf.assessedvalue
-) t
-ORDER BY t.year DESC 
+FROM rptledger rl
+	INNER JOIN rptledgerfaas lf ON rl.objid = lf.rptledgerid
+	INNER JOIN rptledgerbillitem bi ON rl.objid = bi.rptledgerid 
+WHERE rl.objid = $P{rptledgerid} 
+GROUP BY rl.objid, lf.tdno, bi.year, lf.assessedvalue
+ORDER BY bi.year DESC 
 
 
 

@@ -49,7 +49,7 @@ public class RPTLedgerController
     }
     
     void loadItems(){
-        debits   = svc.getLedgerItems(ledger.objid)
+        debits   = svc.getLedgerBillItems(ledger.objid)
         credits = svc.getLedgerCredits(ledger.objid)
         debitListHandler.reload();
         paymentListHandler.reload();
@@ -221,9 +221,7 @@ public class RPTLedgerController
     }
     
     def printBill(){
-        def bill = billSvc.initBill();
-        bill.taxpayer = entity.taxpayer
-        bill.ledgerids.add(entity.objid)
+        def bill = billSvc.initBill(entity.objid);
         return InvokerUtil.lookupOpener('rptbill:print', [bill:bill])
     }
     
