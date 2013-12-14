@@ -42,7 +42,7 @@ public class RPTBillingService
 	public def initBill(ledgerid){
 		def pdate = dtSvc.parseCurrentDate()
 		return [
-			billdate 			: null,
+			billdate 			: pdate.date,
 			billtoyear 			: pdate.year,
 			billtoqtr			: 4,
 			advancebill			: false,
@@ -131,14 +131,14 @@ public class RPTBillingService
         bill.ledger = em.findOpenLedgerById(bill)
         if (!bill.ledger) throw new Exception('Ledger if fully paid.')
 
-		clearBillItems(bill)
-
-        def data = executeRules(bill)
-        saveBillItems(bill, data)
-
-        bill.expirydate = getExpiryDate(bill)
-        bill.validuntil = dtSvc.add(bill.expirydate, '-1d')
-        em.updateLedgerNextBillDate(buildParams(bill))
+        if (bill.ledger.lastbilledyear != bill.billtoyear || bill.ledger.lastbilledqtr != bill.billtoqtr || bill.ledger.partialbasic != 0){
+        	clearBillItems(bill)
+	        def data = executeRules(bill)
+	        saveBillItems(bill, data)
+	        bill.expirydate = getExpiryDate(bill)
+	        bill.validuntil = dtSvc.add(bill.expirydate, '-1d')
+	        em.updateLedgerNextBillDate(buildParams(bill))
+        }
 		return bill
 	}
 
@@ -151,6 +151,11 @@ public class RPTBillingService
 		data.ledgers.each{
 			em.create(it, SCHEMA_BILL_ITEM)
 		}
+		//apply partial
+		if (bill.ledger.partialled == 1) {
+			em.applyPartialPayment(bill.ledger)
+		}
+
 	}
 
 
@@ -167,7 +172,9 @@ public class RPTBillingService
 			rptledgerid : bill.rptledgerid,
 			taxpayerid : bill.taxpayerid,
 			billtoyear  : bill.billtoyear, 
-			billtoqtr   : bill.billtoqtr, 
+			billtoqtr   : bill.billtoqtr,
+			toyear  	: bill.billtoyear, 
+			toqtr   	: bill.billtoqtr, 
 			currdate    : cdate.date,
 			currentyr   : cdate.year,
 			currentqtr  : cdate.qtr,
@@ -492,6 +499,113 @@ public class RPTBillingService
 		else {
 			return dtSvc.add(dtSvc.getMonthEndDate(dt.date), '1d')
 		} 
+	}
+
+
+
+
+	@ProxyMethod
+	public def computePartialPayment( ledger, payment  ) {
+		def partial = payment 
+		if (payment == null || payment == 0)
+			throw new Exception('Partial Payment is required.')
+
+		def paiditems = em.getFullyPaidItems(['rptledgerid':ledger.rptledgerid])
+		def idx = 0
+		def pitem = null 
+		def totalbasic = 0.0
+		def totalsef = 0.0
+		def partialinfo = [:]
+
+		for(; idx < paiditems.size(); idx++)
+		{
+			if (payment == 0.0 ) break;
+
+			pitem = paiditems[idx]
+			def amtdue = pitem.total 
+			if ( payment >= amtdue){
+				payment -= amtdue 
+				totalbasic += (pitem.basic + pitem.basicint)
+				totalsef += (pitem.sef + pitem.sefint)
+			}
+			else 
+			{
+				pitem.partial = true;
+
+				if (payment > pitem.firecode){
+					payment -= pitem.firecode 
+				}
+				else{
+					pitem.firecode = payment 
+					payment = 0.0 
+				}
+
+				if (payment > 0.0){
+					//apply proportionally
+					def basicpaymentrate  = numSvc.round(pitem.basic / (pitem.basic + pitem.sef))
+					def basicpayment 	= numSvc.round(payment * basicpaymentrate)
+					def sefpayment 		= payment - basicpayment 
+
+					def basicintrate    = numSvc.round(pitem.basicint / pitem.basic)
+					def partialbasic    = numSvc.round(basicpayment / (1 + basicintrate))
+					def partialbasicint = basicpayment - partialbasic 
+
+					def partialbasicdisc 		= 0.0
+					if (pitem.basicdisc > 0.0) {
+						def basicdiscrate = numSvc.round(pitem.basicdisc / pitem.basic)
+						partialbasicdisc = numSvc.round(partialbasic * basicdiscrate)
+						partialbasic += partialbasicdisc
+					}
+
+					def sefintrate    	= numSvc.round(pitem.sefint / pitem.sef)
+					def partialsef    	= numSvc.round(sefpayment / (1 + sefintrate))
+					def partialsefint 	= sefpayment - partialsef 
+
+					def partialsefdisc 	= 0.0
+					if (pitem.sefdisc > 0.0) {
+						def sefdiscrate = numSvc.round(pitem.sefdisc / pitem.sef)
+						partialsefdisc = numSvc.round(partialsef * sefdiscrate)
+						partialsef += partialsefdisc
+					}
+
+					def param = [
+						rptledgerid  : pitem.rptledgerid,
+						yeartodelete : (pitem.qtrly == 1 ? pitem.year : pitem.year + 1),
+						qtrtodelete  : (pitem.qtrly == 1 ? pitem.qtr + 1 : 0 ),
+					]
+					if (pitem.qtrly == 1)
+						em.deleteUnpartialledQtrlyItems(param)
+					else 
+						em.deleteUnpartialledYearlyItems(param)
+
+					totalbasic += (partialbasic + partialbasicint)
+					totalsef += (partialsef + partialsefint)
+
+					partialinfo = [
+						objid 				: pitem.objid,
+						partialbasic 		: partialbasic,
+						partialbasicint 	: partialbasicint,
+						partialbasicdisc 	: partialbasicdisc,
+						partialsef 			: partialsef,
+						partialsefint 		: partialsefint,
+						partialsefdisc 		: partialsefdisc,
+						partialled 			: true,
+						amount 				: partial,
+						toyear				: pitem.year,
+						toqtr				: pitem.toqtr, 
+						totalbasic 			: totalbasic,
+						totalsef 			: totalsef,
+						partialledyear		: pitem.year,
+						partialledqtr		: pitem.fromqtr,
+					]
+					
+					em.updatePartialInfo(partialinfo)
+					payment = 0.0
+					break;
+				}
+			}
+		}
+		return partialinfo 
 	}
 
 }
