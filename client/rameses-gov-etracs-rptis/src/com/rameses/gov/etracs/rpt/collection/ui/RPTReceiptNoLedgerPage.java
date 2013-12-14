@@ -162,7 +162,7 @@ public class RPTReceiptNoLedgerPage extends javax.swing.JPanel {
                 , new Object[]{"typeHandler", new com.rameses.rcp.common.TextColumnHandler()}
             }),
             new com.rameses.rcp.common.Column(new Object[]{
-                new Object[]{"name", "barangay"}
+                new Object[]{"name", "barangay.name"}
                 , new Object[]{"caption", "Barangay"}
                 , new Object[]{"width", 150}
                 , new Object[]{"minWidth", 0}

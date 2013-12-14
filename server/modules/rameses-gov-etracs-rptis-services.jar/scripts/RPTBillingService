@@ -246,7 +246,11 @@ public class RPTBillingService
 
 		//create RPTLedgerFacts
 		bill.items = []
-		def ledgerfaases = em.getLedgerFaases(bill)
+		def ledgerfaases = []
+		if (bill.noledger == true)
+			ledgerfaases << bill.ledger 
+		else 
+		 	ledgerfaases = em.getLedgerFaases(bill)
 
 		def cy = dtSvc.serverYear
 		bill.ledger.fromyear.upto(bill.billtoyear){ yr ->

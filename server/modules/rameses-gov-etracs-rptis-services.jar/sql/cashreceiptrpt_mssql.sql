@@ -370,3 +370,13 @@ FROM (
 		nl.classification_objid ,
 		b.name
 ) t
+
+
+
+
+[findRevenueItemById]
+SELECT 
+	objid, code, title, 
+	fund_objid, fund_code, fund_title
+FROM revenueitem 
+WHERE objid = $P{objid}
