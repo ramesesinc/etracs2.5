@@ -9,12 +9,11 @@
         <field name="firstqtrpaidontime" required="true" type="boolean" />
         <field name="qtrlypaymentavailed" required="true" type="boolean" />
         <field name="qtrlypaymentpaidontime" required="true" type="boolean" />
-        <field name="lastitemyear" required="true" type="integer"/>
         <field name="lastreceiptid"/>
         <field name="barangayid" required="true" />
         <field name="advancebill" required="true" type="boolean"/>
         <field name="lastbilledyear" type="integer" />
-        <field name="lastbilledqtr"type="integer"  />
+        <field name="lastbilledqtr" type="integer"  />
         <field name="partialbasic" type="decimal" />
         <field name="partialbasicint" type="decimal" />
         <field name="partialbasicdisc" type="decimal" />

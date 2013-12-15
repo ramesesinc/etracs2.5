@@ -131,7 +131,8 @@ public class RPTBillingService
         bill.ledger = em.findOpenLedgerById(bill)
         if (!bill.ledger) throw new Exception('Ledger if fully paid.')
 
-        if (bill.ledger.lastbilledyear != bill.billtoyear || bill.ledger.lastbilledqtr != bill.billtoqtr || bill.ledger.partialbasic != 0){
+        if (bill.ledger.lastbilledyear != bill.billtoyear || bill.ledger.lastbilledqtr != bill.billtoqtr || bill.ledger.partialled == 1){
+        	println 'Recalculating ledger...'
         	clearBillItems(bill)
 	        def data = executeRules(bill)
 	        saveBillItems(bill, data)

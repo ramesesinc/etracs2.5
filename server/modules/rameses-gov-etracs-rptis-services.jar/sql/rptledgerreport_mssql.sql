@@ -30,51 +30,28 @@ FROM faas f
 	INNER JOIN realproperty rp ON r.realpropertyid = rp.objid
 	INNER JOIN barangay b ON rp.barangayid = b.objid,
 	(
-		SELECT
-			rl.objid,
-			rl.faasid,
-			MIN(rli.year) AS  fromyear,
-			1 AS fromqtr,
-			MAX(rli.year) AS toyear,
-			4 AS toqtr,
-			SUM(rli.basic + rli.basicint - rli.basicdisc - rli.basicdisctaken - rli.basicpaid - rli.basicintpaid +
-				rli.sef + rli.sefint - rli.sefdisc - rli.sefdisctaken - rli.sefpaid - rli.sefintpaid +
-				rli.firecode - rli.firecodepaid
-			) AS amtdue
-		FROM rptledger rl
-			INNER JOIN rptledgeritem rli ON rl.objid = rli.rptledgerid
-			INNER JOIN faas f ON rl.faasid = f.objid 
-		WHERE ${filters}
-		  AND rl.state = 'APPROVED'
-		  AND rli.state = 'OPEN'
-		  AND rli.year <= ${cy}
-		  AND rli.qtrly = 0
-		GROUP BY rl.objid, rl.faasid 
-		
-		
-		UNION ALL
-		
 		SELECT 
-			rl.objid,
-			rl.faasid,
-			MIN(rliq.year) AS  fromyear,
-			MIN(rliq.qtr) AS fromqtr,
-			MAX(rliq.year) AS toyear,
-			MAX(rliq.qtr) AS toqtr,
-			SUM(rliq.basic + rliq.basicint - rliq.basicdisc - rliq.basicdisctaken - rliq.basicpaid - rliq.basicintpaid +
-			    rliq.sef + rliq.sefint - rliq.sefdisc - rliq.sefdisctaken - rliq.sefpaid - rliq.sefintpaid +
-				rliq.firecode - rliq.firecodepaid
-			) AS amtdue
-		FROM rptledger rl 
-			INNER JOIN rptledgeritem rli ON rl.objid = rli.rptledgerid
-			INNER JOIN rptledgeritem_qtrly rliq ON rli.objid = rliq.rptledgeritemid 
-			INNER JOIN faas f ON rl.faasid = f.objid 
-		WHERE ${filters}
-		 AND rl.state = 'APPROVED'
-		 AND rli.year <= ${cy}
-		 AND rli.qtrly = 1 
-		 AND rliq.state = 'OPEN'
-		GROUP BY  rl.objid, rl.faasid
+			x.*,
+			(SELECT MIN(CASE WHEN qtr = 0 THEN fromqtr ELSE qtr END) FROM rptledgerbillitem WHERE rptledgerid = x.objid AND year = x.fromyear) AS fromqtr,
+			(SELECT MAX(CASE WHEN qtr = 0 THEN toqtr ELSE qtr END) FROM rptledgerbillitem WHERE rptledgerid = x.objid AND year = x.fromyear) AS toqtr
+		FROM (
+			SELECT
+				rl.objid,
+				rl.faasid,
+				MIN(bi.year) AS  fromyear,
+				MAX(bi.year) AS toyear,
+				SUM(bi.basic + bi.basicint - bi.basicdisc - bi.basicdisctaken - bi.basicpaid - bi.basicintpaid +
+					bi.sef + bi.sefint - bi.sefdisc - bi.sefdisctaken - bi.sefpaid - bi.sefintpaid +
+					bi.firecode - bi.firecodepaid
+				) AS amtdue
+			FROM rptledger rl
+				INNER JOIN rptledgerbillitem bi ON rl.objid = bi.rptledgerid
+				INNER JOIN faas f ON rl.faasid = f.objid 
+			WHERE ${filters}
+			  AND rl.state = 'APPROVED'
+			  AND bi.year <= $P{cy}
+			GROUP BY rl.objid, rl.faasid 
+		)x	
 	) t
 WHERE f.objid = t.faasid 
 GROUP BY 

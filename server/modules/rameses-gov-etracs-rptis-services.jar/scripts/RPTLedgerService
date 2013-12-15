@@ -91,6 +91,13 @@ class RPTLedgerService
     }
 
     @ProxyMethod
+    public def fixLedgerFaas(ledgerfaas){
+        saveLedgerFaas(ledgerfaas)
+        em.resetLastBilledInfo(ledgerfaas)
+        billingSvc.generateBillByLedgerId(ledgerfaas.rptledgerid)
+    }
+
+    @ProxyMethod
     public def removeLedgerFaas( ledgerfaas ) {
         em.delete(ledgerfaas, SCHEMA_FAAS)    
     }
@@ -214,42 +221,9 @@ class RPTLedgerService
         payment.paidby_address = payment.paidby.address
         payment.paidby = payment.paidby.name.substring(0,len)
         em.create(payment, SCHEMA_CAPTUREPMT)
-
         em.updateLastYearQtrPaid(payment)    
-        
-        payment.origtoqtr = payment.toqtr
-
-        payment.fromyear.upto(payment.toyear){ yr ->
-            def item = em.findLedgerItemByYear([rptledgerid:payment.rptledgerid, year:yr])
-            payment.paidyear = yr 
-            payment.toqtr = payment.origtoqtr
-
-            def bill = [rptledgerid:payment.rptledgerid, billtoyear:yr, insertqtrly:1, forpayment:0]
-
-            if (item.qtrly == 1 && yr == payment.fromyear ){
-                payment.toqtr = (payment.fromyear == payment.toyear ? payment.toqtr : 4)
-                em.closePaidQtrlyLedgerItemByYear(payment)
-                em.updateLedgerItemQuarterlyPaidInfo(payment)
-            }
-            else if (item.qtrly == 1 && yr == payment.toyear ){
-                payment.toqtr = payment.origtoqtr
-                em.closePaidQtrlyLedgerItemByYear(payment)
-                em.updateLedgerItemQuarterlyPaidInfo(payment)
-            }
-            else if ( item.qtrly == 0 && yr == payment.fromyear && payment.fromyear == payment.toyear && ( payment.fromqtr != 1 || payment.toqtr != 4  )) {
-                billingSvc.insertQtrlyLedgerItems(bill, [objid:payment.rptledgerid])
-                em.closePaidQtrlyLedgerItemByYear(payment)
-                em.updateLedgerItemQuarterlyPaidInfo(payment)
-            }
-            else if ( item.qtrly == 0 && yr == payment.toyear && ( payment.toqtr != 4 )) {
-                billingSvc.insertQtrlyLedgerItems(bill, [objid:payment.rptledgerid])
-                em.closePaidQtrlyLedgerItemByYear(payment)
-                em.updateLedgerItemQuarterlyPaidInfo(payment)
-            }
-            else {
-                em.closePaidLedgerItemByYear(payment)
-            }
-        }
+        em.resetLastBilledInfo(payment)
+        billingSvc.generateBillByLedgerId(payment.rptledgerid)
     }
 
     @ProxyMethod
@@ -285,44 +259,16 @@ class RPTLedgerService
         if (!info.taxpayer) throw new Exception('Taxpayer is required.')
 
         info.rptledgerid = info.objid 
-        info.lastitemyear = (info.lastqtrpaid == 4 ? info.lastyearpaid : info.lastyearpaid - 1)
-        info.paidyear = info.lastyearpaid
-        info.toyear = info.lastyearpaid
-        info.toqtr = info.lastqtrpaid
+        info.partialledyear = null
+        info.partialledqtr = null 
 
-        em.updateLedgerLastItemYear(info)
-        em.deleteQuarterlyLedgerItem(info)
-        em.deleteLedgerItem(info)            
-
-        def bill = billingSvc.initBill()
-        bill.loadbillitems = false
-        bill.taxpayer = info.taxpayer
-        bill.ledgerids.add(info.objid)
-        billingSvc.generateBill( bill )
-
-        if (info.lastqtrpaid != 4){
-            if (info.lastyearpaid == dtSvc.serverYear){
-                em.fixPaidQtrlyLedgerItemByYear(info)
-            }
-            else {
-                //simulate qtrly payment for previous year
-                bill.billtoyear = info.lastyearpaid
-                bill.billtoqtr = 3
-                billingSvc.generateBill( bill )
-                em.fixPaidQtrlyLedgerItemByYear(info)
-                em.updateLedgerItemLastQtrPaid(info)
-            }
-            if (info.basic > 0.0 || info.sef > 0.0){
-                em.partialPaidQtrlyLedgerItemByYear(info)
-            }
+        def partial = info.partialbasic + info.partialbasicint + info.partialsef + info.partialsefint
+        if ( partial > 0){
+            info.partialledyear = (info.lastqtrpaid == 1 ? info.lastyearpaid - 1 : info.lastyearpaid) 
+            info.partialledqtr =  (info.lastqtrpaid == 1 ? 4 : info.lastqtrpaid - 1)
         }
-        else if (info.basic > 0.0 || info.sef > 0.0){
-            em.partialPaidLedgerItemByYear(info)
-        }
-
-        em.updateLastYearQtrPaid(info)
-        //force recalc bill again
-        billingSvc.forceRecalcBill(info.objid)
+        em.fixLedgerInfo(info)
+        billingSvc.generateBillByLedgerId(info.rptledgerid)
     }
 
     void validateFixPartial(info, item){

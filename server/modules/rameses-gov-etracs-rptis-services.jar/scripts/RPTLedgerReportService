@@ -26,15 +26,7 @@ class RPTLedgerReportService
 		else {
 			throw new Exception('Ledger or taxpayer is required.')
 		}
-
-		def bill = billingSvc.initBill()
-		bill.taxpayer = data.taxpayer 
-		if (data.rptledgerid){
-			bill.ledgerids.add(data.rptledgerid)
-		}
-		bill.loadbillitems = false
-		billingSvc.generateBill(bill)
-
+		
 		data.cy = dtSvc.serverYear
 		def list = em.getDelinquentLedgers(data)
 		data.ledgers = list.findAll{it.amtdue > 0.0}

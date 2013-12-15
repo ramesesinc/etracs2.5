@@ -252,135 +252,33 @@ ORDER BY x.receiptdate DESC
 UPDATE rptledgerfaas SET state = 'APPROVED' WHERE objid = $P{objid}
 
 
-[updateLedgerItemAccountInfo]
-UPDATE rptledgeritem SET 
-	basicacct_objid = $P{basicacctid},
-	basicintacct_objid = CASE WHEN basicintacct_objid IS NULL THEN $P{basicintacctid} ELSE basicintacct_objid END,
-	sefacct_objid = $P{sefacctid},
-	sefintacct_objid = CASE WHEN sefintacct_objid IS NULL THEN $P{sefintacctid} ELSE sefintacct_objid END,
-	firecodeacct_objid = CASE WHEN firecodeacct_objid IS NULL THEN $P{firecodeacctid} ELSE firecodeacct_objid END
-WHERE objid = $P{rptledgeritemid}	
-
-
 [updateLastYearQtrPaid]
 UPDATE rptledger SET lastyearpaid = $P{toyear}, lastqtrpaid = $P{toqtr} WHERE objid = $P{rptledgerid}
-
-
-[closePaidLedgerItemByYear]
-UPDATE rptledgeritem SET 
-	state = 'CLOSED',
-	basic = $P{basic}, basicpaid = $P{basic},
-	basicint = $P{basicint}, basicintpaid = $P{basicint},
-	basicdisc = $P{basicdisc}, basicdisctaken = $P{basicdisc},
-	
-	sef = $P{sef}, sefpaid = $P{sef},
-	sefint = $P{sefint}, sefintpaid = $P{sefint},
-	sefdisc = $P{sefdisc}, sefdisctaken = $P{sefdisc},
-
-	firecode = $P{firecode}, firecodepaid = $P{firecode}
-WHERE rptledgerid = $P{rptledgerid}	
- AND state = 'OPEN'
- AND year = $P{paidyear}
- AND qtrly = 0
-
-
- [closePaidQtrlyLedgerItemByYear]
- UPDATE rptledgeritem_qtrly SET 
-	state = 'CLOSED',
-	basic = $P{basic}, basicpaid = $P{basic},
-	basicint = $P{basicint}, basicintpaid = $P{basicint},
-	basicdisc = $P{basicdisc}, basicdisctaken = $P{basicdisc},
-	
-	sef = $P{sef}, sefpaid = $P{sef},
-	sefint = $P{sefint}, sefintpaid = $P{sefint},
-	sefdisc = $P{sefdisc}, sefdisctaken = $P{sefdisc},
-
-	firecode = $P{firecode}, firecodepaid = $P{firecode}
-WHERE rptledgerid = $P{rptledgerid}	
- AND state = 'OPEN'
- AND year = $P{paidyear}
- AND qtr <= $P{toqtr}
-
-
-[findLedgerItemByYear]
-SELECT * FROM rptledgeritem WHERE rptledgerid = $P{rptledgerid} AND year = $P{year}
-
-
-
-[updateLedgerItemQuarterlyPaidInfo]
-UPDATE rli SET
-	rli.state = CASE WHEN NOT EXISTS (
-				  		SELECT *
-				  		FROM rptledgeritem_qtrly 
-				  		WHERE rptledgeritemid = rli.objid AND state = 'OPEN'
-				  	) 
-					THEN 'CLOSED' ELSE 'OPEN' END,					
-	rli.lastqtrpaid = ISNULL((SELECT MAX(qtr) FROM rptledgeritem_qtrly WHERE rptledgeritemid = rli.objid AND (basicpaid > 0  OR state = 'CLOSED')),0)
-FROM rptledgeritem rli 	
-WHERE rli.rptledgerid = $P{rptledgerid} 
-  AND rli.qtrly = 1 
-
-
-
-
-
- [fixPaidQtrlyLedgerItemByYear]
- UPDATE rptledgeritem_qtrly SET 
-	state = 'CLOSED'
-WHERE rptledgerid = $P{rptledgerid}	
- AND state = 'OPEN'
- AND year = $P{paidyear}
- AND qtr <= $P{toqtr}
-
-
-
-[findPartialedQtrlyItem]
-SELECT * FROM rptledgeritem_qtrly
-WHERE rptledgerid = $P{rptledgerid}	
- AND year = $P{paidyear} + 1
- AND qtr = $P{toqtr}
-
-
-[partialPaidQtrlyLedgerItemByYear]
-UPDATE rptledgeritem_qtrly SET 
-	state = 'OPEN',
-	basicpaid = $P{basic},
-	basicintpaid = $P{basicint},
-	sefpaid = $P{sef},
-	sefintpaid = $P{sefint}
-WHERE rptledgerid = $P{rptledgerid}	
- AND year = $P{paidyear} 
- AND qtr = $P{toqtr}
-
-
-
-[findPartialedLedgerItem]
-SELECT * FROM rptledgeritem 
-WHERE rptledgerid = $P{rptledgerid}	
- AND year = $P{paidyear} + 1
-
-[partialPaidLedgerItemByYear]
-UPDATE rptledgeritem SET 
-	state = 'OPEN',
-	basicpaid = $P{basic},
-	basicintpaid = $P{basicint},
-	sefpaid = $P{sef},
-	sefintpaid = $P{sefint}
-WHERE rptledgerid = $P{rptledgerid}	
- AND year = $P{paidyear}
-
-
-[deleteLedgerItem]
-DELETE FROM rptledgeritem WHERE rptledgerid = $P{rptledgerid} 
-
-[deleteQuarterlyLedgerItem]
-DELETE FROM rptledgeritem_qtrly WHERE rptledgerid = $P{rptledgerid}
-
-
-[updateLedgerItemLastQtrPaid]
-UPDATE rptledgeritem SET lastqtrpaid = ${lastqtrpaid} WHERE rptledgerid = $P{rptledgerid} and year = $P{lastyearpaid}
 
 
 [updateState]
 UPDATE rptledger SET state = $P{state} WHERE objid = $P{objid}
 
+
+
+[fixLedgerInfo]
+UPDATE rptledger SET 
+	lastyearpaid = $P{lastyearpaid}, 
+	lastqtrpaid = $P{lastqtrpaid},
+	partialledyear = $P{partialledyear},
+	partialledqtr = $P{partialledqtr},
+	lastbilledyear = null,
+	lastbilledqtr = null,
+	partialbasic = $P{partialbasic},
+	partialbasicint = $P{partialbasicint},
+	partialbasicdisc = $P{partialbasicdisc},
+	partialsef = $P{partialsef},
+	partialsefint = $P{partialsefint},
+	partialsefdisc = $P{partialsefdisc}
+WHERE objid = $P{rptledgerid}
+
+[resetLastBilledInfo]
+UPDATE rptledger SET 
+	lastbilledyear = null,
+	lastbilledqtr = null
+WHERE objid = $P{rptledgerid}
