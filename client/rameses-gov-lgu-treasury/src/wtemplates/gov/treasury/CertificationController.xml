@@ -5,7 +5,6 @@
         <invoker type="formActions" action="_close"   caption="Cancel"    shourtcut="c" mnemonic="c"  index="0"  visibleWhen="#{mode == 'create'}" immediate="true" icon="images/toolbars/cancel.png" />
         <invoker type="formActions" action="_close"   caption="Close"    shourtcut="c" mnemonic="c"  index="0"  visibleWhen="#{mode != 'create'}" immediate="true" icon="images/toolbars/cancel.png" />
         <invoker type="formActions" action="doSave"     caption="Save"      shourtcut="s" mnemonic="s"  index="2"  visibleWhen="#{mode == 'create'}" icon="images/toolbars/save.png" />        
-        <invoker type="formActions" action="init"     caption="New"      shourtcut="n" mnemonic="n"  index="3"  visibleWhen="#{mode != 'create'}" icon="images/toolbars/create.png" />        
     </invokers>
     <pages>
         <page template="com.rameses.gov.treasury.certification.CertificationPage" />

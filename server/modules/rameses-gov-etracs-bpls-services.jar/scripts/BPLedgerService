@@ -1,0 +1,30 @@
+import com.rameses.annotations.*;
+import com.rameses.services.extended.*;
+import java.rmi.server.*;
+
+class BPLedgerService {
+
+	@ActiveDB("bpledger")
+	def em;
+
+
+	/****************************************
+	* called by Application or Business when
+	* posting receivables
+	****************************************/
+	@ProxyMethod
+	public def postReceivables( o ) {
+		if(!o.items)
+			throw new Exception("Error in BPLedger.postReceivables. Must have at least one item");
+		for(item in o.items) {
+			em.create( item, "receivable");
+		}
+		return o;	
+	}
+
+	@ProxyMethod
+	public def getReceivables( o ) {
+		return em.getReceivables(o);	
+	}
+
+}

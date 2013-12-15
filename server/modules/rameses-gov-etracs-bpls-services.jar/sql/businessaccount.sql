@@ -62,19 +62,19 @@ LEFT JOIN revenueitem ir ON ba.interest_objid=ir.objid
 WHERE ba.objid = $P{objid}
 
 [findPrincipalAccount]
-SELECT r.objid, r.code, r.title, r.fund_code, r.fund_objid, ba.paymentmode
+SELECT r.objid, r.code, r.title, r.fund_code, r.fund_objid
 FROM businessaccount ba 
 INNER JOIN revenueitem r ON ba.objid=r.objid 
 WHERE ba.objid = $P{objid}
 
 [findSurchargeAccount]
-SELECT r.objid, r.code, r.title, r.fund_code, r.fund_objid, ba.paymentmode
+SELECT r.objid, r.code, r.title, r.fund_code, r.fund_objid
 FROM businessaccount ba 
 INNER JOIN revenueitem r ON ba.surcharge_objid=r.objid 
 WHERE ba.objid = $P{objid}
 
 [findInterestAccount]
-SELECT r.objid, r.code, r.title, r.fund_code, r.fund_objid, ba.paymentmode
+SELECT r.objid, r.code, r.title, r.fund_code, r.fund_objid
 FROM businessaccount ba 
 INNER JOIN revenueitem r ON ba.interest_objid=r.objid 
 WHERE ba.objid = $P{objid}

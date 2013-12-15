@@ -3,7 +3,7 @@ import com.rameses.util.*;
 import java.rmi.server.*;
 import com.rameses.services.extended.*;
 
-public class CityEngineerBPApplicationService  {
+public class CityEngineerBPApplicationService {
 
 	@Service("BPApplicationService")
 	def appSvc;
@@ -17,15 +17,40 @@ public class CityEngineerBPApplicationService  {
 	@Env
 	def env;
 
+	@ActiveDB("business_cityengineer")
+	def em;
+
 	@ProxyMethod
 	public def open(def o) {
-		return appSvc.open(o);
+		def z = appSvc.open(o);
+		z.taxfees = em.getFees(z);
+		z.total = z.taxfees.sum{it.amount};
+		//we hardcode the department.
+		z.department = 'CEO';
+		z.departmentname = 'CITY ENGINEER';
+		return z;
 	}
 	
 	@ProxyMethod
-	public def addTaxFee(def o) {
-			
+	public def addFee(def o) {
+		em.create( o, "fee" );
 	}
-	
+
+	@ProxyMethod
+	public def updateFee(def o) {
+		em.update( o, "fee" );
+	}
+
+	@ProxyMethod
+	public def removeFee(def o) {
+		em.delete( o, "fee" );
+	}
+
+	@ProxyMethod
+	public def submitFees(o) {
+		def z = [businessid:o.businessid, state:'active']
+		em.activateFees( z );
+		em.changeState(z);
+	}
 
 }

@@ -16,7 +16,7 @@
             
             class BPBillingAnalyzerController  {
             
-                @Service("BPBillingService")
+                @Service("BPBillingRuleService")
                 def billSvc;
                 
                 @Binding
@@ -28,15 +28,12 @@
                 def query = [:];
                 
                 def qtrs = (1..4);
-                def payOptions = LOV.BP_PAYOPTIONS*.key
+                def payOptions = LOV.BP_PAYOPTIONS*.key ;
                 def result = [:];
                 
-                def payment = [:];
+                def validUntil;
+                def taxcredit = 0;
                 
-                def pmtOpener = new Opener(id:"pmt", outcome:"payment", target:"popup");
-                
-                def selectedPayment;
-                def payments = [];
                 def taxfees;
                 
                 void init() {
@@ -56,11 +53,10 @@
                     result.items.each {
                         it.balancedue = it.total;
                     }
+                    validUntil = result.validUntil;
+                    taxcredit = result.taxcredit;
                     listModel.reload();
-                    payments.clear();
-                    selectedPayment = null;
-                    paymentModel.reload();
-                    binding.refresh("result.*");
+                    binding.refresh("result.*|validUntil|taxcredit");
                 }
                 
                 //billing
@@ -70,75 +66,13 @@
                     }
                 ] as BasicListModel;
                 
-                def paymentModel = [
-                    fetchList: {
-                        if(!selectedPayment) return [];
-                        return selectedPayment.items;
-                    }
-                ] as BasicListModel;
-                
-                def addPayment() {
-                    payment.pmtdate = query.billdate;
-                    return pmtOpener;
-                }
-                
-                //accept the payment.
-                def doOk() {
-                    def q = [:];
-                    q.entity = entity;
-                    q.billdate = query.billdate;
-                    q.payoption = query.payoption;
-                    q.qtr = query.qtr;
-                    payment.minamt = result.total_amtdue;
-                    q.payment = payment;
-                    q.receivables = taxfees.findAll{ (it.amount - it.amtpaid) >0 };
-                    selectedPayment = billSvc.getBillItems( q );
-                    selectedPayment.receiptno = payment.receiptno;
-                    selectedPayment.pmtdate = payment.pmtdate;
-                    paymentModel.reload();
-                    binding.refresh();
-                    return "_close";
-                }
-                
-                def doCancel() {
-                    payment = [:];
-                    return "_close";
-                }
-                
                 void resetAll() {
                     result = [ items: []];
-                    payments.clear();
                     taxfees.each {
                         it.amtpaid = 0;
                     }
-                    selectedPayment = null;
-                    paymentModel.reload();
-                    listModel.reload();
-                    binding.refresh();
-                }
-                
-                void updateLedger() {
-                    //update each taxfees
-                    
-                    selectedPayment.items.each { t->
-                        def r = null;
-                        if(t.lob) {
-                            r = taxfees.find{ it.lob.objid==t.lob.objid && it.account.objid==t.account.objid };
-                        }
-                        else {
-                            r = taxfees.find{ it.account.objid==t.account.objid };
-                        }
-                        r.amtpaid += t.amtdue;
-                        r.balance = r.amount - r.amtpaid;
-                    }
-                    
-                    taxfees.each {
-                        println it.account.title + " " + it.amount + " amtpaid:"+it.amtpaid+ " bal:" + it.balance;
-                    }
-                
-                    result = [ items: []];
-                    selectedPayment = null;
-                    paymentModel.reload();
+                    validUntil = null;
+                    taxcredit = 0;
                     listModel.reload();
                     binding.refresh();
                 }
@@ -149,6 +83,6 @@
     </code>
     <pages>
         <page template="com.rameses.gov.etracs.rules.bpls.BPBillingAnalyzerPage"/>
-        <page name="payment" template="com.rameses.gov.etracs.rules.bpls.PaymentPage"/>
+       
     </pages>
 </workunit>

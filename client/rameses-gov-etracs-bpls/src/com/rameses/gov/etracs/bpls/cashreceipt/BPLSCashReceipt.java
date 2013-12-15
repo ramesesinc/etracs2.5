@@ -34,13 +34,21 @@ public class BPLSCashReceipt extends javax.swing.JPanel {
         xButton2 = new com.rameses.rcp.control.XButton();
         xFormPanel3 = new com.rameses.rcp.control.XFormPanel();
         xComboBox1 = new com.rameses.rcp.control.XComboBox();
+        xFormPanel1 = new com.rameses.rcp.control.XFormPanel();
+        xDecimalField1 = new com.rameses.rcp.control.XDecimalField();
         xComboBox2 = new com.rameses.rcp.control.XComboBox();
+        xFormPanel2 = new com.rameses.rcp.control.XFormPanel();
+        xIntegerField1 = new com.rameses.rcp.control.XIntegerField();
         xDataTable1 = new com.rameses.rcp.control.XDataTable();
         xFormPanel4 = new com.rameses.rcp.control.XFormPanel();
         xDecimalField2 = new com.rameses.rcp.control.XDecimalField();
         xDecimalField3 = new com.rameses.rcp.control.XDecimalField();
+        xFormPanel5 = new com.rameses.rcp.control.XFormPanel();
+        xDecimalField6 = new com.rameses.rcp.control.XDecimalField();
         xDecimalField4 = new com.rameses.rcp.control.XDecimalField();
+        xFormPanel6 = new com.rameses.rcp.control.XFormPanel();
         xDecimalField5 = new com.rameses.rcp.control.XDecimalField();
+        xDecimalField7 = new com.rameses.rcp.control.XDecimalField();
 
         setPreferredSize(new java.awt.Dimension(875, 325));
         com.rameses.rcp.control.border.XTitledBorder xTitledBorder1 = new com.rameses.rcp.control.border.XTitledBorder();
@@ -60,13 +68,24 @@ public class BPLSCashReceipt extends javax.swing.JPanel {
         xComboBox1.setRequired(true);
         xFormPanel3.add(xComboBox1);
 
+        xFormPanel1.setCaptionWidth(60);
+        xDecimalField1.setCaption("Amount");
+        xDecimalField1.setDepends(new String[] {"query.payoption"});
+        xDecimalField1.setName("partialpmt");
+        xFormPanel1.add(xDecimalField1);
+
         xComboBox2.setCaption("Qtr");
-        xComboBox2.setCaptionWidth(40);
         xComboBox2.setDepends(new String[] {"query.payoption"});
         xComboBox2.setItems("qtrs");
         xComboBox2.setName("query.qtr");
         xComboBox2.setRequired(true);
-        xFormPanel3.add(xComboBox2);
+        xFormPanel1.add(xComboBox2);
+
+        xIntegerField1.setCaption("Paid in full up to current qtr");
+        xIntegerField1.setCaptionWidth(150);
+        xIntegerField1.setEnabled(false);
+        xIntegerField1.setName("entity.qtr");
+        xFormPanel2.add(xIntegerField1);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -74,17 +93,23 @@ public class BPLSCashReceipt extends javax.swing.JPanel {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(xFormPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 317, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(xFormPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(xFormPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 179, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(xButton2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(457, Short.MAX_VALUE))
+                .addGap(89, 89, 89)
+                .addComponent(xFormPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(209, 209, 209))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(xFormPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(xButton2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(xFormPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(xButton2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(xFormPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -99,14 +124,14 @@ public class BPLSCashReceipt extends javax.swing.JPanel {
                 , new Object[]{"resizable", true}
                 , new Object[]{"nullWhenEmpty", true}
                 , new Object[]{"editable", false}
-                , new Object[]{"alignment", "CENTER"}
+                , new Object[]{"alignment", "LEFT"}
                 , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
-                , new Object[]{"expression", "#{item.year}-#{item.qtr}"}
+                , new Object[]{"expression", "#{item.year}#{item.qtr!=0? '-'+item.qtr: '' }"}
                 , new Object[]{"typeHandler", new com.rameses.rcp.common.LabelColumnHandler()}
             }),
             new com.rameses.rcp.common.Column(new Object[]{
-                new Object[]{"name", "deadline"}
-                , new Object[]{"caption", "Deadline"}
+                new Object[]{"name", "duedate"}
+                , new Object[]{"caption", "Date Due"}
                 , new Object[]{"width", 100}
                 , new Object[]{"minWidth", 100}
                 , new Object[]{"maxWidth", 100}
@@ -221,58 +246,88 @@ public class BPLSCashReceipt extends javax.swing.JPanel {
 
         xFormPanel4.setCellspacing(10);
         xFormPanel4.setOrientation(com.rameses.rcp.constant.UIConstants.HORIZONTAL);
-        xDecimalField2.setCaption("Total Business Tax");
+        xDecimalField2.setCaption("1st Qtr Total");
         xDecimalField2.setCaptionWidth(120);
         xDecimalField2.setEnabled(false);
         xDecimalField2.setFont(new java.awt.Font("Courier New", 1, 14));
         xDecimalField2.setForeground(new java.awt.Color(0, 0, 204));
-        xDecimalField2.setName("total_tax");
+        xDecimalField2.setName("total_q1");
         xFormPanel4.add(xDecimalField2);
 
-        xDecimalField3.setCaption("Total Reg. Fee");
+        xDecimalField3.setCaption("3rd Qtr Total");
         xDecimalField3.setCaptionWidth(90);
         xDecimalField3.setEnabled(false);
         xDecimalField3.setFont(new java.awt.Font("Courier New", 1, 14));
         xDecimalField3.setForeground(new java.awt.Color(0, 0, 204));
-        xDecimalField3.setName("total_regfee");
+        xDecimalField3.setName("total_q3");
         xFormPanel4.add(xDecimalField3);
 
-        xDecimalField4.setCaption("Total Other Charge");
-        xDecimalField4.setCaptionWidth(120);
+        xFormPanel5.setCellspacing(10);
+        xFormPanel5.setOrientation(com.rameses.rcp.constant.UIConstants.HORIZONTAL);
+        xDecimalField6.setCaption("2nd Qtr Total");
+        xDecimalField6.setCaptionWidth(120);
+        xDecimalField6.setEnabled(false);
+        xDecimalField6.setFont(new java.awt.Font("Courier New", 1, 14));
+        xDecimalField6.setForeground(new java.awt.Color(0, 0, 204));
+        xDecimalField6.setName("total_q2");
+        xFormPanel5.add(xDecimalField6);
+
+        xDecimalField4.setCaption("4th Qtr Total");
+        xDecimalField4.setCaptionWidth(90);
         xDecimalField4.setEnabled(false);
         xDecimalField4.setFont(new java.awt.Font("Courier New", 1, 14));
         xDecimalField4.setForeground(new java.awt.Color(0, 0, 204));
-        xDecimalField4.setName("total_othercharge");
-        xFormPanel4.add(xDecimalField4);
+        xDecimalField4.setName("total_q4");
+        xFormPanel5.add(xDecimalField4);
 
-        xDecimalField5.setCaption("Total Amt Due");
+        xFormPanel6.setCellspacing(10);
+        xDecimalField5.setCaption("Prev Bal.");
         xDecimalField5.setCaptionWidth(90);
         xDecimalField5.setEnabled(false);
         xDecimalField5.setFont(new java.awt.Font("Courier New", 1, 14));
         xDecimalField5.setForeground(new java.awt.Color(0, 0, 204));
-        xDecimalField5.setName("total_amtdue");
-        xFormPanel4.add(xDecimalField5);
+        xDecimalField5.setName("prevbalance");
+        xFormPanel6.add(xDecimalField5);
+
+        xDecimalField7.setCaption("TOTAL");
+        xDecimalField7.setCaptionWidth(90);
+        xDecimalField7.setEnabled(false);
+        xDecimalField7.setFont(new java.awt.Font("Courier New", 1, 14));
+        xDecimalField7.setForeground(new java.awt.Color(0, 0, 204));
+        xDecimalField7.setName("total");
+        xFormPanel6.add(xDecimalField7);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(xFormPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, 855, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(xFormPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, 445, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(xFormPanel4, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 445, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(66, 66, 66)
+                        .addComponent(xFormPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, 216, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(xDataTable1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 855, Short.MAX_VALUE)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 855, Short.MAX_VALUE))
                 .addContainerGap())
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(xDataTable1, javax.swing.GroupLayout.DEFAULT_SIZE, 875, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(xDataTable1, javax.swing.GroupLayout.PREFERRED_SIZE, 178, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(xDataTable1, javax.swing.GroupLayout.PREFERRED_SIZE, 197, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(xFormPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(xFormPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(4, 4, 4)
+                        .addComponent(xFormPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(xFormPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
     
@@ -283,12 +338,20 @@ public class BPLSCashReceipt extends javax.swing.JPanel {
     private com.rameses.rcp.control.XComboBox xComboBox1;
     private com.rameses.rcp.control.XComboBox xComboBox2;
     private com.rameses.rcp.control.XDataTable xDataTable1;
+    private com.rameses.rcp.control.XDecimalField xDecimalField1;
     private com.rameses.rcp.control.XDecimalField xDecimalField2;
     private com.rameses.rcp.control.XDecimalField xDecimalField3;
     private com.rameses.rcp.control.XDecimalField xDecimalField4;
     private com.rameses.rcp.control.XDecimalField xDecimalField5;
+    private com.rameses.rcp.control.XDecimalField xDecimalField6;
+    private com.rameses.rcp.control.XDecimalField xDecimalField7;
+    private com.rameses.rcp.control.XFormPanel xFormPanel1;
+    private com.rameses.rcp.control.XFormPanel xFormPanel2;
     private com.rameses.rcp.control.XFormPanel xFormPanel3;
     private com.rameses.rcp.control.XFormPanel xFormPanel4;
+    private com.rameses.rcp.control.XFormPanel xFormPanel5;
+    private com.rameses.rcp.control.XFormPanel xFormPanel6;
+    private com.rameses.rcp.control.XIntegerField xIntegerField1;
     // End of variables declaration//GEN-END:variables
     
 }

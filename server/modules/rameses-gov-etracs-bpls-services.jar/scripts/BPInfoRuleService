@@ -60,7 +60,10 @@ public class BPInfoRuleService  {
 			
 		def info = [objid:"BPINFO"+new UID()];
 		info.phase = phase;
+		info.infotype = "appinfo";
 		info.attribute = bv.read( [objid: attrid ] );
+		info.attribute.remove("description");info.attribute.remove("state");info.attribute.remove("system");
+
 		if(lob) {
 			info.lob = [objid:lob.objid, name:lob.name];
 		}
@@ -87,6 +90,28 @@ public class BPInfoRuleService  {
 		return info;
 	}
 
+	def comparator = { agg, oldvalue, newvalue ->
+		switch(agg) {
+			case "COUNT":
+				return (oldvalue + 1);
+
+			case "SUM":
+				return oldvalue + newvalue;
+
+			case "MIN":
+				if( oldvalue <= newvalue  )		
+					return oldvalue;
+				else
+					return newvalue;
+			case "MAX":
+				if( oldvalue >= newvalue  )		
+					return oldvalue;
+				else
+					return newvalue;
+		}
+		return 0;
+	}
+
 	def buildFacts( request ) {
 		def o = request.entity;
 		def facts = [];
@@ -104,20 +129,21 @@ public class BPInfoRuleService  {
 	def buildActions(def request) {
 		def actions = new RuleAction();
 		actions.addCommand( "ask_business_info", new AskBusinessInfo( infoBuilder: infoBuilder, request:request ));
+		actions.addCommand( "assert_business_info", new AssertBusinessInfo(request:request, infoBuilder: infoBuilder,  comparator: comparator));
+
 		actions.addCommand( "add_requirement", new AddRequirement(request:request, BR: br));
 		actions.addCommand( "print_test", new PrintTest());
 		return actions;
 	}
 
-
 	@ProxyMethod
 	public def execute(def o) throws Exception {
-		if(!o.lobs)
-			throw new Exception("Please provide at least one line of business");
+		//we need to remove first infos where phase==null || phase > 1
+		o.infos.removeAll( o.infos.findAll{it.phase==null || it.phase > 1} );
+
 		def request = [newinfos:[],  vars:[:], entity: o, requirements:[] ]; 
 		request.facts = buildFacts(request);
 		request.actions = buildActions( request );
-		
 		def grps = ruleDB.getRulegroups( [ruleset: RULESET] );
 		int phase = 0;
 		for( g in grps ) { 
@@ -128,6 +154,7 @@ public class BPInfoRuleService  {
 			if(phase <= 1 && request.newinfos) break;
 			phase++;
 		}
+		if(phase == 1) phase = 2;
 		return [infos:request.newinfos, phase: phase, requirements:request.requirements];
 	}
 }
@@ -139,11 +166,35 @@ public class AskBusinessInfo implements RuleActionHandler {
 		def lob = params.lob;
 		def attrid = params.attribute.key;
 		def defvalue = params.defaultvalue;
-		def laterenewal = params.laterenewal;
 		def entity = request.entity;
 		def newinfos = request.newinfos;
-		def info = infoBuilder( entity, newinfos, lob, attrid, null, request.phase, laterenewal );
+		def info = infoBuilder( entity, newinfos, lob, attrid, null, request.phase, null );
+
 		if(info) info.defaultvalue = defvalue;
+	}
+}
+
+public class AssertBusinessInfo implements RuleActionHandler {
+	def request;
+	def infoBuilder;
+	def comparator;
+
+	public void execute(def params, def drools) {
+		def lob = params.lob;
+		def attrid = params.attribute.key;
+		def val = params.value;
+		def facts = request.facts;
+
+		//check if fact already exists
+		def info = infoBuilder( request.entity, request.newinfos, lob, attrid, val, request.phase, null );
+		if(info!=null) {
+			def dtype = info.attribute.datatype;
+			def f = new BusinessInfo(dtype, info.value);
+			f.objid = info.objid;
+			f.name = info.attribute.name;
+			f.lob = lob;
+			facts << f;
+		}
 	}
 }
 

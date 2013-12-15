@@ -7,10 +7,10 @@
 "listModel:item.*" [ item.qtr == 4 ] {
     background-color: rgb(247,255,222); 
 }
-"query.amtpaid" [ query.payoption != 'PARTIAL_PMT' ] {
+"partialpmt" [ query.payoption != 'PARTIAL' ] {
     visible: false;
 }
-"query.amtpaid" [ query.payoption == 'PARTIAL_PMT' ] {
+"partialpmt" [ query.payoption == 'PARTIAL' ] {
     visible: true;
 }
 "query.qtr" [ query.payoption != 'FULLQTR' ] {

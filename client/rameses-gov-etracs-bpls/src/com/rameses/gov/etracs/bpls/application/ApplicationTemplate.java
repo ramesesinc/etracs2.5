@@ -34,23 +34,17 @@ public class ApplicationTemplate extends javax.swing.JPanel {
         xLabel1 = new com.rameses.rcp.control.XLabel();
         jPanel2 = new javax.swing.JPanel();
         xFormPanel1 = new com.rameses.rcp.control.XFormPanel();
-        xLabel2 = new com.rameses.rcp.control.XLabel();
-        xLabel16 = new com.rameses.rcp.control.XLabel();
-        xLabel6 = new com.rameses.rcp.control.XLabel();
-        xLabel7 = new com.rameses.rcp.control.XLabel();
-        xLabel12 = new com.rameses.rcp.control.XLabel();
-        xFormPanel2 = new com.rameses.rcp.control.XFormPanel();
-        xLabel15 = new com.rameses.rcp.control.XLabel();
-        xLabel5 = new com.rameses.rcp.control.XLabel();
-        xLabel9 = new com.rameses.rcp.control.XLabel();
-        xLabel11 = new com.rameses.rcp.control.XLabel();
-        xLabel10 = new com.rameses.rcp.control.XLabel();
-        xFormPanel3 = new com.rameses.rcp.control.XFormPanel();
         xLabel4 = new com.rameses.rcp.control.XLabel();
+        xLabel16 = new com.rameses.rcp.control.XLabel();
+        xLabel7 = new com.rameses.rcp.control.XLabel();
+        xFormPanel3 = new com.rameses.rcp.control.XFormPanel();
+        xLabel2 = new com.rameses.rcp.control.XLabel();
+        xLabel5 = new com.rameses.rcp.control.XLabel();
         xLabel3 = new com.rameses.rcp.control.XLabel();
-        xLabel13 = new com.rameses.rcp.control.XLabel();
-        xLabel8 = new com.rameses.rcp.control.XLabel();
-        xLabel14 = new com.rameses.rcp.control.XLabel();
+        xFormPanel4 = new com.rameses.rcp.control.XFormPanel();
+        xLabel6 = new com.rameses.rcp.control.XLabel();
+        xLabel17 = new com.rameses.rcp.control.XLabel();
+        xLabel9 = new com.rameses.rcp.control.XLabel();
 
         setLayout(new java.awt.BorderLayout());
 
@@ -58,7 +52,7 @@ public class ApplicationTemplate extends javax.swing.JPanel {
         jPanel1.setLayout(new java.awt.BorderLayout());
 
         jPanel1.setBackground(new java.awt.Color(204, 204, 204));
-        jPanel1.setPreferredSize(new java.awt.Dimension(41, 150));
+        jPanel1.setPreferredSize(new java.awt.Dimension(41, 110));
         xLabel1.setVerticalAlignment(javax.swing.SwingConstants.TOP);
         xLabel1.setBackground(new java.awt.Color(255, 255, 153));
         xLabel1.setExpression("#{message}");
@@ -69,151 +63,107 @@ public class ApplicationTemplate extends javax.swing.JPanel {
         xLabel1.setVisibleWhen("#{message!=null}");
         jPanel1.add(xLabel1, java.awt.BorderLayout.NORTH);
 
+        jPanel2.setPreferredSize(new java.awt.Dimension(0, 60));
+
+        xFormPanel1.setCaptionWidth(120);
+        xLabel4.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
+        xLabel4.setCaption("App No");
+        xLabel4.setExpression("#{ entity.appno  }");
+        xLabel4.setFont(new java.awt.Font("Tahoma", 1, 12));
+        xLabel4.setPreferredSize(new java.awt.Dimension(0, 20));
+        xFormPanel1.add(xLabel4);
+
         com.rameses.rcp.control.border.XLineBorder xLineBorder1 = new com.rameses.rcp.control.border.XLineBorder();
         xLineBorder1.setLineColor(new java.awt.Color(204, 204, 204));
-        xLabel2.setBorder(xLineBorder1);
-        xLabel2.setCaption("Owner");
-        xLabel2.setExpression("#{entity.owner.name}");
-        xLabel2.setPreferredSize(new java.awt.Dimension(0, 18));
-        xFormPanel1.add(xLabel2);
-
-        com.rameses.rcp.control.border.XLineBorder xLineBorder2 = new com.rameses.rcp.control.border.XLineBorder();
-        xLineBorder2.setLineColor(new java.awt.Color(204, 204, 204));
-        xLabel16.setBorder(xLineBorder2);
-        xLabel16.setCaption("Owner Address");
-        xLabel16.setExpression("#{entity.owner.address}");
+        xLabel16.setBorder(xLineBorder1);
+        xLabel16.setCaption("Business Name");
+        xLabel16.setExpression("#{entity.businessname}");
         xLabel16.setPreferredSize(new java.awt.Dimension(0, 18));
         xFormPanel1.add(xLabel16);
 
-        com.rameses.rcp.control.border.XLineBorder xLineBorder3 = new com.rameses.rcp.control.border.XLineBorder();
-        xLineBorder3.setLineColor(new java.awt.Color(204, 204, 204));
-        xLabel6.setBorder(xLineBorder3);
-        xLabel6.setCaption("Trade Name");
-        xLabel6.setExpression("#{entity.tradename}");
-        xLabel6.setPreferredSize(new java.awt.Dimension(0, 18));
-        xFormPanel1.add(xLabel6);
-
-        com.rameses.rcp.control.border.XLineBorder xLineBorder4 = new com.rameses.rcp.control.border.XLineBorder();
-        xLineBorder4.setLineColor(new java.awt.Color(204, 204, 204));
-        xLabel7.setBorder(xLineBorder4);
+        com.rameses.rcp.control.border.XLineBorder xLineBorder2 = new com.rameses.rcp.control.border.XLineBorder();
+        xLineBorder2.setLineColor(new java.awt.Color(204, 204, 204));
+        xLabel7.setBorder(xLineBorder2);
         xLabel7.setCaption("Address");
         xLabel7.setExpression("#{entity.businessaddress}");
         xLabel7.setName("application.info.taxpayeraddress");
         xLabel7.setPreferredSize(new java.awt.Dimension(0, 18));
         xFormPanel1.add(xLabel7);
 
-        com.rameses.rcp.control.border.XLineBorder xLineBorder5 = new com.rameses.rcp.control.border.XLineBorder();
-        xLineBorder5.setLineColor(new java.awt.Color(204, 204, 204));
-        xLabel12.setBorder(xLineBorder5);
-        xLabel12.setCaption("Branch Name");
-        xLabel12.setExpression("#{entity.branchname}");
-        xLabel12.setName("entity.branchname");
-        xLabel12.setPreferredSize(new java.awt.Dimension(0, 18));
-        xFormPanel1.add(xLabel12);
+        xFormPanel3.setCaptionWidth(120);
+        xFormPanel3.setShowCaption(false);
+        com.rameses.rcp.control.border.XLineBorder xLineBorder3 = new com.rameses.rcp.control.border.XLineBorder();
+        xLineBorder3.setLineColor(new java.awt.Color(204, 204, 204));
+        xLabel2.setBorder(xLineBorder3);
+        xLabel2.setCaption("BIN");
+        xLabel2.setExpression("#{entity.bin}");
+        xLabel2.setPreferredSize(new java.awt.Dimension(0, 18));
+        xFormPanel3.add(xLabel2);
 
-        xFormPanel2.setCaptionWidth(100);
-        com.rameses.rcp.control.border.XLineBorder xLineBorder6 = new com.rameses.rcp.control.border.XLineBorder();
-        xLineBorder6.setLineColor(new java.awt.Color(204, 204, 204));
-        xLabel15.setBorder(xLineBorder6);
-        xLabel15.setCaption("BIN");
-        xLabel15.setExpression("#{entity.bin}");
-        xLabel15.setPreferredSize(new java.awt.Dimension(0, 20));
-        xFormPanel2.add(xLabel15);
-
-        com.rameses.rcp.control.border.XLineBorder xLineBorder7 = new com.rameses.rcp.control.border.XLineBorder();
-        xLineBorder7.setLineColor(new java.awt.Color(204, 204, 204));
-        xLabel5.setBorder(xLineBorder7);
+        com.rameses.rcp.control.border.XLineBorder xLineBorder4 = new com.rameses.rcp.control.border.XLineBorder();
+        xLineBorder4.setLineColor(new java.awt.Color(204, 204, 204));
+        xLabel5.setBorder(xLineBorder4);
         xLabel5.setCaption("Applicable Year");
-        xLabel5.setCaptionWidth(100);
         xLabel5.setExpression("#{entity.appyear}");
         xLabel5.setName("application.year");
         xLabel5.setPreferredSize(new java.awt.Dimension(0, 18));
-        xFormPanel2.add(xLabel5);
+        xFormPanel3.add(xLabel5);
 
-        com.rameses.rcp.control.border.XLineBorder xLineBorder8 = new com.rameses.rcp.control.border.XLineBorder();
-        xLineBorder8.setLineColor(new java.awt.Color(204, 204, 204));
-        xLabel9.setBorder(xLineBorder8);
-        xLabel9.setCaption("Bus. Org Type");
-        xLabel9.setExpression("#{entity.orgtypename}");
-        xLabel9.setPreferredSize(new java.awt.Dimension(0, 18));
-        xFormPanel2.add(xLabel9);
-
-        com.rameses.rcp.control.border.XLineBorder xLineBorder9 = new com.rameses.rcp.control.border.XLineBorder();
-        xLineBorder9.setLineColor(new java.awt.Color(204, 204, 204));
-        xLabel11.setBorder(xLineBorder9);
-        xLabel11.setCaption("Office Type");
-        xLabel11.setExpression("#{entity.officetype}");
-        xLabel11.setPreferredSize(new java.awt.Dimension(0, 18));
-        xFormPanel2.add(xLabel11);
-
-        com.rameses.rcp.control.border.XLineBorder xLineBorder10 = new com.rameses.rcp.control.border.XLineBorder();
-        xLineBorder10.setLineColor(new java.awt.Color(204, 204, 204));
-        xLabel10.setBorder(xLineBorder10);
-        xLabel10.setCaption("Barangay");
-        xLabel10.setExpression("#{entity.barangay.name}");
-        xLabel10.setName("application.info.taxpayeraddress");
-        xLabel10.setPreferredSize(new java.awt.Dimension(0, 18));
-        xFormPanel2.add(xLabel10);
-
-        xFormPanel3.setCaptionWidth(60);
-        xFormPanel3.setShowCaption(false);
-        xLabel4.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
-        xLabel4.setCaption("App No");
-        xLabel4.setExpression("#{ entity.appno  }");
-        xLabel4.setFont(new java.awt.Font("Tahoma", 1, 12));
-        xLabel4.setPreferredSize(new java.awt.Dimension(0, 20));
-        xFormPanel3.add(xLabel4);
-
-        com.rameses.rcp.control.border.XLineBorder xLineBorder11 = new com.rameses.rcp.control.border.XLineBorder();
-        xLineBorder11.setLineColor(new java.awt.Color(204, 204, 204));
-        xLabel3.setBorder(xLineBorder11);
+        com.rameses.rcp.control.border.XLineBorder xLineBorder5 = new com.rameses.rcp.control.border.XLineBorder();
+        xLineBorder5.setLineColor(new java.awt.Color(204, 204, 204));
+        xLabel3.setBorder(xLineBorder5);
         xLabel3.setCaption("Date");
         xLabel3.setExpression("#{entity.dtfiled}");
         xLabel3.setPreferredSize(new java.awt.Dimension(0, 18));
         xFormPanel3.add(xLabel3);
 
-        xLabel13.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
-        xLabel13.setCaption("State");
-        xLabel13.setExpression("#{entity.state }");
-        xLabel13.setPreferredSize(new java.awt.Dimension(0, 19));
-        xFormPanel3.add(xLabel13);
+        xFormPanel4.setCaptionWidth(120);
+        com.rameses.rcp.control.border.XLineBorder xLineBorder6 = new com.rameses.rcp.control.border.XLineBorder();
+        xLineBorder6.setLineColor(new java.awt.Color(204, 204, 204));
+        xLabel6.setBorder(xLineBorder6);
+        xLabel6.setCaption("Owner");
+        xLabel6.setExpression("#{entity.owner.name}");
+        xLabel6.setPreferredSize(new java.awt.Dimension(0, 18));
+        xFormPanel4.add(xLabel6);
 
-        xLabel8.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
-        xLabel8.setCaption("App Type");
-        xLabel8.setExpression("#{entity.apptype}");
-        xLabel8.setPreferredSize(new java.awt.Dimension(0, 19));
-        xFormPanel3.add(xLabel8);
+        com.rameses.rcp.control.border.XLineBorder xLineBorder7 = new com.rameses.rcp.control.border.XLineBorder();
+        xLineBorder7.setLineColor(new java.awt.Color(204, 204, 204));
+        xLabel17.setBorder(xLineBorder7);
+        xLabel17.setCaption("Owner Address");
+        xLabel17.setExpression("#{entity.owner.address}");
+        xLabel17.setPreferredSize(new java.awt.Dimension(0, 18));
+        xFormPanel4.add(xLabel17);
 
-        xLabel14.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
-        xLabel14.setCaption("Mode");
-        xLabel14.setExpression("#{entity.txnmode}");
-        xLabel14.setPreferredSize(new java.awt.Dimension(0, 19));
-        xFormPanel3.add(xLabel14);
+        com.rameses.rcp.control.border.XLineBorder xLineBorder8 = new com.rameses.rcp.control.border.XLineBorder();
+        xLineBorder8.setLineColor(new java.awt.Color(204, 204, 204));
+        xLabel9.setBorder(xLineBorder8);
+        xLabel9.setCaption("Org Type");
+        xLabel9.setExpression("#{entity.orgtypename}");
+        xLabel9.setPreferredSize(new java.awt.Dimension(0, 18));
+        xFormPanel4.add(xLabel9);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+            .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(xFormPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 337, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(xFormPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 330, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(xFormPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, 337, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(xFormPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(43, 43, 43))
+                .addComponent(xFormPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 275, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(709, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(xFormPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, 116, Short.MAX_VALUE)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(xFormPanel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 105, Short.MAX_VALUE)
-                            .addComponent(xFormPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, 105, Short.MAX_VALUE))
-                        .addContainerGap())))
+                    .addComponent(xFormPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(xFormPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(xFormPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1.add(jPanel2, java.awt.BorderLayout.CENTER);
 
@@ -226,23 +176,17 @@ public class ApplicationTemplate extends javax.swing.JPanel {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private com.rameses.rcp.control.XFormPanel xFormPanel1;
-    private com.rameses.rcp.control.XFormPanel xFormPanel2;
     private com.rameses.rcp.control.XFormPanel xFormPanel3;
+    private com.rameses.rcp.control.XFormPanel xFormPanel4;
     private com.rameses.rcp.control.XLabel xLabel1;
-    private com.rameses.rcp.control.XLabel xLabel10;
-    private com.rameses.rcp.control.XLabel xLabel11;
-    private com.rameses.rcp.control.XLabel xLabel12;
-    private com.rameses.rcp.control.XLabel xLabel13;
-    private com.rameses.rcp.control.XLabel xLabel14;
-    private com.rameses.rcp.control.XLabel xLabel15;
     private com.rameses.rcp.control.XLabel xLabel16;
+    private com.rameses.rcp.control.XLabel xLabel17;
     private com.rameses.rcp.control.XLabel xLabel2;
     private com.rameses.rcp.control.XLabel xLabel3;
     private com.rameses.rcp.control.XLabel xLabel4;
     private com.rameses.rcp.control.XLabel xLabel5;
     private com.rameses.rcp.control.XLabel xLabel6;
     private com.rameses.rcp.control.XLabel xLabel7;
-    private com.rameses.rcp.control.XLabel xLabel8;
     private com.rameses.rcp.control.XLabel xLabel9;
     // End of variables declaration//GEN-END:variables
     

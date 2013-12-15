@@ -21,8 +21,6 @@
             def binding;
         
             def entity;
-            def lobAssessmentTypes = ["RENEW", "RETIRE"];
-            def selectedLob;
             def infoLoaded = true;
             def handler;
             def formInfos = [];
@@ -30,15 +28,19 @@
             boolean completed;
             def query = [:];
             def initial = "lob";
-            
+            def initialInfos = [];
+            def existingInfos = [];
             int level = 0;
+            
+            @FormTitle
+            def title;
             
             def start() {
                 if(!service) {
                    throw new Exception("service not specified");
                 }
                 query.putAll( entity );
-                query.infos = [];
+                query.infos = initialInfos;
                 query.taxfees = [];
                 query.requirements = [];
                 completed = false;
@@ -46,39 +48,6 @@
                     initial = "info";
                 }
                 return super.start(initial);
-            }
-             
-             def getLookupLob() {
-                return InvokerUtil.lookupOpener( "lob:lookup", [
-                    onselect: { o->
-                        if(entity.lobs.find{ it.lobid == o.objid }!=null) 
-                            throw new Exception("Item already added");
-                        def m = [:];
-                        m.objid = "BPLOB"+new UID();
-                        m.lobid = o.objid;
-                        m.name = o.name;
-                        m.classification = o.classification;
-                        m.assessmenttype = "NEW";
-                        entity.lobs << m; 
-                        infoLoaded = false;
-                        lobModel.reload();
-                        binding.focus("lob");
-                    }
-                ]);
-            }
-             
-            def lobModel = [
-                fetchList: { o->
-                    return entity.lobs;
-                },
-            ] as EditorListModel;
-
-            void removeLob() {
-                if(!selectedLob) return;
-                if(selectedLob.assessmenttype != "NEW" ) 
-                    throw new Exception("Only new lines of business can be removed");
-                entity.lobs.remove(selectedLob);
-                infoLoaded = false;
             }
             
             def formPanel = [
@@ -97,19 +66,27 @@
             
             def sortInfos(sinfos) {
                 def list = sinfos.findAll{it.lob?.objid==null && it.attribute.category==null}?.sort{it.attribute.sortorder};
-                list = list + sinfos.findAll{it.lob?.objid==null && it.attribute.category!=null}?.sort{ [it.attribute.caption, it.attribute.sortorder] };
+                def catGrp = sinfos.findAll{it.lob?.objid==null && it.attribute.category!=null};
+                if(catGrp) {
+                    def grpList = catGrp.groupBy{ it.attribute.category };
+                    grpList.each { k,v->
+                        v.sort{ it.attribute.sortorder }.each{z->
+                            list.add( z );
+                        }
+                    }
+                }
                 list = list + sinfos.findAll{ it.lob?.objid!=null }?.sort{ [it.lob.name, it.attribute.sortorder] }; 
                 return list; 
             }
             
             def findValue( info ) {
                 if(info.lob?.objid!=null) {
-                    def filter = entity.infos.findAll{ it.lob?.objid!=null };
+                    def filter = existingInfos.findAll{ it.lob?.objid!=null };
                     def m = filter.find{ it.lob.objid==info.lob.objid && it.attribute.objid == info.attribute.objid };
                     if(m) return m.value;
                 }
                 else {
-                    def filter = entity.infos.findAll{ it.lob?.objid==null };
+                    def filter = existingInfos.findAll{ it.lob?.objid==null };
                     def m = filter.find{ it.attribute.objid == info.attribute.objid };
                     if(m) {
                         return m.value;
@@ -182,7 +159,6 @@
                     query.infos.addAll(infos);
                     buildFormInfos();
                     completed = false;
-                    
                 }
             }
 
@@ -206,23 +182,17 @@
     
     <pageflow>
         <start>
-            <transition to="specify-lob" name="lob"/>
             <transition to="getInfo" name="info"/>
         </start>
         
-        <page name="specify-lob" title="Specify Line of Business">
-            <transition to="end" caption="Close"/>
-            <transition to="getInfo" caption="Next" mnemonic="N"  immediate="false" />
-        </page>
-
         <process name="getInfo" action="loadInfos">
             <transition to="specify-info" cond="#{completed==false}"/>
             <transition to="end" cond="#{completed==true}" />
         </process>
         
         <page name="specify-info" title="Specify Info">
-            <transition to="end" caption="Close" confirm="Data will not be saved. Continue?"/>
-            <transition to="specify-info" name="back" caption="Back" mnemonic="B" action="goBack"/>
+            <transition to="end" caption="Close" />
+            <transition to="specify-info" name="back" caption="Back" mnemonic="B" action="goBack" visibleWhen="level&gt;1"/>
             <transition to="getInfo" name="next" caption="Next" mnemonic="N"  immediate="false" />
         </page>
 
@@ -230,7 +200,6 @@
     </pageflow>
     
     <pages>
-        <page name="specify-lob" template="com.rameses.gov.etracs.bpls.application.SpecifyLOBPage"/>
         <page name="specify-info" template="com.rameses.gov.etracs.bpls.application.SpecifyInfoPage"/>
     </pages>
     

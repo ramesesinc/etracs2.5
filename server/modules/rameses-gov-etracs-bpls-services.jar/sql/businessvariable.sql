@@ -9,6 +9,10 @@ UPDATE businessvariable
 SET state = 'APPROVED'
 WHERE objid = $P{objid}
 
+[findInfo]
+SELECT name, caption, datatype, arrayvalues, sortorder, category, handler
+FROM businessvariable WHERE objid=$P{objid} 
+
 [getLookup]
 SELECT *
 FROM businessvariable

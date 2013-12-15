@@ -1,0 +1,100 @@
+import com.rameses.annotations.*;
+import com.rameses.util.*;
+import java.rmi.server.*;
+import com.rameses.services.extended.*
+import java.math.*;
+
+public class BPBillingReportService  {
+
+	@Service("BPBillingRuleService")
+	def billingSvc;
+	
+	@ActiveDB("businessaccount")
+	def ba;
+
+	@ActiveDB("business")
+	def biz;
+	
+	@Service("NumberService")
+	def numberSvc;
+
+	@Service("DateService")
+	def dateSvc;
+
+	@ProxyMethod
+	public def getReport(def o) throws Exception {
+
+		/**
+		* To calculate next due date do the following:
+		* For new business, next due date would mean January 1 of next year. 
+		* For renew business, next due date is the nearest qtr deadline or month 
+		* nearest to actual date. 
+		* Example: 
+		*    If date is Mar 25 next due date would be April 1
+		*    If date is April 2 next due date would be April 20. 
+		*/
+		def m = [:];
+		m.payoption = 'FULLYEAR';
+		m.billdate = dateSvc.serverDate;
+		m.application = o;
+
+
+		def z = billingSvc.getBillItems(m);	
+		def result = [:];	
+
+		result.billitems = z.items;
+
+		def barcode = "51005:"+o.appno;
+
+        def  data = [
+           ownername: o.owner.name, 
+           owneraddress: o.owner.address, 
+           billdate: m.billdate, 
+           expirydate:z.validUntil,
+           barcode: barcode
+        ];
+
+        data.items = [];
+        def app = [:]
+        app.appno = o.appno;
+        app.txntype = o.apptype;
+		app.docstate = "APPROVED";
+		app.txndate = o.dtfiled; 
+		app.tradename = o.tradename;
+		app.address = o.businessaddress;
+
+		app.barcode = barcode;
+        app.taxfees = result.billitems.collect {
+        	[
+        		year:it.year,
+        		qtr:((it.qtr==0)?null:it.qtr),
+        		lobname: it.lob?.name,
+        		applicationtype: it.assessmenttype,
+        		accttitle: it.account.title,
+        		duedate: it.duedate,
+        		amount: new BigDecimal(it.amtdue),
+        		surcharge: new BigDecimal(it.surcharge),
+        		interest: new BigDecimal(it.interest),
+        		total: new BigDecimal(it.total)
+        	]
+        }
+
+        //calculate quarter totals
+		app.first_qtr_total = new BigDecimal(z.total_q1);
+        app.second_qtr_total = new BigDecimal(z.total_q2);
+        app.third_qtr_total = new BigDecimal(z.total_q3);
+        app.fourth_qtr_total = new BigDecimal(z.total_q4); 
+
+		app.totalamount = new BigDecimal(z.total_amtdue);
+		app.totalsurcharge = new BigDecimal(z.total_surcharge);
+        app.totalinterest = new BigDecimal(z.total_interest);
+        app.grandtotal = new BigDecimal(z.total);
+        
+        data.grandtotal = app.grandtotal;
+        
+        data.items << app;
+		return  data;
+	}
+
+
+}

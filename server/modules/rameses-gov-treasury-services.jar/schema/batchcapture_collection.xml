@@ -25,7 +25,7 @@
 		<field name="collector_title" required="true"/>
 		<field name="capturedby_objid" required="true"/>
 		<field name="capturedby_name" required="true"/>
-		<field name="capturedby_title" required="true"/>
+		<field name="capturedby_title" />
 		<field name="org_objid" required="true"/>
 		<field name="org_name" required="true"/>
 		<field name="postedby_objid" />

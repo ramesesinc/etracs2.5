@@ -172,6 +172,19 @@ public class BatchCaptureController  {
                 item.totalcash = item.amount
                 item.totalnoncash = 0.0 
             }  
+            if(colname == 'voided') { 
+                calculate();
+            }
+            
+        },
+        onRemoveItem: { o ->
+            if(! MsgBox.confirm('Remove item? ')) return false;
+            if( batchItems.indexOf(o) != (batchItems.size()-1)) return false;
+
+            batchItems.remove(o);
+            calculate()
+            entity.currentseries -= 1
+            return true;
         }
         
     ] as EditorListModel;

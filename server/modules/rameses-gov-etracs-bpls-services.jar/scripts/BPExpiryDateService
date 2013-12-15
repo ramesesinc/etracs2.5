@@ -19,8 +19,5 @@ public class BPExpiryDateService extends ActiveCrudListService {
 		];
 	}
 
-	void beforeUpdate(o) {
-		println "before updated " + o;
-	}
 
 }

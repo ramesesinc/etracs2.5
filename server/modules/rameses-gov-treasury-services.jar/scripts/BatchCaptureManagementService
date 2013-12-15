@@ -42,7 +42,8 @@ public class BatchCaptureManagementService
 
 
 	@ProxyMethod
-	public def getSubmittedBatchCapturedReceipts( collector ) {
-		return db.getSubmittedBatchCapturedReceipts([collectorid:collector.objid])
+	public def getSubmittedBatchCapturedReceipts( params ) {
+		params.startseries = params.startseries ? params.startseries + '%' : '%'
+ 		return db.getSubmittedBatchCapturedReceipts(params)
 	}
 }

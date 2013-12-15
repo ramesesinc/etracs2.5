@@ -1,7 +1,7 @@
 [getLiquidationInfo]
 select 
-  l.txnno, l.dtposted, l.liquidatingofficer_name, l.liquidatingofficer_title, 
-  lc.fund_title, lc.cashier_name, su.jobtitle as cashier_title, lc.amount, l.cashbreakdown
+  l.txnno, l.dtposted, l.liquidatingofficer_name, l.liquidatingofficer_title, lc.objid as liquidationfundid, 
+  lc.fund_title, lc.cashier_name, su.jobtitle as cashier_title, lc.amount, lc.cashbreakdown  
 from liquidation l  
    inner join liquidation_cashier_fund lc on lc.liquidationid = l.objid 
    inner join sys_user su on su.objid = lc.cashier_objid  
@@ -110,15 +110,22 @@ where lr.liquidationid=$P{liquidationid}
 GROUP BY ai.afid) a
 
 [getRCDOtherPayments]
+select  'CHECK' as paytype, pc.particulars, pc.amount  
+from  liquidation_checkpayment lcf  
+   inner join cashreceiptpayment_check pc on pc.objid = lcf.objid 
+where lcf.liquidationfundid=$P{liquidationfundid} 
+
+[getRCDOtherPayments_bak]
 select  'CHECK' as paytype, pc.particulars, cri.amount  as amount 
-from liquidation_remittance  lr 
+from  liquidation_cashier_fund lcf 
+   inner join liquidation_remittance  lr on lr.liquidationid = lcf.liquidationid 
    inner join remittance_cashreceipt rc  on rc.remittanceid = lr.objid 
    inner join cashreceipt cr on rc.objid = cr.objid 
    inner join cashreceiptpayment_check pc on pc.receiptid = rc.objid 
    left join cashreceipt_void crv on crv.receiptid = cr.objid 
    inner join cashreceiptitem cri on cri.receiptid = cr.objid
    inner join revenueitem ri on ri.objid = cri.item_objid   
-where lr.liquidationid=$P{liquidationid} and ri.fund_objid =$P{fundname} 
+where lr.liquidationid=$P{liquidationid} and ri.fund_objid = $P{fundname} 
   and crv.objid is null 
 
 

@@ -16,15 +16,16 @@ public class BPApplicationLookupService extends ActiveCrudListService {
 	public def getColumns(def o) {
 		return [
 			[name:"appno", caption:"Application No"],
-			[name:"tradename", caption:"Tradename"],
+			[name:"apptype", caption:"Application Type"],
+			[name:"businessname", caption:"Business Name"],
 			[name:"owner.name", caption:"Owner"],
 			[name:"bin", caption:"BIN"],
 		];
 	}
 
 	public void beforeList(o) {
-		if( o.state!=null &&  o.state.toUpperCase() == "PAYMENT" ) {
-			o._listMethod = "getLookupByOwner";
+		if( o.ownerid && o.state!=null &&  o.state.equalsIgnoreCase("payment") ) {
+			o._listMethod = "getApplicationsByOwner";
 			o._pagingKeys = "ba.objid";
 		}
 	}
@@ -33,12 +34,12 @@ public class BPApplicationLookupService extends ActiveCrudListService {
 	public def findByBarcode(o) {
 		def prefix = o.prefix;
 		def appno = o.barcode;
-
 		def m = em.findApplicationByAppNo( [appno: appno] );
-		m.collectiontype = collectionType.findCollectionTypeByBarcode([barcode: prefix]);
-
 		if(!m)
 			throw new Exception("Application No " + o + " does not exist!");
+		m.collectiontype = collectionType.findCollectionTypeByBarcode([barcode: prefix]);
+		if(!m.collectiontype)	
+			throw new Exception("Collection type not found with barcode prefix " + prefix + ". Please check collection type and register barcode prefix");
 		return m;
 	}
 

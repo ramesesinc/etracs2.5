@@ -17,61 +17,50 @@ import java.rmi.server.*;
 **********************************************************/
 public class BusinessCashReceiptInterceptor {
 
-	@ActiveDB("businesscashreceipt")
-	def cashRct;
+	@ActiveDB("bpledger")
+	def bpledger;
 	
-	@ActiveDB("business")
-	def biz;
-
 	@ActiveDB("bpapplication")
 	def application;
 
 	@Service("NumberService")
 	def numberSvc;
 
-	@After(pattern="CashReceiptService.open", eval="#{result.collectiontype.handler == 'bpls'}") 
-	public void onOpen(def evt) {
-		def p = evt.result;
-		def b = cashRct.read( p );
-		if(!b) b = [tradename:'']; 	
-		p.paidby = p.paidby + " ( " + b.tradename + " ) ";
-	}	
-
 	@After(pattern="CashReceiptService.post", eval="#{result.collectiontype.handler == 'bpls'}")
 	public void postBusinessPayment(def evt) {
+
 		def result = evt.result;
-
-		//for printing purposes:
-		result.payerdetails = result.paidby + " (" + result.tradename + ") " + "\n" + result.paidbyaddress;
-
-		cashRct.save( result );
-		result.items.each {
-			it.parentid = result.objid;
-			cashRct.save(it, "item");
-		}
-
+		def pmt = [:];
+		pmt.objid = "BPPMT"+new UID();
+		pmt.businessid = result.businessid;
+		pmt.applicationid = result.applicationid;
+		pmt.qtr = result.qtr;
+		pmt.payoption = result.payoption;
+		pmt.refno = result.receiptno;
+		pmt.refdate = result.receiptdate;
+		pmt.receiptid = result.objid;
+		pmt.amount = result.amount;
+		pmt.remarks = null;
+		pmt.voided = 0;
+		bpledger.create( pmt, "payment" );
+		
 		result.billitems.each {
-			println "DEADLINE IS " + it.deadline;
 			def m = [:]
 			m.objid = "BPRCVPMT"+ new UID();
 			m.receivableid = it.receivableid;
 			m.businessid = result.businessid;
+			m.paymentid = pmt.objid;
 			m.iyear = it.year;
 			m.iqtr = it.qtr;
-			m.refno = result.receiptno;
-			m.reftype = "cashreceipt";
-			m.refdate = result.receiptdate;
 			m.refid = result.objid;
 			m.amtpaid = it.amtdue;
 			m.surchargepaid = it.surcharge;
 			m.interestpaid = it.interest;
 			m.discount = it.discount;
 			m.voided = 0;
-			biz.create( m, "receivable_payment");
+			bpledger.create( m, "receivableitem");
 		}
 		
-		throw new Exception("break it!");
-
 		//summarize by receivableid
 		def grps = result.billitems.groupBy{ it.receivableid };
 		def ids = [];
@@ -80,20 +69,12 @@ public class BusinessCashReceiptInterceptor {
 			def amtpaid = numberSvc.round( v.sum{ it.amtdue} );
 			if(!discount) discount = 0;
 			if(!amtpaid) amtpaid = 0;
-			biz.updateReceivablePayment( [receivableid: k, amtpaid:amtpaid, discount: discount] );
+			bpledger.updateReceivablePayment( [receivableid: k, amtpaid:amtpaid, discount: discount] );
 			ids << k;
 		}
-
-		/* 
-		* check unpaid balance in the application
-		*   if 0 then change state of application to release.
-		*/
-		String receivableIds = "'" + ids.join("','") + "'";
-		def list = biz.getReceivableBalances( [receivableids: receivableIds] );
-		for( app in list ) {
-			if( app.balance <= 0 ) {
-				application.changeState( [state:'release', objid: app.applicationid ] );
-			}
+		//check the receivable balance of the application. before today due date.
+		if( pmt.qtr > 0 ) {
+			application.changeState( [objid: pmt.applicationid, state:'release'] );	
 		}
 	}
 

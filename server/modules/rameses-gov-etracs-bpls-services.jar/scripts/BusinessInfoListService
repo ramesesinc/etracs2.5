@@ -1,0 +1,61 @@
+import com.rameses.annotations.*;
+import com.rameses.util.*;
+import java.rmi.server.*;
+import com.rameses.services.extended.*;
+
+public class BusinessInfoService extends ActiveCrudListService {
+
+	@ActiveDB("business")
+	def em;
+
+	@Service("DateService")
+	def dateSvc;
+
+	@ProxyMethod
+	public def getNodes(o) {
+		return [
+			[state:'approved', caption:'Approved', leaf:true, folder:true, allowSearch:true],
+			[state:'active', caption:'Active', leaf:true, folder:true, allowSearch:true],
+			[state:'retired', caption:'Retired', leaf:true, folder:true, allowSearch:true],
+			[state:'renewal', caption:'For Renewal', leaf:true, folder:true, allowSearch:true],
+			[state:'laterenewal', caption:'For Late Renewal', leaf:true, folder:true, allowSearch:true],
+		];
+	}	
+
+	@ProxyMethod
+	public def getColumns(o) {
+		return [
+			[name:'bin', caption:'BIN'],
+			[name:'activeyear', caption:'Year'],
+			[name:'businessname', caption:'Business Name'],
+			[name:'businessaddress', caption:'Business Address'],
+			[name:'owner.name', caption:'Owner'],
+			[name:'state', caption:'State'],
+		];
+	}
+
+	void beforeList(o) {
+		o._pagingKeys = "a.objid";
+		if(o.name=="search") {
+			if( o.searchtext == "%") o.searchtext ="?";
+			o._listMethod = "getListSearch";
+		}
+		else if( o.state== "retired" ) {
+
+		}
+		else if( o.state == "renewal" ) {
+			o._listMethod = "getListForRenewal";
+			o.prevyear = dateSvc.serverYear - 1;
+		}
+		else if( o.state == "laterenewal") {
+			o._listMethod = "getListForLateRenewal";
+			o.prevyear = dateSvc.serverYear - 1;
+		}
+		else {
+			o._listMethod = "getList";
+			o.currentyear = dateSvc.serverYear;
+		}
+	}
+
+
+}

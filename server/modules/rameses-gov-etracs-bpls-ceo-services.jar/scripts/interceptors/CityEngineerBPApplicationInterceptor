@@ -5,17 +5,60 @@ import com.rameses.services.extended.*;
 
 public class CityEngineerBPApplicationInterceptor {
 
+	@ActiveDB("business_cityengineer")
+	def em;
+
+	@After( pattern="BPApplicationService.submitForAssessment" )
+	public void onSubmitForAssessment(evt) {
+		def app = evt.args[0];
+		def m = app.appinfos.find{ it.attribute.objid == "LOCATED_ON_GOVERNMENT_PROPERTY" };
+
+		//if this info does not exist or is not supplied, we assume there is a city engineer component
+		//find if there is  already a link, if not, we need to create one
+
+		if( !m?.value ) {
+			def z = em.findBusinessLink([businessid:app.businessid]);
+			if(!z) {
+				z = [objid: "BUSCEO"+ new UID()];
+				z.businessid = app.businessid;
+				z.state = 'pending';
+				em.create(z);
+			}
+		}
+	}	
+
+	@Before( pattern="BPApplicationService.approveApplication" )
+	public void onApproveApplication(evt) {
+		def app = evt.args[0];
+		def z = em.findBusinessLink([businessid:app.businessid]);
+		if(z) {
+			if( z.state == 'pending') {
+				throw new Exception("There is still a pending assessment in City Engineers Office");
+			}
+			if( !app.taxfees.find{it.department=='CEO'}) {
+				throw new Exception("There must be at least one fee from the city engineers office. Please run calculate charges again");
+			}
+		}
+	}	
+
 	/***
-	* add additional fees from city engineer
+	* add additional fees from city engineer. Add @Before so it can be totalled.
 	***/
 	@Before( pattern="BPApplicationService.assess" )
 	public void fireAssess(evt) {
 		def o = evt.args[0];		
-		println "intercept assessment from city engineer";
-		if(!o.taxfees) o.taxfees = [];
-		o.taxfees << [objid:'p1', account:[code:'555', title: 'Electrical Fees'], amount:250.00];
+		def taxfees = em.getFees([businessid:o.businessid]);
+		if( o.taxfees == null ) o.taxfees = [];
+		taxfees.each {
+			if(it.state=='active') {
+				it.objid = "BPTXF"+new UID();
+				it.department = 'CEO';
+				it.account.taxfeetype = 'OTHERCHARGE';
+				it.taxfeetype = 'OTHERCHARGE';
+				o.taxfees << it;
+			}
+		}
 	}	
 
-	
 
 }

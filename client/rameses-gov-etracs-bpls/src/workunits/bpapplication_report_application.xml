@@ -44,16 +44,23 @@
                     else if(x==false) return "No";
                     else return x+"";
                 }
-                def infos = entity.infos.collect{ 
+                def infos = entity.appinfos.collect{ 
                     [
-                      category:it.lob?.name, 
+                      category:it.category?.name, 
                       name: it.attribute.caption,
                       value: format(it.value)
                     ]  
                  };
                  
+                infos.addAll( entity.assessmentinfos.collect{ 
+                    [
+                      category:it.lob?.name, 
+                      name: it.attribute.caption,
+                      value: format(it.value)
+                    ]  
+                 });
                  
-                 
+                
                 //ctcno: "CCI2012-191919191", 
                 //ctcdate: java.sql.Date.valueOf("2013-02-01"),
                 data = [
@@ -63,7 +70,6 @@
                    businessorgtype: orgtypes.find{ it.key == entity.orgtype}?.value,
                    businessaddress: entity.businessaddress,
                    ownername: entity.owner.name, 
-                   ownerno: entity.owner.entityno,
                    owneraddress: entity.owner.address,
                    txndate: entity.dtfiled, 
                    laterenewal:"0", 

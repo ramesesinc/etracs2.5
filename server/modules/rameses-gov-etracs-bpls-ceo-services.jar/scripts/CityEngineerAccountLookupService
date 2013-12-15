@@ -1,0 +1,22 @@
+import com.rameses.annotations.*;
+import com.rameses.util.*;
+import java.rmi.server.*;
+import com.rameses.services.extended.*;
+
+public class CityEngineerAccountLookupService  extends ActiveListService {
+
+	@ActiveDB("business_cityengineer_account")
+	def em;
+
+	String pagingKeys = "ba.objid";
+
+	@ProxyMethod
+	public def getColumns( def p ) {
+		return [
+			[name:"code", caption:"Acct Code"],
+			[name:"title", caption:"Acct Title"]
+		]
+	}
+	
+
+}

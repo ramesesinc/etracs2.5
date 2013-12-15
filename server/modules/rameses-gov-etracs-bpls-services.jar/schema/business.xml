@@ -3,7 +3,6 @@
 	<element tablename="business">
 		<field name="objid" primary="true"/>
 		<field name="state" required="true"/>
-		<field name="apptype" required="true"/>
 		<field name="owner_name" required="true"/>
 		<field name="owner_objid" required="true"/>
 		<field name="owner_address" required="true"/>
@@ -12,28 +11,50 @@
 		<field name="tradename" required="true"/>
 		<field name="businessaddress" required="true"/>
 		<field name="orgtype" required="true"/>
-		<field name="officetype" required="true"/>
-		<field name="branchname" />
+		<field name="businessname" required="true"/>
 		<field name="yearstarted" required="true"/>
 		<field name="activeyear" required="true"/>
-		<field name="credits" required="true"/>
 		<field name="user_objid" />
+		<field name="pin" />
+		<field name="taxcredit" required="true"/>
+	</element>	
+
+	<element name="bin" tablename="business_bin">
+		<field name="objid" primary="true"/>
+		<field name="bin" required="true"/>
+		<field name="state" required="true"/>
+		<field name="txndate" required="true"/>
+		<field name="applicationid" />
 	</element>	
 
 	<element name="lob" tablename="business_lob">
 		<field name="objid" primary="true"/>
-		<field name="businessid" />
-		<field name="permitid" />
-		<field name="iyear" />
+		<field name="businessid" required="true"/>
+		<field name="applicationid" required="true"/>
+		<field name="iyear" required="true"/>
 		<field name="lobid" required="true"/>
 		<field name="name" required="true"/>
+		<field name="assessmenttype" required="true"/>
 	</element>
 
 	<element name="info" tablename="business_info">
 		<field name="objid" primary="true"/>
-		<field name="businessid" />
-		<field name="applicationid" />
-		<field name="iyear"/>
+		<field name="businessid" required="true"/>
+		<field name="attribute_objid" required="true"/>
+		<field name="attribute_name" required="true"/>
+		<field name="decimalvalue" />
+		<field name="intvalue" />
+		<field name="stringvalue" />
+		<field name="boolvalue" />
+		<field name="phase" />
+		<field name="level" />
+	</element>	
+
+	<element name="assessment_info" tablename="business_assessment_info">
+		<field name="objid" primary="true"/>
+		<field name="businessid" required="true"/>
+		<field name="applicationid" required="true"/>
+		<field name="iyear" required="true"/>
 		<field name="attribute_objid" required="true"/>
 		<field name="attribute_name" required="true"/>
 		<field name="lob_objid" />
@@ -42,6 +63,8 @@
 		<field name="intvalue" />
 		<field name="stringvalue" />
 		<field name="boolvalue" />
+		<field name="phase" />
+		<field name="level" />
 	</element>	
 
 	<element name="case" tablename="business_case">
@@ -57,8 +80,12 @@
 		<field name="businessid" required="true"/>
 		<field name="applicationid" required="true"/>
 		<field name="permitno" required="true"/>
+		<field name="permittype" required="true"/>
 		<field name="dtissued" required="true"/>
-		<field name="iyear" required="true"/>
+		<field name="issuedby_objid" required="true"/>
+		<field name="issuedby_name" required="true"/>
+		<field name="expirydate" required="true"/>
+		<field name="remarks" required="true"/>
 	</element>	
 
 	<element name="changeinfo" tablename="business_changeinfo">
@@ -73,7 +100,6 @@
 		<field name="issuedby_objid" required="true"/>
 		<field name="issuedby_name" required="true"/>
 	</element>
-
 
 	<element name="redflag" tablename="business_redflag">
 		<field name="objid" primary="true"/>

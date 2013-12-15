@@ -20,7 +20,8 @@ FROM (
 		SUM(CASE WHEN bce.voided = 0 THEN 0 ELSE 1 END) AS voidcount
 	FROM batchcapture_collection bc
 		INNER JOIN batchcapture_collection_entry bce ON bc.objid = bce.parentid
-	WHERE bc.collector_objid = $P{collectorid}
+	WHERE bc.collector_objid = $P{collectorid} 
+	   AND bc.startseries like $P{startseries}  
 	  AND bc.state IN ('FORPOSTING', 'POSTED')
 	GROUP BY 
 		bc.objid,

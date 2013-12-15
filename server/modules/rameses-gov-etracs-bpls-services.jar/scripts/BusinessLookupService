@@ -12,7 +12,7 @@ public class BusinessLookupService extends ActiveCrudListService {
 
 	public def getColumns(def o) {
 		return [
-			[name:"tradename", caption:"Tradename"],
+			[name:"businessname", caption:"Business Name"],
 			[name:"owner.name", caption:"Owner"],
 			[name:"bin", caption:"BIN"],
 		];
