@@ -62,7 +62,7 @@ public class RPTBillingController
     def selectedItems 
     void updateLedgerBillStatement(){
         if (items) {
-            selectedItems = items.findAll{it.bill == true}
+            selectedItems = items.findAll{it.bill == true && it.recalcbill == 1}
             if (!selectedItems) selectedItems = items;
             selectedItems.each{
                 bill.rptledgerid = it.objid 

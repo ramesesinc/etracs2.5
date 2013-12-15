@@ -33,7 +33,14 @@ SELECT
 	CASE
 		WHEN rl.partialbasic > 0 THEN rl.partialledqtr
 		WHEN rl.lastqtrpaid = 4 THEN 1 ELSE rl.lastqtrpaid + 1 
-	END AS fromqtr
+	END AS fromqtr,
+	CASE 
+		WHEN rl.nextbilldate <= GETDATE() THEN 1 
+		WHEN rl.partialbasic > 0 THEN 1
+		WHEN rl.lastbilledyear IS NULL OR rl.lastbilledqtr IS NULL THEN 1 
+		WHEN rl.lastbilledyear <> $P{billtoyear} OR rl.lastbilledqtr <> $P{billtoqtr} THEN 1
+		ELSE 0
+	END AS recalcbill
 FROM faas f
 	INNER JOIN rpu r ON f.rpuid = r.objid 
 	INNER JOIN propertyclassification pc ON r.classification_objid = pc.objid 
@@ -89,7 +96,18 @@ SELECT
 	b.name AS barangay,
 	rp.cadastrallotno,
 	rp.barangayid,
-	pc.code AS classcode
+	pc.code AS classcode,
+	rl.lastbilledyear,
+	rl.lastbilledqtr,
+	CASE WHEN rl.partialbasic > 0 THEN 1 ELSE 0 END AS partialled,
+	CASE WHEN rl.nextbilldate <= GETDATE() THEN 1 ELSE 0 END AS expired,
+	CASE 
+		WHEN rl.nextbilldate <= GETDATE() THEN 1 
+		WHEN rl.partialbasic > 0 THEN 1
+		WHEN rl.lastbilledyear IS NULL OR rl.lastbilledqtr IS NULL THEN 1 
+		WHEN rl.lastbilledyear <> $P{billtoyear} OR rl.lastbilledqtr <> $P{billtoqtr} THEN 1
+		ELSE 0
+	END AS recalcbill
 FROM rptledger rl 
 	INNER JOIN faas f ON rl.faasid = f.objid 
 	INNER JOIN rpu r ON f.rpuid = r.objid 
@@ -99,7 +117,7 @@ FROM rptledger rl
 WHERE ${filters}
  AND rl.state = 'APPROVED'
  AND r.taxable = 1 
- AND ( rl.lastyearpaid < $P{billtoyear} OR ( rl.lastyearpaid = $P{billtoyear} AND rl.lastqtrpaid <= $P{billtoqtr}))
+ AND (rl.lastyearpaid < $P{billtoyear} OR ( rl.lastyearpaid = $P{billtoyear} AND rl.lastqtrpaid < $P{billtoqtr}))
 ORDER BY f.tdno  
 
 

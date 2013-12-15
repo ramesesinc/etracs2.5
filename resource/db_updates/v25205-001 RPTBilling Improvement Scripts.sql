@@ -161,3 +161,16 @@ alter table cashreceiptitem_rpt add toqtr int
 go
 
 
+
+
+
+alter table rptledger drop constraint DF__rptledger__nextb__08362A7C
+go
+drop index rptledger.ix_rptledger_nextbilldate 
+go
+drop index rptledger.ix_rptledger_state_nextbilldate
+go
+alter table rptledger alter column nextbilldate date 
+go
+
+

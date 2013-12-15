@@ -131,8 +131,8 @@ public class RPTBillingService
         bill.ledger = em.findOpenLedgerById(bill)
         if (!bill.ledger) throw new Exception('Ledger if fully paid.')
 
-        if (bill.ledger.lastbilledyear != bill.billtoyear || bill.ledger.lastbilledqtr != bill.billtoqtr || bill.ledger.partialled == 1){
-        	println 'Recalculating ledger...'
+        if (bill.ledger.recalcbill == 1 ){
+        	println 'Recalculating ledger -> ' + bill.ledger.tdno 
         	clearBillItems(bill)
 	        def data = executeRules(bill)
 	        saveBillItems(bill, data)
@@ -274,7 +274,7 @@ public class RPTBillingService
 			ledgerfaas = ledgerfaases.find{ xyr >= it.fromyear && ( xyr <= it.toyear || it.toyear == 0) }
 		}
 		if (!ledgerfaas) 
-			throw new Exception('Ledger FAAS for year ' + yr + ' is not defined.\nVerify RPT Ledger faas history record.')
+			throw new Exception('Ledger FAAS ' + bill.ledger.tdno +  ' for year ' + yr + ' is not defined.\nVerify RPT Ledger faas history record.')
 
 		def qtrlyav  = numSvc.round( ledgerfaas.assessedvalue / 4)
 		def fourthqtrav = ledgerfaas.assessedvalue - numSvc.round((qtrlyav * 3))
@@ -300,7 +300,7 @@ public class RPTBillingService
 			ledgerfaas = ledgerfaases.find{ xyr >= it.fromyear && ( xyr <= it.toyear || it.toyear == 0) }
 		}
 		if (!ledgerfaas) 
-			throw new Exception('Ledger FAAS for year ' + yr + ' is not defined.\nVerify RPT Ledger faas history record.')
+			throw new Exception('Ledger FAAS ' + bill.ledger.tdno +  ' for year ' + yr + ' is not defined.\nVerify RPT Ledger faas history record.')
 
 		def qtrlyav = numSvc.round( ledgerfaas.assessedvalue / 4)
 		def av      = ledgerfaas.assessedvalue
