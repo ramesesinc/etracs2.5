@@ -142,7 +142,7 @@ go
 alter table cashreceiptitem_rpt drop column rptledgeritemid
 go
 
-alter table cashreceiptitem_rpt drop constraint DF__cashrecei__rptle__10966653
+alter table cashreceiptitem_rpt drop constraint DF__cashrecei__rptle__1B33F057
 go
 
 alter table cashreceiptitem_rpt drop column rptledgeritemqtrlyid
@@ -159,6 +159,5 @@ alter table cashreceiptitem_rpt add fromqtr int
 go
 alter table cashreceiptitem_rpt add toqtr int
 go
-
 
 

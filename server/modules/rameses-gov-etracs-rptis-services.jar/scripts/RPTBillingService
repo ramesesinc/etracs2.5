@@ -269,6 +269,10 @@ public class RPTBillingService
 
 	void createQtrlyLedgerFacts(data, bill, ledgerfaases, yr){
 		def ledgerfaas = ledgerfaases.find{ yr >= it.fromyear && ( yr <= it.toyear || it.toyear == 0) }
+		if (!ledgerfaas){
+			def xyr = yr + 1
+			ledgerfaas = ledgerfaases.find{ xyr >= it.fromyear && ( xyr <= it.toyear || it.toyear == 0) }
+		}
 		if (!ledgerfaas) 
 			throw new Exception('Ledger FAAS for year ' + yr + ' is not defined.\nVerify RPT Ledger faas history record.')
 
@@ -291,6 +295,10 @@ public class RPTBillingService
 
 	void createYearlyLedgerFact(data, bill, ledgerfaases, yr){
 		def ledgerfaas = ledgerfaases.find{ yr >= it.fromyear && ( yr <= it.toyear || it.toyear == 0) }
+		if (!ledgerfaas){
+			def xyr = yr + 1
+			ledgerfaas = ledgerfaases.find{ xyr >= it.fromyear && ( xyr <= it.toyear || it.toyear == 0) }
+		}
 		if (!ledgerfaas) 
 			throw new Exception('Ledger FAAS for year ' + yr + ' is not defined.\nVerify RPT Ledger faas history record.')
 

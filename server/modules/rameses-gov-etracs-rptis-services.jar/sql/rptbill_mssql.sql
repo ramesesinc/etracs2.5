@@ -51,8 +51,8 @@ SELECT rlf.*
 FROM rptledger rl
 	INNER JOIN rptledgerfaas rlf ON rl.objid = rlf.rptledgerid
 WHERE rl.objid =  $P{rptledgerid}
-  AND (rl.lastyearpaid >= rlf.fromyear OR rlf.toyear = 0)
   AND rlf.state = 'APPROVED' 
+ORDER BY rlf.fromyear   
 
 
 [updateLedgerNextBillDate]
