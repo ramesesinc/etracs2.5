@@ -38,6 +38,7 @@ public abstract class CertificationController
     String officeName = 'treasury';
         
     def getReportData(){
+        entity.name = entity.name.replace('&', '&amp;');
         return entity;
     }
     

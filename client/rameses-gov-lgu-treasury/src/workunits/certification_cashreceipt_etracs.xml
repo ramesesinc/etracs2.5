@@ -3,6 +3,7 @@
         <invoker type="treasury-certification" caption="ETRACS Collection Certification" role="TREASURY_REPORT" certificationType="cashreceipt_etracs" />
         <invoker type="treasury-certification:cashreceipt_etracs:create" action="init" caption="ETRACS Collection Certification"  target="self" index="10" role="TREASURY_REPORT"/>
         <invoker type="cashreceipt_certification:open" action="open" caption="Collection Certification"  target="self" index="10" role="TREASURY_REPORT"/>
+        <invoker type="cashreceipt_etracs:open" action="open" caption="Collection Certification"  target="self" index="10" role="TREASURY_REPORT"/>
     </invokers>
     
     <code>
