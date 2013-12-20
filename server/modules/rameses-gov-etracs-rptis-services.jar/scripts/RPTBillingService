@@ -129,7 +129,7 @@ public class RPTBillingService
             throw new Exception('Advance Billing Date must be greater than current date.')
 
         bill.ledger = em.findOpenLedgerById(bill)
-        if (!bill.ledger) throw new Exception('Ledger if fully paid.')
+        if (!bill.ledger) throw new Exception('Ledger is fully paid.')
 
         if (bill.ledger.recalcbill == 1 ){
         	println 'Recalculating ledger -> ' + bill.ledger.tdno 
