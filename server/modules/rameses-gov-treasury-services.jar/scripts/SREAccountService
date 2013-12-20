@@ -42,7 +42,9 @@ class SREAccountService extends ActiveCrudNodeService {
 		if( p._tag ) {
 			p._listMethod = "getLookup";
 			p.type = p._tag;
+			if(!p.parentid) p.parentid = '%';
 		}
+
 	}
 	
 	public void afterList( def p, def list ) {

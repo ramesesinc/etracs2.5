@@ -30,10 +30,9 @@ public class TracsCashReceiptService extends ActiveListService {
 
 	void beforeList(o) {
 		o._pagingKeys = "o.objid";
-		o._limit = 50;
-		if (!o.searchtext) o.searchtext = ''
+		o._limit = 30;
+		if (!o.searchtext) o.searchtext = '%'
 		o.orno = o.searchtext
-		o.paidby = o.searchtext + '%'
 	}
 
 	

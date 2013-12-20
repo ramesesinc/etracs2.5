@@ -9,6 +9,7 @@ SELECT
   rl.faasid, 
   DateAdd(d, -1, rl.nextbilldate) AS expirydate,
   f.tdno,
+  f.prevtdno,  
   f.owner_name,
   f.administrator_name,
   r.rputype,
