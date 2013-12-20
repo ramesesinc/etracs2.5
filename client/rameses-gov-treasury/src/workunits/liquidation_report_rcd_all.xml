@@ -1,9 +1,7 @@
 <workunit>
     
    <invokers>
-        <!--
          <invoker type="liquidation:reports" caption="Report on Collection and Deposits (Summary)" action="init" index="2" target="self"/>
-         --> 
          <invoker type="formActions" caption="Back" action="_close" mnemonic="b" shortcut="ctrl B" icon="images/toolbars/arrow_left.png"/>
    </invokers>
    
