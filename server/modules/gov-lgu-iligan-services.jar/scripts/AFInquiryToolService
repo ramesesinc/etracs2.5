@@ -1,0 +1,63 @@
+import com.rameses.annotations.*;
+import com.rameses.util.*;
+import java.rmi.server.*;
+import com.rameses.services.extended.*;
+
+
+public class AFInquiryToolService {
+
+	@PersistenceContext("main")
+	def em
+
+
+	@ProxyMethod 
+	def search( entity ) {
+		def sql = """
+			select 
+				ai.objid, ai.respcenter_name as collector, ai.afid as formno, ai.startstub as stubno, ai.startseries,  ai.endseries, ac.currentseries, 
+				case when ac.currentseries > ai.endseries then 'CLOSED' else 'OPEN' end as status 
+			from afserial_inventory ai 
+				inner join afserial_control ac on ac.controlid = ai.objid 
+			where  '${entity.series}' between startseries and endseries 
+				and respcenter_type ='COLLECTOR'
+		""";
+		return  em.sqlContext.createQuery( sql ).resultList;
+	}
+	
+
+	@ProxyMethod 
+	void delete( item ) {
+		def bc = em.sqlContext.createQuery("select objid from batchcapture_collection where controlid='${item.objid}'").singleResult;
+		if( bc ) throw new Exception("Selected AF was already used in batch capture.     ");
+
+		bc = em.sqlContext.createQuery("select objid from cashreceipt where controlid='${item.objid}'").singleResult;
+		if(bc) throw new Exception("Selected AF was already used in cash receipts .     ");
+
+		em.sqlContext.createExecutor("delete from remittance_afserial where objid in ( select c.objid from afserial_inventory_detail c where c.controlid ='${item.objid}' ) ").execute();
+		em.sqlContext.createExecutor("delete from afserial_inventory_detail where controlid ='${item.objid}' ").execute();
+		em.sqlContext.createExecutor("delete from afserial_control where controlid ='${item.objid}' ").execute();
+		em.sqlContext.createExecutor("delete from afserial_inventory where objid ='${item.objid}' ").execute();
+	}
+
+	@ProxyMethod 
+	void transferAF( item ) {
+		em.sqlContext.createExecutor("""
+			update afserial_inventory set 
+				respcenter_name='${item.collector.name}', 
+				respcenter_objid='${item.collector.objid}'
+			where objid='${item.objid}' 
+		 """).execute() 
+	}
+
+	@ProxyMethod 
+	void changeStartSeries( item ) {
+		em.sqlContext.createExecutor("delete from remittance_afserial where objid in ( select c.objid from afserial_inventory_detail c where c.controlid ='${item.objid}') ").execute();
+		em.sqlContext.createExecutor("delete from afserial_inventory_detail where controlid ='${item.objid}' and reftype != 'SYSTEM' ").execute();
+
+		em.sqlContext.createExecutor("update afserial_inventory set startseries='${item.newseries}', currentseries='${item.newseries}' where objid ='${item.objid}' ").execute();
+		em.sqlContext.createExecutor("update afserial_control set currentseries='${item.newseries}' where controlid ='${item.objid}' ").execute();
+		em.sqlContext.createExecutor("update afserial_inventory_detail set receivedstartseries='${item.newseries}', endingstartseries='${item.newseries}'  where controlid ='${item.objid}'  ").execute();
+	}
+
+
+}
