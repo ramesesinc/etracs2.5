@@ -139,7 +139,11 @@ public class RPTBillingController
             ] as SubReport[]
         },
         getReportData : { return bill },
-        getParameters : { return reportSvc.getStandardParameter() }
+        getParameters : { 
+            def sparam = reportSvc.getStandardParameter();
+            sparam.RPUCOUNT = bill.ledgers.size() 
+            return sparam;
+        }
     ] as ReportModel
     
     List getQuarters() {
