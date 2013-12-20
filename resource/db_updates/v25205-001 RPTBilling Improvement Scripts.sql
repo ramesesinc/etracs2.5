@@ -174,3 +174,7 @@ alter table rptledger alter column nextbilldate date
 go
 
 
+
+alter table cashreceiptitem_rpt add partialled int default 0
+go
+

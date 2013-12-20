@@ -95,7 +95,7 @@ SELECT
 	bi.firecode - bi.firecodepaid AS firecode,
 	bi.firecodeacctid AS firecodeacct_objid,
 	bi.revtype,
-	bi.partialapplied AS partialled
+	bi.partial AS partialled
 FROM rptledger rl
 		INNER JOIN rptledgerbillitem bi ON rl.objid = bi.rptledgerid
 WHERE rl.objid = $P{rptledgerid}
@@ -293,31 +293,32 @@ GROUP BY
 
 [getLedgersMinPaidYearAndQtr]
 SELECT 
-	x.rptreceiptid, x.rptledgerid, x.minyear,
-	ri.qtr,
-	CASE WHEN ri.qtr = 0 THEN ri.fromqtr ELSE ri.qtr END AS minqtr,
-	CASE WHEN ri.partialled = 1 THEN ri.basic ELSE 0 END  AS partialbasic, 
-	CASE WHEN ri.partialled = 1 THEN ri.basicint ELSE 0 END AS partialbasicint, 
-	CASE WHEN ri.partialled = 1 THEN ri.sef ELSE 0 END AS partialsef, 
-	CASE WHEN ri.partialled = 1 THEN ri.sefint ELSE 0 END AS partialsefint
+	x.*,
+	CASE WHEN x.qtr = 0 THEN x.fromqtr ELSE x.qtr END AS minqtr
 FROM
 (
 	SELECT 
 		t.*,
-		(SELECT MIN(qtr) FROM cashreceiptitem_rpt
-		  WHERE rptreceiptid = t.rptreceiptid AND year = t.minyear) AS minqtr
+		MIN(ri.qtr) AS qtr,
+		MIN(ri.fromqtr) AS fromqtr,
+		MAX(ri.toqtr) AS toqtr
 	FROM (
 		SELECT 
 			cr.rptreceiptid, 
 			cr.rptledgerid, 
-			MIN(cr.year) AS minyear
+			MIN(cr.year) AS minyear,
+			0 AS partialbasic, 
+			0 AS partialbasicint, 
+			0 AS partialsef, 
+			0 AS partialsefint
 		FROM cashreceiptitem_rpt cr 
-		WHERE cr.rptreceiptid = $P{rptreceiptid} 
-		GROUP BY cr.rptreceiptid, cr.rptledgerid, cr.year 
+		WHERE cr.rptreceiptid = $P{rptreceiptid}
+		GROUP BY cr.rptreceiptid, cr.rptledgerid
 	)t
+	INNER JOIN cashreceiptitem_rpt ri ON t.rptreceiptid = ri.rptreceiptid AND t.minyear = ri.year 
+	GROUP BY t.rptreceiptid, t.rptledgerid, t.minyear, t.partialbasic, t.partialbasicint, t.partialsef, t.partialsefint
 ) x	
-INNER JOIN cashreceiptitem_rpt ri ON x.rptreceiptid = ri.rptreceiptid 
-WHERE x.minqtr = ri.qtr 
+
 
 
 

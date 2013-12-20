@@ -136,6 +136,7 @@ class RPTReceiptService
 				it.partialledqtr = (it.qtr > 0 ? it.qtr : it.toqtr )
 			}
 			em.updateLedgerYearQtrPaid(it)
+			billingSvc.generateBillByLedgerId(it.rptledgerid)
 		}
 	}
 
