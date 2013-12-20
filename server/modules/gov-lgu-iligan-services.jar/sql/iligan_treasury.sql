@@ -4,7 +4,7 @@ SELECT
 	strorno AS receiptno, dtordate AS receiptdate, curamount AS amount,
 	o.intvoid AS voided
 FROM tblor o
-WHERE o.strorno LIKE $P{orno} OR o.strpaidby LIKE $P{paidby}
+WHERE o.strorno LIKE $P{orno} 
 ORDER BY o.strorno 
 
 
