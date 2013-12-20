@@ -47,16 +47,17 @@
 	<field name="totalareasqm" class="java.math.BigDecimal"/>
 	<field name="totalareaha" class="java.math.BigDecimal"/>
 	<field name="firecode" class="java.math.BigDecimal"/>
+	<field name="prevtdno" class="java.lang.String"/>
 
 
 		<group  name="LEDGERID" >
 			<groupExpression><![CDATA[$F{objid}]]></groupExpression>
 			<groupHeader>
-			<band height="69"  isSplitAllowed="true" >
+			<band height="77"  isSplitAllowed="true" >
 				<staticText>
 					<reportElement
 						mode="Transparent"
-						x="300"
+						x="176"
 						y="30"
 						width="42"
 						height="13"
@@ -76,7 +77,7 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						mode="Transparent"
-						x="342"
+						x="218"
 						y="30"
 						width="101"
 						height="13"
@@ -97,7 +98,7 @@
 					<reportElement
 						mode="Opaque"
 						x="0"
-						y="44"
+						y="55"
 						width="540"
 						height="0"
 						forecolor="#000000"
@@ -124,9 +125,9 @@
 				<staticText>
 					<reportElement
 						mode="Transparent"
-						x="158"
-						y="30"
-						width="25"
+						x="176"
+						y="43"
+						width="41"
 						height="13"
 						forecolor="#000000"
 						backcolor="#FFFFFF"
@@ -144,9 +145,9 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						mode="Transparent"
-						x="183"
-						y="30"
-						width="117"
+						x="217"
+						y="43"
+						width="152"
 						height="13"
 						forecolor="#000000"
 						backcolor="#FFFFFF"
@@ -206,7 +207,7 @@
 						mode="Transparent"
 						x="2"
 						y="30"
-						width="39"
+						width="58"
 						height="13"
 						forecolor="#000000"
 						backcolor="#FFFFFF"
@@ -219,12 +220,12 @@
 					<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
 						<font fontName="Tahoma" pdfFontName="Helvetica" size="9" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 					</textElement>
-				<text><![CDATA[TD No.:]]></text>
+				<text><![CDATA[Prev TD No.:]]></text>
 				</staticText>
-				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						mode="Transparent"
-						x="41"
+						x="60"
 						y="30"
 						width="117"
 						height="13"
@@ -239,12 +240,12 @@
 					<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
 						<font fontName="Tahoma" pdfFontName="Helvetica" size="9" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{tdno}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{prevtdno}]]></textFieldExpression>
 				</textField>
 				<subreport  isUsingCache="true">
 					<reportElement
 						x="0"
-						y="48"
+						y="58"
 						width="540"
 						height="19"
 						key="subreport-1"/>
@@ -374,7 +375,7 @@
 				<staticText>
 					<reportElement
 						mode="Transparent"
-						x="443"
+						x="319"
 						y="30"
 						width="38"
 						height="13"
@@ -394,9 +395,9 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						mode="Transparent"
-						x="480"
+						x="356"
 						y="30"
-						width="60"
+						width="184"
 						height="13"
 						forecolor="#000000"
 						backcolor="#FFFFFF"
@@ -491,6 +492,46 @@
 					</textElement>
 				<text><![CDATA[Area (ha):]]></text>
 				</staticText>
+				<staticText>
+					<reportElement
+						mode="Transparent"
+						x="2"
+						y="43"
+						width="58"
+						height="13"
+						forecolor="#000000"
+						backcolor="#FFFFFF"
+						key="staticText-27"/>
+					<box leftPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
+						<font fontName="Tahoma" pdfFontName="Helvetica" size="9" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
+					</textElement>
+				<text><![CDATA[TD No.:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						mode="Transparent"
+						x="60"
+						y="43"
+						width="117"
+						height="13"
+						forecolor="#000000"
+						backcolor="#FFFFFF"
+						key="textField-39"/>
+					<box leftPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
+						<font fontName="Tahoma" pdfFontName="Helvetica" size="9" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{tdno}]]></textFieldExpression>
+				</textField>
 			</band>
 			</groupHeader>
 			<groupFooter>
