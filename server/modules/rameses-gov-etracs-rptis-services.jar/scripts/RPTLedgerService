@@ -94,7 +94,12 @@ class RPTLedgerService
     public def fixLedgerFaas(ledgerfaas){
         saveLedgerFaas(ledgerfaas)
         em.resetLastBilledInfo(ledgerfaas)
-        billingSvc.generateBillByLedgerId(ledgerfaas.rptledgerid)
+        try{
+            billingSvc.generateBillByLedgerId(ledgerfaas.rptledgerid)
+        }
+        catch(e){
+            //
+        }
     }
 
     @ProxyMethod
@@ -223,7 +228,12 @@ class RPTLedgerService
         em.create(payment, SCHEMA_CAPTUREPMT)
         em.updateLastYearQtrPaid(payment)    
         em.resetLastBilledInfo(payment)
-        billingSvc.generateBillByLedgerId(payment.rptledgerid)
+        try{
+            billingSvc.generateBillByLedgerId(payment.rptledgerid)
+        }
+        catch(e){
+            //
+        }
     }
 
     @ProxyMethod
@@ -268,7 +278,12 @@ class RPTLedgerService
             info.partialledqtr =  (info.lastqtrpaid == 1 ? 4 : info.lastqtrpaid - 1)
         }
         em.fixLedgerInfo(info)
-        billingSvc.generateBillByLedgerId(info.rptledgerid)
+        try{
+            billingSvc.generateBillByLedgerId(info.rptledgerid)
+        }
+        catch(e){
+            //
+        }
     }
 
     void validateFixPartial(info, item){
