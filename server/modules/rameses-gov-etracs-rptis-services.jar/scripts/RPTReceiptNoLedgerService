@@ -37,27 +37,33 @@ class RPTReceiptNoLedgerService
 			bill.billdate = dtSvc.serverDate 
 
 		entity.objid = 'RL' + new java.rmi.server.UID()
-		bill.ledgers = []
-		bill.ledgers << createLedgerInfo(bill, entity)
+		def ledger = createLedgerInfo(bill, entity)
 		def data = billingSvc.executeRules(bill)
-		bill.ledgers.each{bl ->
-			bl.items.each{ item ->
-				def ledger = data.ledgers.find{it.objid == item.objid}
-				if (ledger){
-					billingSvc.updateLedgerItemData(item, ledger)
-					item.basicnet = item.basic + item.basicint - item.basicdisc 
-					item.sefnet   = item.sef + item.sefint - item.sefdisc 
-					item.amount = item.basicnet + item.sefnet + item.firecode
-				}
-			}
-			bl.basicnet = bl.items.basicnet.sum();
-			bl.sefnet   = bl.items.sefnet.sum();
-			bl.firecode = bl.items.firecode.sum();
-			bl.amount   = bl.items.amount.sum();
-			bl.period   = entity.fromqtr + 'Q,' + entity.fromyear + '-' + entity.toqtr + 'Q,' + entity.toyear 
+		data.ledgers.each{
+			it.amount = it.basic + it.basicint - it.basicdisc + it.sef + it.sefint - it.sefdisc + it.firecode
+			it.qtrly = 0
+			it.barangayid = ledger.barangayid
 		}
-		return bill.ledgers.first()
+		ledger.items = data.ledgers 
+		ledger.amount = ledger.items.amount.sum()
+		ledger.basicnet = ledger.items.sum{ it.basic + it.basicint - it.basicdisc}
+		ledger.sefnet = ledger.items.sum{ it.sef + it.sefint - it.sefdisc}
+		ledger.firecode = ledger.items.firecode.sum()
+		ledger.period = buildPeriod(ledger)
+		return ledger 
 	}	
+
+	def buildPeriod(ledger){
+		def first = ledger.items.first();
+		def last = ledger.items.last();
+		if (first.year == last.year && first.fromqtr == 1 && last.toqtr == 4)
+			return first.year + ''
+		if (first.year == last.year)
+			return first.fromqtr + '' + last.toqtr + 'Q, ' + first.year
+		if (first.year != last.year && first.fromqtr == 1 && last.toqtr == 4)
+			return first.year + '-' + last.year 
+		return first.fromqtr + 'Q, ' + first.year + '-' + last.toqtr + 'Q,' + last.year
+	}
 
 
 	@ProxyMethod
@@ -71,7 +77,14 @@ class RPTReceiptNoLedgerService
 		em.create(receipt)
 		receipt.ledgers.each{ rl ->
 			rl.items.each{rli ->
+				rli.rptledgerid = null
 				rli.rptreceiptid = receipt.objid 
+				rli.barangay = rl.barangay
+				rli.pin = rl.fullpin 
+				rli.classification = rl.classification
+				rli.actualuse = rl.actualuse
+				rli.tdno = rl.tdno 
+				rli.cadastrallotno = rl.cadastrallotno
 				em.create(rli, SCHEMA_RECEIPT_ITEM)
 				em.create(rli, SCHEMA_NOLEDGER_ITEM)
 			}
@@ -88,7 +101,7 @@ class RPTReceiptNoLedgerService
 	def createLedgerInfo(bill, entity){
 		entity.lastyearpaid = (entity.fromqtr == 1 ? entity.fromyear - 1 : entity.fromyear )
 		entity.lastqtrpaid  = (entity.fromqtr == 1 ? 4 : entity.fromqtr )
-		def rl = [
+		return [
 			lastyearpaid 	: entity.lastyearpaid,
 			lastqtrpaid		: entity.lastqtrpaid,
 			tdno			: entity.tdno,
@@ -96,70 +109,19 @@ class RPTReceiptNoLedgerService
 			fullpin			: entity.pin ,
 			totalareaha		: 0.0 ,
 			totalareasqm	: 0.0,
-			totalav			: entity.av ,
-			barangay 		: entity.barangay.name,
+			totalav			: entity.assessedvalue ,
+			barangayid      : entity.barangay.objid,
 			cadastrallotno  : null ,
 			barangayid 		: entity.barangay.objid ,
 			classcode 		: entity.classification.code ,
 			actualusecode   : entity.actualuse.code,
 			fromyear 		: (entity.lastqtrpaid = 4 ? entity.lastyearpaid + 1 : entity.lastyearpaid ),
 			fromqtr 		: (entity.lastqtrpaid = 4 ? 1 : entity.lastqtrpaid + 1 ),
-		]
-
-		def curryr = dtSvc.serverYear 
-
-		rl.items = []
-		for (int yr = entity.fromyear; yr <= entity.toyear; yr++){
-			if (yr == entity.fromyear && entity.fromyear == entity.toyear && (entity.fromqtr != 1 || entity.toqtr != 4)){
-				rl.items += createQuarterlyItems(entity, yr, entity.fromqtr, entity.toqtr) 
-			}
-			else if (yr == entity.fromyear && entity.fromqtr != 1){
-				rl.items += createQuarterlyItems(entity, yr, entity.fromqtr, 4) 
-			}
-			else if (yr == entity.toyear && entity.toqtr != 4){
-				rl.items += createQuarterlyItems(entity, yr, 1, entity.toqtr) 
-			}
-			else if (yr >= curryr){
-				rl.items += createQuarterlyItems(entity, yr, 1, 4) 
-			}
-			else{
-				rl.items << createItemInfo(entity, yr, 0, entity.av, 1) 
-			}
-		}
-
-		return rl 
-	}
-
-
-	def createQuarterlyItems(entity, yr, fromqtr, toqtr){
-		def items = [] 
-		fromqtr.upto(toqtr){ qtr ->
-			def qtrlyav = numSvc.round(entity.av / 4)
-			def forthav   = numSvc.round( entity.av - (qtrlyav * 3))
-			items << createItemInfo(entity, yr, qtr, (qtr != 4 ? qtrlyav : forthav), 1)
-		}
-		return items 
-	}
-
-	def createItemInfo(entity, yr, qtr, av, qtrly) {
-		return [
-			objid 			: entity.objid + '-' + yr + '' + qtr,
-			rptledgerid 	: null,
-			rptledgeritemid : null,
-			originalav 		: entity.av, 
-			av 				: av,
-			qtrly 			: qtrly,
-			revtype 		: null,
-			tdno 			: entity.tdno, 
-			year 			: yr,
-			qtr 			: qtr,
-			txntype 	    : entity.txntype,
-			rputype 		: entity.rputype,
-			classification  : entity.classification,
-			actualuse       : entity.classification,
-			barangay 	    : entity.barangay,
-			barangayid 	    : entity.barangay.objid,
-			pin 			: entity.pin,
+			barangay 		: entity.barangay,
+			classification 	: entity.classification,
+			actualuse   	: entity.actualuse,
 		]
 	}
+
+
 }

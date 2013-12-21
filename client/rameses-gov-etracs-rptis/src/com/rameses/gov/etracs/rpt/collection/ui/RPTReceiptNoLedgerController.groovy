@@ -39,7 +39,7 @@ class RPTReceiptNoLedgerController extends com.rameses.enterprise.treasury.cashr
         entity.txntype = 'noledger';
         entity.amount = 0.0;
         clearAllPayments();
-        bill = billSvc.initBill();
+        bill = billSvc.initBill(null);
         mode = MODE_CREATE;
     }
     

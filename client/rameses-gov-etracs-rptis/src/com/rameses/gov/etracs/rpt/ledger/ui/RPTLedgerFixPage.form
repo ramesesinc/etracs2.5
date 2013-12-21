@@ -98,7 +98,7 @@
             <Property name="cellPadding" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
               <Insets value="[10, 0, 0, 0]"/>
             </Property>
-            <Property name="name" type="java.lang.String" value="info.basic"/>
+            <Property name="name" type="java.lang.String" value="info.partialbasic"/>
             <Property name="required" type="boolean" value="true"/>
           </Properties>
         </Component>
@@ -106,7 +106,7 @@
           <Properties>
             <Property name="caption" type="java.lang.String" value="Basic Penalty"/>
             <Property name="captionWidth" type="int" value="120"/>
-            <Property name="name" type="java.lang.String" value="info.basicint"/>
+            <Property name="name" type="java.lang.String" value="info.partialbasicint"/>
             <Property name="required" type="boolean" value="true"/>
           </Properties>
         </Component>
@@ -114,7 +114,7 @@
           <Properties>
             <Property name="caption" type="java.lang.String" value="SEF"/>
             <Property name="captionWidth" type="int" value="120"/>
-            <Property name="name" type="java.lang.String" value="info.sef"/>
+            <Property name="name" type="java.lang.String" value="info.partialsef"/>
             <Property name="required" type="boolean" value="true"/>
           </Properties>
         </Component>
@@ -122,7 +122,7 @@
           <Properties>
             <Property name="caption" type="java.lang.String" value="SEF Penalty"/>
             <Property name="captionWidth" type="int" value="120"/>
-            <Property name="name" type="java.lang.String" value="info.sefint"/>
+            <Property name="name" type="java.lang.String" value="info.partialsefint"/>
             <Property name="required" type="boolean" value="true"/>
           </Properties>
         </Component>

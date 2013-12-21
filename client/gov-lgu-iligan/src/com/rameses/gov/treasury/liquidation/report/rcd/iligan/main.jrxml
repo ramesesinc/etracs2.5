@@ -1054,6 +1054,7 @@ Form
 			<groupExpression><![CDATA[]]></groupExpression>
 			<groupHeader>
 			<band height="14"  isSplitAllowed="true" >
+				<printWhenExpression><![CDATA[new Boolean($P{REPORTTYPE} == "SUMMARY")]]></printWhenExpression>
 				<subreport  isUsingCache="true">
 					<reportElement
 						mode="Opaque"

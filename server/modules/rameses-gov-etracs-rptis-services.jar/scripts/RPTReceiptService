@@ -40,25 +40,11 @@ class RPTReceiptService
 
 	@ProxyMethod
 	public def getItemsForPayment( bill ) {
-		bill.loadbillitems = false
-		billingSvc.generateBill(bill)
-		
-		resetForPaymentFlag(bill)
 		def params = billingSvc.buildParams(bill)
-		em.setItemForPaymentFlag(params)
-		em.setQuarterlyItemForPaymentFlag(params)
 		def items =  em.getItemsForPayment(params).each{ it.pay = true }	
 		items.removeAll(items.findAll{it.amount == 0.0})
 		if (!items) throw new Exception('There are no more unpaid ledgers for this taxpayer.')
 		return items 
-	}
-
-	@ProxyMethod
-	public void resetForPaymentFlag(bill){
-		if (!bill.billdate) bill.billdate = dtSvc.serverDate
-		def params = billingSvc.buildParams(bill)
-		em.resetItemForPaymentFlag(params)
-		em.resetQuarterlyItemForPaymentFlag(params)
 	}
 
 
@@ -74,22 +60,48 @@ class RPTReceiptService
 		
 		//insert cash items
 		receipt.rptitems.each{
+			def partialbasic = 0.0
+			def partialbasicint = 0.0
+			def partialbasicdisc = 0.0
+			def partialsef = 0.0
+			def partialsefint = 0.0
+			def partialsefdisc = 0.0
+
+			def toyear = it.toyear
+			def toqtr = it.toqtr 
+			if (it.partialled){
+				toyear = (it.toqtr == 1 ? toyear - 1 : toyear)
+				toqtr  = it.fromqtr 
+				// toqtr  = (it.toqtr == 1 ? 4 : toqtr - 1)
+				partialbasic = it.partialbasic
+				partialbasicint = it.partialbasicint
+				partialbasicdisc = it.partialbasicdisc
+				partialsef = it.partialsef
+				partialsefint = it.partialsefint
+				partialsefdisc = it.partialsefdisc
+			}
 			def params = [
 				objid			: util.generateId('RI'), 
 				rptreceiptid    : receipt.objid,
 				rptledgerid		: it.rptledgerid,
 				fromyear		: it.fromyear,
 				fromqtr 		: it.fromqtr,
-				toyear			: it.toyear,
-				toqtr 			: it.toqtr,
+				toyear			: toyear,
+				toqtr 			: toqtr,
+				partialbasic 	: partialbasic,
+				partialbasicint : partialbasicint,
+				partialbasicdisc : partialbasicdisc,
+				partialsef 		: partialsef,
+				partialsefint 	: partialsefint,
+				partialsefdisc 	: partialsefdisc,
+				partialledyear  : it.partialledyear,
+				partialledqtr   : it.partialledqtr,
 			]
+
 			em.insertPaidItemByLedgerId(params)
-			em.postPaymentToLedgerItem(params)
-			em.postPaymentToQuarterlyLedgerItem(params)
-			em.getQuarterlyPaymentsforLedgerItem(params).each{
-				em.applyQuarterlyPaymentToLedgerItem(it)
-			}
-			em.updateLedgerItemQuarterlyPaidInfo(params)
+			em.deletePaidBillItems(params)
+
+			//TODO: if partial toqtr must be less than 1
 			em.updateLedgerYearQtrPaid(params)
 		}
 	}
@@ -116,17 +128,16 @@ class RPTReceiptService
 			rptreceiptid : receipt.objid,
 		]
 
-		em.voidLedgerItemPayment(params)
-		em.voidQuarterlyItemPayment(params)
-		em.getAppliedQuarterlyPaymentsOnLedgerItem(params).each{
-			em.voidAppliedQuarterlyPaymentsOnLedgerItem(it)	
-		}
 		em.getLedgersMinPaidYearAndQtr(params).each{
 			it.toyear = (it.minqtr <= 1 ? it.minyear - 1 : it.minyear) 
 			it.toqtr = (it.minqtr <= 1 ? 4 : it.minqtr - 1) 
+			if (it.partialbasic > 0.0){
+				it.partialledyear = it.toyear
+				it.partialledqtr = (it.qtr > 0 ? it.qtr : it.toqtr )
+			}
 			em.updateLedgerYearQtrPaid(it)
+			billingSvc.generateBillByLedgerId(it.rptledgerid)
 		}
-		em.voidReceiptItems(params)
 	}
 
 

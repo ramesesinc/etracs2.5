@@ -44,7 +44,7 @@ class RPTReceiptNoLedgerAddController
     void init(){
         entity       = [items:[]];
         bill.ledgers = []
-        bill.ledgers << entity 
+        // bill.ledgers << entity 
         mode         = MODE_CREATE;
     }
     
@@ -82,6 +82,10 @@ class RPTReceiptNoLedgerAddController
     
     void calculateDue(){
         validateInfo();
+        bill.noledger = true;
+        bill.billtoyear = entity.toyear;
+        bill.billtoqtr = entity.toqtr;
+        bill.ledger = entity
         entity.ledger = svc.calculateDue(bill, entity)
         listHandler.reload();
         binding.refresh('entity.ledger.amount')

@@ -39,8 +39,7 @@ class RPTLedgerService
 
     def SCHEMA_LEDGER   = 'rptledger'
     def SCHEMA_FAAS     = 'ledgerfaas'
-    def SCHEMA_ITEM     = 'item'
-    def SCHEMA_QTRLYITEM = 'qtrlyitem'
+    def SCHEMA_BILLITEM     = 'billitem'
     def SCHEMA_CAPTUREPMT = 'capturepayment'
 
     def STATE_PENDING   = 'PENDING'
@@ -92,71 +91,20 @@ class RPTLedgerService
     }
 
     @ProxyMethod
+    public def fixLedgerFaas(ledgerfaas){
+        saveLedgerFaas(ledgerfaas)
+        em.resetLastBilledInfo(ledgerfaas)
+        try{
+            billingSvc.generateBillByLedgerId(ledgerfaas.rptledgerid)
+        }
+        catch(e){
+            //
+        }
+    }
+
+    @ProxyMethod
     public def removeLedgerFaas( ledgerfaas ) {
         em.delete(ledgerfaas, SCHEMA_FAAS)    
-    }
-
-
-    @ProxyMethod
-    public def createLedgerItem( item ) {
-        item.forpayment = util.toBoolean(item.forpayment, false)
-        item.partial = util.toBoolean(item.partial, false)
-        em.create(item, SCHEMA_ITEM)
-        return item 
-    }
-
-    @ProxyMethod
-    public def openLedgerItem( item ) {
-        item = em.read(item, SCHEMA_ITEM)
-        if (item){
-            item.year = util.toInteger(item.year)
-            item.forpayment = util.toBoolean(item.forpayment, false)
-            item.qtrly = util.toBoolean(item.qtrly, false)
-            item.partial = util.toBoolean(item.partial, false)
-        }
-        return item
-    }
-
-    @ProxyMethod
-    public def updateLedgerItem( item ) {
-        item.year = util.toInteger(item.year)
-        item.forpayment = util.toBoolean(item.forpayment, false)
-        item.partial = util.toBoolean(item.partial, false)
-        em.update(item, SCHEMA_ITEM)
-    }
-
-    @ProxyMethod
-    public def openLedgerItemQuarterly( item ) {
-        item = em.read(item, SCHEMA_QTRLYITEM)
-        if (item){
-            item.year = util.toInteger(item.year)
-            item.qtr = util.toInteger(item.qtr)
-            item.forpayment = util.toBoolean(item.forpayment, false)
-            item.partial = util.toBoolean(item.partial, false)
-        }
-        return item 
-    }
-
-    @ProxyMethod
-    public def updateLedgerItemQuarterly( item ) {
-        item.year = util.toInteger(item.year)
-        item.qtr = util.toInteger(item.qtr)
-        item.forpayment = util.toBoolean(item.forpayment, false)
-        item.partial = util.toBoolean(item.partial, false)
-        em.update(item, SCHEMA_QTRLYITEM)
-    }
-
-    @ProxyMethod
-    public def updateLedgerItemAccountInfo( item ) {
-        def params =[
-            rptledgeritemid     : item.rptledgeritemid,
-            basicacctid         : item.basicacct.objid,
-            basicintacctid      : item.basicintacct.objid,
-            sefacctid           : item.sefacct.objid,
-            sefintacctid        : item.sefintacct.objid,
-            firecodeacctid      : item.firecodeacct.objid,
-        ]
-        em.updateLedgerItemAccountInfo(params)
     }
 
     @ProxyMethod
@@ -180,9 +128,7 @@ class RPTLedgerService
         ledger.faases.each{  
             it.state = ledger.state 
             em.approveLedgerFaas(it)
-            postLedgerItems(it)
         }
-        // billingSvc.generateBillByLedgerId(ledger.objid)
         return ledger;
     }
 
@@ -234,8 +180,8 @@ class RPTLedgerService
 
 
     @ProxyMethod
-    public def getLedgerItems(ledgerid){
-        return em.getLedgerItems([rptledgerid:ledgerid])
+    public def getLedgerBillItems(ledgerid){
+        return em.getLedgerBillItems([rptledgerid:ledgerid])
     }
 
 
@@ -280,127 +226,15 @@ class RPTLedgerService
         payment.paidby_address = payment.paidby.address
         payment.paidby = payment.paidby.name.substring(0,len)
         em.create(payment, SCHEMA_CAPTUREPMT)
-
         em.updateLastYearQtrPaid(payment)    
-        
-        payment.origtoqtr = payment.toqtr
-
-        payment.fromyear.upto(payment.toyear){ yr ->
-            def item = em.findLedgerItemByYear([rptledgerid:payment.rptledgerid, year:yr])
-            payment.paidyear = yr 
-            payment.toqtr = payment.origtoqtr
-
-            def bill = [rptledgerid:payment.rptledgerid, billtoyear:yr, insertqtrly:1, forpayment:0]
-
-            if (item.qtrly == 1 && yr == payment.fromyear ){
-                payment.toqtr = (payment.fromyear == payment.toyear ? payment.toqtr : 4)
-                em.closePaidQtrlyLedgerItemByYear(payment)
-                em.updateLedgerItemQuarterlyPaidInfo(payment)
-            }
-            else if (item.qtrly == 1 && yr == payment.toyear ){
-                payment.toqtr = payment.origtoqtr
-                em.closePaidQtrlyLedgerItemByYear(payment)
-                em.updateLedgerItemQuarterlyPaidInfo(payment)
-            }
-            else if ( item.qtrly == 0 && yr == payment.fromyear && payment.fromyear == payment.toyear && ( payment.fromqtr != 1 || payment.toqtr != 4  )) {
-                billingSvc.insertQtrlyLedgerItems(bill, [objid:payment.rptledgerid])
-                em.closePaidQtrlyLedgerItemByYear(payment)
-                em.updateLedgerItemQuarterlyPaidInfo(payment)
-            }
-            else if ( item.qtrly == 0 && yr == payment.toyear && ( payment.toqtr != 4 )) {
-                billingSvc.insertQtrlyLedgerItems(bill, [objid:payment.rptledgerid])
-                em.closePaidQtrlyLedgerItemByYear(payment)
-                em.updateLedgerItemQuarterlyPaidInfo(payment)
-            }
-            else {
-                em.closePaidLedgerItemByYear(payment)
-            }
+        em.resetLastBilledInfo(payment)
+        try{
+            billingSvc.generateBillByLedgerId(payment.rptledgerid)
+        }
+        catch(e){
+            //
         }
     }
-
-    void postLedgerItems(ledgerfaas){
-        def pdate = dtSvc.parseCurrentDate()
-        ledgerfaas.toyear  = (ledgerfaas.toyear == 0 ? pdate.year : ledgerfaas.toyear)
-        // def qtrlyPrevYears = util.toBoolean(var.rptledger_previous_year_computed_as_quarterly, false)
-        if (ledgerfaas.fromyear <= ledgerfaas.toyear ){
-            ledgerfaas.fromyear.upto(ledgerfaas.toyear){ yr ->
-                doPostLedgerItems(ledgerfaas.rptledgerid, ledgerfaas, yr)
-            }
-        }
-    }
-
-    void doPostLedgerItems(rptledgerid, ledgerfaas, yr){
-        postYearlyItems(ledgerfaas, yr)
-        if ( yr >= dtSvc.serverYear  ){
-            billdb.insertQtrlyLedgerItems([rptledgerid:rptledgerid, billtoyear:yr, forpayment:0])
-            billdb.setLedgerItemQtrlyFlag([rptledgerid:rptledgerid, billtoyear:yr, forpayment:0])
-        }
-    }
-
-    void postYearlyItems(ledgerfaas, yr){
-        println 'posting yearly item ' + ledgerfaas.objid + ' === ' + yr 
-        createLedgerItem(doCreateLedgerItem(ledgerfaas, yr, 0))
-    }
-
-    @ProxyMethod
-    public def insertLedgerItems(ledger, fromyear, toyear){
-        def curryear = dtSvc.serverYear 
-        if( fromyear <= toyear) {
-            fromyear.upto(toyear){yr -> 
-                def ledgerfaas = em.findLedgerFaasByFaasId([rptledgerid:ledger.objid, faasid:ledger.faasid, yr:yr, curryear:curryear])
-                if( ledgerfaas ){
-                    doPostLedgerItems(ledgerfaas.rptledgerid, ledgerfaas, yr)
-                    em.updateLedgerLastItemYear([objid:ledger.objid, lastitemyear:toyear])
-                }
-            }
-        }
-    }
-
-
-    def doCreateLedgerItem(ledgerfaas, yr, qtr){
-        return [
-            objid               : util.generateId('RLI'),
-            state               : STATE_OPEN,
-            rptledgerid         : ledgerfaas.rptledgerid,
-            rptledgerfaasid     : ledgerfaas.objid, 
-            year                : yr, 
-            qtr                 : qtr, 
-            assessedvalue       : ledgerfaas.assessedvalue,
-            basic               : 0.0,
-            basicpaid           : 0.0,
-            basicint            : 0.0,
-            basicintpaid        : 0.0,
-            basicintpartial     : 0.0,
-            basicdisc           : 0.0,
-            basicdisctaken      : 0.0,
-            basicamnesty        : 0.0,
-            basicintamnesty     : 0.0,
-            basicamnestyapplied : 0.0,
-            basicintamnestyapplied : 0.0,
-            basiccredit         : 0.0,
-            sef                 : 0.0,
-            sefpaid             : 0.0,
-            sefint              : 0.0,
-            sefintpaid          : 0.0,
-            sefintpartial       : 0.0,
-            sefdisc             : 0.0,
-            sefdisctaken        : 0.0,
-            sefamnesty          : 0.0,
-            sefintamnesty       : 0.0,
-            sefamnestyapplied   : 0.0,
-            sefintamnestyapplied : 0.0,
-            sefcredit           : 0.0,
-            firecode            : 0.0,
-            firecodepaid        : 0.0,
-            forpayment          : 0,
-            partial             : 0,
-            lastqtrpaid         : 0,
-            qtrly               : false,
-        ]
-    }
-
-
-
 
     @ProxyMethod
     public def approveMigratedLedger( ledger) {
@@ -435,48 +269,24 @@ class RPTLedgerService
         if (!info.taxpayer) throw new Exception('Taxpayer is required.')
 
         info.rptledgerid = info.objid 
-        info.lastitemyear = (info.lastqtrpaid == 4 ? info.lastyearpaid : info.lastyearpaid - 1)
-        info.paidyear = info.lastyearpaid
-        info.toyear = info.lastyearpaid
-        info.toqtr = info.lastqtrpaid
+        info.partialledyear = null
+        info.partialledqtr = null 
 
-        em.updateLedgerLastItemYear(info)
-        em.deleteQuarterlyLedgerItem(info)
-        em.deleteLedgerItem(info)            
-
-        def bill = billingSvc.initBill()
-        bill.loadbillitems = false
-        bill.taxpayer = info.taxpayer
-        bill.ledgerids.add(info.objid)
-        billingSvc.generateBill( bill )
-
-        if (info.lastqtrpaid != 4){
-            if (info.lastyearpaid == dtSvc.serverYear){
-                em.fixPaidQtrlyLedgerItemByYear(info)
-            }
-            else {
-                //simulate qtrly payment for previous year
-                bill.billtoyear = info.lastyearpaid
-                bill.billtoqtr = 3
-                billingSvc.generateBill( bill )
-                em.fixPaidQtrlyLedgerItemByYear(info)
-                em.updateLedgerItemLastQtrPaid(info)
-            }
-            if (info.basic > 0.0 || info.sef > 0.0){
-                em.partialPaidQtrlyLedgerItemByYear(info)
-            }
+        def partial = info.partialbasic + info.partialbasicint + info.partialsef + info.partialsefint
+        if ( partial > 0){
+            info.partialledyear = (info.lastqtrpaid == 1 ? info.lastyearpaid - 1 : info.lastyearpaid) 
+            info.partialledqtr =  (info.lastqtrpaid == 1 ? 4 : info.lastqtrpaid - 1)
         }
-        else if (info.basic > 0.0 || info.sef > 0.0){
-            em.partialPaidLedgerItemByYear(info)
+        em.fixLedgerInfo(info)
+        try{
+            billingSvc.generateBillByLedgerId(info.rptledgerid)
         }
-
-        em.updateLastYearQtrPaid(info)
-        //force recalc bill again
-        billingSvc.forceRecalcBill(info.objid)
+        catch(e){
+            //
+        }
     }
 
     void validateFixPartial(info, item){
-        println 'item -> ' + item 
         if (info.basic > item.basic )
             throw new Exception('Partial Basic must not exceed ' + numSvc.format('#,##0.00',item.basic) + '.')
         if (info.basicint > item.basicint )

@@ -1,0 +1,52 @@
+<schema>
+    <element name="billitem" tablename="rptledgerbillitem">
+        <field name="objid" primary="true" />
+        <field name="rptledgerid" required="true" />
+        <field name="rptledgerfaasid" required="true" />
+        <field name="year" required="true" type="integer" />
+        <field name="qtr" required="true" type="integer" />
+        <field name="fromqtr" required="true" type="integer" />
+        <field name="toqtr" required="true" type="integer" />
+        <field name="assessedvalue" required="true" type="decimal" />
+        <field name="qtrlyav" required="true" type="decimal" />
+        <field name="basic" required="true" type="decimal" />
+        <field name="basicpaid" required="true" type="decimal" />
+        <field name="basicint" required="true" type="decimal" />
+        <field name="basicintpaid" required="true" type="decimal" />
+        <field name="basicintpartial" required="true" type="decimal" />
+        <field name="basicdisc" required="true" type="decimal" />
+        <field name="basicdisctaken" required="true" type="decimal" />
+        <field name="basicamnesty" required="true" type="decimal" />
+        <field name="basicintamnesty" required="true" type="decimal" />
+        <field name="basiccredit" required="true" type="decimal" />
+        <field name="sef" required="true" type="decimal" />
+        <field name="sefpaid" required="true" type="decimal" /> 
+        <field name="sefint" required="true" type="decimal" />
+        <field name="sefintpaid" required="true" type="decimal" />
+        <field name="sefintpartial" required="true" type="decimal" />
+        <field name="sefdisc" required="true" type="decimal" />
+        <field name="sefdisctaken" required="true" type="decimal" />
+        <field name="sefamnesty" required="true" type="decimal" />
+        <field name="sefintamnesty" required="true" type="decimal" />
+        <field name="sefcredit" required="true" type="decimal" />
+        <field name="firecode" required="true" type="decimal" />
+        <field name="firecodepaid" required="true" type="decimal" />
+        <field name="revtype" />
+        <field name="amnestyinfo" />
+        <field name="forpayment" required="true" type="boolean" />
+        <field name="partial" required="true" type="boolean" />
+        <field name="partialbasic" type="decimal" />
+        <field name="partialbasicint" type="decimal" />
+        <field name="partialbasicdisc" type="decimal" />
+        <field name="partialsef" type="decimal" />
+        <field name="partialsefint" type="decimal" />
+        <field name="partialsefdisc" type="decimal" />
+
+        <field name="basicacctid"  /> 
+        <field name="basicintacctid"  /> 
+        <field name="sefacctid"  /> 
+        <field name="sefintacctid"  /> 
+        <field name="firecodeacctid"  /> 
+
+    </element>
+</schema>
