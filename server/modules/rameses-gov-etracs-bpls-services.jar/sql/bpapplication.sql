@@ -32,8 +32,6 @@ ORDER BY a.appno
 #######################################
 # used for retrieving the application
 #######################################
-[findBIN]
-SELECT bin FROM business_bin WHERE objid=$P{businessid}
 
 [getTaxfees]
 SELECT br.*, r.code AS account_code, ba.taxfeetype, ba.taxfeetype AS account_taxfeetype 
@@ -63,20 +61,7 @@ WHERE b.refid=$P{objid}
 #######################################
 # used for cash receipt
 #######################################
-[findApplicationByAppNo]
-SELECT ba.objid AS applicationid, ba.appno, 
-ba.apptype, ba.owner_objid, ba.owner_name, 
-ba.businessname, ba.businessid, ba.businessaddress, ba.state 
-FROM bpapplication ba 
-WHERE  ba.appno=$P{appno}
 
-[getApplicationsByOwner]
-SELECT ba.objid AS applicationid, ba.appno, ba.apptype, ba.owner_name, 
-ba.businessname, ba.businessid, bb.bin, ba.businessaddress 
-FROM bpapplication ba 
-LEFT JOIN business b ON b.objid=ba.businessid
-LEFT JOIN business_bin bb ON b.objid=bb.objid
-WHERE ba.state = $P{state} AND ba.owner_objid=$P{ownerid}
 
 
 [changeState]

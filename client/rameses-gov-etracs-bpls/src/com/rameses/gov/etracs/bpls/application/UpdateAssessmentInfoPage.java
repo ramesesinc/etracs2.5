@@ -76,6 +76,7 @@ public class UpdateAssessmentInfoPage extends javax.swing.JPanel {
         });
         xDataTable2.setHandler("assessmentInfoModel");
 
+        xButton1.setMnemonic('u');
         xButton1.setName("updateAssessmentInfo");
         xButton1.setText("Update Assessment Info");
 

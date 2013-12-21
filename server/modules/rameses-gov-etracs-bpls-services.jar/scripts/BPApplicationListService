@@ -18,13 +18,15 @@ public class BPApplicationListService extends ActiveListService {
 			[caption:'For Assessment', state:'assessment', leaf:true, folder:true, allowSearch:true],
 			[caption:'For Approval', state:'approval', leaf:true, folder:true, allowSearch:true],
 			[caption:'For Payment', state:'payment', leaf:true, folder:true, allowSearch:true],
-			[caption:'For Release', state:'release', leaf:true, folder:true, allowSearch:true]
+			[caption:'For Release', state:'release', leaf:true, folder:true, allowSearch:true],
+			[caption:'Active', state:'active', leaf:true, folder:true, allowSearch:true],
 		];
 	}	
 
 	@ProxyMethod
 	public def getColumns(o) {
 		return [
+			[name:'bin', caption:'BIN', width:120, resizable:false],
 			[name:'appno', caption:'Application No', width:120, resizable:false],
 			[name:'apptype', caption:'App. Type', width:120, resizable:false],
 			[name:'appyear', caption:'Year', width:80, resizable:false],

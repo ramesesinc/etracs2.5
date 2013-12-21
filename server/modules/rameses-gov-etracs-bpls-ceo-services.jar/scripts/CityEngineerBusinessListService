@@ -1,0 +1,41 @@
+import com.rameses.annotations.*;
+import com.rameses.util.*;
+import java.rmi.server.*;
+import com.rameses.services.extended.*;
+
+public class CityEngineerBusinessListService extends ActiveListService {
+
+	@ActiveDB("business_cityengineer")
+	def em;
+
+	@ProxyMethod
+	public def getNodes(o) {
+		return [
+			[caption:'For Assessment', state:'pending', leaf:true, folder:true, allowSearch:true],
+			[caption:'Active', state:'active', leaf:true, folder:true, allowSearch:true],
+		];
+	}	
+
+	@ProxyMethod
+	public def getColumns(o) {
+		return [
+			[name:'bin', caption:'BIN', width:120, resizable:false],
+			[name:'businessname', caption:'Business Name' ],
+			[name:'businessaddress', caption:'Business Address' ],
+			[name:'owner.name', caption:'Owner'],
+			[name:'state', caption:'State', width:120, resizable:false]
+		];
+	}
+
+	void beforeList(o) {
+		o._pagingKeys = "b.objid";
+		if(o.name=="search") {
+			o._listMethod = "getSearchList";
+			if( o.searchtext == "%") o.searchtext ="?";
+		}	
+	}
+
+	
+	
+
+}

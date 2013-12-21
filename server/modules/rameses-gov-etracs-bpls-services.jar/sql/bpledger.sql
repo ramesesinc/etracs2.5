@@ -1,10 +1,4 @@
 #######################################
-# BPCashReceiptService
-#######################################
-[findByBarcode]
-SELECT * FROM 
-
-#######################################
 # BPLedgerService
 #######################################
 [getReceivables]
@@ -20,13 +14,12 @@ INNER JOIN businessaccount ba ON br.account_objid = ba.objid
 INNER JOIN revenueitem r ON  r.objid=ba.objid 
 LEFT JOIN bpapplication app ON app.objid=br.applicationid
 WHERE br.businessid=$P{objid} 
-
+ORDER BY br.iyear DESC, br.lob_name ASC
 
 [getReceivablePayments]
 SELECT * 
 FROM bpreceivable_credit 
 WHERE receivableid = $P{objid}
-
 
 [removeReceivables]
 DELETE FROM bpreceivable WHERE ledgerid=$P{objid}

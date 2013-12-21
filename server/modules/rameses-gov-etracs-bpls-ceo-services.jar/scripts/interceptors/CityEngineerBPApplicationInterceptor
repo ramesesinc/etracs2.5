@@ -8,7 +8,7 @@ public class CityEngineerBPApplicationInterceptor {
 	@ActiveDB("business_cityengineer")
 	def em;
 
-	@After( pattern="BPApplicationService.submitForAssessment" )
+	@After( pattern="BPApplicationService.(create|submitForAssessment)" )
 	public void onSubmitForAssessment(evt) {
 		def app = evt.args[0];
 		def m = app.appinfos.find{ it.attribute.objid == "LOCATED_ON_GOVERNMENT_PROPERTY" };
@@ -17,7 +17,7 @@ public class CityEngineerBPApplicationInterceptor {
 		//find if there is  already a link, if not, we need to create one
 
 		if( !m?.value ) {
-			def z = em.findBusinessLink([businessid:app.businessid]);
+			def z = em.findInfo([businessid:app.businessid]);
 			if(!z) {
 				z = [objid: "BUSCEO"+ new UID()];
 				z.businessid = app.businessid;
@@ -30,7 +30,7 @@ public class CityEngineerBPApplicationInterceptor {
 	@Before( pattern="BPApplicationService.approveApplication" )
 	public void onApproveApplication(evt) {
 		def app = evt.args[0];
-		def z = em.findBusinessLink([businessid:app.businessid]);
+		def z = em.findInfo([businessid:app.businessid]);
 		if(z) {
 			if( z.state == 'pending') {
 				throw new Exception("There is still a pending assessment in City Engineers Office");
@@ -46,17 +46,29 @@ public class CityEngineerBPApplicationInterceptor {
 	***/
 	@Before( pattern="BPApplicationService.assess" )
 	public void fireAssess(evt) {
-		def o = evt.args[0];		
+		def o = evt.args[0];	
 		def taxfees = em.getFees([businessid:o.businessid]);
 		if( o.taxfees == null ) o.taxfees = [];
 		taxfees.each {
 			if(it.state=='active') {
-				it.objid = "BPTXF"+new UID();
+				it.objid = "BCEOFEE"+new UID();
 				it.department = 'CEO';
 				it.account.taxfeetype = 'OTHERCHARGE';
 				it.taxfeetype = 'OTHERCHARGE';
 				o.taxfees << it;
 			}
+		}
+	}	
+
+	/***
+	* add additional fees from city engineer. Add @Before so it can be totalled.
+	***/
+	@After( pattern="BusinessInfoService.open" )
+	public void onOpen(evt) {
+		def result = evt.result;
+		def z = em.findInfo( [businessid: result.objid ] );
+		if(z) {
+			result.cityengineer = z;
 		}
 	}	
 

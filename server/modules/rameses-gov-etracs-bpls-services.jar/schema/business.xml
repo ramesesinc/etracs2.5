@@ -16,7 +16,11 @@
 		<field name="activeyear" required="true"/>
 		<field name="user_objid" />
 		<field name="pin" />
+		<field name="bin" required="true"/>
 		<field name="taxcredit" required="true"/>
+		<field name="currentapplicationid" />
+		<field name="currentpermitid" />
+		<field name="qtrpaid" />
 	</element>	
 
 	<element name="bin" tablename="business_bin">
@@ -30,7 +34,7 @@
 	<element name="lob" tablename="business_lob">
 		<field name="objid" primary="true"/>
 		<field name="businessid" required="true"/>
-		<field name="applicationid" required="true"/>
+		<field name="applicationid" />
 		<field name="iyear" required="true"/>
 		<field name="lobid" required="true"/>
 		<field name="name" required="true"/>
@@ -79,13 +83,15 @@
 		<field name="objid" primary="true"/>
 		<field name="businessid" required="true"/>
 		<field name="applicationid" required="true"/>
+		<field name="activeyear" required="true"/>
+		<field name="version" required="true"/>
 		<field name="permitno" required="true"/>
 		<field name="permittype" required="true"/>
 		<field name="dtissued" required="true"/>
 		<field name="issuedby_objid" required="true"/>
 		<field name="issuedby_name" required="true"/>
 		<field name="expirydate" required="true"/>
-		<field name="remarks" required="true"/>
+		<field name="remarks" />
 	</element>	
 
 	<element name="changeinfo" tablename="business_changeinfo">

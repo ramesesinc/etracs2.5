@@ -15,10 +15,10 @@
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="xDataTable2" alignment="0" min="-2" pref="831" max="-2" attributes="0"/>
+                  <Component id="xDataTable2" alignment="0" min="-2" pref="895" max="-2" attributes="0"/>
                   <Component id="xButton1" alignment="0" min="-2" pref="159" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace pref="115" max="32767" attributes="0"/>
+              <EmptySpace pref="51" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -44,8 +44,9 @@
     </Component>
     <Component class="com.rameses.rcp.control.XButton" name="xButton1">
       <Properties>
+        <Property name="mnemonic" type="int" value="117"/>
         <Property name="name" type="java.lang.String" value="updateAppInfo"/>
-        <Property name="text" type="java.lang.String" value="Update Application Info"/>
+        <Property name="text" type="java.lang.String" value="Update Business Info"/>
       </Properties>
     </Component>
   </SubComponents>

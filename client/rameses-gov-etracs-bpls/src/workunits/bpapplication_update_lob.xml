@@ -65,13 +65,13 @@
                 if(!selectedLob) return;
                 if(selectedLob.assessmenttype != "RENEW" ) 
                     throw new Exception("Only renew lines of business can be retired");
-                selectedLob.assessmenttype = 'RETIRED'    
+                selectedLob.assessmenttype = 'RETIRE'    
                 lobUpdated = true;
             }
 
             void unretireLOB() {
                 if(!selectedLob) return;
-                if(selectedLob.assessmenttype != "RETIRED" ) 
+                if(selectedLob.assessmenttype != "RETIRE" && selectedLob.assessmenttype != "RETIRED" ) 
                     throw new Exception("Only retired lines of business can be unretired");
                 selectedLob.assessmenttype = 'RENEW'    
                 lobUpdated = true;

@@ -112,13 +112,13 @@ class AbstractBPApplication extends PageFlowController {
         if(!selectedLob) return;
         if(selectedLob.assessmenttype != "RENEW" ) 
             throw new Exception("Only renew lines of business can be retired");
-        selectedLob.assessmenttype = 'RETIRED'    
+        selectedLob.assessmenttype = 'RETIRE'    
         lobUpdated = true;
     }
 
     void unretireLOB() {
         if(!selectedLob) return;
-        if(selectedLob.assessmenttype != "RETIRED" ) 
+        if(selectedLob.assessmenttype != "RETIRE" && selectedLob.assessmenttype != "RETIRED" ) 
             throw new Exception("Only retired lines of business can be unretired");
         selectedLob.assessmenttype = 'RENEW'    
         lobUpdated = true;
@@ -129,6 +129,7 @@ class AbstractBPApplication extends PageFlowController {
             entity: entity, 
             initial: 'info',
             service: infoRuleSvc,
+            title: 'Business Information',
             existingInfos: entity.appinfos,
             handler:{ result ->
                 entity.appinfos = result.infos;
@@ -147,7 +148,7 @@ class AbstractBPApplication extends PageFlowController {
             service: assessmentRuleSvc,
             initialInfos: entity.appinfos.collect{it},
             existingInfos: entity.assessmentinfos,
-            title: 'Assessment Information for ' + entity.appyear,
+            title: 'Assessment Information for ' + (entity.appyear?entity.appyear:' Current Year'),
             handler:{ result ->
                 entity.assessmentinfos = result.infos.findAll{ it.infotype == 'assessment' };
                 entity.requirements = result.requirements;
@@ -159,6 +160,11 @@ class AbstractBPApplication extends PageFlowController {
                 dirty = true;
             }
         ]);
+    }
+
+    def verifyAppInfo() {
+        if(!entity.appinfos) 
+            throw new Exception("Please specify at least one info for business");
     }
 
     def verifyLOB() {

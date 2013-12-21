@@ -1,0 +1,58 @@
+import com.rameses.annotations.*;
+import com.rameses.util.*;
+import java.rmi.server.*;
+import com.rameses.services.extended.*;
+
+public class CityEngineerBusinessService {
+
+	@ActiveDB("business_cityengineer")
+	def em;
+
+	@Service("DateService")
+	def dateSvc;
+
+	@Env
+	def env;
+
+	@ProxyMethod
+	public def getInfo(def o) {
+		o.businessid = o.objid;
+		def m = em.findInfo(o);
+		m.fees = em.getFees([businessid: o.objid]);
+		return m;
+	}
+
+	@ProxyMethod
+	public def addFee(def o) {
+		o.state = 'inactive';
+		o.user = [objid: env.USERID, name: env.USER];
+		em.create( o, "fee" );
+	}
+
+	@ProxyMethod
+	public def updateFee(def o) {
+		em.update( o, "fee" );
+	}
+
+	@ProxyMethod
+	public def removeFee(def o) {
+		em.delete( o, "fee" );
+	}
+
+	@ProxyMethod
+	public def activate(o) {
+		def z = [businessid:o.objid, state:'active']
+		em.activateFees( z );
+		em.changeState(z);
+		return getInfo(o);
+	}
+
+	@ProxyMethod
+	public def deactivate(o) {
+		def z = [businessid:o.objid, state:'inactive']
+		em.activateFees( z );
+		em.changeState(z);
+		return getInfo(o);
+	}
+
+}

@@ -10,28 +10,28 @@ class BusinessNameVerificationService {
 	
 	@ProxyMethod
 	public def getList(o) {
-		int numChars = 2;
-		double weightThreshold = 88.0
-
+		int numChars = 1;
+		double weightThreshold = 80.0
+		
 		def wtThreshold = weightThreshold / 100.0; 
 		JaroWinkler jw = new JaroWinkler( weightThreshold, numChars);
 
 		//get the first 2 letters for query and then apply jarowinkler.
 		def m = [:];
-		m.tradename = o.substring(0,numChars) + "%";
+		m.businessname = o.substring(0,numChars) + "%";
 
 		def list = em.getListForVerification(m);
-		println list.size();
 
 		int i = 0;
 		def matchList = [];
-		def tdname = o.replaceAll("\\s{1,}", "_");
-        list.each {
-            def wt = jw.compare( o, it.tradename.replaceAll("\\s{1,}","_") );
+		def tdname = o.replaceAll("\\s{1,}", "");
+        for(it in list) {
+            def wt = jw.compare( o, it.businessname.replaceAll("\\s{1,}","") );
             if( wt  >= wtThreshold) {
                 it.weight = (int)( wt * 100)
                 matchList.add( it );
             }
+            if(i>50)break;
         }
         return matchList.sort{ it.weight * -1 };
 	}

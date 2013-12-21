@@ -14,14 +14,16 @@ class BPRenewalApplication extends AbstractNewBPApplication {
 
     def query = [:];
     def selectedApplication;
+    def list = [];
 
     def renewalModel = [
         fetchList: {    
-            return renewalSvc.getList(query);
+            return list;
         }
     ] as BasicListModel;
 
     void doSearch() {
+        list = renewalSvc.getList(query);
         renewalModel.reload();
     }
 

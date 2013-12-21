@@ -30,39 +30,27 @@ public class BusinessGeneralInfo extends javax.swing.JPanel {
     private void initComponents() {
         jPanel1 = new javax.swing.JPanel();
         xFormPanel1 = new com.rameses.rcp.control.XFormPanel();
-        xLabel2 = new com.rameses.rcp.control.XLabel();
-        xLabel5 = new com.rameses.rcp.control.XLabel();
-        xLabel7 = new com.rameses.rcp.control.XLabel();
-        xLabel6 = new com.rameses.rcp.control.XLabel();
+        xLabel10 = new com.rameses.rcp.control.XLabel();
         xLabel4 = new com.rameses.rcp.control.XLabel();
         xLabel3 = new com.rameses.rcp.control.XLabel();
+        xLabel5 = new com.rameses.rcp.control.XLabel();
+        xLabel2 = new com.rameses.rcp.control.XLabel();
+        xLabel7 = new com.rameses.rcp.control.XLabel();
+        xLabel6 = new com.rameses.rcp.control.XLabel();
         xLabel1 = new com.rameses.rcp.control.XLabel();
         xLabel8 = new com.rameses.rcp.control.XLabel();
+        xLabel9 = new com.rameses.rcp.control.XLabel();
+        xLabel11 = new com.rameses.rcp.control.XLabel();
 
         com.rameses.rcp.control.border.XTitledBorder xTitledBorder1 = new com.rameses.rcp.control.border.XTitledBorder();
         xTitledBorder1.setTitle("General Information");
         jPanel1.setBorder(xTitledBorder1);
 
         xFormPanel1.setCaptionWidth(150);
-        xLabel2.setCaption("Org Type");
-        xLabel2.setExpression("#{entity.orgtypename}");
-        xLabel2.setPreferredSize(new java.awt.Dimension(0, 16));
-        xFormPanel1.add(xLabel2);
-
-        xLabel5.setCaption("Trade Name");
-        xLabel5.setExpression("#{entity.tradename}");
-        xLabel5.setPreferredSize(new java.awt.Dimension(0, 16));
-        xFormPanel1.add(xLabel5);
-
-        xLabel7.setCaption("Owner Name");
-        xLabel7.setExpression("#{entity.owner.name}");
-        xLabel7.setPreferredSize(new java.awt.Dimension(0, 16));
-        xFormPanel1.add(xLabel7);
-
-        xLabel6.setCaption("Owner Address");
-        xLabel6.setExpression("#{entity.owner.address}");
-        xLabel6.setPreferredSize(new java.awt.Dimension(0, 16));
-        xFormPanel1.add(xLabel6);
+        xLabel10.setCaption("BIN");
+        xLabel10.setExpression("#{entity.bin}");
+        xLabel10.setPreferredSize(new java.awt.Dimension(0, 16));
+        xFormPanel1.add(xLabel10);
 
         xLabel4.setCaption("Business Name");
         xLabel4.setExpression("#{entity.businessname}");
@@ -74,6 +62,26 @@ public class BusinessGeneralInfo extends javax.swing.JPanel {
         xLabel3.setPreferredSize(new java.awt.Dimension(0, 16));
         xFormPanel1.add(xLabel3);
 
+        xLabel5.setCaption("Trade Name");
+        xLabel5.setExpression("#{entity.tradename}");
+        xLabel5.setPreferredSize(new java.awt.Dimension(0, 16));
+        xFormPanel1.add(xLabel5);
+
+        xLabel2.setCaption("Org Type");
+        xLabel2.setExpression("#{entity.orgtypename}");
+        xLabel2.setPreferredSize(new java.awt.Dimension(0, 16));
+        xFormPanel1.add(xLabel2);
+
+        xLabel7.setCaption("Owner Name");
+        xLabel7.setExpression("#{entity.owner.name}");
+        xLabel7.setPreferredSize(new java.awt.Dimension(0, 16));
+        xFormPanel1.add(xLabel7);
+
+        xLabel6.setCaption("Owner Address");
+        xLabel6.setExpression("#{entity.owner.address}");
+        xLabel6.setPreferredSize(new java.awt.Dimension(0, 16));
+        xFormPanel1.add(xLabel6);
+
         xLabel1.setCaption("Barangay");
         xLabel1.setExpression("#{entity.barangay.name}");
         xLabel1.setPreferredSize(new java.awt.Dimension(0, 16));
@@ -84,21 +92,30 @@ public class BusinessGeneralInfo extends javax.swing.JPanel {
         xLabel8.setPreferredSize(new java.awt.Dimension(0, 16));
         xFormPanel1.add(xLabel8);
 
+        xLabel9.setCaption("PIN");
+        xLabel9.setExpression("#{entity.pin}");
+        xLabel9.setPreferredSize(new java.awt.Dimension(0, 16));
+        xFormPanel1.add(xLabel9);
+
+        xLabel11.setCaption("Status");
+        xLabel11.setExpression("#{entity.state}");
+        xLabel11.setPreferredSize(new java.awt.Dimension(0, 16));
+        xFormPanel1.add(xLabel11);
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(xFormPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 549, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(35, Short.MAX_VALUE))
+                .addComponent(xFormPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 560, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(24, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(xFormPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 167, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(18, Short.MAX_VALUE))
+                .addComponent(xFormPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 214, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -115,7 +132,7 @@ public class BusinessGeneralInfo extends javax.swing.JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(173, Short.MAX_VALUE))
+                .addContainerGap(199, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
     
@@ -124,6 +141,8 @@ public class BusinessGeneralInfo extends javax.swing.JPanel {
     private javax.swing.JPanel jPanel1;
     private com.rameses.rcp.control.XFormPanel xFormPanel1;
     private com.rameses.rcp.control.XLabel xLabel1;
+    private com.rameses.rcp.control.XLabel xLabel10;
+    private com.rameses.rcp.control.XLabel xLabel11;
     private com.rameses.rcp.control.XLabel xLabel2;
     private com.rameses.rcp.control.XLabel xLabel3;
     private com.rameses.rcp.control.XLabel xLabel4;
@@ -131,6 +150,7 @@ public class BusinessGeneralInfo extends javax.swing.JPanel {
     private com.rameses.rcp.control.XLabel xLabel6;
     private com.rameses.rcp.control.XLabel xLabel7;
     private com.rameses.rcp.control.XLabel xLabel8;
+    private com.rameses.rcp.control.XLabel xLabel9;
     // End of variables declaration//GEN-END:variables
     
 }

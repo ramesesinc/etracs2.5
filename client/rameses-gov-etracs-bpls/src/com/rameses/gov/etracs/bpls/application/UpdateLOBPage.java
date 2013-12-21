@@ -41,9 +41,10 @@ public class UpdateLOBPage extends javax.swing.JPanel {
         jLabel1.setFont(new java.awt.Font("Tahoma", 1, 11));
         jLabel1.setText("Specify line(s) of business for this application and click next when done.");
 
-        xLookupField2.setCaption("Add new Line of Business");
+        xLookupField2.setCaption("Add New Line of Business");
         xLookupField2.setCaptionWidth(150);
         xLookupField2.setHandler("lookupLob");
+        xLookupField2.setIndex(-1);
         xLookupField2.setName("lob");
         xLookupField2.setPreferredSize(new java.awt.Dimension(0, 20));
         xFormPanel2.add(xLookupField2);

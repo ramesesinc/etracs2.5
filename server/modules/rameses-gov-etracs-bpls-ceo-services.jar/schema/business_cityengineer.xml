@@ -14,6 +14,8 @@
 		<field name="account_title" required="true"/>
 		<field name="amount" required="true"/>
 		<field name="recurring" required="true"/>
+		<field name="user_objid" required="true"/>
+		<field name="user_name" required="true"/>
 	</element>
 		
 </schema>	

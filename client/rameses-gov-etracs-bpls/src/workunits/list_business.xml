@@ -1,6 +1,6 @@
 <workunit extends="wtemplates/ExplorerViewController.xml" serviceName="BusinessInfoListService" defaultFileType="business" autoSelect="true">
     <invokers>
-        <invoker folderid="/explorer/txn/bpls" caption="List of Business"  index="4" role="MASTER_ENCODER"/>
-        <invoker type="home.action" caption="List of Business"  index="3" role="MASTER_ENCODER"/>
+        <invoker folderid="/explorer/txn/bpls" caption="List of Business"  index="4" role="BUSINESSINFO,ASSESSOR,APPROVER,LICENSING" />
+        <invoker type="home.action" caption="List of Business"  index="3" role="BUSINESSINFO,ASSESSOR,APPROVER,LICENSING"/>
     </invokers>
 </workunit>
