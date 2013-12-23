@@ -32,10 +32,10 @@ public class SuccessPage extends javax.swing.JPanel {
         xTextField1 = new com.rameses.rcp.control.XTextField();
         xTextField1.setAlignmentX(CENTER_ALIGNMENT);
 
-        jLabel1.setText("Application successfully submitted. Please use the ff. application no. ");
+        jLabel1.setText("Application successfully submitted. Please use the ff. bin");
 
         xTextField1.setFont(new java.awt.Font("Tahoma", 0, 36));
-        xTextField1.setName("entity.appno");
+        xTextField1.setName("entity.bin");
         xTextField1.setReadonly(true);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);

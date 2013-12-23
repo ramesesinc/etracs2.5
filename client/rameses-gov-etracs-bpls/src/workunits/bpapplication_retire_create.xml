@@ -1,0 +1,45 @@
+<workunit>
+    <invokers>
+        <invoker type="home.action" caption="Retire Business"  action="start" target="window"  role="BUSINESSINFO,LICENSING"/>
+        <invoker type="extActions" caption="Continue" action="openApplication"  visibleWhen="#{state == 'save-success'}"/>
+        <invoker type="extActions" caption="Print BIN" action="printBIN"  visibleWhen="#{state == 'save-success'}"/>
+    </invokers>
+    
+    <code class="com.rameses.gov.etracs.bpls.application.BPRetireApplication" />
+    
+    <pageflow>
+        <start>
+            <transition to="search-business" name="create"/>
+        </start>
+        
+        <page name="search-business" title="Search Business (Retire Application)">
+            <transition to="end" caption="Close" />
+            <transition to="update-assessment-info" caption="Next" mnemonic="N"  immediate="false" action="openApplication"/>
+        </page>
+        
+        <page name="update-assessment-info" title="Specify Assessment Information (Amend Application)" >
+            <transition to="search-business" caption="Back" mnemonic="B" name="back" />
+            <transition to="confirm" caption="Next" name="next" mnemonic="N"  action="verifyAssessmentInfo"/>
+        </page>
+        
+        <page name="confirm" title="Confirm (Retire Application)">
+            <transition to="search-business" caption="Back" mnemonic="B" name="back"/>
+            <transition to="save-success" caption="Submit" mnemonic="S" name="save" action="saveCreate"
+            confirm="You are about to save this transaction. Continue?"/>
+        </page>
+        
+        <page name="save-success" title="Save Success (Retire Application)">
+            <transition to="search-business" caption="Add Another" mnemonic="A" />
+        </page>
+
+
+        <end/>
+    </pageflow>
+    <pages>
+        <page name="search-business" template="com.rameses.gov.etracs.bpls.application.SearchBusinessForRenewal"/>
+         <page name="update-assessment-info" template="com.rameses.gov.etracs.bpls.application.UpdateAssessmentInfoPage"/>
+        <page name="confirm" template="com.rameses.gov.etracs.bpls.application.ViewApplicationInfoPage"/>
+        <page name="save-success" template="com.rameses.gov.etracs.bpls.application.SuccessPage"/>
+    </pages>
+    
+</workunit>

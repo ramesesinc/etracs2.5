@@ -2,6 +2,7 @@
     <invokers>
         <invoker type="home.action" caption="Business Renewal"  action="start" target="window"  role="BUSINESSINFO,LICENSING"/>
         <invoker type="extActions" caption="Continue" action="openApplication"  visibleWhen="#{state == 'save-success'}"/>
+        <invoker type="extActions" caption="Print BIN" action="printBIN"  visibleWhen="#{state == 'save-success'}"/>
     </invokers>
     
     <code class="com.rameses.gov.etracs.bpls.application.BPRenewalApplication" />
@@ -18,10 +19,10 @@
         
         <page name="update-app-info" title="Update Business Information (Renewal Application)">
             <transition to="search-business" caption="Back" mnemonic="B" name="back"/>
-            <transition to="update-lob" caption="Next" name="next" mnemonic="N"/>
+            <transition to="update-lob" caption="Next" name="next" mnemonic="N" action="verifyAppInfo"/>
         </page>
         
-        <page name="update-lob" title="Specify Line of Business (New Application)">
+        <page name="update-lob" title="Specify Line of Business (Renewal Application)">
             <transition to="update-app-info" caption="Back" mnemonic="B" name="back"/>
             <transition to="update-assessment-info" caption="Next" name="next" mnemonic="N" action="verifyLOB" />
         </page>
@@ -33,7 +34,7 @@
         
         <page name="confirm" title="Confirm (Renewal Application)">
             <transition to="update-assessment-info" caption="Back" mnemonic="B" name="back"/>
-            <transition to="save-success" caption="Save" mnemonic="S" name="save" action="saveCreate"
+            <transition to="save-success" caption="Submit" mnemonic="S" name="save" action="saveCreate"
             confirm="You are about to save this transaction. Continue?"/>
         </page>
         

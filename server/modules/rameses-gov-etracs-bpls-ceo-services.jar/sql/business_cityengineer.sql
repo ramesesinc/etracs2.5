@@ -1,46 +1,30 @@
 [getList]
-SELECT DISTINCT a.* FROM 
-(
-	SELECT b.objid,bc.state,b.appno,b.owner_name,b.businessname,b.businessaddress,b.appyear,b.apptype
-	FROM bpapplication b 
-	INNER JOIN business_cityengineer bc ON bc.businessid=b.businessid
-	WHERE b.owner_name LIKE $P{searchtext} 
-UNION
-	SELECT b.objid,bc.state,b.appno,b.owner_name,b.businessname,b.businessaddress,b.appyear,b.apptype 
-	FROM bpapplication b
-	INNER JOIN business_cityengineer bc ON bc.businessid=b.businessid
-	WHERE b.businessname LIKE $P{searchtext} 
-UNION
-	SELECT b.objid,bc.state,b.appno,b.owner_name,b.businessname,b.businessaddress,b.appyear,b.apptype 
-	FROM bpapplication b
-	INNER JOIN business_cityengineer bc ON bc.businessid=b.businessid
-	WHERE b.appno LIKE $P{searchtext} 
-) a
-WHERE a.state=$P{state}
-ORDER BY a.appno
+SELECT b.objid, b.bin, b.owner_name,b.businessname,b.businessaddress
+FROM business b 
+INNER JOIN business_cityengineer bc ON bc.businessid=b.objid
 
 [getSearchList]
-SELECT DISTINCT a.* FROM 
+SELECT DISTINCT b.* FROM 
 (
-	SELECT b.objid,bc.state,b.appno,b.owner_name,b.businessname,b.businessaddress,b.appyear,b.apptype
-	FROM bpapplication b 
-	INNER JOIN business_cityengineer bc ON bc.businessid=b.businessid
+	SELECT b.objid, b.bin, b.owner_name,b.businessname,b.businessaddress
+	FROM business b 
+	INNER JOIN business_cityengineer bc ON bc.businessid=b.objid
 	WHERE b.owner_name LIKE $P{searchtext}
 UNION
-	SELECT b.objid,bc.state,b.appno,b.owner_name,b.businessname,b.businessaddress,b.appyear,b.apptype 
-	FROM bpapplication b
-	INNER JOIN business_cityengineer bc ON bc.businessid=b.businessid
+	SELECT b.objid, b.bin, b.owner_name,b.businessname,b.businessaddress
+	FROM business b 
+	INNER JOIN business_cityengineer bc ON bc.businessid=b.objid
 	WHERE b.businessname LIKE $P{searchtext}
 UNION
-	SELECT b.objid,bc.state,b.appno,b.owner_name,b.businessname,b.businessaddress,b.appyear,b.apptype 
-	FROM bpapplication b
-	INNER JOIN business_cityengineer bc ON bc.businessid=b.businessid
-	WHERE b.appno LIKE $P{searchtext} 
-) a
-ORDER BY a.appno
+	SELECT b.objid, b.bin, b.owner_name,b.businessname,b.businessaddress
+	FROM business b 
+	INNER JOIN business_cityengineer bc ON bc.businessid=b.objid
+	WHERE b.bin LIKE $P{searchtext} 
+) b
+ORDER BY b.bin
 
-[findBusinessLink]
-SELECT * FROM business_cityengineer WHERE businessid=$P{businessid}
+[findInfo]
+SELECT * FROM business_cityengineer WHERE businessid = $P{businessid}
 
 [getFees]
 SELECT cf.*, r.code AS account_code

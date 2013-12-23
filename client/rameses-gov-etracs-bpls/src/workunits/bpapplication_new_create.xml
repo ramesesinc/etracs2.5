@@ -2,6 +2,7 @@
     <invokers>
         <invoker type="home.action" caption="New Business Application"  action="start" target="window"  role="BUSINESSINFO,LICENSING"/>
         <invoker type="extActions" caption="Continue" action="openApplication"  visibleWhen="#{state == 'save-success'}"/>
+        <invoker type="extActions" caption="Print BIN" action="printBIN"  visibleWhen="#{state == 'save-success'}"/>
     </invokers>
     
     <code class="com.rameses.gov.etracs.bpls.application.BPNewApplication"/>
@@ -28,7 +29,7 @@
 
         <page name="update-app-info" title="Specify Business Information (New Application)">
             <transition to="initial" caption="Back" mnemonic="B" name="back"/>
-            <transition to="update-lob" caption="Next" name="next" mnemonic="N"/>
+            <transition to="update-lob" caption="Next" name="next" mnemonic="N" action="verifyAppInfo"/>
         </page>
         
         <page name="update-lob" title="Specify Line of Business (New Application)">
@@ -43,7 +44,7 @@
         
         <page name="confirm" title="Confirm (New Application)">
             <transition to="update-assessment-info" caption="Back" mnemonic="B" name="back"/>
-            <transition to="save-success" caption="Save" mnemonic="S" name="save" action="saveCreate"
+            <transition to="save-success" caption="Submit" mnemonic="S" name="save" action="saveCreate"
             confirm="You are about to save this transaction. Continue?"/>
         </page>
         

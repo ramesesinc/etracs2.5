@@ -31,46 +31,80 @@ public class ChangeBusinessName extends javax.swing.JPanel {
         xFormPanel1 = new com.rameses.rcp.control.XFormPanel();
         xTextField3 = new com.rameses.rcp.control.XTextField();
         xTextField2 = new com.rameses.rcp.control.XTextField();
+        jLabel1 = new javax.swing.JLabel();
+        xFormPanel2 = new com.rameses.rcp.control.XFormPanel();
+        xTextField4 = new com.rameses.rcp.control.XTextField();
+        xTextField5 = new com.rameses.rcp.control.XTextField();
 
         setPreferredSize(new java.awt.Dimension(482, 130));
 
         xFormPanel1.setCaptionWidth(150);
         xTextField3.setCaption("Business Name");
-        xTextField3.setDepends(new String[] {"entity.businessname"});
-        xTextField3.setName("entity.businessname");
+        xTextField3.setDepends(new String[] {"newentity.businessname"});
+        xTextField3.setName("newentity.businessname");
         xTextField3.setPreferredSize(new java.awt.Dimension(0, 20));
         xTextField3.setRequired(true);
         xFormPanel1.add(xTextField3);
 
         xTextField2.setCaption("Trade Name");
-        xTextField2.setName("entity.tradename");
+        xTextField2.setName("newentity.tradename");
         xTextField2.setPreferredSize(new java.awt.Dimension(0, 20));
         xTextField2.setRequired(true);
         xFormPanel1.add(xTextField2);
+
+        jLabel1.setFont(new java.awt.Font("Tahoma", 1, 11));
+        jLabel1.setText("To");
+
+        xFormPanel2.setCaptionWidth(150);
+        xTextField4.setCaption("Business Name");
+        xTextField4.setEnabled(false);
+        xTextField4.setName("entity.businessname");
+        xTextField4.setPreferredSize(new java.awt.Dimension(0, 20));
+        xTextField4.setRequired(true);
+        xFormPanel2.add(xTextField4);
+
+        xTextField5.setCaption("Trade Name");
+        xTextField5.setEnabled(false);
+        xTextField5.setName("entity.tradename");
+        xTextField5.setPreferredSize(new java.awt.Dimension(0, 20));
+        xTextField5.setRequired(true);
+        xFormPanel2.add(xTextField5);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(xFormPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 462, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(xFormPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 462, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(xFormPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 462, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(154, 154, 154)
+                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 297, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(20, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
+                .addComponent(xFormPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 15, Short.MAX_VALUE)
                 .addComponent(xFormPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(59, Short.MAX_VALUE))
+                .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
     
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel jLabel1;
     private com.rameses.rcp.control.XFormPanel xFormPanel1;
+    private com.rameses.rcp.control.XFormPanel xFormPanel2;
     private com.rameses.rcp.control.XTextField xTextField2;
     private com.rameses.rcp.control.XTextField xTextField3;
+    private com.rameses.rcp.control.XTextField xTextField4;
+    private com.rameses.rcp.control.XTextField xTextField5;
     // End of variables declaration//GEN-END:variables
     
 }

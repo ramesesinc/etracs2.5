@@ -44,9 +44,8 @@ public class BPBillingReportService  {
 
 		result.billitems = z.items;
 
-		def barcode = "51005:"+o.appno;
-
-        def  data = [
+		def barcode = "51005:"+o.bin;
+		def  data = [
            ownername: o.owner.name, 
            owneraddress: o.owner.address, 
            billdate: m.billdate, 

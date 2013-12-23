@@ -1,0 +1,33 @@
+<workunit>
+    <invokers>
+        <invoker type="business:formActions1" caption="Barcode" shortcut="ctrl B" mnemonic="b" 
+            target="process" action="init" index="50" icon="images/toolbars/barcode.png"/>
+    </invokers>    
+    
+    <code>
+        <![CDATA[
+        import com.rameses.osiris2.common.*;
+        import com.rameses.rcp.common.*;
+        import com.rameses.rcp.annotations.*;
+        import com.rameses.osiris2.client.*;
+        import com.rameses.util.*;
+        
+        class ListBusinessBarcode {
+            def init() {
+                def p = MsgBox.prompt("Enter barcode");
+                if( p == null || p.toString().length() <= 5 ) return;
+                def prefix = p.substring(0,5); 
+                def barcodeid = p.substring(6);
+                try {
+                    return InvokerUtil.lookupOpener( "business:barcode:"+prefix, [ barcodeid: barcodeid] );
+                }
+                catch(e) {
+                    MsgBox.err("No appropriate handler found for this particular barcode.[ business:barcode:"+prefix+"]->"+barcodeid);
+                    return null;
+                }
+            }
+        }
+        ]]>
+    </code>    
+    
+</workunit>

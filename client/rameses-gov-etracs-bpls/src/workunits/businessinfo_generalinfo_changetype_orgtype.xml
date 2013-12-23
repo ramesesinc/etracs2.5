@@ -1,0 +1,42 @@
+<workunit>
+    <invokers>
+        <invoker type="business:generalinfo:changetype" caption="Change Org Type" index="1" target="popup"/>
+    </invokers>
+    
+       <code>
+        <![CDATA[    
+        import com.rameses.rcp.annotations.*
+        import com.rameses.rcp.common.*
+        import com.rameses.osiris2.client.*
+        import com.rameses.osiris2.common.*
+        import java.rmi.server.*
+        import com.rameses.gov.etracs.bpls.business.*;
+        
+        class  ChangeOrgTypeController  {
+        
+            @Binding
+            def binding;
+            
+            def newentity = [:];
+            def entity;
+            def handler;
+            
+            def orgTypes = LOV.ORG_TYPES;
+    
+            def doCancel() {
+                return "_close";
+            }
+            
+            def doOk() {
+                handler(entity);
+            }
+        }
+        ]]>
+    </code>
+
+    
+    <pages>
+        <page  template="com.rameses.gov.etracs.bpls.business.amend.ChangeOrgType"/>
+    </pages>
+    
+</workunit>

@@ -1,6 +1,0 @@
-<workunit extends="wtemplates/ListController.xml" serviceName="InactiveBusinessService" entityName="inactivebusiness">
-    <invokers>
-        <invoker folderid="/explorer/master/bpls" caption="Inactive Business" target="window" index="11" role="MASTER_ENCODER"/>
-        <invoker type="home.action" caption="Inactive Business" target="window" index="11" role="MASTER_ENCODER"/>
-    </invokers>
-</workunit>

@@ -20,8 +20,8 @@
             @Service("BPCashReceiptService")
             def billSvc;
             
-            @Service("BPApplicationLookupService")
-            def appLookup;
+            @Service("BusinessLookupService")
+            def busLookup;
         
             String entityName = "cashreceipt:business";
             
@@ -47,7 +47,7 @@
             
             void initBarcode() {
                 def param = [prefix: "51005", barcode: barcodeid ]; 
-                def m = appLookup.findByBarcode( param );
+                def m = busLookup.findByBarcode( param );
                 entity = [formtype: "serial", formno:"51", txnmode: 'ONLINE'];
                 entity = cashReceiptSvc.init( entity );
                 entity.payer = [objid: m.owner.objid, name: m.owner.name];
@@ -98,12 +98,13 @@
                 clearBilling();
                 super.clearAllPayments();
                 super.updateBalances();
-                def opener = InvokerUtil.lookupOpener( "bpapplication:lookup", [
+                def opener = InvokerUtil.lookupOpener( "business:lookup", [
                     "query.ownerid":owner.objid,
                     "query.state": "payment",
                     onselect: { o->
                         entity.applicationid = o.applicationid;
                         entity.businessname = o.businessname;
+                        
                         entity.businessid = o.businessid;
                         entity.paidby = o.businessname;
                         entity.paidbyaddress = o.businessaddress;

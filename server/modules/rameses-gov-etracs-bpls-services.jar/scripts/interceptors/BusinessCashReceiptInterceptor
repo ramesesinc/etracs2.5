@@ -23,6 +23,9 @@ public class BusinessCashReceiptInterceptor {
 	@ActiveDB("bpapplication")
 	def application;
 
+	@ActiveDB("business")
+	def business;
+
 	@Service("NumberService")
 	def numberSvc;
 
@@ -72,9 +75,13 @@ public class BusinessCashReceiptInterceptor {
 			bpledger.updateReceivablePayment( [receivableid: k, amtpaid:amtpaid, discount: discount] );
 			ids << k;
 		}
+
 		//check the receivable balance of the application. before today due date.
-		if( pmt.qtr > 0 ) {
-			application.changeState( [objid: pmt.applicationid, state:'release'] );	
+		if(pmt.qtr > 0 ) {
+			business.activate( [objid:pmt.businessid, qtr: pmt.qtr ] );
+			if( pmt.applicationid ) {
+				application.changeState( [objid: pmt.applicationid, state:'active'] );	
+			}
 		}
 	}
 

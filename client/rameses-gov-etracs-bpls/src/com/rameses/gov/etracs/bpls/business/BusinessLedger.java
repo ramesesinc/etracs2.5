@@ -34,6 +34,9 @@ public class BusinessLedger extends javax.swing.JPanel {
         jLabel1 = new javax.swing.JLabel();
         xDataTable2 = new com.rameses.rcp.control.XDataTable();
         jLabel2 = new javax.swing.JLabel();
+        xFormPanel1 = new com.rameses.rcp.control.XFormPanel();
+        xIntegerField1 = new com.rameses.rcp.control.XIntegerField();
+        xIntegerField2 = new com.rameses.rcp.control.XIntegerField();
 
         xDataTable1.setColumns(new com.rameses.rcp.common.Column[]{
             new com.rameses.rcp.common.Column(new Object[]{
@@ -130,7 +133,6 @@ public class BusinessLedger extends javax.swing.JPanel {
             })
         });
         xDataTable1.setHandler("receivableModel");
-        xDataTable1.setId("receivableModel");
         xDataTable1.setName("selectedReceivable");
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 1, 11));
@@ -199,6 +201,18 @@ public class BusinessLedger extends javax.swing.JPanel {
         jLabel2.setFont(new java.awt.Font("Tahoma", 1, 11));
         jLabel2.setText("Payments");
 
+        xFormPanel1.setCellpadding(new java.awt.Insets(0, 40, 0, 0));
+        xFormPanel1.setOrientation(com.rameses.rcp.constant.UIConstants.HORIZONTAL);
+        xIntegerField1.setCaption("Active Year");
+        xIntegerField1.setEnabled(false);
+        xIntegerField1.setName("entity.activeyear");
+        xFormPanel1.add(xIntegerField1);
+
+        xIntegerField2.setCaption("Last Qtr Paid");
+        xIntegerField2.setEnabled(false);
+        xIntegerField2.setName("entity.qtrpaid");
+        xFormPanel1.add(xIntegerField2);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -207,23 +221,26 @@ public class BusinessLedger extends javax.swing.JPanel {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(xDataTable1, javax.swing.GroupLayout.PREFERRED_SIZE, 1044, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 719, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(xDataTable2, javax.swing.GroupLayout.PREFERRED_SIZE, 472, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 719, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(xFormPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 489, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(83, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
+                .addComponent(xFormPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(xDataTable1, javax.swing.GroupLayout.PREFERRED_SIZE, 211, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(31, 31, 31)
+                .addComponent(xDataTable1, javax.swing.GroupLayout.PREFERRED_SIZE, 248, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(xDataTable2, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(220, 220, 220))
+                .addGap(95, 95, 95))
         );
     }// </editor-fold>//GEN-END:initComponents
     
@@ -233,6 +250,9 @@ public class BusinessLedger extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel2;
     private com.rameses.rcp.control.XDataTable xDataTable1;
     private com.rameses.rcp.control.XDataTable xDataTable2;
+    private com.rameses.rcp.control.XFormPanel xFormPanel1;
+    private com.rameses.rcp.control.XIntegerField xIntegerField1;
+    private com.rameses.rcp.control.XIntegerField xIntegerField2;
     // End of variables declaration//GEN-END:variables
     
 }

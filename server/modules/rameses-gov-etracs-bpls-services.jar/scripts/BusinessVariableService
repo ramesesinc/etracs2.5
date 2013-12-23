@@ -18,10 +18,12 @@ class BusinessVariableService extends ActiveCrudListService {
 
 	void beforeCreate(o) {
 		o.objid = o.name;
+		o.system = 0;
 	}
 	
 	void beforeUpdate(o) {
 		o.objid = o.name;
+		o.system = 0;
 	}
 
 }

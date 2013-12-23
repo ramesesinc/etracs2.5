@@ -19,6 +19,9 @@ public class BPCashReceiptService  {
 
 	@ProxyMethod
 	public def getBilling(def o) throws Exception {
+		if(!o.applicationid)
+			throw new Exception("Application is required");
+
 		def m = [:];
 		m.application = appSvc.open( [objid: o.applicationid ]); 
 		m.billdate = o.billdate;
