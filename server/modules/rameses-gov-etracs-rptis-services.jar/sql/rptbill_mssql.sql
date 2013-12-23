@@ -50,7 +50,7 @@ FROM faas f
 WHERE rl.objid = $P{rptledgerid}
  AND rl.state = 'APPROVED'
  AND r.taxable = 1 
- AND ( rl.lastyearpaid < $P{billtoyear} OR (rl.lastyearpaid = $P{billtoyear} AND rl.lastqtrpaid < $P{billtoqtr}))
+ AND ( rl.lastyearpaid < $P{billtoyear} OR rl.partialbasic > 0.0 OR (rl.lastyearpaid = $P{billtoyear} AND rl.lastqtrpaid < $P{billtoqtr}))
 
 
 [getLedgerFaases]
