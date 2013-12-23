@@ -157,6 +157,7 @@ class BankDepositReportService  {
 		def data = deposit.clone();
 		def params = [ bankdepositid: deposit.objid ]
 		data.acctsummaries = em.sqlContext.createNamedQuery('bankdepositreport:getRevenueItemSummaryByFund').setParameters(params ).resultList
+		data.brgyshares  = em.sqlContext.createNamedQuery('bankdepositreport:getBarangayShares').setParameters(params ).resultList
 		if( ! data.acctsummaries ) throw new Exception("No record(s) found ");
 		return data;
 	}

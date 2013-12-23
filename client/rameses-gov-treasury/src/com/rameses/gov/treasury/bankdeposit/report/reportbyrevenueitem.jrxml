@@ -46,6 +46,7 @@
 	<field name="txnno" class="java.lang.String"/>
 	<field name="cashier.name" class="java.lang.String"/>
 	<field name="cashier.title" class="java.lang.String"/>
+	<field name="brgyshares" class="java.lang.Object"/>
 
 	<variable name="sum" class="java.math.BigDecimal" resetType="Report" calculation="Nothing">
 	</variable>
@@ -71,6 +72,43 @@
 					<dataSourceExpression><![CDATA[$F{acctsummaries}]]></dataSourceExpression>
 					<subreportExpression  class="net.sf.jasperreports.engine.JasperReport"><![CDATA[$P{ReportSummary}]]></subreportExpression>
 				</subreport>
+			</band>
+			</groupHeader>
+			<groupFooter>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+			</groupFooter>
+		</group>
+		<group  name="BRGYSHARE" >
+			<groupExpression><![CDATA[]]></groupExpression>
+			<groupHeader>
+			<band height="47"  isSplitAllowed="true" >
+				<subreport  isUsingCache="true">
+					<reportElement
+						mode="Opaque"
+						x="13"
+						y="19"
+						width="526"
+						height="21"
+						forecolor="#000000"
+						backcolor="#FFFFFF"
+						key="subreport-3"/>
+					<dataSourceExpression><![CDATA[$F{brgyshares}]]></dataSourceExpression>
+					<subreportExpression  class="net.sf.jasperreports.engine.JasperReport"><![CDATA[$P{ReportSummary}]]></subreportExpression>
+				</subreport>
+				<staticText>
+					<reportElement
+						x="12"
+						y="2"
+						width="206"
+						height="14"
+						key="staticText-19"/>
+					<box></box>
+					<textElement>
+						<font pdfFontName="Helvetica-Bold" isBold="true"/>
+					</textElement>
+				<text><![CDATA[BARANGAY SHARE SUMMARY]]></text>
+				</staticText>
 			</band>
 			</groupHeader>
 			<groupFooter>
