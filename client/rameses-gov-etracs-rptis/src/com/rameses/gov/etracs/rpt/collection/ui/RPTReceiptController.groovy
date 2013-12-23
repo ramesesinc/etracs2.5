@@ -38,7 +38,7 @@ class RPTReceiptController extends com.rameses.enterprise.treasury.cashreceipt.A
     def openledgers;
     def itemsforpayment;
             
-    
+    String entityName = "cashreceipt_rpt"
     
     void init(){
         super.init();
