@@ -96,12 +96,12 @@ class RPTReceiptService
 				partialsefdisc 	: partialsefdisc,
 				partialledyear  : it.partialledyear,
 				partialledqtr   : it.partialledqtr,
+				lastbilledyear  : toyear,
+				lastbilledqtr   : toqtr,
 			]
 
 			em.insertPaidItemByLedgerId(params)
 			em.deletePaidBillItems(params)
-
-			//TODO: if partial toqtr must be less than 1
 			em.updateLedgerYearQtrPaid(params)
 		}
 	}
@@ -131,6 +131,8 @@ class RPTReceiptService
 		em.getLedgersMinPaidYearAndQtr(params).each{
 			it.toyear = (it.minqtr <= 1 ? it.minyear - 1 : it.minyear) 
 			it.toqtr = (it.minqtr <= 1 ? 4 : it.minqtr - 1) 
+			it.lastbilledyear = null
+			it.lastbilledqtr = null
 			if (it.partialbasic > 0.0){
 				it.partialledyear = it.toyear
 				it.partialledqtr = (it.qtr > 0 ? it.qtr : it.toqtr )

@@ -117,7 +117,9 @@ UPDATE rptledger SET
 	partialsefint = 	$P{partialsefint},
 	partialsefdisc = 	$P{partialsefdisc},
 	partialledyear = $P{partialledyear},
-	partialledqtr  = $P{partialledqtr}
+	partialledqtr  = $P{partialledqtr},
+	lastbilledyear = $P{lastbilledyear},
+	lastbilledqtr  = $P{lastbilledqtr}
 WHERE objid = $P{rptledgerid}	
 
 
