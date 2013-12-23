@@ -197,3 +197,24 @@ FROM rptledger rl
 WHERE rl.objid = $P{objid}
   AND rl.partialledyear = bi.year
   AND rl.partialledqtr =  CASE WHEN bi.qtr = 0 THEN bi.fromqtr ELSE bi.qtr END 
+
+
+
+
+
+[applyLedgerItemTaxIncentives]
+UPDATE rli SET 
+	rli.basic = ROUND(rli.basic - (rli.basic * rti.basicrate / 100), 2),
+	rli.basicint = ROUND(rli.basicint - (rli.basicint * rti.basicrate / 100), 2),
+	rli.basicdisc = ROUND(rli.basicdisc - (rli.basicdisc * rti.basicrate / 100), 2),
+	rli.sef = ROUND(rli.sef - (rli.sef * rti.sefrate / 100), 2),
+	rli.sefint = ROUND(rli.sefint - (rli.sefint * rti.sefrate / 100), 2),
+	rli.sefdisc = ROUND(rli.sefdisc - (rli.sefdisc * rti.sefrate / 100), 2)
+FROM rptledger rl
+	INNER JOIN rptledgerbillitem rli ON rl.objid = rli.rptledgerid
+	INNER JOIN rpttaxincentive_item rti ON rti.rptledgerid = rl.objid 
+WHERE rl.objid = $P{objid}
+ AND rl.state = 'APPROVED'
+ AND rli.year >= rti.fromyear  
+ AND rli.year <= rti.toyear 
+
