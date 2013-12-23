@@ -184,7 +184,7 @@ public class SubdivisionController extends PageFlowController
     
      
     def landListHandler = [
-        getRows : { return 25 },
+        getRows : { return 50 },
             
         fetchList : { return subdividedLands },
                 
@@ -279,7 +279,7 @@ public class SubdivisionController extends PageFlowController
     def selectedAffectedRpu;
     
     def affectedrpuListHandler = [
-        getRows : { return 25 },
+        getRows : { return 250 },
             
         fetchList : { return affectedrpus },
                 
