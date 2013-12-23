@@ -41,6 +41,7 @@ class RPTReceiptNoLedgerService
 		def data = billingSvc.executeRules(bill)
 		data.ledgers.each{
 			it.amount = it.basic + it.basicint - it.basicdisc + it.sef + it.sefint - it.sefdisc + it.firecode
+			it.general = it.basic + it.basicint - it.basicdisc + it.firecode
 			it.qtrly = 0
 			it.barangayid = ledger.barangayid
 		}
@@ -49,6 +50,7 @@ class RPTReceiptNoLedgerService
 		ledger.basicnet = ledger.items.sum{ it.basic + it.basicint - it.basicdisc}
 		ledger.sefnet = ledger.items.sum{ it.sef + it.sefint - it.sefdisc}
 		ledger.firecode = ledger.items.firecode.sum()
+		ledger.general = ledger.basicnet + ledger.firecode  
 		ledger.period = buildPeriod(ledger)
 		return ledger 
 	}	

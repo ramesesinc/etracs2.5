@@ -59,13 +59,13 @@ public class RPTReceiptNoLedgerPage extends javax.swing.JPanel {
         xButton2.setText("Remove");
 
         xFormPanel1.setOrientation(com.rameses.rcp.constant.UIConstants.HORIZONTAL);
-        xDecimalField1.setCaption("Total BASIC");
+        xDecimalField1.setCaption("GENERAL");
         xDecimalField1.setCellPadding(new java.awt.Insets(0, 0, 0, 10));
         xDecimalField1.setDepends(new String[] {"selectedItem", "selectAll", "deselectAll", "fullPayment", "partialPayment", "ledger"});
         xDecimalField1.setDisabledTextColor(new java.awt.Color(0, 0, 0));
         xDecimalField1.setEnabled(false);
         xDecimalField1.setFont(new java.awt.Font("Courier New", 1, 18));
-        xDecimalField1.setName("totalBasic");
+        xDecimalField1.setName("totalGeneral");
         xDecimalField1.setPreferredSize(new java.awt.Dimension(150, 24));
         xFormPanel1.add(xDecimalField1);
 

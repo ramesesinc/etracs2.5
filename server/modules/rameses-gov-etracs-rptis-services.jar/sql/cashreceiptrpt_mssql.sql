@@ -9,6 +9,8 @@ SELECT
 	(SELECT MAX(CASE WHEN qtr = 0 THEN toqtr ELSE qtr END) FROM rptledgerbillitem WHERE rptledgerid = t.rptledgerid AND year = t.toyear) AS toqtr,
 	SUM(t.basic) AS totalbasic,
 	SUM(t.sef) AS totalsef,
+	SUM(t.firecode) AS totalfirecode,
+	SUM(t.basic + t.firecode) AS totalgeneral,
 	SUM(t.basic + t.sef + t.firecode) AS amount
 FROM (
 	SELECT

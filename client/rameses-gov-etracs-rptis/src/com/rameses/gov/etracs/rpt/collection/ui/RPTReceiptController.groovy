@@ -252,8 +252,8 @@ class RPTReceiptController extends com.rameses.enterprise.treasury.cashreceipt.A
     }
     
     
-    def getTotalBasic(){
-        return itemsforpayment.findAll{it.pay == true}.totalbasic.sum()
+    def getTotalGeneral(){
+        return itemsforpayment.findAll{it.pay == true}.totalgeneral.sum()
     }
     
     def getTotalSef(){
