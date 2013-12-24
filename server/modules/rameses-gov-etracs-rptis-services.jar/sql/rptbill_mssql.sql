@@ -21,6 +21,7 @@ SELECT
 	r.totalareaha,
 	r.totalareasqm,
 	r.totalav,
+	r.taxable,
 	b.name AS barangay,
 	rp.cadastrallotno,
 	rp.barangayid,
