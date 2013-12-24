@@ -69,7 +69,7 @@ go
 update cri set 
 	cri.brgyshare =	ROUND((cri.basic - cri.basicdisc) * 0.30, 2),
 	cri.brgyintshare =	ROUND(cri.basicint * 0.30, 2)
-from cashreceiptitem_rpt cri 
+from cashreceiptitem_rpt cri  
 go
 
 update cri set 

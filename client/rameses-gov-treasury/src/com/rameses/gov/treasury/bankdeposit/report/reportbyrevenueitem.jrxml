@@ -47,6 +47,7 @@
 	<field name="cashier.name" class="java.lang.String"/>
 	<field name="cashier.title" class="java.lang.String"/>
 	<field name="brgyshares" class="java.lang.Object"/>
+	<field name="hasbrgyshares" class="java.lang.Boolean"/>
 
 	<variable name="sum" class="java.math.BigDecimal" resetType="Report" calculation="Nothing">
 	</variable>
@@ -82,12 +83,13 @@
 		<group  name="BRGYSHARE" >
 			<groupExpression><![CDATA[]]></groupExpression>
 			<groupHeader>
-			<band height="47"  isSplitAllowed="true" >
+			<band height="53"  isSplitAllowed="true" >
+				<printWhenExpression><![CDATA[new Boolean($F{hasbrgyshares}.booleanValue() == true)]]></printWhenExpression>
 				<subreport  isUsingCache="true">
 					<reportElement
 						mode="Opaque"
 						x="13"
-						y="19"
+						y="26"
 						width="526"
 						height="21"
 						forecolor="#000000"
@@ -98,13 +100,20 @@
 				</subreport>
 				<staticText>
 					<reportElement
+						mode="Opaque"
 						x="12"
-						y="2"
-						width="206"
-						height="14"
+						y="4"
+						width="526"
+						height="19"
+						backcolor="#CCCCCC"
 						key="staticText-19"/>
-					<box></box>
-					<textElement>
+					<box leftPadding="3">					<pen lineWidth="0.5" lineStyle="Solid"/>
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+</box>
+					<textElement verticalAlignment="Middle">
 						<font pdfFontName="Helvetica-Bold" isBold="true"/>
 					</textElement>
 				<text><![CDATA[BARANGAY SHARE SUMMARY]]></text>
