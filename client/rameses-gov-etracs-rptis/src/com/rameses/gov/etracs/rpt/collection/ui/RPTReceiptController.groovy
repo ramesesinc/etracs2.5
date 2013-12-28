@@ -232,7 +232,7 @@ class RPTReceiptController extends com.rameses.enterprise.treasury.cashreceipt.A
             entity.amount = paiditems.amount.sum();
         }
         updateBalances();
-        binding.refresh('totalBasic|totalSef')
+        binding.refresh('totalGeneral|totalSef')
     }
     
     
