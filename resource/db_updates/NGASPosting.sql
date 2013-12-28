@@ -26,7 +26,10 @@ create table ngas_revenueitem
 	acct_objid varchar(50) null,
 	subacct_objid varchar(50) null,
 	collectiontype_objid varchar(50) not null,
-	amount numeric(16,2) not null
+	amount numeric(16,2) not null,
+	remittanceid varchar(50),
+	liquidationid varchar(50),
+	depositid varchar(50)
 )
 go
 
@@ -56,26 +59,20 @@ go
 
 
 
-
-		
-create table ngas_revenue_cashreceipt
-(
-	objid varchar(50) not null primary key,
-	parentid varchar(50) not null
-)		
-
-alter table ngas_revenue_cashreceipt
-	add constraint FK_ngasrevenuecashreceipt_ngasrevenue foreign key(parentid)
-		references ngas_revenue(objid)
+alter table ngas_revenueitem 
+	add constraint FK_ngasrevenueitem_liquidation foreign key(liquidationid)
+		references liquidation(objid)
 go
 
-alter table ngas_revenue_cashreceipt
-	add constraint FK_ngasrevenuecashreceipt_cashreceipt foreign key(objid)
-		references cashreceipt(objid)
+alter table ngas_revenueitem 
+	add constraint FK_ngasrevenueitem_deposit foreign key(depositid)
+		references bankdeposit(objid)
 go
 
--- alter table ngas_revenue_cashreceipt drop constraint FK_ngasrevenuecashreceipt_cashreceipt
-		
+
+
+
+
 create table ngas_revenue_remittance
 (
 	objid varchar(50) not null primary key,
@@ -89,27 +86,9 @@ go
 
 alter table ngas_revenue_remittance
 	add constraint FK_ngasrevenueremittance_remittance foreign key(objid)
-		references remittance(objid)
+		references tracs_remittance(objid)
 go
 
-
-
-
-create table ngas_revenue_liquidation
-(
-	objid varchar(50) not null primary key,
-	parentid varchar(50) not null
-)		
-
-alter table ngas_revenue_liquidation
-	add constraint FK_ngasrevenueliquidation_ngasrevenue foreign key(parentid)
-		references ngas_revenue(objid)
-go
-
-alter table ngas_revenue_liquidation
-	add constraint FK_ngasrevenueliquidation_liquidation foreign key(objid)
-		references liquidation_cashier_fund(objid)
-go
 
 
 

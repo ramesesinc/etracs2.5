@@ -23,7 +23,10 @@ class CollectionPostingService
     def mode;
             
     public String getTitle(){
-        return 'Collection Posting'
+        def t = 'Collection Posting' 
+        if (entity.type)
+             t += ' (' + entity.type + ')'
+        return t
     }
             
     def init() {
@@ -39,8 +42,10 @@ class CollectionPostingService
     
     
     def next(){
-        entity = svc.init(entity);
+        entity.putAll(svc.init(entity));
         mode = MODE_CREATE;
+        depositListHandler.reload();
+        remittanceListHandler.reload();
         return 'default';
     }
     

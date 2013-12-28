@@ -33,7 +33,7 @@ public class CollectionPostingPage extends javax.swing.JPanel {
         xFormPanel1 = new com.rameses.rcp.control.XFormPanel();
         xLabel1 = new com.rameses.rcp.control.XLabel();
         xLabel2 = new com.rameses.rcp.control.XLabel();
-        xDateField1 = new com.rameses.rcp.control.XDateField();
+        xLabel3 = new com.rameses.rcp.control.XLabel();
         xDateField2 = new com.rameses.rcp.control.XDateField();
         xDecimalField3 = new com.rameses.rcp.control.XDecimalField();
         jTabbedPane1 = new javax.swing.JTabbedPane();
@@ -128,13 +128,14 @@ public class CollectionPostingPage extends javax.swing.JPanel {
         xLabel2.setPreferredSize(new java.awt.Dimension(0, 19));
         xFormPanel1.add(xLabel2);
 
-        xDateField1.setCaption("Account Type");
-        xDateField1.setDisabledTextColor(new java.awt.Color(0, 0, 0));
-        xDateField1.setEnabled(false);
-        xDateField1.setFont(new java.awt.Font("Tahoma", 1, 11));
-        xDateField1.setName("entity.type");
-        xDateField1.setPreferredSize(new java.awt.Dimension(150, 20));
-        xFormPanel1.add(xDateField1);
+        com.rameses.rcp.control.border.XLineBorder xLineBorder3 = new com.rameses.rcp.control.border.XLineBorder();
+        xLineBorder3.setLineColor(new java.awt.Color(204, 204, 204));
+        xLabel3.setBorder(xLineBorder3);
+        xLabel3.setCaption("Account Type");
+        xLabel3.setExpression("#{entity.type}");
+        xLabel3.setFont(new java.awt.Font("Tahoma", 1, 11));
+        xLabel3.setPreferredSize(new java.awt.Dimension(0, 19));
+        xFormPanel1.add(xLabel3);
 
         xDateField2.setCaption("Transaction Date");
         xDateField2.setDisabledTextColor(new java.awt.Color(0, 0, 0));
@@ -382,7 +383,6 @@ public class CollectionPostingPage extends javax.swing.JPanel {
     private com.rameses.rcp.control.XDataTable xDataTable1;
     private com.rameses.rcp.control.XDataTable xDataTable2;
     private com.rameses.rcp.control.XDataTable xDataTable3;
-    private com.rameses.rcp.control.XDateField xDateField1;
     private com.rameses.rcp.control.XDateField xDateField2;
     private com.rameses.rcp.control.XDecimalField xDecimalField1;
     private com.rameses.rcp.control.XDecimalField xDecimalField2;
@@ -392,6 +392,7 @@ public class CollectionPostingPage extends javax.swing.JPanel {
     private com.rameses.rcp.control.XFormPanel xFormPanel3;
     private com.rameses.rcp.control.XLabel xLabel1;
     private com.rameses.rcp.control.XLabel xLabel2;
+    private com.rameses.rcp.control.XLabel xLabel3;
     // End of variables declaration//GEN-END:variables
     
 }

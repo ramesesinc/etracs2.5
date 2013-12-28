@@ -50,10 +50,11 @@ class CollectionPostingNgasInterceptor
 		adb.insertRevenue(entity)
 		entity.deposits.each{ d ->
 			adb.insertDeposit([objid:d.objid, parentid:entity.objid])
-			adb.insertLiquidation([objid:d.objid, parentid:entity.objid])
-			adb.insertRemittance([objid:d.objid, parentid:entity.objid])
-			adb.insertCashReceipt([objid:d.objid, parentid:entity.objid])
 			adb.insertRevenueItems([objid:d.objid, parentid:entity.objid])
+		}
+		entity.migratedremittances.each{m -> 
+			adb.insertTracsRemittance([objid:m.objid, parentid:entity.objid])
+			adb.insertTracsRevenueItems([objid:m.objid, parentid:entity.objid])
 		}
 	}
 
