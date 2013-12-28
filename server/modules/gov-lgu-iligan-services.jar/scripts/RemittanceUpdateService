@@ -27,7 +27,7 @@ public class RemittanceUpdateService {
 
 	@ProxyMethod 
 	def updateCTCBShare( entity ) {
-		def receipts = em.findReceitpsByTxnno( entity );
+		def receipts = em.getReceitpsByTxnno( entity );
 		if(! receipts) throw new Exception("Remittance No ${entity.txnno} could not be found. ")
 
 		for(o in receipts) {

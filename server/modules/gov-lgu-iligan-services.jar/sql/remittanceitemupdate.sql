@@ -19,7 +19,7 @@ where r.txnno=$P{txnno}
 	and ci.item_code = $P{itemcode}
 
 
-[findReceitpsByTxnno]
+[getReceitpsByTxnno]
 select c.* from remittance r
  inner join remittance_cashreceipt rc on rc.remittanceid = r.objid 
  inner join cashreceipt c on rc.objid = c.objid
