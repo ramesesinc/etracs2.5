@@ -1,6 +1,8 @@
 <workunit>
     
    <invokers>
+       <invoker type="quick_launcher" code="CP01" caption="Collection Posting" index="200" role="CASHIER" action="init" target="window"/>
+       
         <invoker type="collectionposting:create" caption="Collection Posting" index="200" role="CASHIER" action="init" target="window"/>
         <invoker type="collectionposting:open" caption="Collection Posting" index="200" role="CASHIER" action="open" target="window"/>
         

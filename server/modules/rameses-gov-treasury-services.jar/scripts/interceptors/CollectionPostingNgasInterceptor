@@ -19,8 +19,8 @@ class CollectionPostingNgasInterceptor
 	@After(pattern="CollectionPostingService.open", eval="#{result.type == 'NGAS'}")
 	public void interceptOpen( evt ) {
 		def entity = evt.result
-		entity.deposits = adb.getDeposits(entity)
-		entity.migratedremittances = adb.getMigratedRemittances(entity)
+		entity.deposits = adb.getDeposits(entity).each{it.included = true}
+		entity.migratedremittances = adb.getMigratedRemittances(entity).each{it.included = true}
 	}
 
 
@@ -28,8 +28,8 @@ class CollectionPostingNgasInterceptor
 	public void init( evt  ) {
 		def entity = evt.result 
 		entity.adjtxndate 	= dtSvc.add(dtSvc.parse('yyyy-MM-dd', entity.txndate), '1d')
-		entity.deposits = adb.getOpenDeposits(entity)
-		entity.migratedremittances = adb.getOpenMigratedRemittances(entity)
+		entity.deposits = adb.getOpenDeposits(entity).each{ it.included = true }
+		entity.migratedremittances = adb.getOpenMigratedRemittances(entity).each{ it.included = true }
 
 		def totaldeposit = entity.deposits.amount.sum()
 		if (totaldeposit == null)  totaldeposit = 0.0 
@@ -48,11 +48,14 @@ class CollectionPostingNgasInterceptor
 		entity.postedby_name = entity.postedby.name
 		entity.postedby_title = entity.postedby.title
 		adb.insertRevenue(entity)
-		entity.deposits.each{ d ->
+		
+		def deposits = entity.deposits.findAll{it.included == true}
+		deposits.each{ d ->
 			adb.insertDeposit([objid:d.objid, parentid:entity.objid])
 			adb.insertRevenueItems([objid:d.objid, parentid:entity.objid])
 		}
-		entity.migratedremittances.each{m -> 
+		def migratedremittances = entity.migratedremittances.findAll{it.included == true }
+		migratedremittances.each{m -> 
 			adb.insertTracsRemittance([objid:m.objid, parentid:entity.objid])
 			adb.insertTracsRevenueItems([objid:m.objid, parentid:entity.objid])
 		}

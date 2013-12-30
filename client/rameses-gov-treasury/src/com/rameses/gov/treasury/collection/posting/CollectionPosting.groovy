@@ -5,7 +5,7 @@ import com.rameses.rcp.common.*;
 import com.rameses.rcp.annotations.*;
 import com.rameses.osiris2.client.*;
 
-class CollectionPostingService
+class CollectionPostingController
 {
     @Binding
     def binding;
@@ -22,6 +22,9 @@ class CollectionPostingService
     def entity;
     def mode;
             
+    def totalDeposit = 0.0;
+    def totalRemittance = 0.0;
+    
     public String getTitle(){
         def t = 'Collection Posting' 
         if (entity.type)
@@ -37,6 +40,7 @@ class CollectionPostingService
     
     void open(){
         entity = svc.open(entity);
+        updateAmount();
         mode = MODE_READ;
     }
     
@@ -46,6 +50,7 @@ class CollectionPostingService
         mode = MODE_CREATE;
         depositListHandler.reload();
         remittanceListHandler.reload();
+        updateAmount();
         return 'default';
     }
     
@@ -64,28 +69,45 @@ class CollectionPostingService
     
     
     
+    
+    
+    def selectedDeposit;
+    def selectedRemittance;
+    
+    
     def depositListHandler = [
+            getRows   : { return 50 },
             fetchList : { return entity.deposits },
-    ] as BasicListModel;
+            onColumnUpdate : { item, colName -> 
+                updateAmount();
+            },
+    ] as EditorListModel;
             
             
     def remittanceListHandler = [
+            getRows   : { return 50 },
             fetchList : { return entity.migratedremittances },
-    ] as BasicListModel;
+            onColumnUpdate : { item, colName -> 
+                updateAmount();
+            },
+    ] as EditorListModel;
                     
-                    
-    def getTotalDeposit(){
-        if (entity.deposits )
-            return entity.deposits.amount.sum();
-        return 0.0
+
+    void updateAmount(){
+        totalDeposit = 0.0;
+        totalRemittance = 0.0;
+        
+        def deposits = entity.deposits.findAll{it.included == true}
+        if (deposits)
+            totalDeposit = deposits.amount.sum();
+        
+        def remittances = entity.migratedremittances .findAll{it.included == true}
+        if (remittances)
+            totalRemittance = remittances.amount.sum();
+                
+        entity.amount = totalDeposit + totalRemittance;
+        
+        binding?.refresh('entity.amount|totalDeposit|totalRemittance');
     }
-    
-    
-    def getTotalRemittance(){
-        if (entity.migratedremittances )
-            return entity.migratedremittances.amount.sum();
-        return 0.0
-    }
-                    
-    
+
 }

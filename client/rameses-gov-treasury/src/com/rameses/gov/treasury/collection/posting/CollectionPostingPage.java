@@ -7,6 +7,7 @@
 package com.rameses.gov.treasury.collection.posting;
 
 import com.rameses.osiris2.themes.FormPage;
+import com.rameses.rcp.ui.annotations.StyleSheet;
 import com.rameses.rcp.ui.annotations.Template;
 
 /**
@@ -14,6 +15,7 @@ import com.rameses.rcp.ui.annotations.Template;
  * @author  Rameses
  */
 @Template(FormPage.class)
+@StyleSheet
 public class CollectionPostingPage extends javax.swing.JPanel {
     
     /** Creates new form CollectionPostingPage */
@@ -155,6 +157,20 @@ public class CollectionPostingPage extends javax.swing.JPanel {
 
         xDataTable1.setColumns(new com.rameses.rcp.common.Column[]{
             new com.rameses.rcp.common.Column(new Object[]{
+                new Object[]{"name", "included"}
+                , new Object[]{"caption", "Include?"}
+                , new Object[]{"width", 100}
+                , new Object[]{"minWidth", 0}
+                , new Object[]{"maxWidth", 0}
+                , new Object[]{"required", false}
+                , new Object[]{"resizable", true}
+                , new Object[]{"nullWhenEmpty", true}
+                , new Object[]{"editable", true}
+                , new Object[]{"editableWhen", null}
+                , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
+                , new Object[]{"typeHandler", new com.rameses.rcp.common.CheckBoxColumnHandler(java.lang.Boolean.class, true, false)}
+            }),
+            new com.rameses.rcp.common.Column(new Object[]{
                 new Object[]{"name", "txnno"}
                 , new Object[]{"caption", "Deposit No."}
                 , new Object[]{"width", 100}
@@ -221,6 +237,7 @@ public class CollectionPostingPage extends javax.swing.JPanel {
             })
         });
         xDataTable1.setHandler("depositListHandler");
+        xDataTable1.setName("selectedDeposit");
 
         xDecimalField1.setCaption("TOTAL");
         xDecimalField1.setDisabledTextColor(new java.awt.Color(0, 0, 0));
@@ -253,6 +270,20 @@ public class CollectionPostingPage extends javax.swing.JPanel {
         jTabbedPane1.addTab("Online Deposits", jPanel1);
 
         xDataTable2.setColumns(new com.rameses.rcp.common.Column[]{
+            new com.rameses.rcp.common.Column(new Object[]{
+                new Object[]{"name", "included"}
+                , new Object[]{"caption", "Include?"}
+                , new Object[]{"width", 100}
+                , new Object[]{"minWidth", 0}
+                , new Object[]{"maxWidth", 0}
+                , new Object[]{"required", false}
+                , new Object[]{"resizable", true}
+                , new Object[]{"nullWhenEmpty", true}
+                , new Object[]{"editable", true}
+                , new Object[]{"editableWhen", null}
+                , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
+                , new Object[]{"typeHandler", new com.rameses.rcp.common.CheckBoxColumnHandler(java.lang.Boolean.class, true, false)}
+            }),
             new com.rameses.rcp.common.Column(new Object[]{
                 new Object[]{"name", "txnno"}
                 , new Object[]{"caption", "Remittance No."}
@@ -320,6 +351,7 @@ public class CollectionPostingPage extends javax.swing.JPanel {
             })
         });
         xDataTable2.setHandler("remittanceListHandler");
+        xDataTable2.setName("selectedRemittance");
 
         xDecimalField2.setCaption("TOTAL");
         xDecimalField2.setDisabledTextColor(new java.awt.Color(0, 0, 0));
