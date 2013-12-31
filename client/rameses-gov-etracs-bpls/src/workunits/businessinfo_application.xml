@@ -1,0 +1,76 @@
+<workunit>
+    
+    <invokers>
+        <invoker type="business:info" caption="Application" index="1" action="init" visibleWhen="#{entity.application!=null}"/>
+        
+        <invoker type="formActions" caption="Update Info" index="30" action="updateAppInfo" role="BUSINESSINFO"/>
+    </invokers>
+    
+    <code>
+        <![CDATA[    
+        import com.rameses.rcp.annotations.*
+        import com.rameses.rcp.common.*
+        import com.rameses.osiris2.client.*
+        import com.rameses.osiris2.common.*
+        import java.rmi.server.*;
+        import com.rameses.gov.etracs.bpls.application.*;
+        
+        class BusinessInfoApplicationController {
+        
+            @Binding
+            def binding;
+            
+            @Service("BPInfoRuleService")
+            def infoRuleSvc;
+
+            String title = "Application ";
+            String entityName = "businessinfo:application";
+        
+            def entity;
+            boolean dirty;
+            def orgTypes = LOV.ORG_TYPES;
+          
+            void init() {
+                entity = entity.application;
+                title = title + "( " + entity.state + " )"
+                entity.orgtypename = orgTypes.find{ it.key == entity.orgtype}?.value;
+            }
+            
+            def updateAppInfo() {
+                return InvokerUtil.lookupOpener( "bpapplicationinfo:edit", [
+                    entity: entity, 
+                    initial: 'info',
+                    service: infoRuleSvc,
+                    title: 'Business Information',
+                    existingInfos: entity.appinfos,
+                    handler:{ result ->
+                        entity.appinfos = result.infos;
+                        entity.requirements = result.requirements;
+                        appInfoModel.reload();
+                        dirty = true;
+                    }
+                ]);
+             }
+            
+            def appInfoModel = [
+                fetchList: { o->    
+                    return  entity.appinfos;
+                }
+            ] as BasicListModel;
+            
+            def lobModel = [
+                fetchList: { o->    
+                    return  entity.lobs;
+                }
+            ] as BasicListModel;
+            
+        }
+        ]]>
+        
+    </code>
+    
+    <pages>
+        <page template="com.rameses.gov.etracs.bpls.business.ApplicationInfoPage"/>
+    </pages>
+
+</workunit>

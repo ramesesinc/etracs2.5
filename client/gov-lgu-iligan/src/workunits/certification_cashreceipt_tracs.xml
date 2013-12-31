@@ -2,6 +2,8 @@
     <invokers>
         <invoker type="treasury-certification" caption="TRACS Collection Certification" role="TREASURY_REPORT" certificationType="cashreceipt_tracs" index="5"/>
         <invoker type="treasury-certification:cashreceipt_tracs:create" action="init" caption="TRACS Collection Certification"  target="self" index="10" role="TREASURY_REPORT"/>
+        
+        <invoker type="cashreceipt_tracs:open" action="open" caption="Collection Certification"  target="self" index="10" role="TREASURY_REPORT"/>
     </invokers>
     
     <code>

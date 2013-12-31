@@ -1,0 +1,83 @@
+<workunit>
+    <invokers>
+       <invoker type="bpapplicationinfo:laterenewal" caption="Late Renewal Infos" action="init" target="popup"/>
+       <invoker type="businessinfo:ledger:formActions" caption="Late Renewal" action="init" target="popup"/>
+    </invokers>
+    
+    <code>
+          <![CDATA[    
+        import com.rameses.rcp.annotations.*
+        import com.rameses.rcp.common.*
+        import com.rameses.osiris2.client.*
+        import com.rameses.osiris2.common.*
+        import java.rmi.server.*;
+        import com.rameses.gov.etracs.bpls.application.*;
+        
+        class BPApplicationLateRenewalController {
+        
+            def entity;
+            def lateRenewalYears;
+            def selectedLateRenewalYear;
+            def assessmentRuleSvc;
+            
+            def init() {
+                MsgBox.alert("late renewals");
+                //selectedLateRenewalYear = entity;
+            }
+            
+            def lateRenewalYearModel = [
+                fetchList: { o->
+                    return [entity] + lateRenewalYears;
+                }
+            ] as BasicListModel;
+
+            def lateRenewalInfoModel = [
+                fetchList: { o->
+                    if(!selectedLateRenewalYear) return [];
+                    selectedLateRenewalYear.assessmentinfos;
+                }
+            ] as BasicListModel;
+    
+    
+            def updateLateRenewalInfo() {
+                if( !selectedLateRenewalYear )
+                    throw new Exception("Please select a year");
+                    
+                def app = [:];
+                app.putAll( entity );  
+                
+                def lobList = app.lobs.findAll{ it.assessmenttype == 'RENEW' || it.assessmenttype == 'RETIRED' };
+                def _list = [];
+                lobList.each {
+                    def m = [:];
+                    m.putAll( it );
+                    m.assessmenttype = 'RENEW';
+                    _list << m;
+                }                
+                
+                app.lobs = _list;
+                app.remove("assessmentinfos");
+                app.appyear = selectedLateRenewalYear.appyear;
+                return InvokerUtil.lookupOpener( "bpapplicationinfo:edit", [
+                    entity: app, 
+                    initial: 'info',
+                    service: assessmentRuleSvc,
+                    initialInfos: entity.appinfos.collect{it},
+                    title:'Application for ' + app.appyear, 
+                    existingInfos: selectedLateRenewalYear.assessmentinfos,
+                    handler:{ result ->
+                        selectedLateRenewalYear.assessmentinfos = result.infos.findAll{ it.infotype == 'assessment' };
+                        lateRenewalInfoModel.reload();
+                    }
+                ]);    
+
+            }
+        }
+        ]]>
+    </code>    
+    
+    <pages>
+        <page template="com.rameses.gov.etracs.bpls.application.SpecifyLateRenewalPage"/>
+    </pages>
+    
+</workunit>

@@ -23,6 +23,9 @@ public class BPApplicationService extends ActiveCrudService {
 	@Service("BusinessInfoService")
 	def businessInfoSvc;
 
+	@ActiveDB("business")
+	def business;
+
 	@Env
 	def env;
 
@@ -37,29 +40,39 @@ public class BPApplicationService extends ActiveCrudService {
 			o.appyear = yr;
 			o.yearstarted = yr;
 		}
-		def mnth = dateSvc.serverMonth;
-		def smon = ( mnth < 10 ) ? "0"+mnth : mnth+"";
-		def prefix = "BP"+o.appyear+smon;
-		o.appno = prefix+seqSvc.getNextFormattedSeries(prefix);
-		o.appversion = 0;
-		o.activeyear = o.appyear;
-		o.txndate = dateSvc.serverDate;
-		o.createdby = env.USERID;
 
 		//check first if there is a businessid else create one if not.
 		if(!o.businessid) {
-			def g = businessInfoSvc.create(o);
+			def b = [:];
+			b.putAll(o);
+			b.objid = null;
+			b.qtrpaid = 0;
+			def g = businessInfoSvc.create(b);
 			o.businessid = g.objid;
+			o.bin = g.bin;
 		}
-		o.state = "info";	
+		if(!o.bin)
+			throw new Exception("BIN for Application is null. Pls. check data again");
+
+		
+		def prefix = o.bin;
+		o.appno = prefix+seqSvc. getNextFormattedSeriesA( prefix, 2 );
+		o.appversion = 0;
+		o.txndate = dateSvc.serverDate;
+		o.createdby = env.USERID;
+		
+		//immediately send for assessment
+		o.state = "assessment";	
 	}
 	
+	//update the business after creation of bpapplication
 	public void afterCreate(o) {
-		o.laterenewals.each {
-			it.appyear = it.year;
-			it.refid = o.objid;
-			em.create(it, "laterenewal");
-		}
+		def b = [objid: o.businessid];
+		b.state = 'PENDING';
+		b.activeyear = o.appyear;
+		b.currentapplicationid = o.objid;
+		b.currentpermitid = null;
+		businessInfoSvc.update(b);
 	}
 
 	public void saveRequirements(o) {
@@ -93,13 +106,6 @@ public class BPApplicationService extends ActiveCrudService {
 		}
 	}
 
-	@ProxyMethod
-	public def openByAppno(o) {
-		def z = em.findApplicationByAppNo( [appno:o.appno] );
-		if(!z)
-			throw new Exception("Application not found");
-		return open( [objid: z.applicationid ] );
-	}
 
 	public void afterOpen(o) {
 		o.requirements = em.getRequirements(o);
@@ -111,7 +117,10 @@ public class BPApplicationService extends ActiveCrudService {
 			if(it.status == 'completed') it.completed = 1;
 		}
 
-		o.bin = em.findBIN([businessid: o.businessid])?.bin;
+		//retrievd the business info.
+		def z = business.read([objid: o.businessid]);
+		o.bin = z.bin;
+		o.pin = z.pin;
 
 		//if state is for approval, include the taxfees.
 		if( o.state == 'approval') {
@@ -132,15 +141,6 @@ public class BPApplicationService extends ActiveCrudService {
 			if(!o.total_othercharge) o.total_othercharge = 0;
 			o.total = o.total_tax + o.total_regfee + o.total_othercharge;
 		}
-		//retrieve also if there are late renewals
-		def laterenewals = em.getLateRenewals(o);
-		if(laterenewals) {
-			laterenewals.each {
-				it.assessmentinfos = em.entityManager.serializer.read( it.assessmentinfos );
-			}
-			o.laterenewals = laterenewals;
-		}
-
 	}
 
 	/*************************************************************************
@@ -158,7 +158,6 @@ public class BPApplicationService extends ActiveCrudService {
 		result.total_regfee = result.totals.total_regfee;
 		result.total_othercharge = result.totals.total_othercharge;
 		result.total = result.totals.total; 
-		println "total ->"+result.total;		
 		return result;
 	}
 
@@ -168,7 +167,7 @@ public class BPApplicationService extends ActiveCrudService {
 	@ProxyMethod
 	public def submitForAssessment(o) {
 		o.state = "assessment";
-		em.changeState( o );
+		em.update( o );	//to include changes in the info
 		return o;
 	}
 
@@ -177,7 +176,7 @@ public class BPApplicationService extends ActiveCrudService {
 	 	if(!o.taxfees)
             throw new Exception("Please indicate at least one taxfee item");
 		o.state = "approval";
-		em.changeState( o );
+		em.update( o );
 		return o;
 	}
 
@@ -195,6 +194,7 @@ public class BPApplicationService extends ActiveCrudService {
 		m.lobs = o.lobs;
 		m.state = 'approved';
 		m.activeyear = o.appyear;
+		m.qtrpaid = 0;
 		businessInfoSvc.updateApprovedInfo(m);
 		
 		def ledger = [:];
@@ -212,7 +212,6 @@ public class BPApplicationService extends ActiveCrudService {
 		return o;
 	}
 
-
 	@ProxyMethod
 	public def returnForInfo(o) {
 		o.state = "info";
@@ -228,24 +227,23 @@ public class BPApplicationService extends ActiveCrudService {
 	}
 
 	@ProxyMethod
-	public def issueBIN(o) {
-		def m = [:];
-		m.objid = o.businessid;
-		m.activeyear = o.appyear;
-		m.applicationid = o.objid;
-		def b = businessInfoSvc.createBIN( m );
-		o.bin = b.bin;
-		return o;
-	}
-
-	@ProxyMethod
 	public def release(o) {
+		boolean isNew = (o.bin) ? false : true;
 		def m = [:];
 		m.objid = o.businessid;
 		m.activeyear = o.appyear;
 		m.applicationid = o.objid;
-		def b = businessInfoSvc.release( m );
+		if(isNew) {
+			def b = businessInfoSvc.createBIN( m );
+			o.bin = b.bin;
+		}	
+		else {
+			businessInfoSvc.release( m );	
+		}
+		em.changeState( [objid: o.objid, state:'active'])
 		return o;
 	}
 
+
+	
 }	

@@ -43,7 +43,9 @@
 						y="6"
 						width="592"
 						height="12"
-						key="textField"/>
+						key="textField">
+							<printWhenExpression><![CDATA[new Boolean($F{fundname} != null)]]></printWhenExpression>
+						</reportElement>
 					<box></box>
 					<textElement verticalAlignment="Middle">
 						<font fontName="Tahoma" pdfFontName="Helvetica-Bold" size="8" isBold="true" isUnderline="false"/>

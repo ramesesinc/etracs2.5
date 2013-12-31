@@ -38,7 +38,7 @@ class RPTReceiptController extends com.rameses.enterprise.treasury.cashreceipt.A
     def openledgers;
     def itemsforpayment;
             
-    
+    String entityName = "cashreceipt_rpt"
     
     void init(){
         super.init();
@@ -46,7 +46,7 @@ class RPTReceiptController extends com.rameses.enterprise.treasury.cashreceipt.A
         entity.txntype = 'rptonline';
         entity.amount = 0.0;
         clearAllPayments();
-        bill = billSvc.initBill();
+        bill = billSvc.initBill(null);
         mode = MODE_INIT;
         payoption = PAY_OPTION_ALL;
     }
@@ -66,7 +66,7 @@ class RPTReceiptController extends com.rameses.enterprise.treasury.cashreceipt.A
         }
         
         if (payoption == PAY_OPTION_ALL){
-            bill.ledgerids.clear();
+            recalcBillingStatement();
             loadItems();
         }
             
@@ -102,10 +102,7 @@ class RPTReceiptController extends com.rameses.enterprise.treasury.cashreceipt.A
         onColumnUpdate : { item,colname ->
             if (colname == 'pay' && item.pay == false){
                 item.amount = 0.0;
-                bill.ledgerids.clear();
-                bill.ledgerids.add(item.rptledgerid);
-                svc.resetForPaymentFlag(bill);
-                bill.ledgerids.clear();
+                bill.rptledgerid = item.rptledgerid;
                 calcReceiptAmount();
             }
             else {
@@ -132,8 +129,16 @@ class RPTReceiptController extends com.rameses.enterprise.treasury.cashreceipt.A
     ] as EditorListModel
                 
                 
+    void recalcBillingStatement(){
+        def ledgers = billSvc.loadProperties(bill);
+        ledgers.each{
+            billSvc.generateBillByLedgerId(it.objid)
+        }
+    }
+                
     void loadItems(){
-        bill.ledgerids.clear();
+        bill.rptledgerid = null;
+        bill.taxpayerid = bill.taxpayer.objid
         itemsforpayment = svc.getItemsForPayment(bill);
         listHandler.load();
         calcReceiptAmount();
@@ -141,8 +146,8 @@ class RPTReceiptController extends com.rameses.enterprise.treasury.cashreceipt.A
         
             
     void loadItemByLedger(rptledgerid){
-        bill.ledgerids.clear();
-        bill.ledgerids.add(rptledgerid);
+        bill.rptledgerid = rptledgerid;
+        billSvc.generateBillByLedgerId(rptledgerid);
         itemsforpayment += svc.getItemsForPayment(bill);
         listHandler.load();
         calcReceiptAmount();
@@ -150,8 +155,8 @@ class RPTReceiptController extends com.rameses.enterprise.treasury.cashreceipt.A
 
     void updateItemDue(item){
         item.partialled = false;
-        bill.ledgerids.clear();
-        bill.ledgerids.add(item.rptledgerid);
+        bill.rptledgerid = item.rptledgerid;
+        billSvc.generateBill(bill);
         def items = svc.getItemsForPayment(bill);
         if (items){
             item.putAll(items[0]);
@@ -213,6 +218,8 @@ class RPTReceiptController extends com.rameses.enterprise.treasury.cashreceipt.A
                 selectedItem.putAll( billSvc.computePartialPayment(selectedItem, partial) );
                 listHandler.load();
                 calcReceiptAmount();
+                
+                
             },
         ])
     }
@@ -223,9 +230,9 @@ class RPTReceiptController extends com.rameses.enterprise.treasury.cashreceipt.A
         entity.amount = 0.0;
         if (paiditems){
             entity.amount = paiditems.amount.sum();
-            updateBalances();
         }
-        binding.refresh('totalBasic|totalSef')
+        updateBalances();
+        binding.refresh('totalGeneral|totalSef')
     }
     
     
@@ -245,8 +252,8 @@ class RPTReceiptController extends com.rameses.enterprise.treasury.cashreceipt.A
     }
     
     
-    def getTotalBasic(){
-        return itemsforpayment.findAll{it.pay == true}.totalbasic.sum()
+    def getTotalGeneral(){
+        return itemsforpayment.findAll{it.pay == true}.totalgeneral.sum()
     }
     
     def getTotalSef(){

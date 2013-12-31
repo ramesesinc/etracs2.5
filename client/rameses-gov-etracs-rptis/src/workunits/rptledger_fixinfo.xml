@@ -31,10 +31,10 @@ public class FixLedgerController
         info.objid = entity.objid
         info.taxpayer = entity.taxpayer
         info.lastyearpaid = entity.lastyearpaid
-        info.basic = 0.0
-        info.basicint = 0.0 
-        info.sef = 0.0
-        info.sefint = 0.0
+        info.partialbasic = 0.0
+        info.partialbasicint = 0.0 
+        info.partialsef = 0.0
+        info.partialsefint = 0.0
         
     }
     

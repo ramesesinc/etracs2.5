@@ -39,7 +39,7 @@ public class FixLedgerFaasController
         if (MsgBox.confirm('Update ledger faas data?') ){
             if (entity.toqtr == null ) 
                 entity.toqtr = 0;
-            svc.saveLedgerFaas(entity)
+            svc.fixLedgerFaas(entity)
             if (oncomplete) 
                 oncomplete(entity);
             return doClose();

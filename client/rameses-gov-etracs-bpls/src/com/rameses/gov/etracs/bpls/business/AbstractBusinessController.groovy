@@ -6,7 +6,7 @@ import com.rameses.osiris2.client.*
 import com.rameses.osiris2.common.*
 import java.rmi.server.*
 
-class AbstractBusinessController  {
+class AbstractBusinessController extends PageFlowController {
 
     @Binding
     def binding;

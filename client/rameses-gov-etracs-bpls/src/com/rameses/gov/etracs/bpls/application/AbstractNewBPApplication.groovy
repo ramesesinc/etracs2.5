@@ -44,8 +44,13 @@ class AbstractNewBPApplication extends AbstractBPApplication {
 
    
     def openApplication() {
-        return  InvokerUtil.lookupOpener( "bpapplication:open", [entity: entity] );
+        return  InvokerUtil.lookupOpener( "business:open", [entity: [objid: entity.businessid]  ] );
     }
+
+    def printBIN() {
+        return  InvokerUtil.lookupOpener( "business:printbin", [entity: entity ] );
+    }
+
 
     void saveCreate() {
         if( !entity.lobs ) {
@@ -59,7 +64,6 @@ class AbstractNewBPApplication extends AbstractBPApplication {
         }
 
         entity = appSvc.create( entity );
-        entity.state = 'info';
      }
 
 }

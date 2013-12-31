@@ -34,8 +34,8 @@ public class VerifyBusinessName extends javax.swing.JPanel {
 
         xDataTable1.setColumns(new com.rameses.rcp.common.Column[]{
             new com.rameses.rcp.common.Column(new Object[]{
-                new Object[]{"name", "tradename"}
-                , new Object[]{"caption", "Trade Name"}
+                new Object[]{"name", "businessname"}
+                , new Object[]{"caption", "Business Name"}
                 , new Object[]{"width", 100}
                 , new Object[]{"minWidth", 0}
                 , new Object[]{"maxWidth", 0}

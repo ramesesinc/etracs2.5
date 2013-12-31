@@ -30,11 +30,14 @@ public class ChangeOrgType extends javax.swing.JPanel {
     private void initComponents() {
         xFormPanel1 = new com.rameses.rcp.control.XFormPanel();
         xComboBox1 = new com.rameses.rcp.control.XComboBox();
+        xFormPanel2 = new com.rameses.rcp.control.XFormPanel();
+        xComboBox2 = new com.rameses.rcp.control.XComboBox();
 
         setPreferredSize(new java.awt.Dimension(482, 130));
 
         xFormPanel1.setCaptionWidth(150);
         xComboBox1.setCaption("Org Type");
+        xComboBox1.setEnabled(false);
         xComboBox1.setExpression("#{item.value}");
         xComboBox1.setItemKey("key");
         xComboBox1.setItems("orgTypes");
@@ -43,28 +46,45 @@ public class ChangeOrgType extends javax.swing.JPanel {
         xComboBox1.setRequired(true);
         xFormPanel1.add(xComboBox1);
 
+        xFormPanel2.setCaptionWidth(150);
+        xFormPanel2.setName("newentity.orgtype");
+        xComboBox2.setCaption("Org Type");
+        xComboBox2.setExpression("#{item.value}");
+        xComboBox2.setItemKey("key");
+        xComboBox2.setItems("orgTypes");
+        xComboBox2.setName("entity.orgtype");
+        xComboBox2.setPreferredSize(new java.awt.Dimension(250, 22));
+        xComboBox2.setRequired(true);
+        xFormPanel2.add(xComboBox2);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(xFormPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 440, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(19, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(xFormPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 440, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(xFormPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 440, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(32, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
+                .addGap(22, 22, 22)
                 .addComponent(xFormPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(34, Short.MAX_VALUE))
+                .addGap(24, 24, 24)
+                .addComponent(xFormPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(30, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
     
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private com.rameses.rcp.control.XComboBox xComboBox1;
+    private com.rameses.rcp.control.XComboBox xComboBox2;
     private com.rameses.rcp.control.XFormPanel xFormPanel1;
+    private com.rameses.rcp.control.XFormPanel xFormPanel2;
     // End of variables declaration//GEN-END:variables
     
 }

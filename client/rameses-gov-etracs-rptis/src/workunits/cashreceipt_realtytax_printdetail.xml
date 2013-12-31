@@ -1,6 +1,7 @@
 <workunit>
     <invokers>
         <invoker type="cashreceiptinfo:formActions" action="print" caption="Realty Tax Detail Printout" target="process" visibleWhen="#{entity.formno=='56'}"/>
+        <invoker type="cashreceipt_rpt:formActions" action="print" caption="Realty Tax Detail Printout" target="process" visibleWhen="#{entity.formno=='56' &amp;&amp; completed}"/>
     </invokers>
     <code>
 

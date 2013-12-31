@@ -67,25 +67,25 @@ public class RPTLedgerFixPage extends javax.swing.JPanel {
         xDecimalField1.setCaption("Basic");
         xDecimalField1.setCaptionWidth(120);
         xDecimalField1.setCellPadding(new java.awt.Insets(10, 0, 0, 0));
-        xDecimalField1.setName("info.basic");
+        xDecimalField1.setName("info.partialbasic");
         xDecimalField1.setRequired(true);
         xFormPanel2.add(xDecimalField1);
 
         xDecimalField2.setCaption("Basic Penalty");
         xDecimalField2.setCaptionWidth(120);
-        xDecimalField2.setName("info.basicint");
+        xDecimalField2.setName("info.partialbasicint");
         xDecimalField2.setRequired(true);
         xFormPanel2.add(xDecimalField2);
 
         xDecimalField3.setCaption("SEF");
         xDecimalField3.setCaptionWidth(120);
-        xDecimalField3.setName("info.sef");
+        xDecimalField3.setName("info.partialsef");
         xDecimalField3.setRequired(true);
         xFormPanel2.add(xDecimalField3);
 
         xDecimalField4.setCaption("SEF Penalty");
         xDecimalField4.setCaptionWidth(120);
-        xDecimalField4.setName("info.sefint");
+        xDecimalField4.setName("info.partialsefint");
         xDecimalField4.setRequired(true);
         xFormPanel2.add(xDecimalField4);
 

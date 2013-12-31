@@ -14,6 +14,8 @@
     </invokers>
     <code>
 
+<![CDATA[ 
+
 import com.rameses.rcp.common.*;
 import com.rameses.rcp.annotations.*;
 import com.rameses.osiris2.client.*;
@@ -27,6 +29,9 @@ class RPTLedgerNoticeOfDelinquencyController
 
     @Service("ReportParameterService")
     def reportSvc;
+    
+    @Service('RPTBillingService')
+    def billingSvc 
 
     def taxpayer;
     def entity;
@@ -47,6 +52,22 @@ class RPTLedgerNoticeOfDelinquencyController
             taxpayer : (taxpayer ? taxpayer : entity.taxpayer),
             rptledgerid : entity?.objid,
         ]
+        
+        def rptledgerids = []
+        if (entity) {
+            rptledgerids << entity.objid
+        }
+        else {
+            def bill = billingSvc.initBill(null)
+            bill.taxpayer = taxpayer
+            def props = billingSvc.loadProperties(bill)
+            if (props ) rptledgerids += props.objid
+        }
+        
+        rptledgerids.each{
+            billingSvc.generateBillByLedgerId(it);
+        }
+        
         data = svc.generateNoticeOfDelinquency(params)
         report.viewReport()
     }
@@ -77,6 +98,8 @@ class RPTLedgerNoticeOfDelinquencyController
     
 
 }
+
+]]>
     </code>
     <pages>
         <page template="com.rameses.gov.etracs.rpt.ledger.ui.NoticeOfDelinquencyInitPage"/>

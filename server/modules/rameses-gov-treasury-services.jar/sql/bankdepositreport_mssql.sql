@@ -100,6 +100,51 @@ group by ri.fund_title, cri.item_objid, cri.item_code, cri.item_title
 order by fundname, acctcode, acctname  
 
 
+[getBarangayShares]
+select 
+  ri.fund_title as fundname, ri.objid as acctid, ri.title as acctname,
+  ri.code as acctcode, sum( cri.brgyshare + cri.brgyintshare ) as amount 
+from( 
+  select
+    distinct lf.liquidationid
+  from bankdeposit b 
+    inner join bankdeposit_liquidation bl on b.objid = bl.bankdepositid
+    inner join liquidation_cashier_fund lf on lf.objid = bl.objid 
+  where b.objid=$P{bankdepositid} 
+  ) a 
+  inner join liquidation_remittance lr on lr.liquidationid = a.liquidationid 
+  inner join remittance_cashreceipt rc on rc.remittanceid = lr.objid 
+  inner join cashreceipt c on c.objid = rc.objid 
+  inner join cashreceiptitem_rpt cri on cri.rptreceiptid = c.objid
+  inner join brgyshare_account_mapping bam on cri.barangayid = bam.barangayid 
+  left join revenueitem ri on ri.objid = bam.acct_objid
+  left join cashreceipt_void cv on cv.receiptid = c.objid 
+  where c.formno = '56'
+group by ri.fund_title, ri.objid, ri.code, ri.title 
+order by fundname, acctcode, acctname  
+
+
+[updateBrgyShares]
+update cri set 
+  cri.brgyshare = ROUND((cri.basic - cri.basicdisc) * 0.30, 2),
+  cri.brgyintshare = ROUND(cri.basicint * 0.30, 2)
+from( 
+    select
+    distinct lf.liquidationid
+    from bankdeposit b 
+    inner join bankdeposit_liquidation bl on b.objid = bl.bankdepositid
+    inner join liquidation_cashier_fund lf on lf.objid = bl.objid 
+    where b.objid =  $P{bankdepositid} 
+  ) a 
+  inner join liquidation_remittance lr on lr.liquidationid = a.liquidationid 
+  inner join remittance_cashreceipt rc on rc.remittanceid = lr.objid 
+  inner join cashreceipt c on c.objid = rc.objid 
+  inner join cashreceiptitem_rpt cri on cri.rptreceiptid = c.objid
+  left join cashreceipt_void cv on cv.receiptid = c.objid 
+  where cv.objid IS NULL 
+
+
+
 [getSerialRemittedForms]
 SELECT a.*, 
     (a.receivedendseries-a.receivedstartseries+1) AS qtyreceived,

@@ -13,8 +13,6 @@
 		<field name="objid" primary="true" />
 		<field name="rptreceiptid" required="true"  />
 		<field name="rptledgerid"   />
-		<field name="rptledgeritemid"   />
-		<field name="rptledgeritemqtrlyid"   />
 		<field name="barangayid" required="true"  />
 		<field name="year" required="true" type="integer" />
 		<field name="qtr" required="true" type="integer" />
@@ -39,7 +37,6 @@
 		<field name="firecode" required="true" type="decimal" />
 		<field name="firecodeacct_objid" />
 		<field name="revtype" required="true" />
-		<field name="qtrly" required="true" type="integer" />
 	</element>
 
 	<element name="noledgeritem" tablename="cashreceiptitem_rpt_noledger">

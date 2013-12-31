@@ -73,7 +73,7 @@
 			</band>
 		</columnHeader>
 		<detail>
-			<band height="32"  isSplitAllowed="true" >
+			<band height="26"  isSplitAllowed="true" >
 				<printWhenExpression><![CDATA[new Boolean($P{RECEIPTITEMCOUNT}.intValue() <= 8)]]></printWhenExpression>
 				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -114,7 +114,7 @@
 						mode="Transparent"
 						x="186"
 						y="0"
-						width="83"
+						width="74"
 						height="16"
 						forecolor="#000000"
 						backcolor="#FFFFFF"
@@ -132,16 +132,15 @@
 						x="36"
 						y="16"
 						width="233"
-						height="16"
+						height="10"
 						forecolor="#000000"
 						backcolor="#FFFFFF"
 						key="textField-4"
-						stretchType="RelativeToTallestObject"
 						isRemoveLineWhenBlank="true"/>
 					<box>					<rightPen lineWidth="0.0" lineStyle="Solid"/>
 </box>
 					<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
-						<font fontName="SansSerif" pdfFontName="Helvetica" size="9" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
+						<font fontName="SansSerif" pdfFontName="Helvetica" size="8" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[$F{remarks}]]></textFieldExpression>
 				</textField>

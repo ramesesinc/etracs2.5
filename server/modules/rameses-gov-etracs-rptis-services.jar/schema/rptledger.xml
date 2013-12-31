@@ -9,10 +9,17 @@
         <field name="firstqtrpaidontime" required="true" type="boolean" />
         <field name="qtrlypaymentavailed" required="true" type="boolean" />
         <field name="qtrlypaymentpaidontime" required="true" type="boolean" />
-        <field name="lastitemyear" required="true" type="integer"/>
         <field name="lastreceiptid"/>
         <field name="barangayid" required="true" />
         <field name="advancebill" required="true" type="boolean"/>
+        <field name="lastbilledyear" type="integer" />
+        <field name="lastbilledqtr" type="integer"  />
+        <field name="partialbasic" type="decimal" />
+        <field name="partialbasicint" type="decimal" />
+        <field name="partialbasicdisc" type="decimal" />
+        <field name="partialsef" type="decimal" />
+        <field name="partialsefint" type="decimal" />
+        <field name="partialsefdisc" type="decimal" />
     </element>
 
     <element name="ledgerfaas" tablename="rptledgerfaas">
@@ -33,92 +40,6 @@
         <field name="assessedvalue" required="true" type="decimal" />
         <field name="systemcreated" required="true" type="boolean" />
     </element>
-
-    <element name="item" tablename="rptledgeritem">
-        <field name="objid" primary="true" />
-        <field name="state" required="true" />
-        <field name="rptledgerid" required="true" />
-        <field name="rptledgerfaasid" required="true" />
-        <field name="year" required="true" type="integer" />
-        <field name="assessedvalue" required="true" type="decimal" />
-        <field name="basic" type="decimal" required="true" />
-        <field name="basicpaid" type="decimal" required="true" />
-        <field name="basicint" type="decimal" required="true" />
-        <field name="basicintpaid" type="decimal" required="true" />
-        <field name="basicintpartial" type="decimal" required="true" />
-        <field name="basicdisc" type="decimal" required="true" />
-        <field name="basicdisctaken" type="decimal" required="true" />
-        <field name="basiccredit" type="decimal" required="true" />
-        <field name="basicamnesty" type="decimal" required="true" />
-        <field name="basicintamnesty" type="decimal" required="true" />
-        <field name="sef" type="decimal" required="true" />
-        <field name="sefpaid" type="decimal" required="true" />
-        <field name="sefint" type="decimal" required="true" />
-        <field name="sefintpaid" type="decimal" required="true" />
-        <field name="sefintpartial" type="decimal" required="true" />
-        <field name="sefdisc" type="decimal" required="true" />
-        <field name="sefdisctaken" type="decimal" required="true" />
-        <field name="sefcredit" type="decimal" required="true" />
-        <field name="sefamnesty" type="decimal" required="true" />
-        <field name="sefintamnesty" type="decimal" required="true" />
-        <field name="basicacct_objid"  />
-        <field name="basicintacct_objid"  />
-        <field name="sefacct_objid"  />
-        <field name="sefintacct_objid"  />
-        <field name="firecode" type="decimal" required="true" />
-        <field name="firecodepaid" type="decimal" required="true" />
-        <field name="firecodeacct_objid"  />
-        <field name="revtype" />
-        <field name="amnestyinfo" />
-        <field name="forpayment" type="boolean" required="true" />
-        <field name="partial" type="boolean" required="true" />
-        <field name="lastqtrpaid" type="integer" required="true" />
-        <field name="qtrly" type="boolean" required="true" />
-    </element>
-
-    <element name="qtrlyitem" tablename="rptledgeritem_qtrly">
-        <field name="objid" primary="true" />
-        <field name="state" required="true" />
-        <field name="rptledgerid" required="true" />
-        <field name="rptledgeritemid" required="true" />
-        <field name="year" required="true" type="integer" />
-        <field name="qtr" required="true" type="integer" />
-        <field name="assessedvalue" required="true" type="decimal" />
-        <field name="qtrlyav" required="true" type="decimal" />
-        <field name="basic" required="true" type="decimal" />
-        <field name="basicpaid" required="true" type="decimal" />
-        <field name="basicint" required="true" type="decimal" />
-        <field name="basicintpaid" required="true" type="decimal" />
-        <field name="basicintpartial" required="true" type="decimal" />
-        <field name="basicdisc" required="true" type="decimal" />
-        <field name="basicdisctaken" required="true" type="decimal" />
-        <field name="basicamnesty" required="true" type="decimal" />
-        <field name="basicintamnesty" required="true" type="decimal" />
-        <field name="basiccredit" required="true" type="decimal" />
-        <field name="sef" required="true" type="decimal" />
-        <field name="sefpaid" required="true" type="decimal" /> 
-        <field name="sefint" required="true" type="decimal" />
-        <field name="sefintpaid" required="true" type="decimal" />
-        <field name="sefintpartial" required="true" type="decimal" />
-        <field name="sefdisc" required="true" type="decimal" />
-        <field name="sefdisctaken" required="true" type="decimal" />
-        <field name="sefamnesty" required="true" type="decimal" />
-        <field name="sefintamnesty" required="true" type="decimal" />
-        <field name="sefcredit" required="true" type="decimal" />
-        <field name="firecode" required="true" type="decimal" />
-        <field name="firecodepaid" required="true" type="decimal" />
-        <field name="revtype" />
-        <field name="amnestyinfo" />
-        <field name="forpayment" required="true" type="boolean" />
-        <field name="partial" required="true" type="boolean" />
-        <field name="partialbasic" type="decimal" />
-        <field name="partialbasicint" type="decimal" />
-        <field name="partialbasicdisc" type="decimal" />
-        <field name="partialsef" type="decimal" />
-        <field name="partialsefint" type="decimal" />
-        <field name="partialsefdisc" type="decimal" />
-    </element>
-
     <element name="capturepayment" tablename="rptreceipt_capture">
         <field name="objid" primary="true" />
         <field name="rptledgerid" required="true" />

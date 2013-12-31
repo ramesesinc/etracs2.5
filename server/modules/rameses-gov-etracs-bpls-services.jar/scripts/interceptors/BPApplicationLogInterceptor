@@ -49,10 +49,10 @@ public class BPApplicationLogInterceptor {
 		log( o.objid, "payment", "approve" );
 	}
 
-	@After(pattern="BPApplicationService.issueBIN")
+	@After(pattern="BPApplicationService.release")
 	public def logIssueBIN(def evt) { 
 		def o = evt.args[0];
-		log( o.objid, "release", "issuebin" );
+		log( o.objid, "release", "release" );
 	}
 
 	@After(pattern="BPApplicationService.issuePermit")

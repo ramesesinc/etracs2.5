@@ -29,11 +29,11 @@ class RPTReceiptNoLedgerInterceptor
 		receipt.items = []
 		receipt.ledgers.each{ rl ->
 			rl.items.each{ rli ->
-				summarizeReceiptItem(receipt, rli.basicacct?.objid, rli.basic)
-				summarizeReceiptItem(receipt, rli.basicintacct?.objid, rli.basicint)
-				summarizeReceiptItem(receipt, rli.sefacct?.objid, rli.sef)
-				summarizeReceiptItem(receipt, rli.sefintacct?.objid, rli.sefint)
-				summarizeReceiptItem(receipt, rli.firecodeacct?.objid, rli.firecode)
+				summarizeReceiptItem(receipt, rli.basicacctid, rli.basic - rli.basicdisc )
+				summarizeReceiptItem(receipt, rli.basicintacctid, rli.basicint)
+				summarizeReceiptItem(receipt, rli.sefacctid, rli.sef - rli.sefdisc)
+				summarizeReceiptItem(receipt, rli.sefintacctid, rli.sefint)
+				summarizeReceiptItem(receipt, rli.firecodeacctid, rli.firecode)
 			}
 		}
 		receipt.items.removeAll(receipt.items.findAll{it.amount <= 0.0 })

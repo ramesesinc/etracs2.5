@@ -49,7 +49,7 @@ public class RPTLedgerController
     }
     
     void loadItems(){
-        debits   = svc.getLedgerItems(ledger.objid)
+        debits   = svc.getLedgerBillItems(ledger.objid)
         credits = svc.getLedgerCredits(ledger.objid)
         debitListHandler.reload();
         paymentListHandler.reload();
@@ -210,20 +210,8 @@ public class RPTLedgerController
     }
     
     
-        
-    void recalcBill(){
-        if (MsgBox.confirm('Recalculate Bill?')){
-            billSvc.forceRecalcBill(entity.objid);
-            open();
-            binding.refresh('.*')
-            MsgBox.alert('Billing information has been successfully recalculated.')
-        }
-    }
-    
     def printBill(){
-        def bill = billSvc.initBill();
-        bill.taxpayer = entity.taxpayer
-        bill.ledgerids.add(entity.objid)
+        def bill = billSvc.initBill(entity.objid);
         return InvokerUtil.lookupOpener('rptbill:print', [bill:bill])
     }
     
@@ -236,7 +224,7 @@ public class RPTLedgerController
                 svc.postCapturedPayment(payment)
                 ledger.lastyearpaid = payment.toyear;
                 ledger.lastqtrpaid  = payment.toqtr;
-                loadItems()
+                open();
                 binding.refresh('.*');
             }
         ])
@@ -269,7 +257,11 @@ public class RPTLedgerController
             oncomplete : {
                 if (it.toqtr == null) it.toqtr = 0
                 selectedItem.putAll(it);
-                debitListHandler.refreshSelectedItem()
+                debitListHandler.refreshSelectedItem();
+                open();
+                entity.lastyearpaid = it.lastyearpaid;
+                entity.lastqtrpaid = it.lastqtrpaid;
+                binding.refresh('.*')
             }
         ])
     }

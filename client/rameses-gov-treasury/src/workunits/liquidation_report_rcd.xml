@@ -58,9 +58,7 @@
                         new SubReport("collectionsummary", reportPath + "collectionsummary.jasper"),
                         new SubReport("reportaforms", reportPath + "reportaforms.jasper"),
                         new SubReport("reportnsaforms", reportPath + "reportnsaforms.jasper"),
-                        new SubReport("reportnonserialsummary", reportPath + "reportnonserialsummary.jasper"),
-                        new SubReport("OtherPayments", reportPath + "otherpayments.jasper"),
-                        new SubReport("Denomination", reportPath + "denomination.jasper")
+                        new SubReport("reportnonserialsummary", reportPath + "reportnonserialsummary.jasper") 
                     ] as SubReport[];    
                  }
             ] as ReportModel

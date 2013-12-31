@@ -39,7 +39,7 @@ class RPTReceiptNoLedgerController extends com.rameses.enterprise.treasury.cashr
         entity.txntype = 'noledger';
         entity.amount = 0.0;
         clearAllPayments();
-        bill = billSvc.initBill();
+        bill = billSvc.initBill(null);
         mode = MODE_CREATE;
     }
     
@@ -59,7 +59,7 @@ class RPTReceiptNoLedgerController extends com.rameses.enterprise.treasury.cashr
         if (entity.amount == null) 
             entity.amount = 0.0
         updateBalances();
-        binding.refresh('totalBasic|totalSef')
+        binding.refresh('totalGeneral|totalSef')
     }
         
     def addLedger(){
@@ -108,8 +108,8 @@ class RPTReceiptNoLedgerController extends com.rameses.enterprise.treasury.cashr
 
         
     
-    def getTotalBasic(){
-        return ledgers.basicnet.sum()
+    def getTotalGeneral(){
+        return ledgers.general.sum();
     }
     
     def getTotalSef(){

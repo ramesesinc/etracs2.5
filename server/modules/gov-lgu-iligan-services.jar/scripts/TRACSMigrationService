@@ -1,0 +1,105 @@
+import com.rameses.annotations.*;
+import com.rameses.util.*;
+import java.rmi.server.*;
+import com.rameses.services.extended.*;
+
+public class TRACSMigrationService {
+
+	@ActiveDB(value="tracsmigration", em="tracs")
+	def em;
+
+	@ActiveDB(value="tracsmigration", em="main")
+	def em2;
+
+	@Service("SequenceService")
+	def seqSvc;
+
+	@Env
+	def env;
+
+
+	
+	@ProxyMethod 
+	def getTRACSReceipts( entry ) { 
+		def receipts = 	em.getCashreceipts(entry );
+		if(! receipts ) throw new Exception("No record(s) found.  ") 
+		entry.unmappedacctlist = []
+		entry.totalamount= 0.0 
+		receipts.each{ r->
+			r.selected = true 
+			r.items = em.getCashreceiptsItem( [objid: r.objid ] ).each {
+				if(! it.taxfeeid  ) {
+					entry.unmappedacctlist << [
+						taxfeeid: it.ttaxfeeid, 
+						taxfeeaccount : it.taxfeedesc
+					]
+				}
+			};
+			if( r.items.size() > 1 ) 
+				r.account = (r.items[0].taxfeeid == null ? '(Multiple Accounts) - <unmapped>': '(Multiple Accounts)' )
+			else if ( r.items.size() == 1 ) 	
+				r.account = (r.items[0].taxfeeid == null ?  '<unmapped>' : r.items[0].item.title )
+			else 
+				r.account = '(No Account)'
+
+			entry.totalamount += r.amount 
+		}
+		entry.unmappedacctlist = entry.unmappedacctlist.unique{ a,b -> return a.taxfeeid <=> b.taxfeeid } 
+		entry.receipts = receipts
+		return entry;
+	}
+	
+	@ProxyMethod 
+	void createAccountMapping( item ) {
+		em.createAccountMapping( item );
+	}
+
+	@ProxyMethod
+	def open(entity ){
+		def rem = em2.findRemittance(entity)
+		rem.collections = em2.getRemittanceEntries( rem )
+		return rem 
+	}
+
+	@ProxyMethod 
+	def save(entity) {
+		def txncode = "TREM" 
+		entity.txnno =  "TREM" + seqSvc.getNextFormattedSeries(txncode);
+
+		entity.collectorid = entity.collector.objid
+		entity.collectorname = entity.collector.name
+		entity.collectortitle = entity.collector.title 
+		entity.postedby = env.USER
+		em2.createTRACSRemittance( entity )
+
+		for( o in entity.entries ) {
+			for( r in o.receipts) {
+				r.remittanceid = entity.objid 
+				r.collectorid = entity.collector.objid
+				r.collectorname = entity.collector.name
+			    r.collectortitle = entity.collector.title 
+			    r.collectiontypeid = o.collectiontype.objid
+			    r.collectiontypename = o.collectiontype.name 
+			    r.formno = o.formno
+			    r.formtype = o.formtype 
+
+			    em2.createTRACSCashreceipt( r )
+
+			    for( ri in r.items) {
+
+			    	def citem = em.findMappedItem(ri)
+			    	ri.itemid = citem.item.objid
+			    	ri.itemcode = citem.item.code
+			    	ri.itemtitle = citem.item.title 
+			    	em2.createTRACSCashreceiptitem( ri );
+			    }
+
+			    em.createCashreceipt( r );
+			 }
+		}
+
+
+		return entity; 
+	}
+
+}

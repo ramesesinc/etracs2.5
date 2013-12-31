@@ -1,5 +1,7 @@
 <workunit extends="wtemplates/ListController.xml" serviceName="RemittanceCaptureService" entityName="remittancecapture">
+    <!--
     <invokers>
         <invoker folderid="/explorer/txn/treasury" caption="Remittances (Capture)" index="30" role="BATCH_MANAGEMENT" />
     </invokers>
+    -->
 </workunit>

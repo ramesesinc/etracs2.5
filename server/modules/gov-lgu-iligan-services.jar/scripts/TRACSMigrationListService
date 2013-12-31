@@ -1,0 +1,31 @@
+import com.rameses.annotations.*;
+import com.rameses.util.*;
+import java.rmi.server.*;
+import com.rameses.common.*
+import com.rameses.services.extended.*
+
+class TRACSMigrationListService extends AbstractListService {
+
+	@PersistenceContext("main")
+	def em; 
+
+	String schemaName = "tracsmigration";
+
+
+	@Env
+	def env;
+
+	@ProxyMethod
+	public def getColumns( def p ) {
+		return [
+			[name:"txnno", caption:"Remittance No"],
+			[name:"dtposted", caption:"Remittance Date" ],
+			[name:"collector.name", caption:"Collector"],
+			[name:"amount", caption:"Amount", type:"decimal"]
+		];	
+	}	
+
+	void beforeList(o) {
+		o.txnno = (o.searchtext ? o.searchtext : '') +'%' 		
+	}
+}

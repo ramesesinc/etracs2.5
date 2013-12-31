@@ -1,0 +1,49 @@
+<workunit>
+    <invokers>
+        <invoker type="business:info" caption="Business Ledger" index="40" role="ASSESSOR,APPROVER"/>
+    </invokers>
+    
+    <code>
+        <![CDATA[    
+        import com.rameses.rcp.annotations.*
+        import com.rameses.rcp.common.*
+        import com.rameses.osiris2.client.*
+        import com.rameses.osiris2.common.*
+        import java.rmi.server.*
+        import com.rameses.gov.etracs.bpls.business.*;
+        
+        class  BusinessGeneralInfoController  {
+        
+            @Service("BPLedgerService")
+            def service;
+
+            String entityName = "businessinfo:ledger"
+            String title = "Business Ledger";
+            
+            def entity;
+            
+            def selectedReceivable;
+            def selectedPayment;
+            
+            def receivableModel = [
+                fetchList: { o->
+                    return service.getReceivables(entity);
+                }
+            ] as BasicListModel;
+            
+            def paymentsModel = [
+                fetchList: { o->
+                    return [];
+                }
+            ] as BasicListModel;
+            
+        }
+        ]]>
+    </code>
+
+    
+    <pages>
+        <page  template="com.rameses.gov.etracs.bpls.business.BusinessLedger"/>
+    </pages>
+    
+</workunit>

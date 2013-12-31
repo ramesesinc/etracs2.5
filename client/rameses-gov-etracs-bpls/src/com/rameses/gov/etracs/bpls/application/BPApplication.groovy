@@ -18,6 +18,7 @@ class BPApplication extends AbstractBPApplication {
     def barcodeid;
     def step;
     
+    String entityName = "bpapplication:form"
 
     def _initOpen() {
         windowTitle = entity.appno;
@@ -123,21 +124,12 @@ class BPApplication extends AbstractBPApplication {
     * FOR PERMITTING
     ******************************************************************/
     void release() {
-        if(MsgBox.confirm("You are about to release this application. Proceed?")) {
-            def b = appSvc.release( entity );
-            MsgBox.alert("Application successfully released" );
-        }
+        def b = appSvc.release( entity );
+        MsgBox.alert("Application successfully released" );
+        binding.refresh("entity.*");
+        entity.state = "active";
      }
 
-     void issueBIN() {
-        if(MsgBox.confirm("You are about to issue a new BIN for this business. Proceed?")) {
-            def b = appSvc.issueBIN( entity );
-            MsgBox.alert("Assigned BIN No. " + b.bin );
-            entity.bin = b.bin;
-            binding.refresh("entity.bin");
-        }
-     }
-             
      def issuePermit() {
         return InvokerUtil.lookupOpener( "businesspermit:create", [entity: entity, handler:{ o->
             MsgBox.alert( " issued " + o.permitno);
