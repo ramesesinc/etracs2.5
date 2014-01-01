@@ -1,0 +1,103 @@
+<workunit>
+    <invokers>
+        
+            
+        <invoker type="bpapplication:amendment" caption="Change Ownership"  action="start" target="window"  role="BUSINESSINFO"/>
+    </invokers>
+    
+    <code>
+         <![CDATA[    
+        import com.rameses.rcp.annotations.*
+        import com.rameses.rcp.common.*
+        import com.rameses.osiris2.client.*
+        import com.rameses.osiris2.common.*
+        import java.rmi.server.*;
+        import com.rameses.gov.etracs.bpls.application.*;
+        
+        public class ChangeOwnershipBPApplication extends AbstractSearchBusiness {
+        
+            String appType = 'CHANGE_OWNERSHIP';
+            boolean hasLookup;
+            def newentity = [:];
+            
+            def getLookupOwners() {
+                hasLookup = true;
+                return InvokerUtil.lookupOpener( "entity:lookup", [
+                    "query.orgtype": entity.orgtype,
+                    onselect: { o->
+                        newentity.owner = o;
+                        binding.refresh("newentity.owner.address");
+                    },
+                    onempty: {
+                        newentity.owner = null;
+                        binding.refresh("newentity.owner.address");
+                        hasLookup = false;
+                    }
+                ]);
+            }
+
+            //this saves or adds owner
+            def showOwner() {
+                if(!entity.orgtype)
+                    throw new Exception("Please select an org type");
+                String action = (newentity.owner?.objid) ? ":open" : ":create";
+                if(action == ":create" && !hasLookup )
+                    throw new Exception("Please attempt first a lookup before creating a new record");
+
+                String openerName = (entity.orgtype=='SING'?'individual':'juridical')+'entity';
+                if( entity.orgtype == 'SING' ) {
+                    def initial = [:];
+                    def sh = { o->
+                        newentity.owner = [ objid:o.objid, name:o.name, address:o.address ];
+                        binding.refresh("newentity.owner.*");
+                    }
+                    return InvokerUtil.lookupOpener( "individualentity"+action, [entity: newentity.owner, initial:initial, saveHandler:sh] );
+                }
+                else {
+                    def initial = [:];
+                    initial.orgtype = entity.orgtype;
+                    def sh = { o->
+                        newentity.owner = [ objid:o.objid, name:o.name, address:o.address ];
+                        binding.refresh("newentity.owner.*");
+                    }
+                    return InvokerUtil.lookupOpener( "juridicalentity"+action, [entity: newentity.owner, initial: initial, saveHandler:sh] );
+                }
+            }
+            
+            void save() {
+                throw new Exception("Save stop");
+            }
+        }
+        ]]>
+    </code>    
+    
+    <pageflow>
+        <start>
+            <transition to="search" name="create" action="init"/>
+            <transition to="main" name="open"/>
+        </start>
+        
+        <page name="search" title="Search Business Name (Change Ownership)">
+            <transition to="main" caption="Next" name="next" mnemonic="N" immediate="false" action="openApplication"/>
+        </page>
+        
+        <page name="main" title="Change Ownership">
+            <transition to="search" caption="Back" mnemonic="B" name="back" visibleWhen="#{OPENED_FROM_APP==false}"/>
+            <transition to="save-success" caption="Submit" name="next" mnemonic="N"  immediate="false" action="save"/>
+        </page>
+
+        <page name="save-success" title="Save Success (Change Ownership)">
+            <transition to="search" caption="Add Another" mnemonic="A" action="init"/>
+        </page>
+
+        <end/>
+    </pageflow>
+    
+    <pages>
+        <page name="search" template="com.rameses.gov.etracs.bpls.application.SearchLookupBusinessPage"/>
+        <page name="main" template="com.rameses.gov.etracs.bpls.application.ChangeOwnershipPage"/>
+        <page name="save-success" template="com.rameses.gov.etracs.bpls.application.SuccessPage"/>
+    </pages>
+    
+    
+</workunit>

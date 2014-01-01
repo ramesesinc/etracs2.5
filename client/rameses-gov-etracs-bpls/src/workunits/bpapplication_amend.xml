@@ -1,0 +1,42 @@
+<workunit>
+    <invokers>
+        <invoker type="businessform:formActions" caption="Amend" action="openFromBusiness" role="BUSINESSINFO"
+            visibleWhen="#{entity.state.toUpperCase()=='ACTIVE'}"  target="window"/>
+            
+        <invoker type="home.action" caption="Business Amendment" target="window"  role="BUSINESSINFO"/>
+        
+        <invoker type="formActions" caption="Next" action="next"  />
+    </invokers>
+    
+    <code>
+         <![CDATA[    
+        import com.rameses.rcp.annotations.*
+        import com.rameses.rcp.common.*
+        import com.rameses.osiris2.client.*
+        import com.rameses.osiris2.common.*
+        import java.rmi.server.*;
+        import com.rameses.gov.etracs.bpls.application.*;
+        
+        public class BPApplicationAmendment  {
+        
+            def entity;
+            def selectedItem;
+            String title = "Business Amendment (Select Type)";
+            def items = InvokerUtil.lookupOpeners( "bpapplication:amendment", [entity:entity]);
+            
+            def next() {
+                if(!selectedItem)
+                    throw new Exception("Select an item");
+                return selectedItem;    
+            }
+            
+        }
+        ]]>
+    </code>    
+    
+    <pages>
+        <page name="search" template="com.rameses.gov.etracs.bpls.application.SelectAmendmentType"/>
+    </pages>
+    
+    
+</workunit>

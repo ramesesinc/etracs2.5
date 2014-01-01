@@ -370,10 +370,10 @@
 				<image  scaleImage="FillFrame" vAlign="Top" hAlign="Center" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						mode="Opaque"
-						x="286"
-						y="0"
-						width="242"
-						height="28"
+						x="325"
+						y="5"
+						width="170"
+						height="23"
 						forecolor="#000000"
 						backcolor="#FFFFFF"
 						key="barcode-1"/>
@@ -383,9 +383,9 @@
 				</image>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="286"
+						x="325"
 						y="29"
-						width="242"
+						width="170"
 						height="11"
 						key="textField-8"/>
 					<box></box>

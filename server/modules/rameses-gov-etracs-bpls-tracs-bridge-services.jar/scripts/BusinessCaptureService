@@ -77,9 +77,21 @@ public class BusinessCaptureService {
 	//inserts id in etracs_tracs.registered_business
 	@ProxyMethod
 	public def register(o) {
-		def x = infoSvc.capture(o);
+		o.state = 'CAPTURED';
+		def biz = infoSvc.create(o);
+		biz.lobs = o.lobs;
+		biz.lobs.each {
+			if(!it.lob?.objid) 
+				throw new Exception("Please map all line of business");
+			it.businessid = biz.objid;	
+			it.iyear = biz.activeyear;
+			it.lobid = it.lob.objid;
+			it.name = it.lob.name;
+			it.assessmenttype = 'RENEW';
+		};
+		infoSvc.activate( biz );
 		em.insertBusinessID(o);	
-		return x;
+		return biz;
 	}
 
 }

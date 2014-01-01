@@ -1,7 +1,7 @@
 <workunit>
     <invokers>
         <invoker type="businessinfo:application:formActions" name="print"
-            caption="Print Application" action="viewReport" target="window" index="0" states="assessment|approval|payment"/>
+            caption="Print Application" action="viewReport" target="window" index="0" />
         
         <invoker type="formActions" caption="Close" action="_close"/>
     </invokers>
@@ -73,7 +73,7 @@
                    txndate: entity.dtfiled, 
                    laterenewal:"0", 
                    infos:infos,
-                   requierements:[],
+                   requirements:[],
                    signatories:[],
                    barcode: "51005:"+entity.bin
                 ]

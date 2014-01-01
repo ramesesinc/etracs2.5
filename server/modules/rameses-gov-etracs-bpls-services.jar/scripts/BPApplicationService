@@ -8,242 +8,135 @@ public class BPApplicationService extends ActiveCrudService {
 	@ActiveDB("bpapplication")
 	def em;
 
-	@Service("SequenceService")
-	def seqSvc;
+	@Service("BusinessInfoService")
+	def bizInfoSvc;
 
 	@Service("DateService")
 	def dateSvc;
 
-	@Service("BPAssessmentRuleService")
-	def assessmentSvc;
-
-	@Service("BPLedgerService")
-	def ledgerSvc;
-
-	@Service("BusinessInfoService")
-	def businessInfoSvc;
-
-	@ActiveDB("business")
-	def business;
-
 	@Env
 	def env;
 
+	/**********************************************************
+	* called when creating new,renew,amend,retire applications
+	***********************************************************/ 
+	@ProxyMethod
+	public def initNew(o) {
+		if(!o.apptype)
+			throw new Exception("apptype must be provided");
+		def currentYear = dateSvc.serverYear;	
+		def entity = [:];
+		entity.businessid = o.businessid;
+		def activeYear = currentYear;
+		if(entity.businessid!=null) {
+        	//retrieve the business info
+        	def p = [objid: entity.businessid];
+        	def b = bizInfoSvc.openForApplication(p);
+        	if( b.state=='PROCESSING' ) 
+        		throw new Exception("This business is currently being processed");
+        	activeYear = b.activeyear;	
+        	entity.putAll(b);
+        }
+        else {
+	        entity.appinfos = [];
+	        entity.lobs = [];
+	        entity.assessmentinfos = [];
+        }
+        entity.appyear = currentYear;
+		entity.txnmode = 'ONLINE';
+		entity.objid = "BP"+ new UID();
+        entity.apptype = o.apptype;
+		switch(  o.apptype ) {
+    		case "NEW":
+    			entity.state = "ASSESSMENT";
+    			break;	
+    		case "RENEW":
+    			entity.state = "ASSESSMENT";
+    			if(activeYear>=currentYear)
+    				throw new Exception("Business is already renewed for " + currentYear);
+
+    			//do not include lines of business that are retired	
+    			def lobs = entity.lobs.findAll{it.assessmenttype!='RETIRE'};	
+    			lobs.each {
+    				it.assessmenttype = 'RENEW';
+    			}	
+    			entity.lobs = lobs;
+    			break;
+    		case "RETIRE":
+    			entity.lobs.each {
+    				it.assessmenttype = 'RETIRE';
+    			}
+    			break;
+    		default:
+    			if(currentYear!=activeYear)
+    				throw new Exception("Business must first be renewed for " + currentYear);
+    			entity.lobs.each {
+    				it.assessmenttype = 'ACTIVE';
+    			}	
+    			break;
+    	}        
+        return entity;
+	}
+
+ 
+	/**************************************************
+	* called by new application or by data capture.
+	* App No - naming = Use BIN + appcount. 
+	**************************************************/ 
 	public void beforeCreate(o) {
-		validateRequirements(o.requirements, "info");
 		if(!o.txnmode)
 			throw new Exception("Please specify txnmode");
-
-		if( o.txnmode == "ONLINE") {
-			def yr = dateSvc.serverYear;
-			o.dtfiled = dateSvc.serverDate;
-			o.appyear = yr;
-			o.yearstarted = yr;
-		}
-
+		def yr = dateSvc.serverYear;	
+		if(!o.dtfiled) o.dtfiled = dateSvc.serverDate;	//useful if captured new
+		o.txndate = dateSvc.serverDate;		
+		o.appyear = yr;
+		o.yearstarted = yr;
 		//check first if there is a businessid else create one if not.
+		def bizInfo = null;
 		if(!o.businessid) {
 			def b = [:];
 			b.putAll(o);
 			b.objid = null;
-			b.qtrpaid = 0;
-			def g = businessInfoSvc.create(b);
-			o.businessid = g.objid;
-			o.bin = g.bin;
+			b.activeyear = yr;
+			bizInfo = bizInfoSvc.create(b);
 		}
-		if(!o.bin)
-			throw new Exception("BIN for Application is null. Pls. check data again");
+		else {
+			bizInfo = bizInfoSvc.open([objid: o.businessid]);
+		}
 
-		
-		def prefix = o.bin;
-		o.appno = prefix+seqSvc. getNextFormattedSeriesA( prefix, 2 );
-		o.appversion = 0;
-		o.txndate = dateSvc.serverDate;
-		o.createdby = env.USERID;
-		
-		//immediately send for assessment
-		o.state = "assessment";	
+		if(!bizInfo.bin)
+			throw new Exception("BIN for Application is null. Pls. check data again");	
+
+		o.businessid = bizInfo.objid;
+		o.bin = bizInfo.bin;
+		o.appcount = bizInfo.appcount;	//we store this so it can be retrieved in afterCreate
+		o.appno = bizInfo.bin + "-" + bizInfo.appcount;
+		o.taxfees = [];
+		o.createdby = [objid:env.USERID,name:env.USER];
 	}
-	
-	//update the business after creation of bpapplication
+
 	public void afterCreate(o) {
-		def b = [objid: o.businessid];
-		b.state = 'PENDING';
-		b.activeyear = o.appyear;
+		def b = [objid: o.businessid ];
 		b.currentapplicationid = o.objid;
-		b.currentpermitid = null;
-		businessInfoSvc.update(b);
+		b.appcount = o.appcount + 1;
+		//if apptype is renew, we should nullify permit also
+		if( o.apptype == 'RENEW') {
+			b.currentpermitid = null;
+			b.state = 'PROCESSING';
+		}
+		bizInfoSvc.update(b);
 	}
 
-	public void saveRequirements(o) {
-		//create the requirements
-		for(x in o.requirements) {
-			if(!x.status) x.status = "open";
-			x.objid = "BAREQ" + new UID();
-			x.applicationid = o.objid;
-			em.create( x, "requirement");
-			if(x.refno) {
-				em.create( x, "requirement_data");
-			}
+	public void beforeUpdate(o) {
+		if(o.totals) {
+			o.totals = em.entityManager.serializer.write( o.totals );
 		}
 	}
-
-	/**********************************************************
-	* This is called in many aspects of the application. during
-	* create, approval of assessment, etc.
-	***********************************************************/
-	@ProxyMethod
-	public void validateRequirements(def reqs, def step) {
-		def buffer = new StringBuffer();
-		for(o in reqs) {
-			if(o.step == step && o.status != "completed") {
-				buffer.append( o.title  + "\n" );
-			}
-		}
-		if(buffer.length()>0) {
-			buffer.insert(0, "Requirements not satisfied:\n");
-			throw new Exception(buffer.toString());
-		}
-	}
-
 
 	public void afterOpen(o) {
-		o.requirements = em.getRequirements(o);
-		o.requirements.each {
-			if(it.type == "DOC" ){
-				def d = em.getDocRequirements(it);
-				it.putAll( d );
-			} 
-			if(it.status == 'completed') it.completed = 1;
-		}
-
-		//retrievd the business info.
-		def z = business.read([objid: o.businessid]);
-		o.bin = z.bin;
-		o.pin = z.pin;
-
-		//if state is for approval, include the taxfees.
-		if( o.state == 'approval') {
-			def result = callAssessmentRule(o);	
-			o.taxfees = result.taxfees;
-			o.total_tax = result.totals.total_tax;
-			o.total_regfee = result.totals.total_regfee;
-			o.total_othercharge = result.totals.total_othercharge;
-			o.total = result.totals.total; 
-		}
-		else if( o.state == 'payment' || o.state == 'release') {
-			o.taxfees = em.getTaxfees(o);	
-			o.total_tax = o.taxfees.findAll{ it.account.taxfeetype == 'TAX'}.sum{it.amount};
-			o.total_regfee = o.taxfees.findAll{ it.account.taxfeetype == 'REGFEE'}.sum{it.amount};
-			o.total_othercharge = o.taxfees.findAll{ it.account.taxfeetype == 'OTHERCHARGE'}.sum{it.amount};
-			if(!o.total_tax) o.total_tax = 0;
-			if(!o.total_regfee) o.total_regfee = 0;
-			if(!o.total_othercharge) o.total_othercharge = 0;
-			o.total = o.total_tax + o.total_regfee + o.total_othercharge;
+		if(o.totals) {
+			o.totals = em.entityManager.serializer.read( o.totals );
 		}
 	}
 
-	/*************************************************************************
-	* update info saves lines of business and fees   
-	**************************************************************************/
-	def callAssessmentRule(o) {
-		o.infos = o.appinfos + o.assessmentinfos;
-		return assessmentSvc.execute(o);		
-	}
-
-	@ProxyMethod
-	public def assess(o) {
-		def result = callAssessmentRule(o);
-		result.total_tax = result.totals.total_tax;
-		result.total_regfee = result.totals.total_regfee;
-		result.total_othercharge = result.totals.total_othercharge;
-		result.total = result.totals.total; 
-		return result;
-	}
-
-	/*************************************************************************
-	* workflow   
-	**************************************************************************/
-	@ProxyMethod
-	public def submitForAssessment(o) {
-		o.state = "assessment";
-		em.update( o );	//to include changes in the info
-		return o;
-	}
-
-	@ProxyMethod
-	public def submitForApproval(o) {
-	 	if(!o.taxfees)
-            throw new Exception("Please indicate at least one taxfee item");
-		o.state = "approval";
-		em.update( o );
-		return o;
-	}
-
-	@ProxyMethod
-	public def approveApplication(o) {
-		if(!o.taxfees)
-			throw new Exception("Please indicate at least one taxfee item");
-
-		def m = [:];
-		m.putAll( o );
-		m.objid = o.businessid;
-		m.applicationid = o.objid;
-		m.infos = o.appinfos;
-		m.assessmentinfos = o.assessmentinfos;
-		m.lobs = o.lobs;
-		m.state = 'approved';
-		m.activeyear = o.appyear;
-		m.qtrpaid = 0;
-		businessInfoSvc.updateApprovedInfo(m);
-		
-		def ledger = [:];
-		ledger.items = o.taxfees;
-		ledger.items.each {
-			it.applicationid = o.objid;
-			it.businessid = o.businessid;
-			it.iyear = o.appyear;
-			it.amtpaid = 0;
-			it.discount = 0;
-		}
-		ledgerSvc.postReceivables(ledger);
-		o.state = 'payment';
-		em.changeState( o );
-		return o;
-	}
-
-	@ProxyMethod
-	public def returnForInfo(o) {
-		o.state = "info";
-		em.changeState( o );
-		return o;
-	}
-
-	@ProxyMethod
-	public def returnForAssessment(o) {
-		o.state = "assessment";
-		em.changeState( o );
-		return o;
-	}
-
-	@ProxyMethod
-	public def release(o) {
-		boolean isNew = (o.bin) ? false : true;
-		def m = [:];
-		m.objid = o.businessid;
-		m.activeyear = o.appyear;
-		m.applicationid = o.objid;
-		if(isNew) {
-			def b = businessInfoSvc.createBIN( m );
-			o.bin = b.bin;
-		}	
-		else {
-			businessInfoSvc.release( m );	
-		}
-		em.changeState( [objid: o.objid, state:'active'])
-		return o;
-	}
-
-
-	
-}	
+}

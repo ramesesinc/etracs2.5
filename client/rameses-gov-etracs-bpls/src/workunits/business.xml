@@ -1,12 +1,16 @@
 <workunit>
     <invokers>
+        
+        <invoker type="bpapplicationform:formActions" 
+            caption="Continue" name="open" action="openFromApplication"  visibleWhen="#{state == 'save-success'}"/>
+        
         <invoker type="business:open" caption="Business Info" action="open" target="window" />
         <invoker type="business:barcode:51005" caption="Business" action="startOpenByBIN" target="window" />
         <invoker type="global:barcode:51005" caption="Business" action="startOpenByBIN" target="window" />
-
-        <invoker type="formActions" caption="Close"  action="_close" />
-        <invoker type="extActions" caption="Issue Permit" target="popup" name="issuePermit" visibleWhen="#{entity.state=='ACTIVE'}"/>        
-
+        
+        
+        <invoker type="extActions" caption="Request for Change" action="changeRequestInfo" role="ASSESSOR"/>
+        
     </invokers>
     
     
@@ -18,15 +22,19 @@
         import com.rameses.osiris2.common.*
         import com.rameses.common.*;
         import java.rmi.server.*
+        import com.rameses.util.*;
         import com.rameses.gov.etracs.bpls.business.*;
         
         class  BusinessInfoController extends PageFlowController {
         
-            @Service("BusinessInfoService")
+            @Service("BusinessWorkflowService")
             def service;
             
-            @Service("BPApplicationService")
-            def appSvc;
+            @Service("BusinessTaskService")
+            def taskSvc;
+            
+            @Service("BusinessPermitService")
+            def permitSvc;
             
             @FormId
             def formId
@@ -40,20 +48,84 @@
             String title;
             def entityName = "businessform";
             def entity;
-            def orgTypes = LOV.ORG_TYPES;
-            
+           
             def sections;
             def currentSection;
             def barcodeid;
             def startstep;
             boolean dirty;
+            String message;
+            boolean assignedAssessor = false;
+            boolean assignedApprover = false;
+            boolean allowChangeRequest = true;
             
-             //used by barcode
-            def startOpenByBIN() {
-                entity = service.findByBIN([bin:barcodeid]);
-                return open();
+            private def loadInfo() {
+                formId = entity.bin;
+                formTitle = entity.bin;
+                title = entity.businessname + ((entity.bin)? ' ['+entity.bin+']' : '');
+                 if( entity.application?.objid && entity.application?.task?.objid  ) {
+                    startstep = entity.application.task.state;
+                    showMessage();
+                }
+                else {
+                    startstep = entity.state?.toLowerCase();
+                }
+                loadSections();
+                return super.start();
+            }
+                      
+            void showMessage() {
+                if( entity.application.assessedby?.objid == OsirisContext.env.USERID ) {
+                    assignedAssessor = true;
+                }
+                if( entity.application.approvedby?.objid == OsirisContext.env.USERID ) {
+                    assignedApprover = true;
+                    message = entity.application.task?.message;
+                }
+                //display message if there are subtasks.
+                if(entity.application.subtasks) {
+                    message = null;
+                    def buff = new StringBuffer();
+                    buff.append( '<font face=\"arial\" size=\"2\">' );
+                    buff.append( '<i>Perform the ff. change requests and click on resolve per each task when done:</i><br>');
+                    entity.application.subtasks.findAll{it.message!=null}.each {
+                        def req = 'self';
+                        if(it.sender?.objid!=null && it.sender.objid != OsirisContext.env.USERID ) req = it.sender.name;
+                        buff.append( "&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"endSubTask\" taskid=\"" + it.objid + "\">Resolve</a>" );
+                        buff.append( "&nbsp;&nbsp;"+it.message + "&nbsp;&nbsp;<b><u>requested by " + req + "</u></b><br>");
+                    }
+                    buff.append( "</font><br>");
+                    message = buff.toString();
+                }
             }
             
+            
+            void endSubTask(v) {
+                taskSvc.endTask( v );
+                def x = entity.application.subtasks.find{ it.objid == v.taskid};
+                entity.application.subtasks.remove(x);
+                showMessage();
+                binding.refresh();
+            }
+
+            
+            //used by barcode
+            def openFromApplication() {
+                entity = service.open([objid: entity.businessid]);
+                return loadInfo();
+            }
+            
+            //used by barcode
+            def startOpenByBIN() {
+                entity = service.findByBIN([bin:barcodeid]);
+                return loadInfo();
+            }
+            
+            def open() {
+                entity = service.open(entity);
+                return loadInfo();
+            }
+
             void loadSections() {
                 sections = InvokerUtil.lookupOpeners( "business:info", [entity: entity ] ).findAll {
                     def vw = it.properties.visibleWhen;
@@ -64,74 +136,108 @@
                 }    
             }
             
-            def open() {
-                entity = service.open(entity);
-                if( entity.application && entity.application.state!='release' ) {
-                    startstep = entity.application?.state;
-                }
-                else {
-                    startstep = entity.state?.toLowerCase();
-                }
-                entity.orgtypename = orgTypes.find{ it.key == entity.orgtype}?.value;
-                formId = entity.bin;
-                formTitle = entity.bin;
-                title = entity.businessname + ((entity.bin)? ' ['+entity.bin+']' : '');
-                loadSections();
-                return super.start();
+            void checkSaved() {
+                if(dirty) throw new Exception("Please save the changes first");
             }
             
-            void submitForAssessment() {
-                if(!entity.application.appinfos) 
-                    throw new Exception("Please specify at least one info for business");
-                entity.application = appSvc.submitForAssessment(entity.application); 
+            def buildParams( def assignee ) {
+                def app = entity.application;
+                return [appid: app.objid, taskid: app.task.objid, assignee: assignee, businessid:entity.objid ];
+            }
+            
+            void updateTaskInfo(def result) {
+                entity.application.task = result.task;
+                message = entity.application.task.message;
+            }
+            
+            //called before
+            void assignAssessorToSelf() {
+                def p = buildParams(null);
+                def result = service.assignAssessorToSelf( p );
+                updateTaskInfo(result);
+                entity.application.assessedby = result.assessedby;
+                assignedAssessor = true;
                 loadSections();
             }
             
             void submitForApproval() {
-                if(!entity.application.taxfees) {
+               checkSaved();
+               if(!entity.application.taxfees) {
                     throw new Exception("Please specify at least one tax fee" );
-                }  
-                entity.application = appSvc.submitForApproval(entity.application);
-                loadSections();
+               }  
+               boolean pass = false;
+               def h = { o->
+                    def p = buildParams(null); 
+                    p.message = o.message;
+                    p.assignee = o.assignee;
+                    service.submitForApproval(p); 
+                    pass= true;
+                    MsgBox.alert("Document successfully submitted");
+               }
+               Modal.show("businesstask:selectassignee",
+                  [handler:h, assigneeList: service.getApproverList() ],
+                  [title: 'Submit for Approval']
+               );
+               if( !pass)  throw new BreakException();
             }
             
             void approve() {
-                if(!entity.application.taxfees) {
-                    throw new Exception("Please specify at least one tax fee" );
-                }  
-                entity.application = appSvc.approveApplication(entity.application);
-                loadSections();
-            }
-
-            void returnForInfo() {
-                entity.application = appSvc.returnForInfo(entity.application);
-                loadSections();
-            }
-    
-            void returnForAssessment() {
-                entity.application = appSvc.returnForAssessment(entity.application);
-                loadSections();
-            }
-
-            def issuePermit() {
-                if( !entity.application ) {
-                    throw new Exception("There must be an associated application");
-                }
-                def permit = service.issuePermit( entity );
-                MsgBox.alert("Permit No " + permit.permitno + "-"+ permit.version + " is created");    
-                entity.permit = permit;
-                return InvokerUtil.lookupOpener("businesspermit:print", [entity: entity] );
+                service.approve(entity.application);
+                MsgBox.alert("Document approved");
             }
             
-                     
-             def validateClose() {
+            void release() {
+                service.release(entity);
+                MsgBox.alert("Document successfully released");
+            }
+            
+            void issuePermit() {
+                boolean pass = false;
+                def h = { o->
+                    entity.permittype = o.permittype;
+                    def permit = permitSvc.create(entity);
+                    entity.permit = permit;
+                    pass = true;
+                }
+                Modal.show("business:issuepermit", [handler:h]);
+                if( !pass) throw new BreakException();
+                loadSections();
+                binding.fireNavigation( InvokerUtil.lookupOpener( "businesspermit:print" , [entity:entity] ));
+            }
+
+            def validateClose() {
                 if(dirty) {
                     if( !MsgBox.confirm("Record is not saved. Proceed?") ) {
-                        throw new com.rameses.util.BreakException();
+                        throw new BreakException();
                     }
                 }    
-             }
+            }
             
+            
+            void changeRequestInfo() {
+                boolean pass = false;
+                Modal.show( "businesstask:selectassignee", 
+                    [ assigneeList: [ entity.application.createdby ],
+                    handler: { o->
+                        def m = [:];
+                        def tsk = entity.application.task;
+                        m.appid = entity.application.objid;
+                        m.parentid = tsk.objid;
+                        m.state = tsk.state;
+                        m.channel = tsk.channel;
+                        m.assignee = o.assignee;
+                        m.message = o.message;
+                        m.action = "modify_appinfo";
+                        taskSvc.startSubTask( m );
+                        pass = true;
+                    }], 
+                    [title:"Request Change for Info"] 
+                );
+                if(pass) MsgBox.alert("request sent");
+            }
+            
+            
+           
         }
         ]]>
     </code>
@@ -140,38 +246,43 @@
         <start>
             <transition to="#{startstep}" />
         </start>
-        
-       <page name="info" title="Business Application (For Info)">
+
+        <page name="assign-assessor" title="Business Application (For Assessment)">
             <transition to="end" caption="Close" action="validateClose"/>
-            <transition to="assessment" caption="Submit for Assessment"
-                confirm="You are about to submit this application for assessment. Proceed?"
-                action="submitForAssessment" role="BUSINESSINFO"/>
+            <transition to="assessment" caption="Assign to Me" action="assignAssessorToSelf" role="ASSESSOR"/>
         </page>    
-        
+
         <page name="assessment" title="Business Application (For Assessment)">
             <transition to="end" caption="Close" action="validateClose"/>
-            <transition to="info" caption="Return For Info" 
-                confirm="You are about to return this application for info. Proceed?"
-                mnemonic="R" action="returnForInfo" role="ASSESSOR"/>
-            <transition to="approval" caption="Submit for Approval" 
-                confirm="You are about to submit this application for approval. Proceed?"
+            <transition to="end" caption="Submit for Approval" visibleWhen="#{assignedAssessor == true}"
                 name="next" mnemonic="S" action="submitForApproval" role="ASSESSOR"/>
+        </page>    
+        
+         <page name="assign-approver" title="Business Application (For Approval)">
+            <transition to="end" caption="Close" action="validateClose"/>
+            <transition to="approval" caption="Assign to Me" action="assignApproverToSelf" role="APPROVER"/>
         </page>    
         
         <page name="approval" title="Business Application (For Approval)">
             <transition to="end" caption="Close" action="validateClose"/>
-            <transition to="assessment" caption="Return to Assessment" mnemonic="R" action="returnForAssessment" 
-                confirm="You are about to return this for assessment. Proceed?" role="APPROVER"/>
-            <transition to="payment" caption="Approve" mnemonic="S" action="approve" 
-                confirm="You are about to approve this for payment. Proceed?" role="APPROVER"/>
+            <transition to="payment" caption="Approve" mnemonic="S" visibleWhen="#{assignedApprover == true}" 
+                action="approve" confirm="You are about to approve this for payment. Proceed?" role="APPROVER"/>
         </page>
         
         <page name="payment" title="Business Application (For Payment)">
             <transition to="end" caption="Close" />
         </page>
         
+        <page name="release" title="Business Application (For Release)">
+            <transition to="end" caption="Close" />
+            <transition to="active" caption="Release" mnemonic="S"  
+                action="release" confirm="You are about to release this application. Proceed?" role="BUSINESSINFO"/>
+        </page>
+        
         <page name="active" title="Active">
             <transition to="end" caption="Close" />
+             <transition to="issuePermit" caption="Issue Permit" mnemonic="S" 
+                action="issuePermit"  role="LICENSING" visibleWhen="#{entity.permit?.objid == null}"/>
         </page>
         
         <page name="captured" title="Captured">
@@ -182,8 +293,9 @@
     </pageflow>
     
     <pages>
-        <page name="info" template="com.rameses.gov.etracs.bpls.business.BusinessInfoPage"/>
+        <page name="assign-assessor" template="com.rameses.gov.etracs.bpls.business.BusinessInfoPage"/>
         <page name="assessment" template="com.rameses.gov.etracs.bpls.business.BusinessInfoPage"/>
+        <page name="assign-approver" template="com.rameses.gov.etracs.bpls.business.BusinessInfoPage"/>
         <page name="approval" template="com.rameses.gov.etracs.bpls.business.BusinessInfoPage"/>
         <page name="payment" template="com.rameses.gov.etracs.bpls.business.BusinessInfoPage"/>
         <page name="release" template="com.rameses.gov.etracs.bpls.business.BusinessInfoPage"/>

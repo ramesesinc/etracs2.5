@@ -46,17 +46,16 @@
 	<field name="apptype" class="java.lang.String"/>
 	<field name="appno" class="java.lang.String"/>
 	<field name="requirements" class="java.lang.Object"/>
-	<field name="appdate" class="java.util.Date"/>
+	<field name="dtfiled" class="java.util.Date"/>
 	<field name="signatories" class="java.lang.Object"/>
 	<field name="ctcno" class="java.lang.String"/>
 	<field name="ctcplaceissued" class="java.lang.String"/>
 	<field name="ctcdateissued" class="java.util.Date"/>
-	<field name="orgtype" class="java.lang.String"/>
+	<field name="orgtypename" class="java.lang.String"/>
 	<field name="officetype" class="java.lang.String"/>
 	<field name="tin" class="java.lang.String"/>
 	<field name="sss" class="java.lang.String"/>
 	<field name="infos" class="java.lang.Object"/>
-	<field name="refno" class="java.lang.String"/>
 	<field name="barcode" class="java.lang.String"/>
 	<field name="regtype" class="java.lang.String"/>
 	<field name="reqdate" class="java.util.Date"/>
@@ -68,7 +67,7 @@
 	<field name="barangay" class="java.lang.String"/>
 	<field name="businessphone" class="java.lang.String"/>
 	<field name="businessemail" class="java.lang.String"/>
-	<field name="businesspin" class="java.lang.String"/>
+	<field name="pin" class="java.lang.String"/>
 	<field name="owneraddress" class="java.lang.String"/>
 	<field name="ownerphone" class="java.lang.String"/>
 	<field name="owneremail" class="java.lang.String"/>
@@ -316,7 +315,7 @@
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[$F{ownername}]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="92"
 						y="98"
@@ -354,7 +353,7 @@
 					<textElement verticalAlignment="Middle">
 						<font fontName="Tahoma" size="8"/>
 					</textElement>
-				<textFieldExpression   class="java.util.Date"><![CDATA[$F{appdate}]]></textFieldExpression>
+				<textFieldExpression   class="java.util.Date"><![CDATA[$F{dtfiled}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -367,7 +366,7 @@
 					<textElement verticalAlignment="Middle">
 						<font fontName="Tahoma" size="8"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{refno}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{appno}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -380,7 +379,7 @@
 					<textElement verticalAlignment="Middle">
 						<font fontName="Tahoma" size="8"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{orgtype}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{orgtypename}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -521,8 +520,9 @@
 					</textElement>
 				<text><![CDATA[Business Name:]]></text>
 				</staticText>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
+						mode="Transparent"
 						x="85"
 						y="84"
 						width="455"
@@ -685,7 +685,7 @@
 					<textElement verticalAlignment="Middle">
 						<font fontName="Tahoma" size="8"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{businesspin}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{pin}]]></textFieldExpression>
 				</textField>
 				<line direction="TopDown">
 					<reportElement
@@ -1570,7 +1570,7 @@
 					<reportElement
 						x="326"
 						y="34"
-						width="181"
+						width="168"
 						height="11"
 						key="textField"/>
 					<box></box>
@@ -1583,9 +1583,9 @@
 					<reportElement
 						mode="Opaque"
 						x="326"
-						y="5"
-						width="181"
-						height="28"
+						y="9"
+						width="170"
+						height="23"
 						forecolor="#000000"
 						backcolor="#FFFFFF"
 						key="barcode-1"/>

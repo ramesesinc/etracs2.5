@@ -2,7 +2,6 @@ import com.rameses.annotations.*;
 import com.rameses.util.*;
 import java.rmi.server.*;
 import com.rameses.rules.common.*;
-
 import bpls.facts.*;
 
 

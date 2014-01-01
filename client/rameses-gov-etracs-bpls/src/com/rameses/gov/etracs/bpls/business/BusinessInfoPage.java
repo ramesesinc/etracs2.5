@@ -28,15 +28,24 @@ public class BusinessInfoPage extends javax.swing.JPanel {
      */
     // <editor-fold defaultstate="collapsed" desc=" Generated Code ">//GEN-BEGIN:initComponents
     private void initComponents() {
+        jSplitPane1 = new javax.swing.JSplitPane();
         jScrollPane1 = new javax.swing.JScrollPane();
         xList1 = new com.rameses.rcp.control.XList();
         xSubFormPanel1 = new com.rameses.rcp.control.XSubFormPanel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        xHtmlView1 = new com.rameses.rcp.control.XHtmlView();
 
+        setLayout(new java.awt.BorderLayout());
+
+        jSplitPane1.setDividerLocation(200);
         xList1.setDynamic(true);
         xList1.setExpression("#{item.caption}");
         xList1.setItems("sections");
         xList1.setName("currentSection");
+        xList1.setPreferredSize(new java.awt.Dimension(40, 100));
         jScrollPane1.setViewportView(xList1);
+
+        jSplitPane1.setLeftComponent(jScrollPane1);
 
         xSubFormPanel1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
         xSubFormPanel1.setDepends(new String[] {"currentSection"});
@@ -46,38 +55,30 @@ public class BusinessInfoPage extends javax.swing.JPanel {
         xSubFormPanel1.setLayout(xSubFormPanel1Layout);
         xSubFormPanel1Layout.setHorizontalGroup(
             xSubFormPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 726, Short.MAX_VALUE)
+            .addGap(0, 192, Short.MAX_VALUE)
         );
         xSubFormPanel1Layout.setVerticalGroup(
             xSubFormPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 365, Short.MAX_VALUE)
+            .addGap(0, 244, Short.MAX_VALUE)
         );
+        jSplitPane1.setRightComponent(xSubFormPanel1);
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
-        this.setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 183, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(xSubFormPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 728, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 367, Short.MAX_VALUE)
-                    .addComponent(xSubFormPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 367, Short.MAX_VALUE))
-                .addContainerGap())
-        );
+        add(jSplitPane1, java.awt.BorderLayout.CENTER);
+
+        xHtmlView1.setBackground(new java.awt.Color(255, 255, 204));
+        xHtmlView1.setName("message");
+        jScrollPane2.setViewportView(xHtmlView1);
+
+        add(jScrollPane2, java.awt.BorderLayout.NORTH);
+
     }// </editor-fold>//GEN-END:initComponents
     
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JSplitPane jSplitPane1;
+    private com.rameses.rcp.control.XHtmlView xHtmlView1;
     private com.rameses.rcp.control.XList xList1;
     private com.rameses.rcp.control.XSubFormPanel xSubFormPanel1;
     // End of variables declaration//GEN-END:variables

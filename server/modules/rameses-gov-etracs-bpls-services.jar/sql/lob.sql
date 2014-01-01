@@ -40,6 +40,7 @@ SELECT lob.*, lc.name AS classification_name
 FROM lob lob 
 INNER JOIN lobclassification lc ON lob.classification_objid = lc.objid
 WHERE lob.name LIKE $P{searchtext}
+ORDER BY lob.name
 
 [findInfo]
 SELECT 

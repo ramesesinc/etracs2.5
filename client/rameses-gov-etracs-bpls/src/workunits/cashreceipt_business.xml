@@ -47,7 +47,7 @@
             
             void initBarcode() {
                 def param = [prefix: "51005", barcode: barcodeid ]; 
-                def m = busLookup.findByBarcode( param );
+                def m = billSvc.findByBarcode( param );
                 entity = [formtype: "serial", formno:"51", txnmode: 'ONLINE'];
                 entity = cashReceiptSvc.init( entity );
                 entity.payer = [objid: m.owner.objid, name: m.owner.name];
@@ -70,6 +70,10 @@
                 "query.payoption":{ o->clearBilling();},
                 "query.qtr":{ o->clearBilling();}
             ]
+            
+            public void validateBeforePost() {
+               //we must override this to allow tax credits
+            }
             
             void clearBilling() {
                 entity.billitems?.clear();
@@ -100,12 +104,11 @@
                 super.updateBalances();
                 def opener = InvokerUtil.lookupOpener( "business:lookup", [
                     "query.ownerid":owner.objid,
-                    "query.state": "payment",
+                    "query.zstate": "payment",
                     onselect: { o->
                         entity.applicationid = o.applicationid;
                         entity.businessname = o.businessname;
-                        
-                        entity.businessid = o.businessid;
+                        entity.businessid = o.objid;
                         entity.paidby = o.businessname;
                         entity.paidbyaddress = o.businessaddress;
                         entity.billitems = [];

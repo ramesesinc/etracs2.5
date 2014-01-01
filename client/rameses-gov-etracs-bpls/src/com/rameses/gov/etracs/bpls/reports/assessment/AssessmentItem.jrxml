@@ -23,8 +23,8 @@
 	<import value="net.sf.jasperreports.engine.*" />
 	<import value="net.sf.jasperreports.engine.data.*" />
 
-	<parameter name="ASSESSMENTNONTAX" isForPrompting="false" class="java.lang.Object"/>
-	<parameter name="ASSESSMENTTAX" isForPrompting="false" class="java.lang.Object"/>
+	<parameter name="AssessmentNonTax" isForPrompting="false" class="java.lang.Object"/>
+	<parameter name="AssessmentTax" isForPrompting="false" class="java.lang.Object"/>
 	<parameter name="PARENTLGUNAME" isForPrompting="false" class="java.lang.String"/>
 	<parameter name="LGUNAME" isForPrompting="false" class="java.lang.String"/>
 	<parameter name="PRINTEDBY" isForPrompting="false" class="java.lang.String"/>
@@ -58,17 +58,117 @@
 			</band>
 		</pageHeader>
 		<columnHeader>
-			<band height="0"  isSplitAllowed="true" >
+			<band height="16"  isSplitAllowed="true" >
+				<staticText>
+					<reportElement
+						mode="Transparent"
+						x="0"
+						y="3"
+						width="148"
+						height="11"
+						forecolor="#000000"
+						backcolor="#FFFFFF"
+						key="staticText-1"/>
+					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
+						<font fontName="Tahoma" pdfFontName="Helvetica-Bold" size="8" isBold="true" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
+					</textElement>
+				<text><![CDATA[Line of Business]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						mode="Transparent"
+						x="148"
+						y="3"
+						width="149"
+						height="11"
+						forecolor="#000000"
+						backcolor="#FFFFFF"
+						key="staticText-2"/>
+					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
+						<font fontName="Tahoma" pdfFontName="Helvetica-Bold" size="8" isBold="true" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
+					</textElement>
+				<text><![CDATA[Tax/Fee]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						mode="Transparent"
+						x="272"
+						y="3"
+						width="104"
+						height="11"
+						forecolor="#000000"
+						backcolor="#FFFFFF"
+						key="staticText-3"/>
+					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
+						<font fontName="Tahoma" pdfFontName="Helvetica-Bold" size="8" isBold="true" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
+					</textElement>
+				<text><![CDATA[Gross Receipts/Capital]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						mode="Transparent"
+						x="377"
+						y="3"
+						width="104"
+						height="11"
+						forecolor="#000000"
+						backcolor="#FFFFFF"
+						key="staticText-4"/>
+					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
+						<font fontName="Tahoma" pdfFontName="Helvetica-Bold" size="8" isBold="true" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
+					</textElement>
+				<text><![CDATA[Tax /Fee Amount]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						mode="Transparent"
+						x="481"
+						y="3"
+						width="58"
+						height="11"
+						forecolor="#000000"
+						backcolor="#FFFFFF"
+						key="staticText-6"/>
+					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
+						<font fontName="Tahoma" pdfFontName="Helvetica-Bold" size="8" isBold="true" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
+					</textElement>
+				<text><![CDATA[Status]]></text>
+				</staticText>
 			</band>
 		</columnHeader>
 		<detail>
-			<band height="96"  isSplitAllowed="true" >
+			<band height="85"  isSplitAllowed="true" >
 				<subreport  isUsingCache="true">
 					<reportElement
 						mode="Opaque"
-						x="13"
-						y="19"
-						width="487"
+						x="0"
+						y="11"
+						width="539"
 						height="19"
 						forecolor="#000000"
 						backcolor="#FFFFFF"
@@ -78,14 +178,14 @@
 						<subreportParameterExpression><![CDATA["TAXES"]]></subreportParameterExpression>
 					</subreportParameter>
 					<dataSourceExpression><![CDATA[$F{taxes}]]></dataSourceExpression>
-					<subreportExpression  class="net.sf.jasperreports.engine.JasperReport"><![CDATA[$P{ASSESSMENTNONTAX}]]></subreportExpression>
+					<subreportExpression  class="net.sf.jasperreports.engine.JasperReport"><![CDATA[$P{AssessmentNonTax}]]></subreportExpression>
 				</subreport>
 				<subreport  isUsingCache="true">
 					<reportElement
 						mode="Opaque"
-						x="13"
-						y="43"
-						width="487"
+						x="0"
+						y="36"
+						width="539"
 						height="19"
 						forecolor="#000000"
 						backcolor="#FFFFFF"
@@ -96,14 +196,14 @@
 						<subreportParameterExpression><![CDATA["REGULATORY FEES"]]></subreportParameterExpression>
 					</subreportParameter>
 					<dataSourceExpression><![CDATA[$F{regfees}]]></dataSourceExpression>
-					<subreportExpression  class="net.sf.jasperreports.engine.JasperReport"><![CDATA[$P{ASSESSMENTNONTAX}]]></subreportExpression>
+					<subreportExpression  class="net.sf.jasperreports.engine.JasperReport"><![CDATA[$P{AssessmentNonTax}]]></subreportExpression>
 				</subreport>
 				<subreport  isUsingCache="true">
 					<reportElement
 						mode="Opaque"
-						x="13"
-						y="67"
-						width="487"
+						x="0"
+						y="60"
+						width="539"
 						height="19"
 						forecolor="#000000"
 						backcolor="#FFFFFF"
@@ -114,7 +214,7 @@
 						<subreportParameterExpression><![CDATA["OTHER CHARGES"]]></subreportParameterExpression>
 					</subreportParameter>
 					<dataSourceExpression><![CDATA[$F{charges}]]></dataSourceExpression>
-					<subreportExpression  class="net.sf.jasperreports.engine.JasperReport"><![CDATA[$P{ASSESSMENTNONTAX}]]></subreportExpression>
+					<subreportExpression  class="net.sf.jasperreports.engine.JasperReport"><![CDATA[$P{AssessmentNonTax}]]></subreportExpression>
 				</subreport>
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -122,7 +222,7 @@
 						x="0"
 						y="0"
 						width="510"
-						height="16"
+						height="11"
 						forecolor="#000000"
 						backcolor="#FFFFFF"
 						key="textField-1">

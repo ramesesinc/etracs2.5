@@ -29,13 +29,13 @@ DELETE FROM bpreceivable WHERE ledgerid=$P{objid}
 # used by BPApplicationCashReceiptService
 ###########################################
 [getUnpaidReceivables]
-SELECT br.objid, br.ledgerid, br.objid AS receivableid, 
+SELECT br.objid, br.businessid, br.objid AS receivableid, 
 r.code as account_code, br.account_title, br.account_objid, ba.taxfeetype AS account_taxfeetype,
 br.lob_objid,br.lob_name,br.amount, br.amtpaid
 FROM bpreceivable br
 INNER JOIN revenueitem r ON br.account_objid=r.objid 
 LEFT JOIN businessaccount ba ON ba.objid=r.objid 
-WHERE br.ledgerid=$P{ledgerid}  AND ((br.amount-br.amtpaid) > 0) 
+WHERE br.businessid=$P{businessid}  AND ((br.amount-br.amtpaid) > 0) 
 
 ##########################################
 # used by BusinessCashReceiptInterceptor

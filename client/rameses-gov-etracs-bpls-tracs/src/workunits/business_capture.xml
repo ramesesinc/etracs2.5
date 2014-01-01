@@ -42,6 +42,8 @@
             void searchBusiness() {
                 searchListModel.reload();
                 if(!binding) binding.refresh("size");
+                if(size==0) 
+                    throw new Exception("No records found. Business may have been registered already");
             }
              
             def searchListModel = [
@@ -91,7 +93,7 @@
                 fetchList: {o->
                     return entity.lobs;
                 }
-            ] as BasicListModel;
+            ] as EditorListModel;
             
             //this saves or adds owner
             def showOwner() {
@@ -146,6 +148,7 @@
             def printBIN() {
                 return InvokerUtil.lookupOpener( "business:printbin", [entity: entity ] );
             }
+            
         }
         ]]>
         
@@ -163,7 +166,7 @@
         
         <page name="info" title="Edit Business Info">
             <transition to="search" caption="Back" name="back" action="reinit"/>
-            <transition to="success" caption="Save" name="save" action="save"/>
+            <transition to="success" caption="Save" name="save" action="save" confirm="You are about to activate this account to ETRACS. Continue?" />
         </page>
         
         <page name="success" title="Business Registered">

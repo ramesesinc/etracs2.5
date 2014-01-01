@@ -14,13 +14,13 @@
 		<field name="businessname" required="true"/>
 		<field name="yearstarted" required="true"/>
 		<field name="activeyear" required="true"/>
-		<field name="user_objid" />
 		<field name="pin" />
+		<field name="currentapplicationid" />
 		<field name="bin" required="true"/>
 		<field name="taxcredit" required="true"/>
-		<field name="currentapplicationid" />
 		<field name="currentpermitid" />
 		<field name="qtrpaid" />
+		<field name="appcount" required="true"/>
 	</element>	
 
 	<element name="bin" tablename="business_bin">
@@ -94,18 +94,6 @@
 		<field name="remarks" />
 	</element>	
 
-	<element name="changeinfo" tablename="business_changeinfo">
-		<field name="objid" primary="true"/>
-		<field name="businessid" required="true"/>
-		<field name="state" required="true"/>
-		<field name="reftype" required="true"/>
-		<field name="refno" required="true"/>
-		<field name="refdate" required="true"/>
-		<field name="oldvalue" required="true"/>
-		<field name="newvalue" required="true"/>
-		<field name="issuedby_objid" required="true"/>
-		<field name="issuedby_name" required="true"/>
-	</element>
 
 	<element name="redflag" tablename="business_redflag">
 		<field name="objid" primary="true"/>

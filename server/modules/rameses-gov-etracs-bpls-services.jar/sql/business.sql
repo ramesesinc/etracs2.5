@@ -1,186 +1,100 @@
 ########################################################
 # BusinessInfoService
 ########################################################
-[getListSearch]
+[getList]
 SELECT DISTINCT b.*  
 FROM 
 (
 	SELECT xb.objid,xb.state,xb.owner_name,xb.businessname,xb.businessaddress,xb.activeyear,xb.bin,
-	ba.appno, ba.apptype, ba.state AS appstate, ba.dtfiled AS appdate
+	ba.appno, ba.apptype, bt.state AS appstate, ba.dtfiled AS appdate,
+    bp.permitno, bp.expirydate, bt.assignee_objid, bt.assignee_name 
 	FROM business xb
 	LEFT JOIN bpapplication ba ON ba.objid=xb.currentapplicationid
+    LEFT JOIN bpapplication_task bt ON bt.objid=ba.task_objid
+    LEFT JOIN business_permit bp ON bp.objid=xb.currentpermitid
 	WHERE xb.owner_name LIKE $P{searchtext}
 UNION 
 	SELECT xb.objid,xb.state,xb.owner_name,xb.businessname,xb.businessaddress,xb.activeyear,xb.bin,
-	ba.appno, ba.apptype, ba.state AS appstate, ba.dtfiled AS appdate
+	ba.appno, ba.apptype, bt.state AS appstate, ba.dtfiled AS appdate,
+    bp.permitno, bp.expirydate, bt.assignee_objid, bt.assignee_name 
 	FROM business xb
-	LEFT JOIN bpapplication ba ON ba.objid=xb.currentapplicationid
+    LEFT JOIN bpapplication ba ON ba.objid=xb.currentapplicationid
+    LEFT JOIN bpapplication_task bt ON bt.objid=ba.task_objid
+    LEFT JOIN business_permit bp ON bp.objid=xb.currentpermitid
 	WHERE xb.businessname LIKE $P{searchtext}
 UNION
 	SELECT xb.objid,xb.state,xb.owner_name,xb.businessname,xb.businessaddress,xb.activeyear,xb.bin,
-	ba.appno, ba.apptype, ba.state AS appstate, ba.dtfiled AS appdate
+	ba.appno, ba.apptype, bt.state AS appstate, ba.dtfiled AS appdate,
+    bp.permitno, bp.expirydate, bt.assignee_objid, bt.assignee_name     
 	FROM business xb 
-	LEFT JOIN bpapplication ba ON ba.objid=xb.currentapplicationid
+    LEFT JOIN bpapplication ba ON ba.objid=xb.currentapplicationid
+    LEFT JOIN bpapplication_task bt ON bt.objid=ba.task_objid
+    LEFT JOIN business_permit bp ON bp.objid=xb.currentpermitid
 	WHERE xb.bin LIKE $P{searchtext}
 ) b
+WHERE NOT(b.objid IS NULL)
+${filter}
 ORDER BY b.businessname
 
-[getListWithApplication]
-SELECT 
-	b.objid,
-    b.businessname,
-    b.businessaddress, 
-    b.owner_name,
-    ba.appno,
-    b.bin,
-	ba.state AS appstate,    
-    ba.dtfiled AS appdate,
-    ba.state,
-    ba.apptype,
-    b.activeyear
-FROM business b
-INNER JOIN bpapplication ba ON ba.objid=b.currentapplicationid
-WHERE NOT( b.objid IS NULL )
-${filter} 
-ORDER BY ba.dtfiled DESC
+[getOpenTaskList]
+SELECT DISTINCT b.*  
+FROM 
+(
+    SELECT xb.objid,xb.state,xb.owner_name,xb.businessname,xb.businessaddress,xb.activeyear,xb.bin,
+    ba.appno, ba.apptype, bt.state AS appstate, ba.dtfiled AS appdate,
+    bt.assignee_objid, bt.assignee_name
+    FROM business xb
+    INNER JOIN bpapplication ba ON ba.objid=xb.currentapplicationid
+    INNER JOIN bpapplication_task bt ON bt.applicationid=ba.objid
+    WHERE xb.owner_name LIKE $P{searchtext} AND bt.enddate IS NULL 
+UNION 
+    SELECT xb.objid,xb.state,xb.owner_name,xb.businessname,xb.businessaddress,xb.activeyear,xb.bin,
+    ba.appno, ba.apptype, bt.state AS appstate, ba.dtfiled AS appdate,
+    bt.assignee_objid, bt.assignee_name
+    FROM business xb
+    INNER JOIN bpapplication ba ON ba.objid=xb.currentapplicationid
+    INNER JOIN bpapplication_task bt ON bt.applicationid=ba.objid
+    WHERE xb.businessname LIKE $P{searchtext}  AND bt.enddate IS NULL 
+UNION
+    SELECT xb.objid,xb.state,xb.owner_name,xb.businessname,xb.businessaddress,xb.activeyear,xb.bin,
+    ba.appno, ba.apptype, bt.state AS appstate, ba.dtfiled AS appdate,
+    bt.assignee_objid, bt.assignee_name    
+    FROM business xb 
+    INNER JOIN bpapplication ba ON ba.objid=xb.currentapplicationid
+    INNER JOIN bpapplication_task bt ON bt.applicationid=ba.objid
+    WHERE xb.bin LIKE $P{searchtext}  AND bt.enddate IS NULL
+) b
+WHERE NOT(b.objid IS NULL)
+${filter}
+ORDER BY b.businessname
 
-[getActiveListWithoutPermit]
+[getLookup]
 SELECT 
 	b.objid,
     b.businessname,
     b.businessaddress, 
     b.owner_name,
-    ba.appno,
+    b.owner_objid,
     b.bin,
-	ba.state AS appstate,    
-    ba.dtfiled AS appdate,
-    ba.state,
-    ba.apptype,
-    b.activeyear
-FROM business b
-INNER JOIN bpapplication ba ON ba.objid=b.currentapplicationid
-LEFT JOIN business_permit bp ON bp.businessid=b.objid
-WHERE bp.objid IS NULL AND b.state='ACTIVE' AND b.activeyear=$P{activeyear}
-${filter} 
-ORDER BY ba.dtfiled DESC
-
-[getActiveListWithPermit]
-SELECT 
-	b.objid,
-    b.businessname,
-    b.businessaddress, 
-    b.owner_name,
-    ba.appno,
-    b.bin,
-	ba.state AS appstate,    
-    ba.dtfiled AS appdate,
-    ba.state,
-    ba.apptype,
     b.activeyear,
-    bp.permitno
+    b.state,
+    b.currentapplicationid,
+    ba.objid AS applicationid,
+    ba.appno AS appno,
+    ba.apptype AS apptype,
+    bt.state AS appstate
 FROM business b
-INNER JOIN bpapplication ba ON ba.objid=b.currentapplicationid
-INNER JOIN business_permit bp ON bp.businessid=b.objid
-WHERE ba.state='ACTIVE' AND b.activeyear=$P{activeyear}
-${filter} 
-ORDER BY ba.dtfiled DESC
-
-[getList]
-SELECT 
-	b.objid,
-    b.businessname,
-    b.businessaddress, 
-    b.owner_name,
-    ba.appno,
-    b.bin,
-	ba.state AS appstate,    
-    ba.dtfiled AS appdate,
-    ba.state,
-    ba.apptype,
-    b.activeyear
-FROM business b
-LEFT JOIN bpapplication ba ON ba.objid=b.currentapplicationid
-WHERE NOT( b.objid IS NULL )
+LEFT JOIN bpapplication ba ON b.currentapplicationid=ba.objid
+LEFT JOIN bpapplication_task bt ON ba.task_objid=bt.objid
+WHERE  NOT(b.state = 'RETIRED')
 ${filter} 
 ORDER BY b.businessname
-
-[getListForRenewal]
-SELECT 
-	b.objid,
-    b.businessname,
-    b.businessaddress, 
-    b.owner_name,
-    b.bin,
-    b.activeyear
-FROM business b
-WHERE b.activeyear < $P{activeyear}
-${filter} 
-ORDER BY b.businessname
-
-[getListForAmendment]
-SELECT 
-    b.objid,
-    b.businessname,
-    b.businessaddress, 
-    b.owner_name,
-    b.bin,
-    b.activeyear
-FROM business b
-WHERE b.state = 'ACTIVE'
-${filter} 
-ORDER BY b.businessname
-
-[getRetiredList]
-SELECT 
-	b.objid,
-    b.businessname,
-    b.businessaddress, 
-    b.owner_name,
-    b.bin,
-    b.activeyear
-FROM business b
-WHERE b.state='RETIRED'
-${filter} 
-ORDER BY b.businessname
-
-[getCapturedList]
-SELECT 
-    b.objid,
-    b.businessname,
-    b.businessaddress, 
-    b.owner_name,
-    b.bin,
-    b.activeyear
-FROM business b
-WHERE b.state='CAPTURED' 
-${filter} 
-ORDER BY b.businessname
-
-[getInactiveList]
-SELECT 
-    b.objid,
-    b.businessname,
-    b.businessaddress, 
-    b.owner_name,
-    ba.appno,
-    b.bin,
-    ba.state AS appstate,    
-    ba.dtfiled AS appdate,
-    ba.state,
-    ba.apptype,
-    b.activeyear
-FROM business b
-INNER JOIN bpapplication ba ON ba.objid=b.currentapplicationid
-WHERE b.state = 'PENDING' AND b.activeyear < $P{activeyear}
-${filter} 
-ORDER BY b.activeyear DESC, b.businessname ASC
-
 
 ########################################################
 # CashReceiptService related 
 #########################################################
-[findIdByBIN]
-SELECT objid FROM business WHERE bin=$P{bin}
+[findByBIN]
+SELECT * FROM business WHERE bin=$P{bin}
 
 [findByBINForReceipt]
 SELECT objid, owner_name, owner_objid, businessname, businessaddress, 
@@ -211,12 +125,16 @@ ORDER BY businessname
 ########################################################
 # BusinessInfoService
 #########################################################
-[getLobs]
-SELECT bl.*, lc.name AS classification_name, lc.objid as classification_objid   
+[getActiveLobs]
+SELECT 
+    bl.*, 
+    lc.name AS classification_name, 
+    lc.objid as classification_objid   
 FROM business_lob bl
+INNER JOIN business b ON b.objid=bl.businessid
 INNER JOIN lob ON bl.lobid=lob.objid
 INNER JOIN lobclassification lc ON lob.classification_objid=lc.objid 
-WHERE bl.businessid = $P{objid}
+WHERE bl.businessid = $P{objid} AND bl.iyear=b.activeyear 
 
 [getAppInfos]
 SELECT bi.*, 
@@ -230,17 +148,18 @@ INNER JOIN businessvariable b ON b.objid=bi.attribute_objid
 WHERE bi.businessid=$P{objid}
 ORDER BY b.category, b.sortorder 
 
-[getAssessmentInfos]
+[getActiveAssessmentInfos]
 SELECT bi.*, 
-b.caption  AS attribute_caption, 
-b.datatype AS attribute_datatype, 
-b.sortorder AS attribute_sortorder,
-b.category AS attribute_category,
-b.handler AS attribute_handler
+bv.caption  AS attribute_caption, 
+bv.datatype AS attribute_datatype, 
+bv.sortorder AS attribute_sortorder,
+bv.category AS attribute_category,
+bv.handler AS attribute_handler
 FROM business_assessment_info bi 
-INNER JOIN businessvariable b ON b.objid=bi.attribute_objid
-WHERE bi.businessid=$P{objid}
-ORDER BY b.category, b.sortorder 
+INNER JOIN business b ON bi.businessid=b.objid
+INNER JOIN businessvariable bv ON bv.objid=bi.attribute_objid
+WHERE bi.businessid=$P{objid} AND bi.iyear=b.activeyear
+ORDER BY bv.category, bv.sortorder 
 
 
 ################################################
@@ -281,3 +200,14 @@ UPDATE business SET currentpermitid = $P{permitid} WHERE objid=$P{objid}
 
 [updatePIN]
 UPDATE business SET pin=$P{pin} WHERE objid=$P{objid}
+
+[getPermitPayments]
+SELECT 
+    bp.refno AS orno, 
+    bp.refdate AS ordate, 
+    bp.amount,
+    bp.payoption,
+    bp.qtr
+FROM bppayment bp
+INNER JOIN business_permit p ON p.applicationid=bp.applicationid
+WHERE p.objid = $P{objid}

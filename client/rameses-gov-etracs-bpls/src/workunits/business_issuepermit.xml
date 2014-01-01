@@ -1,0 +1,38 @@
+<workunit>
+    <invokers>
+        <invoker type="business:issuepermit" caption="Issue Permit" target="popup"/>        
+    </invokers>
+    
+    <code>
+         <![CDATA[    
+        import com.rameses.rcp.annotations.*
+        import com.rameses.rcp.common.*
+        import com.rameses.osiris2.client.*
+        import com.rameses.osiris2.common.*
+        import java.rmi.server.*;
+        import com.rameses.gov.etracs.bpls.application.*;
+        
+        class IssuePermitController  {
+        
+            def permit = [:];
+            def permitTypes = ["STANDARD", "TEMPORARY"];
+            def handler;
+            
+            def doOk() {
+                handler( permit );
+                return "_close";
+            }
+            
+            def doCancel() {
+                return "_close";
+            }
+            
+        }
+        ]]>
+    </code>    
+
+    <pages>
+        <page  template="com.rameses.gov.etracs.bpls.business.IssuePermit"/>
+    </pages>
+    
+</workunit>

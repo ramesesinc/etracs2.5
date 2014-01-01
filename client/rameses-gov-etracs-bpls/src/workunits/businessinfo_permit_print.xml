@@ -1,10 +1,10 @@
 <workunit>
     <invokers>
-       <invoker type="businessinfo:permits:formActions" caption="Print Permit" action="specifyDate" target="popup"/>
+       <invoker type="businessinfo:generalinfo:formActions" caption="Print Permit" 
+            action="viewReport" visibleWhen="#{entity.permit?.objid!=null}" />
+            
        <invoker type="businesspermit:print" index="50" action="viewReport"/>    
-
        <invoker type="formActions" caption="Back" action="_close" mnemonic="b" shortcut="ctrl B" /> 
-       
     </invokers>
     
     <code>
@@ -14,6 +14,7 @@
         import com.rameses.osiris2.client.*
         import com.rameses.osiris2.common.*
         import java.rmi.server.*;
+        import java.text.SimpleDateFormat;
         import com.rameses.osiris2.reports.*;
         
         class  BPPermitReportController  {
@@ -21,6 +22,8 @@
             @Service("ReportParameterService") 
             def paramsvc
             
+            @Service("BusinessPermitService")
+            def permitSvc;
             
             def entity;
             def data = [:];
@@ -34,22 +37,14 @@
             def formTitle;
             
             void viewReport() {
+                data = permitSvc.getPermitInfo( entity.permit );
                 formId = "BPRMT-" + entity.objid;
-                formTitle = "BPRMT-" + entity.appno;
-                data.putAll( entity );
-                data.permitno = entity.permit.permitno + "-" + entity.permit.version;
-                data.ownername = entity.owner.name;
-                data.apptype = entity.application.apptype;
-                data.dtissued = entity.permit.dtissued;
-                data.expirydate = entity.permit.expirydate;
-                data.activeyear = entity.permit.activeyear;
-                data.version = entity.permit.version;
-                data.lobs = entity.application.lobs.collect { [name: it.name] };
-                data.orlist = [];
-                
-                println "expiry date " + data.expirydate + " type " + data.expirydate.class.name;
-                println "dt issued " + data.dtissued;
-                println data.lobs;
+                formTitle = "BPRMT-" + entity.bin;
+                data.permitno = data.permitno + "-" + data.version;
+                data.ownername = data.owner.name;
+                data.barcode = entity.barcode;
+                data.pin = entity.pin;
+                data.bin = entity.bin;
                 report.viewReport();
             } 
             

@@ -1,6 +1,6 @@
 <workunit>
     <invokers>
-        <invoker type="business:info" caption="Business Ledger" index="40" role="ASSESSOR,APPROVER"/>
+        <invoker type="business:info" caption="Business Ledger" index="40"/>
     </invokers>
     
     <code>

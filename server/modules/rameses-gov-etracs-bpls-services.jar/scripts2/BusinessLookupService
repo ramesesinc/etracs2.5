@@ -1,0 +1,47 @@
+import com.rameses.annotations.*;
+import com.rameses.util.*;
+import java.rmi.server.*;
+import com.rameses.services.extended.*
+
+public class BusinessLookupService extends ActiveCrudListService {
+
+	@ActiveDB("business")
+	def em;
+
+	@ActiveDB("collectiontype")
+	def collectionType;
+
+	String listMethod = "getLookup";
+
+	public def getColumns(def o) {
+		return [
+			[name:"bin", caption:"BIN"],
+			[name:"businessname", caption:"Business Name"],
+			[name:"owner.name", caption:"Owner"],
+			[name:"businessaddress", caption:"Business Address"],
+		];
+	}
+
+	public void beforeList(o) {
+		if( o.state!=null &&  o.state.toUpperCase() == "PAYMENT" ) {
+			o._listMethod = "getBusinessesByOwner";
+		}
+	}
+
+	@ProxyMethod
+	public def findByBarcode(o) {
+		def prefix = o.prefix;
+		def bin = o.barcode;
+		def m = em.findByBINForReceipt( [bin: bin] );
+		if(!m)
+			throw new Exception("BIN " + bin + " does not exist!");
+
+		m.collectiontype = collectionType.findCollectionTypeByBarcode([barcode: prefix]);
+		if(!m.collectiontype)	
+			throw new Exception("Collection type not found with barcode prefix " + prefix + ". Please check collection type and register barcode prefix");
+			
+		return m; 
+	} 
+
+
+}

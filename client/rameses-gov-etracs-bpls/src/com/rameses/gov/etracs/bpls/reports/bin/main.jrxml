@@ -52,8 +52,8 @@
 						mode="Opaque"
 						x="6"
 						y="74"
-						width="208"
-						height="30"
+						width="170"
+						height="23"
 						forecolor="#000000"
 						backcolor="#FFFFFF"
 						key="barcode-1"/>
@@ -64,8 +64,8 @@
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="6"
-						y="110"
-						width="208"
+						y="100"
+						width="166"
 						height="10"
 						key="textField-1"/>
 					<box></box>
@@ -100,32 +100,19 @@
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[$F{bin}]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+				<textField isStretchWithOverflow="true" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="59"
+						x="6"
 						y="51"
-						width="155"
+						width="208"
 						height="14"
 						key="textField"/>
 					<box></box>
-					<textElement>
+					<textElement textAlignment="Center">
 						<font/>
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[$F{businessname}]]></textFieldExpression>
 				</textField>
-				<staticText>
-					<reportElement
-						x="6"
-						y="51"
-						width="47"
-						height="13"
-						key="staticText-2"/>
-					<box></box>
-					<textElement>
-						<font/>
-					</textElement>
-				<text><![CDATA[Name :]]></text>
-				</staticText>
 			</band>
 		</detail>
 		<columnFooter>

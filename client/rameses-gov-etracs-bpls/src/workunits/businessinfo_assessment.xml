@@ -2,11 +2,21 @@
     
     <invokers>
         <invoker type="business:info" caption="Business Assessment" index="30" action="init" 
-            visibleWhen="#{entity.application!=null}" role="ASSESSOR,APPROVER"/>
+            visibleWhen="#{entity.application!=null}" role="ASSESSOR,APPROVER" />
+
+        <!-- form Actions -->    
+        <invoker type="formActions" caption="Save" index="0" action="save" role="ASSESSOR"
+            visibleWhen="#{editable==true}"/>
         
-        <invoker type="formActions" caption="Update LOB" index="30" action="updateLOB" visibleWhen="#{entity.state.matches('assessment|approval')}"/>
-        <invoker type="formActions" caption="Update Info" index="30" action="updateAssessmentInfo" visibleWhen="#{entity.state.matches('assessment|approval')}"/>
-        <invoker type="formActions" caption="Calculate Taxes/Fees" index="30" action="calculateTaxfee" visibleWhen="#{entity.state.matches('assessment|approval')}"/>
+        <invoker type="formActions" caption="Edit Line of Business" index="30" action="updateLOB" role="ASSESSOR"
+            visibleWhen="#{editable == true}"/>
+        <invoker type="formActions" caption="Edit Assessment Info" index="30" action="updateAssessmentInfo" role="ASSESSOR"
+            visibleWhen="#{editable==true}"/>
+
+        <invoker type="formActions" caption="Calculate Taxes/Fees" index="30" action="calculateTaxfee" role="ASSESSOR"
+            visibleWhen="#{editable==true}"/>
+            
+            
     </invokers>
     
     <code>
@@ -23,22 +33,30 @@
             @Binding
             def binding;
             
-            @Service("BPAssessmentRuleService")
-            def assessmentRuleSvc;
-
+            @Service("BPAssessmentService")
+            def assessmentSvc;
+            
             @Service("BPApplicationService")
             def appSvc;
             
+            @Caller
+            def caller;
+
             String title = "Business Assessment";
             String entityName = "businessinfo:assessment";
             
             def lobUpdated;
             def entity;
-            boolean dirty;
+            boolean editable;
             
             void init() {
                 entity = entity.application;
-                if(!entity.taxfees) entity.taxfees = [];
+                def tsk = entity.task;
+                def userid = OsirisContext.env.USERID;
+                if( tsk.state?.toLowerCase() == 'assessment' && tsk?.assignee?.objid == userid ) {
+                    editable = true;
+                }
+                if(!entity.taxfees ) entity.taxfees = [];
             }
             
             def updateLOB() {
@@ -49,50 +67,49 @@
                         entity.taxfees.clear();
                         lobModel.reload();
                         taxfeeModel.reload();
+                        caller.dirty = true;
                     }
                 ]);
             }
 
             def updateAssessmentInfo() {
-                return InvokerUtil.lookupOpener( "bpapplicationinfo:edit", [
+                return InvokerUtil.lookupOpener( "bpinfoedit:assessment", [
                     entity: entity, 
-                    initial: 'info',
-                    service: assessmentRuleSvc,
                     initialInfos: entity.appinfos.collect{it},
                     existingInfos: entity.assessmentinfos,
-                    title: 'Assessment Information for ' + (entity.appyear?entity.appyear:' Current Year'),
                     handler:{ result ->
                         entity.assessmentinfos = result.infos.findAll{ it.infotype == 'assessment' };
-                        entity.requirements = result.requirements;
-                        entity.taxfees.clear();
                         assessmentInfoModel.reload();
-                        taxfeeModel.reload();
                         lobUpdated = false;
-                        dirty = true;
+                        entity.taxfees.clear();
+                        taxfeeModel.reload();
+                        caller.dirty = true;
                     }
                 ]);
             }
-
+            
              void calculateTaxfee() {
                 if( !entity.lobs )
                     throw new Exception("Please indicate at least one line of business");
                 if(lobUpdated) 
-                    throw new Exception("Line of business was updated. Please run 'Update Info' again" );
-             
+                    throw new Exception("Line of business was updated. Please run 'Edit Assessment Info' again" );
                 if(entity.taxfees==null) entity.taxfees = [];
                 entity.taxfees.clear();
                 def unedited = entity.assessmentinfos.findAll{ it.value == null };
                 if( unedited ) 
                     throw new Exception("Some info(s) are not filled up. Please complete" ); 
-                def result = appSvc.assess(entity);  
+                def result = assessmentSvc.assess(entity);  
                 entity.taxfees = result.taxfees;
-                entity.total_tax = result.totals.total_tax;
-                entity.total_regfee = result.totals.total_regfee;
-                entity.total_othercharge = result.totals.total_othercharge;
-                entity.total = result.totals.total;
+                entity.totals = [
+                    tax:result.totals.total_tax,
+                    regfee: result.totals.total_regfee,
+                    othercharge: result.totals.total_othercharge,
+                    total: result.totals.total
+                ];
                 taxfeeModel.reload();
                 binding.refresh("entity.total.*");
-             }
+                caller.dirty = true;
+            }
           
             def lobModel = [
                 fetchList: { o->    
@@ -112,6 +129,20 @@
                 }
             ] as BasicListModel;
             
+             void save() {
+                if(entity.assessedby?.objid==null) {
+                    throw new Exception("Assessed by must not be null");
+                }    
+                if(!caller.dirty) return;
+                if(lobUpdated) 
+                    throw new Exception("Line of business was updated. Please run 'Edit Assessment Info' again" );
+                
+                appSvc.update( entity );
+                binding.refresh("entity.total.*");
+                caller.dirty = false;
+                MsgBox.alert("Record successfully updated!");
+                
+            }
         }
         ]]>
         

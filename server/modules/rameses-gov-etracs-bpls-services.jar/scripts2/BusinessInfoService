@@ -1,0 +1,208 @@
+import com.rameses.annotations.*;
+import com.rameses.util.*;
+import java.rmi.server.*;
+import com.rameses.services.extended.*;
+
+public class BusinessInfoService extends ActiveCrudService {
+
+	@ActiveDB("business")
+	def em;
+
+	@Service("SequenceService")
+	def seqSvc;
+
+	@Service("DateService")
+	def dateSvc;
+
+	@Env
+	def env;
+
+	@Service("BPApplicationService")
+	def appSvc;
+
+	//generate the id of the business {LGUCODE,3}{YEAR,4}{MONTH,2}{SEQ,5}
+	private def generateBin(o) {
+		def lgucode = 169;
+		def yr = o.activeyear;
+		def mnth = dateSvc.serverMonth;
+		def smon = ( mnth < 10 ) ? "0"+mnth : mnth+"";
+		def prefix = "B"+lgucode+yr+smon;
+		return prefix+seqSvc.getNextFormattedSeries(prefix);
+	}
+
+	public void beforeCreate(o) {
+		if(!o.objid) {
+			o.objid = "BUS"+new UID();
+		}	
+		o.activeyear = o.appyear;
+		o.state = "PENDING";
+		o.taxcredit = 0;
+		o.lastqtrpaid = 0;
+		o.user = [objid: o.createdby];
+		o.bin = generateBin(o);
+	}
+
+	//o is the application
+	@ProxyMethod
+	public void updateApprovedInfo(o) {
+		em.update(o);
+		em.removeInfos(o);
+		o.infos.each {
+			it.businessid = o.objid;
+			if(o.applicationid) it.applicationid = o.applicationid;
+			convertInfo(it);
+			em.create(it, "info");
+		}
+		o.lobs.each {
+			it.businessid = o.objid;	
+			if(o.applicationid) it.applicationid = o.applicationid;
+			it.iyear = o.activeyear;
+			em.create(it, "lob");
+		}
+		o.assessmentinfos.each {
+			it.businessid = o.objid;
+			if(o.applicationid) it.applicationid = o.applicationid;
+			it.iyear = o.activeyear;
+			convertInfo(it);
+			em.create(it, "assessment_info");
+		}		
+	}
+
+	@ProxyMethod
+	def release( def o ) {
+		o.txndate = dateSvc.serverDate;
+		o.user = [objid:env.USERID];
+		o.state = 'ACTIVE';
+		em.update(o);
+		return o;
+	}
+
+	/**********************************************************************
+	* This is used for registering business from other systems like TRACS
+	***********************************************************************/
+	@ProxyMethod
+	public def capture(def o ) {
+		o.state = 'CAPTURED';
+		o.taxcredit = 0;
+		o.bin = generateBin(o);
+		o.lobs.each {
+			it.objid = "BUSLOB"+new UID();
+			it.businessid = o.objid;	
+			it.iyear = o.activeyear;
+			it.lobid = it.lob.objid;
+			it.name = it.lob.name;
+			it.assessmenttype = 'RENEW';
+			em.create(it, "lob");
+		}
+		def x = em.create(o);
+		return x;
+	}
+
+	private void convertInfo(o) {
+		def value = o.value;
+		if( value == null ) return;
+		switch(o.attribute.datatype) {
+			case "decimal":
+				o.decimalvalue = Double.parseDouble(value+"");
+				break;
+			case "integer":
+				o.intvalue = Integer.parseInt(value+"");
+				break;
+			case "string_array":	
+			case "string":
+				o.stringvalue = (String)value;
+				break;
+			case "boolean":
+				value = ( value == 1 || value == true ) ? "true" : "false";
+				boolean b =  Boolean.parseBoolean(value);
+				o.boolvalue = (b) ? 1 : 0; 
+				break;
+		} 
+	}
+
+	public void afterOpen(o) {
+		if(o.currentapplicationid) {
+			o.application = appSvc.open( [objid: o.currentapplicationid] );
+		}
+		o.lobs = em.getLobs(o);
+		o.appinfos = em.getAppInfos(o);
+		o.appinfos.each {
+			it.value = formatInfo(it);
+		}
+		o.assessmentinfos = em.getAssessmentInfos(o);
+		o.assessmentinfos.each {
+			it.value = formatInfo(it);
+		}
+	}
+
+	@ProxyMethod
+	public def findByBIN( o ) {
+		def b = em.findIdByBIN(o);
+		if(!b)
+			throw new Exception("BIN not found " + o.bin);
+		return open( [objid: b.objid ] );
+	}
+
+	private def formatInfo(x)  {
+		switch(x.attribute.datatype) {
+			case "decimal" : return x.decimalvalue; break;
+			case "integer" : return x.intvalue; break;
+			case "string_array" : return x.stringvalue; break;
+			case "string"  : return x.stringvalue; break;
+			case "boolean" : 
+				if(x.boolvalue == 0) return false;
+				if(x.boolvalue == 1) return true;
+				return x.boolvalue; 
+				break;
+		}
+	}
+
+	@ProxyMethod
+	public void updatePIN(o) {
+		em.updatePIN(o);
+	}
+
+	@ProxyMethod
+	public def issuePermit(o) {
+		def lgucode = 169;
+
+		if(!o.application)
+			throw new Exception("There must be an associated application for permit");
+
+		//check if there is already an issued permit for the year, update the version	
+		def yr = o.activeyear;
+
+		def z = em.findPermitByYear( [businessid: o.objid, activeyear: yr ] );
+
+		def permitno = null;
+		int ver = 0;
+
+		if( z ) {
+			ver = z.version + 1;
+			permitno = z.permitno;
+		}
+		else {
+			def prefix = lgucode+""+yr;
+			ver = 0;
+			permitno = prefix+"-"+seqSvc.getNextFormattedSeriesA(prefix,5);
+		}
+		//calculate expiry date
+		def expirydate = dateSvc.getMonthEndDate( java.sql.Date.valueOf(yr+"-12-01") );		
+
+		def p = [:];
+ 		p.objid = "PERM" + new UID();
+ 		p.businessid = o.objid;
+ 		p.applicationid = o.application.objid;
+ 		p.activeyear = o.activeyear;
+ 		p.permitno = permitno;
+ 		p.version = ver;
+ 		p.dtissued = dateSvc.serverDate;
+ 		p.permittype = 'STANDARD';
+ 		p.issuedby = [objid: env.USERID, name:env.USER];
+ 		p.expirydate = expirydate;
+ 		em.create( p, "permit");
+		em.updatePermit( [objid: o.objid, permitid: p.objid ] );
+ 		return p;
+	}
+
+}

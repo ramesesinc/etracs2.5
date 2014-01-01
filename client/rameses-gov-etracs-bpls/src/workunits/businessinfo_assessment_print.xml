@@ -1,8 +1,7 @@
 <workunit>
     <invokers>
         <invoker type="businessinfo:assessment:formActions" caption="Print Assessment" 
-            action="viewReport" target="window" 
-            states="approval|payment" />
+            action="viewReport" target="window" />
             
         <invoker type="formActions" caption="Close" action="_close"/>
     </invokers>
@@ -72,20 +71,21 @@
                  };
                 //ctcno: "CCI2012-191919191", 
                 //ctcdate: java.sql.Date.valueOf("2013-02-01"),
-                  
                data = [
                    temporary: ( entity.state == 'assessment' || entity.state == 'approval' ),
-                   txnno: entity.appno, 
-                   barcode: "51005:"+entity.bin,
+                   appno: entity.appno, 
+                   apptype:entity.apptype,
+                   dtfiled: entity.dtfiled,
+                   bin: entity.bin,
+                   barcode: entity.barcode,
                    tradename: entity.tradename, 
                    businessaddress: entity.businessaddress,
                    ownername: entity.owner.name, 
                    owneraddress: entity.owner.address,
-                   txndate: entity.dtfiled, 
-                   totaltax: new BigDecimal(entity.total_tax+""), 
-                   totalregfee: new BigDecimal(entity.total_regfee+""), 
-                   totalcharge: new BigDecimal(entity.total_othercharge+""), 
-                   totalamount: new BigDecimal(entity.total+""), 
+                   totaltax: new BigDecimal(entity.totals.tax+""), 
+                   totalregfee: new BigDecimal(entity.totals.regfee+""), 
+                   totalcharge: new BigDecimal(entity.totals.othercharge+""), 
+                   totalamount: new BigDecimal(entity.totals.total+""), 
                    laterenewal:"0", 
                    applications: [
                         taxes: taxfees.findAll{ it.taxfeetype == "TAX" },  
@@ -102,7 +102,6 @@
                 getParameters : { return paramsvc.getStandardParameter() },
                 getSubReports : { return [
                         new SubReport("AssessmentItem", reportPath + "AssessmentItem.jasper"),
-                        new SubReport("SignatoryItem", reportPath + "SignatoryItem.jasper"),
                         new SubReport("AssessmentNonTax", reportPath + "AssessmentNonTax.jasper")
                     ] as SubReport[];
                 }

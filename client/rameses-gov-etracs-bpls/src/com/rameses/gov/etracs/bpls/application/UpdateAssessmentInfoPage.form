@@ -12,11 +12,12 @@
   <Layout>
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Group type="102" alignment="0" attributes="0">
+          <Group type="102" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="xDataTable2" alignment="0" min="-2" pref="831" max="-2" attributes="0"/>
                   <Component id="xButton1" alignment="0" min="-2" pref="157" max="-2" attributes="0"/>
+                  <Component id="xDataTable2" alignment="0" min="-2" pref="831" max="-2" attributes="0"/>
+                  <Component id="xLabel1" alignment="0" min="-2" pref="668" max="-2" attributes="0"/>
               </Group>
               <EmptySpace pref="115" max="32767" attributes="0"/>
           </Group>
@@ -25,9 +26,11 @@
     <DimensionLayout dim="1">
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="0" attributes="0">
-              <Component id="xButton1" min="-2" pref="34" max="-2" attributes="0"/>
+              <Component id="xLabel1" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="xDataTable2" pref="305" max="32767" attributes="0"/>
+              <Component id="xButton1" min="-2" pref="23" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
+              <Component id="xDataTable2" pref="294" max="32767" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
       </Group>
@@ -47,6 +50,15 @@
         <Property name="mnemonic" type="int" value="117"/>
         <Property name="name" type="java.lang.String" value="updateAssessmentInfo"/>
         <Property name="text" type="java.lang.String" value="Update Assessment Info"/>
+      </Properties>
+    </Component>
+    <Component class="com.rameses.rcp.control.XLabel" name="xLabel1">
+      <Properties>
+        <Property name="expression" type="java.lang.String" value="Specify the information needed to retire this business"/>
+        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+          <Font name="Tahoma" size="11" style="1"/>
+        </Property>
+        <Property name="visibleWhen" type="java.lang.String" value="#{entity.apptype == &apos;RETIRE&apos;}"/>
       </Properties>
     </Component>
   </SubComponents>
