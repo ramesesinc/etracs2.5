@@ -110,6 +110,8 @@ public class BusinessCashReceiptInterceptor {
 	//hook for void cash receipts
 	@After(pattern="CashReceiptVoidService.post", eval="#{result.receipt.collectiontype.handler == 'bpls'}")
 	public void voidTxn(def evt) {
+		throw new Exception("Void is not yet allowed at this time");
+		
 		def rct = evt.result.receipt;
 		def list = biz.getReceivablePaymentForVoiding(  [receiptid: rct.objid ] );
 		def grps = list.groupBy{ it.receivableid }

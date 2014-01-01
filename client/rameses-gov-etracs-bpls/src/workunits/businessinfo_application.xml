@@ -4,11 +4,12 @@
         <invoker type="business:info" caption="Current Application" index="1" action="init"
             visibleWhen="#{entity.application!=null}"/>
         
-        <invoker type="formActions" caption="Edit Info" action="updateAppInfo" 
+        <invoker type="formActions" caption="Save"  action="save" 
             role="BUSINESSINFO" visibleWhen="#{modify_appinfo==true}"/>
 
-        <invoker type="formActions" caption="Save Info"  action="save" 
+        <invoker type="formActions" caption="Edit App Info" action="updateAppInfo" 
             role="BUSINESSINFO" visibleWhen="#{modify_appinfo==true}"/>
+
     </invokers>
     
     <code>
@@ -92,6 +93,7 @@
             
             void save() {
                 if(!caller.dirty) return;
+                if(entity.requirements==null) entity.requirements = [];
                 def m = service.update( entity );
                 entity.putAll(m);
                 caller.dirty = false;

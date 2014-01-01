@@ -49,7 +49,7 @@ public abstract class AbstractSearchBusiness extends PageFlowController {
     }
             
     def searchListModel = [
-        getRows : { return 3; },
+        getRows : { return 25; },
         fetchList: { o->
             if(!query) return [];
             if(!o) o = [:];

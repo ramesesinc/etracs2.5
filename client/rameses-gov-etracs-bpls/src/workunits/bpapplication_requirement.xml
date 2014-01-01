@@ -1,39 +1,34 @@
 <workunit>
     <invokers>
-        <invoker type="businesstask:selectassignee"  target="popup"/>
+        <invoker type="bpapplication:requirement" caption="Requirement Details" target="popup"/>
     </invokers>
     
     <code>
-        <![CDATA[    
+         <![CDATA[    
         import com.rameses.rcp.annotations.*
         import com.rameses.rcp.common.*
         import com.rameses.osiris2.client.*
         import com.rameses.osiris2.common.*
-        import com.rameses.common.*;
-        import java.rmi.server.*
-        import com.rameses.util.*;
+        import java.rmi.server.*;
+        import com.rameses.gov.etracs.bpls.application.*;
         
-        class  SubTaskController  {
-        
+        public class BPApplicationRequirement  {
+            def info=[:];
             def handler;
-            def entity = [:];
-            def assigneeList;
-
             public def doOk() {
-                handler(entity);
+                handler(info);
                 return "_close";
             }
-            
             public def doCancel() {
                 return "_close";
             }
         }
         ]]>
-    </code>
-    
+    </code>    
     
     <pages>
-        <page  template="com.rameses.gov.etracs.bpls.business.ForApprovalMessage"/>
+        <page template="com.rameses.gov.etracs.bpls.application.BPRequirementDocument"/>
     </pages>
+    
     
 </workunit>

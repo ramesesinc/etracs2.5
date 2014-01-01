@@ -100,6 +100,12 @@
                     return entity.assessmentinfos; 
                 }
             ] as BasicListModel;
+            
+            def requirementModel = [
+                fetchList: { o-> 
+                    return entity.requirements; 
+                }
+            ] as BasicListModel;
 
             def verifyAppInfo() {
                 if(!entity.appinfos) 
@@ -137,6 +143,8 @@
                     handler:{ result ->
                         entity.assessmentinfos = result.infos.findAll{ it.infotype == 'assessment' };
                         assessmentInfoModel.reload();
+                        entity.requirements = result.requirements.collect{ [type:it.refid, title:it.title ] };
+                        requirementModel.reload();
                         lobUpdated = false;
                     }
                 ]);
@@ -144,6 +152,17 @@
             
             void saveCreate() {
                 entity = appSvc.create( entity );
+            }
+            
+            def selectedRequirement;
+            def editRequirement() {
+                if(!selectedRequirement) return;
+                return InvokerUtil.lookupOpener( "bpapplication:requirement", [
+                    info:selectedRequirement,
+                    handler: { o->
+                        selectedRequirement.putAll( o );
+                    }
+                ]);
             }
             
         }

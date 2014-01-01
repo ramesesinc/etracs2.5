@@ -49,6 +49,8 @@
             def entity;
             boolean editable;
             
+            def printType;
+            
             void init() {
                 entity = entity.application;
                 def tsk = entity.task;
@@ -57,6 +59,7 @@
                     editable = true;
                 }
                 if(!entity.taxfees ) entity.taxfees = [];
+                 
             }
             
             def updateLOB() {
@@ -136,7 +139,7 @@
                 if(!caller.dirty) return;
                 if(lobUpdated) 
                     throw new Exception("Line of business was updated. Please run 'Edit Assessment Info' again" );
-                
+                if(entity.requirements==null) entity.requirements = [];
                 appSvc.update( entity );
                 binding.refresh("entity.total.*");
                 caller.dirty = false;

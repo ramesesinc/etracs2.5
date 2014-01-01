@@ -30,6 +30,7 @@
 		<field name="approvedby_name" />
 		<complex name="lobs" type="list" serializer="default" required="true"/>
 		<complex name="appinfos" type="list" serializer="default" required="true"/>
+		<complex name="requirements" type="list" serializer="default" required="true"/>
 		<complex name="assessmentinfos" type="list" serializer="default" required="true"/>
 		<complex name="taxfees" type="list" serializer="default" required="true"/>
 		<field name="totals" />

@@ -32,6 +32,7 @@ public class BusinessWorkflowService  {
 			app.orgtypename = b.orgtypename;
 			b.application = app;
 		}
+
 		if(b.currentpermitid) {
 			def p = bizDB.read( [objid:b.currentpermitid], "permit" );
 			b.permit = p; 
@@ -87,6 +88,13 @@ public class BusinessWorkflowService  {
 		app.username = o.assignee.name;
 		appDB.updateApprovedBy( app );
 		return [state:'approval'];
+	}
+
+	@ProxyMethod
+	public def returnForAssessment(o) {
+		if(!o.assignee) throw new Exception("Please specify an assignee");
+		def app = [objid: o.appid];
+		return [state:'assessment'];
 	}
 
 	@ProxyMethod

@@ -1,7 +1,7 @@
 <workunit>
     <invokers>
         <invoker type="businessinfo:assessment:formActions" caption="Print Assessment" 
-            action="viewReport" target="window" />
+            action="viewReport" target="window" visibleWhen="#{!entity.task?.state?.matches('assign-assessor|assessment')}"/>
             
         <invoker type="formActions" caption="Close" action="_close"/>
     </invokers>
@@ -13,7 +13,7 @@
         import com.rameses.osiris2.client.*
         import com.rameses.osiris2.common.*
         import java.rmi.server.*;
-         import com.rameses.osiris2.reports.*;
+        import com.rameses.osiris2.reports.*;
         
         class  BPAssessmentReportController  {
         
@@ -71,8 +71,9 @@
                  };
                 //ctcno: "CCI2012-191919191", 
                 //ctcdate: java.sql.Date.valueOf("2013-02-01"),
+                boolean temporary = (entity.task?.state == 'approval');
                data = [
-                   temporary: ( entity.state == 'assessment' || entity.state == 'approval' ),
+                   temporary: temporary,
                    appno: entity.appno, 
                    apptype:entity.apptype,
                    dtfiled: entity.dtfiled,

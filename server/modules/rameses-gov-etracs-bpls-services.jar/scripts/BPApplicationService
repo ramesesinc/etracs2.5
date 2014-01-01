@@ -36,11 +36,13 @@ public class BPApplicationService extends ActiveCrudService {
         		throw new Exception("This business is currently being processed");
         	activeYear = b.activeyear;	
         	entity.putAll(b);
+        	if(entity.requirements==null) entity.requirements = [];
         }
         else {
 	        entity.appinfos = [];
 	        entity.lobs = [];
 	        entity.assessmentinfos = [];
+	        entity.requirements = [];
         }
         entity.appyear = currentYear;
 		entity.txnmode = 'ONLINE';
