@@ -36,7 +36,7 @@ SELECT
 		WHEN rl.lastqtrpaid = 4 THEN 1 ELSE rl.lastqtrpaid + 1 
 	END AS fromqtr,
 	CASE 
-		WHEN rl.nextbilldate <= GETDATE() THEN 1 
+		WHEN rl.nextbilldate IS NULL OR rl.nextbilldate <= GETDATE() THEN 1 
 		WHEN rl.partialbasic > 0 THEN 1
 		WHEN rl.lastbilledyear IS NULL OR rl.lastbilledqtr IS NULL THEN 1 
 		WHEN rl.lastbilledyear <> $P{billtoyear} OR rl.lastbilledqtr <> $P{billtoqtr} THEN 1

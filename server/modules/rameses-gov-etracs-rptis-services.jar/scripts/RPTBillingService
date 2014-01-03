@@ -345,7 +345,8 @@ public class RPTBillingService
 		ledger.qtrlypaymentpaidontime = util.toBoolean(bill.ledger.qtrlypaymentpaidontime, false )
         ledger.fullpayment            = determineFullPayment(pdate, bill, bill.ledger, ledger) 
         ledger.advancepayment         = bill.advancepayment 
-		ledger.backtax				= ledgerfaas.backtax 
+		ledger.backtax				  = ledgerfaas.backtax 
+		ledger.reclassed			  = (ledgerfaas.reclassed != null ? ledgerfaas.reclassed : false)
 		return ledger 
 	}
 
