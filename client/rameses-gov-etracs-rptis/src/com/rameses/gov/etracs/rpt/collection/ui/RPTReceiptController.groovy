@@ -146,11 +146,14 @@ class RPTReceiptController extends com.rameses.enterprise.treasury.cashreceipt.A
         
             
     void loadItemByLedger(rptledgerid){
-        bill.rptledgerid = rptledgerid;
-        billSvc.generateBillByLedgerId(rptledgerid);
-        itemsforpayment += svc.getItemsForPayment(bill);
-        listHandler.load();
-        calcReceiptAmount();
+        if ( ! itemsforpayment.find{it.rptledgerid == rptledgerid}){
+            bill.rptledgerid = rptledgerid;
+            billSvc.generateBillByLedgerId(rptledgerid);
+            itemsforpayment += svc.getItemsForPayment(bill);
+            listHandler.load();
+            calcReceiptAmount();
+        }
+        binding.focus('ledger');
     }
 
     void updateItemDue(item){
@@ -190,6 +193,7 @@ class RPTReceiptController extends com.rameses.enterprise.treasury.cashreceipt.A
         if (payoption == PAY_OPTION_ALL) {
             loadItems();
         }
+        calcReceiptAmount();
     }
     
     void deselectAll(){
@@ -199,6 +203,7 @@ class RPTReceiptController extends com.rameses.enterprise.treasury.cashreceipt.A
             it.amount = 0.0;
         }
         listHandler.load();
+        calcReceiptAmount();
     }
     
     
