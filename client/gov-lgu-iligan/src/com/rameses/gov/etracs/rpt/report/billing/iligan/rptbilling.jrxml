@@ -927,9 +927,9 @@
 				<image  scaleImage="FillFrame" vAlign="Top" hAlign="Center" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						mode="Opaque"
-						x="390"
+						x="369"
 						y="192"
-						width="150"
+						width="170"
 						height="21"
 						forecolor="#000000"
 						backcolor="#FFFFFF"
@@ -942,9 +942,9 @@
 				</image>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="390"
+						x="369"
 						y="214"
-						width="150"
+						width="170"
 						height="15"
 						key="textField-38"/>
 					<box></box>
