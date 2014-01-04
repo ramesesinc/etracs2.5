@@ -74,6 +74,7 @@ class RPTLedgerService
     @ProxyMethod
     public def updateLedger( ledger ) {
         ledger.advancebill = false;
+        ledger.nextbilldate = null;
         em.update(ledger)    
         return ledger 
     }
