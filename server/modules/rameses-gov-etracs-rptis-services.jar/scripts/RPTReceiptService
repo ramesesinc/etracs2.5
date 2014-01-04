@@ -47,6 +47,14 @@ class RPTReceiptService
 		return items 
 	}
 
+	@ProxyMethod
+	public def getItemsForPaymentByBill(bill){
+		def items =  em.getItemsForPaymentByBill(bill).each{ it.pay = true }	
+		items.removeAll(items.findAll{it.amount == 0.0})
+		if (!items) throw new Exception('There are no more unpaid ledgers for this taxpayer.')
+		return items 
+	}
+
 
 	@ProxyMethod
 	public def createReceipt( receipt ) {
@@ -98,10 +106,13 @@ class RPTReceiptService
 				partialledqtr   : it.partialledqtr,
 				lastbilledyear  : toyear,
 				lastbilledqtr   : toqtr,
+				billid 			: it.billid,
 			]
 
 			em.insertPaidItemByLedgerId(params)
 			em.deletePaidBillItems(params)
+			em.deleteRptBillLedgers(params)
+			em.deleteRptBill(params)
 			em.updateLedgerYearQtrPaid(params)
 		}
 	}

@@ -90,7 +90,8 @@ public class RPTBillingController
         else {
             bill.ledgers << billReportSvc.generateReportByLedgerId(bill.rptledgerid )
         }
-        
+        def b = svc.saveBill(bill)
+        bill.barcode = b.barcode 
         updateBillInfo()
         
         report.viewReport()
@@ -109,7 +110,7 @@ public class RPTBillingController
 
     void updateBillInfo(){
             //set expirty
-            bill.validuntil = bill.ledgers[0].expirydate
+            bill.validuntil = bill.ledgers[0].validuntil
                     
             //summarize totals
             bill.totalbasic     = sumListField(bill.ledgers, 'basic')

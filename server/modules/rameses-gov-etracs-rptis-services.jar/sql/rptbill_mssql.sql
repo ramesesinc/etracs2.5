@@ -219,3 +219,24 @@ WHERE rl.objid = $P{objid}
  AND rli.year >= rti.fromyear  
  AND rli.year <= rti.toyear 
 
+
+
+[insertRptBill]
+INSERT INTO rptbill (objid, barcode, expirydate, taxpayer_objid, taxpayer_name, taxpayer_address, postedby, postedbytitle)
+VALUES ($P{objid}, $P{barcode}, $P{expirydate}, $P{taxpayer_objid}, $P{taxpayer_name}, $P{taxpayer_address}, $P{postedby}, $P{postedbytitle})
+
+
+[insertRptBillLedger]
+INSERT INTO rptbill_ledger (rptledgerid, rptbillid)
+VALUES ($P{rptledgerid}, $P{rptbillid})
+
+
+[findBillByBarcode]
+SELECT * FROM rptbill  WHERE barcode = $P{barcodeid}
+
+[findCollectionTypeByBarcodeKey]
+SELECT * FROM collectiontype WHERE barcodekey = $P{barcodekey}
+  
+
+[getBillLedgers]  
+SELECT * FROM rptbill_ledger WHERE rptbillid = $P{objid}

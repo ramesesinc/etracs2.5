@@ -9,6 +9,7 @@ class RPTBillingInterceptor
 
 	@After(pattern="RuleMgmtService.deploy", eval="#{result.ruleset == 'rptbilling'}") 
 	public void interceptRuleDeploy( evt ) {
+		println 'Clearing RPT Billing next billdate...'
 		svc.clearNextBillDate()
 	}
 
