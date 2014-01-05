@@ -42,6 +42,7 @@ public class RPTReceiptPage extends javax.swing.JPanel {
         jPanel9 = new javax.swing.JPanel();
         formPanel6 = new com.rameses.rcp.util.FormPanel();
         xLookupField1 = new com.rameses.rcp.control.XLookupField();
+        xActionTextField1 = new com.rameses.rcp.control.XActionTextField();
 
         setLayout(new java.awt.BorderLayout());
 
@@ -232,10 +233,11 @@ public class RPTReceiptPage extends javax.swing.JPanel {
 
         jPanel9.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(153, 153, 153)));
 
+        formPanel6.setOrientation(com.rameses.rcp.constant.UIConstants.HORIZONTAL);
         formPanel6.setPadding(new java.awt.Insets(0, 0, 0, 0));
-        formPanel6.setPreferredSize(new java.awt.Dimension(300, 35));
+        formPanel6.setPreferredSize(new java.awt.Dimension(600, 35));
         xLookupField1.setCaption("Search Ledger");
-        xLookupField1.setCaptionMnemonic('s');
+        xLookupField1.setCaptionMnemonic('l');
         xLookupField1.setCaptionWidth(100);
         xLookupField1.setCellPadding(new java.awt.Insets(10, 5, 0, 0));
         xLookupField1.setExpression("#{''}");
@@ -243,8 +245,16 @@ public class RPTReceiptPage extends javax.swing.JPanel {
         xLookupField1.setIndex(-500);
         xLookupField1.setName("ledger");
         xLookupField1.setNullWhenEmpty(false);
-        xLookupField1.setPreferredSize(new java.awt.Dimension(0, 19));
+        xLookupField1.setPreferredSize(new java.awt.Dimension(180, 19));
         formPanel6.add(xLookupField1);
+
+        xActionTextField1.setActionName("processBarcode");
+        xActionTextField1.setCaption("Barcode");
+        xActionTextField1.setCaptionWidth(60);
+        xActionTextField1.setCellPadding(new java.awt.Insets(10, 10, 0, 0));
+        xActionTextField1.setName("barcode");
+        xActionTextField1.setPreferredSize(new java.awt.Dimension(200, 20));
+        formPanel6.add(xActionTextField1);
 
         jPanel9.add(formPanel6, java.awt.BorderLayout.WEST);
 
@@ -269,6 +279,7 @@ public class RPTReceiptPage extends javax.swing.JPanel {
     private javax.swing.JPanel jPanel7;
     private javax.swing.JPanel jPanel8;
     private javax.swing.JPanel jPanel9;
+    private com.rameses.rcp.control.XActionTextField xActionTextField1;
     private com.rameses.rcp.control.XButton xButton1;
     private com.rameses.rcp.control.XButton xButton2;
     private com.rameses.rcp.control.XButton xButton3;

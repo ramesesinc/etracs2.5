@@ -36,6 +36,49 @@ GROUP BY t.rptledgerid, t.lastyearpaid, t.lastqtrpaid, t.tdno, t.fromyear, t.toy
 
 
 
+
+[getItemsForPaymentByBill]
+SELECT 
+	t.rptledgerid, t.tdno, 
+	t.lastyearpaid, t.lastqtrpaid,
+	t.billid,
+	t.fromyear, 
+	(SELECT MIN(CASE WHEN qtr = 0 THEN fromqtr ELSE qtr END) FROM rptledgerbillitem WHERE rptledgerid = t.rptledgerid AND year = t.fromyear) AS fromqtr,
+	$P{billtoyear} AS toyear,
+	(SELECT MAX(CASE WHEN qtr = 0 THEN toqtr ELSE qtr END) FROM rptledgerbillitem WHERE rptledgerid = t.rptledgerid AND year = t.toyear) AS toqtr,
+	SUM(t.basic) AS totalbasic,
+	SUM(t.sef) AS totalsef,
+	SUM(t.firecode) AS totalfirecode,
+	SUM(t.basic + t.firecode) AS totalgeneral,
+	SUM(t.basic + t.sef + t.firecode) AS amount
+FROM (
+	SELECT
+		rb.objid AS billid,
+		rl.objid AS rptledgerid, 
+		rl.lastyearpaid,
+		rl.lastqtrpaid,
+		f.tdno, 
+		MIN(bi.year) AS fromyear,
+		MAX(bi.year) AS toyear,
+		SUM(bi.basic - bi.basicpaid - bi.basicdisc + bi.basicint - bi.basicintpaid) AS basic,
+		SUM(bi.sef - bi.sefpaid -  bi.sefdisc + bi.sefint - bi.sefintpaid) AS sef,
+		SUM(bi.firecode - bi.firecodepaid) AS firecode 
+	FROM rptbill rb
+		INNER JOIN rptbill_ledger rbl ON rb.objid = rbl.rptbillid 
+		INNER JOIN rptledger rl ON rbl.rptledgerid = rl.objid 
+		INNER JOIN rptledgerbillitem bi ON rl.objid = bi.rptledgerid
+		INNER JOIN faas f ON rl.faasid = f.objid 
+		INNER JOIN rpu r ON f.rpuid = r.objid 
+	WHERE rb.objid = $P{billid}
+	  AND rl.state = 'APPROVED'
+	  AND r.taxable = 1
+	GROUP BY rb.objid, rl.objid, f.tdno, rl.lastyearpaid, rl.lastqtrpaid
+) t
+GROUP BY t.billid, t.rptledgerid, t.lastyearpaid, t.lastqtrpaid, t.tdno, t.fromyear, t.toyear 
+
+
+
+
 [insertPaidItemByLedgerId]
 INSERT INTO cashreceiptitem_rpt
     (objid,
@@ -385,3 +428,10 @@ SELECT
 	fund_objid, fund_code, fund_title
 FROM revenueitem 
 WHERE objid = $P{objid}
+
+
+[deleteRptBill]
+DELETE FROM rptbill WHERE objid = $P{billid}
+
+[deleteRptBillLedgers]
+DELETE FROM rptbill_ledger WHERE rptbillid = $P{billid}

@@ -1,38 +1,6 @@
 #######################################
-# BPApplicationListService
-#######################################
-[getList]
-SELECT DISTINCT a.* FROM 
-(SELECT objid,state,appno,owner_name,businessname,businessaddress,appyear,apptype
- FROM bpapplication WHERE owner_name LIKE $P{searchtext}
-UNION
-SELECT objid,state,appno,owner_name,businessname,businessaddress,appyear,apptype 
-FROM bpapplication WHERE businessname LIKE $P{searchtext}
-UNION
-SELECT objid,state,appno,owner_name,businessname,businessaddress,appyear,apptype
-FROM bpapplication WHERE appno LIKE $P{searchtext}) a
-WHERE a.state=$P{state}
-ORDER BY a.appno
-
-[getSearchList]
-SELECT DISTINCT a.* FROM 
-(SELECT 
-objid,state,appno,owner_name,businessname,businessaddress,appyear,apptype	
- FROM bpapplication WHERE owner_name LIKE $P{searchtext}
-UNION
-SELECT 
-objid,state,appno,owner_name,businessname,businessaddress,appyear,apptype
- FROM bpapplication WHERE businessname LIKE $P{searchtext}
-UNION
-SELECT 
-objid,state,appno,owner_name,businessname,businessaddress,appyear,apptype
- FROM bpapplication WHERE appno LIKE $P{searchtext}) a
-ORDER BY a.appno
-
-#######################################
 # used for retrieving the application
 #######################################
-
 [getTaxfees]
 SELECT br.*, r.code AS account_code, ba.taxfeetype, ba.taxfeetype AS account_taxfeetype 
 FROM bpreceivable br 
@@ -52,19 +20,49 @@ SELECT *
 FROM bpapplication_requirement_data b
 WHERE b.objid=$P{objid}
 
-[getLateRenewals]
-SELECT * 
-FROM bpapplication_laterenewal b
-WHERE b.refid=$P{objid}
-
-
 #######################################
-# used for cash receipt
+# workflow
 #######################################
+[getOpenSubTasks]
+SELECT * FROM bpapplication_task
+WHERE parentid=$P{taskid} AND enddate IS NULL
 
+[updateTask]
+UPDATE bpapplication SET task_objid=$P{taskid} WHERE objid=$P{objid}
 
+[findAssessedBy]
+SELECT assessedby_name FROM bpapplication WHERE objid=$P{objid} 
+
+[findApprovedBy]
+SELECT approvedby_name FROM bpapplication WHERE objid=$P{objid} 
+
+[updateAssessedBy]
+UPDATE bpapplication SET 
+assessedby_objid=$P{userid}, assessedby_name=$P{username}
+WHERE objid=$P{objid} 
+
+[updateApprovedBy]
+UPDATE bpapplication SET 
+approvedby_objid=$P{userid}, approvedby_name=$P{username}
+WHERE objid=$P{objid} 
+
+[getApproverList]
+SELECT  u.objid, u.name, ug.role, ug.domain
+FROM sys_usergroup_member sgm
+INNER JOIN sys_user u ON u.objid=sgm.user_objid
+INNER JOIN sys_usergroup ug ON ug.objid=sgm.usergroupid
+WHERE ug.domain='BPLS' AND ug.role='APPROVER' 
+
+[findCurrentTaskid]
+SELECT task_objid AS taskid FROM bpapplication WHERE objid=$P{objid}
+
+[closeCurrentTask]
+UPDATE bpapplication SET task_objid = NULL, dtreleased=$P{dtreleased} 
+WHERE objid=$P{objid}
 
 [changeState]
 UPDATE bpapplication SET state = $P{state} WHERE objid = $P{objid}
+
+
 
 

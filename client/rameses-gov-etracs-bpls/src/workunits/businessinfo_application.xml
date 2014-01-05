@@ -1,9 +1,15 @@
 <workunit>
     
     <invokers>
-        <invoker type="business:info" caption="Application" index="1" action="init" visibleWhen="#{entity.application!=null}"/>
+        <invoker type="business:info" caption="Current Application" index="1" action="init"
+            visibleWhen="#{entity.application!=null}"/>
         
-        <invoker type="formActions" caption="Update Info" index="30" action="updateAppInfo" role="BUSINESSINFO"/>
+        <invoker type="formActions" caption="Save"  action="save" 
+            role="BUSINESSINFO" visibleWhen="#{modify_appinfo==true}"/>
+
+        <invoker type="formActions" caption="Edit App Info" action="updateAppInfo" 
+            role="BUSINESSINFO" visibleWhen="#{modify_appinfo==true}"/>
+
     </invokers>
     
     <code>
@@ -20,37 +26,51 @@
             @Binding
             def binding;
             
-            @Service("BPInfoRuleService")
-            def infoRuleSvc;
-
+            @Caller
+            def caller;
+            
+            @Service("BPApplicationService")
+            def service;
+            
             String title = "Application ";
             String entityName = "businessinfo:application";
         
+            boolean modify_appinfo;
+            boolean canRequestEdit;
             def entity;
-            boolean dirty;
-            def orgTypes = LOV.ORG_TYPES;
-          
+            def state;
+            def message;
+            
             void init() {
                 entity = entity.application;
-                title = title + "( " + entity.state + " )"
-                entity.orgtypename = orgTypes.find{ it.key == entity.orgtype}?.value;
+                String state = entity.task?.state;
+                if( state == null ) state = "released";
+                title = title + "( " + state.toUpperCase() + " )"
+                state = state.toLowerCase();
+                
+                //check if there are subtasks and if subtask has an info state.
+                //to know the source of action, it is in business (workunit)
+                if(entity.subtasks) {
+                    if( entity.subtasks.find{it.action=='modify_appinfo'} ) {
+                        modify_appinfo = true;
+                    }
+                }
+                else if( state == 'assign-assessor') {
+                    canRequestEdit = true;
+                }
             }
             
             def updateAppInfo() {
-                return InvokerUtil.lookupOpener( "bpapplicationinfo:edit", [
-                    entity: entity, 
-                    initial: 'info',
-                    service: infoRuleSvc,
-                    title: 'Business Information',
+                return InvokerUtil.lookupOpener( "bpinfoedit:app", [
+                    entity: entity,
                     existingInfos: entity.appinfos,
                     handler:{ result ->
                         entity.appinfos = result.infos;
-                        entity.requirements = result.requirements;
                         appInfoModel.reload();
-                        dirty = true;
+                        caller.dirty = true;
                     }
                 ]);
-             }
+            }
             
             def appInfoModel = [
                 fetchList: { o->    
@@ -58,11 +78,28 @@
                 }
             ] as BasicListModel;
             
+            def assessmentInfoModel = [
+                fetchList: { o->    
+                    return  entity.assessmentinfos;
+                }
+            ] as BasicListModel;
+            
+            
             def lobModel = [
                 fetchList: { o->    
                     return  entity.lobs;
                 }
             ] as BasicListModel;
+            
+            void save() {
+                if(!caller.dirty) return;
+                if(entity.requirements==null) entity.requirements = [];
+                def m = service.update( entity );
+                entity.putAll(m);
+                caller.dirty = false;
+                MsgBox.alert("Record successfully updated!");
+            }
+            
             
         }
         ]]>

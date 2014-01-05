@@ -1248,8 +1248,8 @@
 						mode="Opaque"
 						x="326"
 						y="4"
-						width="181"
-						height="28"
+						width="170"
+						height="23"
 						forecolor="#000000"
 						backcolor="#FFFFFF"
 						key="barcode-1"/>

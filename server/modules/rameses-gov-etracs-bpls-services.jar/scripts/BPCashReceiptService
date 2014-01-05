@@ -17,13 +17,41 @@ public class BPCashReceiptService  {
 	@Service("NumberService")
 	def numberSvc;
 
+	@ActiveDB("business")
+	def biz;
+
+	@ActiveDB("collectiontype")
+	def collectionType;
+
+	@ActiveDB("bpledger")
+	def bpLedger;
+
+	@ProxyMethod
+	public def findByBarcode(o) {
+		def prefix = o.prefix;
+		def bin = o.barcode;
+		def m = biz.findByBINForReceipt( [bin: bin] );
+		if(!m)
+			throw new Exception("BIN " + bin + " does not exist!");
+
+		m.collectiontype = collectionType.findCollectionTypeByBarcode([barcode: prefix]);
+		if(!m.collectiontype)	
+			throw new Exception("Collection type not found with barcode prefix " + prefix + ". Please check collection type and register barcode prefix");
+		return m; 
+	}
+
 	@ProxyMethod
 	public def getBilling(def o) throws Exception {
 		if(!o.applicationid)
 			throw new Exception("Application is required");
 
 		def m = [:];
+		//throw new Exception("Must get taxfees from ledger not from the application");
+
 		m.application = appSvc.open( [objid: o.applicationid ]); 
+
+		m.application.taxfees = bpLedger.getUnpaidReceivables([businessid:m.application.businessid]);
+
 		m.billdate = o.billdate;
 		m.payoption = o.payoption;
 		m.qtr = o.qtr;
@@ -94,9 +122,7 @@ public class BPCashReceiptService  {
 			mm.remarks = sbuilder.toString();
 			result.receiptitems << mm;
 		}
-
 		return  result;
 	}
-
 
 }

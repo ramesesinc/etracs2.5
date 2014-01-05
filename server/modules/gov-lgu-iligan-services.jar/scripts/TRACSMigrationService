@@ -85,9 +85,11 @@ public class TRACSMigrationService {
 			    em2.createTRACSCashreceipt( r )
 
 			    for( ri in r.items) {
-			    	ri.itemid = ri.item.objid
-			    	ri.itemcode = ri.item.code
-			    	ri.itemtitle = ri.item.title 
+
+			    	def citem = em.findMappedItem(ri)
+			    	ri.itemid = citem.item.objid
+			    	ri.itemcode = citem.item.code
+			    	ri.itemtitle = citem.item.title 
 			    	em2.createTRACSCashreceiptitem( ri );
 			    }
 

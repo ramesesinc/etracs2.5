@@ -13,7 +13,8 @@ import java.rmi.server.*;
 * for each billing item compared with the receipt date. 
 * We get the first expiry date, which is 1st qtr date for
 * renew. If all items are paid prior to this date, then
-* application will be released.      
+* application will be released. Eventually we would like 
+* this to be rule based in the future.     
 **********************************************************/
 public class BusinessCashReceiptInterceptor {
 
@@ -23,11 +24,14 @@ public class BusinessCashReceiptInterceptor {
 	@ActiveDB("bpapplication")
 	def application;
 
-	@ActiveDB("business")
-	def business;
-
 	@Service("NumberService")
 	def numberSvc;
+
+	@Service("BusinessTaskService")
+	def taskSvc;
+
+	@Service("BusinessTaxCreditService")
+	def taxCreditSvc;
 
 	@After(pattern="CashReceiptService.post", eval="#{result.collectiontype.handler == 'bpls'}")
 	public void postBusinessPayment(def evt) {
@@ -76,18 +80,38 @@ public class BusinessCashReceiptInterceptor {
 			ids << k;
 		}
 
+		if(result.totalcredit >0) {
+			def entry = [businessid: pmt.businessid];
+			entry.refno = pmt.refno;
+			entry.refdate = pmt.refdate;
+			entry.refid = pmt.receiptid;
+			entry.refdate = pmt.refdate;
+			entry.dr = result.totalcredit;
+			entry.reftype = "cashreceipt";
+			entry.particulars = "overpayment";
+			taxCreditSvc.post( entry );
+		}
+
 		//check the receivable balance of the application. before today due date.
 		if(pmt.qtr > 0 ) {
-			business.activate( [objid:pmt.businessid, qtr: pmt.qtr ] );
-			if( pmt.applicationid ) {
-				application.changeState( [objid: pmt.applicationid, state:'active'] );	
-			}
+			//find recent task
+			def tskid = application.findCurrentTaskid( [objid: pmt.applicationid] )?.taskid;
+			if(!tskid)
+				throw new Exception("There is no associated taskid");
+			taskSvc.endTask([taskid: tskid]);
+			def tsk = [:];
+			tsk.appid = pmt.applicationid;
+			tsk.state = 'release';
+			tsk.channel = 'BPLS';
+			taskSvc.startTask( tsk );
 		}
 	}
 
 	//hook for void cash receipts
 	@After(pattern="CashReceiptVoidService.post", eval="#{result.receipt.collectiontype.handler == 'bpls'}")
 	public void voidTxn(def evt) {
+		throw new Exception("Void is not yet allowed at this time");
+		
 		def rct = evt.result.receipt;
 		def list = biz.getReceivablePaymentForVoiding(  [receiptid: rct.objid ] );
 		def grps = list.groupBy{ it.receivableid }

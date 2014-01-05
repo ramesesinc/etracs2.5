@@ -2,6 +2,7 @@
     <invokers>
         <invoker type="cashreceipt:rpt" action="init" />
         <invoker type="formActions" action="printDetail" immediate="true" caption="Print Detail" visibleWhen="#{completed == true &amp;&amp; entity.voided == false}" mnemonic="d"/>
+        <invoker type="cashreceipt:barcode:56001" action="initBarcode" />
     </invokers>
     
     <code class="com.rameses.gov.etracs.rpt.collection.ui.RPTReceiptController" >

@@ -1,0 +1,1 @@
+alter table rptledger alter column lastitemyear int null

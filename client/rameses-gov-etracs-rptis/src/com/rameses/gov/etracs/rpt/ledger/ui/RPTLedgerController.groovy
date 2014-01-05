@@ -212,6 +212,7 @@ public class RPTLedgerController
     
     def printBill(){
         def bill = billSvc.initBill(entity.objid);
+        bill.taxpayer = entity.taxpayer
         return InvokerUtil.lookupOpener('rptbill:print', [bill:bill])
     }
     

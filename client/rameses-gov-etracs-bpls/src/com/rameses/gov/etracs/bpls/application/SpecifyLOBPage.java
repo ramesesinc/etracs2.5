@@ -42,7 +42,8 @@ public class SpecifyLOBPage extends javax.swing.JPanel {
 
         xLookupField2.setCaption("Add new Line of Business");
         xLookupField2.setCaptionWidth(150);
-        xLookupField2.setHandler("lookupLob");
+        xLookupField2.setDisableWhen("#{ADD_LOB!=true}");
+        xLookupField2.setHandler("addLob");
         xLookupField2.setName("lob");
         xLookupField2.setPreferredSize(new java.awt.Dimension(0, 20));
         xFormPanel2.add(xLookupField2);
@@ -82,18 +83,19 @@ public class SpecifyLOBPage extends javax.swing.JPanel {
         xButton1.setMargin(new java.awt.Insets(2, 5, 2, 5));
         xButton1.setName("removeLob");
         xButton1.setText("Remove");
+        xButton1.setVisibleWhen("#{ADD_LOB==true}");
 
         xButton2.setImmediate(true);
         xButton2.setMargin(new java.awt.Insets(2, 5, 2, 5));
         xButton2.setName("retireLOB");
         xButton2.setText("Retire LOB");
-        xButton2.setVisibleWhen("#{entity.apptype!='NEW'}");
+        xButton2.setVisibleWhen("#{RETIRE_LOB==true}");
 
         xButton3.setImmediate(true);
         xButton3.setMargin(new java.awt.Insets(2, 5, 2, 5));
         xButton3.setName("unretireLOB");
         xButton3.setText("Unretire");
-        xButton3.setVisibleWhen("#{entity.apptype!='NEW'}");
+        xButton3.setVisibleWhen("#{RETIRE_LOB==true}");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -102,7 +104,6 @@ public class SpecifyLOBPage extends javax.swing.JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 496, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(xButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -110,15 +111,15 @@ public class SpecifyLOBPage extends javax.swing.JPanel {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(xButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(xDataTable1, javax.swing.GroupLayout.PREFERRED_SIZE, 598, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(xFormPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 503, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(xFormPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 503, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 496, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(49, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap()
                 .addComponent(jLabel1)
-                .addGap(16, 16, 16)
+                .addGap(27, 27, 27)
                 .addComponent(xFormPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(xDataTable1, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE)

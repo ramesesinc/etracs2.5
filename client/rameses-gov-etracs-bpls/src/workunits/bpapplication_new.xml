@@ -1,0 +1,304 @@
+<workunit>
+    <invokers>
+        <invoker type="home.action" caption="New Business Application"  action="start" target="window"  role="BUSINESSINFO"/>
+    </invokers>
+    
+    <code>
+         <![CDATA[    
+        import com.rameses.rcp.annotations.*
+        import com.rameses.rcp.common.*
+        import com.rameses.osiris2.client.*
+        import com.rameses.osiris2.common.*
+        import java.rmi.server.*;
+        import com.rameses.gov.etracs.bpls.application.*;
+        
+        public class NewBPApplication extends PageFlowController {
+        
+            @Service("BusinessNameVerificationService")
+            def verificationSvc;
+            
+            @Service("BPApplicationService")
+            def appSvc;
+        
+            def orgTypes = LOV.ORG_TYPES;
+            def entity;
+            def searchList;
+            boolean searchNamePass;
+            boolean hasLookup;
+            boolean lobUpdated;
+            def selectedLob;
+            
+            boolean ADD_LOB = true;
+            boolean REMOVE_LOB = true;
+            boolean RETIRE_LOB = false;
+            
+            def entityName = "bpapplicationform";
+            
+            void init() {
+                entity = appSvc.initNew( [ apptype: 'NEW' ] );
+                appInfoModel.reload();
+                lobModel.reload();
+                assessmentInfoModel.reload();
+            }
+            
+            @PropertyChangeListener
+            def listener = [
+                "entity.orgtype" : { o->
+                    entity.owner = null;
+                    entity.orgtypename = orgTypes.find{ it.key == o}?.value;
+                }
+            ]
+
+            def getLookupOwners() {
+                if( !entity.orgtype ) {
+                    MsgBox.err("Please select an orgtype first.");
+                    return null;
+                }    
+                hasLookup = true;
+                return InvokerUtil.lookupOpener( "entity:lookup", [
+                    "query.orgtype": entity.orgtype,
+                    onselect: { o->
+                        entity.owner = o;
+                        binding.refresh("entity.owner.address");
+                    },
+                    onempty: {
+                        entity.owner = null;
+                        binding.refresh("entity.owner.address");
+                        hasLookup = false;
+                    }
+                ]);
+            }
+
+            //this saves or adds owner
+            def showOwner() {
+                if(!entity.orgtype)
+                    throw new Exception("Please select an org type");
+                String action = (entity.owner?.objid) ? ":open" : ":create";
+                if(action == ":create" && !hasLookup )
+                    throw new Exception("Please attempt first a lookup before creating a new record");
+
+                String openerName = (entity.orgtype=='SING'?'individual':'juridical')+'entity';
+                if( entity.orgtype == 'SING' ) {
+                    def initial = [:];
+                    def sh = { o->
+                        entity.owner = [ objid:o.objid, name:o.name, address:o.address ];
+                        binding.refresh("entity.owner.*");
+                    }
+                    return InvokerUtil.lookupOpener( "individualentity"+action, [entity: entity.owner, initial:initial, saveHandler:sh] );
+                }
+                else {
+                    def initial = [:];
+                    initial.orgtype = entity.orgtype;
+                    def sh = { o->
+                        entity.owner = [ objid:o.objid, name:o.name, address:o.address ];
+                        binding.refresh("entity.owner.*");
+                    }
+                    return InvokerUtil.lookupOpener( "juridicalentity"+action, [entity: entity.owner, initial: initial, saveHandler:sh] );
+                }
+            }
+
+            def copyBusinessName() {
+                entity.tradename = entity.businessname;
+                binding.refresh("entity.tradename");
+                binding.focus("entity.tradename");
+            }
+
+             /******************************************************************
+             * for verifying the business name
+             ******************************************************************/
+             void checkName() {
+                 searchList  = verificationSvc.getList(entity.businessname); 
+                 if(searchList) {
+                    searchNamePass = false;
+                    searchListModel.reload();
+                 }
+                 else {
+                    searchNamePass = true;
+                 }
+             }
+            
+             def searchListModel = [
+                fetchList: { o->return searchList;}
+             ] as BasicListModel;
+
+             
+             def getAddLob() {
+                return InvokerUtil.lookupOpener( "lob:lookup", [
+                    onselect: { o->
+                        if(entity.lobs.find{ it.lobid == o.objid }!=null) 
+                            throw new Exception("Item already added");
+                        def m = [:];
+                        m.objid = "BPLOB"+new UID();
+                        m.lobid = o.objid;
+                        m.name = o.name;
+                        m.classification = o.classification;
+                        m.assessmenttype = "NEW";
+                        entity.lobs << m; 
+                        lobModel.reload();
+                        lobUpdated = true;
+                        binding.focus("lob");
+                    }
+                ]);
+            }
+             
+            void removeLob() {
+                if(!selectedLob) return;
+                if(selectedLob.assessmenttype != "NEW" ) 
+                    throw new Exception("Only new lines of business can be removed");
+                entity.lobs.remove(selectedLob);
+                lobUpdated = true;
+            }
+             
+             def appInfoModel = [
+                fetchList: { o-> 
+                    return entity.appinfos; 
+                }
+            ] as BasicListModel;
+
+             def lobModel = [
+                fetchList: { o->
+                    return entity.lobs;
+                },
+            ] as BasicListModel;
+            
+            def assessmentInfoModel = [
+                fetchList: { o-> 
+                    return entity.assessmentinfos; 
+                }
+            ] as BasicListModel;
+
+            def requirementModel = [
+                fetchList: { o-> 
+                    return entity.requirements; 
+                }
+            ] as BasicListModel; 
+            
+            def verifyAppInfo() {
+                if(!entity.appinfos) 
+                    throw new Exception("Please specify at least one info for business");
+                def unedited = entity.appinfos.findAll{ it.value == null };
+                if( unedited ) {
+                    def buff = new StringBuffer();
+                    unedited.each {
+                        buff.append( "\n"+it.attribute.name );
+                    }
+                    throw new Exception("Please complete the ff. Do not leave blanks" + buff.toString() );  
+                }    
+            }
+
+            def verifyLOB() {
+                if(!entity.lobs) 
+                    throw new Exception("Please specify at least one line of business");
+            }
+
+            def verifyAssessmentInfo() {
+                if(!entity.assessmentinfos) 
+                    throw new Exception("Please specify at least one assessment information");
+                if(lobUpdated)
+                    throw new Exception("Please run update assessment info again. Line of Business was updated.");
+            }
+         
+             def updateAppInfo() {
+                return InvokerUtil.lookupOpener( "bpinfoedit:app", [
+                    entity: entity,
+                    existingInfos: entity.appinfos,
+                    handler:{ result ->
+                        entity.appinfos = result.infos;
+                        appInfoModel.reload();
+                    }
+                ]);
+            }
+            
+            def updateAssessmentInfo() {
+                return InvokerUtil.lookupOpener( "bpinfoedit:assessment", [
+                    entity: entity, 
+                    initialInfos: entity.appinfos.collect{it},
+                    existingInfos: entity.assessmentinfos,
+                    handler:{ result ->
+                        entity.assessmentinfos = result.infos.findAll{ it.infotype == 'assessment' };
+                        assessmentInfoModel.reload();
+                        entity.requirements = result.requirements.collect{ [type:it.refid, title:it.title ] };
+                        requirementModel.reload();
+                        lobUpdated = false;
+                    }
+                ]);
+            }
+            
+            void saveCreate() {
+                entity = appSvc.create( entity );
+            }
+            
+            def selectedRequirement;
+            def editRequirement() {
+                if(!selectedRequirement) return;
+                return InvokerUtil.lookupOpener( "bpapplication:requirement", [
+                    info:selectedRequirement,
+                    handler: { o->
+                        selectedRequirement.putAll( o );
+                    }
+                ]);
+            }
+        }
+        ]]>
+    </code>    
+    
+    <pageflow>
+        <start>
+            <transition to="initial" name="create" action="init"/>
+        </start>
+        
+        <page name="initial" title="Specify Business Name (New Application)">
+            <transition to="check-name" caption="Next" name="next" mnemonic="N" immediate="false"/>
+        </page>
+        
+        <process name="check-name" action="checkName">
+            <transition to="verify-name" cond="#{searchNamePass==false}"/>
+            <transition to="update-app-info" cond="#{searchNamePass==true}"/>
+        </process>
+            
+        <page name="verify-name" title="Verify Business Name (New Application)">
+            <transition to="initial" caption="Back" mnemonic="B"/>
+            <transition to="update-app-info" caption="Next" name="next" mnemonic="N"/>
+        </page>
+
+        <page name="update-app-info" title="Specify Business Information (New Application)">
+            <transition to="initial" caption="Back" mnemonic="B" name="back"/>
+            <transition to="update-lob" caption="Next" name="next" mnemonic="N" action="verifyAppInfo"/>
+        </page>
+        
+        <page name="update-lob" title="Specify Line of Business (New Application)">
+            <transition to="update-app-info" caption="Back" mnemonic="B" name="back"/>
+            <transition to="update-assessment-info" caption="Next" name="next" mnemonic="N"  action="verifyLOB"/>
+        </page>
+
+        <page name="update-assessment-info" title="Specify Assessment Information (New Application)" >
+            <transition to="update-lob" caption="Back" mnemonic="B" name="back"/>
+            <transition to="confirm" caption="Next" name="next" mnemonic="N" action="verifyAssessmentInfo"/>
+        </page>
+        
+        <page name="confirm" title="Confirm (New Application)">
+            <transition to="update-assessment-info" caption="Back" mnemonic="B" name="back"/>
+            <transition to="save-success" caption="Submit" mnemonic="S" name="save" action="saveCreate"
+            confirm="You are about to save this transaction. Continue?"/>
+        </page>
+        
+        <page name="save-success" title="Save Success (New Application)">
+            <transition to="initial" caption="Add Another" mnemonic="A" action="init"/>
+        </page>
+
+        <end/>
+    </pageflow>
+    
+    <pages>
+        <page name="initial" template="com.rameses.gov.etracs.bpls.application.SpecifyBusinessInfoPage"/>
+        <page name="verify-name" template="com.rameses.gov.etracs.bpls.application.VerifyBusinessName"/>
+        
+        <page name="update-app-info" template="com.rameses.gov.etracs.bpls.application.UpdateAppInfoPage"/>
+        <page name="update-lob" template="com.rameses.gov.etracs.bpls.application.SpecifyLOBPage"/>
+        <page name="update-assessment-info" template="com.rameses.gov.etracs.bpls.application.UpdateAssessmentInfoPage"/>
+        <page name="confirm" template="com.rameses.gov.etracs.bpls.application.ConfirmApplicationPage"/>
+        <page name="save-success" template="com.rameses.gov.etracs.bpls.application.SuccessPage"/>
+    </pages>
+    
+    
+</workunit>

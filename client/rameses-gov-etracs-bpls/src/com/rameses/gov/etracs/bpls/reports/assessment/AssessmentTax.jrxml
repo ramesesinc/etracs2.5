@@ -5,10 +5,10 @@
 		 name="AssessmentTax"
 		 columnCount="1"
 		 printOrder="Vertical"
-		 orientation="Portrait"
-		 pageWidth="510"
+		 orientation="Landscape"
+		 pageWidth="539"
 		 pageHeight="510"
-		 columnWidth="510"
+		 columnWidth="539"
 		 columnSpacing="0"
 		 leftMargin="0"
 		 rightMargin="0"
@@ -25,13 +25,11 @@
 
 	<parameter name="TITLE" isForPrompting="false" class="java.lang.String"/>
 
-	<field name="accountTitle" class="java.lang.String"/>
-	<field name="lobName" class="java.lang.String"/>
+	<field name="accounttitle" class="java.lang.String"/>
+	<field name="lobname" class="java.lang.String"/>
 	<field name="amtdue" class="java.math.BigDecimal"/>
-	<field name="vars(GROSS)" class="java.math.BigDecimal"/>
-	<field name="vars(GROSS_ESSENTIAL)" class="java.math.BigDecimal"/>
-	<field name="vars(GROSS_NON_ESSENTIAL)" class="java.math.BigDecimal"/>
-	<field name="vars(CAPITAL)" class="java.math.BigDecimal"/>
+	<field name="assessmenttype" class="java.lang.String"/>
+	<field name="amount" class="java.math.BigDecimal"/>
 
 		<background>
 			<band height="0"  isSplitAllowed="true" >
@@ -46,67 +44,7 @@
 			</band>
 		</pageHeader>
 		<columnHeader>
-			<band height="11"  isSplitAllowed="true" >
-				<staticText>
-					<reportElement
-						mode="Transparent"
-						x="7"
-						y="0"
-						width="167"
-						height="11"
-						forecolor="#000000"
-						backcolor="#FFFFFF"
-						key="staticText-1"/>
-					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-</box>
-					<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
-						<font fontName="Tahoma" pdfFontName="Helvetica" size="8" isBold="true" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
-					</textElement>
-				<text><![CDATA[Account]]></text>
-				</staticText>
-				<staticText>
-					<reportElement
-						mode="Transparent"
-						x="178"
-						y="0"
-						width="172"
-						height="11"
-						forecolor="#000000"
-						backcolor="#FFFFFF"
-						key="staticText-2"/>
-					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-</box>
-					<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
-						<font fontName="Tahoma" pdfFontName="Helvetica" size="8" isBold="true" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
-					</textElement>
-				<text><![CDATA[Line of Business]]></text>
-				</staticText>
-				<staticText>
-					<reportElement
-						mode="Transparent"
-						x="353"
-						y="0"
-						width="118"
-						height="11"
-						forecolor="#000000"
-						backcolor="#FFFFFF"
-						key="staticText-3"/>
-					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-</box>
-					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
-						<font fontName="Tahoma" pdfFontName="Helvetica" size="8" isBold="true" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
-					</textElement>
-				<text><![CDATA[Tax Amount]]></text>
-				</staticText>
+			<band height="0"  isSplitAllowed="true" >
 			</band>
 		</columnHeader>
 		<detail>
@@ -114,9 +52,9 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						mode="Transparent"
-						x="7"
+						x="148"
 						y="0"
-						width="167"
+						width="149"
 						height="11"
 						forecolor="#000000"
 						backcolor="#FFFFFF"
@@ -129,14 +67,14 @@
 					<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
 						<font fontName="Tahoma" pdfFontName="Helvetica" size="8" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{accountTitle}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{accounttitle}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						mode="Transparent"
-						x="353"
+						x="297"
 						y="0"
-						width="118"
+						width="79"
 						height="11"
 						forecolor="#000000"
 						backcolor="#FFFFFF"
@@ -154,9 +92,9 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						mode="Transparent"
-						x="178"
+						x="0"
 						y="0"
-						width="172"
+						width="148"
 						height="11"
 						forecolor="#000000"
 						backcolor="#FFFFFF"
@@ -169,7 +107,49 @@
 					<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
 						<font fontName="Tahoma" pdfFontName="Helvetica" size="8" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{lobName}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{lobname}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						mode="Transparent"
+						x="376"
+						y="0"
+						width="104"
+						height="11"
+						forecolor="#000000"
+						backcolor="#FFFFFF"
+						key="textField-1">
+							<printWhenExpression><![CDATA[new Boolean($F{amount}.doubleValue() > 0.0)]]></printWhenExpression>
+						</reportElement>
+					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
+						<font fontName="Tahoma" pdfFontName="Helvetica" size="8" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
+					</textElement>
+				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{amtdue}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						mode="Transparent"
+						x="480"
+						y="0"
+						width="58"
+						height="11"
+						forecolor="#000000"
+						backcolor="#FFFFFF"
+						key="textField-2"/>
+					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
+						<font fontName="Tahoma" pdfFontName="Helvetica" size="8" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{assessmenttype}]]></textFieldExpression>
 				</textField>
 			</band>
 		</detail>

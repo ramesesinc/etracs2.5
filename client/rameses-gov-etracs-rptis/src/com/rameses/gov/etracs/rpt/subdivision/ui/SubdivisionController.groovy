@@ -117,10 +117,64 @@ public class SubdivisionController extends PageFlowController
     }
     
     
+    
+    
+    
+    def approveTask = null;
+    def info;
+    def processing = false;
+    def haserror = false;
+    
+    
+    def oncomplete = {
+        haserror = false;
+        processing = false;
+        approveTask = null;
+        binding.refresh();
+    }
+    
+    def onerror = {
+        haserror = true;
+        processing = false;
+        approveTask = null;
+        showinfo('ERROR: ' + it)
+    }
+    
+    def showinfo = { msg ->
+        info += msg;
+        binding.refresh('info');
+    }
+    
     void approveSubdivision() {
-        subdivision = svc.approveSubdivision(subdivision);
+        info = '';
+        processing = true;
+        approveTask = new ApproveSubdivisionTask(
+                    svc             : svc, 
+                    subdivision     : subdivision,
+                    oncomplete      : oncomplete,
+                    showinfo        : showinfo,
+                    onerror         : onerror,
+                );
+        Thread t = new Thread(approveTask);
+        t.start();
+        
+        // subdivision = svc.approveSubdivision(subdivision);
     }
 
+        
+    void checkErrors(){
+        if (processing)
+            throw new Exception('Subdivision Approval is ongoing.');
+        subdividedLands = svc.getSubdividedLands(subdivision.objid)
+        affectedrpus = svc.getAffectedRpus(subdivision.objid);
+    }
+    
+    void checkFinish(){
+        if (haserror)
+            throw new Exception('Approval cannot be completed due to errors. Fix errors before finishing the transaction.')
+        if (processing)
+            throw new Exception('Subdivision Approval is ongoing.');
+    }
 
     void disapproveSubdivision() {
         subdivision = svc.disapproveSubdivision(subdivision);
@@ -427,4 +481,64 @@ public class SubdivisionController extends PageFlowController
     
 
     
+}
+
+
+
+public class ApproveSubdivisionTask implements Runnable{
+    def svc;
+    def subdivision;
+    def oncomplete;
+    def onerror;
+    def showinfo;
+
+    public void run(){
+        try{
+            showinfo('Initializing');
+            svc.initApproveSubdivisionAsync(subdivision);
+            showinfo(' .... Done\n');
+        
+            showinfo('Assigning new TD No. to Subdivided Lands and Affected RPUs');
+            svc.assignNewTdNos(subdivision);
+            showinfo(' .... Done\n');
+            
+            
+            showinfo('Processing Subdivided Lands\n');
+            svc.getSubdividedLands(subdivision.objid).each{ land ->
+                if ( ! land.newfaasid) {
+                    showinfo('Creating new Land FAAS for TD No. ' + land.newtdno );
+                    svc.createSubdividedLandFaasRecord(subdivision, land);
+                    showinfo(' .... Done\n');
+                }
+            }
+            
+            showinfo('Processing Affected RPUs\n');
+            svc.getAffectedRpus(subdivision.objid).each{ arpu ->
+                if ( ! arpu.newfaasid) {
+                    showinfo('Creating new Affected RPU FAAS for TD No. ' + arpu.newtdno );
+                    svc.createAffectedRpuFaasRecord(subdivision, arpu);
+                    showinfo(' .... Done\n');
+                }
+            }
+            
+            showinfo('Subdivision Approval')
+            svc.approveSubdivisionAsync(subdivision);
+            subdivision.state = 'APPROVED';
+            showinfo(' .... Done\n');
+            
+            oncomplete()
+        }
+        catch(e){
+            onerror('\n\n' + e.message )
+        }
+    }
+    
+    void doSleep(){
+        try{
+            Thread.sleep(2000);
+        }
+        catch(e){
+            ;
+        }
+    }
 }

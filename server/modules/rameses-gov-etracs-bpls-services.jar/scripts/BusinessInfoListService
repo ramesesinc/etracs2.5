@@ -11,23 +11,24 @@ public class BusinessInfoService extends ActiveCrudListService {
 	@Service("DateService")
 	def dateSvc;
 
+	@Env
+	def env;
+
 	@ProxyMethod
 	public def getNodes(o) {
 		return [
-			[name:'new', appstate:'info', caption:'New', leaf:true, folder:true, allowSearch:true],
-			[name:'renew', appstate:'info', caption:'Renewal', leaf:true, folder:true, allowSearch:true],
-			[name:'amend', appstate:'info', caption:'For Amendment', leaf:true, folder:true, allowSearch:true],
-			[name:'retire', appstate:'info', caption:'For Retirement', leaf:true, folder:true, allowSearch:true],
-
-			[name:'assessment', appstate:'assessment', caption:'For Assessment', leaf:true, folder:true, allowSearch:true],
-			[name:'approval', appstate:'approval', caption:'For Approval', leaf:true, folder:true, allowSearch:true],
-			[name:'payment', appstate:'payment', caption:'For Payment', leaf:true, folder:true, allowSearch:true],
-			[name:'active', caption:'Active (w/o Permit)', leaf:true, folder:true, allowSearch:true],
-			[name:'activep', caption:'Active (with Permit)', leaf:true, folder:true, allowSearch:true],
-			[name:'expired', caption:'Expired (For Renewal)', leaf:true, folder:true, allowSearch:true],
-			[name:'captured', caption:'Captured', leaf:true, folder:true, allowSearch:true],
-			[name:'retired', caption:'Retired', leaf:true, folder:true, allowSearch:true],
-			[name:'draft', caption:'Draft', leaf:true, folder:true, allowSearch:true],
+		   [name:'mytask', caption:'My Tasks', leaf:true, allowSearch:true],
+		   [name:'assign-assessor', caption:'For Assessment(Unassigned)', leaf:true, folder:true, allowSearch:true],
+		   [name:'assessment', caption:'Assessment', leaf:true, folder:true, allowSearch:true],
+		   [name:'approval', caption:'For Approval', leaf:true, folder:true, allowSearch:true],
+		   [name:'payment', caption:'For Payment', leaf:true, folder:true, allowSearch:true],
+		   [name:'release', caption:'For Release', leaf:true, folder:true, allowSearch:true],
+		   [name:'wopermit', caption:'Active w/o Permit', leaf:true, folder:true, allowSearch:true],
+		   [name:'wpermit', caption:'Active with Permit', leaf:true, folder:true, allowSearch:true],
+		   [name:'expired', caption:'Expired (For Renewal)', leaf:true, folder:true, allowSearch:true],
+		   [name:'captured', caption:'Captured', leaf:true, folder:true, allowSearch:true],
+		   [name:'retired', caption:'Retired', leaf:true, folder:true, allowSearch:true],
+		   [name:'inactive', caption:'Inactive', leaf:true, folder:true, allowSearch:true],
 		];
 	}	
 
@@ -39,15 +40,12 @@ public class BusinessInfoService extends ActiveCrudListService {
 		cols <<	[name:'businessname', caption:'Business Name'];
 		cols <<	[name:'businessaddress', caption:'Business Address'];
 		cols <<	[name:'owner.name', caption:'Owner'];
-		if( o.name !='expired' && o.name != 'captured') {
-			cols <<	[name:'appno', caption:'App No', width:120, resizable:false];
-			cols <<	[name:'appdate', caption:'App Date', width:80, resizable:false, type:'date'];
-			cols <<	[name:'apptype', caption:'App Type', width:80, resizable:false];
-			cols <<	[name:'appstate', caption:'App Status', width:80, resizable:false];
-		}
-		if( o.name == 'activep') {
-			cols <<	[name:'permitno', caption:'Permit No', resizable:false];
-		}
+		cols <<	[name:'apptype', caption:'App Type', width:80, resizable:false];
+		cols <<	[name:'appdate', caption:'App Date', width:80, resizable:false, type:'date'];
+		cols <<	[name:'appstate', caption:'App Status', width:80, resizable:false];
+		cols <<	[name:'assignee.name', caption:'Assigned To', width:80, resizable:false];
+		cols <<	[name:'permitno', caption:'Permit No', resizable:false];
+		cols <<	[name:'expirydate', caption:'Expiry date', resizable:false];
 		return cols;
 	}
 
@@ -55,51 +53,52 @@ public class BusinessInfoService extends ActiveCrudListService {
 		def activeYear = dateSvc.serverYear;
 		o._pagingKeys = "b.objid";
 		o.filter = '';
-		if(o.name=='search') {
-			o._listMethod = "getListSearch";
-			if( !o.searchtext || o.searchtext == '%' ) {
-				o.searchtext = "?";
-			}	
-		}
-		else if( o.appstate ) {
-			o._listMethod = "getListWithApplication";
-			o.apptype = null;
-			if( o.name == 'new' ) o.apptype = 'NEW';
-			else if( o.name == 'renew' ) o.apptype = 'RENEW';
-			else if( o.name == 'amend' ) o.apptype = 'AMEND';
-			else if( o.name == 'retire' ) o.apptype = 'RETIRE';
-			o.filter = '';
-			if( o.apptype ) o.filter = 	' AND ba.apptype = $P{apptype} ';
-			o.filter += ' AND ba.state=$P{appstate} ';
-		}
-		else if( o.name == 'active' ) {
-			o._listMethod = "getActiveListWithoutPermit";
-			o.activeyear = activeYear;
-			o.filter = '';
-		}
-		else if( o.name == 'activep' ) {
-			o._listMethod = "getActiveListWithPermit";
-			o.activeyear = activeYear;
-			o.filter = '';
-		}
-		else if( o.name == 'expired' ) {
-			o._listMethod = "getListForRenewal";
-			o.activeyear = activeYear;
-			o.state = "ACTIVE";
-			o.filter = ' AND b.state=$P{state} ';
-		}
-		else if( o.name == 'retired' ) {
-			o._listMethod = "getRetiredList";
-			o.filter = '';
-		}
-		else if( o.name == 'captured' ) {
-			o._listMethod = "getCapturedList";
-			o.filter = '';
-		}
-		else if( o.name == 'discontinued' ) {
-			o._listMethod = "getInactiveList";
-			o.activeyear = activeYear;
-			o.filter = '';
+		switch(o.name) {
+			case 'search':
+				if( !o.searchtext || o.searchtext == '%' ) o.searchtext = "?";
+				break;
+				
+			case 'mytask':
+				o._listMethod = "getOpenTaskList";
+				o.assigneeid = env.USERID;
+				o.filter = ''' AND b.assignee_objid = $P{assigneeid} '''
+				break;
+
+			//--------------- processing--------------------	
+			case 'assign-assessor':
+			case 'assessment':	
+			case 'approval':
+			case 'payment':
+			case 'release':
+			case 'info':
+				o.appstate = o.name.toUpperCase();
+				o.state = 'PROCESSING';
+				o.filter = ''' AND b.appstate = $P{appstate} AND b.state=$P{state} ''';
+				if(o.apptype) o.filter += ''' AND b.apptype=$P{apptype} ''';
+				break;		
+
+			//--------------- active--------------------	
+			case 'wopermit':
+				o.state = 'ACTIVE';
+				o.filter = ''' AND b.state=$P{state} AND b.permitno IS NULL ''';
+				break;	
+			case 'wpermit':
+				o.state = 'ACTIVE';
+				o.filter = ''' AND b.state=$P{state} AND NOT(b.permitno IS NULL) ''';
+				break;	
+			case 'expired':
+				o.state = 'ACTIVE';
+				o.currentdate = dateSvc.serverDate;
+				o.filter = ''' AND b.state=$P{state} AND NOT(b.permitno IS NULL) AND b.expirydate < ${currentdate}''';
+				break;	
+
+			case 'captured':
+			case 'retired':
+				o.state = o.name.toUpperCase();
+				o.filter = ''' AND b.state=$P{state} ''';			
+				break;
+			default:
+				break;
 		}
 	}
 

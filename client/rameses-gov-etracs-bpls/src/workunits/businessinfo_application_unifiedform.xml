@@ -2,7 +2,8 @@
     <invokers>
         <invoker type="businessinfo:application:formActions" name="print"
             caption="Print Unified Form" action="viewReport" target="window" 
-            index="0" states="assessment|approval|payment"/>
+            index="0" visibleWhen="#{entity.task?.objid==null}"/>
+
         <invoker type="formActions" caption="Close" action="_close"/>
     </invokers>
     
@@ -22,7 +23,6 @@
             def title = "BP Application"
             
             def reportPath = "com/rameses/gov/etracs/bpls/reports/unifiedform/"
-            def orgtypes = LOV.ORG_TYPES;    
             
             @Service("ReportParameterService") 
             def paramsvc
@@ -66,33 +66,22 @@
                  
                 //ctcno: "CCI2012-191919191", 
                 //ctcdate: java.sql.Date.valueOf("2013-02-01"),
-                data = [
-                   apptype: entity.apptype,
-                   refno: entity.appno, 
-                   appdate: entity.dtfiled,
-                   tradename: entity.tradename,
-                   businessname: entity.businessname,
-                   barangay: entity.barangay.name,
-                   orgtype: orgtypes.find{ it.key == entity.orgtype}?.value,
-                   businessaddress: entity.businessaddress,
-                   ownername: entity.owner.name, 
-                   ownerno: entity.owner.entityno,
-                   owneraddress: entity.owner.address,
-                   txndate: entity.dtfiled, 
-                   laterenewal:"0", 
-                   infos:infos,
-                   requirements:[],
-                   signatories:[],
-                   barcode: "51005:"+entity.bin
-                ];
-                
+                data = [:];
+                data.putAll( entity );
+                data.barangay =  entity.barangay.name;
+                data.ownername = entity.owner.name; 
+                data.ownerno = entity.owner.entityno;
+                data.owneraddress = entity.owner.address;
+                data.infos = infos;
+                data.requirements = [];
+                data.signatories = [];
+                data.barcode =  "51005:"+entity.bin
                 entity.appinfos.each {
                     data[ it.attribute.name.toLowerCase() ] = format(it); 
                 }
                 entity.assessmentinfos.findAll{it.lob?.objid==null}.each {
                     data[ it.attribute.name.toLowerCase() ] = format(it); 
                 }
-                
                 report.viewReport();
             } 
             

@@ -8,34 +8,37 @@ public class CityEngineerBPApplicationInterceptor {
 	@ActiveDB("business_cityengineer")
 	def em;
 
-	@After( pattern="BPApplicationService.(create|submitForAssessment)" )
+	@ActiveDB("bpapplication")
+	def appDB;
+
+	@After( pattern="BPApplicationService.create" )
 	public void onSubmitForAssessment(evt) {
 		def app = evt.args[0];
-		def m = app.appinfos.find{ it.attribute.objid == "LOCATED_ON_GOVERNMENT_PROPERTY" };
+		def m = app.appinfos.find{ it.attribute.objid == "REQUIRE_CEO" };
 
 		//if this info does not exist or is not supplied, we assume there is a city engineer component
 		//find if there is  already a link, if not, we need to create one
-
-		if( !m?.value ) {
+		if( m?.value == true ) {
 			def z = em.findInfo([businessid:app.businessid]);
 			if(!z) {
 				z = [objid: "BUSCEO"+ new UID()];
 				z.businessid = app.businessid;
-				z.state = 'pending';
+				z.state = 'PENDING';
 				em.create(z);
 			}
 		}
 	}	
 
-	@Before( pattern="BPApplicationService.approveApplication" )
-	public void onApproveApplication(evt) {
+	@Before( pattern="BusinessWorkflowService.submitForApproval" )
+	public void onSubmitApproval(evt) {
 		def app = evt.args[0];
 		def z = em.findInfo([businessid:app.businessid]);
 		if(z) {
-			if( z.state == 'pending') {
+			if( z.state == 'PENDING') {
 				throw new Exception("There is still a pending assessment in City Engineers Office");
 			}
-			if( !app.taxfees.find{it.department=='CEO'}) {
+			def tf = appDB.read( [objid:app.appid] );
+			if( !tf.taxfees.find{it.department=='CEO'}) {
 				throw new Exception("There must be at least one fee from the city engineers office. Please run calculate charges again");
 			}
 		}
@@ -44,18 +47,18 @@ public class CityEngineerBPApplicationInterceptor {
 	/***
 	* add additional fees from city engineer. Add @Before so it can be totalled.
 	***/
-	@Before( pattern="BPApplicationService.assess" )
+	@Before( pattern="BPAssessmentService.assess" )
 	public void fireAssess(evt) {
-		def o = evt.args[0];	
-		def taxfees = em.getFees([businessid:o.businessid]);
-		if( o.taxfees == null ) o.taxfees = [];
+		def app = evt.args[0];	
+		def taxfees = em.getFees([businessid:app.businessid]);
+		if( app.taxfees == null ) app.taxfees = [];
 		taxfees.each {
-			if(it.state=='active') {
+			if(it.state.toLowerCase()=='active') {
 				it.objid = "BCEOFEE"+new UID();
 				it.department = 'CEO';
 				it.account.taxfeetype = 'OTHERCHARGE';
 				it.taxfeetype = 'OTHERCHARGE';
-				o.taxfees << it;
+				app.taxfees << it;
 			}
 		}
 	}	
@@ -63,7 +66,7 @@ public class CityEngineerBPApplicationInterceptor {
 	/***
 	* add additional fees from city engineer. Add @Before so it can be totalled.
 	***/
-	@After( pattern="BusinessInfoService.open" )
+	@After( pattern="BusinessWorkflowService.(open|findByBIN)" )
 	public void onOpen(evt) {
 		def result = evt.result;
 		def z = em.findInfo( [businessid: result.objid ] );
@@ -71,6 +74,5 @@ public class CityEngineerBPApplicationInterceptor {
 			result.cityengineer = z;
 		}
 	}	
-
 
 }

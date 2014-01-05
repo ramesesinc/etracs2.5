@@ -38,8 +38,6 @@ public class AssessmentPage extends javax.swing.JPanel {
         xDecimalField4 = new com.rameses.rcp.control.XDecimalField();
         xDataTable2 = new com.rameses.rcp.control.XDataTable();
         jLabel1 = new javax.swing.JLabel();
-        xFormPanel1 = new com.rameses.rcp.control.XFormPanel();
-        xLabel1 = new com.rameses.rcp.control.XLabel();
         xDataTable1 = new com.rameses.rcp.control.XDataTable();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
@@ -123,7 +121,7 @@ public class AssessmentPage extends javax.swing.JPanel {
         xDecimalField1.setCaptionWidth(80);
         xDecimalField1.setEnabled(false);
         xDecimalField1.setFont(new java.awt.Font("Courier New", 1, 14));
-        xDecimalField1.setName("entity.total_tax");
+        xDecimalField1.setName("entity.totals.tax");
         xDecimalField1.setPreferredSize(new java.awt.Dimension(120, 20));
         xFormPanel3.add(xDecimalField1);
 
@@ -131,7 +129,7 @@ public class AssessmentPage extends javax.swing.JPanel {
         xDecimalField2.setCaptionWidth(80);
         xDecimalField2.setEnabled(false);
         xDecimalField2.setFont(new java.awt.Font("Courier New", 1, 14));
-        xDecimalField2.setName("entity.total_regfee");
+        xDecimalField2.setName("entity.totals.regfee");
         xDecimalField2.setPreferredSize(new java.awt.Dimension(120, 20));
         xFormPanel3.add(xDecimalField2);
 
@@ -139,7 +137,7 @@ public class AssessmentPage extends javax.swing.JPanel {
         xDecimalField3.setCaptionWidth(120);
         xDecimalField3.setEnabled(false);
         xDecimalField3.setFont(new java.awt.Font("Courier New", 1, 14));
-        xDecimalField3.setName("entity.total_othercharge");
+        xDecimalField3.setName("entity.totals.othercharge");
         xDecimalField3.setPreferredSize(new java.awt.Dimension(120, 20));
         xFormPanel3.add(xDecimalField3);
 
@@ -147,7 +145,7 @@ public class AssessmentPage extends javax.swing.JPanel {
         xDecimalField4.setCaptionWidth(60);
         xDecimalField4.setEnabled(false);
         xDecimalField4.setFont(new java.awt.Font("Courier New", 1, 14));
-        xDecimalField4.setName("entity.total");
+        xDecimalField4.setName("entity.totals.total");
         xDecimalField4.setPreferredSize(new java.awt.Dimension(120, 20));
         xFormPanel3.add(xDecimalField4);
 
@@ -198,11 +196,6 @@ public class AssessmentPage extends javax.swing.JPanel {
         jLabel1.setFont(new java.awt.Font("Tahoma", 1, 11));
         jLabel1.setText("Taxes and Fees Assessment");
 
-        xLabel1.setCaption("App No");
-        xLabel1.setExpression("#{entity.appno}");
-        xLabel1.setFont(new java.awt.Font("Tahoma", 1, 11));
-        xFormPanel1.add(xLabel1);
-
         xDataTable1.setColumns(new com.rameses.rcp.common.Column[]{
             new com.rameses.rcp.common.Column(new Object[]{
                 new Object[]{"name", "name"}
@@ -247,27 +240,22 @@ public class AssessmentPage extends javax.swing.JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(xDataTable3, javax.swing.GroupLayout.PREFERRED_SIZE, 919, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 328, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(xFormPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 310, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 975, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(xDataTable1, javax.swing.GroupLayout.PREFERRED_SIZE, 381, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(9, 9, 9)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 328, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(xDataTable2, javax.swing.GroupLayout.PREFERRED_SIZE, 529, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 56, Short.MAX_VALUE))
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addComponent(xFormPanel3, javax.swing.GroupLayout.Alignment.LEADING, 0, 0, Short.MAX_VALUE)
-                        .addComponent(xDataTable3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 919, Short.MAX_VALUE)))
+                            .addComponent(xDataTable2, javax.swing.GroupLayout.PREFERRED_SIZE, 529, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 975, Short.MAX_VALUE)
+                    .addComponent(xFormPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(xFormPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(2, 2, 2)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
                     .addComponent(jLabel3))
@@ -278,10 +266,10 @@ public class AssessmentPage extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(xDataTable3, javax.swing.GroupLayout.PREFERRED_SIZE, 211, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(xDataTable3, javax.swing.GroupLayout.PREFERRED_SIZE, 197, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(xFormPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(90, 90, 90))
+                .addComponent(xFormPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(152, 152, 152))
         );
     }// </editor-fold>//GEN-END:initComponents
     
@@ -297,9 +285,7 @@ public class AssessmentPage extends javax.swing.JPanel {
     private com.rameses.rcp.control.XDecimalField xDecimalField2;
     private com.rameses.rcp.control.XDecimalField xDecimalField3;
     private com.rameses.rcp.control.XDecimalField xDecimalField4;
-    private com.rameses.rcp.control.XFormPanel xFormPanel1;
     private com.rameses.rcp.control.XFormPanel xFormPanel3;
-    private com.rameses.rcp.control.XLabel xLabel1;
     // End of variables declaration//GEN-END:variables
     
 }

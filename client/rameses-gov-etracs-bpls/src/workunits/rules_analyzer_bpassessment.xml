@@ -1,8 +1,8 @@
 <workunit>
     <invokers>
        <invoker type="rulemgmt:formActions" caption="BP Rules Analyzer" action="init"
-            visibleWhen="#{ruleset == 'bpassessment'}" target="window" role="ASSESSOR,RULE_AUTHOR"/>
-       <invoker type="home.action" caption="BP Rules Analyzer" action="init" index="1" target="window" role="ASSESSOR,RULE_AUTHOR"/>
+            visibleWhen="#{ruleset == 'bpassessment'}" target="window" role="RULE_AUTHOR"/>
+       <invoker type="home.action" caption="BP Rules Analyzer" action="init" index="1" target="window" role="ASSESSOR,APPROVER,RULE_AUTHOR"/>
        
        <invoker type="formActions" caption="Close" action="_close" immediate="true"/>
        <invoker type="formActions" caption="Run Info" action="runInfo"/>
@@ -123,12 +123,8 @@
                 }
                 
                 def runInfo() {
-                    if(!entity.lobs)
-                        throw new Exception("Please indicate at least one line of business");
-                    return InvokerUtil.lookupOpener( "bpapplicationinfo:edit", [
+                    return InvokerUtil.lookupOpener( "bpinfoedit:app", [
                         entity: entity, 
-                        initial: 'info',
-                        service: bpInfoSvc,
                         existingInfos: entity.appinfos,
                         handler:{ query ->
                             entity.appinfos = query.infos;
@@ -143,12 +139,10 @@
                 def run() {
                     if(!entity.lobs)
                         throw new Exception("Please indicate at least one line of business");
-                    return InvokerUtil.lookupOpener( "bpapplicationinfo:edit", [
+                    return InvokerUtil.lookupOpener("bpinfoedit:assessment", [
                         entity: entity, 
-                        initial: 'info',
                         initialInfos: entity.appinfos.collect{it},
                         existingInfos: entity.assessmentinfos,
-                        service: bpSvc,
                         handler:{ query ->
                             entity.assessmentinfos = query.infos.findAll{it.infotype=='assessment'};
                             entity.requirements = query.requirements;

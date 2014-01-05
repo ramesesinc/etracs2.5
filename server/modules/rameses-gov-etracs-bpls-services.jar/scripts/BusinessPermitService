@@ -1,0 +1,96 @@
+import com.rameses.annotations.*;
+import com.rameses.services.extended.*;
+import java.rmi.server.*;
+
+
+class BusinessPermitService  {
+
+	@ActiveDB("business")
+	def em;
+
+	@ActiveDB("bpapplication")
+	def app;
+
+	@Service("Var")
+	def sysvar;
+
+	@Service("DateService")
+	def dateSvc;
+
+	@Service("SequenceService")
+	def seqSvc;
+
+	@Env
+	def env;
+
+	@ProxyMethod
+	public def create(o) {
+		def lgucode = sysvar.lgu_objid;
+
+		if(!o.application)
+			throw new Exception("There must be an associated application for permit");
+
+		//check if there is already an issued permit for the year, update the version	
+		def yr = o.activeyear;
+
+		def z = em.findPermitByYear( [businessid: o.objid, activeyear: yr ] );
+
+		def permitno = null;
+		int ver = 0;
+
+		if( z ) {
+			ver = z.version + 1;
+			permitno = z.permitno;
+		}
+		else {
+			def prefix = lgucode+""+yr;
+			ver = 0;
+			permitno = prefix+"-"+seqSvc.getNextFormattedSeriesA(prefix,5);
+		}
+		//calculate expiry date
+		def expirydate = dateSvc.getMonthEndDate( java.sql.Date.valueOf(yr+"-12-01") );		
+
+		def p = [:];
+ 		p.objid = "PERM" + new UID();
+ 		p.businessid = o.objid;
+ 		p.applicationid = o.currentapplicationid;
+ 		p.activeyear = o.activeyear;
+ 		p.permitno = permitno;
+ 		p.version = ver;
+ 		p.dtissued = dateSvc.serverDate;
+ 		p.permittype = o.permittype;
+ 		p.issuedby = [objid: env.USERID, name:env.USER];
+ 		p.expirydate = expirydate;
+ 		em.create( p, "permit");
+		em.updatePermit( [objid: o.objid, permitid: p.objid ] );
+ 		return p;
+	}
+
+	@ProxyMethod
+	public def getPermitInfo(o) {
+		def permit = em.read( [objid:o.objid], "permit");
+		def a = app.read( [objid: permit.applicationid ] );
+		permit.lobs = a.lobs;
+		permit.apptype = a.apptype;
+		permit.owner = a.owner;
+		permit.businessname = a.businessname;
+		permit.businessaddress = a.businessaddress;
+		permit.tradename = a.tradename;
+		permit.payments = em.getPermitPayments( [objid:permit.objid] );
+		permit.payments.each {
+			if(it.payoption == 'FULLYEAR') {
+				it.particulars = 'full';
+			}
+			else if(it.payoption == 'FULLQTR') {
+				it.particulars = 'paid until qtr ' + it.qtr;
+			}
+			else if( it.qtr > 0 ) {
+				it.particulars = 'paid until qtr ' + it.qtr;
+			}
+		}
+		return permit;
+	}
+
+
+
+}

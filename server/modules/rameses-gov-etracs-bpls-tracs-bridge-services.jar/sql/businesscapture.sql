@@ -73,12 +73,14 @@ tfa.strDescription AS account_title,
 tb.curAmount AS amount, 
 tb.curAmtPaid AS amtpaid, 
 (tb.curAmount-tb.curAmtPaid) AS balance,
-ta.intyear  AS year
+ta.intyear AS year, 
+ceo.etracs_acctid AS etracsacctid
 FROM tblBPLedgerBill tb
 INNER JOIN tblBPLedger b ON b.objid=tb.parentid
 INNER JOIN tblTaxFeeAccount tfa ON tfa.objid=tb.strAcctID
 INNER JOIN tblassessment ta ON ta.objid=tb.strAssessmentID
 LEFT JOIN tblBusinessLine bl ON bl.objid=tb.strBusinessLineID
+LEFT JOIN tracs_etracs.dbo.ceomapping ceo ON ceo.tracs_acctid=tfa.objid
 WHERE b.strBusinessID=$P{objid}
 ORDER BY ta.intyear DESC
 

@@ -43,7 +43,7 @@ public class BPRequirementDocument extends javax.swing.JPanel {
         xLabel1.setPreferredSize(new java.awt.Dimension(0, 16));
         xFormPanel1.add(xLabel1);
 
-        xTextField1.setCaption("Doc Ref No");
+        xTextField1.setCaption("Ref No");
         xTextField1.setName("info.refno");
         xTextField1.setPreferredSize(new java.awt.Dimension(0, 20));
         xTextField1.setTextCase(com.rameses.rcp.constant.TextCase.NONE);

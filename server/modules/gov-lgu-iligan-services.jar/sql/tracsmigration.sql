@@ -45,6 +45,9 @@ from tblIncomingCheck c
  inner join tblBank b on c.strBankID = b.ObjID 
 where c.ParentID = $P{objid} 
 
+[findMappedItem]
+select * from tracs_etracs..tbletracsaccountmapping where taxfeeid =$P{ttaxfeeid}
+
 
 [createAccountMapping]
 insert into tracs_etracs..tbletracsaccountmapping

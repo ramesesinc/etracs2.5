@@ -60,6 +60,7 @@ public class SpecifyBusinessInfoPage extends javax.swing.JPanel {
         xLookupField1.setDepends(new String[] {"entity.orgtype"});
         xLookupField1.setExpression("#{item.name}");
         xLookupField1.setHandler("lookupOwners");
+        xLookupField1.setIndex(1);
         xLookupField1.setName("entity.owner");
         xLookupField1.setPreferredSize(new java.awt.Dimension(0, 20));
         xLookupField1.setRequired(true);
@@ -74,18 +75,21 @@ public class SpecifyBusinessInfoPage extends javax.swing.JPanel {
 
         xTextField3.setCaption("Business Name");
         xTextField3.setDepends(new String[] {"entity.businessname"});
+        xTextField3.setIndex(2);
         xTextField3.setName("entity.businessname");
         xTextField3.setPreferredSize(new java.awt.Dimension(0, 20));
         xTextField3.setRequired(true);
         xFormPanel1.add(xTextField3);
 
         xTextField2.setCaption("Trade Name");
+        xTextField2.setIndex(4);
         xTextField2.setName("entity.tradename");
         xTextField2.setPreferredSize(new java.awt.Dimension(0, 20));
         xTextField2.setRequired(true);
         xFormPanel1.add(xTextField2);
 
         xTextField1.setCaption("Business Address");
+        xTextField1.setIndex(5);
         xTextField1.setName("entity.businessaddress");
         xTextField1.setPreferredSize(new java.awt.Dimension(0, 20));
         xTextField1.setRequired(true);
@@ -94,6 +98,7 @@ public class SpecifyBusinessInfoPage extends javax.swing.JPanel {
         xLookupField3.setCaption("Barangay");
         xLookupField3.setExpression("#{item.name}");
         xLookupField3.setHandler("barangay:lookup");
+        xLookupField3.setIndex(6);
         xLookupField3.setName("entity.barangay");
         xLookupField3.setPreferredSize(new java.awt.Dimension(0, 20));
         xFormPanel1.add(xLookupField3);
@@ -102,7 +107,9 @@ public class SpecifyBusinessInfoPage extends javax.swing.JPanel {
         xButton1.setName("showOwner");
         xButton1.setText("...");
 
+        xButton2.setMnemonic('c');
         xButton2.setImmediate(true);
+        xButton2.setIndex(3);
         xButton2.setName("copyBusinessName");
         xButton2.setText("Copy");
 
@@ -129,7 +136,7 @@ public class SpecifyBusinessInfoPage extends javax.swing.JPanel {
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(34, 34, 34)
                         .addComponent(xButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(45, 45, 45)
+                        .addGap(19, 19, 19)
                         .addComponent(xButton2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(18, Short.MAX_VALUE))
         );

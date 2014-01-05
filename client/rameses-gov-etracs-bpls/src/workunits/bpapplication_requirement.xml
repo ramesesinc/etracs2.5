@@ -1,0 +1,34 @@
+<workunit>
+    <invokers>
+        <invoker type="bpapplication:requirement" caption="Requirement Details" target="popup"/>
+    </invokers>
+    
+    <code>
+         <![CDATA[    
+        import com.rameses.rcp.annotations.*
+        import com.rameses.rcp.common.*
+        import com.rameses.osiris2.client.*
+        import com.rameses.osiris2.common.*
+        import java.rmi.server.*;
+        import com.rameses.gov.etracs.bpls.application.*;
+        
+        public class BPApplicationRequirement  {
+            def info=[:];
+            def handler;
+            public def doOk() {
+                handler(info);
+                return "_close";
+            }
+            public def doCancel() {
+                return "_close";
+            }
+        }
+        ]]>
+    </code>    
+    
+    <pages>
+        <page template="com.rameses.gov.etracs.bpls.application.BPRequirementDocument"/>
+    </pages>
+    
+    
+</workunit>

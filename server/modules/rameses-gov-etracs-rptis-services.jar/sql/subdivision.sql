@@ -94,6 +94,7 @@ FROM subdivisionaffectedrpu sar
 	INNER JOIN faas f ON sar.prevfaasid = f.objid 
 	INNER JOIN rpu r ON f.rpuid = r.objid
 WHERE sar.subdivisionid = $P{subdivisionid}	
+ORDER BY r.fullpin
 
 
 [getAffectedRpusForCreate]
@@ -165,3 +166,39 @@ where subdivisionid = $P{subdivisionid}
 
 [updateRpuFullPin]
 UPDATE rpu SET fullpin = $P{fullpin} WHERE objid = $P{objid}
+
+
+
+
+
+#===============================================================
+#
+#  ASYNCHRONOUS APPROVAL SUPPORT 
+#
+#================================================================
+
+[findFaasByNewRpuId]
+SELECT 
+	r.ry AS rpu_ry, 
+	rp.barangayid AS rpu_rp_barangayid
+FROM rpu r 
+	INNER JOIN realproperty rp ON r.realpropertyid = rp.objid 
+WHERE r.objid =  $P{newrpuid}	
+
+
+[updateLandNewTdNo]
+UPDATE subdividedland SET 
+	newtdno = $P{newtdno}, newutdno = $P{newutdno}
+WHERE objid =$P{objid}	
+
+
+
+[updateAffectedNewTdNo]
+UPDATE subdivisionaffectedrpu SET 
+	newtdno = $P{newtdno}, newutdno = $P{newutdno}
+WHERE objid =$P{objid}	
+
+
+
+
+

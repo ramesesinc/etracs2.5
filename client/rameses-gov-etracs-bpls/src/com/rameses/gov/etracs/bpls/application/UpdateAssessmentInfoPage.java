@@ -31,6 +31,7 @@ public class UpdateAssessmentInfoPage extends javax.swing.JPanel {
     private void initComponents() {
         xDataTable2 = new com.rameses.rcp.control.XDataTable();
         xButton1 = new com.rameses.rcp.control.XButton();
+        xLabel1 = new com.rameses.rcp.control.XLabel();
 
         xDataTable2.setColumns(new com.rameses.rcp.common.Column[]{
             new com.rameses.rcp.common.Column(new Object[]{
@@ -80,6 +81,10 @@ public class UpdateAssessmentInfoPage extends javax.swing.JPanel {
         xButton1.setName("updateAssessmentInfo");
         xButton1.setText("Update Assessment Info");
 
+        xLabel1.setExpression("Specify the information needed to retire this business");
+        xLabel1.setFont(new java.awt.Font("Tahoma", 1, 11));
+        xLabel1.setVisibleWhen("#{entity.apptype == 'RETIRE'}");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -87,16 +92,19 @@ public class UpdateAssessmentInfoPage extends javax.swing.JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(xButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(xDataTable2, javax.swing.GroupLayout.PREFERRED_SIZE, 831, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(xButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(xLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 668, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(115, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(xButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(xLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(xDataTable2, javax.swing.GroupLayout.DEFAULT_SIZE, 305, Short.MAX_VALUE)
+                .addComponent(xButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(xDataTable2, javax.swing.GroupLayout.DEFAULT_SIZE, 294, Short.MAX_VALUE)
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -105,6 +113,7 @@ public class UpdateAssessmentInfoPage extends javax.swing.JPanel {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private com.rameses.rcp.control.XButton xButton1;
     private com.rameses.rcp.control.XDataTable xDataTable2;
+    private com.rameses.rcp.control.XLabel xLabel1;
     // End of variables declaration//GEN-END:variables
     
 }

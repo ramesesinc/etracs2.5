@@ -1,14 +1,14 @@
-"ledger" [mode == 'create']{
+"ledger|barcode" [mode == 'create']{
     visible:true;
     requestFocus:true;
 }
 
-"ledger" [payoption != 'byledger']{
+"ledger|barcode" [payoption != 'byledger']{
     visible:false;
 } 
 
 
-"ledger" [mode != 'create']{
+"ledger|barcode" [mode != 'create']{
     visible:false;
 }
 

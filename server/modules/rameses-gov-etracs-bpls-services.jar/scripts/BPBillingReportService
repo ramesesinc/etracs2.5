@@ -21,6 +21,9 @@ public class BPBillingReportService  {
 	@Service("DateService")
 	def dateSvc;
 
+	@ActiveDB("bpledger")
+	def bpLedger;
+
 	@ProxyMethod
 	public def getReport(def o) throws Exception {
 
@@ -37,13 +40,13 @@ public class BPBillingReportService  {
 		m.payoption = 'FULLYEAR';
 		m.billdate = dateSvc.serverDate;
 		m.application = o;
+		m.application.taxfees = bpLedger.getUnpaidReceivables([businessid:m.application.businessid]);
 
 
 		def z = billingSvc.getBillItems(m);	
 		def result = [:];	
 
 		result.billitems = z.items;
-
 		def barcode = "51005:"+o.bin;
 		def  data = [
            ownername: o.owner.name, 
@@ -62,8 +65,7 @@ public class BPBillingReportService  {
 		app.tradename = o.tradename;
 		app.address = o.businessaddress;
 
-		app.barcode = barcode;
-        app.taxfees = result.billitems.collect {
+		app.taxfees = result.billitems.collect {
         	[
         		year:it.year,
         		qtr:((it.qtr==0)?null:it.qtr),
