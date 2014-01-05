@@ -17,7 +17,6 @@ public class TRACSMigrationService {
 	@Env
 	def env;
 
-
 	
 	@ProxyMethod 
 	def getTRACSReceipts( entry ) { 
@@ -98,6 +97,22 @@ public class TRACSMigrationService {
 
 
 		return entity; 
+	}
+
+	@ProxyMethod
+	def getFundlist( objid ) {
+		return em2.getFundlist([objid:objid])
+	}
+
+	@ProxyMethod
+	def generateReportByRevenueItem( params ) {
+		if(! params.fundid ) params.fundid = '%'
+
+		def data = em2.findRemittance(params);
+		data.acctsummaries = em2.getRevenueItemSummaryByFund( params )
+		if( ! data.acctsummaries ) throw new Exception("No record(s) found ");
+		return data;
+
 	}
 
 }
