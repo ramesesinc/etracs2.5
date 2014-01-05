@@ -32,14 +32,19 @@ public class IndividualCTCService
 
 	@ProxyMethod
 	public def getCtcRelatedPayerData(entity){
+		return [newbusiness:false]
+
 		// info fields required:
 		// newbusiness, businessgross
-		def business = em.findBusinessInfo(entity)
+		// def business = em.findBusinessInfo(entity)
+
+		/*
 		def info = [
 			newbusiness 	: (business.apptype == null ? false : business.apptype.equalsIgnoreCase('NEW')),
 			businessgross 	: business.totalgross 
 		]
 		return info 
+		*/
 	}
 
 

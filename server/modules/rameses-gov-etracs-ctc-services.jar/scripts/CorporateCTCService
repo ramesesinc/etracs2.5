@@ -32,6 +32,8 @@ public class CorporateCTCService
 
 	@ProxyMethod
 	public def getCtcRelatedPayerData(entity){
+		return [newbusiness:false]
+		/*
 		// info fields required:
 		// newbusiness, realpropertyav, businessgross
 		def property = em.findRealPropertyAv(entity)
@@ -42,6 +44,7 @@ public class CorporateCTCService
 			realpropertyav  : property.totalav,
 		]
 		return info 
+		*/
 	}
 
 	@ProxyMethod

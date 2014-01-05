@@ -86,7 +86,7 @@ class  IndividualCtcCashReceipt extends AbstractCashReceipt
     
     
     public def payerChanged( o ) {
-        if (o.type != 'INDIVIDUAL')
+        if ( ! o.type.equalsIgnoreCase('individual'))
             throw new Exception('Only individual entities are allowed.');
         
         o.putAll(entitySvc.open(o));
