@@ -4,6 +4,9 @@ import com.rameses.services.extended.*
 
 class RPTReceiptService
 {
+	@Env 
+	def env 
+
 	@ActiveDB('cashreceiptrpt')
 	def em
     
@@ -163,6 +166,13 @@ class RPTReceiptService
 			}
 		}
 		return items 
+	}
+
+
+	@ProxyMethod
+	public def getCollectionsByCount(receiptcount){
+		def params = [userid:env.USERID, _limit:receiptcount, _pagingKeys:'cr.objid']
+		return em.getCollectionsByCount(params)
 	}
 
 
