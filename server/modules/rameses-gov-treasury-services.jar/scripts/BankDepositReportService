@@ -159,7 +159,7 @@ class BankDepositReportService  {
 		data.acctsummaries = adb.getRevenueItemSummaryByFund(params )
 
 		//TODO: Temporary fix while the billing and collection is updated
-		adb.updateBrgyShares(params)
+		// adb.updateBrgyShares(params)
 
 		data.brgyshares  = adb.getBarangayShares(params)
 		data.hasbrgyshares = data.brgyshares.size() > 0

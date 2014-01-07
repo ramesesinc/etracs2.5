@@ -109,7 +109,17 @@ INSERT INTO cashreceiptitem_rpt
      firecode,
      firecodeacct_objid,
      revtype,
-     partialled
+     partialled,
+     brgyshare, 
+     brgyintshare,
+     lgushare,
+     lguintshare,
+     provshare,
+     provintshare,
+     brgyshareacctid,
+     brgyintshareacctid,
+     provshareacctid,
+     provintshareacctid
 )
 SELECT 
 	bi.objid,
@@ -140,7 +150,17 @@ SELECT
 	bi.firecode - bi.firecodepaid AS firecode,
 	bi.firecodeacctid AS firecodeacct_objid,
 	bi.revtype,
-	bi.partial AS partialled
+	bi.partial AS partialled,
+	bi.brgyshare, 
+    bi.brgyintshare,
+    bi.lgushare,
+    bi.lguintshare,
+    bi.provshare,
+    bi.provintshare,
+    bi.brgyshareacctid,
+    bi.brgyintshareacctid,
+    bi.provshareacctid,
+    bi.provintshareacctid
 FROM rptledger rl
 		INNER JOIN rptledgerbillitem bi ON rl.objid = bi.rptledgerid
 WHERE rl.objid = $P{rptledgerid}
@@ -148,7 +168,6 @@ WHERE rl.objid = $P{rptledgerid}
 
 [deletePaidBillItems]  
 DELETE FROM rptledgerbillitem WHERE rptledgerid = $P{rptledgerid} 
-
 
 
 [updateLedgerYearQtrPaid]

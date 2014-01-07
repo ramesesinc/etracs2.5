@@ -23,6 +23,7 @@ SELECT
 	r.totalav,
 	r.taxable,
 	b.name AS barangay,
+	b.objid AS barangayid,
 	rp.cadastrallotno,
 	rp.barangayid,
 	pc.code AS classcode,
@@ -210,7 +211,14 @@ UPDATE rli SET
 	rli.basicdisc = ROUND(rli.basicdisc - (rli.basicdisc * rti.basicrate / 100), 2),
 	rli.sef = ROUND(rli.sef - (rli.sef * rti.sefrate / 100), 2),
 	rli.sefint = ROUND(rli.sefint - (rli.sefint * rti.sefrate / 100), 2),
-	rli.sefdisc = ROUND(rli.sefdisc - (rli.sefdisc * rti.sefrate / 100), 2)
+	rli.sefdisc = ROUND(rli.sefdisc - (rli.sefdisc * rti.sefrate / 100), 2),
+
+	rli.brgyshare = ROUND(rli.brgyshare - (rli.brgyshare * rti.basicrate / 100), 2),
+	rli.brgyintshare = ROUND(rli.brgyintshare - (rli.brgyintshare * rti.basicrate / 100), 2),
+	rli.lgushare = ROUND(rli.lgushare - (rli.lgushare * rti.basicrate / 100), 2),
+	rli.lguintshare = ROUND(rli.lguintshare - (rli.lguintshare * rti.basicrate / 100), 2),
+	rli.provshare = ROUND(rli.provshare - (rli.provshare * rti.basicrate / 100), 2),
+	rli.provintshare = ROUND(rli.provintshare - (rli.provintshare * rti.basicrate / 100), 2)
 FROM rptledger rl
 	INNER JOIN rptledgerbillitem rli ON rl.objid = rli.rptledgerid
 	INNER JOIN rpttaxincentive_item rti ON rti.rptledgerid = rl.objid 
