@@ -22,6 +22,8 @@
                       <Component id="xButton2" min="-2" pref="72" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="xButton3" min="-2" pref="72" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="xButton4" min="-2" pref="94" max="-2" attributes="0"/>
                   </Group>
                   <Component id="xDataTable1" alignment="0" min="-2" pref="598" max="-2" attributes="1"/>
                   <Component id="xFormPanel2" alignment="0" min="-2" pref="503" max="-2" attributes="1"/>
@@ -44,6 +46,7 @@
                   <Component id="xButton1" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="xButton2" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="xButton3" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="xButton4" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace min="-2" pref="236" max="-2" attributes="0"/>
           </Group>
@@ -114,6 +117,17 @@
         <Property name="name" type="java.lang.String" value="unretireLOB"/>
         <Property name="text" type="java.lang.String" value="Unretire"/>
         <Property name="visibleWhen" type="java.lang.String" value="#{entity.apptype!=&apos;NEW&apos;}"/>
+      </Properties>
+    </Component>
+    <Component class="com.rameses.rcp.control.XButton" name="xButton4">
+      <Properties>
+        <Property name="immediate" type="boolean" value="true"/>
+        <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
+          <Insets value="[2, 5, 2, 5]"/>
+        </Property>
+        <Property name="name" type="java.lang.String" value="reclassifyLOB"/>
+        <Property name="text" type="java.lang.String" value="Reclassify"/>
+        <Property name="visibleWhen" type="java.lang.String" value="#{entity.apptype==&apos;RENEW&apos;}"/>
       </Properties>
     </Component>
   </SubComponents>

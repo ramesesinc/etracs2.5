@@ -7,7 +7,7 @@
         <invoker type="formActions" caption="Deactivate" action="deactivate" index="100" visibleWhen="#{info.state=='active'}" role="ASSESSOR"/>
         <invoker type="formActions" caption="Add Fee" action="addFee" index="100" role="ASSESSOR" visibleWhen="#{info.state!='active'}"/>
         <invoker type="formActions" caption="Remove Fee" action="removeFee" index="100" role="ASSESSOR" visibleWhen="#{info.state!='active'}"/>
-        <invoker type="formActions" caption="Edit Fee" action="deactivate" index="100" role="ASSESSOR" visibleWhen="#{info.state!='active'}"/>
+        <invoker type="formActions" caption="Edit Fee" action="editFee" index="100" role="ASSESSOR" visibleWhen="#{info.state!='active'}"/>
     </invokers>
     
        <code>
@@ -26,6 +26,9 @@
         
             @Binding
             def binding;
+            
+            @Caller
+            def caller;
             
             String title = "City Engineer";
             def deptList = LOV.BUSINESS_EXT_DEPT;
@@ -96,7 +99,7 @@
                 if(MsgBox.confirm( "You are about to activate these fees. Please ensure all fees are correct" )) {
                     entity = service.activate(entity);
                     MsgBox.alert("Fees Activated");
-                    return "_close";
+                    open();
                 }
             }
             
@@ -104,7 +107,7 @@
                 if(MsgBox.confirm( "You are about to deactivate these fees." )) {
                     entity = service.deactivate(entity);
                     MsgBox.alert("Fees Deactivated");
-                    return "_close";
+                    open();
                 }
             }
             

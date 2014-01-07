@@ -1,7 +1,7 @@
 <workunit>
     
     <invokers>
-        <invoker type="home.action" action="start" target="window" role="ASSESSOR" caption="Register Business (TRACS Capture)"/>
+        <invoker type="home.action" action="start" target="window" role="ASSESSOR" caption="Register Business (TRACS Capture)" index="51"/>
         <invoker type="extActions" action="printBIN" caption="Print BIN" visibleWhen="#{state=='success'}" />
     </invokers>
     
@@ -80,6 +80,7 @@
                     onselect: { o->
                         entity.owner = o;
                         binding.refresh("entity.owner.address");
+                        binding.refresh("entity.owner.*");
                     },
                     onempty: {o->
                         entity.owner = null;
@@ -92,6 +93,13 @@
             def lobListModel = [
                 fetchList: {o->
                     return entity.lobs;
+                },
+                onRemoveItem: { o->
+                    if( MsgBox.confirm( 'You are about to remove this item. Proceed?')) {
+                        entity.lobs.remove(o);    
+                        return true;
+                    }
+                    return false;
                 }
             ] as EditorListModel;
             

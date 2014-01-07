@@ -56,7 +56,7 @@ public class ApplicationTemplate extends javax.swing.JPanel {
         xLabel1.setVerticalAlignment(javax.swing.SwingConstants.TOP);
         xLabel1.setBackground(new java.awt.Color(255, 255, 153));
         xLabel1.setExpression("#{message}");
-        xLabel1.setFont(new java.awt.Font("Tahoma", 1, 11));
+        xLabel1.setFont(new java.awt.Font("Tahoma", 1, 12));
         xLabel1.setOpaque(true);
         xLabel1.setPadding(new java.awt.Insets(8, 10, 1, 1));
         xLabel1.setPreferredSize(new java.awt.Dimension(41, 30));
@@ -67,8 +67,8 @@ public class ApplicationTemplate extends javax.swing.JPanel {
 
         xFormPanel1.setCaptionWidth(120);
         xLabel4.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
-        xLabel4.setCaption("App No");
-        xLabel4.setExpression("#{ entity.appno  }");
+        xLabel4.setCaption("BIN");
+        xLabel4.setExpression("#{ entity.bin  }");
         xLabel4.setFont(new java.awt.Font("Tahoma", 1, 12));
         xLabel4.setPreferredSize(new java.awt.Dimension(0, 20));
         xFormPanel1.add(xLabel4);
@@ -95,8 +95,8 @@ public class ApplicationTemplate extends javax.swing.JPanel {
         com.rameses.rcp.control.border.XLineBorder xLineBorder3 = new com.rameses.rcp.control.border.XLineBorder();
         xLineBorder3.setLineColor(new java.awt.Color(204, 204, 204));
         xLabel2.setBorder(xLineBorder3);
-        xLabel2.setCaption("BIN");
-        xLabel2.setExpression("#{entity.bin}");
+        xLabel2.setCaption("App Type");
+        xLabel2.setExpression("#{entity.apptype}");
         xLabel2.setPreferredSize(new java.awt.Dimension(0, 18));
         xFormPanel3.add(xLabel2);
 
@@ -152,17 +152,17 @@ public class ApplicationTemplate extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(xFormPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, 337, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(xFormPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 275, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(709, Short.MAX_VALUE))
+                .addComponent(xFormPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 352, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(632, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(xFormPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(xFormPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(xFormPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(xFormPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(xFormPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1.add(jPanel2, java.awt.BorderLayout.CENTER);

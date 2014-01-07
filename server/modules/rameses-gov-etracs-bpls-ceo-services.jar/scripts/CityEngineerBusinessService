@@ -49,9 +49,9 @@ public class CityEngineerBusinessService {
 
 	@ProxyMethod
 	public def deactivate(o) {
-		def z = [businessid:o.objid, state:'inactive']
-		em.activateFees( z );
+		def z = [businessid:o.objid, state:'pending']
 		em.changeState(z);
+		em.deactivateFees( z );
 		return getInfo(o);
 	}
 

@@ -76,6 +76,7 @@ public class BPBillingReportService  {
         		amount: new BigDecimal(it.amtdue),
         		surcharge: new BigDecimal(it.surcharge),
         		interest: new BigDecimal(it.interest),
+        		discount: new BigDecimal(it.discount),
         		total: new BigDecimal(it.total)
         	]
         }
@@ -88,6 +89,7 @@ public class BPBillingReportService  {
 
 		app.totalamount = new BigDecimal(z.total_amtdue);
 		app.totalsurcharge = new BigDecimal(z.total_surcharge);
+		app.totaldiscount = new BigDecimal(z.total_discount);
         app.totalinterest = new BigDecimal(z.total_interest);
         app.grandtotal = new BigDecimal(z.total);
         

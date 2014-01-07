@@ -10,6 +10,9 @@
         <invoker type="formActions" caption="Edit App Info" action="updateAppInfo" 
             role="BUSINESSINFO" visibleWhen="#{modify_appinfo==true}"/>
 
+        <invoker type="formActions" caption="Edit Line of Business" index="30" action="updateLOB" 
+            role="BUSINESSINFO" visibleWhen="#{modify_appinfo==true}"/>
+            
     </invokers>
     
     <code>
@@ -40,6 +43,7 @@
             def entity;
             def state;
             def message;
+            boolean lobUpdated;
             
             void init() {
                 entity = entity.application;
@@ -72,18 +76,24 @@
                 ]);
             }
             
+            def updateLOB() {
+                return InvokerUtil.lookupOpener("bpapplicationinfo:updatelob", [entity:entity,
+                    handler:{ lobs->
+                        entity.lobs = lobs;
+                        lobUpdated = true;
+                        entity.taxfees.clear();
+                        lobModel.reload();
+                        caller.dirty = true;
+                    }
+                ]);
+            }
+
+            
             def appInfoModel = [
                 fetchList: { o->    
                     return  entity.appinfos;
                 }
             ] as BasicListModel;
-            
-            def assessmentInfoModel = [
-                fetchList: { o->    
-                    return  entity.assessmentinfos;
-                }
-            ] as BasicListModel;
-            
             
             def lobModel = [
                 fetchList: { o->    

@@ -7,7 +7,7 @@ FROM
 (
 	SELECT xb.objid,xb.state,xb.owner_name,xb.businessname,xb.businessaddress,xb.activeyear,xb.bin,
 	ba.appno, ba.apptype, bt.state AS appstate, ba.dtfiled AS appdate,
-    bp.permitno, bp.expirydate, bt.assignee_objid, bt.assignee_name 
+    bp.permitno, bp.expirydate, bt.assignee_objid, bt.assignee_name, bt.startdate 
 	FROM business xb
 	LEFT JOIN bpapplication ba ON ba.objid=xb.currentapplicationid
     LEFT JOIN bpapplication_task bt ON bt.objid=ba.task_objid
@@ -16,7 +16,7 @@ FROM
 UNION 
 	SELECT xb.objid,xb.state,xb.owner_name,xb.businessname,xb.businessaddress,xb.activeyear,xb.bin,
 	ba.appno, ba.apptype, bt.state AS appstate, ba.dtfiled AS appdate,
-    bp.permitno, bp.expirydate, bt.assignee_objid, bt.assignee_name 
+    bp.permitno, bp.expirydate, bt.assignee_objid, bt.assignee_name, bt.startdate 
 	FROM business xb
     LEFT JOIN bpapplication ba ON ba.objid=xb.currentapplicationid
     LEFT JOIN bpapplication_task bt ON bt.objid=ba.task_objid
@@ -25,7 +25,7 @@ UNION
 UNION
 	SELECT xb.objid,xb.state,xb.owner_name,xb.businessname,xb.businessaddress,xb.activeyear,xb.bin,
 	ba.appno, ba.apptype, bt.state AS appstate, ba.dtfiled AS appdate,
-    bp.permitno, bp.expirydate, bt.assignee_objid, bt.assignee_name     
+    bp.permitno, bp.expirydate, bt.assignee_objid, bt.assignee_name, bt.startdate     
 	FROM business xb 
     LEFT JOIN bpapplication ba ON ba.objid=xb.currentapplicationid
     LEFT JOIN bpapplication_task bt ON bt.objid=ba.task_objid
@@ -34,7 +34,7 @@ UNION
 ) b
 WHERE NOT(b.objid IS NULL)
 ${filter}
-ORDER BY b.businessname
+ORDER BY b.startdate
 
 [getOpenTaskList]
 SELECT DISTINCT b.*  
@@ -42,7 +42,7 @@ FROM
 (
     SELECT xb.objid,xb.state,xb.owner_name,xb.businessname,xb.businessaddress,xb.activeyear,xb.bin,
     ba.appno, ba.apptype, bt.state AS appstate, ba.dtfiled AS appdate,
-    bt.assignee_objid, bt.assignee_name
+    bt.assignee_objid, bt.assignee_name, bt.startdate
     FROM business xb
     INNER JOIN bpapplication ba ON ba.objid=xb.currentapplicationid
     INNER JOIN bpapplication_task bt ON bt.applicationid=ba.objid
@@ -50,7 +50,7 @@ FROM
 UNION 
     SELECT xb.objid,xb.state,xb.owner_name,xb.businessname,xb.businessaddress,xb.activeyear,xb.bin,
     ba.appno, ba.apptype, bt.state AS appstate, ba.dtfiled AS appdate,
-    bt.assignee_objid, bt.assignee_name
+    bt.assignee_objid, bt.assignee_name, bt.startdate
     FROM business xb
     INNER JOIN bpapplication ba ON ba.objid=xb.currentapplicationid
     INNER JOIN bpapplication_task bt ON bt.applicationid=ba.objid
@@ -58,7 +58,7 @@ UNION
 UNION
     SELECT xb.objid,xb.state,xb.owner_name,xb.businessname,xb.businessaddress,xb.activeyear,xb.bin,
     ba.appno, ba.apptype, bt.state AS appstate, ba.dtfiled AS appdate,
-    bt.assignee_objid, bt.assignee_name    
+    bt.assignee_objid, bt.assignee_name, bt.startdate    
     FROM business xb 
     INNER JOIN bpapplication ba ON ba.objid=xb.currentapplicationid
     INNER JOIN bpapplication_task bt ON bt.applicationid=ba.objid
@@ -66,7 +66,7 @@ UNION
 ) b
 WHERE NOT(b.objid IS NULL)
 ${filter}
-ORDER BY b.businessname
+ORDER BY b.startdate
 
 [getLookup]
 SELECT 
@@ -161,7 +161,6 @@ INNER JOIN businessvariable bv ON bv.objid=bi.attribute_objid
 WHERE bi.businessid=$P{objid} AND bi.iyear=b.activeyear
 ORDER BY bv.category, bv.sortorder 
 
-
 ################################################
 # BusinessInfoService.create and changeState
 ################################################
@@ -211,3 +210,7 @@ SELECT
 FROM bppayment bp
 INNER JOIN business_permit p ON p.applicationid=bp.applicationid
 WHERE p.objid = $P{objid}
+
+
+[getRedflags]
+SELECT * FROM business_redflag WHERE businessid=$P{businessid} ORDER BY dtposted DESC

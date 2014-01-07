@@ -28,7 +28,6 @@ public class BusinessInfoService extends ActiveCrudListService {
 		   [name:'expired', caption:'Expired (For Renewal)', leaf:true, folder:true, allowSearch:true],
 		   [name:'captured', caption:'Captured', leaf:true, folder:true, allowSearch:true],
 		   [name:'retired', caption:'Retired', leaf:true, folder:true, allowSearch:true],
-		   [name:'inactive', caption:'Inactive', leaf:true, folder:true, allowSearch:true],
 		];
 	}	
 
@@ -36,7 +35,6 @@ public class BusinessInfoService extends ActiveCrudListService {
 	public def getColumns(o) {
 		def cols = [];
 		cols << [name:'bin', caption:'BIN', width:120, resizable:false];
-		cols << [name:'activeyear', caption:'Year', width:80, resizable:false];
 		cols <<	[name:'businessname', caption:'Business Name'];
 		cols <<	[name:'businessaddress', caption:'Business Address'];
 		cols <<	[name:'owner.name', caption:'Owner'];
@@ -89,7 +87,7 @@ public class BusinessInfoService extends ActiveCrudListService {
 			case 'expired':
 				o.state = 'ACTIVE';
 				o.currentdate = dateSvc.serverDate;
-				o.filter = ''' AND b.state=$P{state} AND NOT(b.permitno IS NULL) AND b.expirydate < ${currentdate}''';
+				o.filter = ''' AND b.state=$P{state} AND NOT(b.permitno IS NULL) AND b.expirydate < $P{currentdate}''';
 				break;	
 
 			case 'captured':
@@ -97,6 +95,9 @@ public class BusinessInfoService extends ActiveCrudListService {
 				o.state = o.name.toUpperCase();
 				o.filter = ''' AND b.state=$P{state} ''';			
 				break;
+
+			case 'inactive':	
+
 			default:
 				break;
 		}
