@@ -70,7 +70,12 @@
             <transition caption="Cancel" to="back-to-forapproval" action="cancelEdit" name="cancel"  mnemonic="c" icon="images/toolbars/cancel.png" visibleWhen="#{mode != 'read'}"/>
             <transition caption="Save"   to="back-to-forapproval" action="save" name="save" mnemonic="s" shortcut="ctrl S" icon="images/toolbars/save.png"  visibleWhen="#{mode != 'read'}" />
             <transition caption="Disapprove" to="default" action="disapproveSubdivision" mnemonic="d" visibleWhen="#{mode == 'read'}" confirm="Disapprove Subdivision?" role="APPROVER"/>
-            <transition caption="Approve" to="approved" action="approveSubdivision" mnemonic="v" icon="images/toolbars/approve.png" visibleWhen="#{mode == 'read'}" confirm="Approve Subdivision?" role="APPROVER"/>
+            <transition caption="Approve" to="wait" action="approveSubdivision" mnemonic="v" icon="images/toolbars/approve.png" visibleWhen="#{mode == 'read'}" confirm="Approve Subdivision?" role="APPROVER"/>
+        </page>
+        
+        <page name="wait" title="Approval of Subdivision">
+            <transition caption="Back" to="forapproval" action="checkErrors" mnemonic="f" icon="images/toolbars/arrow_left.png" />
+            <transition caption="Finish" to="approved" action="checkFinish" mnemonic="f" icon="images/toolbars/approve.png" />
         </page>
         
         <process name="back-to-forapproval">
@@ -129,6 +134,7 @@
         <page name="provsubmissionapproval" template="com.rameses.gov.etracs.rpt.subdivision.ui.SubdivisionPage"/>
         <page name="forprovapproval" template="com.rameses.gov.etracs.rpt.subdivision.ui.SubdivisionPage"/>
         <page name="approved" template="com.rameses.gov.etracs.rpt.subdivision.ui.SubdivisionPage"/>
+        <page name="wait" template="com.rameses.gov.etracs.rpt.subdivision.ui.WaitInfoPage"/>
     </pages>
 </workunit>
 

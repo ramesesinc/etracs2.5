@@ -8,6 +8,7 @@ declare RPTLedgerFact
     qtr                     : Integer 
     originalav              : Double
     av                      : Double
+    barangayid              : String
     txntype                 : String 
     rputype                 : String 
     classification          : String
@@ -42,6 +43,8 @@ declare RPTLedgerFact
     expr                  : String 
     paidyear              : Integer
     revtype               : String
+
+    reclassed             : Boolean
 end
 
 

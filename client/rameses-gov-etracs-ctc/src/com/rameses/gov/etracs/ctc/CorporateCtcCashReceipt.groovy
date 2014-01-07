@@ -69,7 +69,7 @@ class  CorporateCtcCashReceipt extends AbstractCashReceipt
     
     
     public def payerChanged( o ) {
-        if (o.type != 'JURIDICAL')
+        if ( ! o.type.equalsIgnoreCase('JURIDICAL') )
             throw new Exception('Only Juridical entities are allowed.');
         
         o.putAll(entitySvc.open(o));

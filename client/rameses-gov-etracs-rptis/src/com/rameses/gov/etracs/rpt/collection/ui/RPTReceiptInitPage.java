@@ -109,6 +109,7 @@ public class RPTReceiptInitPage extends javax.swing.JPanel {
         xButton1.setCellPadding(new java.awt.Insets(0, 10, 0, 0));
         xButton1.setDefaultCommand(true);
         xButton1.setName("process");
+        xButton1.setPreferredSize(new java.awt.Dimension(100, 23));
         xButton1.setShowCaption(false);
         xButton1.setText("Process");
         formPanel2.add(xButton1);

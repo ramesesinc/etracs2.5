@@ -35,6 +35,8 @@ public class RPTLedgerFaasFixPage extends javax.swing.JPanel {
         xIntegerField2 = new com.rameses.rcp.control.XIntegerField();
         xComboBox2 = new com.rameses.rcp.control.XComboBox();
         xDecimalField1 = new com.rameses.rcp.control.XDecimalField();
+        xSeparator1 = new com.rameses.rcp.control.XSeparator();
+        xCheckBox2 = new com.rameses.rcp.control.XCheckBox();
         xButton2 = new com.rameses.rcp.control.XButton();
 
         xButton1.setMnemonic('c');
@@ -82,6 +84,29 @@ public class RPTLedgerFaasFixPage extends javax.swing.JPanel {
         xDecimalField1.setRequired(true);
         xFormPanel2.add(xDecimalField1);
 
+        xSeparator1.setPreferredSize(new java.awt.Dimension(0, 20));
+        javax.swing.GroupLayout xSeparator1Layout = new javax.swing.GroupLayout(xSeparator1);
+        xSeparator1.setLayout(xSeparator1Layout);
+        xSeparator1Layout.setHorizontalGroup(
+            xSeparator1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 323, Short.MAX_VALUE)
+        );
+        xSeparator1Layout.setVerticalGroup(
+            xSeparator1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 20, Short.MAX_VALUE)
+        );
+        xFormPanel2.add(xSeparator1);
+
+        xCheckBox2.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        xCheckBox2.setCaption("");
+        xCheckBox2.setCaptionWidth(110);
+        xCheckBox2.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        xCheckBox2.setName("entity.reclassed");
+        xCheckBox2.setPreferredSize(new java.awt.Dimension(150, 19));
+        xCheckBox2.setShowCaption(false);
+        xCheckBox2.setText(" Reclassed?");
+        xFormPanel2.add(xCheckBox2);
+
         xButton2.setMnemonic('u');
         xButton2.setName("doUpdate");
         xButton2.setText("Update");
@@ -104,7 +129,7 @@ public class RPTLedgerFaasFixPage extends javax.swing.JPanel {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(xFormPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 164, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(xFormPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 203, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(xButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -117,12 +142,14 @@ public class RPTLedgerFaasFixPage extends javax.swing.JPanel {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private com.rameses.rcp.control.XButton xButton1;
     private com.rameses.rcp.control.XButton xButton2;
+    private com.rameses.rcp.control.XCheckBox xCheckBox2;
     private com.rameses.rcp.control.XComboBox xComboBox1;
     private com.rameses.rcp.control.XComboBox xComboBox2;
     private com.rameses.rcp.control.XDecimalField xDecimalField1;
     private com.rameses.rcp.control.XFormPanel xFormPanel2;
     private com.rameses.rcp.control.XIntegerField xIntegerField1;
     private com.rameses.rcp.control.XIntegerField xIntegerField2;
+    private com.rameses.rcp.control.XSeparator xSeparator1;
     // End of variables declaration//GEN-END:variables
     
 }

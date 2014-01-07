@@ -74,6 +74,7 @@ class RPTLedgerService
     @ProxyMethod
     public def updateLedger( ledger ) {
         ledger.advancebill = false;
+        ledger.nextbilldate = null;
         em.update(ledger)    
         return ledger 
     }
@@ -174,6 +175,7 @@ class RPTLedgerService
         return em.getLedgerFaases([rptledgerid:ledgerid]).each {
                         it.taxable = util.toBoolean(it.taxable, true)
                         it.backtax = util.toBoolean(it.backtax, false)
+                        it.reclassed = util.toBoolean(it.reclassed, false)
                         it.systemcreated = util.toBoolean(it.systemcreated, true)
                     }
     }

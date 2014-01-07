@@ -109,3 +109,27 @@ values
 (
 	$P{objid}  
 )
+
+[getFundlist]
+select 
+	distinct fu.objid, fu.code, fu.title 
+from tracs_remittance r 
+	inner join tracs_cashreceipt tc on r.objid = tc.remittanceid
+	inner join tracs_cashreceiptitem tci on tci.receiptid = tc.objid
+	inner join revenueitem ru on ru.objid = tci.item_objid 
+	inner join fund fu on ru.fund_objid = fu.objid
+where r.objid=$P{objid}
+
+[getRevenueItemSummaryByFund]
+select 
+  fu.title as fundname, tci.item_objid as acctid, tci.item_title as acctname,
+  tci.item_code as acctcode, sum( tci.amount ) as amount 
+from tracs_remittance r 
+	inner join tracs_cashreceipt cr on r.objid = cr.remittanceid
+	inner join tracs_cashreceiptitem tci on tci.receiptid = cr.objid
+	inner join revenueitem ru on ru.objid = tci.item_objid 
+	inner join fund fu on ru.fund_objid = fu.objid
+where r.objid=$P{objid} and fu.objid like $P{fundid}
+group by fu.title, tci.item_objid , tci.item_code, tci.item_title 
+order by fu.title, tci.item_title 
+

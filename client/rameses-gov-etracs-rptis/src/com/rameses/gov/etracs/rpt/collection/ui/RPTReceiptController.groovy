@@ -14,6 +14,9 @@ class RPTReceiptController extends com.rameses.enterprise.treasury.cashreceipt.A
     @Binding
     def binding;
     
+    @Service("CashReceiptService")
+    def cashReceiptSvc;
+                
     @Service('RPTReceiptService')
     def svc;
     
@@ -37,6 +40,9 @@ class RPTReceiptController extends com.rameses.enterprise.treasury.cashreceipt.A
     def advanceyear;
     def openledgers;
     def itemsforpayment;
+    def barcodeid;
+    def barcode;
+    def barcodeprocessing = false;
             
     String entityName = "cashreceipt_rpt"
     
@@ -73,7 +79,6 @@ class RPTReceiptController extends com.rameses.enterprise.treasury.cashreceipt.A
         mode = MODE_CREATE;
         return 'main'
     }
-    
     
     def getLookupLedger(){
         return InvokerUtil.lookupOpener('rptledger:lookup',[
@@ -135,7 +140,87 @@ class RPTReceiptController extends com.rameses.enterprise.treasury.cashreceipt.A
             billSvc.generateBillByLedgerId(it.objid)
         }
     }
-                
+        
+        
+    /* add ledgers for the scanned bill */
+    void processBarcode(){
+        if (!barcode) return;
+        def barcodekey = "56001"
+        def param = [barcodekey:barcodekey , barcodeid: barcode]; 
+        def b = billSvc.getBillByBarcode(param);
+        bill.billid = b.objid;
+        
+        if ( ! itemsforpayment.find{it.billid == b.billid} ){
+            b.ledgers.each{
+                billSvc.generateBillByLedgerId(it.rptledgerid)
+            }
+            def items = svc.getItemsForPaymentByBill(bill);
+            items.each{ i ->
+                if ( ! itemsforpayment.find{it.rptledgerid == i.rptledgerid }){
+                    itemsforpayment << i;
+                }
+            }
+            listHandler.load();
+            calcReceiptAmount();
+        }        
+        barcode = null;
+        binding.refresh('barcode');
+        binding.focus('barcode');
+    }
+           
+    def initBarcode(){
+        entity = [formtype: "serial", formno:"56", txnmode: 'ONLINE', txntype:'rptonline', amount:0.0];
+        itemsforpayment = [];
+        clearAllPayments();
+        bill = billSvc.initBill(null);
+        
+        def barcodekey = "56001"
+        def param = [barcodekey:barcodekey , barcodeid: barcodekey+':'+barcodeid ]; 
+        def b = billSvc.getBillByBarcode(param);
+        bill.billid = b.objid;
+        b.ledgers.each{
+            billSvc.generateBillByLedgerId(it.rptledgerid)
+        }
+        
+        
+        entity = cashReceiptSvc.init( entity );
+        entity.collectiontype = b.collectiontype;
+        entity.payer = b.taxpayer;
+        entity.paidby = b.taxpayer.name;
+        entity.paidbyaddress = b.taxpayer.address;
+        super.init();
+        
+        itemsforpayment = svc.getItemsForPaymentByBill(bill);
+        listHandler.load();
+        calcReceiptAmount();
+        
+        payoption = PAY_OPTION_BYLEDGER;
+        mode = MODE_CREATE;
+        
+        barcodeprocessing = true;
+        
+        return 'main'
+    }
+        
+    def scanBarcode(){
+        def barcode = MsgBox.prompt('Enter or Scan Barcode:');
+        if ( !barcode ) return 
+        def b = billSvc.getBillByBarcode(barcode);
+        bill.billid = b.objid;
+        entity.payer = b.taxpayer;
+        entity.paidby = b.taxpayer.name;
+        entity.paidbyaddress = b.taxpayer.address;
+        binding.refresh("entity.(payer.*|paidby.*)");
+        
+        itemsforpayment = svc.getItemsForPaymentByBill(bill);
+        listHandler.load();
+        calcReceiptAmount();
+        
+        payoption = PAY_OPTION_BYLEDGER;
+        mode = MODE_CREATE;
+        return 'main'
+    }
+    
     void loadItems(){
         bill.rptledgerid = null;
         bill.taxpayerid = bill.taxpayer.objid
@@ -146,11 +231,14 @@ class RPTReceiptController extends com.rameses.enterprise.treasury.cashreceipt.A
         
             
     void loadItemByLedger(rptledgerid){
-        bill.rptledgerid = rptledgerid;
-        billSvc.generateBillByLedgerId(rptledgerid);
-        itemsforpayment += svc.getItemsForPayment(bill);
-        listHandler.load();
-        calcReceiptAmount();
+        if ( ! itemsforpayment.find{it.rptledgerid == rptledgerid}){
+            bill.rptledgerid = rptledgerid;
+            billSvc.generateBillByLedgerId(rptledgerid);
+            itemsforpayment += svc.getItemsForPayment(bill);
+            listHandler.load();
+            calcReceiptAmount();
+        }
+        binding.focus('ledger');
     }
 
     void updateItemDue(item){
@@ -190,6 +278,7 @@ class RPTReceiptController extends com.rameses.enterprise.treasury.cashreceipt.A
         if (payoption == PAY_OPTION_ALL) {
             loadItems();
         }
+        calcReceiptAmount();
     }
     
     void deselectAll(){
@@ -199,6 +288,7 @@ class RPTReceiptController extends com.rameses.enterprise.treasury.cashreceipt.A
             it.amount = 0.0;
         }
         listHandler.load();
+        calcReceiptAmount();
     }
     
     
@@ -232,7 +322,7 @@ class RPTReceiptController extends com.rameses.enterprise.treasury.cashreceipt.A
             entity.amount = paiditems.amount.sum();
         }
         updateBalances();
-        binding.refresh('totalGeneral|totalSef')
+        binding?.refresh('totalGeneral|totalSef')
     }
     
     

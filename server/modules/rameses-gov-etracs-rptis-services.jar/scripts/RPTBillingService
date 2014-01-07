@@ -13,6 +13,8 @@ public class RPTBillingService
 	@ActiveDB("rule")
 	def ruleDB;
 
+	@Env
+	def env
 
 	@Service('RPTUtil')
 	def util
@@ -26,6 +28,9 @@ public class RPTBillingService
 	@Service('NumberService')
 	def numSvc
 
+	@Service('SequenceService')
+	def seqSvc
+
 	@Service('RPTLedgerService')
 	def ledgerSvc 
 
@@ -37,6 +42,8 @@ public class RPTBillingService
 	def MAX_ADVANCE_YEARS = 3 
 	
 	def SCHEMA_BILL_ITEM = 'billitem'
+
+	def BARCODE_PREFIX = '56001:'
 
 	@ProxyMethod
 	public def initBill(ledgerid){
@@ -53,6 +60,45 @@ public class RPTBillingService
             cy 					: pdate.year,
             rptledgerid 		: ledgerid,
 		]
+	}
+
+
+	@ProxyMethod
+	public def saveBill(bill){
+		def cy = dtSvc.serverYear
+		def lguid = var.lgu_objid
+		if (!lguid) throw new Exception('The lgu_objid info in sys_var must be set.')
+		lguid = lguid.replaceAll('-', '')
+		def b = [
+			objid 			: 'B' + new java.rmi.server.UID(),
+			barcode 		: BARCODE_PREFIX + lguid + cy + seqSvc.getNextFormattedSeriesA('RPTBILL-' + cy,7),
+			expirydate  	: bill.ledgers[0].expirydate,
+			taxpayer_objid	: bill.taxpayer.objid,
+			taxpayer_name	: bill.taxpayer.name,
+			taxpayer_address: bill.taxpayer.address,
+			postedby		: env.NAME,
+			postedbytitle	: env.JOBTITLE
+		]
+		em.insertRptBill(b)
+		bill.ledgers.each{
+			em.insertRptBillLedger([rptbillid:b.objid, rptledgerid:it.objid])
+		}
+		return b 
+	}
+
+	@ProxyMethod
+	public def getBillByBarcode(param){
+		println 'param -> ' + param 
+		def bill= em.findBillByBarcode(param)
+		if (!bill) 
+			throw new Exception('Invalid barcode or associated bill has already expired.')
+		if (bill.expirydate <= dtSvc.serverDate) 
+			throw new Exception('Bill has already expired.')
+		bill.collectiontype = em.findCollectionTypeByBarcodeKey(param)
+		if (!bill.collectiontype) 
+			throw new Exception('Collection Type is not defined for barcode key ' + param.barcodekey + '.')
+		bill.ledgers = em.getBillLedgers(bill)
+		return bill 
 	}
 
 
@@ -345,7 +391,8 @@ public class RPTBillingService
 		ledger.qtrlypaymentpaidontime = util.toBoolean(bill.ledger.qtrlypaymentpaidontime, false )
         ledger.fullpayment            = determineFullPayment(pdate, bill, bill.ledger, ledger) 
         ledger.advancepayment         = bill.advancepayment 
-		ledger.backtax				= ledgerfaas.backtax 
+		ledger.backtax				  = ledgerfaas.backtax 
+		ledger.reclassed			  = (ledgerfaas.reclassed != null ? ledgerfaas.reclassed : false)
 		return ledger 
 	}
 

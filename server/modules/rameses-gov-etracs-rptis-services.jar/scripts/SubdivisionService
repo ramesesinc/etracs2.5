@@ -1,5 +1,6 @@
 import com.rameses.annotations.*
 import com.rameses.common.*;
+import com.rameses.services.extended.*;
 import com.rameses.util.*
 
 
@@ -7,6 +8,9 @@ class SubdivisionService
 {
 	@PersistenceContext('rpt')
 	def em
+
+    @ActiveDB('subdivision')
+    def adb 
     
 	@Env
 	def env
@@ -601,6 +605,90 @@ class SubdivisionService
                     .execute()
         }
     }
+
+
+
+
+    /*============================================================================
+    **
+    ** ASYNCHRONOUS APPROVAL SUPPORT 
+    **
+    ============================================================================*/
+    @ProxyMethod
+    public void initApproveSubdivisionAsync(subdivision) {
+        try{
+            workflowRef.insert(subdivision)
+        }
+        catch(e){
+            // ignore repeated approval
+        }
+        validate(subdivision)
+    }
+
+    @ProxyMethod
+    public def assignNewTdNos(subdivision){
+        getSubdividedLands(subdivision.objid).each{ sl ->
+            if (sl.newtdno == null || sl.newtdno == '-'){
+                def faas = adb.findFaasByNewRpuId(sl)
+                sl.newtdno = faasSvc.generateNextTdNo(faas)
+                sl.newutdno = sl.newtdno 
+                adb.updateLandNewTdNo(sl)
+            }
+        }
+        getAffectedRpus(subdivision.objid).each{arpu ->
+            if (arpu.newtdno == null || arpu.newtdno == '-'){
+                def faas = adb.findFaasByNewRpuId(arpu)
+                arpu.newtdno = faasSvc.generateNextTdNo(faas)
+                arpu.newutdno = arpu.newtdno 
+                adb.updateAffectedNewTdNo(arpu)
+            }
+        }
+    }
+
+    @ProxyMethod
+    public void createSubdividedLandFaasRecord(subdivision, land){
+        land.rpu = rpuSvc.openRpu(land.newrpuid)
+        land.rp = land.rpu.rp 
+        def faas = createFaasFromSubdividedLand(subdivision, land)
+        faasSvc.createFaasOnly(faas)
+        land.newfaasid = faas.objid 
+        updateSubdividedLand(land)
+
+        faas = faasSvc.openFaas(land.newfaasid)
+        faasSvc.approveFaas(faas)
+    }
+
+    @ProxyMethod
+    public void createAffectedRpuFaasRecord(subdivision, arpu){
+        arpu.rpu = rpuSvc.openRpu(arpu.newrpuid)
+        arpu.rp = arpu.rpu.rp 
+        def faas = createFaasFromAffectedRpu(subdivision, arpu)
+        faasSvc.createFaasOnly(faas)
+        arpu.newfaasid = faas.objid 
+        saveAffectedRpu(arpu)
+
+        faas = faasSvc.openFaas(arpu.newfaasid)
+        faasSvc.approveFaas(faas)
+        em.sqlContext.createNamedExecutor('subdivision:updateRpuFullPin')
+            .setParameter('fullpin', arpu.newpin + '-' + arpu.newsuffix)
+            .setParameter('objid', arpu.newrpuid )
+            .execute()
+    }
+
+    @ProxyMethod
+    public void approveSubdivisionAsync(subdivision){
+        em.sqlContext.createNamedExecutor('subdivision:approveSubdivision')
+            .setParameter('objid', subdivision.objid)
+            .execute()
+
+        em.sqlContext.createNamedExecutor('subdivision:cancelRealProperty')
+            .setParameter('objid', subdivision.motherfaas.realpropertyid)
+            .execute()
+        em.sqlContext.createNamedExecutor('subdivision:cancelMotherLandLedger')
+                .setParameter('faasid', subdivision.motherfaasid)
+                .execute()
+    }
+
 }
 
 

@@ -32,6 +32,7 @@
         <field name="classification_objid" required="true" />
         <field name="actualuse_objid"  />
         <field name="taxable" required="true" type="boolean" />
+        <field name="reclassed" type="boolean" />
         <field name="backtax" required="true" type="boolean" />
         <field name="fromyear" required="true" type="integer" />
         <field name="fromqtr" required="true" type="integer" />

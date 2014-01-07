@@ -4,7 +4,7 @@
        <invoker type="tracsmigration:open" action="open" caption="TRACS Receipt" target="window"/>
         
         <invoker type="formActions" caption="Close" action="_close" visibleWhen="#{mode != 'init'}"  immediate="true" mnemonic="c" shortcut="ctrl C" icon="images/toolbars/cancel.png"/>
-        <invoker type="formActions" caption="New" action="init" visibleWhen="#{mode != 'init'}"   mnemonic="n" shortcut="ctrl N" icon="images/toolbars/create.png"/>
+        <invoker type="formActions" caption="New" action="create" visibleWhen="#{mode != 'init'}"   mnemonic="n" shortcut="ctrl N" icon="images/toolbars/create.png"/>
         <invoker type="formActions" caption="Cancel" action="doCancel"  visibleWhen="#{mode == 'init'}" immediate="true" mnemonic="c" shortcut="ctrl C" icon="images/toolbars/cancel.png"/>
         <invoker type="formActions" caption="Save" action="save" visibleWhen="#{mode == 'init'}" mnemonic="s" shortcut="ctrl S" icon="images/toolbars/save.png"/>
     </invokers>
@@ -33,6 +33,8 @@ class  TracsReceiptMigrationController
     @Binding 
     def binding 
     def mode
+    
+    def entityName = "tracsrem"
     
     def selectedItem
     
@@ -67,6 +69,11 @@ class  TracsReceiptMigrationController
         MsgBox.alert("Data migrated successfully.      ")
         mode = "posted"
         binding.refresh();
+    }
+    
+    void create() {
+        init() 
+        listModel.reload()
     }
     
     def add() {

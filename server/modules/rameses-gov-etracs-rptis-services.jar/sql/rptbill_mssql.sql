@@ -36,7 +36,7 @@ SELECT
 		WHEN rl.lastqtrpaid = 4 THEN 1 ELSE rl.lastqtrpaid + 1 
 	END AS fromqtr,
 	CASE 
-		WHEN rl.nextbilldate <= GETDATE() THEN 1 
+		WHEN rl.nextbilldate IS NULL OR rl.nextbilldate <= GETDATE() THEN 1 
 		WHEN rl.partialbasic > 0 THEN 1
 		WHEN rl.lastbilledyear IS NULL OR rl.lastbilledqtr IS NULL THEN 1 
 		WHEN rl.lastbilledyear <> $P{billtoyear} OR rl.lastbilledqtr <> $P{billtoqtr} THEN 1
@@ -219,3 +219,24 @@ WHERE rl.objid = $P{objid}
  AND rli.year >= rti.fromyear  
  AND rli.year <= rti.toyear 
 
+
+
+[insertRptBill]
+INSERT INTO rptbill (objid, barcode, expirydate, taxpayer_objid, taxpayer_name, taxpayer_address, postedby, postedbytitle)
+VALUES ($P{objid}, $P{barcode}, $P{expirydate}, $P{taxpayer_objid}, $P{taxpayer_name}, $P{taxpayer_address}, $P{postedby}, $P{postedbytitle})
+
+
+[insertRptBillLedger]
+INSERT INTO rptbill_ledger (rptledgerid, rptbillid)
+VALUES ($P{rptledgerid}, $P{rptbillid})
+
+
+[findBillByBarcode]
+SELECT * FROM rptbill  WHERE barcode = $P{barcodeid}
+
+[findCollectionTypeByBarcodeKey]
+SELECT * FROM collectiontype WHERE barcodekey = $P{barcodekey}
+  
+
+[getBillLedgers]  
+SELECT * FROM rptbill_ledger WHERE rptbillid = $P{objid}
