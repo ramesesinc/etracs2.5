@@ -272,21 +272,21 @@ SELECT
 	t.classcode,
 	t.barangay,
 	CASE
-		WHEN MIN(t.fromyear) = MAX(t.toyear) AND MIN(t.fromqtr) = 1 AND MAX(t.toqtr) = 4 
-			THEN 'FULL ' + CONVERT(VARCHAR(4),MAX(t.toyear))
-		WHEN MIN(t.fromyear) = MAX(t.toyear) AND MIN(t.fromqtr) = MAX(t.toqtr)
-			THEN CONVERT(VARCHAR(1),MAX(t.toqtr)) + 'Q, ' + CONVERT(VARCHAR(4),MAX(t.toyear))
-		WHEN MIN(t.fromyear) = MAX(t.toyear) 
-			THEN CONVERT(VARCHAR(1),MIN(t.fromqtr)) + CONVERT(VARCHAR(1),MAX(t.toqtr)) + 'Q, ' + CONVERT(VARCHAR(4),MAX(t.toyear))
+		WHEN t.fromyear = t.toyear AND t.fromqtr = 1 AND t.toqtr = 4 
+			THEN 'FULL ' + CONVERT(VARCHAR(4),t.toyear)
+		WHEN t.fromyear = t.toyear AND t.fromqtr = t.toqtr
+			THEN CONVERT(VARCHAR(1),t.toqtr) + 'Q, ' + CONVERT(VARCHAR(4),t.toyear)
+		WHEN t.fromyear = t.toyear 
+			THEN CONVERT(VARCHAR(1),t.fromqtr) + CONVERT(VARCHAR(1),t.toqtr) + 'Q, ' + CONVERT(VARCHAR(4),t.toyear)
 
-		WHEN MIN(t.fromqtr) = 1 AND MAX(t.toqtr) = 4
-			THEN 'FULL ' + CONVERT(VARCHAR(4),MIN(t.fromyear)) + '-' + CONVERT(VARCHAR(4),MAX(t.toyear))
-		WHEN MIN(t.fromqtr) = 1 AND MAX(t.toqtr) <> 4
-			THEN CONVERT(VARCHAR(4),MIN(t.fromyear)) + '-' + CONVERT(VARCHAR(1),MAX(t.toqtr)) + 'Q,' + CONVERT(VARCHAR(4),MAX(t.toyear))
-		WHEN MIN(t.fromqtr) <> 1 AND MAX(t.toqtr) = 4
-			THEN CONVERT(VARCHAR(1),MIN(t.fromqtr)) + 'Q,' + CONVERT(VARCHAR(4),MIN(t.fromyear)) + '-' + CONVERT(VARCHAR(4),MAX(t.toyear))
+		WHEN t.fromqtr = 1 AND t.toqtr = 4
+			THEN 'FULL ' + CONVERT(VARCHAR(4),t.fromyear) + '-' + CONVERT(VARCHAR(4),t.toyear)
+		WHEN t.fromqtr = 1 AND t.toqtr <> 4
+			THEN CONVERT(VARCHAR(4),t.fromyear) + '-' + CONVERT(VARCHAR(1),t.toqtr) + 'Q,' + CONVERT(VARCHAR(4),t.toyear)
+		WHEN t.fromqtr <> 1 AND t.toqtr = 4
+			THEN CONVERT(VARCHAR(1),t.fromqtr) + 'Q,' + CONVERT(VARCHAR(4),t.fromyear) + '-' + CONVERT(VARCHAR(4),t.toyear)
 		ELSE
-			CONVERT(VARCHAR(1),MIN(t.fromqtr)) + 'Q,' + CONVERT(VARCHAR(4),MIN(t.fromyear)) + '-' + CONVERT(VARCHAR(1),MAX(t.toqtr)) + 'Q,' + CONVERT(VARCHAR(4),MAX(t.toyear))
+			CONVERT(VARCHAR(1),t.fromqtr) + 'Q,' + CONVERT(VARCHAR(4),t.fromyear) + '-' + CONVERT(VARCHAR(1),t.toqtr) + 'Q,' + CONVERT(VARCHAR(4),t.toyear)
 	END + (CASE WHEN t.partialled = 0 THEN '' ELSE '*P*' END) AS period,
 	SUM(t.basic) AS basic, 
 	SUM(t.basicdisc) AS basicdisc, 
@@ -313,7 +313,7 @@ FROM (
 		MIN(cri.year) AS fromyear,
 		(SELECT MIN(CASE WHEN qtr = 0 THEN 1 ELSE qtr END)  FROM cashreceiptitem_rpt WHERE rptreceiptid = cri.rptreceiptid AND YEAR = MIN(cri.year) ) AS fromqtr,
 		MAX(cri.year) AS toyear,
-		(SELECT MAX(CASE WHEN qtr = 0 THEN 4 ELSE qtr END) FROM cashreceiptitem_rpt WHERE rptreceiptid = cri.rptreceiptid AND YEAR = MIN(cri.year) ) AS toqtr,
+		(SELECT MAX(CASE WHEN qtr = 0 THEN 4 ELSE qtr END) FROM cashreceiptitem_rpt WHERE rptreceiptid = cri.rptreceiptid AND YEAR = MAX(cri.year) ) AS toqtr,
 		SUM(basic) AS basic,
 		SUM(basicint) AS basicint,
 		SUM(basicdisc) AS basicdisc,
@@ -334,7 +334,7 @@ FROM (
 		INNER JOIN propertyclassification pc ON r.classification_objid = pc.objid 
 		INNER JOIN realproperty rp ON r.realpropertyid = rp.objid 
 		INNER JOIN barangay b ON rp.barangayid = b.objid 
-	WHERE cri.rptreceiptid = $P{rptreceiptid}
+	WHERE cri.rptreceiptid = 'RCT-46cc0be6:1436659d955:-4cfd'		 -- $P{rptreceiptid}
 	GROUP BY 
 		cri.rptreceiptid,
 		cri.rptledgerid, 
@@ -353,7 +353,11 @@ GROUP BY
 		t.cadastrallotno,
 		t.classcode,
 		t.barangay,
-		t.partialled
+		t.partialled,
+		t.fromyear,
+		t.fromqtr,
+		t.toyear, 
+		t.toqtr
 
 
 
