@@ -78,7 +78,7 @@
                       
             private String formatMsg( def msg ) {
                 def buff = new StringBuffer();
-                buff.append( '<font face=\"arial\" size=\"2\">' );
+                buff.append( '<font face=\"arial\" size=\"3\" color=red>' );
                 buff.append( (msg == null) ? '' : msg );
                 buff.append( "</font><br>");
                 return buff.toString();
@@ -101,8 +101,8 @@
                     entity.application.subtasks.findAll{it.message!=null}.each {
                         def req = 'me';
                         if(it.sender?.objid!=null && it.sender.objid != OsirisContext.env.USERID ) req = it.sender.name;
-                        buff.append( "&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"endSubTask\" taskid=\"" + it.objid + "\">Resolve</a>" );
-                        buff.append( "&nbsp;&nbsp;"+it.message + "&nbsp;&nbsp;<b><u>requested by " + req + "</u></b><br>");
+                        buff.append( "&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"endSubTask\" taskid=\"" + it.objid + "\"  color=blue><b><u>Resolve</u></b></a>" );
+                        buff.append( "&nbsp;&nbsp;"+it.message + "&nbsp;&nbsp;requested by " + req + "<br>");
                     }
                     message = formatMsg( buff.toString() );
                 }
@@ -229,7 +229,14 @@
                 refresh();
             }
             
+            void revertApproval() {
+                service.revertApproval(entity.application);
+                MsgBox.alert("Approval reversed");
+                refresh();
+            }
+            
             void release() {
+                //copy only the state bec. this is not the full object returned
                 service.release(entity);
                 MsgBox.alert("Document successfully released");
                 refresh();
@@ -310,11 +317,15 @@
         
         <page name="payment" title="Business Application (For Payment)">
             <transition to="end" caption="Close" />
+            <transition to="approval" caption="Reverse Approval" mnemonic="A" visibleWhen="#{assignedApprover == true}" 
+                action="revertApproval" confirm="You are about to reverse approval. Proceed?" role="APPROVER"/>
         </page>
         
         <page name="release" title="Business Application (For Release)">
             <transition to="end" caption="Close" />
-            <transition to="active" caption="Release" mnemonic="S"  
+            <transition to="active" caption="Release" mnemonic="S"  visibleWhen="#{entity.application.apptype!='RETIRE'}"
+                action="release" confirm="You are about to release this application. Proceed?" role="BUSINESSINFO"/>
+            <transition to="retired" caption="Release for Retirement" mnemonic="S"  visibleWhen="#{entity.application.apptype=='RETIRE'}"
                 action="release" confirm="You are about to release this application. Proceed?" role="BUSINESSINFO"/>
         </page>
         
@@ -327,6 +338,11 @@
         <page name="captured" title="Captured">
             <transition to="end" caption="Close" />
         </page>
+
+        <page name="retired" title="Retired">
+            <transition to="end" caption="Close" />
+        </page>
+
         
         <end/>
     </pageflow>
@@ -340,6 +356,7 @@
         <page name="release" template="com.rameses.gov.etracs.bpls.business.BusinessInfoPage"/>
         <page name="active" template="com.rameses.gov.etracs.bpls.business.BusinessInfoPage"/>
         <page name="captured" template="com.rameses.gov.etracs.bpls.business.BusinessInfoPage"/>
+        <page name="retired" template="com.rameses.gov.etracs.bpls.business.BusinessInfoPage"/>
     </pages>
     
 </workunit>

@@ -200,6 +200,9 @@ public class BPBillingRuleService  {
         def amtdue = items.sum{ it.amtdue }; 
         result.total_amtdue = (amtdue==null) ? 0.0 : amtdue; 
 
+		def disc = items.sum{ it.discount }; 
+        result.total_discount = (disc==null) ? 0.0 : disc; 
+
         def surch = items.sum{ it.surcharge }; 
         result.total_surcharge = (surch==null) ? 0.0 : surch; 
 

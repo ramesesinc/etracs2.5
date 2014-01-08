@@ -39,7 +39,7 @@ public class BusinessInfoService extends ActiveCrudService {
 			def lgucode = sysvar.lgu_objid;
 			if(!lgucode)
 				throw new Exception("LGU code is null. Please check lgu_objid in sysvar");
-			def yr = o.activeyear;
+			def yr = dateSvc.serverYear;
 			def mnth = dateSvc.serverMonth;
 			def smon = ( mnth < 10 ) ? "0"+mnth : mnth+"";
 			def prefix = "B"+lgucode+yr+smon;
@@ -85,30 +85,32 @@ public class BusinessInfoService extends ActiveCrudService {
 	*********************************************************/
 	@ProxyMethod
 	public def activate(o) {
-		em.removeInfos(o);
-		o.infos.each {
-			it.businessid = o.objid;
-			it.applicationid = o.currentapplicationid;
-			convertInfo(it);
-			em.create(it, "info");
+		if(o.state!='RETIRED') {
+			em.removeInfos(o);
+			o.infos.each {
+				it.businessid = o.objid;
+				it.applicationid = o.currentapplicationid;
+				convertInfo(it);
+				em.create(it, "info");
+			}
+			//update the state of the business
+			if(!o.state=='CAPTURED') o.state = 'ACTIVE';
 		}
 		o.lobs.each {
-			if(!it.objid) it.objid = "BUSLOB"+new UID();
+			it.objid = "BUSLOB"+new UID();
 			it.businessid = o.objid;	
 			it.applicationid = o.currentapplicationid;
 			it.iyear = o.activeyear;
 			em.create(it, "lob");
 		}
 		o.assessmentinfos.each {
+			it.objid = "BUSASSMT"+new UID();
 			it.businessid = o.objid;
 			it.applicationid = o.currentapplicationid;
 			it.iyear = o.activeyear;
 			convertInfo(it);
 			em.create(it, "assessment_info");
 		}	
-
-		//update the state of the business
-		if(!o.state=='CAPTURED') o.state = 'ACTIVE';
 		em.update(o);
 	}
 
@@ -189,6 +191,10 @@ public class BusinessInfoService extends ActiveCrudService {
 		return z;
 	}
 
+	@ProxyMethod
+	public def getRedflags(o) {
+		return em.getRedflags(o);
+	}
 	
 
 }

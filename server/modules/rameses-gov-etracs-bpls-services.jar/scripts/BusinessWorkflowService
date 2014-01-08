@@ -116,6 +116,18 @@ public class BusinessWorkflowService  {
 		return [state:'payment'];
 	}
 
+	@ProxyMethod
+	public def revertApproval(app) {
+		if(!app.approvedby?.objid)
+			throw new Exception("approver is required");
+		app.assignee = app.approvedby;
+		ledgerSvc.revertReceivables( [applicationid: app.objid ] );
+		app.appid = app.objid;
+		app.taskid = app.task.objid;
+		return [state:'approval'];
+	}
+
+
 	/***
 	* release will explode the application infos and activate the business.
 	* at the same time it will also close the remaining tasks.
@@ -139,7 +151,12 @@ public class BusinessWorkflowService  {
 		m.businessaddress = app.businessaddress;
 		m.orgtype = app.orgtype;
 		m.currentapplicationid = o.currentapplicationid;
-		m.state = 'ACTIVE';
+		if(app.apptype=='RETIRE') {
+			m.state = 'RETIRED';
+		}
+		else {
+			m.state = 'ACTIVE';
+		}
 		bizInfoSvc.activate( m );
 	}
 

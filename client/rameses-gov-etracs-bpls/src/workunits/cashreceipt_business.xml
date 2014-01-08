@@ -23,7 +23,8 @@
             @Service("BusinessLookupService")
             def busLookup;
         
-            String entityName = "cashreceipt:business";
+            //we specify this so print detail will appear.
+            String entityName = "misc_cashreceipt";
             
             def query = [:]
             

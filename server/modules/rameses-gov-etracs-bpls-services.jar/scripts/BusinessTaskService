@@ -43,6 +43,7 @@ class BusinessTaskService  {
 		if(!m.parentid) throw new Exception("parentid is required  in subtask");
 		if(!m.assignee) throw new Exception("assignee is required  in subtask");
 		if(!m.action) throw new Exception("action is required  in subtask");
+		if(!m.message) throw new Exception("message is required  in subtask");
 		def tsk = [:];
 		tsk.objid = "BPSUBTSK"+new UID();
 		tsk.assignee = m.assignee;

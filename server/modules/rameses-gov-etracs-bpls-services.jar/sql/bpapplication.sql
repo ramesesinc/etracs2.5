@@ -52,6 +52,7 @@ FROM sys_usergroup_member sgm
 INNER JOIN sys_user u ON u.objid=sgm.user_objid
 INNER JOIN sys_usergroup ug ON ug.objid=sgm.usergroupid
 WHERE ug.domain='BPLS' AND ug.role='APPROVER' 
+ORDER u.name
 
 [findCurrentTaskid]
 SELECT task_objid AS taskid FROM bpapplication WHERE objid=$P{objid}

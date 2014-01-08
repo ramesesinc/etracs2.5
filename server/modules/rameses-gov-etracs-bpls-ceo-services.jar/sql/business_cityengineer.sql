@@ -1,22 +1,38 @@
 [getList]
-SELECT b.objid, b.bin, b.owner_name,b.businessname,b.businessaddress
-FROM business b 
-INNER JOIN business_cityengineer bc ON bc.businessid=b.objid
-
-[getSearchList]
 SELECT DISTINCT b.* FROM 
 (
-	SELECT b.objid, b.bin, b.owner_name,b.businessname,b.businessaddress
+	SELECT b.objid, b.bin, b.owner_name,b.businessname,b.businessaddress, bc.state
 	FROM business b 
 	INNER JOIN business_cityengineer bc ON bc.businessid=b.objid
 	WHERE b.owner_name LIKE $P{searchtext}
 UNION
-	SELECT b.objid, b.bin, b.owner_name,b.businessname,b.businessaddress
+	SELECT b.objid, b.bin, b.owner_name,b.businessname,b.businessaddress, bc.state
 	FROM business b 
 	INNER JOIN business_cityengineer bc ON bc.businessid=b.objid
 	WHERE b.businessname LIKE $P{searchtext}
 UNION
-	SELECT b.objid, b.bin, b.owner_name,b.businessname,b.businessaddress
+	SELECT b.objid, b.bin, b.owner_name,b.businessname,b.businessaddress, bc.state
+	FROM business b 
+	INNER JOIN business_cityengineer bc ON bc.businessid=b.objid
+	WHERE b.bin LIKE $P{searchtext} 
+) b
+WHERE b.state = $P{state}
+ORDER BY b.bin
+
+[getSearchList]
+SELECT DISTINCT b.* FROM 
+(
+	SELECT b.objid, b.bin, b.owner_name,b.businessname,b.businessaddress, bc.state
+	FROM business b 
+	INNER JOIN business_cityengineer bc ON bc.businessid=b.objid
+	WHERE b.owner_name LIKE $P{searchtext}
+UNION
+	SELECT b.objid, b.bin, b.owner_name,b.businessname,b.businessaddress, bc.state
+	FROM business b 
+	INNER JOIN business_cityengineer bc ON bc.businessid=b.objid
+	WHERE b.businessname LIKE $P{searchtext}
+UNION
+	SELECT b.objid, b.bin, b.owner_name,b.businessname,b.businessaddress, bc.state
 	FROM business b 
 	INNER JOIN business_cityengineer bc ON bc.businessid=b.objid
 	WHERE b.bin LIKE $P{searchtext} 
@@ -36,6 +52,10 @@ WHERE cf.businessid=$P{businessid}
 UPDATE business_cityengineer_fee 
 SET state='active' WHERE businessid=$P{businessid}
 
+[deactivateFees]
+UPDATE business_cityengineer_fee 
+SET state='inactive' WHERE businessid=$P{businessid}
+
 [changeState]
 UPDATE business_cityengineer SET 
-state='active' WHERE businessid=$P{businessid}
+state=$P{state} WHERE businessid=$P{businessid}

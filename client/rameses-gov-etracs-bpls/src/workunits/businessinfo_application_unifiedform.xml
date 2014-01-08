@@ -56,13 +56,26 @@
                     }
                 }
                 
-                
+                def infos = [];
+                entity.lobs.each {
+                    def m = [:];
+                    m.lob = it.name;
+                    entity.assessmentinfos.findAll{it.lob?.objid!=null}.collect{ 
+                        [
+                          lob:it.name, 
+                          (it.attribute.name.toLowerCase()): format(it)
+                        ]  
+                     };
+                    infos << m;
+                }
+                /*
                 def infos = entity.assessmentinfos.findAll{it.lob?.objid!=null}.collect{ 
                     [
-                      lob:it.lob?.name, 
+                      lob:it.name, 
                       (it.attribute.name.toLowerCase()): format(it)
                     ]  
                  };
+                 */
                  
                 //ctcno: "CCI2012-191919191", 
                 //ctcdate: java.sql.Date.valueOf("2013-02-01"),
@@ -72,6 +85,7 @@
                 data.ownername = entity.owner.name; 
                 data.ownerno = entity.owner.entityno;
                 data.owneraddress = entity.owner.address;
+                data.bin = entity.bin;
                 data.infos = infos;
                 data.requirements = [];
                 data.signatories = [];
