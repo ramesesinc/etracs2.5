@@ -248,3 +248,13 @@ SELECT * FROM collectiontype WHERE barcodekey = $P{barcodekey}
 
 [getBillLedgers]  
 SELECT * FROM rptbill_ledger WHERE rptbillid = $P{objid}
+
+
+
+
+[findPartialTotal]
+SELECT 
+	SUM(basic - basicdisc + basicint + firecode) AS totalgeneral,
+	SUM(sef - sefdisc + sefint) AS totalsef
+FROM rptledgerbillitem 
+WHERE rptledgerid = $P{rptledgerid}

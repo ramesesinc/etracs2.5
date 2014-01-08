@@ -177,7 +177,7 @@ public class RPTBillingService
         bill.ledger = em.findOpenLedgerById(bill)
         if (!bill.ledger) throw new Exception('Ledger is fully paid or is exempted.')
 
-        if (bill.ledger.recalcbill == 1 ){
+        if (bill.ledger.recalcbill == 1 || bill.forceRecalcBill == true){
         	println 'Recalculating ledger -> ' + bill.ledger.tdno 
         	clearBillItems(bill)
 	        def data = executeRules(bill)
@@ -587,8 +587,6 @@ public class RPTBillingService
 		def paiditems = em.getFullyPaidItems(['rptledgerid':ledger.rptledgerid])
 		def idx = 0
 		def pitem = null 
-		def totalbasic = 0.0
-		def totalsef = 0.0
 		def partialinfo = [:]
 
 		for(; idx < paiditems.size(); idx++)
@@ -599,8 +597,6 @@ public class RPTBillingService
 			def amtdue = pitem.total 
 			if ( payment >= amtdue){
 				payment -= amtdue 
-				totalbasic += (pitem.basic + pitem.basicint)
-				totalsef += (pitem.sef + pitem.sefint)
 			}
 			else 
 			{
@@ -652,9 +648,7 @@ public class RPTBillingService
 					else 
 						em.deleteUnpartialledYearlyItems(param)
 
-					totalbasic += (partialbasic + partialbasicint)
-					totalsef += (partialsef + partialsefint)
-
+					
 					partialinfo = [
 						objid 				: pitem.objid,
 						partialbasic 		: partialbasic,
@@ -667,14 +661,18 @@ public class RPTBillingService
 						amount 				: partial,
 						toyear				: pitem.year,
 						toqtr				: pitem.toqtr, 
-						totalbasic 			: totalbasic,
-						totalsef 			: totalsef,
 						partialledyear		: pitem.year,
 						partialledqtr		: pitem.fromqtr,
 					]
 					
 					em.updatePartialInfo(partialinfo)
+					
+					def total = em.findPartialTotal(param)
+					partialinfo.totalgeneral = total.totalgeneral
+					partialinfo.totalsef = total.totalsef 
+
 					payment = 0.0
+					
 					break;
 				}
 			}
