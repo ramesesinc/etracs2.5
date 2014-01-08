@@ -36,8 +36,8 @@
 	<field name="paidbyaddress" class="java.lang.String"/>
 	<field name="receiptno" class="java.lang.String"/>
 	<field name="checkamount" class="java.math.BigDecimal"/>
-	<field name="checkbanks" class="java.lang.String"/>
-	<field name="checknos" class="java.lang.String"/>
+	<field name="checkbank" class="java.lang.String"/>
+	<field name="checkno" class="java.lang.String"/>
 	<field name="paidby" class="java.lang.String"/>
 	<field name="serialno" class="java.lang.String"/>
 	<field name="collector.title" class="java.lang.String"/>
@@ -345,7 +345,7 @@
 					<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
 						<font fontName="SansSerif" pdfFontName="Helvetica" size="9" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{checknos}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{checkno}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -365,7 +365,7 @@
 					<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
 						<font fontName="SansSerif" pdfFontName="Helvetica" size="9" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{checkbanks}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{checkbank}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
