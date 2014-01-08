@@ -334,7 +334,7 @@ FROM (
 		INNER JOIN propertyclassification pc ON r.classification_objid = pc.objid 
 		INNER JOIN realproperty rp ON r.realpropertyid = rp.objid 
 		INNER JOIN barangay b ON rp.barangayid = b.objid 
-	WHERE cri.rptreceiptid = 'RCT-46cc0be6:1436659d955:-4cfd'		 -- $P{rptreceiptid}
+	WHERE cri.rptreceiptid = $P{rptreceiptid}
 	GROUP BY 
 		cri.rptreceiptid,
 		cri.rptledgerid, 
