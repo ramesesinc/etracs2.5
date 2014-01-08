@@ -68,6 +68,7 @@
                 getSubReports : {
                     return [ 
                         new SubReport("ReportSummary", reportPath + "reportbyrevenueitemsummary.jasper"),
+                        new SubReport("BrgyShareSummary", reportPath + "reportbyrevenueitemsummary_share.jasper")
                     ] as SubReport[];    
                  }
             ] as ReportModel

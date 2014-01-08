@@ -77,7 +77,13 @@ class RemittanceReportService  {
 		def data = rem.clone();
 		def params = [ remittanceid: data.objid,  fundid : fund ? fund.objid : '%']
 		data.acctsummaries = em.sqlContext.createNamedQuery('remittancereport:getRevenueItemSummaryByFund').setParameters(params ).resultList
+
+		data.brgyshares  = em.sqlContext.createNamedQuery('remittancereport:getBrgyShares').setParameters(params ).resultList
+		data.hasbrgyshares = data.brgyshares.size() > 0
+			
 		if( ! data.acctsummaries ) throw new Exception("No record(s) found ");
+
+		data.amount = data.acctsummaries.amount.sum(); 
 		return data;
 	}
 
