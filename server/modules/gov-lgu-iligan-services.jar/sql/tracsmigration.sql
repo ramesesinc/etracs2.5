@@ -130,6 +130,7 @@ from tracs_remittance r
 	inner join revenueitem ru on ru.objid = tci.item_objid 
 	inner join fund fu on ru.fund_objid = fu.objid
 where r.objid=$P{objid} and fu.objid like $P{fundid}
+	and cr.amount > 0.0 
 group by fu.title, tci.item_objid , tci.item_code, tci.item_title 
 order by fu.title, tci.item_title 
 
