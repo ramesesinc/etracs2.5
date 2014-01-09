@@ -8,9 +8,9 @@ declare RPTLedgerFact
     qtr                     : Integer 
     originalav              : Double
     av                      : Double
-    barangayid              : String
     txntype                 : String 
     rputype                 : String 
+    barangayid              : String
     classification          : String
     actualuse               : String
     numberofmonthsfromqtr   : Integer
@@ -34,17 +34,29 @@ declare RPTLedgerFact
     sefamnesty              : Double
     sefintamnesty           : Double
     firecode                : Double
-
     basicacctid           : String 
     basicintacctid        : String 
     sefacctid             : String 
     sefintacctid          : String 
     firecodeacctid        : String 
+
+    lgushare                : Double
+    lguintshare                : Double
+    
+    brgyshare               : Double
+    brgyintshare            : Double
+    brgyshareacctid         : String 
+    brgyintshareacctid      : String 
+
+    provshare               : Double
+    provintshare            : Double
+    provshareacctid         : String 
+    provintshareacctid      : String 
+    
     expr                  : String 
     paidyear              : Integer
     revtype               : String
-
-    reclassed             : Boolean
+    reclassed               :Boolean
 end
 
 
@@ -53,6 +65,7 @@ declare AssessedValueFact
     rptledgerid   : String
     year          : Integer
     assessedvalue : Double 
+    qtrlyav       : Double 
 end
 
 

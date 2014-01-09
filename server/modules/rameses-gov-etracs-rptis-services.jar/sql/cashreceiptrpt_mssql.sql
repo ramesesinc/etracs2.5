@@ -20,8 +20,8 @@ FROM (
 		f.tdno, 
 		MIN(bi.year) AS fromyear,
 		MAX(bi.year) AS toyear,
-		SUM(bi.basic - bi.basicpaid - bi.basicdisc + bi.basicint - bi.basicintpaid) AS basic,
-		SUM(bi.sef - bi.sefpaid -  bi.sefdisc + bi.sefint - bi.sefintpaid) AS sef,
+		SUM(bi.basic - bi.basicpaid - (bi.basicdisc - bi.basicdisctaken) + bi.basicint - bi.basicintpaid) AS basic,
+		SUM(bi.sef - bi.sefpaid -  (bi.sefdisc - bi.sefdisctaken) + bi.sefint - bi.sefintpaid) AS sef,
 		SUM(bi.firecode - bi.firecodepaid) AS firecode 
 	FROM rptledger rl
 		INNER JOIN rptledgerbillitem bi ON rl.objid = bi.rptledgerid
@@ -60,8 +60,8 @@ FROM (
 		f.tdno, 
 		MIN(bi.year) AS fromyear,
 		MAX(bi.year) AS toyear,
-		SUM(bi.basic - bi.basicpaid - bi.basicdisc + bi.basicint - bi.basicintpaid) AS basic,
-		SUM(bi.sef - bi.sefpaid -  bi.sefdisc + bi.sefint - bi.sefintpaid) AS sef,
+		SUM(bi.basic - bi.basicpaid - (bi.basicdisc - bi.basicdisctaken) + bi.basicint - bi.basicintpaid) AS basic,
+		SUM(bi.sef - bi.sefpaid -  (bi.sefdisc - bi.sefdisctaken) + bi.sefint - bi.sefintpaid) AS sef,
 		SUM(bi.firecode - bi.firecodepaid) AS firecode 
 	FROM rptbill rb
 		INNER JOIN rptbill_ledger rbl ON rb.objid = rbl.rptbillid 
@@ -109,7 +109,17 @@ INSERT INTO cashreceiptitem_rpt
      firecode,
      firecodeacct_objid,
      revtype,
-     partialled
+     partialled,
+     brgyshare, 
+     brgyintshare,
+     lgushare,
+     lguintshare,
+     provshare,
+     provintshare,
+     brgyshareacctid,
+     brgyintshareacctid,
+     provshareacctid,
+     provintshareacctid
 )
 SELECT 
 	bi.objid,
@@ -123,7 +133,7 @@ SELECT
 	bi.toqtr,
 	bi.basic - bi.basicpaid AS basic,
 	bi.basicint - bi.basicintpaid  AS basicint,
-	bi.basicdisc,
+	(bi.basicdisc - bi.basicdisctaken) AS basicdisc ,
 	bi.basiccredit,
 	bi.basicamnesty,
 	bi.basicintamnesty,
@@ -131,7 +141,7 @@ SELECT
 	bi.basicintacctid AS  basicintacct_objid,
 	bi.sef - bi.sefpaid  AS sef,
 	bi.sefint - bi.sefintpaid  AS  sefint,
-	bi.sefdisc,
+	(bi.sefdisc - bi.sefdisctaken) AS sefdisc ,
 	bi.sefcredit,
 	bi.sefamnesty,
 	bi.sefintamnesty,
@@ -140,7 +150,17 @@ SELECT
 	bi.firecode - bi.firecodepaid AS firecode,
 	bi.firecodeacctid AS firecodeacct_objid,
 	bi.revtype,
-	bi.partial AS partialled
+	bi.partial AS partialled,
+	bi.brgyshare, 
+    bi.brgyintshare,
+    bi.lgushare,
+    bi.lguintshare,
+    bi.provshare,
+    bi.provintshare,
+    bi.brgyshareacctid,
+    bi.brgyintshareacctid,
+    bi.provshareacctid,
+    bi.provintshareacctid
 FROM rptledger rl
 		INNER JOIN rptledgerbillitem bi ON rl.objid = bi.rptledgerid
 WHERE rl.objid = $P{rptledgerid}
@@ -148,7 +168,6 @@ WHERE rl.objid = $P{rptledgerid}
 
 [deletePaidBillItems]  
 DELETE FROM rptledgerbillitem WHERE rptledgerid = $P{rptledgerid} 
-
 
 
 [updateLedgerYearQtrPaid]
@@ -179,7 +198,7 @@ FROM (
 		rb.code AS item_code, 
 		rb.title AS item_title,
 		rb.fund_objid AS item_fund_objid, rb.fund_code AS item_fund_code, rb.fund_title AS item_fund_title,
-		bi.basic - bi.basicpaid - bi.basicdisc AS amount
+		bi.basic - bi.basicpaid - (bi.basicdisc - bi.basicdisctaken) AS amount
 	FROM rptledger rl
 		INNER JOIN rptledgerbillitem bi ON rl.objid = bi.rptledgerid
 		INNER JOIN revenueitem rb ON bi.basicacctid = rb.objid 
@@ -205,7 +224,7 @@ FROM (
 		rb.code AS item_code,
 		rb.title AS item_title,
 		rb.fund_objid AS item_fund_objid, rb.fund_code AS item_fund_code, rb.fund_title AS item_fund_title,
-		bi.sef - bi.sefpaid - bi.sefdisc AS amount
+		bi.sef - bi.sefpaid - (bi.sefdisc - bi.sefdisctaken) AS amount
 	FROM rptledger rl
 		INNER JOIN rptledgerbillitem bi ON rl.objid = bi.rptledgerid
 		INNER JOIN revenueitem rb ON bi.sefacctid = rb.objid 
@@ -253,21 +272,21 @@ SELECT
 	t.classcode,
 	t.barangay,
 	CASE
-		WHEN MIN(t.fromyear) = MAX(t.toyear) AND MIN(t.fromqtr) = 1 AND MAX(t.toqtr) = 4 
-			THEN 'FULL ' + CONVERT(VARCHAR(4),MAX(t.toyear))
-		WHEN MIN(t.fromyear) = MAX(t.toyear) AND MIN(t.fromqtr) = MAX(t.toqtr)
-			THEN CONVERT(VARCHAR(1),MAX(t.toqtr)) + 'Q, ' + CONVERT(VARCHAR(4),MAX(t.toyear))
-		WHEN MIN(t.fromyear) = MAX(t.toyear) 
-			THEN CONVERT(VARCHAR(1),MIN(t.fromqtr)) + CONVERT(VARCHAR(1),MAX(t.toqtr)) + 'Q, ' + CONVERT(VARCHAR(4),MAX(t.toyear))
+		WHEN t.fromyear = t.toyear AND t.fromqtr = 1 AND t.toqtr = 4 
+			THEN 'FULL ' + CONVERT(VARCHAR(4),t.toyear)
+		WHEN t.fromyear = t.toyear AND t.fromqtr = t.toqtr
+			THEN CONVERT(VARCHAR(1),t.toqtr) + 'Q, ' + CONVERT(VARCHAR(4),t.toyear)
+		WHEN t.fromyear = t.toyear 
+			THEN CONVERT(VARCHAR(1),t.fromqtr) + CONVERT(VARCHAR(1),t.toqtr) + 'Q, ' + CONVERT(VARCHAR(4),t.toyear)
 
-		WHEN MIN(t.fromqtr) = 1 AND MAX(t.toqtr) = 4
-			THEN 'FULL ' + CONVERT(VARCHAR(4),MIN(t.fromyear)) + '-' + CONVERT(VARCHAR(4),MAX(t.toyear))
-		WHEN MIN(t.fromqtr) = 1 AND MAX(t.toqtr) <> 4
-			THEN CONVERT(VARCHAR(4),MIN(t.fromyear)) + '-' + CONVERT(VARCHAR(1),MAX(t.toqtr)) + 'Q,' + CONVERT(VARCHAR(4),MAX(t.toyear))
-		WHEN MIN(t.fromqtr) <> 1 AND MAX(t.toqtr) = 4
-			THEN CONVERT(VARCHAR(1),MIN(t.fromqtr)) + 'Q,' + CONVERT(VARCHAR(4),MIN(t.fromyear)) + '-' + CONVERT(VARCHAR(4),MAX(t.toyear))
+		WHEN t.fromqtr = 1 AND t.toqtr = 4
+			THEN 'FULL ' + CONVERT(VARCHAR(4),t.fromyear) + '-' + CONVERT(VARCHAR(4),t.toyear)
+		WHEN t.fromqtr = 1 AND t.toqtr <> 4
+			THEN CONVERT(VARCHAR(4),t.fromyear) + '-' + CONVERT(VARCHAR(1),t.toqtr) + 'Q,' + CONVERT(VARCHAR(4),t.toyear)
+		WHEN t.fromqtr <> 1 AND t.toqtr = 4
+			THEN CONVERT(VARCHAR(1),t.fromqtr) + 'Q,' + CONVERT(VARCHAR(4),t.fromyear) + '-' + CONVERT(VARCHAR(4),t.toyear)
 		ELSE
-			CONVERT(VARCHAR(1),MIN(t.fromqtr)) + 'Q,' + CONVERT(VARCHAR(4),MIN(t.fromyear)) + '-' + CONVERT(VARCHAR(1),MAX(t.toqtr)) + 'Q,' + CONVERT(VARCHAR(4),MAX(t.toyear))
+			CONVERT(VARCHAR(1),t.fromqtr) + 'Q,' + CONVERT(VARCHAR(4),t.fromyear) + '-' + CONVERT(VARCHAR(1),t.toqtr) + 'Q,' + CONVERT(VARCHAR(4),t.toyear)
 	END + (CASE WHEN t.partialled = 0 THEN '' ELSE '*P*' END) AS period,
 	SUM(t.basic) AS basic, 
 	SUM(t.basicdisc) AS basicdisc, 
@@ -292,9 +311,9 @@ FROM (
 		pc.code AS classcode,
 		b.name AS barangay,
 		MIN(cri.year) AS fromyear,
-		(SELECT MIN(CASE WHEN qtr = 0 THEN 1 ELSE qtr END)  FROM cashreceiptitem_rpt WHERE rptreceiptid = cri.rptreceiptid AND YEAR = MIN(cri.year) ) AS fromqtr,
+		(SELECT MIN(CASE WHEN qtr = 0 THEN 1 ELSE qtr END)  FROM cashreceiptitem_rpt WHERE rptreceiptid = cri.rptreceiptid AND rptledgerid = cri.rptledgerid AND YEAR = MIN(cri.year) ) AS fromqtr,
 		MAX(cri.year) AS toyear,
-		(SELECT MAX(CASE WHEN qtr = 0 THEN 4 ELSE qtr END) FROM cashreceiptitem_rpt WHERE rptreceiptid = cri.rptreceiptid AND YEAR = MIN(cri.year) ) AS toqtr,
+		(SELECT MAX(CASE WHEN qtr = 0 THEN 4 ELSE qtr END) FROM cashreceiptitem_rpt WHERE rptreceiptid = cri.rptreceiptid AND  rptledgerid = cri.rptledgerid AND YEAR = MAX(cri.year) ) AS toqtr,
 		SUM(basic) AS basic,
 		SUM(basicint) AS basicint,
 		SUM(basicdisc) AS basicdisc,
@@ -334,7 +353,11 @@ GROUP BY
 		t.cadastrallotno,
 		t.classcode,
 		t.barangay,
-		t.partialled
+		t.partialled,
+		t.fromyear,
+		t.fromqtr,
+		t.toyear, 
+		t.toqtr
 
 
 
@@ -435,3 +458,17 @@ DELETE FROM rptbill WHERE objid = $P{billid}
 
 [deleteRptBillLedgers]
 DELETE FROM rptbill_ledger WHERE rptbillid = $P{billid}
+
+
+[getCollectionsByCount]
+SELECT 
+	cr.receiptno, 
+	CASE WHEN cv.objid IS NULL THEN cr.amount  ELSE 0.0 END AS amount,
+	CASE WHEN cv.objid IS NULL THEN 0  ELSE 1 END AS voided
+FROM cashreceipt cr 
+	LEFT JOIN cashreceipt_void cv ON cr.objid = cv.receiptid 
+	LEFT JOIN remittance_cashreceipt rc ON cr.objid = rc.objid 
+WHERE cr.collector_objid = $P{userid}
+  AND rc.objid IS NULL 
+ORDER BY cr.txndate DESC   
+  

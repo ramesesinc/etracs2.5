@@ -42,6 +42,7 @@ public class RPUPage extends javax.swing.JPanel {
         formPanel9 = new com.rameses.rcp.util.FormPanel();
         xCheckBox1 = new com.rameses.rcp.control.XCheckBox();
         xComboBox5 = new com.rameses.rcp.control.XComboBox();
+        xCheckBox2 = new com.rameses.rcp.control.XCheckBox();
 
         setLayout(new java.awt.BorderLayout());
 
@@ -120,6 +121,7 @@ public class RPUPage extends javax.swing.JPanel {
         xCheckBox1.setCaption("Taxability");
         xCheckBox1.setCaptionWidth(90);
         xCheckBox1.setName("rpu.taxable");
+        xCheckBox1.setOpaque(false);
         xCheckBox1.setText("Taxable? ");
         formPanel9.add(xCheckBox1);
 
@@ -132,6 +134,16 @@ public class RPUPage extends javax.swing.JPanel {
         xComboBox5.setPreferredSize(new java.awt.Dimension(0, 22));
         formPanel9.add(xComboBox5);
 
+        xCheckBox2.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        xCheckBox2.setCaption("Taxability");
+        xCheckBox2.setCaptionWidth(90);
+        xCheckBox2.setName("rpu.reclassed");
+        xCheckBox2.setOpaque(false);
+        xCheckBox2.setPreferredSize(new java.awt.Dimension(0, 15));
+        xCheckBox2.setShowCaption(false);
+        xCheckBox2.setText(" Reclassed?");
+        formPanel9.add(xCheckBox2);
+
         org.jdesktop.layout.GroupLayout jPanel7Layout = new org.jdesktop.layout.GroupLayout(jPanel7);
         jPanel7.setLayout(jPanel7Layout);
         jPanel7Layout.setHorizontalGroup(
@@ -143,8 +155,8 @@ public class RPUPage extends javax.swing.JPanel {
         );
         jPanel7Layout.setVerticalGroup(
             jPanel7Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(formPanel8, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 81, Short.MAX_VALUE)
-            .add(formPanel9, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 81, Short.MAX_VALUE)
+            .add(formPanel8, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 90, Short.MAX_VALUE)
+            .add(formPanel9, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         add(jPanel7, java.awt.BorderLayout.NORTH);
 
@@ -160,6 +172,7 @@ public class RPUPage extends javax.swing.JPanel {
     private javax.swing.JPanel jPanel7;
     private com.rameses.rcp.control.XActionBar xActionBar1;
     private com.rameses.rcp.control.XCheckBox xCheckBox1;
+    private com.rameses.rcp.control.XCheckBox xCheckBox2;
     private com.rameses.rcp.control.XComboBox xComboBox5;
     private com.rameses.rcp.control.XDecimalField xDecimalField10;
     private com.rameses.rcp.control.XDecimalField xDecimalField8;

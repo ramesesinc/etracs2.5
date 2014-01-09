@@ -109,6 +109,7 @@ class RPTLedgerInterceptor
             toqtr                   : 0,
             assessedvalue           : faas.rpu.totalav,
             systemcreated           : true,
+            reclassed               : faas.rpu.reclassed,
         ]
 	}
 	

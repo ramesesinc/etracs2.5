@@ -177,7 +177,7 @@ public class RPTBillingService
         bill.ledger = em.findOpenLedgerById(bill)
         if (!bill.ledger) throw new Exception('Ledger is fully paid or is exempted.')
 
-        if (bill.ledger.recalcbill == 1 ){
+        if (bill.ledger.recalcbill == 1 || bill.forceRecalcBill == true){
         	println 'Recalculating ledger -> ' + bill.ledger.tdno 
         	clearBillItems(bill)
 	        def data = executeRules(bill)
@@ -270,19 +270,25 @@ public class RPTBillingService
 
 	def buildActions(bill, data){
 		def actions = new RuleAction();
-		actions.addCommand('calc-basic', new CalcBasic(ledgers:data.ledgers))
-		actions.addCommand('calc-basicint', new CalcBasicInterest(ledgers:data.ledgers))
-		actions.addCommand('calc-basicdisc', new CalcBasicDiscount(ledgers:data.ledgers))
-		actions.addCommand('calc-basic-amnesty', new CalcBasicAmnesty(ledgers:data.ledgers))
-		actions.addCommand('calc-basicint-amnesty', new CalcBasicIntAmnesty(ledgers:data.ledgers))
+		actions.addCommand('calc-basic', new CalcBasic(numSvc:numSvc, ledgers:data.ledgers))
+		actions.addCommand('calc-basicint', new CalcBasicInterest(numSvc:numSvc, ledgers:data.ledgers))
+		actions.addCommand('calc-basicdisc', new CalcBasicDiscount(numSvc:numSvc, ledgers:data.ledgers))
+		actions.addCommand('calc-basic-amnesty', new CalcBasicAmnesty(numSvc:numSvc, ledgers:data.ledgers))
+		actions.addCommand('calc-basicint-amnesty', new CalcBasicIntAmnesty(numSvc:numSvc, ledgers:data.ledgers))
 
-		actions.addCommand('calc-sef', new CalcSEF(ledgers:data.ledgers))
-		actions.addCommand('calc-sefint', new CalcSEFInterest(ledgers:data.ledgers))
-		actions.addCommand('calc-sefdisc', new CalcSEFDiscount(ledgers:data.ledgers))
-		actions.addCommand('calc-sef-amnesty', new CalcSEFAmnesty(ledgers:data.ledgers))
-		actions.addCommand('calc-sefint-amnesty', new CalcSEFIntAmnesty(ledgers:data.ledgers))
+		actions.addCommand('calc-sef', new CalcSEF(numSvc:numSvc, ledgers:data.ledgers))
+		actions.addCommand('calc-sefint', new CalcSEFInterest(numSvc:numSvc, ledgers:data.ledgers))
+		actions.addCommand('calc-sefdisc', new CalcSEFDiscount(numSvc:numSvc, ledgers:data.ledgers))
+		actions.addCommand('calc-sef-amnesty', new CalcSEFAmnesty(numSvc:numSvc, ledgers:data.ledgers))
+		actions.addCommand('calc-sefint-amnesty', new CalcSEFIntAmnesty(numSvc:numSvc, ledgers:data.ledgers))
+		actions.addCommand('calc-firecode', new CalcFireCode(numSvc:numSvc, ledgers:data.ledgers))
 
-		actions.addCommand('calc-firecode', new CalcFireCode(ledgers:data.ledgers))
+		actions.addCommand('calc-brgyshare', new CalcBrgyShare(numSvc:numSvc, ledgers:data.ledgers))
+		actions.addCommand('calc-brgyint-share', new CalcBrgyIntShare(numSvc:numSvc, ledgers:data.ledgers))
+		actions.addCommand('calc-lgushare', new CalcLguShare(numSvc:numSvc, ledgers:data.ledgers))
+		actions.addCommand('calc-lguint-share', new CalcLguIntShare(numSvc:numSvc, ledgers:data.ledgers))
+		actions.addCommand('calc-provshare', new CalcProvShare(numSvc:numSvc, ledgers:data.ledgers))
+		actions.addCommand('calc-provint-share', new CalcProvIntShare(numSvc:numSvc, ledgers:data.ledgers))
 		return actions 
 	}
 
@@ -378,6 +384,7 @@ public class RPTBillingService
 		ledger.toqtr 			= toqtr
 		ledger.originalav 		= ledgerfaas.assessedvalue 
 		ledger.assessedvalue	= ledgerfaas.assessedvalue 
+		ledger.barangayid 		= bill.ledger.barangayid
 		ledger.av 				= av
 		ledger.qtrlyav 				= av
 		ledger.txntype 			= ledgerfaas.txntype.objid
@@ -424,6 +431,7 @@ public class RPTBillingService
 				avfact.rptledgerid = rl.objid
 				avfact.year  	   = util.toInteger(yr)
 				avfact.assessedvalue  = numSvc.round(ledgerfaas.assessedvalue)
+				avfact.qtrlyav = numSvc.round(ledgerfaas.assessedvalue / 4.0)
 				map.facts << avfact 		
 			}
 		}
@@ -462,6 +470,12 @@ public class RPTBillingService
 		item.partialsef = 0.0
 		item.partialsefint = 0.0
 		item.partialsefdisc = 0.0
+		item.brgyshare = 0.0
+		item.brgyintshare = 0.0
+		item.lgushare = 0.0
+		item.lguintshare = 0.0
+		item.provshare = 0.0
+		item.provintshare = 0.0
 	}
 
 	int calculateNoOfMonthsFromQtr(pdate, year, qtr) {
@@ -573,8 +587,6 @@ public class RPTBillingService
 		def paiditems = em.getFullyPaidItems(['rptledgerid':ledger.rptledgerid])
 		def idx = 0
 		def pitem = null 
-		def totalbasic = 0.0
-		def totalsef = 0.0
 		def partialinfo = [:]
 
 		for(; idx < paiditems.size(); idx++)
@@ -585,8 +597,6 @@ public class RPTBillingService
 			def amtdue = pitem.total 
 			if ( payment >= amtdue){
 				payment -= amtdue 
-				totalbasic += (pitem.basic + pitem.basicint)
-				totalsef += (pitem.sef + pitem.sefint)
 			}
 			else 
 			{
@@ -601,32 +611,18 @@ public class RPTBillingService
 				}
 
 				if (payment > 0.0){
-					//apply proportionally
-					def basicpaymentrate  = numSvc.round(pitem.basic / (pitem.basic + pitem.sef))
-					def basicpayment 	= numSvc.round(payment * basicpaymentrate)
-					def sefpayment 		= payment - basicpayment 
+					def linetotal = pitem.total - pitem.firecode 
 
-					def basicintrate    = numSvc.round(pitem.basicint / pitem.basic)
-					def partialbasic    = numSvc.round(basicpayment / (1 + basicintrate))
-					def partialbasicint = basicpayment - partialbasic 
+					def partialbasic     = numSvc.round(  payment * (pitem.basic - pitem.basicdisc) / linetotal )
+					def partialbasicint  = numSvc.round(  payment * pitem.basicint / linetotal )
+					def partialbasicdisc = numSvc.round(  payment * pitem.basicdisc / linetotal )
 
-					def partialbasicdisc 		= 0.0
-					if (pitem.basicdisc > 0.0) {
-						def basicdiscrate = numSvc.round(pitem.basicdisc / pitem.basic)
-						partialbasicdisc = numSvc.round(partialbasic * basicdiscrate)
-						partialbasic += partialbasicdisc
-					}
+					def partialsefint  = numSvc.round(  payment * pitem.sefint / linetotal )
+					def partialsefdisc = numSvc.round(  payment * pitem.sefdisc / linetotal )
+					def partialsef = payment - partialsefint - partialbasic - partialbasicint 
 
-					def sefintrate    	= numSvc.round(pitem.sefint / pitem.sef)
-					def partialsef    	= numSvc.round(sefpayment / (1 + sefintrate))
-					def partialsefint 	= sefpayment - partialsef 
-
-					def partialsefdisc 	= 0.0
-					if (pitem.sefdisc > 0.0) {
-						def sefdiscrate = numSvc.round(pitem.sefdisc / pitem.sef)
-						partialsefdisc = numSvc.round(partialsef * sefdiscrate)
-						partialsef += partialsefdisc
-					}
+					partialbasic += partialbasicdisc
+					partialsef += partialsefdisc 
 
 					def param = [
 						rptledgerid  : pitem.rptledgerid,
@@ -638,9 +634,7 @@ public class RPTBillingService
 					else 
 						em.deleteUnpartialledYearlyItems(param)
 
-					totalbasic += (partialbasic + partialbasicint)
-					totalsef += (partialsef + partialsefint)
-
+					
 					partialinfo = [
 						objid 				: pitem.objid,
 						partialbasic 		: partialbasic,
@@ -653,14 +647,18 @@ public class RPTBillingService
 						amount 				: partial,
 						toyear				: pitem.year,
 						toqtr				: pitem.toqtr, 
-						totalbasic 			: totalbasic,
-						totalsef 			: totalsef,
 						partialledyear		: pitem.year,
 						partialledqtr		: pitem.fromqtr,
 					]
 					
 					em.updatePartialInfo(partialinfo)
+					
+					def total = em.findPartialTotal(param)
+					partialinfo.totalgeneral = total.totalgeneral
+					partialinfo.totalsef = total.totalsef 
+
 					payment = 0.0
+					
 					break;
 				}
 			}
@@ -681,15 +679,16 @@ public class RPTBillingService
 ============================================================================**/	
 
 public class CalcBasic implements RuleActionHandler {
+	def numSvc
 	def ledgers 
 	public void execute(def params, def drools) {
 		def ledger = ledgers.find{ it.objid == params.rptledger.objid }
 		if (ledger){
-			ledger.basic = params.expr.getDecimalValue();
+			ledger.basic = numSvc.round(params.expr.getDecimalValue());
 			ledger.basicacctid = params.basicacct.key
 			ledger.revtype = params.revtype.key
 
-			params.rptledger.basic = params.expr.getDecimalValue();
+			params.rptledger.basic = ledger.basic
 			params.rptledger.basicacctid = params.basicacct.key
 			params.rptledger.revtype = params.revtype.key
 		}
@@ -697,48 +696,52 @@ public class CalcBasic implements RuleActionHandler {
 }	
 
 public class CalcBasicInterest implements RuleActionHandler {
+	def numSvc
 	def ledgers 
 	public void execute(def params, def drools) {
 		def ledger = ledgers.find{ it.objid == params.rptledger.objid }
 		if (ledger){
-			ledger.basicint = params.expr.getDecimalValue();
+			ledger.basicint = numSvc.round(params.expr.getDecimalValue());
 			ledger.basicintacctid = params.basicintacct.key
 
-			params.rptledger.basicint = params.expr.getDecimalValue();
+			params.rptledger.basicint = ledger.basicint
 			params.rptledger.basicintacctid = params.basicintacct.key
 		}
 	}
 }	
 
 public class CalcBasicDiscount implements RuleActionHandler {
+	def numSvc
 	def ledgers 
 	public void execute(def params, def drools) {
 		def ledger = ledgers.find{ it.objid == params.rptledger.objid }
 		if (ledger){
-			ledger.basicdisc = params.expr.getDecimalValue();
+			ledger.basicdisc = numSvc.round(params.expr.getDecimalValue());
 			params.rptledger.basicdisc = params.expr.getDecimalValue();
 		}
 	}
 }	
 
 public class CalcBasicAmnesty implements RuleActionHandler {
+	def numSvc
 	def ledgers 
 	public void execute(def params, def drools) {
 		def ledger = ledgers.find{ it.objid == params.rptledger.objid }
 		if (ledger){
-			ledger.basicamnesty = params.expr.getDecimalValue();
-			params.rptledger.basicamnesty = params.expr.getDecimalValue();
+			ledger.basicamnesty = numSvc.round(params.expr.getDecimalValue());
+			params.rptledger.basicamnesty = ledger.basicamnesty 
 		}
 	}
 }	
 
 public class CalcBasicIntAmnesty implements RuleActionHandler {
+	def numSvc
 	def ledgers 
 	public void execute(def params, def drools) {
 		def ledger = ledgers.find{ it.objid == params.rptledger.objid }
 		if (ledger){
-			ledger.basicintamnesty = params.expr.getDecimalValue();
-			params.rptledger.basicintamnesty = params.expr.getDecimalValue();
+			ledger.basicintamnesty = numSvc.round(params.expr.getDecimalValue());
+			params.rptledger.basicintamnesty = ledger.basicintamnesty 
 		}
 	}
 }	
@@ -746,75 +749,168 @@ public class CalcBasicIntAmnesty implements RuleActionHandler {
 
 
 public class CalcSEF implements RuleActionHandler {
+	def numSvc
 	def ledgers 
 	public void execute(def params, def drools) {
 		def ledger = ledgers.find{ it.objid == params.rptledger.objid }
 		if (ledger){
-			ledger.sef = params.expr.getDecimalValue();
+			ledger.sef = numSvc.round(params.expr.getDecimalValue());
 			ledger.sefacctid = params.sefacct.key
-			params.rptledger.sef = params.expr.getDecimalValue();
+			params.rptledger.sef = ledger.sef
 			params.rptledger.sefacctid = params.sefacct.key
 		}
 	}
 }	
 
 public class CalcSEFInterest implements RuleActionHandler {
+	def numSvc
 	def ledgers 
 	public void execute(def params, def drools) {
 		def ledger = ledgers.find{ it.objid == params.rptledger.objid }
 		if (ledger){
-			ledger.sefint = params.expr.getDecimalValue();
+			ledger.sefint = numSvc.round(params.expr.getDecimalValue());
 			ledger.sefintacctid = params.sefintacct.key
 
-			params.rptledger.sefint = params.expr.getDecimalValue();
+			params.rptledger.sefint = ledger.sefint
 			params.rptledger.sefintacctid = params.sefintacct.key
 		}
 	}
 }	
 
 public class CalcSEFDiscount implements RuleActionHandler {
+	def numSvc
 	def ledgers 
 	public void execute(def params, def drools) {
 		def ledger = ledgers.find{ it.objid == params.rptledger.objid }
 		if (ledger){
-			ledger.sefdisc = params.expr.getDecimalValue();
-			params.rptledger.sefdisc = params.expr.getDecimalValue();
+			ledger.sefdisc = numSvc.round(params.expr.getDecimalValue());
+			params.rptledger.sefdisc = ledger.sefdisc 
 		}
 	}
 }	
 
 public class CalcSEFAmnesty implements RuleActionHandler {
+	def numSvc
 	def ledgers 
 	public void execute(def params, def drools) {
 		def ledger = ledgers.find{ it.objid == params.rptledger.objid }
 		if (ledger){
-			ledger.sefamnesty = params.expr.getDecimalValue();
-			params.rptledger.sefamnesty = params.expr.getDecimalValue();
+			ledger.sefamnesty = numSvc.round(params.expr.getDecimalValue());
+			params.rptledger.sefamnesty = ledger.sefamnesty
 		}
 	}
 }	
 
 public class CalcSEFIntAmnesty implements RuleActionHandler {
+	def numSvc
 	def ledgers 
 	public void execute(def params, def drools) {
 		def ledger = ledgers.find{ it.objid == params.rptledger.objid }
 		if (ledger){
-			ledger.sefintamnesty = params.expr.getDecimalValue();
-			params.rptledger.sefintamnesty = params.expr.getDecimalValue();
+			ledger.sefintamnesty = numSvc.round(params.expr.getDecimalValue());
+			params.rptledger.sefintamnesty = ledger.sefintamnesty
 		}
 	}
 }	
 
 public class CalcFireCode implements RuleActionHandler {
+	def numSvc
 	def ledgers 
 	public void execute(def params, def drools) {
 		def ledger = ledgers.find{ it.objid == params.rptledger.objid }
 		if (ledger){
-			ledger.firecode = params.expr.getDecimalValue()
+			ledger.firecode = numSvc.round(params.expr.getDecimalValue())
 			ledger.firecodeacctid = params.firecodeacct.key
 
-			params.rptledger.firecode = params.expr.getDecimalValue()
+			params.rptledger.firecode = ledger.firecode
 			params.rptledger.firecodeacctid = params.firecodeacct.key
+		}
+	}
+}	
+
+
+public class CalcBrgyShare implements RuleActionHandler {
+	def numSvc
+	def ledgers 
+	public void execute(def params, def drools) {
+		def ledger = ledgers.find{ it.objid == params.rptledger.objid }
+		if (ledger){
+			ledger.brgyshare = numSvc.round(params.expr.getDecimalValue())
+			ledger.brgyshareacctid = params.brgyshareacct.key
+			params.rptledger.brgyshare = ledger.brgyshare
+			params.rptledger.brgyshareacctid = ledger.brgyshareacctid
+		}
+	}
+}	
+
+
+public class CalcBrgyIntShare implements RuleActionHandler {
+	def numSvc
+	def ledgers 
+	public void execute(def params, def drools) {
+		def ledger = ledgers.find{ it.objid == params.rptledger.objid }
+		if (ledger){
+			ledger.brgyintshare = numSvc.round(params.expr.getDecimalValue())
+			ledger.brgyintshareacctid = params.brgyintshareacct.key
+			params.rptledger.brgyintshare = ledger.brgyintshare
+			params.rptledger.brgyintshareacctid = ledger.brgyintshareacctid
+		}
+	}
+}	
+
+
+
+public class CalcLguShare implements RuleActionHandler {
+	def numSvc
+	def ledgers 
+	public void execute(def params, def drools) {
+		def ledger = ledgers.find{ it.objid == params.rptledger.objid }
+		if (ledger){
+			ledger.lgushare = numSvc.round(params.expr.getDecimalValue())
+		}
+	}
+}	
+
+
+public class CalcLguIntShare implements RuleActionHandler {
+	def numSvc
+	def ledgers 
+	public void execute(def params, def drools) {
+		def ledger = ledgers.find{ it.objid == params.rptledger.objid }
+		if (ledger){
+			ledger.lguintshare = numSvc.round(params.expr.getDecimalValue())
+		}
+	}
+}	
+
+
+
+
+public class CalcProvShare implements RuleActionHandler {
+	def numSvc
+	def ledgers 
+	public void execute(def params, def drools) {
+		def ledger = ledgers.find{ it.objid == params.rptledger.objid }
+		if (ledger){
+			ledger.provshare = numSvc.round(params.expr.getDecimalValue())
+			ledger.provshareacctid = params.provshareacct.key
+			params.rptledger.provshare = ledger.provshare
+			params.rptledger.provshareacctid = ledger.provshareacctid
+		}
+	}
+}	
+
+
+public class CalcProvIntShare implements RuleActionHandler {
+	def numSvc
+	def ledgers 
+	public void execute(def params, def drools) {
+		def ledger = ledgers.find{ it.objid == params.rptledger.objid }
+		if (ledger){
+			ledger.provintshare = numSvc.round(params.expr.getDecimalValue())
+			ledger.provintshareacctid = params.provintshareacct.key
+			params.rptledger.provintshare = ledger.provintshare
+			params.rptledger.provintshareacctid = ledger.provintshareacctid
 		}
 	}
 }	

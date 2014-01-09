@@ -23,6 +23,7 @@ public class FixLedgerFaasController
     
     String title = 'Update Ledger FAAS Information'
     
+    def states = ['APPROVED', 'PENDING', 'CANCELLED']
     
     void init(){
     }
