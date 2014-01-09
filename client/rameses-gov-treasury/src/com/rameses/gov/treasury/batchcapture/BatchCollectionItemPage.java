@@ -115,6 +115,7 @@ public class BatchCollectionItemPage extends javax.swing.JPanel {
             })
         });
         xDataTable1.setHandler("listModel");
+        xDataTable1.setIndex(-10);
         xDataTable1.setName("selectedItem");
 
         xLabel1.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
