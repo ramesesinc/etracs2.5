@@ -60,8 +60,8 @@ FROM (
 		f.tdno, 
 		MIN(bi.year) AS fromyear,
 		MAX(bi.year) AS toyear,
-		SUM(bi.basic - bi.basicpaid - bi.basicdisc + bi.basicint - bi.basicintpaid) AS basic,
-		SUM(bi.sef - bi.sefpaid -  bi.sefdisc + bi.sefint - bi.sefintpaid) AS sef,
+		SUM(bi.basic - bi.basicpaid - (bi.basicdisc - bi.basicdisctaken) + bi.basicint - bi.basicintpaid) AS basic,
+		SUM(bi.sef - bi.sefpaid -  (bi.sefdisc - bi.sefdisctaken) + bi.sefint - bi.sefintpaid) AS sef,
 		SUM(bi.firecode - bi.firecodepaid) AS firecode 
 	FROM rptbill rb
 		INNER JOIN rptbill_ledger rbl ON rb.objid = rbl.rptbillid 
@@ -133,7 +133,7 @@ SELECT
 	bi.toqtr,
 	bi.basic - bi.basicpaid AS basic,
 	bi.basicint - bi.basicintpaid  AS basicint,
-	bi.basicdisc,
+	(bi.basicdisc - bi.basicdisctaken) AS basicdisc ,
 	bi.basiccredit,
 	bi.basicamnesty,
 	bi.basicintamnesty,
@@ -141,7 +141,7 @@ SELECT
 	bi.basicintacctid AS  basicintacct_objid,
 	bi.sef - bi.sefpaid  AS sef,
 	bi.sefint - bi.sefintpaid  AS  sefint,
-	bi.sefdisc,
+	(bi.sefdisc - bi.sefdisctaken) AS sefdisc ,
 	bi.sefcredit,
 	bi.sefamnesty,
 	bi.sefintamnesty,
@@ -198,7 +198,7 @@ FROM (
 		rb.code AS item_code, 
 		rb.title AS item_title,
 		rb.fund_objid AS item_fund_objid, rb.fund_code AS item_fund_code, rb.fund_title AS item_fund_title,
-		bi.basic - bi.basicpaid - bi.basicdisc AS amount
+		bi.basic - bi.basicpaid - (bi.basicdisc - bi.basicdisctaken) AS amount
 	FROM rptledger rl
 		INNER JOIN rptledgerbillitem bi ON rl.objid = bi.rptledgerid
 		INNER JOIN revenueitem rb ON bi.basicacctid = rb.objid 
@@ -224,7 +224,7 @@ FROM (
 		rb.code AS item_code,
 		rb.title AS item_title,
 		rb.fund_objid AS item_fund_objid, rb.fund_code AS item_fund_code, rb.fund_title AS item_fund_title,
-		bi.sef - bi.sefpaid - bi.sefdisc AS amount
+		bi.sef - bi.sefpaid - (bi.sefdisc - bi.sefdisctaken) AS amount
 	FROM rptledger rl
 		INNER JOIN rptledgerbillitem bi ON rl.objid = bi.rptledgerid
 		INNER JOIN revenueitem rb ON bi.sefacctid = rb.objid 
@@ -311,9 +311,9 @@ FROM (
 		pc.code AS classcode,
 		b.name AS barangay,
 		MIN(cri.year) AS fromyear,
-		(SELECT MIN(CASE WHEN qtr = 0 THEN 1 ELSE qtr END)  FROM cashreceiptitem_rpt WHERE rptreceiptid = cri.rptreceiptid AND YEAR = MIN(cri.year) ) AS fromqtr,
+		(SELECT MIN(CASE WHEN qtr = 0 THEN 1 ELSE qtr END)  FROM cashreceiptitem_rpt WHERE rptreceiptid = cri.rptreceiptid AND rptledgerid = cri.rptledgerid AND YEAR = MIN(cri.year) ) AS fromqtr,
 		MAX(cri.year) AS toyear,
-		(SELECT MAX(CASE WHEN qtr = 0 THEN 4 ELSE qtr END) FROM cashreceiptitem_rpt WHERE rptreceiptid = cri.rptreceiptid AND YEAR = MAX(cri.year) ) AS toqtr,
+		(SELECT MAX(CASE WHEN qtr = 0 THEN 4 ELSE qtr END) FROM cashreceiptitem_rpt WHERE rptreceiptid = cri.rptreceiptid AND  rptledgerid = cri.rptledgerid AND YEAR = MAX(cri.year) ) AS toqtr,
 		SUM(basic) AS basic,
 		SUM(basicint) AS basicint,
 		SUM(basicdisc) AS basicdisc,
