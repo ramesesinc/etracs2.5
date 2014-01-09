@@ -20,8 +20,8 @@ FROM (
 		f.tdno, 
 		MIN(bi.year) AS fromyear,
 		MAX(bi.year) AS toyear,
-		SUM(bi.basic - bi.basicpaid - bi.basicdisc + bi.basicint - bi.basicintpaid) AS basic,
-		SUM(bi.sef - bi.sefpaid -  bi.sefdisc + bi.sefint - bi.sefintpaid) AS sef,
+		SUM(bi.basic - bi.basicpaid - (bi.basicdisc - bi.basicdisctaken) + bi.basicint - bi.basicintpaid) AS basic,
+		SUM(bi.sef - bi.sefpaid -  (bi.sefdisc - bi.sefdisctaken) + bi.sefint - bi.sefintpaid) AS sef,
 		SUM(bi.firecode - bi.firecodepaid) AS firecode 
 	FROM rptledger rl
 		INNER JOIN rptledgerbillitem bi ON rl.objid = bi.rptledgerid

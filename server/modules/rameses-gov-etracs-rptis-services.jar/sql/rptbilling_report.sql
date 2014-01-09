@@ -53,14 +53,15 @@ SELECT
   bi.basicint - bi.basicintpaid AS basicint, 
   bi.basicdisc - bi.basicdisctaken AS basicdisc, 
   bi.basiccredit AS basiccredit,
-  bi.basicint - bi.basicintpaid - bi.basicdisc - bi.basicdisctaken  AS  basicdp,
-  bi.basic + bi.basicint - bi.basicdisc - bi.basicdisctaken - bi.basicpaid - bi.basicintpaid AS basicnet,
+  (bi.basicint - bi.basicintpaid) - (bi.basicdisc - bi.basicdisctaken ) AS  basicdp,
+  bi.basic + bi.basicint - (bi.basicdisc - bi.basicdisctaken) - (bi.basicpaid - bi.basicintpaid) AS basicnet,
+  
   bi.sef - bi.sefpaid AS sef, 
   bi.sefint - bi.sefintpaid AS sefint, 
   bi.sefdisc - bi.sefdisctaken AS sefdisc, 
   bi.sefcredit AS sefcredit,
-  bi.sefint - bi.sefintpaid - bi.sefdisc - bi.sefdisctaken  AS  sefdp,
-  bi.sef + bi.sefint - bi.sefdisc - bi.sefdisctaken - bi.sefpaid - bi.sefintpaid AS sefnet,
+  (bi.sefint - bi.sefintpaid) - (bi.sefdisc - bi.sefdisctaken)  AS  sefdp,
+  bi.sef + bi.sefint - (bi.sefdisc - bi.sefdisctaken) - (bi.sefpaid - bi.sefintpaid) AS sefnet,
   bi.firecode - bi.firecodepaid AS firecode,
   rl.barangayid
 FROM rptledger rl
