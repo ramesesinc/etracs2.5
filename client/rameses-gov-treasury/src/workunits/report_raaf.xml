@@ -1,0 +1,54 @@
+<workunit extends="wtemplates/gov/treasury/ReportController.xml" >
+    <invokers>
+        <invoker folderid="/explorer/txn/treasury/reports" action="init" caption="RAAF" target="window" index="5" role="COLLECTOR" />
+    </invokers>
+    <code>
+
+<![CDATA[
+
+import com.rameses.rcp.common.*;
+import com.rameses.rcp.annotations.*;
+import com.rameses.osiris2.client.*;
+import com.rameses.osiris2.reports.*;
+
+
+class CraafController extends com.rameses.gov.treasury.report.ReportController
+{
+    @Service('RAAFReportService') 
+    def svc
+    
+    
+    String title = 'Report of Accountability for Accountable Forms'
+    String reportpath = 'com/rameses/gov/treasury/report/raaf/'
+    String reportName = reportpath + 'raaf.jasper'
+    
+        
+    def initReport(){
+        return 'default'
+    }
+    
+    
+    def data
+    def getReportData(){
+        data = svc.generateRaafData(entity);
+        return data.items
+    }
+    
+    def formControl = [
+        getControlList: { svc.getFormControlList() }
+   ] as FormPanelModel;
+   
+   
+   Map getParameters(){
+        return data.info
+    }
+    
+    List getMonths(){
+        return dtSvc.getMonths();
+    }
+}
+
+]]>        
+        
+    </code>
+</workunit>
