@@ -34,11 +34,7 @@
             
             def report = [
                 getReportName : { return reportPath + "ris.jasper" },
-                getReportData : { 
-                    def afolist = ugmSvc.getList(['_tag':'AFO']) 
-                    if( afolist) { entity.approver = afolist[0] } 
-                    return  entity 
-                },
+                getReportData : { return  entity  },
                 getParameters : { return paramsvc.getStandardParameter() },
                 getSubReports : { return [  new SubReport("ReportRISItem", reportPath + "risitem.jasper") ] as SubReport[]; }
             ] as ReportModel

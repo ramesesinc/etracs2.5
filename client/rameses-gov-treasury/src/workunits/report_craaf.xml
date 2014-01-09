@@ -1,6 +1,8 @@
 <workunit extends="wtemplates/gov/treasury/ReportController.xml" >
     <invokers>
-        <invoker folderid="/menu/report/treasury" action="init" caption="CRAAF" target="window" index="4" role="TREASURY_REPORT" />
+        <invoker folderid="/explorer/txn/treasury/reports" action="init" caption="CRAAF" target="window" index="4" role="AFO" />
+        
+        <invoker type="report:craaf" action="init" caption="CRAAF" target="window" index="4" role="AFO" />
     </invokers>
     <code>
 
@@ -17,7 +19,7 @@ class CraafController extends com.rameses.gov.treasury.report.ReportController
     @Service('CRAAFReportService') 
     def svc
     
-    String title = 'Statement of Revenue'
+    String title = 'Consolidated Report of Accountability for Accountable Forms'
     String reportpath = 'com/rameses/gov/treasury/report/craaf/'
     String reportName = reportpath + 'craaf.jasper'
     

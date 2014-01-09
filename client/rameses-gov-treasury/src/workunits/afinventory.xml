@@ -65,9 +65,9 @@
                 }
             ] as BasicListModel;
             
-            public void viewCraaf() {
-                
-            }
+            public def viewCraaf() {
+                return InvokerUtil.lookupOpener("report:craaf")
+            } 
             
         }
         ]]>

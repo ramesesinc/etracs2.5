@@ -118,7 +118,18 @@ select
 	distinct collector_objid as objid, 
 	collector_name as name, collector_title as title 
 from batchcapture_collection
-where state = 'POSTED'
+where state = 'POSTED' 
+
+union 
+
+select 
+	distinct c.collector_objid as objid, 
+	c.collector_name as name, c.collector_title as title 
+from cashreceipt c 
+	left join remittance_cashreceipt rc on c.objid = rc.objid 
+where c.state = 'CAPTURED' 
+	and rc.objid is null 
+	and c.formno in ('CT2', 'CT5')
 
 [updateRemittanceAF]
 INSERT INTO remittance_afserial (objid,remittanceid)

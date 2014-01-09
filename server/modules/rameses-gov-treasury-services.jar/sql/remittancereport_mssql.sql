@@ -130,13 +130,10 @@ select
   SUM( cri.lgushare + cri.lguintshare) as lgushare, sum( cri.brgyshare + brgyintshare) as brgyshare 
 from remittance_cashreceipt rc
 inner join cashreceipt c on c.objid= rc.objid
-inner join cashreceiptitem cri on cri.receiptid = cr.objid 
-inner join revenueitem ri on ri.objid = cri.item_objid
 inner join cashreceiptitem_rpt cri on cri.rptreceiptid = c.objid
 inner join barangay b on b.objid = cri.barangayid 
 left join cashreceipt_void cv on cv.receiptid = c.objid 
-where rc.remittanceid=${remittanceid}  
-  and ri.fund_objid like $P{fundid} 
+where rc.remittanceid=$P{remittanceid} 
   and cv.objid IS NULL 
 group by cri.barangayid 
 order by barangayname 
