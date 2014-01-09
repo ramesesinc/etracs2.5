@@ -611,32 +611,18 @@ public class RPTBillingService
 				}
 
 				if (payment > 0.0){
-					//apply proportionally
-					def basicpaymentrate  = numSvc.round(pitem.basic / (pitem.basic + pitem.sef))
-					def basicpayment 	= numSvc.round(payment * basicpaymentrate)
-					def sefpayment 		= payment - basicpayment 
+					def linetotal = pitem.total - pitem.firecode 
 
-					def basicintrate    = numSvc.round(pitem.basicint / pitem.basic)
-					def partialbasic    = numSvc.round(basicpayment / (1 + basicintrate))
-					def partialbasicint = basicpayment - partialbasic 
+					def partialbasic     = numSvc.round(  payment * (pitem.basic - pitem.basicdisc) / linetotal )
+					def partialbasicint  = numSvc.round(  payment * pitem.basicint / linetotal )
+					def partialbasicdisc = numSvc.round(  payment * pitem.basicdisc / linetotal )
 
-					def partialbasicdisc 		= 0.0
-					if (pitem.basicdisc > 0.0) {
-						def basicdiscrate = numSvc.round(pitem.basicdisc / pitem.basic)
-						partialbasicdisc = numSvc.round(partialbasic * basicdiscrate)
-						partialbasic += partialbasicdisc
-					}
+					def partialsefint  = numSvc.round(  payment * pitem.sefint / linetotal )
+					def partialsefdisc = numSvc.round(  payment * pitem.sefdisc / linetotal )
+					def partialsef = payment - partialsefint - partialbasic - partialbasicint 
 
-					def sefintrate    	= numSvc.round(pitem.sefint / pitem.sef)
-					def partialsef    	= numSvc.round(sefpayment / (1 + sefintrate))
-					def partialsefint 	= sefpayment - partialsef 
-
-					def partialsefdisc 	= 0.0
-					if (pitem.sefdisc > 0.0) {
-						def sefdiscrate = numSvc.round(pitem.sefdisc / pitem.sef)
-						partialsefdisc = numSvc.round(partialsef * sefdiscrate)
-						partialsef += partialsefdisc
-					}
+					partialbasic += partialbasicdisc
+					partialsef += partialsefdisc 
 
 					def param = [
 						rptledgerid  : pitem.rptledgerid,
