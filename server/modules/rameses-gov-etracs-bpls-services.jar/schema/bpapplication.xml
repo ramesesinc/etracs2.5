@@ -33,7 +33,11 @@
 		<complex name="requirements" type="list" serializer="default" required="true"/>
 		<complex name="assessmentinfos" type="list" serializer="default" required="true"/>
 		<complex name="taxfees" type="list" serializer="default" required="true"/>
-		<field name="totals" />
+		<field name="totals_tax"  required="true"/>
+		<field name="totals_regfee"  required="true"/>
+		<field name="totals_othercharge"  required="true"/>
+		<field name="totals_total"  required="true"/>
+		<field name="remarks"/>
 	</element>	
 
 	<element name="task" tablename="bpapplication_task">

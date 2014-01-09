@@ -54,12 +54,12 @@ from tblBusiness b
 [getLobs]
 SELECT DISTINCT 
 ta.strBusinessID AS businessid, bl.objid AS tracslobid, bl.strBusinessLine AS tracslobname,
-(SELECT lo.etracslobid FROM tracs_etracs.dbo.lobmapping lo WHERE lo.tracslobid=bl.objid) AS lob_objid,
-(SELECT lo.etracslobname FROM tracs_etracs.dbo.lobmapping lo WHERE lo.tracslobid=bl.objid) AS lob_name
+(SELECT TOP 1 lo.etracslobid FROM tracs_etracs.dbo.lobmapping lo WHERE lo.tracslobid=bl.objid) AS lob_objid,
+(SELECT TOP 1 lo.etracslobname FROM tracs_etracs.dbo.lobmapping lo WHERE lo.tracslobid=bl.objid) AS lob_name
 FROM tblAssessment ta
 INNER JOIN tblAssessmentBO bo ON bo.parentid=ta.objid
 INNER JOIN tblBusinessLine bl ON bo.strBusinessLineID=bl.objid 
-WHERE ta.strBusinessID=$P{objid}
+WHERE ta.strBusinessID=$P{objid} AND ta.inttype NOT IN ( 2,10 )
 
 [getReceivables]
 SELECT 
@@ -73,14 +73,12 @@ tfa.strDescription AS account_title,
 tb.curAmount AS amount, 
 tb.curAmtPaid AS amtpaid, 
 (tb.curAmount-tb.curAmtPaid) AS balance,
-ta.intyear AS year, 
-ceo.etracs_acctid AS etracsacctid
+ta.intyear AS year
 FROM tblBPLedgerBill tb
 INNER JOIN tblBPLedger b ON b.objid=tb.parentid
 INNER JOIN tblTaxFeeAccount tfa ON tfa.objid=tb.strAcctID
 INNER JOIN tblassessment ta ON ta.objid=tb.strAssessmentID
 LEFT JOIN tblBusinessLine bl ON bl.objid=tb.strBusinessLineID
-LEFT JOIN tracs_etracs.dbo.ceomapping ceo ON ceo.tracs_acctid=tfa.objid
 WHERE b.strBusinessID=$P{objid}
 ORDER BY ta.intyear DESC
 

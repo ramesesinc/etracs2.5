@@ -96,24 +96,23 @@ public class BusinessCashReceiptInterceptor {
 		if(pmt.qtr > 0 ) {
 			//find recent task
 			def tskid = application.findCurrentTaskid( [objid: pmt.applicationid] )?.taskid;
-			if(!tskid)
-				throw new Exception("There is no associated taskid");
-			taskSvc.endTask([taskid: tskid]);
-			def tsk = [:];
-			tsk.appid = pmt.applicationid;
-			tsk.state = 'release';
-			tsk.channel = 'BPLS';
-			taskSvc.startTask( tsk );
+			if(tskid) {
+				taskSvc.endTask([taskid: tskid]);
+				def tsk = [:];
+				tsk.appid = pmt.applicationid;
+				tsk.state = 'release';
+				tsk.channel = 'BPLS';
+				taskSvc.startTask( tsk );
+			}
 		}
 	}
 
 	//hook for void cash receipts
 	@After(pattern="CashReceiptVoidService.post", eval="#{result.receipt.collectiontype.handler == 'bpls'}")
 	public void voidTxn(def evt) {
-		throw new Exception("Void is not yet allowed at this time");
-		
 		def rct = evt.result.receipt;
-		def list = biz.getReceivablePaymentForVoiding(  [receiptid: rct.objid ] );
+		def bppayment = bpledger.findReceivablePaymentForVoid(  [receiptid: rct.objid ] );
+		def list = bpledger.getPaymentItemsForVoid(  [paymentid: bppayment.objid ] );
 		def grps = list.groupBy{ it.receivableid }
 		def ids = [];
 		grps.each {k,v->
@@ -121,15 +120,21 @@ public class BusinessCashReceiptInterceptor {
 					 amtpaid: numberSvc.round( v.sum{ it.amtpaid } ),
 					 discount: numberSvc.round( v.sum{ it.discount } ),
 				   ];
-			biz.reverseReceivablePayment(z);
+			bpledger.reverseReceivablePayment(z);
 			ids << k;
 		}
-		biz.updateReceivablePaymentForVoiding(  [receiptid: rct.objid ] );
-		//reverse the application back to paymet status.
-		String receivableIds = "'" + ids.join("','") + "'";
-		def applist = biz.getReceivableBalances( [receivableids: receivableIds] );
-		for( app in applist ) {
-			application.changeState( [state:'payment', objid: app.applicationid ] );
+		bpledger.updateReceivablePaymentForVoiding(  [receiptid: rct.objid ] );
+
+		//find associated application for receipt
+		if(!bppayment.applicationid) throw new Exception("No associated application for this payment");
+		def tskid = application.findCurrentTaskid( [objid: bppayment.applicationid] )?.taskid;
+		if(tskid) {
+			taskSvc.endTask([taskid: tskid]);
+			def tsk = [:];
+			tsk.appid = bppayment.applicationid;
+			tsk.state = 'payment';
+			tsk.channel = 'BPLS';
+			taskSvc.startTask( tsk );
 		}
 
 	}

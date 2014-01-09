@@ -1,9 +1,9 @@
 <workunit>
     <invokers>
         <invoker type="businessform:formActions" caption="Renew"  action="openFromBusiness"  role="BUSINESSINFO"
-            visibleWhen="#{entity.state.toUpperCase().matches('CAPTURED|EXPIRED')}"  target="window"/>
+            visibleWhen="#{entity.state.toUpperCase().matches('CAPTURED|EXPIRED')}"  target="window" />
 
-        <invoker type="home.action" caption="Renew Business Application"  action="start" target="window"  role="BUSINESSINFO"/>
+        <invoker type="home.action" caption="Renew Business Application"  action="start" target="window"  role="BUSINESSINFO" index="52"/>
         <invoker type="extActions" caption="Continue" action="continueOpen"  visibleWhen="#{state == 'save-success'}"/>
         <invoker type="extActions" caption="Print BIN" action="printBIN"  visibleWhen="#{state == 'save-success'}"/>
     </invokers>
@@ -38,6 +38,14 @@
                     entity = null;
                 }
                 searchListModel.reload();
+            }
+            
+            def openApplication() {
+                entity = super.openApplication();
+                appInfoModel.reload();
+                lobModel.reload();
+                assessmentInfoModel.reload(); 
+                return entity;
             }
             
             def getAddLob() {
@@ -82,6 +90,22 @@
                 selectedLob.assessmenttype = 'RENEW'    
                 lobUpdated = true;
             }
+            
+            def reclassifyLOB() {
+                if(!selectedLob) return;
+                if(selectedLob.assessmenttype != "RENEW") 
+                    throw new Exception("Only renew lines of business can be reclassified");
+                return InvokerUtil.lookupOpener( "lob:lookup", [
+                    onselect: { o->
+                        selectedLob.lobid = o.objid;
+                        selectedLob.name = o.name;
+                        selectedLob.classification = o.classification;
+                        lobModel.reload();
+                        lobUpdated = true;
+                        binding.focus("lob");
+                    }
+                ]);    
+            }
              
             def appInfoModel = [
                 fetchList: { o-> 
@@ -115,6 +139,8 @@
             def verifyLOB() {
                 if(!entity.lobs) 
                     throw new Exception("Please specify at least one line of business");
+                if(!entity.lobs.findAll{it.assessmenttype=='RENEW' || it.assessmenttype=='NEW'}) 
+                    throw new Exception("There must be at least one new or renew line of business");
             }
 
             def verifyAssessmentInfo() {
@@ -149,7 +175,7 @@
                     }
                 ]);
             }
-            
+           
             void saveCreate() {
                 entity = appSvc.create( entity );
             }
@@ -186,7 +212,7 @@
         
         <page name="update-lob" title="Specify Line of Business (For Renewal)">
             <transition to="update-app-info" caption="Back" mnemonic="B" name="back"/>
-            <transition to="update-assessment-info" caption="Next" name="next" mnemonic="N"  action="verifyLOB"/>
+            <transition to="confirm" caption="Next" name="next" mnemonic="N"  action="verifyLOB"/>
         </page>
 
         <page name="update-assessment-info" title="Specify Assessment Information (For Renewal)" >
@@ -195,7 +221,7 @@
         </page>
         
         <page name="confirm" title="Confirm (For Renewal)">
-            <transition to="update-assessment-info" caption="Back" mnemonic="B" name="back"/>
+            <transition to="update-lob" caption="Back" mnemonic="B" name="back"/>
             <transition to="save-success" caption="Submit" mnemonic="S" name="save" action="saveCreate"
             confirm="You are about to save this transaction. Continue?"/>
         </page>

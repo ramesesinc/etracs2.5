@@ -923,13 +923,13 @@
 			</band>
 		</lastPageFooter>
 		<summary>
-			<band height="186"  isSplitAllowed="true" >
+			<band height="259"  isSplitAllowed="true" >
 				<printWhenExpression><![CDATA[$F{temporary} == false]]></printWhenExpression>
 				<staticText>
 					<reportElement
 						mode="Transparent"
-						x="25"
-						y="17"
+						x="294"
+						y="193"
 						width="68"
 						height="11"
 						forecolor="#000000"
@@ -943,13 +943,13 @@
 					<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
 						<font fontName="Tahoma" pdfFontName="Helvetica" size="8" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 					</textElement>
-				<text><![CDATA[Approved:]]></text>
+				<text><![CDATA[Approved By:]]></text>
 				</staticText>
 				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						mode="Transparent"
-						x="25"
-						y="43"
+						x="294"
+						y="229"
 						width="223"
 						height="11"
 						forecolor="#000000"
@@ -968,8 +968,8 @@
 				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						mode="Transparent"
-						x="25"
-						y="54"
+						x="294"
+						y="240"
 						width="223"
 						height="11"
 						forecolor="#000000"

@@ -37,12 +37,18 @@ public class BPApplicationService extends ActiveCrudService {
         	activeYear = b.activeyear;	
         	entity.putAll(b);
         	if(entity.requirements==null) entity.requirements = [];
+        	if(entity.totals==null) {
+        		entity.totals = [tax:0,othercharge:0,regfee:0,total:0];
+        	}	
         }
         else {
 	        entity.appinfos = [];
 	        entity.lobs = [];
 	        entity.assessmentinfos = [];
 	        entity.requirements = [];
+        	if(entity.totals==null) {
+        		entity.totals = [tax:0,othercharge:0,regfee:0,total:0];
+        	}	
         }
         entity.appyear = currentYear;
 		entity.txnmode = 'ONLINE';
@@ -65,6 +71,7 @@ public class BPApplicationService extends ActiveCrudService {
     			entity.lobs = lobs;
     			break;
     		case "RETIRE":
+    			println "retire";
     			entity.lobs.each {
     				it.assessmenttype = 'RETIRE';
     			}
@@ -122,23 +129,12 @@ public class BPApplicationService extends ActiveCrudService {
 		b.currentapplicationid = o.objid;
 		b.appcount = o.appcount + 1;
 		//if apptype is renew, we should nullify permit also
-		if( o.apptype == 'RENEW') {
+		if( o.apptype == 'RENEW' || o.apptype == 'RETIRE') {
 			b.currentpermitid = null;
 			b.state = 'PROCESSING';
 		}
 		bizInfoSvc.update(b);
 	}
 
-	public void beforeUpdate(o) {
-		if(o.totals) {
-			o.totals = em.entityManager.serializer.write( o.totals );
-		}
-	}
-
-	public void afterOpen(o) {
-		if(o.totals) {
-			o.totals = em.entityManager.serializer.read( o.totals );
-		}
-	}
 
 }

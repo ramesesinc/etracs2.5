@@ -27,7 +27,6 @@ FROM
 			INNER JOIN tblTaxFeeAccount tfa ON tfa.objid=tb.strAcctID
 			INNER JOIN tblassessment ta ON ta.objid=tb.strAssessmentID
 			LEFT JOIN tblBusinessLine bl ON bl.objid=tb.strBusinessLineID
-			LEFT JOIN tracs_etracs.dbo.ceomapping ceo ON ceo.tracs_acctid=tfa.objid
 			WHERE b.strBusinessID=$P{objid}
 		) a
 	WHERE NOT(a.objid IS NULL)

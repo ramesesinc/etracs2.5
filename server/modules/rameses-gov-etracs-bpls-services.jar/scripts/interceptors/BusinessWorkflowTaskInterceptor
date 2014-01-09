@@ -46,7 +46,7 @@ public class BusinessWorkflowTaskInterceptor {
 		}
 	}
 
-	@After(pattern="BusinessWorkflowService.(assign.*|return.*|submitFor.*|approve)")
+	@After(pattern="BusinessWorkflowService.(assign.*|return.*|submitFor.*|approve|revert.*)")
 	public void fireWorkflow(def evt) { 
 		def param = evt.args[0];
 		def result = evt.result;

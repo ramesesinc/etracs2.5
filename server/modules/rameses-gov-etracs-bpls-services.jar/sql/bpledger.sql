@@ -56,19 +56,33 @@ GROUP BY br.applicationid, br.businessid
 ###############################################
 # used by BusinessCashReceiptInterceptor .Void
 ###############################################
-[getReceivablePaymentForVoiding]
+[findReceivablePaymentForVoid]
 SELECT * 
-FROM business_receivable_payment 
-WHERE refid=$P{receiptid}
+FROM bppayment 
+WHERE receiptid=$P{receiptid}
+
+[getPaymentItemsForVoid]
+SELECT * 
+FROM bpreceivable_item WHERE paymentid=$P{paymentid} 
 
 [reverseReceivablePayment]
-UPDATE business_receivable 
+UPDATE bpreceivable 
 SET amtpaid = amtpaid - $P{amtpaid}, 
 discount=discount - $P{discount} 
 WHERE objid=$P{receivableid}
 
 [updateReceivablePaymentForVoiding]
-UPDATE business_receivable_payment 
+UPDATE bppayment 
 SET voided = 1 
-WHERE refid=$P{receiptid}
+WHERE receiptid=$P{receiptid}
+
+
+###############################################
+# used by BPLedgerService
+###############################################
+[getHasPaidReceivable]
+SELECT * FROM bpreceivable WHERE applicationid=$P{applicationid} AND amtpaid > 0
+
+[removeReceivablesForApplication]
+DELETE FROM bpreceivable WHERE applicationid=$P{applicationid}
 
