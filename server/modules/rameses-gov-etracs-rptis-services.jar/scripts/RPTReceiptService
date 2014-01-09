@@ -38,6 +38,15 @@ class RPTReceiptService
 		if (rct){
 			receipt.putAll(rct)
 		}
+
+		def checks = []
+		receipt.paymentitems.each{
+		  checks << it.bank + ' - ' + it.checkno + ' / ' + dtSvc.format('MM-dd-yyyy', dtSvc.parse('yyyy-MM-dd', it.checkdate))
+		}
+		receipt.checkno = null
+		if (checks){
+			receipt.checkno = checks.join('\n')
+		}
 	}
 
 
