@@ -1,0 +1,33 @@
+<workunit>
+    <invokers>
+        <invoker type="businessform:formActions" caption="Remove City Engineer" target="process" action="removeLink" role="ADMIN"/>
+    </invokers>
+    <code>
+        <![CDATA[    
+        import com.rameses.rcp.annotations.*
+        import com.rameses.rcp.common.*
+        import com.rameses.osiris2.client.*
+        import com.rameses.osiris2.common.*
+        import com.rameses.common.*;
+        import java.rmi.server.*
+        import com.rameses.util.*;
+        import com.rameses.gov.etracs.bpls.business.*;
+        
+        class BusinessCityEngineerRemoveController extends PageFlowController {
+        
+            @Service("CityEngineerToolService")
+            def service;        
+            
+            def entity;
+            
+            void removeLink() {
+                if( MsgBox.confirm("You are about to remove city engineer's fees from this application. Proceed?")) {
+                    service.removeLink( entity );
+                    MsgBox.alert("city engineer's fees removed " );
+                }
+            }
+            
+        }
+        ]]>
+    </code>
+</workunit>

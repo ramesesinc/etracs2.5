@@ -47,7 +47,7 @@ public class CityEngineerBPApplicationInterceptor {
 	/***
 	* add additional fees from city engineer. Add @Before so it can be totalled.
 	***/
-	@Before( pattern="BPAssessmentService.assess" )
+	@Before( pattern="BPAssessmentService.(assess|calculateTaxFees)" )
 	public void fireAssess(evt) {
 		def app = evt.args[0];	
 		def taxfees = em.getFees([businessid:app.businessid]);

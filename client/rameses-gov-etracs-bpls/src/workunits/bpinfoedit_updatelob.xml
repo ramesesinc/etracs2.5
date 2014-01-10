@@ -68,6 +68,22 @@
                 selectedLob.assessmenttype = 'RETIRE'    
                 lobUpdated = true;
             }
+            
+            def reclassifyLOB() {
+                if(!selectedLob) return;
+                if(selectedLob.assessmenttype != "RENEW") 
+                    throw new Exception("Only renew lines of business can be reclassified");
+                return InvokerUtil.lookupOpener( "lob:lookup", [
+                    onselect: { o->
+                        selectedLob.lobid = o.objid;
+                        selectedLob.name = o.name;
+                        selectedLob.classification = o.classification;
+                        lobModel.reload();
+                        lobUpdated = true;
+                        binding.focus("lob");
+                    }
+                ]);    
+            }
 
             void unretireLOB() {
                 if(!selectedLob) return;

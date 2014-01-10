@@ -71,8 +71,9 @@ public class RetirePage extends javax.swing.JPanel {
 
         jScrollPane1.setPreferredSize(new java.awt.Dimension(0, 60));
         xTextArea1.setLineWrap(true);
-        xTextArea1.setCaption("Enter reason toretire");
+        xTextArea1.setCaption("Reason to retire");
         xTextArea1.setName("entity.remarks");
+        xTextArea1.setRequired(true);
         jScrollPane1.setViewportView(xTextArea1);
 
         jLabel2.setFont(new java.awt.Font("Tahoma", 1, 11));

@@ -135,6 +135,7 @@ INNER JOIN business b ON b.objid=bl.businessid
 INNER JOIN lob ON bl.lobid=lob.objid
 INNER JOIN lobclassification lc ON lob.classification_objid=lc.objid 
 WHERE bl.businessid = $P{objid} AND bl.iyear=b.activeyear 
+AND NOT( bl.assessmenttype = 'RETIRE' )
 
 [getAppInfos]
 SELECT bi.*, 
@@ -173,6 +174,7 @@ DELETE FROM business_lob WHERE applicationid=$P{objid}
 [removeAssessmentInfos]
 DELETE FROM business_assessment_info WHERE applicationid=$P{objid}
 
+
 [updateActiveStatus]
 UPDATE business 
 SET activeyear=$P{year},apptype='RENEW' 
@@ -209,8 +211,19 @@ SELECT
     bp.qtr
 FROM bppayment bp
 INNER JOIN business_permit p ON p.applicationid=bp.applicationid
-WHERE p.objid = $P{objid}
+WHERE p.objid = $P{objid} AND bp.voided = 0
 
+[getPermitLobs]
+SELECT *
+FROM business_lob bl
+INNER JOIN business_permit p ON p.applicationid=bl.applicationid
+WHERE p.objid = $P{objid} AND NOT( bl.assessmenttype = 'RETIRE' )
 
 [getRedflags]
 SELECT * FROM business_redflag WHERE businessid=$P{businessid} ORDER BY dtposted DESC
+
+[removeBusinessLOB]
+DELETE FROM business_lob WHERE businessid=$P{objid} AND applicationid IS NULL
+
+[getBusinessLOB]
+SELECT * FROM business_lob WHERE businessid=$P{objid}

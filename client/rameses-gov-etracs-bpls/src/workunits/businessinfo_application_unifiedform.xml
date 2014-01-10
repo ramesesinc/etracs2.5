@@ -57,25 +57,16 @@
                 }
                 
                 def infos = [];
-                entity.lobs.each {
+                entity.lobs.each { lb->
                     def m = [:];
-                    m.lob = it.name;
-                    entity.assessmentinfos.findAll{it.lob?.objid!=null}.collect{ 
-                        [
-                          lob:it.name, 
-                          (it.attribute.name.toLowerCase()): format(it)
-                        ]  
-                     };
+                    m.lob = lb.name;
+                    for( x in entity.assessmentinfos.findAll{it.lob?.objid == lb.lobid } ) { 
+                        try {
+                            m[x.attribute.name.toLowerCase()] = format(x);
+                        }catch(ign){;}  
+                    };
                     infos << m;
                 }
-                /*
-                def infos = entity.assessmentinfos.findAll{it.lob?.objid!=null}.collect{ 
-                    [
-                      lob:it.name, 
-                      (it.attribute.name.toLowerCase()): format(it)
-                    ]  
-                 };
-                 */
                  
                 //ctcno: "CCI2012-191919191", 
                 //ctcdate: java.sql.Date.valueOf("2013-02-01"),

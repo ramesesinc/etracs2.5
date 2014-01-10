@@ -37,4 +37,9 @@ class BPLedgerService {
 		return em.getReceivables(o);	
 	}
 
+	@ProxyMethod
+	public def getPayments( o ) {
+		return em.getPayments(o);	
+	}
+
 }

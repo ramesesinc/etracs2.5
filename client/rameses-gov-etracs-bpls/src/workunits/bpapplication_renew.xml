@@ -198,15 +198,21 @@
     <pageflow>
         <start>
             <transition to="search" name="create" action="init"/>
-            <transition to="update-app-info" name="open"/>
+            <transition to="edit-address" name="open"/>
         </start>
         
         <page name="search" title="Search Business Name (For Renewal)">
-            <transition to="update-app-info" caption="Next" name="next" mnemonic="N" immediate="false" action="openApplication"/>
+            <transition to="edit-address" caption="Next" name="next" mnemonic="N" immediate="false" action="openApplication"/>
+        </page>
+        
+        <!--  -->
+        <page name="edit-address" title="Edit Address (For Renewal)">
+            <transition to="search" caption="Back" mnemonic="B" name="back" visibleWhen="#{OPENED_FROM_APP==false}"/>
+            <transition to="update-app-info" caption="Next" name="next" mnemonic="N" />
         </page>
         
         <page name="update-app-info" title="Specify Business Information (For Renewal)">
-            <transition to="search" caption="Back" mnemonic="B" name="back" visibleWhen="#{OPENED_FROM_APP==false}"/>
+            <transition to="edit-address" caption="Back" mnemonic="B" name="back" />
             <transition to="update-lob" caption="Next" name="next" mnemonic="N" action="verifyAppInfo"/>
         </page>
         
@@ -235,7 +241,7 @@
     
     <pages>
         <page name="search" template="com.rameses.gov.etracs.bpls.application.SearchLookupBusinessPage"/>
-        
+        <page name="edit-address" template="com.rameses.gov.etracs.bpls.application.EditBusinessInfo"/>
         <page name="update-app-info" template="com.rameses.gov.etracs.bpls.application.UpdateAppInfoPage"/>
         <page name="update-lob" template="com.rameses.gov.etracs.bpls.application.SpecifyLOBPage"/>
         <page name="update-assessment-info" template="com.rameses.gov.etracs.bpls.application.UpdateAssessmentInfoPage"/>

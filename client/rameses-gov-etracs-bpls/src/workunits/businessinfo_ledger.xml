@@ -33,7 +33,7 @@
             
             def paymentsModel = [
                 fetchList: { o->
-                    return [];
+                    return service.getPayments( entity ); 
                 }
             ] as BasicListModel;
             

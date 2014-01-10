@@ -1,0 +1,24 @@
+import com.rameses.annotations.*;
+import com.rameses.util.*;
+import java.rmi.server.*;
+import com.rameses.services.extended.*;
+
+public class CityEngineerToolService {
+
+	@ActiveDB("business_cityengineertool")
+	def em;
+
+	@ProxyMethod
+	public void addLink(def o) {
+		if(!o.objid) throw new Exception("businessid is required");
+		em.addLink([businessid: o.objid]);
+	}
+
+	@ProxyMethod
+	public def removeLink(def o) {
+		if(!o.objid) throw new Exception("businessid is required");
+		em.removeLink([businessid: o.objid]);
+	}
+
+
+}

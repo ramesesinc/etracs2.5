@@ -13,9 +13,11 @@
             visibleWhen="#{editable == true}"/>
         -->    
             
+        <!--
         <invoker type="formActions" caption="Edit Assessment Info" index="30" action="updateAssessmentInfo" role="ASSESSOR"
             visibleWhen="#{editable==true}"/>
-
+        -->
+        
         <invoker type="formActions" caption="Calculate Taxes/Fees" index="30" action="calculateTaxfee" role="ASSESSOR"
             visibleWhen="#{editable==true}"/>
             
@@ -78,8 +80,8 @@
                 ]);
             }
 
-            def updateAssessmentInfo() {
-                return InvokerUtil.lookupOpener( "bpinfoedit:assessment", [
+            def calculateTaxfee() {
+                return InvokerUtil.lookupOpener( "bpinfoedit:calculatetaxfee", [
                     entity: entity, 
                     initialInfos: entity.appinfos.collect{it},
                     existingInfos: entity.assessmentinfos,
@@ -87,14 +89,22 @@
                         entity.assessmentinfos = result.infos.findAll{ it.infotype == 'assessment' };
                         assessmentInfoModel.reload();
                         lobUpdated = false;
-                        entity.taxfees.clear();
+                        entity.taxfees = result.taxfees;
+                        entity.totals = [
+                            tax:result.totals.total_tax,
+                            regfee: result.totals.total_regfee,
+                            othercharge: result.totals.total_othercharge,
+                            total: result.totals.total
+                        ];
                         taxfeeModel.reload();
+                        binding.refresh("entity.total.*");
                         caller.dirty = true;
                     }
                 ]);
             }
             
-             void calculateTaxfee() {
+            /*
+             void _calculateTaxfee() {
                 if( !entity.lobs )
                     throw new Exception("Please indicate at least one line of business");
                 if(lobUpdated) 
@@ -116,6 +126,7 @@
                 binding.refresh("entity.total.*");
                 caller.dirty = true;
             }
+            */
           
             def lobModel = [
                 fetchList: { o->    
