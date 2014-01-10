@@ -181,7 +181,13 @@ UPDATE rptledgerbillitem  SET
 	partialsef = $P{partialsef},
 	partialsefint = $P{partialsefint},
 	partialsefdisc = $P{partialsefdisc},
-	partial = 1
+	partial = 1,
+
+	brgyshare = ROUND( ( $P{partialbasic} - $P{partialbasicdisc}) * brgyshare / (lgushare + brgyshare), 2),
+	lgushare  = ( $P{partialbasic} - $P{partialbasicdisc}) - ROUND(( $P{partialbasic} - $P{partialbasicdisc}) * brgyshare / (lgushare + brgyshare), 2),
+
+	brgyintshare = ROUND( $P{partialbasicint} * brgyshare / (lgushare + brgyshare), 2),
+	lguintshare = $P{partialbasicint} -  ROUND( $P{partialbasicint} * brgyshare / (lgushare + brgyshare), 2)
 WHERE objid = $P{objid}	
 
 
