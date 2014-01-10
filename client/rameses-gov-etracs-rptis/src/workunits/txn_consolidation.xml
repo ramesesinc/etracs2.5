@@ -75,8 +75,16 @@
             <transition caption="Cancel" to="back-to-forapproval" action="cancelEdit" name="cancel"  mnemonic="c" icon="images/toolbars/cancel.png" visibleWhen="#{mode != 'read'}"/>
             <transition caption="Save"   to="back-to-forapproval" action="save" name="save" mnemonic="s" shortcut="ctrl S" icon="images/toolbars/save.png"  visibleWhen="#{mode != 'read'}" />
             <transition caption="Disapprove" to="default" action="disapproveConsolidation" mnemonic="d" visibleWhen="#{mode == 'read'}" confirm="Disapprove Consolidation?" role="APPROVER"/>
-            <transition caption="Approve" to="approved" action="approveConsolidation" mnemonic="v" icon="images/toolbars/approve.png" visibleWhen="#{mode == 'read'}" confirm="Approve Consolidation?" role="APPROVER"/>
+            <transition caption="Approve" to="wait" action="approveConsolidation" mnemonic="v" icon="images/toolbars/approve.png" visibleWhen="#{mode == 'read'}" confirm="Approve Consolidation?" role="APPROVER"/>
         </page>
+        
+        
+                
+        <page name="wait" title="Approval of Consolidation">
+            <transition caption="Back" to="forapproval" action="checkErrors" mnemonic="f" icon="images/toolbars/arrow_left.png" />
+            <transition caption="Finish" to="approved" action="checkFinish" mnemonic="f" icon="images/toolbars/approve.png" />
+        </page>
+        
         
         <process name="back-to-forapproval">
             <transition to="forapproval"/>
@@ -135,6 +143,7 @@
         <page name="provsubmissionapproval" template="com.rameses.gov.etracs.rpt.consolidation.ui.ConsolidationPage"/>
         <page name="forprovapproval" template="com.rameses.gov.etracs.rpt.consolidation.ui.ConsolidationPage"/>
         <page name="approved" template="com.rameses.gov.etracs.rpt.consolidation.ui.ConsolidationPage"/>
+        <page name="wait" template="com.rameses.gov.etracs.rpt.rpu.ui.WaitInfoPage"/>
     </pages>
 </workunit>
 

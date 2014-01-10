@@ -8,6 +8,9 @@ class ConsolidationService
 	@PersistenceContext('rpt')
 	def em
     
+  @ActiveDB('consolidation')
+   def adb 
+
 	@Env
 	def env
 	
@@ -574,8 +577,8 @@ class ConsolidationService
         txnRef.insertRef(arpu.prevfaasid, consolidation.objid, "FAAS is currently referenced by Consolidation No. $consolidation.txnno.")
     }
 
-
-    void validate(consolidation){
+    @ProxyMethod
+    public void validate(consolidation){
 
         getAffectedRpus(consolidation.objid).each{arpu ->
             if (util.isEmpty(arpu.newtdno)) 
@@ -592,13 +595,82 @@ class ConsolidationService
     	def data = em.sqlContext.createNamedQuery('consolidation:getTotalConsolidatedLandArea').setParameter('consolidationid', consolidation.objid).singleResult
         if( ! data || data.totalareasqm == null  ) throw new Exception('Consolidated lands are required.')
 		
-		if( util.isTrue(var.consolidation_allow_equal_area_only) ) {
-			if( data.totalareasqm != consolidation.newrpu.totalareasqm) 
-				throw new Exception('Total consolidated land area must be equal to ' + consolidation.areasqm + ' sqm.')
-		}
-
-
+  		if( util.isTrue(var.consolidation_allow_equal_area_only) ) {
+  			if( data.totalareasqm != consolidation.newrpu.totalareasqm) 
+  				throw new Exception('Total consolidated land area must be equal to ' + consolidation.areasqm + ' sqm.')
+  		}
     }
+
+
+
+  /*============================================================================
+    **
+    ** ASYNCHRONOUS APPROVAL SUPPORT 
+    **
+    ============================================================================*/    
+
+    @ProxyMethod
+    public def initApproveConsolidationAsync(consolidation) {
+        //workflowRef.insert(consolidation)
+    }
+
+    @ProxyMethod
+    public def assignNewTdNosAsync(consolidation){
+        if (consolidation.newtdno == null || consolidation.newtdno == '-'){
+            def faas = adb.findFaasByNewRpuId(consolidation)
+            consolidation.newtdno = faasSvc.generateNextTdNo(faas)
+            consolidation.newutdno = consolidation.newtdno 
+            adb.updateConsolidationNewTdNo(consolidation)
+        }
+        
+        getAffectedRpus(consolidation.objid).each{arpu ->
+            if (arpu.newtdno == null || arpu.newtdno == '-'){
+                def faas = adb.findFaasByNewRpuId(arpu)
+                arpu.newtdno = faasSvc.generateNextTdNo(faas)
+                arpu.newutdno = arpu.newtdno 
+                adb.updateAffectedNewTdNo(arpu)
+            }
+        }
+        return consolidation;
+    }
+
+    @ProxyMethod
+    public def createConsolidatedLandFaasAsync(consolidation){
+        def faas = createFaasFromConsolidation(consolidation)
+        faasSvc.createFaasOnly(faas)
+        consolidation.newfaasid = faas.objid 
+        adb.updateConsolidationNewFaasId(consolidation)
+
+        faas = faasSvc.openFaas(consolidation.newfaasid)
+        faasSvc.approveFaas(faas)
+
+        return consolidation
+    }
+
+    @ProxyMethod
+    public def createAffectedRpuFaasRecordAsync(consolidation, arpu){
+        arpu.rpu = rpuSvc.openRpu(arpu.newrpuid)
+        arpu.rp = arpu.rpu.rp 
+        def faas = createFaasFromAffectedRpu(consolidation, arpu)
+        faasSvc.createFaasOnly(faas)
+        arpu.newfaasid = faas.objid 
+        saveAffectedRpu(arpu)
+
+        faas = faasSvc.openFaas(arpu.newfaasid)
+        faasSvc.approveFaas(faas)
+    }
+
+
+    @ProxyMethod
+    public def approveConsolidationAsync(consolidation){
+        getConsolidatedLands(consolidation.objid).each{cl ->
+            adb.cancelRealProperty([objid:cl.rpu.realpropertyid])
+            adb.cancelLandLedger([faasid:cl.landfaasid])
+        }
+
+        adb.approveConsolidation(consolidation)
+    }
+
 
 }
 
