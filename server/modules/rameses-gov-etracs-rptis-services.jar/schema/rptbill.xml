@@ -48,5 +48,16 @@
         <field name="sefintacctid"  /> 
         <field name="firecodeacctid"  /> 
 
+        <field name="lgushare" type="decimal" />
+        <field name="lguintshare" type="decimal" />
+        <field name="brgyshare" type="decimal" />
+        <field name="brgyintshare" type="decimal" />
+        <field name="brgyshareacctid"  /> 
+        <field name="brgyintshareacctid"  />         
+        <field name="provshare" type="decimal" />
+        <field name="provintshare" type="decimal" />
+        <field name="provshareacctid"  /> 
+        <field name="provintshareacctid"  />         
+
     </element>
 </schema>

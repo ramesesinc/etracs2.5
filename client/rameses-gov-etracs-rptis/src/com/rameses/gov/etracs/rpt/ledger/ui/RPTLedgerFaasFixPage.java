@@ -36,9 +36,11 @@ public class RPTLedgerFaasFixPage extends javax.swing.JPanel {
         xComboBox2 = new com.rameses.rcp.control.XComboBox();
         xDecimalField1 = new com.rameses.rcp.control.XDecimalField();
         xSeparator1 = new com.rameses.rcp.control.XSeparator();
+        xComboBox3 = new com.rameses.rcp.control.XComboBox();
         xCheckBox2 = new com.rameses.rcp.control.XCheckBox();
         xButton2 = new com.rameses.rcp.control.XButton();
 
+        setPreferredSize(new java.awt.Dimension(368, 271));
         xButton1.setMnemonic('c');
         xButton1.setName("doClose");
         xButton1.setText("Cancel");
@@ -97,13 +99,22 @@ public class RPTLedgerFaasFixPage extends javax.swing.JPanel {
         );
         xFormPanel2.add(xSeparator1);
 
+        xComboBox3.setAllowNull(false);
+        xComboBox3.setCaption("State");
+        xComboBox3.setCaptionWidth(110);
+        xComboBox3.setItems("states");
+        xComboBox3.setName("entity.state");
+        xComboBox3.setPreferredSize(new java.awt.Dimension(150, 20));
+        xComboBox3.setRequired(true);
+        xFormPanel2.add(xComboBox3);
+
         xCheckBox2.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
         xCheckBox2.setCaption("");
         xCheckBox2.setCaptionWidth(110);
         xCheckBox2.setMargin(new java.awt.Insets(0, 0, 0, 0));
         xCheckBox2.setName("entity.reclassed");
+        xCheckBox2.setOpaque(false);
         xCheckBox2.setPreferredSize(new java.awt.Dimension(150, 19));
-        xCheckBox2.setShowCaption(false);
         xCheckBox2.setText(" Reclassed?");
         xFormPanel2.add(xCheckBox2);
 
@@ -129,7 +140,7 @@ public class RPTLedgerFaasFixPage extends javax.swing.JPanel {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(xFormPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 203, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(xFormPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 220, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(xButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -145,6 +156,7 @@ public class RPTLedgerFaasFixPage extends javax.swing.JPanel {
     private com.rameses.rcp.control.XCheckBox xCheckBox2;
     private com.rameses.rcp.control.XComboBox xComboBox1;
     private com.rameses.rcp.control.XComboBox xComboBox2;
+    private com.rameses.rcp.control.XComboBox xComboBox3;
     private com.rameses.rcp.control.XDecimalField xDecimalField1;
     private com.rameses.rcp.control.XFormPanel xFormPanel2;
     private com.rameses.rcp.control.XIntegerField xIntegerField1;

@@ -36,8 +36,8 @@
 	<field name="paidbyaddress" class="java.lang.String"/>
 	<field name="receiptno" class="java.lang.String"/>
 	<field name="checkamount" class="java.math.BigDecimal"/>
-	<field name="checkbanks" class="java.lang.String"/>
-	<field name="checknos" class="java.lang.String"/>
+	<field name="checkbank" class="java.lang.String"/>
+	<field name="checkno" class="java.lang.String"/>
 	<field name="paidby" class="java.lang.String"/>
 	<field name="serialno" class="java.lang.String"/>
 	<field name="collector.title" class="java.lang.String"/>
@@ -307,7 +307,7 @@
 		</pageFooter>
 		<summary>
 			<band height="135"  isSplitAllowed="true" >
-				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+				<textField isStretchWithOverflow="false" pattern="P #,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						mode="Transparent"
 						x="444"
@@ -327,13 +327,13 @@
 					</textElement>
 				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{amount}]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						mode="Transparent"
-						x="57"
+						x="1"
 						y="64"
-						width="126"
-						height="14"
+						width="195"
+						height="39"
 						forecolor="#000000"
 						backcolor="#FFFFFF"
 						key="textField-8"/>
@@ -342,30 +342,10 @@
 					<bottomPen lineWidth="0.0" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 </box>
-					<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
+					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single">
 						<font fontName="SansSerif" pdfFontName="Helvetica" size="9" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{checknos}]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						mode="Transparent"
-						x="57"
-						y="78"
-						width="126"
-						height="14"
-						forecolor="#000000"
-						backcolor="#FFFFFF"
-						key="textField-9"/>
-					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-</box>
-					<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
-						<font fontName="SansSerif" pdfFontName="Helvetica" size="9" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{checkbanks}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{checkno}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -437,42 +417,18 @@
 				</textField>
 				<staticText>
 					<reportElement
-						x="-1"
+						x="0"
 						y="41"
 						width="105"
 						height="18"
-						key="staticText-9"/>
+						key="staticText-9">
+							<printWhenExpression><![CDATA[new Boolean($F{checkno} != null)]]></printWhenExpression>
+						</reportElement>
 					<box></box>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
 						<font fontName="SansSerif" size="9" isUnderline="true"/>
 					</textElement>
 				<text><![CDATA[CHECK INFORMATION]]></text>
-				</staticText>
-				<staticText>
-					<reportElement
-						x="0"
-						y="64"
-						width="57"
-						height="14"
-						key="staticText-10"/>
-					<box></box>
-					<textElement textAlignment="Left" verticalAlignment="Middle">
-						<font fontName="SansSerif" size="9"/>
-					</textElement>
-				<text><![CDATA[Check No(s).]]></text>
-				</staticText>
-				<staticText>
-					<reportElement
-						x="0"
-						y="78"
-						width="57"
-						height="14"
-						key="staticText-11"/>
-					<box></box>
-					<textElement textAlignment="Left" verticalAlignment="Middle">
-						<font fontName="SansSerif" size="9"/>
-					</textElement>
-				<text><![CDATA[Bank(s).]]></text>
 				</staticText>
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement

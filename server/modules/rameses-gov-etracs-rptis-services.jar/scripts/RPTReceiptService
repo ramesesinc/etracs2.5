@@ -4,6 +4,9 @@ import com.rameses.services.extended.*
 
 class RPTReceiptService
 {
+	@Env 
+	def env 
+
 	@ActiveDB('cashreceiptrpt')
 	def em
     
@@ -34,6 +37,15 @@ class RPTReceiptService
 		def rct = em.read(receipt)	
 		if (rct){
 			receipt.putAll(rct)
+		}
+
+		def checks = []
+		receipt.paymentitems.each{
+		  checks << it.bank + ' - ' + it.checkno + ' / ' + dtSvc.format('MM-dd-yyyy', dtSvc.parse('yyyy-MM-dd', it.checkdate))
+		}
+		receipt.checkno = null
+		if (checks){
+			receipt.checkno = checks.join('\n')
 		}
 	}
 
@@ -163,6 +175,13 @@ class RPTReceiptService
 			}
 		}
 		return items 
+	}
+
+
+	@ProxyMethod
+	public def getCollectionsByCount(receiptcount){
+		def params = [userid:env.USERID, _limit:receiptcount, _pagingKeys:'cr.objid']
+		return em.getCollectionsByCount(params)
 	}
 
 

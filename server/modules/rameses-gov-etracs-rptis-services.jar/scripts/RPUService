@@ -64,6 +64,7 @@ class RPUService
             swornamount     : 0.0,
             useswornamount  : false,
             rp              : rp,
+            reclassed       : false,
         ]
         rpu.rpumasterid = rpu.objid 
         rpu.fullpin = buildFullPin(rpu)
@@ -122,6 +123,7 @@ class RPUService
         rpu.taxable  = util.toBoolean(rpu.taxable, true)
         rpu.hasswornamount  = util.toBoolean(rpu.hasswornamount, false)
         rpu.useswornamount  = util.toBoolean(rpu.useswornamount, false)
+        rpu.reclassed  = util.toBoolean(rpu.reclassed, false)
         rpu.rp = rpSvc.openRealProperty(rpu.realpropertyid)
         return rpu 
     }
