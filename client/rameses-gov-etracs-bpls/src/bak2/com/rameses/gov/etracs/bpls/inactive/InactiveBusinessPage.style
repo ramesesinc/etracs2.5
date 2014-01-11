@@ -1,6 +1,0 @@
-"entity.branchname" [ entity.officetype != "BRANCH" ] {
-    visible:false;
-}
-"entity.branchname" [ entity.officetype == "BRANCH" ] {
-    visible:true;
-}

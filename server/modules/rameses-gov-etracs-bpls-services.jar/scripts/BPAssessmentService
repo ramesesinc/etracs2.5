@@ -25,6 +25,10 @@ class BPAssessmentService {
 		return result;
 	}
 
+	@ProxyMethod
+	public def calculateTaxFees(o) {
+		return assessmentSvc.execute(o);		
+	}
 
 
 }

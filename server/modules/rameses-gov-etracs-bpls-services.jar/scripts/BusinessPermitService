@@ -70,7 +70,8 @@ class BusinessPermitService  {
 	public def getPermitInfo(o) {
 		def permit = em.read( [objid:o.objid], "permit");
 		def a = app.read( [objid: permit.applicationid ] );
-		permit.lobs = a.lobs;
+		//do not include retirement
+		permit.lobs = em.getPermitLobs( [objid: permit.objid] );
 		permit.apptype = a.apptype;
 		permit.owner = a.owner;
 		permit.businessname = a.businessname;
