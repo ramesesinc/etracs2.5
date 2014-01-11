@@ -518,16 +518,9 @@ public class RPTBillingService
     }
 
     boolean determineFullPayment(pdate, bill, rl, item) {
-    	def fullpayment = false
-
-    	if (item.year > pdate.year && item.year < bill.billtoyear) 
-    		fullpayment = true
-    	else if (item.year > pdate.year && item.year == bill.billtoyear &&  bill.billtoqtr == 4)
-    		fullpayment = true 
-    	else if (item.year == pdate.year && rl.lastyearpaid == 4 &&  bill.billtoqtr == 4)
-    		fullpayment = true 
-
-    	return fullpayment
+    	if( bill.billtoqtr != 4 ) return false
+        if( bill.billtoqtr == 4 && item.lastqtrpaid != 4 ) return false
+        return true
     }
 
 
