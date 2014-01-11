@@ -134,3 +134,16 @@ where r.objid=$P{objid} and fu.objid like $P{fundid}
 group by fu.title, tci.item_objid , tci.item_code, tci.item_title 
 order by fu.title, tci.item_title 
 
+[getBrgyShares]
+select 
+  min(b.name) as barangayname, SUM( tci.amount ) as netbasic, 
+  SUM( tci.lgushare ) as lgushare, sum( tci.brgyshare ) as brgyshare 
+from tracs_remittance r 
+	inner join tracs_cashreceipt cr on r.objid = cr.remittanceid
+	inner join tracs_cashreceiptitem tci on tci.receiptid = cr.objid
+	inner join barangay b on b.objid = tci.barangayid
+where r.objid=$P{objid} and cr.amount > 0.0  
+	and tci.item_title like '%RPT%BASIC%'
+group by b.objid 
+
+
