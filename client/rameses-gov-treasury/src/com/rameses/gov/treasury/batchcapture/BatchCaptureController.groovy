@@ -133,11 +133,13 @@ public class BatchCaptureController  {
             m.paymentitems = []
             m.voided = 0
             if( copyprevinfo ) {
-                if(prevEntity && prevEntity.items.size() == 1) {
-                    def item =  prevEntity.items[0].clone();
-                    item.amount = 0.0 
-                    m.items = [ item ]
-                    m.acctinfo = prevEntity.acctinfo;
+                if(prevEntity ) {
+                    if( prevEntity.items && prevEntity.item.size() > 0 ) {
+                        def item =  prevEntity.items[0].clone();
+                        item.amount = 0.0 
+                        m.items = [ item ]
+                        m.acctinfo = prevEntity.acctinfo;    
+                    }   
                 }
                 m.paidbyaddress = prevEntity.paidbyaddress;
             }        

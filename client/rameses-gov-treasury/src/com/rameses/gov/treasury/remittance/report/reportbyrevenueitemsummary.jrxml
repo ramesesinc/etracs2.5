@@ -41,7 +41,7 @@
 					<reportElement
 						x="3"
 						y="6"
-						width="592"
+						width="453"
 						height="12"
 						key="textField"/>
 					<box></box>

@@ -1,7 +1,0 @@
-"entity.iqtr" [entity.paymentmode == 'QTR'] {
-    visible:true;
-}
-
-"entity.iqtr" [entity.paymentmode == 'YEAR'] {
-    visible:false;
-}

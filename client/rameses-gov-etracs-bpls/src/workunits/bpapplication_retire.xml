@@ -29,7 +29,10 @@
             String appType = "RETIRE";
             
             def openApplication() {
-                return super.openApplication();
+                def entity = super.openApplication();
+                appInfoModel.reload();
+                lobModel.reload();
+                return entity;
             }
             
             def appInfoModel = [

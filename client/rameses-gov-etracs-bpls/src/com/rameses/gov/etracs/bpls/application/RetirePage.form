@@ -73,8 +73,9 @@
         <Component class="com.rameses.rcp.control.XTextArea" name="xTextArea1">
           <Properties>
             <Property name="lineWrap" type="boolean" value="true"/>
-            <Property name="caption" type="java.lang.String" value="Enter reason toretire"/>
+            <Property name="caption" type="java.lang.String" value="Reason to retire"/>
             <Property name="name" type="java.lang.String" value="entity.remarks"/>
+            <Property name="required" type="boolean" value="true"/>
           </Properties>
         </Component>
       </SubComponents>

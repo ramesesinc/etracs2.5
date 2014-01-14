@@ -1,6 +1,0 @@
-<workunit extends="wtemplates/ServiceLookupController.xml" 
-    serviceName="BusinessRenewalService">
-    <invokers>
-        <invoker type="businessrenewal:lookup" caption="Lookup Business For Renewal" target="popup"/>
-    </invokers>
-</workunit>

@@ -81,7 +81,7 @@
             ] as EditorListModel;
             
             void validateCheckPayment() {
-                 if(payment && !payment.bank )  throw new Exception("Bank is required.  ");
+                 if(payment && !payment.bank  )  throw new Exception("Bank is required.  ");
                  if(payment && !payment.checkno )  throw new Exception("Check No is required.  ");
                  if(payment && !payment.checkdate )  throw new Exception("Check Date is required.  ");
                  if(payment && !payment.amount)  throw new Exception("Amount is required.  ");
@@ -130,15 +130,15 @@
             def getLookupBank(){
                 return InvokerUtil.lookupOpener('bank:lookup', [
                     onselect : {
+                        payment = [:]
                         payment.bankid = it.objid;
                         payment.bank   = it.code;
                         payment.deposittype = it.deposittype;
                     },
                     
                     onempty  : {
-                        payment.bankid = null;
-                        payment.bank   = null;
-                        payment.deposittype = null;
+                        payment = [:] 
+                        binding.refresh("payment.*");
                     }
                 ])
             }

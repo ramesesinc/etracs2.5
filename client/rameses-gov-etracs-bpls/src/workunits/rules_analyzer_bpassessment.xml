@@ -54,7 +54,6 @@
                     entity.appyear = dateSvc.serverYear;
                 }
                 
-                
                 void reset() {
                     initNew();
                 }
