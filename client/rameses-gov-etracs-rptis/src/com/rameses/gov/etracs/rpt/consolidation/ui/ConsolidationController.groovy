@@ -131,11 +131,70 @@ public class ConsolidationController extends PageFlowController
     }
     
     
+    
+    
+    
+    def approveTask = null;
+    def info;
+    def processing = false;
+    def haserror = false;
+    
+    
+    def oncomplete = {
+        haserror = false;
+        processing = false;
+        approveTask = null;
+        binding.refresh();
+    }
+    
+    def onerror = {
+        haserror = true;
+        processing = false;
+        approveTask = null;
+        showinfo('ERROR: ' + it)
+    }
+    
+    def showinfo = { msg ->
+        info += msg;
+        binding.refresh('info');
+    }
+    
+    
     void approveConsolidation() {
-        consolidation = svc.approveConsolidation(consolidation);
-        loadItems();
+        
+        svc.validate(consolidation);
+        
+        info = '';
+        processing = true;
+        approveTask = new ApproveConsolidationTask(
+                    svc             : svc, 
+                    consolidation   : consolidation,
+                    oncomplete      : oncomplete,
+                    showinfo        : showinfo,
+                    onerror         : onerror,
+                );
+        Thread t = new Thread(approveTask);
+        t.start();
+        
+        // consolidation = svc.approveConsolidation(consolidation);
+        // loadItems();
     }
 
+    
+    void checkErrors(){
+        if (processing)
+            throw new Exception('Consolidation Approval is ongoing.');
+        affectedrpus = svc.getAffectedRpus(consolidation.objid);
+    }
+    
+    void checkFinish(){
+        if (haserror)
+            throw new Exception('Approval cannot be completed due to errors. Fix errors before finishing the transaction.')
+        if (processing)
+            throw new Exception('Consolidation Approval is ongoing.');
+    }
+    
+    
 
     void disapproveConsolidation() {
         consolidation = svc.disapproveConsolidation(consolidation);
@@ -455,4 +514,61 @@ public class ConsolidationController extends PageFlowController
         consolidation.signatories.find{it.type == 'approver'}?.putAll(approver);
     }
     
+}
+
+
+public class ApproveConsolidationTask implements Runnable{
+    def svc;
+    def consolidation;
+    def oncomplete;
+    def onerror;
+    def showinfo;
+
+    public void run(){
+        try{
+            showinfo('Initializing');
+            svc.initApproveConsolidationAsync(consolidation);
+            showinfo(' .... Done\n');
+        
+            showinfo('Assigning new TD No. to Consolidated Land and Affected RPUs');
+            consolidation.putAll( svc.assignNewTdNosAsync(consolidation) );
+            showinfo(' .... Done\n');
+            
+            
+            showinfo('Processing Consolidated Land\n');
+            if ( ! consolidation.newfaasid){
+                showinfo('Creating new Consolidated Land FAAS for TD No. ' + consolidation.newtdno );
+                consolidation.putAll( svc.createConsolidatedLandFaasAsync(consolidation))
+            }
+            showinfo(' .... Done\n\n');
+                
+            showinfo('Processing Affected RPUs\n');
+            svc.getAffectedRpus(consolidation.objid).each{ arpu ->
+                if ( ! arpu.newfaasid) {
+                    showinfo('Creating new Affected RPU FAAS for TD No. ' + arpu.newtdno );
+                    svc.createAffectedRpuFaasRecordAsync(consolidation, arpu);
+                    showinfo(' .... Done\n');
+                }
+            }
+            
+            showinfo('Consolidation Approval')
+            svc.approveConsolidationAsync(consolidation);
+            consolidation.state = 'APPROVED';
+            showinfo(' .... Done\n');
+            
+            oncomplete()
+        }
+        catch(e){
+            onerror('\n\n' + e.message )
+        }
+    }
+    
+    void doSleep(){
+        try{
+            Thread.sleep(2000);
+        }
+        catch(e){
+            ;
+        }
+    }
 }

@@ -4,7 +4,7 @@
  * Created on January 5, 2014, 9:18 AM
  */
 
-package com.rameses.gov.etracs.rpt.subdivision.ui;
+package com.rameses.gov.etracs.rpt.rpu.ui;
 
 import com.rameses.osiris2.themes.FormPage;
 import com.rameses.rcp.ui.annotations.Template;

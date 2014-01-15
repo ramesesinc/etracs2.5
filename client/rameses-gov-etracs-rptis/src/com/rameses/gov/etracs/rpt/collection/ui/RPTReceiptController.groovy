@@ -152,7 +152,7 @@ class RPTReceiptController extends com.rameses.enterprise.treasury.cashreceipt.A
         
         if ( ! itemsforpayment.find{it.billid == b.billid} ){
             b.ledgers.each{
-                billSvc.generateBillByLedgerId(it.rptledgerid)
+                billSvc.generateBillByLedgerId2(it.rptledgerid, b.billtoyear, b.billtoqtr)
             }
             def items = svc.getItemsForPaymentByBill(bill);
             items.each{ i ->
@@ -179,7 +179,7 @@ class RPTReceiptController extends com.rameses.enterprise.treasury.cashreceipt.A
         def b = billSvc.getBillByBarcode(param);
         bill.billid = b.objid;
         b.ledgers.each{
-            billSvc.generateBillByLedgerId(it.rptledgerid)
+            billSvc.generateBillByLedgerId2(it.rptledgerid, b.billtoyear, b.billtoqtr)
         }
         
         

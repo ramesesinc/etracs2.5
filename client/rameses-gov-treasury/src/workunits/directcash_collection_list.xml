@@ -1,6 +1,7 @@
 <workunit extends="wtemplates/ListController.xml" >
     <invokers>
         <invoker folderid="/explorer/txn/treasury" caption="Direct To Cash Collections" role="COLLECTOR" index="100"/>
+        <invoker type="formActions" action="viewReport" caption="Report" />
     </invokers>
     
     <code>
@@ -14,6 +15,11 @@
             String serviceName = 'DirectCashCollectionListService'
             String entityName = 'directcash'
             String formTarget = 'window'
+            
+            
+            def viewReport(){
+                return InvokerUtil.lookupOpener('directcash:report',[:])
+            }
         }
         
     </code> 

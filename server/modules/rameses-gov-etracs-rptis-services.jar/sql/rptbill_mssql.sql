@@ -181,7 +181,13 @@ UPDATE rptledgerbillitem  SET
 	partialsef = $P{partialsef},
 	partialsefint = $P{partialsefint},
 	partialsefdisc = $P{partialsefdisc},
-	partial = 1
+	partial = 1,
+
+	brgyshare = ROUND( ( $P{partialbasic} - $P{partialbasicdisc}) * brgyshare / (lgushare + brgyshare), 2),
+	lgushare  = ( $P{partialbasic} - $P{partialbasicdisc}) - ROUND(( $P{partialbasic} - $P{partialbasicdisc}) * brgyshare / (lgushare + brgyshare), 2),
+
+	brgyintshare = ROUND( $P{partialbasicint} * brgyshare / (lgushare + brgyshare), 2),
+	lguintshare = $P{partialbasicint} -  ROUND( $P{partialbasicint} * brgyshare / (lgushare + brgyshare), 2)
 WHERE objid = $P{objid}	
 
 
@@ -230,8 +236,10 @@ WHERE rl.objid = $P{objid}
 
 
 [insertRptBill]
-INSERT INTO rptbill (objid, barcode, expirydate, taxpayer_objid, taxpayer_name, taxpayer_address, postedby, postedbytitle)
-VALUES ($P{objid}, $P{barcode}, $P{expirydate}, $P{taxpayer_objid}, $P{taxpayer_name}, $P{taxpayer_address}, $P{postedby}, $P{postedbytitle})
+INSERT INTO rptbill 
+	(objid, barcode, expirydate, taxpayer_objid, taxpayer_name, taxpayer_address, postedby, postedbytitle, billtoyear, billtoqtr,dtposted)
+VALUES 
+	($P{objid}, $P{barcode}, $P{expirydate}, $P{taxpayer_objid}, $P{taxpayer_name}, $P{taxpayer_address}, $P{postedby}, $P{postedbytitle}, $P{billtoyear}, $P{billtoqtr}, GETDATE())
 
 
 [insertRptBillLedger]

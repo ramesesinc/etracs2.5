@@ -57,4 +57,21 @@ public class DirectCashCollectionService extends ActiveCrudService
 			throw new Exception('Amount must be equal to items total amount.')
 		super.approve(entity)
 	}
+
+
+	@ProxyMethod
+	public def generateReport(params) {
+		def filters = ' YEAR(dc.refdate) = $P{year} AND DATEPART(q, dc.refdate) = $P{qtr} '
+		if (params.month){
+			filters += ' AND MONTH(dc.refdate) = $P{monthindex}' 
+			params.monthindex = params.month.index 
+		}
+		params.filters = filters 
+
+		params.acctid = '%'
+		if (params.account){
+			params.acctid = params.account.objid
+		}
+		return em.getReportData(params)
+	}
 }
