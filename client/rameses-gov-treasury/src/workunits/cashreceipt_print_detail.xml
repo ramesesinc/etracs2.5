@@ -1,7 +1,7 @@
 <workunit>
     
    <invokers>
-         <invoker type="cashreceiptinfo:formActions" caption="Print Detail" action="print" index="1" target="process" />
+         <invoker type="cashreceiptinfo:formActions" caption="Print Detail" action="print" index="1" target="process"  role="COLLECTOR"/>
          <invoker type="misc_cashreceipt:formActions" caption="Print Detail" action="print" index="1" target="process" visibleWhen="#{completed &amp;&amp; entity.formno == '51'}"/>
    </invokers>
    
