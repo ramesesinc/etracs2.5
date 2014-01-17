@@ -1,7 +1,10 @@
 [lookup]
-SELECT b.objid, b.state, b.indexno, b.pin, b.name, b.oldpin, b.oldindexno
-FROM barangay b 
-WHERE b.name LIKE $P{name}  
+SELECT * FROM 
+(
+	SELECT * FROM barangay b WHERE b.name LIKE $P{name}
+	UNION
+	SELECT * FROM barangay b WHERE b.parentid = $P{parentid}
+) b
 ORDER BY b.name 
 
 [changeState]

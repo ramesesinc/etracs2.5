@@ -1,0 +1,7 @@
+<workunit extends="wtemplates/ExplorerViewController.xml" serviceName="RealPropertyListService" 
+    defaultFileType="realproperty" autoSelect="true">
+    <invokers>
+        <invoker folderid="/explorer/txn/rpt/list" caption="Real Properties"  target="window" index="50" role="APPRAISER,TAXMAPPER" />
+        <invoker type="quick_launcher" code="RP00" caption="Real Properties"  role="APPRAISER,TAXMAPPER" />
+    </invokers>
+</workunit>

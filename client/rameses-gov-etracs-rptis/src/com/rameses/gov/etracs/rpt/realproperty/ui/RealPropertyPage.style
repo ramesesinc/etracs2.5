@@ -1,7 +1,7 @@
-"parcel" [ true == true ] {
-    enabled:true;
+"entity.*|section|parcel" [mode == 'read']{
+    enabled:false;
 }
 
-"parcel" [ rp.autonumber == 1 || rp.autonumber == true ] {
-    enabled:false;
+"entity.*|section|parcel" [mode != 'read']{
+    enabled:true;
 }

@@ -1,21 +1,58 @@
-[getRealPropertyByPinRy]
-SELECT * FROM realproperty WHERE pin = $P{pin} AND ry = $P{ry}
+[getList]
+SELECT t.* FROM (
+	SELECT rp.*, b.objid AS barangay_objid, b.name AS barangay_name
+	FROM realproperty rp
+		INNER JOIN barangay b ON rp.barangayid = b.objid 
+	WHERE rp.pin LIKE $P{searchtext}
+	${filters}
+
+	UNION 
+
+	SELECT rp.*, b.objid AS barangay_objid, b.name AS barangay_name
+	FROM realproperty rp
+		INNER JOIN barangay b ON rp.barangayid = b.objid 
+	WHERE rp.cadastrallotno = $P{cadastrallotno}
+	${filters}
+
+	UNION
+
+	SELECT rp.*, b.objid AS barangay_objid, b.name AS barangay_name
+	FROM realproperty rp
+		INNER JOIN barangay b ON rp.barangayid = b.objid 
+	WHERE rp.surveyno = $P{surveyno}
+	${filters}
+
+	UNION
+
+	SELECT rp.*, b.objid AS barangay_objid, b.name AS barangay_name
+	FROM realproperty rp
+		INNER JOIN barangay b ON rp.barangayid = b.objid 
+	WHERE b.name = $P{barangay}
+	${filters}
+) t
+ORDER BY barangay_name, pin 
 
 
-[checkDuplicatePin]
-SELECT * FROM realproperty 
-WHERE objid <> $P{objid}
-AND pin = $P{pin} 
-AND ry = $P{ry}
-
-
-[getState]   
-SELECT state FROM realproperty WHERE objid = $P{objid}
-
-[cancelPrevRealPropertyById]
-UPDATE realproperty SET state = 'CANCELLED' WHERE objid = $P{objid}
-
-
-
-[updateState]
+[changeState]
 UPDATE realproperty SET state = $P{state} WHERE objid = $P{objid}
+
+
+[approve]
+UPDATE realproperty SET  state = 'CURRENT' WHERE objid = $P{objid} AND state <> 'CANCELLED'
+
+
+[disapprove]
+UPDATE realproperty SET  state = 'INTERIM' WHERE objid = $P{objid} AND state NOT IN ('CANCELLED', 'CURRENT')
+
+
+[getLandRevisionYears]
+SELECT ry FROM landrysetting ORDER BY ry 
+
+
+[findFaasByRealPropertyId]
+SELECT objid, tdno FROM faas 
+WHERE realpropertyid = $P{realpropertyid} 
+  AND objid <> $P{objid}
+  AND state <> 'CANCELLED'
+
+

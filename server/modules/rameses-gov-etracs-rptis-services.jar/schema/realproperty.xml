@@ -3,7 +3,6 @@
 		<field name="objid" primary="true" />
 		<field name="state" required="true" />
 		<field name="autonumber" required="true" />
-		<field name="pinid" required="true" />
 		<field name="pintype" required="true" />
 		<field name="pin" required="true" />
 		<field name="section" required="true" />
