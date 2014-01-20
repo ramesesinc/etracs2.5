@@ -101,7 +101,7 @@ public class RealPropertyPage extends javax.swing.JPanel {
         xLabel2.setBorder(xLineBorder2);
         xLabel2.setCaption("Municipality/District");
         xLabel2.setDepends(new String[] {"entity.name"});
-        xLabel2.setExpression("#{entity.munidistrict.name}");
+        xLabel2.setExpression("#{entity.barangay.munidistrict.name}");
         xLabel2.setPreferredSize(new java.awt.Dimension(0, 19));
         formPanel3.add(xLabel2);
 
@@ -110,20 +110,20 @@ public class RealPropertyPage extends javax.swing.JPanel {
         xLabel3.setBorder(xLineBorder3);
         xLabel3.setCaption("Province/City");
         xLabel3.setDepends(new String[] {"entity.name"});
-        xLabel3.setExpression("#{entity.provcity.name}");
+        xLabel3.setExpression("#{entity.barangay.provcity.name}");
         xLabel3.setPreferredSize(new java.awt.Dimension(0, 19));
         formPanel3.add(xLabel3);
 
         xIntegerField1.setCaption("Section No.");
         xIntegerField1.setIndex(-1);
         xIntegerField1.setMinValue(0.0);
-        xIntegerField1.setName("section");
+        xIntegerField1.setName("entity.isection");
         xIntegerField1.setRequired(true);
         formPanel3.add(xIntegerField1);
 
         xIntegerField2.setCaption("Parcel No.");
         xIntegerField2.setMinValue(0.0);
-        xIntegerField2.setName("parcel");
+        xIntegerField2.setName("entity.iparcel");
         xIntegerField2.setRequired(true);
         formPanel3.add(xIntegerField2);
 

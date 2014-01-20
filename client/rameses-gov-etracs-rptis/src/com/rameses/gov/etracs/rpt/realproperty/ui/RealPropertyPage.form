@@ -135,7 +135,7 @@
                 <StringItem index="0" value="entity.name"/>
               </StringArray>
             </Property>
-            <Property name="expression" type="java.lang.String" value="#{entity.munidistrict.name}"/>
+            <Property name="expression" type="java.lang.String" value="#{entity.barangay.munidistrict.name}"/>
             <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
               <Dimension value="[0, 19]"/>
             </Property>
@@ -156,7 +156,7 @@
                 <StringItem index="0" value="entity.name"/>
               </StringArray>
             </Property>
-            <Property name="expression" type="java.lang.String" value="#{entity.provcity.name}"/>
+            <Property name="expression" type="java.lang.String" value="#{entity.barangay.provcity.name}"/>
             <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
               <Dimension value="[0, 19]"/>
             </Property>
@@ -167,7 +167,7 @@
             <Property name="caption" type="java.lang.String" value="Section No."/>
             <Property name="index" type="int" value="-1"/>
             <Property name="minValue" type="double" value="0.0"/>
-            <Property name="name" type="java.lang.String" value="section"/>
+            <Property name="name" type="java.lang.String" value="entity.isection"/>
             <Property name="required" type="boolean" value="true"/>
           </Properties>
         </Component>
@@ -175,7 +175,7 @@
           <Properties>
             <Property name="caption" type="java.lang.String" value="Parcel No."/>
             <Property name="minValue" type="double" value="0.0"/>
-            <Property name="name" type="java.lang.String" value="parcel"/>
+            <Property name="name" type="java.lang.String" value="entity.iparcel"/>
             <Property name="required" type="boolean" value="true"/>
           </Properties>
         </Component>

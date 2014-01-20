@@ -75,7 +75,7 @@ public class RealPropertyController
         
     @PropertyChangeListener
     def listener = [
-        'entity.pintype|section|parcel' :{ buildPin() },
+        'entity.pintype|entity.isection|entity.iparcel' :{ buildPin() },
     ]
     
                 
@@ -177,63 +177,8 @@ public class RealPropertyController
                 
                 
     void buildPin(){       
-        def newpin = new StringBuilder();
-        
-        if( entity.provcity ) {
-            newpin = entity.provcity.indexno + '-';
-        }
-        else {
-            newpin = '000-';
-        }
-            
-        if( entity.munidistrict ) {
-            newpin += entity.munidistrict.indexno + '-';
-        }
-        else {
-            newpin += '00-';
-        }
-        
-        
-        if( entity.barangay && entity.barangay.oldindexno == null) {
-            entity.barangay.oldindexno = entity.barangay.indexno ;
-        }
-        
-        if( entity.barangay) {
-            newpin += entity.barangay?.indexno + '-';
-        }
-        else {
-            newpin += ( entity.pintype == 'new' ? '0000' : '000') + '-';
-        }        
-        
-        
-        def ssection = '';
-        def sparcel = '';
-        
-        if( section > 0 ) {
-            ssection = section.toString();
-            ssection = ( entity.pintype == 'new' ? ssection.padLeft(3,'0') : ssection.padLeft(2,'0'));
-            entity.section = ssection;
-            newpin += ssection + '-';
-        }
-        else {
-            ssection = ( entity.pintype == 'new' ? '000' : '00') ;
-            newpin += ssection + '-';
-        }
-        
-        if( parcel > 0 ) {
-            sparcel = parcel.toString();
-            sparcel = ( entity.pintype == 'new' ? sparcel.padLeft(2,'0') : sparcel.padLeft(3,'0'));
-            entity.parcel = sparcel;
-            newpin += sparcel;
-        }
-        else {
-            sparcel = ( entity.pintype == 'new' ? '00' : '000');
-            newpin += sparcel ;
-        }
-        
-        entity.pin= newpin;
-                
-        binding?.refresh('rp.pin')
+        RPTUtil.buildPin(entity);
+        binding?.refresh('entity.pin');
     }
     
     
@@ -242,23 +187,11 @@ public class RealPropertyController
         return InvokerUtil.lookupOpener('barangay:lookup', [
                 onselect : {
                     entity.barangay = it;
-                    
-                    entity.munidistrict = lguSvc.lookupMunicipalityById(it.parentid)
-                    if (!entity.munidistrict){
-                        entity.munidistrict = lguSvc.lookupDistrictById(it.parentid)
-                    }
-                    
-                    entity.provcity = lguSvc.lookupProvinceById(entity.munidistrict?.parentid)
-                    if (!entity.provcity){
-                        entity.provcity = lguSvc.lookupCityById(entity.munidistrict?.parentid)
-                    }
                     buildPin();
                 },
                 
                 onempty : {
                     entity.barangay = null;
-                    entity.munidistrict = null;
-                    entity.provcity = null;
                 }
         
                 

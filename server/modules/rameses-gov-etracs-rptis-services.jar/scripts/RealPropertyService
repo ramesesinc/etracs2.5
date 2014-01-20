@@ -64,15 +64,8 @@ class RealPropertyService
 		entity = em.read(entity)	
 		entity.autonumber = util.toBoolean(entity.autonumber, false)
 		entity.barangay = lguSvc.lookupBarangayById(entity.barangayid)
-
-		entity.munidistrict = lguSvc.lookupDistrictById(entity.barangay.parentid)
-		if (!entity.munidistrict) 
-			entity.munidistrict = lguSvc.lookupMunicipalityById(entity.barangay.parentid)
-
-		entity.provcity = lguSvc.lookupCityById(entity.munidistrict.parentid)
-		if (!entity.provcity)
-			entity.provcity = lguSvc.lookupProvinceById(entity.munidistrict.parentid) 
-
+		entity.isection = util.toInteger(entity.section)
+		entity.iparcel = util.toInteger(entity.parcel)
 		return entity 
 	}
 
@@ -95,6 +88,7 @@ class RealPropertyService
 	public def disapprove( entity ) {
 		entity.state = STATE_INTERIM
 		def retval = em.disapprove(entity)	
+		if (retval == 0) throw new Exception('Real Property has already been approved or cancelled.')
 		return entity
 	}
 	
