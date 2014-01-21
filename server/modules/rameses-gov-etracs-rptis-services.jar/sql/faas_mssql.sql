@@ -19,12 +19,50 @@ SELECT
 	b.name AS barangay_name,
 	pc.code AS classification_code
 FROM faas f
-	INNER JOIN rpu rpu ON f.rpuid = rpu.objid
-	INNER  JOIN realproperty rp ON rpu.realpropertyid = rp.objid
+	LEFT JOIN rpu rpu ON f.rpuid = rpu.objid
+	LEFT  JOIN realproperty rp ON f.realpropertyid = rp.objid
 	INNER JOIN barangay b ON rp.barangayid = b.objid 
 	INNER JOIN propertyclassification pc ON rpu.classification_objid = pc.objid 
 WHERE 1=1
 ${filters}
+
+
+[findById]
+SELECT  
+	f.*,
+	rpu.rputype AS rpu_rputype,
+	rpu.ry AS rpu_ry,
+	rpu.objid AS rpu_objid, 
+	rpu.suffix AS rpu_suffix, 
+	rpu.fullpin AS rpu_fullpin,
+	rpu.taxable AS rpu_taxable,
+	rpu.totalmv AS rpu_totalmv,
+	rpu.totalav AS rpu_totalav,
+	rpu.reclassed AS rpu_reclassed,
+	rpu.realpropertyid AS rpu_realpropertyid,
+	pc.objid AS rpu_classification_objid,
+	pc.code AS rpu_classification_code,
+	rp.objid AS rp_objid,
+	rp.pin AS rp_pin,
+	rp.surveyno AS rp_surveyno,
+	rp.cadastrallotno AS rp_cadastrallotno,
+	rp.blockno AS rp_blockno,
+	rp.purok AS rp_purok,
+	rp.street AS rp_street,
+	rp.north AS rp_north,
+	rp.south AS rp_south,
+	rp.east AS rp_east,
+	rp.west AS rp_west,
+	b.name AS rp_barangay_name,
+	b.objid AS rp_barangay_objid,
+	b.parentid AS rp_barangay_parentid
+FROM faas f
+	INNER JOIN rpu rpu ON f.rpuid = rpu.objid
+	INNER JOIN propertyclassification pc ON rpu.classification_objid = pc.objid 
+	INNER  JOIN realproperty rp ON f.realpropertyid = rp.objid
+	INNER JOIN barangay b ON rp.barangayid = b.objid 
+WHERE f.objid = $P{objid}
+
 
 
 [getFaasIds]
@@ -39,17 +77,6 @@ where f.state like $P{state}
 	and rp.section like $P{section} 
 order by r.fullpin 
 
-[openFaas]
-SELECT * FROM faas WHERE objid = $P{objid}
-
-
-[getState]   
-SELECT state FROM faas WHERE objid = $P{objid}
-
-
-[getFaasByTdNo]
-SELECT * FROM faas WHERE tdno = $P{tdno} 
-
 
 [getPreviousFaases]
 SELECT pf.*, f.rpuid AS prevrpuid
@@ -57,16 +84,10 @@ FROM previousfaas pf
 INNER JOIN faas f ON pf.prevfaasid = f.objid 
 WHERE faasid = $P{faasid}
 
+
 [getBackTaxes]
 SELECT * FROM faasbacktax WHERE faasid = $P{faasid} ORDER BY effectivityyear DESC 
 
-[getLandReference]
-select
-	r.fullpin, r.totalareasqm, f.owner_name, f.tdno, rp.cadastrallotno 
- from rpu r 
-	inner join faas f on f.rpuid = r.objid 
-	inner join realproperty rp on rp.objid = r.realpropertyid 
-where r.objid=$P{landrpuid} and r.rputype ='land'
 
 [cancelFaas]
 UPDATE faas SET 
@@ -120,7 +141,8 @@ WHERE fl.objid = $P{landfaasid}
   AND ri.rputype <> 'land' 
   AND fi.state = 'CURRENT'
 
-[getLguIndex]  
+
+[findLguIndexInfo]  
 SELECT
 	b.indexno as barangayindex,
 	case when c.objid is not null then c.indexno else p.indexno end as provcityindex,
@@ -135,9 +157,46 @@ where b.objid = $P{barangayid}
 
 
 [updateFaasState]
-UPDATE faas SET state = $P{state} WHERE objid = $P{objid}
+UPDATE faas SET state = $P{state} WHERE objid = $P{objid} AND state = $P{prevstate}
+
 
 
 [approveFaas]
-UPDATE faas SET state = $P{state}, utdno = $P{utdno}, tdno = $P{tdno} WHERE objid = $P{objid}
+UPDATE faas SET 
+	state = $P{state}, utdno = $P{utdno}, tdno = $P{tdno} 
+WHERE objid = $P{objid}  
+  AND state = $P{prevstate}
 
+
+[updateRpuMasterInfo]
+UPDATE rm SET 
+	rm.currentfaasid = f.objid,
+	rm.currentrpuid = f.rpuid 
+FROM faas f
+	INNER JOIN rpu r ON f.rpuid = r.objid 
+	INNER JOIN rpumaster rm ON r.rpumasterid = rm.objid 
+WHERE f.objid = $P{objid}
+
+
+[findRealProperty]
+SELECT rp.*, f.objid AS faasid, f.tdno
+FROM realproperty rp 
+	LEFT JOIN faas f ON rp.objid = f.realpropertyid 
+WHERE rp.pin = $P{pin} 
+  AND rp.ry = $P{ry}
+
+[findRpu]  
+SELECT r.*, f.objid AS faasid, f.tdno
+FROM rpu r
+	LEFT JOIN faas f ON r.objid = f.rpuid
+WHERE r.fullpin = $P{fullpin} 
+  AND r.ry = $P{ry}
+
+
+[getLandReference]
+select
+	r.fullpin, r.totalareasqm, f.owner_name, f.tdno, rp.cadastrallotno 
+ from rpu r 
+	inner join faas f on f.rpuid = r.objid 
+	inner join realproperty rp on rp.objid = r.realpropertyid 
+where r.objid=$P{landrpuid} and r.rputype ='land'

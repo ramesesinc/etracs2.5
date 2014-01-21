@@ -12,10 +12,7 @@ public class MachRPUController extends com.rameses.gov.etracs.rpt.rpu.ui.Abstrac
     @Service('MachRPUService')
     def svc;
     
-    public def getService(){
-        return svc 
-    }
-    
+
     
     /*-------------------------------------------------------------
      *

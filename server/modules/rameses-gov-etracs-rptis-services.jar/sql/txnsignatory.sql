@@ -1,7 +1,7 @@
 [getSignatories]
 SELECT * FROM txnsignatory WHERE refid = $P{refid} ORDER BY seqno 
 
-[lookup]
+[getLookup]
 SELECT 
 	objid, name, title
 FROM signatory 
@@ -13,3 +13,11 @@ ORDER BY name
 [deleteSignatories]
 DELETE FROM txnsignatory WHERE refid = $P{refid}
 
+
+[updateSignatory]
+UPDATE txnsignatory SET 
+	personnelid =  $P{personnelid},
+	name =  $P{name},
+	title = $P{title},
+	dtsigned =  $P{dtsigned}
+WHERE objid = $P{objid}	

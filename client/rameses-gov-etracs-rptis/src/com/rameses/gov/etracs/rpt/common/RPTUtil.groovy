@@ -113,5 +113,29 @@ class RPTUtil
         }
         
         entity.pin= newpin;
+        entity.fullpin = newpin;
+        
+        if (entity.rputype != 'land'){
+            if (validSuffix(entity))
+                entity.fullpin += '-' + entity.suffix;
+        }
+        
+        
+    }
+    
+    static boolean validSuffix(entity){
+        def valid = false;
+        if (entity.rputype == 'land')
+            valid = true;
+        else if (entity.rputype == 'bldg' && entity.suffix >= 1001 && entity.suffix <= 1999)
+            valid = true;
+        else if (entity.rputype == 'mach' && entity.suffix >= 2001 && entity.suffix <= 2999)
+            valid = true;
+        else if (entity.rputype == 'planttree' && entity.suffix >= 3001 && entity.suffix <= 6999)
+            valid = true;
+        else if (entity.rputype == 'misc' && entity.suffix >= 7001 && entity.suffix <= 7999)
+            valid = true;
+        
+        return valid;
     }
 }

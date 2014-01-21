@@ -1,9 +1,10 @@
 import com.rameses.annotations.*
 import com.rameses.util.*
+import com.rameses.services.extended.*
 
 class PlantTreeRPUService
 {
-	@PersistenceContext('rpt')
+	@ActiveDB('planttreerpu')
     def em
 
     @Env
@@ -25,8 +26,7 @@ class PlantTreeRPUService
     def ptSettingSvc 
 
     
-    def SCHEMA_RPU     = 'planttreerpu'
-    def SCHEMA_DETAIL  = 'planttreerpu:planttreedetail'
+    def SCHEMA_DETAIL  = 'planttreedetail'
     
 
     @ProxyMethod
@@ -41,7 +41,7 @@ class PlantTreeRPUService
 
     @ProxyMethod
     public def createPlantTreeRpu( rpu ) {
-        em.create(SCHEMA_RPU, rpu)
+        em.create(rpu)
         savePlantTrees(rpu.planttrees)
         return rpu
     }
@@ -49,7 +49,7 @@ class PlantTreeRPUService
 
     @ProxyMethod
     public def updatePlantTreeRpu(rpu) { 
-        em.updateImmediate(SCHEMA_RPU, rpu)
+        em.updateImmediate(rpu)
         savePlantTrees(rpu.planttrees)
         removeDeletedItems(rpu)
         return rpu
@@ -58,7 +58,7 @@ class PlantTreeRPUService
 
     @ProxyMethod
     public def openPlantTreeRpu( objid ) {
-        def rpu = em.read(SCHEMA_RPU, [objid:objid])
+        def rpu = em.read([objid:objid])
         if (!rpu) {
             throw new Exception('Plant/Tree RPU does not exists or has been deleted.')
         }
@@ -69,8 +69,8 @@ class PlantTreeRPUService
 
     @ProxyMethod
     public def deletePlantTreeRpu(rpu){
-    	rpu.planttrees.each{ em.delete(SCHEMA_DETAIL, it) }
-        em.delete(SCHEMA_RPU, rpu)
+    	rpu.planttrees.each{ em.delete(it, SCHEMA_DETAIL) }
+        em.delete(rpu)
     }
 
 
@@ -178,21 +178,19 @@ class PlantTreeRPUService
 
 
     def getPlantTreeDetails(rpu){
-    	return em.sqlContext.createNamedQuery('planttreerpu:getPlantTreeDetails').setParameters(rpu).resultList
+        return em.getPlantTreeDetails(rpu)
     }
 
     void savePlantTrees(planttrees){
     	planttrees.each{pt ->
-    		def xpt = EntityUtil.mapToField(pt)
-    		em.validate(SCHEMA_DETAIL, xpt)
-    		em.save(SCHEMA_DETAIL, xpt)
+    		em.save(xpt, SCHEMA_DETAIL)
     	}
     }
 
 
     void removeDeletedItems(rpu){
     	rpu._planttrees?.each{
-    		em.delete(SCHEMA_DETAIL, it)
+    		em.delete(it,SCHEMA_DETAIL)
     	}
     }
 }

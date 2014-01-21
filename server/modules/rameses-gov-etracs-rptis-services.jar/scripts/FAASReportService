@@ -32,14 +32,14 @@ class FaasReportService
 	
 	@ProxyMethod
 	public def getReportData( faasid ) {
-		def faas = faasSvc.openFaas(faasid)
+		def faas = faasSvc.loadFaas([objid:faasid])
 		if( !faas ) throw new Exception('Cannot open FAAS with ID No. ' + faasid + '.')
 		
 		faas.taxeffectivity = faas.effectivityqtr + "Q - " + faas.effectivityyear
 		faas.taxability = ( faas.rpu.taxable ? "TAXABLE" : "EXEMPT" )
 		
-		def muni = lguSvc.lookupMunicipalityById(faas.rpu.rp.barangay.parentid)
-		def district = lguSvc.lookupDistrictById(faas.rpu.rp.barangay.parentid)
+		def muni = lguSvc.lookupMunicipalityById(faas.rp.barangay.parentid)
+		def district = lguSvc.lookupDistrictById(faas.rp.barangay.parentid)
 		def prov = lguSvc.lookupProvinceById(muni?.parentid)
 		def city = lguSvc.lookupCityById(district?.parentid)
 		faas.propertylocation = ( muni ? muni.name + ', ' : '') + ( prov ? prov.name : city.name )

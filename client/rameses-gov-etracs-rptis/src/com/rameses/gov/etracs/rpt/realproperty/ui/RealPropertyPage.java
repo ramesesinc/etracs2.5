@@ -144,6 +144,7 @@ public class RealPropertyPage extends javax.swing.JPanel {
         formPanel6.setBorder(xTitledBorder2);
         xTextField9.setCaption("North");
         xTextField9.setCaptionWidth(60);
+        xTextField9.setIndex(100);
         xTextField9.setName("entity.north");
         xTextField9.setPreferredSize(new java.awt.Dimension(0, 20));
         xTextField9.setRequired(true);
@@ -151,6 +152,7 @@ public class RealPropertyPage extends javax.swing.JPanel {
 
         xTextField11.setCaption("East");
         xTextField11.setCaptionWidth(60);
+        xTextField11.setIndex(100);
         xTextField11.setName("entity.east");
         xTextField11.setPreferredSize(new java.awt.Dimension(0, 20));
         xTextField11.setRequired(true);
@@ -158,6 +160,7 @@ public class RealPropertyPage extends javax.swing.JPanel {
 
         xTextField10.setCaption("South");
         xTextField10.setCaptionWidth(60);
+        xTextField10.setIndex(100);
         xTextField10.setName("entity.south");
         xTextField10.setPreferredSize(new java.awt.Dimension(0, 20));
         xTextField10.setRequired(true);
@@ -165,6 +168,7 @@ public class RealPropertyPage extends javax.swing.JPanel {
 
         xTextField12.setCaption("West");
         xTextField12.setCaptionWidth(60);
+        xTextField12.setIndex(100);
         xTextField12.setName("entity.west");
         xTextField12.setPreferredSize(new java.awt.Dimension(0, 20));
         xTextField12.setRequired(true);

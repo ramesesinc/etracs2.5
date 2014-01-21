@@ -28,5 +28,5 @@ DELETE FROM machdetail WHERE machrpuid = $P{objid}
 DELETE FROM machuse WHERE machrpuid = $P{objid}
 
 
-[getMachRySetting]
+[findMachRySetting]
 SELECT * FROM machrysetting WHERE ry = $P{ry}

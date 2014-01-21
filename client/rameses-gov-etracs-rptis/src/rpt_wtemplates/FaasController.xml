@@ -5,56 +5,27 @@
 
     <pageflow>
         <start>
-            <transition name="dcinit" to="dcinit"/>
-            <transition name="txninit" to="txninit"/>
-            <transition name="ndinit" to="ndinit"/>
-            <transition name="mcinit" to="mcinit"/>
-            <transition name="grinit" to="grinit"/>
+            <transition name="new" to="newpage"/>
             <transition name="open" to="open"/>
             <transition name="previous" to="previous"/>
         </start>
         
         <process name="open">
-            <transition to="default" cond="#{faas.state == 'INTERIM'}"/>
-            <transition to="forapproval" cond="#{faas.state == 'FORAPPROVAL'}"/>
-            <transition to="forprovsubmission" cond="#{faas.state == 'FORPROVSUBMISSION'}"/>
-            <transition to="forprovapproval" cond="#{faas.state == 'FORPROVAPPROVAL'}"/>
-            <transition to="current" cond="#{faas.state == 'CURRENT'}"/>
-            <transition to="cancelled" cond="#{faas.state == 'CANCELLED'}"/>
-            <transition to="readonly" cond="#{faas.state == 'PENDING'}"/>
+            <transition to="default" cond="#{entity.state == 'INTERIM'}"/>
+            <transition to="forapproval" cond="#{entity.state == 'FORAPPROVAL'}"/>
+            <transition to="forprovsubmission" cond="#{entity.state == 'FORPROVSUBMISSION'}"/>
+            <transition to="forprovapproval" cond="#{entity.state == 'FORPROVAPPROVAL'}"/>
+            <transition to="current" cond="#{entity.state == 'CURRENT'}"/>
+            <transition to="cancelled" cond="#{entity.state == 'CANCELLED'}"/>
+            <transition to="readonly" cond="#{entity.state == 'PENDING'}"/>
         </process>
         
-        <page name="dcinit" title="Data Capture : Initial">
-            <transition caption="Close" to="end"  mnemonic="c" icon="images/toolbars/cancel.png"/>
-            <transition caption="Next"  to="newpage" action="initDataCaptureFaas" mnemonic="n"  />
-        </page>
-        
-        <page name="txninit" title="FAAS Transaction : Initial">
-            <transition caption="Close" to="end"  mnemonic="c" icon="images/toolbars/cancel.png"/>
-            <transition caption="Next"  to="newpage" action="initFaasTransaction" mnemonic="n"  />
-        </page>
-        
-        <page name="ndinit" title="New Discovery : Initial">
-            <transition caption="Close" to="end"  mnemonic="c" icon="images/toolbars/cancel.png"/>
-            <transition caption="Next"  to="newpage" action="initNewDiscoveryFaas" mnemonic="n"  />
-        </page>
-        
-        <page name="mcinit" title="Multiple Claim: Initial">
-            <transition caption="Close" to="end"  mnemonic="c" icon="images/toolbars/cancel.png"/>
-            <transition caption="Next"  to="newpage" action="initMultipleClaimFaas" mnemonic="n"  />
-        </page>
-        
-        <page name="grinit" title="General Revision: Initial">
-            <transition caption="Close" to="end"  mnemonic="c" icon="images/toolbars/cancel.png"/>
-            <transition caption="Next"  to="newpage" action="initGeneralRevisionFaas" mnemonic="n"  />
-        </page>
-        
-        <page name="newpage" title="FAAS #{faas.txntype.name} (Interim)">
+        <page name="newpage" title="FAAS #{entity.txntype.name} (Interim)">
             <transition caption="Cancel" to="end"      mnemonic="c" icon="images/toolbars/cancel.png" confirm="Cancel entry?"/>
             <transition caption="Save"   to="back-to-default" action="save" name="save" mnemonic="s" shortcut="ctrl S" icon="images/toolbars/save.png"  visibleWhen="#{mode != 'read'}" />
         </page>
         
-        <page name="default" title="FAAS #{faas.txntype.name} (Interim)">
+        <page name="default" title="FAAS #{entity.txntype.name} (Interim)">
             <transition caption="Close"  to="end"      mnemonic="c" icon="images/toolbars/cancel.png" visibleWhen="#{mode == 'read'}"/>
             <transition caption="Edit"   to="back-to-default" action="edit"  name="edit" mnemonic="e" shortcut="ctrl E" icon="images/toolbars/edit.png"  visibleWhen="#{mode == 'read'}" role="APPRAISER" permission="faas.edit"/>
             <transition caption="Cancel" to="back-to-default" action="cancelEdit" name="cancel" mnemonic="c" icon="images/toolbars/cancel.png" visibleWhen="#{mode != 'read'}"/>
@@ -72,14 +43,14 @@
         </process>
         
         <process name="submit">
-            <transition to="forapproval" cond="#{faas.state == 'FORAPPROVAL'}"/>
-            <transition to="forprovapproval" cond="#{faas.state == 'FORPROVAPPROVAL'}"/>
-            <transition to="forprovsubmission" cond="#{faas.state == 'FORPROVSUBMISSION'}"/>
+            <transition to="forapproval" cond="#{entity.state == 'FORAPPROVAL'}"/>
+            <transition to="forprovapproval" cond="#{entity.state == 'FORPROVAPPROVAL'}"/>
+            <transition to="forprovsubmission" cond="#{entity.state == 'FORPROVSUBMISSION'}"/>
         </process>
         
         
         <!-- CITY-->
-        <page name="forapproval" title="FAAS #{faas.txntype.name} (For Approval)">
+        <page name="forapproval" title="FAAS #{entity.txntype.name} (For Approval)">
             <transition caption="Close" to="end" mnemonic="c" icon="images/toolbars/cancel.png" visibleWhen="#{mode == 'read'}" />
             <transition caption="Edit"   to="back-to-forapproval" action="edit" name="edit" mnemonic="e" shortcut="ctrl E" icon="images/toolbars/edit.png"  visibleWhen="#{mode == 'read'}" role="APPROVER"/>
             <transition caption="Cancel" to="back-to-forapproval" action="cancelEdit" name="cancel"  mnemonic="c" icon="images/toolbars/cancel.png" visibleWhen="#{mode != 'read'}"/>
@@ -94,7 +65,7 @@
         
         
         <!-- MUNICIPALIY -->
-        <page name="forprovsubmission" title="FAAS #{faas.txntype.name} (For Submission to Province)">
+        <page name="forprovsubmission" title="FAAS #{entity.txntype.name} (For Submission to Province)">
             <transition caption="Close"  to="end" mnemonic="c" icon="images/toolbars/cancel.png" visibleWhen="#{mode == 'read'}" />
             <transition caption="Edit"   to="back-to-prov-submission" action="edit" name="edit" mnemonic="e" shortcut="ctrl E" icon="images/toolbars/edit.png"  visibleWhen="#{mode == 'read'}" role="RECOMMENDER" />
             <transition caption="Cancel" to="back-to-prov-submission" action="cancelEdit" name="cancel"  mnemonic="c" icon="images/toolbars/cancel.png" visibleWhen="#{mode != 'read'}"/>
@@ -107,7 +78,7 @@
             <transition to="forprovsubmission"/>
         </process>
         
-        <page name="provsubmissionapproval" title="FAAS #{faas.txntype.name} (For Province Approval)">
+        <page name="provsubmissionapproval" title="FAAS #{entity.txntype.name} (For Province Approval)">
             <transition caption="Close" to="end" mnemonic="c" icon="images/toolbars/cancel.png"/>
             <transition caption="Disapprove" to="forprovsubmission" action="disapproveFaasByProvince"  mnemonic="d" confirm="Disapprove FAAS?" role="RECOMMENDER" permission="faas.disapprove"/>
             <transition caption="Approve" to="current" action="approveFaasByProvince"  mnemonic="v" confirm="Approve FAAS?" role="RECOMMENDER" permission="faas.approve"/>
@@ -115,7 +86,7 @@
         
         
         <!-- PROVINCE -->
-        <page name="forprovapproval" title="FAAS #{faas.txntype.name} (Province Approval)">
+        <page name="forprovapproval" title="FAAS #{entity.txntype.name} (Province Approval)">
             <transition caption="Close" to="end" mnemonic="c" icon="images/toolbars/cancel.png" visibleWhen="#{mode == 'read'}" />
             <transition caption="Edit"   to="back-to-forprovapproval" action="edit" name="edit" mnemonic="e" shortcut="ctrl E" icon="images/toolbars/edit.png"  visibleWhen="#{mode == 'read'}" role="APPROVER"  />
             <transition caption="Cancel" to="back-to-forprovapproval" action="cancelEdit" name="cancel"  mnemonic="c" icon="images/toolbars/cancel.png" visibleWhen="#{mode != 'read'}"/>
@@ -128,19 +99,19 @@
             <transition to="forprovapproval"/>
         </process>
         
-        <page name="current" title="FAAS #{faas.txntype.name} (Current)">
+        <page name="current" title="FAAS #{entity.txntype.name} (Current)">
             <transition caption="Close" to="end" mnemonic="c" icon="images/toolbars/cancel.png"/>
         </page>
         
-        <page name="cancelled" title="FAAS #{faas.txntype.name} (Cancelled)">
+        <page name="cancelled" title="FAAS #{entity.txntype.name} (Cancelled)">
             <transition caption="Close" to="end" mnemonic="c" icon="images/toolbars/cancel.png"/>
         </page>
         
-        <page name="readonly" title="FAAS #{faas.txntype.name} (View Only)">
+        <page name="readonly" title="FAAS #{entity.txntype.name} (View Only)">
             <transition caption="Close" to="end" mnemonic="c" icon="images/toolbars/cancel.png"/>
         </page>
         
-        <page name="previous" title="FAAS #{faas.txntype.name}">
+        <page name="previous" title="FAAS #{entity.txntype.name}">
             <transition caption="Close" to="closeForm" mnemonic="c" icon="images/toolbars/cancel.png"/>
         </page>
         
@@ -150,7 +121,6 @@
     </pageflow>
     
     <pages> 
-        <page name="dcinit" template="com.rameses.gov.etracs.rpt.faas.ui.FAASDataCaptureInitPage"/>
         <page name="txninit" template="com.rameses.gov.etracs.rpt.faas.ui.FAASTxnInitPage"/>
         <page name="newpage" template="com.rameses.gov.etracs.rpt.faas.ui.FAASPage"/>
         <page name="default" template="com.rameses.gov.etracs.rpt.faas.ui.FAASPage"/>

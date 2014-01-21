@@ -20,6 +20,7 @@
 		<field name="south" required="true" />
 		<field name="west" required="true" />
 		<field name="lgutype" required="true" />
+		<field name="lguid" />
 		<field name="previd" />
 	</element>
 </schema>

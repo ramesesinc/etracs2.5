@@ -1,0 +1,13 @@
+<workunit extends="rpt_wtemplates/RPUController.xml">
+    <invokers>
+        <invoker type="planttreerpu:create" action="init" caption="Plant/Tree RPU" target="popup" />
+        <invoker type="planttreerpu:open" action="open" caption="LPlant/Tree RPU" target="popup" />
+    </invokers>
+
+    <code class="com.rameses.gov.etracs.rpt.rpu.planttree.ui.PlantTreeRPUController">
+    </code>
+    
+    <pages>
+        <page template="com.rameses.gov.etracs.rpt.rpu.planttree.ui.PlantTreeRPUPage"/>
+    </pages>
+</workunit>

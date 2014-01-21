@@ -80,9 +80,11 @@ public class RealPropertyController
     
                 
     void init(){
-        entity = svc.init();
-        section = null;
-        parcel = null;
+        if (!entity.datacapture){
+            entity = svc.init();
+            isection = null;
+            iparcel = null;
+        }
         mode = MODE_CREATE;
     }
         
@@ -149,7 +151,9 @@ public class RealPropertyController
     }
     
     
+    @Close
     def close(){
+        entity.isnew = false;
         if (onupdate) onupdate(entity);
         return '_close';
     }

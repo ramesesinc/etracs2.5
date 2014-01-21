@@ -13,7 +13,10 @@ alter table realproperty drop column pinid
 go
 
 
-
+alter table realproperty add lguid varchar(50)
+go
+update realproperty set lguid = '169'
+go
 
 
 

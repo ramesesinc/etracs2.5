@@ -25,6 +25,12 @@ class LandRpuInterceptor
 		svc.generateNewIds(evt.result)
 	}
 
+
+	@After(pattern="RPUService.calculateAssessment", eval="#{result.rputype == 'land'}") 
+	public void calculateAssessment( evt ) {
+		svc.calculateAssessment(evt.result)
+	}
+
 	
 	@After(pattern="RPUService.openRpu", eval="#{result.rputype == 'land'}") 
 	public void openLandRpu( evt ) {
@@ -33,7 +39,7 @@ class LandRpuInterceptor
 	}
 	
 
-	@After(pattern="RPUService.createRpu", eval="#{result.rputype == 'land' && result.txntype.newrpu == true}") 
+	@After(pattern="RPUService.createRpu", eval="#{result.rputype == 'land'") 
 	public void createLandRpu( evt ) {
 		def rpu = evt.result
 		svc.createLandRpu(rpu)

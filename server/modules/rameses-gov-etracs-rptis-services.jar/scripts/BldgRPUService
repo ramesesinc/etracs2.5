@@ -1,9 +1,10 @@
 import com.rameses.annotations.*
 import com.rameses.util.*
+import com.rameses.services.extended.*
 
 class BldgRPUService
 {
-	@PersistenceContext('rpt')
+	@ActiveDB('bldgrpu')
 	def em
     
     @Service('NumberService')
@@ -31,12 +32,11 @@ class BldgRPUService
 	@Env
 	def env
     
-	def SCHEMA_RPU			= 'bldgrpu'
-	def SCHEMA_STRUCTURE	= 'bldgrpu:structure'
-	def SCHEMA_BLDGUSE		= 'bldgrpu:bldguse'
-	def SCHEMA_FLOOR		= 'bldgrpu:floor'
-	def SCHEMA_ADDITIONAL	= 'bldgrpu:additional'
-	def SCHEMA_PARAM		= 'bldgrpu:param'
+	def SCHEMA_STRUCTURE	= 'structure'
+	def SCHEMA_BLDGUSE		= 'bldguse'
+	def SCHEMA_FLOOR		= 'floor'
+	def SCHEMA_ADDITIONAL	= 'additional'
+	def SCHEMA_PARAM		= 'param'
 
 
 	@ProxyMethod
@@ -65,7 +65,7 @@ class BldgRPUService
 	@ProxyMethod
 	public def createBldgRpu( rpu ) {
 		validateInfo(rpu)
-		em.create(SCHEMA_RPU, rpu)
+		em.create(rpu)
 		saveStructures(rpu.structures)
 		saveBldgUses(rpu.bldguses)
 		return rpu
@@ -75,7 +75,7 @@ class BldgRPUService
 	@ProxyMethod
 	public def updateBldgRpu(rpu) { 
 		validateInfo(rpu)
-		em.updateImmediate(SCHEMA_RPU, rpu)
+		em.updateImmediate(rpu)
 		saveStructures(rpu.structures)
 		saveBldgUses(rpu.bldguses)
 		removeDeletedItems(rpu)
@@ -85,7 +85,7 @@ class BldgRPUService
 
 	@ProxyMethod
 	public def openBldgRpu( objid ) {
-		def rpu = em.read(SCHEMA_RPU, [objid:objid])
+		def rpu = em.read([objid:objid])
 		if (!rpu) {
 			throw new Exception('Building RPU does not exists or has been deleted.')
 		}
@@ -101,12 +101,12 @@ class BldgRPUService
 
 	@ProxyMethod
 	public def deleteBldgRpu(rpu){
-		em.sqlContext.createNamedExecutor('bldgrpu:deleteAllParams').setParameters(rpu).execute()
-		em.sqlContext.createNamedExecutor('bldgrpu:deleteAllFloorAdditionals').setParameters(rpu).execute()
-		em.sqlContext.createNamedExecutor('bldgrpu:deleteAllFloors').setParameters(rpu).execute()
-		em.sqlContext.createNamedExecutor('bldgrpu:deleteAllUses').setParameters(rpu).execute()
-		em.sqlContext.createNamedExecutor('bldgrpu:deleteAllStructures').setParameters(rpu).execute()
-		em.delete(SCHEMA_RPU, rpu)
+		em.deleteAllParams(rpu)
+		em.deleteAllFloorAdditionals(rpu)
+		em.deleteAllFloors(rpu)
+		em.deleteAllUses(rpu)
+		em.deleteAllStructures(rpu)
+		em.delete(rpu)
 	}
 
 
@@ -449,91 +449,85 @@ class BldgRPUService
 	-------------------------------------------------------------------*/
 	void saveStructures(structures){
 		structures.each{ st ->
-			em.save(SCHEMA_STRUCTURE, st)
+			em.save(st, SCHEMA_STRUCTURE)
 		}
 	}
 
 	void saveBldgUses(bldguses){
 		bldguses.each{bu ->
-			em.save(SCHEMA_BLDGUSE, bu)
+			em.save(bu, SCHEMA_BLDGUSE)
 			saveFloors(bu.floors)
 		}
 	}
 
 	void removeDeletedItems(rpu){
-		rpu._params.each{ em.delete(SCHEMA_PARAM, it)}
+		rpu._params.each{ em.delete(it, SCHEMA_PARAM)}
 		
 		rpu._additionals.each{ addl ->
 			addl.params.each{param-> 
-				em.delete(SCHEMA_PARAM, param)
+				em.delete(param, SCHEMA_PARAM)
 			}
-			em.delete(SCHEMA_ADDITIONAL, addl)
+			em.delete(addl, SCHEMA_ADDITIONAL)
 		}
 
 		rpu._floors.each{floor ->
 			floor.additionals.each{ addl ->
 				addl.params.each{param-> 
-					em.delete(SCHEMA_PARAM, param)
+					em.delete(param, SCHEMA_PARAM)
 				}
-				em.delete(SCHEMA_ADDITIONAL, addl)
+				em.delete(addl, SCHEMA_ADDITIONAL)
 			}
-			em.delete(SCHEMA_FLOOR, floor)
+			em.delete(floor, SCHEMA_FLOOR)
 		}
 
 		rpu._bldguses.each{bu ->
 			bu.floors.each{floor ->
 				floor.additionals.each{ addl ->
 					addl.params.each{param-> 
-						em.delete(SCHEMA_PARAM, param)
+						em.delete(param, SCHEMA_PARAM)
 					}
-					em.delete(SCHEMA_ADDITIONAL, addl)
+					em.delete(addl, SCHEMA_ADDITIONAL)
 				}
-				em.delete(SCHEMA_FLOOR, floor)
+				em.delete(floor, SCHEMA_FLOOR)
 			}
-			em.delete(SCHEMA_BLDGUSE, bu)
+			em.delete(bu, SCHEMA_BLDGUSE)
 		}
 	}
 
 	void saveFloors(floors){
 		floors.each{
-			em.validate(SCHEMA_FLOOR, it)
-			em.save(SCHEMA_FLOOR, it)
+			em.save(it,SCHEMA_FLOOR)
 			saveFloorAdditionals(it.additionals)
 		}
 	}
 
 	void saveFloorAdditionals(additionals){
 		additionals.each{
-			em.save(SCHEMA_ADDITIONAL, it)
+			em.save(it, SCHEMA_ADDITIONAL)
 			saveParams(it.params)
 		}
 	}
 
 	void saveParams(params){
 		params.each{ param ->
-			em.save(SCHEMA_PARAM, param)
+			em.save(param, SCHEMA_PARAM)
 		}
 	}
 
 
 
 	List getStructures(rpu){
-		return em.sqlContext.createNamedQuery('bldgrpu:getStructures')
-					.setParameters(rpu).resultList 
+		return em.getStructures(rpu)
 	}
 
 	List getBldgUses(rpu){
-		def bldguses = em.sqlContext.createNamedQuery('bldgrpu:getBldgUses')
-						.setParameter('bldgrpuid', rpu.objid).resultList 
+		def bldguses = em.getBldgUses([bldgrpuid:rpu.objid])
 		bldguses.each{ bu ->
-			bu.floors = em.sqlContext.createNamedQuery('bldgrpu:getFloors')
-								.setParameter('bldguseid', bu.objid).resultList 
+			bu.floors = em.getFloors([bldguseid:bu.objid])
 			bu.floors.each{ floor ->
-				floor.additionals = em.sqlContext.createNamedQuery('bldgrpu:getAdditionalItems')
-										.setParameter('bldgfloorid', floor.objid).resultList 
+				floor.additionals = em.getAdditionalItems([bldgfloorid:floor.objid])
 				floor.additionals.each{ addl -> 
-					addl.params = em.sqlContext.createNamedQuery('bldgrpu:getAdditionalItemParams')
-										.setParameter('bldgflooradditionalid', addl.objid).resultList 
+					addl.params = em.getAdditionalItemParams([bldgflooradditionalid:addl.objid])
 				}
 			}
 		}

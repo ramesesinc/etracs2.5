@@ -12,7 +12,8 @@
 		<field name="titletype" />
 		<field name="titleno" />
 		<field name="titledate" />
-		<field name="rpuid" required="true"/>
+		<field name="rpuid" />
+		<field name="realpropertyid" />
 		<field name="taxpayer_objid" required="true"/>
 		<field name="taxpayer_name" required="true"/>
 		<field name="taxpayer_address" required="true"/>
@@ -37,6 +38,7 @@
 		<field name="canceldate" />
 		<field name="cancelledbytdnos" />
 		<field name="lguid" />
+		<field name="lgutype" />
 		<field name="txntimestamp" required="true" />
 		<field name="cancelledtimestamp"/>
 		<field name="name"/>

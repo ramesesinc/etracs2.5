@@ -1,4 +1,4 @@
-"faas.*|taxpayer|administrator|appraiser.*|recommender.*|taxmapper.*|approver.*" [allowEdit == true] {
+"entity.*|taxpayer|administrator|appraiser.*|recommender.*|taxmapper.*|approver.*" [allowEdit == true] {
     enabled:true;
 }
 
@@ -7,41 +7,36 @@
 }
 
 
-"taxpayer|faas.owner.*|faas.taxpayer.*|faas.administrator.*"[ allowEditOwner == false ] {
+"taxpayer|entity.owner.*|entity.taxpayer.*|entity.administrator.*"[ allowEditOwner == false ] {
     enabled:false;
 }
 
 
-"faas.rpu.rp.*" [ allowEditPinInfo == false  ] {
+"entity.prev.*" [ allowEditPrevInfo == false  ] {
     enabled:false;
 }
 
-
-"faas.prev.*" [ allowEditPrevInfo == false  ] {
+"entity.tdno" [ entity.autonumber == true] {
     enabled:false;
 }
 
-"faas.tdno" [ faas.autonumber == true] {
+"entity.titleno|entity.titledate" [ entity.titletype == null] {
     enabled:false;
 }
 
-"faas.titleno|faas.titledate" [ faas.titletype == null] {
+"entity.titletype" [entity.txntype == 'TR' && entity.datacapture == false ] {
     enabled:false;
 }
 
-"faas.titletype" [faas.txntype == 'TR' && faas.datacapture == false ] {
-    enabled:false;
-}
-
-"faas.tdno" [ enableTdno == true ] {
+"entity.tdno" [ enableTdno == true ] {
     enabled:true;
 }
 
-"faas.tdno" [ enableTdno == false ] {
+"entity.tdno" [ enableTdno == false ] {
     enabled:false;
 }
 
-"faas.*|taxpayer|administrator|appraiser.*|recommender.*|taxmapper.*|approver.*" [allowEdit == false] {
+"entity.*|taxpayer|administrator|appraiser.*|recommender.*|taxmapper.*|approver.*" [allowEdit == false] {
     enabled:false;
 }
 
@@ -49,12 +44,12 @@
     readonly:true;
 }
 
-"faas.cancelnote" [faas.datacapture == true ] {
+"entity.cancelnote" [entity.datacapture == true ] {
     enabled:false;
 }
 
 
-"faas.backtaxyrs|faas.rpu.totalmv|faas.rpu.totalav" [  true == true ] {
+"entity.backtaxyrs|rpu.totalmv|rpu.totalav" [  true == true ] {
     enabled:false;
 }
 
@@ -65,3 +60,9 @@
 "annotated" [showAnnotation != true]{
     visible:false;
 }
+
+
+"rp.*" [ true == true ] {
+    enabled:false;
+}
+

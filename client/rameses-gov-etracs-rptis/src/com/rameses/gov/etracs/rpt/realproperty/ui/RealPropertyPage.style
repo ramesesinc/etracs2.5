@@ -5,3 +5,7 @@
 "entity.*|section|parcel" [mode != 'read']{
     enabled:true;
 }
+
+"entity.ry|entity.pintype|entity.barangay|entity.isection|entity.iparcel|entity.claimno" [entity.datacapture == true]{
+    enabled:false;
+}

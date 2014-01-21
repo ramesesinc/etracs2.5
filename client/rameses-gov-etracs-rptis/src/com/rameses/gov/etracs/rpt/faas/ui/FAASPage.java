@@ -77,6 +77,8 @@ public class FAASPage extends javax.swing.JPanel {
         xTextField30 = new com.rameses.rcp.control.XTextField();
         xTextField33 = new com.rameses.rcp.control.XTextField();
         xFormPanel9 = new com.rameses.rcp.control.XFormPanel();
+        xFormPanel12 = new com.rameses.rcp.control.XFormPanel();
+        xButton2 = new com.rameses.rcp.control.XButton();
         xLabel13 = new com.rameses.rcp.control.XLabel();
         xTextField31 = new com.rameses.rcp.control.XTextField();
         xTextField32 = new com.rameses.rcp.control.XTextField();
@@ -125,7 +127,7 @@ public class FAASPage extends javax.swing.JPanel {
         xTextField24.setCaptionWidth(90);
         xTextField24.setFont(new java.awt.Font("Tahoma", 1, 12));
         xTextField24.setMargin(new java.awt.Insets(1, 1, 1, 1));
-        xTextField24.setName("faas.tdno");
+        xTextField24.setName("entity.tdno");
         xTextField24.setPreferredSize(new java.awt.Dimension(0, 22));
         xFormPanel2.add(xTextField24);
 
@@ -134,7 +136,7 @@ public class FAASPage extends javax.swing.JPanel {
         xComboBox3.setCellPadding(new java.awt.Insets(2, 0, 0, 0));
         xComboBox3.setImmediate(true);
         xComboBox3.setItems("titleTypes");
-        xComboBox3.setName("faas.titletype");
+        xComboBox3.setName("entity.titletype");
         xComboBox3.setPreferredSize(new java.awt.Dimension(0, 19));
         xFormPanel2.add(xComboBox3);
 
@@ -145,17 +147,17 @@ public class FAASPage extends javax.swing.JPanel {
         xTextField25.setCaption("Title No.");
         xTextField25.setCaptionWidth(90);
         xTextField25.setCellPadding(new java.awt.Insets(0, 0, 0, 5));
-        xTextField25.setDepends(new String[] {"faas.titletype"});
+        xTextField25.setDepends(new String[] {"entity.titletype"});
         xTextField25.setMargin(new java.awt.Insets(1, 1, 1, 1));
-        xTextField25.setName("faas.titleno");
+        xTextField25.setName("entity.titleno");
         xTextField25.setPreferredSize(new java.awt.Dimension(90, 19));
         xFormPanel3.add(xTextField25);
 
         xDateField2.setCaption("Title Date");
         xDateField2.setCaptionWidth(65);
-        xDateField2.setDepends(new String[] {"faas.titletype"});
+        xDateField2.setDepends(new String[] {"entity.titletype"});
         xDateField2.setMargin(new java.awt.Insets(1, 1, 1, 1));
-        xDateField2.setName("faas.titledate");
+        xDateField2.setName("entity.titledate");
         xDateField2.setPreferredSize(new java.awt.Dimension(76, 19));
         xFormPanel3.add(xDateField2);
 
@@ -170,7 +172,7 @@ public class FAASPage extends javax.swing.JPanel {
         xNumberField2.setCellPadding(new java.awt.Insets(0, 0, 0, 5));
         xNumberField2.setFieldType(Integer.class);
         xNumberField2.setMargin(new java.awt.Insets(1, 1, 1, 1));
-        xNumberField2.setName("faas.effectivityyear");
+        xNumberField2.setName("entity.effectivityyear");
         xNumberField2.setPreferredSize(new java.awt.Dimension(90, 19));
         xNumberField2.setRequired(true);
         xFormPanel4.add(xNumberField2);
@@ -178,7 +180,7 @@ public class FAASPage extends javax.swing.JPanel {
         xComboBox5.setCaption("Qtr");
         xComboBox5.setCaptionWidth(65);
         xComboBox5.setItems("quarters");
-        xComboBox5.setName("faas.effectivityqtr");
+        xComboBox5.setName("entity.effectivityqtr");
         xComboBox5.setPreferredSize(new java.awt.Dimension(76, 20));
         xComboBox5.setRequired(true);
         xFormPanel4.add(xComboBox5);
@@ -192,19 +194,19 @@ public class FAASPage extends javax.swing.JPanel {
         xNumberField5.setCaption("Back Tax Yrs");
         xNumberField5.setCaptionWidth(90);
         xNumberField5.setCellPadding(new java.awt.Insets(0, 0, 0, 5));
-        xNumberField5.setDepends(new String[] {"faas.txntype"});
+        xNumberField5.setDepends(new String[] {"entity.txntype"});
         xNumberField5.setEnabled(false);
         xNumberField5.setFieldType(Integer.class);
         xNumberField5.setMargin(new java.awt.Insets(1, 1, 1, 1));
-        xNumberField5.setName("faas.backtaxyrs");
+        xNumberField5.setName("entity.backtaxyrs");
         xNumberField5.setPreferredSize(new java.awt.Dimension(90, 19));
         xFormPanel5.add(xNumberField5);
 
         xTextField26.setCaption("Claim No.");
         xTextField26.setCaptionWidth(65);
-        xTextField26.setDepends(new String[] {"faas.titletype"});
+        xTextField26.setDepends(new String[] {"entity.titletype"});
         xTextField26.setMargin(new java.awt.Insets(1, 1, 1, 1));
-        xTextField26.setName("faas.rpu.rp.claimno");
+        xTextField26.setName("rp.claimno");
         xTextField26.setPreferredSize(new java.awt.Dimension(76, 19));
         xTextField26.setReadonly(true);
         xFormPanel5.add(xTextField26);
@@ -221,7 +223,7 @@ public class FAASPage extends javax.swing.JPanel {
         xLabel1.setCaption("Transaction");
         xLabel1.setCaptionWidth(75);
         xLabel1.setFont(new java.awt.Font("Arial", 1, 11));
-        xLabel1.setName("faas.txntype.objid");
+        xLabel1.setName("entity.txntype.objid");
         xLabel1.setPreferredSize(new java.awt.Dimension(40, 19));
         formPanel1.add(xLabel1);
 
@@ -230,7 +232,7 @@ public class FAASPage extends javax.swing.JPanel {
         xLabel16.setCaptionWidth(90);
         xLabel16.setFont(new java.awt.Font("Arial", 1, 11));
         xLabel16.setForeground(new java.awt.Color(204, 0, 0));
-        xLabel16.setName("faas.cancelreason");
+        xLabel16.setName("entity.cancelreason");
         xLabel16.setPreferredSize(new java.awt.Dimension(40, 19));
         formPanel1.add(xLabel16);
 
@@ -239,7 +241,7 @@ public class FAASPage extends javax.swing.JPanel {
         xLabel17.setCaptionWidth(90);
         xLabel17.setFont(new java.awt.Font("Arial", 1, 11));
         xLabel17.setForeground(new java.awt.Color(204, 0, 0));
-        xLabel17.setName("faas.canceldate");
+        xLabel17.setName("entity.canceldate");
         xLabel17.setPreferredSize(new java.awt.Dimension(73, 19));
         formPanel1.add(xLabel17);
 
@@ -251,7 +253,7 @@ public class FAASPage extends javax.swing.JPanel {
         xComboBox6.setCaption("Restriction");
         xComboBox6.setCaptionWidth(90);
         xComboBox6.setItems("restrictions");
-        xComboBox6.setName("faas.restrictionid");
+        xComboBox6.setName("entity.restrictionid");
         xComboBox6.setPreferredSize(new java.awt.Dimension(0, 20));
         xFormPanel11.add(xComboBox6);
 
@@ -270,7 +272,7 @@ public class FAASPage extends javax.swing.JPanel {
 
         xDateField3.setHint("Date Appraised");
         xDateField3.setName("appraiser.dtsigned");
-        xDateField3.setPreferredSize(new java.awt.Dimension(90, 20));
+        xDateField3.setPreferredSize(new java.awt.Dimension(91, 20));
         xDateField3.setShowCaption(false);
         formPanel4.add(xDateField3);
 
@@ -289,7 +291,7 @@ public class FAASPage extends javax.swing.JPanel {
         formPanel5.add(xLookupField2);
 
         xDateField4.setName("recommender.dtsigned");
-        xDateField4.setPreferredSize(new java.awt.Dimension(90, 20));
+        xDateField4.setPreferredSize(new java.awt.Dimension(91, 20));
         xDateField4.setShowCaption(false);
         formPanel5.add(xDateField4);
 
@@ -308,7 +310,7 @@ public class FAASPage extends javax.swing.JPanel {
         formPanel6.add(xLookupField3);
 
         xDateField5.setName("taxmapper.dtsigned");
-        xDateField5.setPreferredSize(new java.awt.Dimension(90, 20));
+        xDateField5.setPreferredSize(new java.awt.Dimension(91, 20));
         xDateField5.setShowCaption(false);
         formPanel6.add(xDateField5);
 
@@ -329,7 +331,7 @@ public class FAASPage extends javax.swing.JPanel {
 
         xDateField6.setHint("Date Approved");
         xDateField6.setName("approver.dtsigned");
-        xDateField6.setPreferredSize(new java.awt.Dimension(90, 20));
+        xDateField6.setPreferredSize(new java.awt.Dimension(91, 20));
         xDateField6.setShowCaption(false);
         formPanel7.add(xDateField6);
 
@@ -359,7 +361,7 @@ public class FAASPage extends javax.swing.JPanel {
         xLookupField5.setCaption("Owner");
         xLookupField5.setCaptionMnemonic('O');
         xLookupField5.setCaptionWidth(105);
-        xLookupField5.setExpression("#{faas.taxpayer.name}");
+        xLookupField5.setExpression("#{entity.taxpayer.name}");
         xLookupField5.setHandler("lookupTaxpayer");
         xLookupField5.setName("taxpayer");
         xLookupField5.setPreferredSize(new java.awt.Dimension(0, 20));
@@ -371,7 +373,7 @@ public class FAASPage extends javax.swing.JPanel {
         xTextField27.setCaptionWidth(105);
         xTextField27.setDepends(new String[] {"taxpayer"});
         xTextField27.setMargin(new java.awt.Insets(1, 1, 1, 1));
-        xTextField27.setName("faas.owner.name");
+        xTextField27.setName("entity.owner.name");
         xTextField27.setPreferredSize(new java.awt.Dimension(0, 19));
         xTextField27.setRequired(true);
         xFormPanel6.add(xTextField27);
@@ -379,7 +381,7 @@ public class FAASPage extends javax.swing.JPanel {
         xTextField28.setCaption("Administrator");
         xTextField28.setCaptionWidth(105);
         xTextField28.setMargin(new java.awt.Insets(1, 1, 1, 1));
-        xTextField28.setName("faas.administrator.name");
+        xTextField28.setName("entity.administrator.name");
         xTextField28.setPreferredSize(new java.awt.Dimension(0, 19));
         xFormPanel6.add(xTextField28);
 
@@ -391,8 +393,8 @@ public class FAASPage extends javax.swing.JPanel {
         xLabel4.setCaption("Address");
         xLabel4.setCaptionWidth(70);
         xLabel4.setDepends(new String[] {"taxpayer"});
-        xLabel4.setExpression("#{faas.taxpayer.address}");
-        xLabel4.setName("faas.taxpayer.address");
+        xLabel4.setExpression("#{entity.taxpayer.address}");
+        xLabel4.setName("entity.taxpayer.address");
         xLabel4.setPreferredSize(new java.awt.Dimension(0, 19));
         xFormPanel7.add(xLabel4);
 
@@ -400,7 +402,7 @@ public class FAASPage extends javax.swing.JPanel {
         xTextField9.setCaptionWidth(70);
         xTextField9.setDepends(new String[] {"taxpayer"});
         xTextField9.setMargin(new java.awt.Insets(1, 1, 1, 1));
-        xTextField9.setName("faas.owner.address");
+        xTextField9.setName("entity.owner.address");
         xTextField9.setPreferredSize(new java.awt.Dimension(0, 19));
         xTextField9.setRequired(true);
         xFormPanel7.add(xTextField9);
@@ -408,7 +410,7 @@ public class FAASPage extends javax.swing.JPanel {
         xTextField29.setCaption("Address");
         xTextField29.setCaptionWidth(70);
         xTextField29.setMargin(new java.awt.Insets(1, 1, 1, 1));
-        xTextField29.setName("faas.administrator.address");
+        xTextField29.setName("entity.administrator.address");
         xTextField29.setPreferredSize(new java.awt.Dimension(0, 19));
         xFormPanel7.add(xTextField29);
 
@@ -427,22 +429,25 @@ public class FAASPage extends javax.swing.JPanel {
         xFormPanel8.setPadding(new java.awt.Insets(0, 0, 0, 0));
         xTextField20.setCaption("Survey No.");
         xTextField20.setCaptionWidth(70);
+        xTextField20.setEnabled(false);
         xTextField20.setMargin(new java.awt.Insets(1, 1, 1, 1));
-        xTextField20.setName("faas.rpu.rp.surveyno");
+        xTextField20.setName("rp.surveyno");
         xTextField20.setPreferredSize(new java.awt.Dimension(0, 19));
         xFormPanel8.add(xTextField20);
 
         xTextField30.setCaption("Street");
         xTextField30.setCaptionWidth(70);
+        xTextField30.setEnabled(false);
         xTextField30.setMargin(new java.awt.Insets(1, 1, 1, 1));
-        xTextField30.setName("faas.rpu.rp.street");
+        xTextField30.setName("rp.street");
         xTextField30.setPreferredSize(new java.awt.Dimension(0, 19));
         xFormPanel8.add(xTextField30);
 
         xTextField33.setCaption("Purok/Zone");
         xTextField33.setCaptionWidth(70);
+        xTextField33.setEnabled(false);
         xTextField33.setMargin(new java.awt.Insets(1, 1, 1, 1));
-        xTextField33.setName("faas.rpu.rp.purok");
+        xTextField33.setName("rp.purok");
         xTextField33.setPreferredSize(new java.awt.Dimension(0, 19));
         xFormPanel8.add(xTextField33);
 
@@ -450,27 +455,44 @@ public class FAASPage extends javax.swing.JPanel {
         xFormPanel8.setBounds(330, 24, 206, 70);
 
         xFormPanel9.setPadding(new java.awt.Insets(0, 0, 0, 0));
+
+        xFormPanel12.setOrientation(com.rameses.rcp.constant.UIConstants.HORIZONTAL);
+        xFormPanel12.setPadding(new java.awt.Insets(0, 0, 0, 0));
+        xFormPanel12.setShowCaption(false);
+        xButton2.setMnemonic('p');
+        xButton2.setCellPadding(new java.awt.Insets(0, 0, 0, 1));
+        xButton2.setImmediate(true);
+        xButton2.setName("viewRealProperty");
+        xButton2.setPreferredSize(new java.awt.Dimension(72, 23));
+        xButton2.setShowCaption(false);
+        xButton2.setText("PIN");
+        xFormPanel12.add(xButton2);
+
         xLabel13.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(153, 153, 153)));
         xLabel13.setCaption("PIN No.");
         xLabel13.setCaptionWidth(75);
-        xLabel13.setExpression("#{faas.rpu.fullpin}");
+        xLabel13.setExpression("#{rpu.fullpin}");
         xLabel13.setFont(new java.awt.Font("Arial", 1, 14));
-        xLabel13.setName("faas.rpu.fullpin");
-        xLabel13.setPreferredSize(new java.awt.Dimension(0, 21));
-        xFormPanel9.add(xLabel13);
+        xLabel13.setName("rpu.fullpin");
+        xLabel13.setPreferredSize(new java.awt.Dimension(239, 21));
+        xLabel13.setShowCaption(false);
+        xFormPanel12.add(xLabel13);
+
+        xFormPanel9.add(xFormPanel12);
 
         xTextField31.setCaption("Cadastral ");
         xTextField31.setCaptionWidth(75);
+        xTextField31.setEnabled(false);
         xTextField31.setMargin(new java.awt.Insets(1, 1, 1, 1));
-        xTextField31.setName("faas.rpu.rp.cadastrallotno");
+        xTextField31.setName("rp.cadastrallotno");
         xTextField31.setPreferredSize(new java.awt.Dimension(0, 19));
-        xTextField31.setRequired(true);
         xFormPanel9.add(xTextField31);
 
         xTextField32.setCaption("Block No.");
         xTextField32.setCaptionWidth(75);
+        xTextField32.setEnabled(false);
         xTextField32.setMargin(new java.awt.Insets(1, 1, 1, 1));
-        xTextField32.setName("faas.rpu.rp.blockno");
+        xTextField32.setName("rp.blockno");
         xTextField32.setPreferredSize(new java.awt.Dimension(0, 19));
         xFormPanel9.add(xTextField32);
 
@@ -481,34 +503,34 @@ public class FAASPage extends javax.swing.JPanel {
         xFormPanel10.setPadding(new java.awt.Insets(0, 0, 0, 0));
         xTextField34.setCaption("North");
         xTextField34.setCaptionWidth(75);
+        xTextField34.setEnabled(false);
         xTextField34.setMargin(new java.awt.Insets(1, 1, 1, 1));
-        xTextField34.setName("faas.rpu.rp.north");
+        xTextField34.setName("rp.north");
         xTextField34.setPreferredSize(new java.awt.Dimension(0, 19));
-        xTextField34.setRequired(true);
         xFormPanel10.add(xTextField34);
 
         xTextField35.setCaption("East");
         xTextField35.setCaptionWidth(75);
+        xTextField35.setEnabled(false);
         xTextField35.setMargin(new java.awt.Insets(1, 1, 1, 1));
-        xTextField35.setName("faas.rpu.rp.east");
+        xTextField35.setName("rp.east");
         xTextField35.setPreferredSize(new java.awt.Dimension(0, 19));
-        xTextField35.setRequired(true);
         xFormPanel10.add(xTextField35);
 
         xTextField36.setCaption("South");
         xTextField36.setCaptionWidth(75);
+        xTextField36.setEnabled(false);
         xTextField36.setMargin(new java.awt.Insets(1, 1, 1, 1));
-        xTextField36.setName("faas.rpu.rp.south");
+        xTextField36.setName("rp.south");
         xTextField36.setPreferredSize(new java.awt.Dimension(0, 19));
-        xTextField36.setRequired(true);
         xFormPanel10.add(xTextField36);
 
         xTextField37.setCaption("West");
         xTextField37.setCaptionWidth(75);
+        xTextField37.setEnabled(false);
         xTextField37.setMargin(new java.awt.Insets(1, 1, 1, 1));
-        xTextField37.setName("faas.rpu.rp.west");
+        xTextField37.setName("rp.west");
         xTextField37.setPreferredSize(new java.awt.Dimension(0, 19));
-        xTextField37.setRequired(true);
         xFormPanel10.add(xTextField37);
 
         jPanel8.add(xFormPanel10);
@@ -533,23 +555,23 @@ public class FAASPage extends javax.swing.JPanel {
         xLabel5.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(153, 153, 153)));
         xLabel5.setCaption("Revision Year");
         xLabel5.setCaptionWidth(100);
+        xLabel5.setExpression("#{rpu.ry}");
         xLabel5.setFont(new java.awt.Font("Arial", 1, 11));
-        xLabel5.setName("faas.rpu.rp.ry");
         xLabel5.setPreferredSize(new java.awt.Dimension(0, 19));
         formPanel2.add(xLabel5);
 
         xLabel6.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(153, 153, 153)));
         xLabel6.setCaption("Classification");
         xLabel6.setCaptionWidth(100);
+        xLabel6.setExpression("#{rpu.classification.code}");
         xLabel6.setFont(new java.awt.Font("Arial", 1, 11));
-        xLabel6.setName("faas.rpu.classification.code");
         xLabel6.setPreferredSize(new java.awt.Dimension(0, 19));
         formPanel2.add(xLabel6);
 
         xDecimalField1.setCaption("Market Value");
         xDecimalField1.setCaptionWidth(100);
         xDecimalField1.setFont(new java.awt.Font("Tahoma", 1, 11));
-        xDecimalField1.setName("faas.rpu.totalmv");
+        xDecimalField1.setName("rpu.totalmv");
         xDecimalField1.setPreferredSize(new java.awt.Dimension(0, 20));
         xDecimalField1.setReadonly(true);
         formPanel2.add(xDecimalField1);
@@ -557,7 +579,7 @@ public class FAASPage extends javax.swing.JPanel {
         xDecimalField2.setCaption("Assessed Value");
         xDecimalField2.setCaptionWidth(100);
         xDecimalField2.setFont(new java.awt.Font("Tahoma", 1, 11));
-        xDecimalField2.setName("faas.rpu.totalav");
+        xDecimalField2.setName("rpu.totalav");
         xDecimalField2.setPreferredSize(new java.awt.Dimension(0, 20));
         xDecimalField2.setReadonly(true);
         formPanel2.add(xDecimalField2);
@@ -567,7 +589,7 @@ public class FAASPage extends javax.swing.JPanel {
         xCheckBox1.setCaptionWidth(100);
         xCheckBox1.setEnabled(false);
         xCheckBox1.setMargin(new java.awt.Insets(0, 0, 0, 0));
-        xCheckBox1.setName("faas.rpu.taxable");
+        xCheckBox1.setName("rpu.taxable");
         xCheckBox1.setPreferredSize(new java.awt.Dimension(13, 19));
         formPanel2.add(xCheckBox1);
 
@@ -584,7 +606,7 @@ public class FAASPage extends javax.swing.JPanel {
         xTextArea1.setLineWrap(true);
         xTextArea1.setCaption("Memoranda");
         xTextArea1.setHint("Memoranda");
-        xTextArea1.setName("faas.memoranda");
+        xTextArea1.setName("entity.memoranda");
         xTextArea1.setPreferredSize(new java.awt.Dimension(100, 65));
         xTextArea1.setShowCaption(false);
         xTextArea1.setTextCase(com.rameses.rcp.constant.TextCase.UPPER);
@@ -596,7 +618,7 @@ public class FAASPage extends javax.swing.JPanel {
         xTextField21.setCaptionWidth(110);
         xTextField21.setFont(new java.awt.Font("Arial", 1, 11));
         xTextField21.setForeground(new java.awt.Color(204, 0, 0));
-        xTextField21.setName("faas.cancelnote");
+        xTextField21.setName("entity.cancelnote");
         xTextField21.setPreferredSize(new java.awt.Dimension(0, 19));
         formPanel3.add(xTextField21);
 
@@ -609,7 +631,7 @@ public class FAASPage extends javax.swing.JPanel {
         xTextField13.setCaptionWidth(100);
         xTextField13.setCellPadding(new java.awt.Insets(0, 0, 2, 0));
         xTextField13.setMargin(new java.awt.Insets(1, 1, 1, 1));
-        xTextField13.setName("faas.prevtdno");
+        xTextField13.setName("entity.prevtdno");
         xTextField13.setPreferredSize(new java.awt.Dimension(0, 18));
         xFormPanel1.add(xTextField13);
 
@@ -617,7 +639,7 @@ public class FAASPage extends javax.swing.JPanel {
         xTextField22.setCaptionWidth(100);
         xTextField22.setCellPadding(new java.awt.Insets(0, 0, 2, 0));
         xTextField22.setMargin(new java.awt.Insets(1, 1, 1, 1));
-        xTextField22.setName("faas.prevpin");
+        xTextField22.setName("entity.prevpin");
         xTextField22.setPreferredSize(new java.awt.Dimension(0, 18));
         xFormPanel1.add(xTextField22);
 
@@ -626,7 +648,7 @@ public class FAASPage extends javax.swing.JPanel {
         xNumberField7.setCellPadding(new java.awt.Insets(0, 0, 2, 0));
         xNumberField7.setFieldType(BigDecimal.class);
         xNumberField7.setMargin(new java.awt.Insets(1, 1, 1, 1));
-        xNumberField7.setName("faas.prevmv");
+        xNumberField7.setName("entity.prevmv");
         xNumberField7.setPattern("#,##0.00");
         xNumberField7.setPreferredSize(new java.awt.Dimension(0, 18));
         xFormPanel1.add(xNumberField7);
@@ -636,7 +658,7 @@ public class FAASPage extends javax.swing.JPanel {
         xNumberField8.setCellPadding(new java.awt.Insets(0, 0, 2, 0));
         xNumberField8.setFieldType(BigDecimal.class);
         xNumberField8.setMargin(new java.awt.Insets(1, 1, 1, 1));
-        xNumberField8.setName("faas.prevav");
+        xNumberField8.setName("entity.prevav");
         xNumberField8.setPattern("#,##0.00");
         xNumberField8.setPreferredSize(new java.awt.Dimension(0, 18));
         xFormPanel1.add(xNumberField8);
@@ -645,7 +667,7 @@ public class FAASPage extends javax.swing.JPanel {
         xTextField23.setCaptionWidth(100);
         xTextField23.setCellPadding(new java.awt.Insets(0, 0, 2, 0));
         xTextField23.setMargin(new java.awt.Insets(1, 1, 1, 1));
-        xTextField23.setName("faas.prevowner");
+        xTextField23.setName("entity.prevowner");
         xTextField23.setPreferredSize(new java.awt.Dimension(0, 18));
         xFormPanel1.add(xTextField23);
 
@@ -675,6 +697,7 @@ public class FAASPage extends javax.swing.JPanel {
     private javax.swing.JPanel jPanel9;
     private javax.swing.JScrollPane jScrollPane1;
     private com.rameses.rcp.control.XButton xButton1;
+    private com.rameses.rcp.control.XButton xButton2;
     private com.rameses.rcp.control.XCheckBox xCheckBox1;
     private com.rameses.rcp.control.XComboBox xComboBox3;
     private com.rameses.rcp.control.XComboBox xComboBox5;
@@ -690,6 +713,7 @@ public class FAASPage extends javax.swing.JPanel {
     private com.rameses.rcp.control.XFormPanel xFormPanel1;
     private com.rameses.rcp.control.XFormPanel xFormPanel10;
     private com.rameses.rcp.control.XFormPanel xFormPanel11;
+    private com.rameses.rcp.control.XFormPanel xFormPanel12;
     private com.rameses.rcp.control.XFormPanel xFormPanel2;
     private com.rameses.rcp.control.XFormPanel xFormPanel3;
     private com.rameses.rcp.control.XFormPanel xFormPanel4;

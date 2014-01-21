@@ -36,9 +36,11 @@ class RealPropertyService
 		return [
 			objid		: objid,
 			state 		: 'INTERIM',
+			lguid		: var.lgu_objid,
 			lgutype 	: var.lgu_type,
 			ry 			: var.current_ry,
 			autonumber	: false,
+			isnew   	: true,
 		]	
 	}
 

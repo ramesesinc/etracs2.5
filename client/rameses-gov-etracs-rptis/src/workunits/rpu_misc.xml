@@ -1,0 +1,13 @@
+<workunit extends="rpt_wtemplates/RPUController.xml">
+    <invokers>
+        <invoker type="miscrpu:create" action="init" caption="Miscellaneous RPU" target="popup" />
+        <invoker type="miscrpu:open" action="open" caption="Miscellaneous RPU" target="popup" />
+    </invokers>
+
+    <code class="com.rameses.gov.etracs.rpt.rpu.misc.ui.MiscRPUController">
+    </code>
+    
+    <pages>
+        <page template="com.rameses.gov.etracs.rpt.rpu.misc.ui.MiscRPUPage"/>
+    </pages>
+</workunit>

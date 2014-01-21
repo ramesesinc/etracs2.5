@@ -55,4 +55,3 @@ WHERE realpropertyid = $P{realpropertyid}
   AND objid <> $P{objid}
   AND state <> 'CANCELLED'
 
-

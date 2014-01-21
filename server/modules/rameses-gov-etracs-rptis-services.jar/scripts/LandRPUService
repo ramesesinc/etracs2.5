@@ -1,10 +1,14 @@
 import com.rameses.annotations.*
 import com.rameses.util.*
+import com.rameses.services.extended.*
 
 class LandRPUService
 {
-	@PersistenceContext('rpt')
+	@ActiveDB('landrpu')
 	def em
+
+	@ActiveDB('planttreerpu')
+	def ptem 
     
     @Service('NumberService')
 	def numberSvc
@@ -25,11 +29,10 @@ class LandRPUService
 	@Env
 	def env
     
-	def SCHEMA_LANDRPU 			= 'landrpu'
-	def SCHEMA_LANDDETAIL 		= 'landrpu:landdetail'
-	def SCHEMA_LANDADJUSTMENT	= 'landrpu:landadjustment'
-	def SCHEMA_PARAMETER 		= 'landrpu:parameter'
-	def SCHEMA_PLANTTREE_DETAIL	= 'planttreerpu:planttreedetail'
+	def SCHEMA_LANDDETAIL 		= 'landdetail'
+	def SCHEMA_LANDADJUSTMENT	= 'landadjustment'
+	def SCHEMA_PARAMETER 		= 'parameter'
+	def SCHEMA_PLANTTREE_DETAIL	= 'planttreedetail'
 	
 	def ADJ_TYPE_LANDVALUE		= 'LV'
 	def ADJ_TYPE_ACTUALUSE		= 'AU'
@@ -46,7 +49,7 @@ class LandRPUService
 
 	@ProxyMethod
 	public def createLandRpu( rpu ) {
-		em.create(SCHEMA_LANDRPU, rpu)
+		em.create(rpu)
 		saveLandAdjustments(rpu)
 		saveLandDetails(rpu)
 		savePlantTrees(rpu)
@@ -56,7 +59,7 @@ class LandRPUService
 
 	@ProxyMethod
 	public def updateLandRpu(rpu) { 
-		em.updateImmediate(SCHEMA_LANDRPU, rpu)
+		em.updateImmediate(rpu)
 		saveLandAdjustments(rpu)
 		saveLandDetails(rpu)
 		savePlantTrees(rpu)
@@ -66,7 +69,7 @@ class LandRPUService
 
 	@ProxyMethod
 	public def openLandRpu( objid ) {
-		def landrpu = em.read(SCHEMA_LANDRPU, [objid:objid])
+		def landrpu = em.read([objid:objid])
 		if (!landrpu) {
 			return [landdetails:[], planttrees:[], landadjustments:[]]
 		}
@@ -81,7 +84,7 @@ class LandRPUService
 	@ProxyMethod
 	public def deleteLandRpu(rpu){
 		rpu.planttrees.each{
-			em.delete(SCHEMA_PLANTTREE_DETAIL, it)
+			ptem.delete(it, SCHEMA_PLANTTREE_DETAIL)
 		}
 		rpu.landdetails.each{ ld ->
 			ld.landadjustments.each{
@@ -90,12 +93,12 @@ class LandRPUService
 			ld.actualuseadjustments.each{
 				deleteAdjustment(it)
 			}
-			em.delete(SCHEMA_LANDDETAIL, ld)
+			em.delete(ld, SCHEMA_LANDDETAIL)
 		}
 		rpu.landadjustments.each{
 			deleteAdjustment(it)
 		}
-		em.delete(SCHEMA_LANDRPU, rpu)
+		em.delete(rpu)
 	}
 
 
@@ -132,9 +135,7 @@ class LandRPUService
 
 	@ProxyMethod
 	public def getLandRpuByRealPropertyId( realpropertyid  ) {
-		return em.sqlContext.createNamedQuery('landrpu:getLandRpuByRealPropertyId')
-							.setParameter('realpropertyid', realpropertyid)
-							.singleResult 
+		return em.findLandRpuByRealPropertyId([realpropertyid:realpropertyid])
 	}
 
 	
@@ -208,9 +209,7 @@ class LandRPUService
     }
 
     def getApplicableClassifications(adjtype){
-    	return em.sqlContext.createNamedQuery('landrpu:getAdjustmentApplicationClassifications')
-    				.setParameters(adjtype)
-    				.resultList 
+    	return em.getAdjustmentApplicationClassifications(adjtype)
     }
 
     @ProxyMethod
@@ -295,13 +294,13 @@ class LandRPUService
 	}
 
 	void removeAdjustment(lda){
-		em.delete(SCHEMA_LANDADJUSTMENT, lda)
+		em.delete(lda, SCHEMA_LANDADJUSTMENT)
 	}
 
 	void saveLandDetails(rpu){
 		rpu.landdetails.each{ ld ->
 			ld.taxable = util.toBoolean(ld.taxable,true)
-			em.save(SCHEMA_LANDDETAIL, ld)
+			em.save(ld, SCHEMA_LANDDETAIL)
 
 			ld.landadjustments.each{ lda ->
 				lda.landdetailid = ld.objid 
@@ -323,78 +322,56 @@ class LandRPUService
 			ld.actualuseadjustments?.each{lda ->
 				removeAdjustment(lda)
 			}
-			em.delete(SCHEMA_LANDDETAIL, ld)
+			em.delete(ld, SCHEMA_LANDDETAIL)
 		}
 	}
 
 
 	void savePlantTrees(rpu){
 		rpu.planttrees.each{ pt ->
-			em.save(SCHEMA_PLANTTREE_DETAIL, pt)
+			ptem.save(pt, SCHEMA_PLANTTREE_DETAIL)
 		}
 
 		rpu._planttrees?.each{pt ->
-			em.delete(SCHEMA_PLANTTREE_DETAIL, pt)
+			ptem.delete(pt, SCHEMA_PLANTTREE_DETAIL)
 		}
 	}
 
 
     void saveAdjustment(adj) {
-		em.save(SCHEMA_LANDADJUSTMENT, adj)
+		em.save(adj, SCHEMA_LANDADJUSTMENT)
 
 		adj.paramaters.each{ param ->
-			em.save(SCHEMA_PARAMETER, param)
+			em.save(param, SCHEMA_PARAMETER)
 		}
     }
 
     void deleteAdjustment(adj){
     	adj.parameters.each{param ->
-    		em.delete(SCHEMA_PARAMETER, param)
+    		em.delete(param, SCHEMA_PARAMETER)
     	}
-    	em.delete(SCHEMA_LANDADJUSTMENT, adj)
+    	em.delete(adj, SCHEMA_LANDADJUSTMENT)
     }
 
 
     @ProxyMethod
     public def getLandDetails(rpu){
-    	def details = em.sqlContext.createNamedQuery('landrpu:getLandDetails')
-    							.setParameter('landrpuid', rpu.objid)
-    							.resultList
-
+    	def details = em.getLandDetails([landrpuid:rpu.objid])
 		details.each{ detail ->
-			EntityUtil.fieldToMap(detail)
-
-			detail.landadjustments 		= em.sqlContext.createNamedQuery('landrpu:getLandDetailAdjustments')
-												.setParameters([landdetailid:detail.objid, type:ADJ_TYPE_LANDVALUE])
-												.resultList.each{
-													EntityUtil.fieldToMap(it)
-												}
-
-			detail.actualuseadjustments = em.sqlContext.createNamedQuery('landrpu:getLandDetailAdjustments')
-												.setParameters([landdetailid:detail.objid, type:ADJ_TYPE_ACTUALUSE])
-												.resultList.each{
-													EntityUtil.fieldToMap(it)
-												}
+			detail.landadjustments 	= em.getLandDetailAdjustments([landdetailid:detail.objid, type:ADJ_TYPE_LANDVALUE])
+			detail.actualuseadjustments = em.getLandDetailAdjustments([landdetailid:detail.objid, type:ADJ_TYPE_ACTUALUSE])
 		}
 		return details 
     }
 
 
 	def getPlantTrees(rpu){
-		return em.sqlContext.createNamedQuery('landrpu:getPlantTrees')
-						.setParameter('landrpuid', rpu.objid)
-						.resultList.each{
-							EntityUtil.fieldToMap(it)
-						}
+		return em.getPlantTrees([landrpuid:rpu.objid])
 	}
 
 
 	def getLandAdjustments(rpu){
-		return em.sqlContext.createNamedQuery('landrpu:getLandAdjustments')
-						.setParameters([landrpuid:rpu.objid, type:ADJ_TYPE_LANDVALUE])
-						.resultList.each{
-							EntityUtil.fieldToMap(it)
-						}
+		return em.getLandAdjustments([landrpuid:rpu.objid, type:ADJ_TYPE_LANDVALUE])
 	}
 
 
@@ -482,7 +459,7 @@ class LandRPUService
             return landdetail.actualuse.rate 
         }
         def params = [ry:ry, landassesslevelid:landdetail.actualuse.objid, marketvalue:landdetail.marketvalue]
-        def range = em.sqlContext.createNamedQuery('landrpu:getAssessLevelRange').setParameters(params).singleResult
+        def range = em.findAssessLevelRange(params)
         if( ! range ) throw new Exception('Market Value of P' + numberSvc.format('#,##0.00', landdetail.marketvalue) + ' has no assess level range definition.' )
         return range.rate 
     }

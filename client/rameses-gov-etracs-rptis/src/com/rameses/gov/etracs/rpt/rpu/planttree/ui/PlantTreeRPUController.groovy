@@ -9,15 +9,6 @@ import com.rameses.gov.etracs.rpt.common.RPTUtil
 public class PlantTreeRPUController extends com.rameses.gov.etracs.rpt.rpu.ui.AbstractRPUController
 {
     
-    @Service('PlantTreeRPUService')
-    def svc;
-    
-    
-    public def getService(){
-        return svc 
-    }
-    
-    
     /*-------------------------------------------------------------
      *
      * MAIN PAGE

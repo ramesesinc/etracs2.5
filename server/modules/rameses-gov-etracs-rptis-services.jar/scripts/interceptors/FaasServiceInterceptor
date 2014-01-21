@@ -124,45 +124,6 @@ class FaasServiceInterceptor
 	}
 
 
-
-
-	@Before(pattern="FAASService.createFaas", eval="#{args[0].datacapture==true}") 
-	public void interceptCreateDataCaptureFaas( evt ) {
-		def faas = evt.args[0]
-		faas.txntype.newrealproperty = true 
-		rpuSvc.createRpu( faas.rpu, faas.txntype )
-	}
-
-
-	@Before(pattern="FAASService.createFaas", eval="#{args[0].datacapture==false}") 
-	public void interceptCreateFaas( evt ) {
-		def faas = evt.args[0]
-		rpuSvc.createRpu( faas.rpu, faas.txntype)
-	}
-
-
-
-
-	@After(pattern="FAASService.openFaas") 
-	public void interceptOpenFaas( evt ) {
-		def faas = evt.result 
-		faas.rpu = rpuSvc.openRpu( faas.rpuid )
-	}
-
-	@Before(pattern="FAASService.updateFaas") 
-	public void interceptUpdateFaas(evt) {
-		def faas = evt.args[0]
-		rpuSvc.updateRpu( faas.rpu )
-	}
-
-	@After(pattern="FAASService.deleteFaas") 
-	public void interceptDeleteFaas( evt ) {
-		def faas = evt.result 
-		if (faas.txntype.newrpu){
-			rpuSvc.deleteRpu( faas.rpu )
-		}
-	}
-
 	/*---------------------------------------------------
 	*
 	* Clear info related to transfer
