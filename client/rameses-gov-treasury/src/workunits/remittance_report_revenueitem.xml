@@ -60,14 +60,17 @@
                 getParameters : { 
                     def params = paramsvc.getStandardParameter() 
                     params.SUBTITLE = 'SUMMARY OF COLLECTION'
+                    params.FUND = "all"
                     if (fund) {
                         params.SUBTITLE = params.SUBTITLE + ' BY ' + fund.title + ' FUND ' ;
+                        params.FUND = "specific"
                     }
                     return params;
                 },
                 getSubReports : {
                     return [ 
                         new SubReport("ReportSummary", reportPath + "reportbyrevenueitemsummary.jasper"),
+                        new SubReport("BrgyShareSummary", reportPath + "reportbyrevenueitemsummary_share.jasper")
                     ] as SubReport[];    
                  }
             ] as ReportModel

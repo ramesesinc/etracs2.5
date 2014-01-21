@@ -195,7 +195,7 @@ public class RPTBillingController
     }
     
     void clearLoadedProperties(){
-        items.clear()
+        items = []
         listHandler.reload()
     }
     

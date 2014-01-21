@@ -134,7 +134,7 @@
         <page name="provsubmissionapproval" template="com.rameses.gov.etracs.rpt.subdivision.ui.SubdivisionPage"/>
         <page name="forprovapproval" template="com.rameses.gov.etracs.rpt.subdivision.ui.SubdivisionPage"/>
         <page name="approved" template="com.rameses.gov.etracs.rpt.subdivision.ui.SubdivisionPage"/>
-        <page name="wait" template="com.rameses.gov.etracs.rpt.subdivision.ui.WaitInfoPage"/>
+        <page name="wait" template="com.rameses.gov.etracs.rpt.rpu.ui.WaitInfoPage"/>
     </pages>
 </workunit>
 

@@ -45,7 +45,7 @@
 	<field name="reqno" class="java.lang.String"/>
 	<field name="dtfiled" class="java.util.Date"/>
 	<field name="requester.title" class="java.lang.String"/>
-	<field name="approver.name" class="java.lang.String"/>
+	<field name="user.name" class="java.lang.String"/>
 	<field name="approver.title" class="java.lang.String"/>
 	<field name="reqtype" class="java.lang.String"/>
 
@@ -837,7 +837,7 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font fontName="Tahoma" pdfFontName="Helvetica-Bold" size="8" isBold="true"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{approver.name}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{user.name}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -854,7 +854,7 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font size="8"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{approver.title}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[""]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement

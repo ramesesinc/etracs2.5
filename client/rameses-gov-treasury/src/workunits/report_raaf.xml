@@ -1,8 +1,6 @@
 <workunit extends="wtemplates/gov/treasury/ReportController.xml" >
     <invokers>
-        <invoker folderid="/explorer/txn/treasury/reports" action="init" caption="CRAAF" target="window" index="4" role="AFO" />
-        
-        <invoker type="report:craaf" action="init" caption="CRAAF" target="window" index="4" role="AFO" />
+        <invoker folderid="/explorer/txn/treasury/reports" action="init" caption="RAAF" target="window" index="5" role="COLLECTOR" />
     </invokers>
     <code>
 
@@ -16,12 +14,13 @@ import com.rameses.osiris2.reports.*;
 
 class CraafController extends com.rameses.gov.treasury.report.ReportController
 {
-    @Service('CRAAFReportService') 
+    @Service('RAAFReportService') 
     def svc
     
-    String title = 'Consolidated Report of Accountability for Accountable Forms'
-    String reportpath = 'com/rameses/gov/treasury/report/craaf/'
-    String reportName = reportpath + 'craaf.jasper'
+    
+    String title = 'Report of Accountability for Accountable Forms'
+    String reportpath = 'com/rameses/gov/treasury/report/raaf/'
+    String reportName = reportpath + 'raaf.jasper'
     
         
     def initReport(){
@@ -31,7 +30,7 @@ class CraafController extends com.rameses.gov.treasury.report.ReportController
     
     def data
     def getReportData(){
-        data = svc.generateCraafData(entity);
+        data = svc.generateRaafData(entity);
         return data.items
     }
     

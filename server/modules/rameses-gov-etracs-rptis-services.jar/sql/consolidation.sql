@@ -143,8 +143,7 @@ UPDATE consolidationaffectedrpu SET newfaasid = null WHERE objid = $P{objid}
 
 [approveConsolidation]
 UPDATE cs SET
-	cs.state = 'APPROVED',
-	cs.newtdno = f.tdno 	
+	cs.state = 'APPROVED'
 FROM consolidation cs
 	INNER JOIN faas f ON cs.newfaasid = f.objid  
 WHERE cs.objid = $P{objid}
@@ -155,3 +154,44 @@ UPDATE realproperty SET state = 'CANCELLED' WHERE objid = $P{objid}
 
 [cancelLandLedger]
 UPDATE rptledger SET state = 'CANCELLED' WHERE faasid = $P{faasid}
+
+
+
+
+
+
+#===============================================================
+#
+#  ASYNCHRONOUS APPROVAL SUPPORT 
+#
+#================================================================
+
+[findFaasByNewRpuId]
+SELECT 
+	r.ry AS rpu_ry, 
+	rp.barangayid AS rpu_rp_barangayid
+FROM rpu r 
+	INNER JOIN realproperty rp ON r.realpropertyid = rp.objid 
+WHERE r.objid =  $P{newrpuid}	
+
+
+[updateConsolidationNewTdNo]
+UPDATE consolidation SET 
+	newtdno = $P{newtdno}, newutdno = $P{newutdno}
+WHERE objid =$P{objid}	
+
+[updateConsolidationNewFaasId]
+UPDATE consolidation SET 
+	newfaasid = $P{newfaasid}
+WHERE objid =$P{objid}	
+
+
+[updateAffectedNewTdNo]
+UPDATE consolidationaffectedrpu SET 
+	newtdno = $P{newtdno}, newutdno = $P{newutdno}
+WHERE objid =$P{objid}	
+
+
+
+
+

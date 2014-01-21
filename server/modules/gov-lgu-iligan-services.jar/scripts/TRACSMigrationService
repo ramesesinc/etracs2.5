@@ -112,7 +112,16 @@ public class TRACSMigrationService {
 
 		def data = em2.findRemittance(params);
 		data.acctsummaries = em2.getRevenueItemSummaryByFund( params )
+
 		if( ! data.acctsummaries ) throw new Exception("No record(s) found ");
+
+		data.brgyshares = []
+		if( params.fundid == 'GENERAL' || params.fundid == '%')
+			data.brgyshares  = em2.getBrgyShares(params )
+
+
+		data.hasbrgyshares = data.brgyshares.size() > 0
+
 		return data;
 
 	}

@@ -77,7 +77,9 @@ public class RPTBillingService
 			taxpayer_name	: bill.taxpayer.name,
 			taxpayer_address: bill.taxpayer.address,
 			postedby		: env.NAME,
-			postedbytitle	: env.JOBTITLE
+			postedbytitle	: env.JOBTITLE,
+			billtoyear		: bill.billtoyear,
+			billtoqtr 		: bill.billtoqtr,
 		]
 		em.insertRptBill(b)
 		bill.ledgers.each{
@@ -88,7 +90,6 @@ public class RPTBillingService
 
 	@ProxyMethod
 	public def getBillByBarcode(param){
-		println 'param -> ' + param 
 		def bill= em.findBillByBarcode(param)
 		if (!bill) 
 			throw new Exception('Invalid barcode or associated bill has already expired.')
@@ -115,6 +116,16 @@ public class RPTBillingService
 	public def generateBillByLedgerId(ledgerid){
 		def bill = initBill(ledgerid)
 		bill.billdate = dtSvc.serverDate
+		return generateBill(bill)
+	}
+
+
+	@ProxyMethod
+	public def generateBillByLedgerId2(ledgerid, billtoyear, billtoqtr ){
+		def bill = initBill(ledgerid)
+		bill.billdate = dtSvc.serverDate
+		bill.billtoyear = billtoyear
+		bill.billtoqtr = billtoqtr
 		return generateBill(bill)
 	}
 
@@ -519,15 +530,16 @@ public class RPTBillingService
 
     boolean determineFullPayment(pdate, bill, rl, item) {
     	def fullpayment = false
+		if (item.year < pdate.year && item.year == rl.lastyearpaid && bill.billtoqtr == 4) 
+			fullpayment = true
+		else if (item.year > rl.lastyearpaid && item.year < bill.billtoyear) 
+			fullpayment = true
+		else if (item.year > rl.lastyearpaid && item.year == bill.billtoyear &&  bill.billtoqtr == 4)
+			fullpayment = true 
+		else if (item.year == pdate.year && rl.lastqtrpaid == 4 &&  bill.billtoqtr == 4)
+			fullpayment = true 
 
-    	if (item.year > pdate.year && item.year < bill.billtoyear) 
-    		fullpayment = true
-    	else if (item.year > pdate.year && item.year == bill.billtoyear &&  bill.billtoqtr == 4)
-    		fullpayment = true 
-    	else if (item.year == pdate.year && rl.lastyearpaid == 4 &&  bill.billtoqtr == 4)
-    		fullpayment = true 
-
-    	return fullpayment
+		return fullpayment
     }
 
 
