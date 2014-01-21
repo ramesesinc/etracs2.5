@@ -68,6 +68,14 @@ WHERE NOT(b.objid IS NULL)
 ${filter}
 ORDER BY b.startdate
 
+[findMyTaskListCount]
+SELECT COUNT(*) AS icount 
+FROM business xb 
+INNER JOIN bpapplication ba ON ba.objid=xb.currentapplicationid
+INNER JOIN bpapplication_task bt ON bt.applicationid=ba.objid
+WHERE bt.assignee_objid=$P{assigneeid} AND bt.enddate IS NULL
+
+
 [getLookup]
 SELECT 
 	b.objid,

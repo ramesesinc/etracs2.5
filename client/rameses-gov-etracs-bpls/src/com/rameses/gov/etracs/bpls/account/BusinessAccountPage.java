@@ -57,6 +57,7 @@ public class BusinessAccountPage extends javax.swing.JPanel {
         xFormPanel1.add(xComboBox1);
 
         xLookupField2.setCaption("Surcharge Account");
+        xLookupField2.setDepends(new String[] {"entity.taxfeetype"});
         xLookupField2.setExpression("#{entity.surcharge.code} #{entity.surcharge.title}");
         xLookupField2.setHandler("lookupSurchargeAccount");
         xLookupField2.setName("entity.surcharge");
@@ -64,6 +65,7 @@ public class BusinessAccountPage extends javax.swing.JPanel {
         xFormPanel1.add(xLookupField2);
 
         xLookupField3.setCaption("Interest Account");
+        xLookupField3.setDepends(new String[] {"entity.taxfeetype"});
         xLookupField3.setExpression("#{entity.interest.code} #{entity.interest.title}");
         xLookupField3.setHandler("lookupInterestAccount");
         xLookupField3.setName("entity.interest");
@@ -71,6 +73,7 @@ public class BusinessAccountPage extends javax.swing.JPanel {
         xFormPanel1.add(xLookupField3);
 
         xComboBox3.setCaption("Ext. Dept");
+        xComboBox3.setDepends(new String[] {"entity.taxfeetype"});
         xComboBox3.setExpression("#{item.value}");
         xComboBox3.setItemKey("key");
         xComboBox3.setItems("extDepts");

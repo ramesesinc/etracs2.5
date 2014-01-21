@@ -2,7 +2,7 @@ import com.rameses.annotations.*;
 import com.rameses.services.extended.*;
 import java.rmi.server.*;
 
-class BusinessTaxCreditService  {
+class BusinessTaxCreditService {
 
 	@ActiveDB("businesstaxcredit")
 	def em;
@@ -40,6 +40,18 @@ class BusinessTaxCreditService  {
 		head.currentlineno = head.currentlineno + 1;
 		em.update( head );
 	}
+
+	@ProxyMethod
+	public def findByBusinessid( def m ) {
+		if(!m.businessid)
+			throw new Exception("Business id is required");
+		def o = em.findByBusinessid( [businessid: m.businessid] );
+		if(!o)
+			return null;
+		o.details = em.getDetails( o );
+		return o;
+	}
+
 
 
 }

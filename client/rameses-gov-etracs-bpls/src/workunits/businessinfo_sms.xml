@@ -1,0 +1,33 @@
+<workunit>
+    <invokers>
+        <invoker type="business:info" caption="SMS Messages" index="110" action="init"/>
+    </invokers>
+    
+    <code>
+         <![CDATA[    
+        import com.rameses.rcp.annotations.*
+        import com.rameses.rcp.common.*
+        import com.rameses.osiris2.client.*
+        import com.rameses.osiris2.common.*
+        import java.rmi.server.*;
+        
+        public class BusinessSMSController extends ListController {
+        
+            String serviceName = "BusinessSMSService";
+        
+            def entity;
+            
+            void init() {
+                query.businessid = entity.objid;
+            }
+        }
+        ]]>
+    </code>    
+    
+    <pages>
+        <page template="com.rameses.osiris2.themes.ListPage"/>
+        <page name="queryform" template="com.rameses.osiris2.themes.DefaultQueryFormPanel"/>
+    </pages>
+    
+    
+</workunit>

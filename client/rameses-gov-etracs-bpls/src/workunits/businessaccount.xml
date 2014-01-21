@@ -18,7 +18,7 @@
             
             boolean allowApprove = false;
             
-            def taxfeeTypes = ["TAX", "REGFEE", "OTHERCHARGE"];
+            def taxfeeTypes = ["TAX", "REGFEE", "OTHERCHARGE", "TAXCREDIT"];
             def paymentModes = ["YEAR", "QTR"];
             def extDepts = LOV.BUSINESS_EXT_DEPT;
             

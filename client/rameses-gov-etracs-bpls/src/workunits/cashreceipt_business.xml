@@ -73,7 +73,7 @@
             ]
             
             public void validateBeforePost() {
-               //we must override this to allow tax credits
+               //proceed.
             }
             
             void clearBilling() {

@@ -66,7 +66,7 @@ WHERE receiptid=$P{receiptid}
 
 [getPaymentItemsForVoid]
 SELECT * 
-FROM bpreceivable_item WHERE paymentid=$P{paymentid} 
+FROM bppayment_item WHERE paymentid=$P{paymentid} 
 
 [reverseReceivablePayment]
 UPDATE bpreceivable 
@@ -88,4 +88,16 @@ SELECT * FROM bpreceivable WHERE applicationid=$P{applicationid} AND amtpaid > 0
 
 [removeReceivablesForApplication]
 DELETE FROM bpreceivable WHERE applicationid=$P{applicationid}
+
+
+[findTaxCreditAccount]
+SELECT 
+r.objid,
+r.code,
+r.title,
+r.fund_objid, 
+r.fund_title 
+FROM businessaccount ba
+INNER JOIN revenueitem r ON r.objid=ba.objid
+WHERE ba.taxfeetype = 'TAXCREDIT'
 

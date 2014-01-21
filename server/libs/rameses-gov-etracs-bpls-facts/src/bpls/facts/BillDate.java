@@ -9,6 +9,7 @@
 
 package bpls.facts;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -29,10 +30,16 @@ public class BillDate {
   
     
     public BillDate(Date d) {
-        
         this.date = d;
-        Calendar cal = Calendar.getInstance();
+        //we need to remove the time component
+        try {
+            SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+            String s = df.format( this.date );
+            this.date = df.parse( s );
+        }
+        catch(Exception ign){;}
         
+        Calendar cal = Calendar.getInstance();
 	cal.setTime( d );
         this.month = cal.get( Calendar.MONTH ) + 1;
 	this.day = cal.get( Calendar.DATE );
