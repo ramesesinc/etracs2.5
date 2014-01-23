@@ -34,6 +34,11 @@
             def paymentsModel = [
                 fetchList: { o->
                     return service.getPayments( entity ); 
+                },
+                onOpenItem: { o, col->
+                    def opener = InvokerUtil.lookupOpener("cashreceiptinfo:open", [ entity: [objid: o.receiptid] ]);
+                    opener.target = "popup";
+                    return opener;
                 }
             ] as BasicListModel;
             

@@ -9,3 +9,12 @@
 "entity.objid"[  mode != 'create' ] {
     enabled: false;
 }
+
+"entity.(surcharge|interest|department)"[  entity.taxfeetype == 'TAXCREDIT' ] {
+    visible: false;
+}
+
+"entity.(surcharge|interest|department)"[  entity.taxfeetype != 'TAXCREDIT' ] {
+    visible: true;
+}
+

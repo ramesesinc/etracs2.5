@@ -33,6 +33,19 @@ public class BusinessCashReceiptInterceptor {
 	@Service("BusinessTaxCreditService")
 	def taxCreditSvc;
 
+	@Before(pattern="CashReceiptService.post", eval="#{args[0].collectiontype.handler == 'bpls'}")
+	public void preBusinessPayment(def evt) {
+		def r = evt.args[0];
+		if(r.totalcredit>0) {
+			def creditAcct = bpledger.findTaxCreditAccount();
+			if(!creditAcct) {
+				throw new Exception("Please define first a tax credit account in business account");
+			}
+			r.items << [ item: creditAcct, amount: r.totalcredit ];
+			r.amount = r.amount + r.totalcredit;		
+		}
+	}
+
 	@After(pattern="CashReceiptService.post", eval="#{result.collectiontype.handler == 'bpls'}")
 	public void postBusinessPayment(def evt) {
 
@@ -65,7 +78,7 @@ public class BusinessCashReceiptInterceptor {
 			m.interestpaid = it.interest;
 			m.discount = it.discount;
 			m.voided = 0;
-			bpledger.create( m, "receivableitem");
+			bpledger.create( m, "paymentitem");
 		}
 		
 		//summarize by receivableid
@@ -137,6 +150,19 @@ public class BusinessCashReceiptInterceptor {
 			taskSvc.startTask( tsk );
 		}
 
+		if(rct.totalcredit > 0 ) {
+			def voidrct = evt.result;
+			println voidrct.txndate;
+			def entry = [businessid:bppayment.businessid];
+			entry.dr = 0;
+			entry.cr = rct.totalcredit;
+			entry.refno = rct.receiptno;
+			entry.refdate = voidrct.txndate;
+			entry.refid = voidrct.objid;
+			entry.particulars = "void:"+voidrct.reason;
+			entry.reftype = "cashreceipt:void";
+			taxCreditSvc.post( entry );
+		}
 	}
 
 

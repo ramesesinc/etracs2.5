@@ -10,6 +10,7 @@
 		<field name="account_title" required="true"/>
 		<field name="lob_objid" />
 		<field name="lob_name" />
+		<field name="lob_assessmenttype" />
 		<field name="amount" required="true"/>
 		<field name="amtpaid" required="true"/>
 		<field name="discount" required="true"/>
@@ -17,20 +18,6 @@
 		<field name="reftype" />
 		<field name="department" />
 		<field name="remarks" />
-	</element>	
-
-	<element name="receivableitem" tablename="bpreceivable_item">
-		<field name="objid" primary="true"/>
-		<field name="receivableid" required="true"/>
-		<field name="businessid" required="true"/>
-		<field name="paymentid" required="true"/>
-		<field name="iqtr" />
-		<field name="iyear"/>
-		<field name="amtpaid" required="true"/>
-		<field name="surchargepaid" required="true"/>
-		<field name="interestpaid" required="true"/>
-		<field name="discount" required="true"/>
-		<field name="voided" required="true"/>
 	</element>	
 
 	<element name="payment" tablename="bppayment">
@@ -44,6 +31,20 @@
 		<field name="refdate" required="true"/>
 		<field name="amount" required="true"/>
 		<field name="remarks" />
+		<field name="voided" required="true"/>
+	</element>	
+
+	<element name="paymentitem" tablename="bppayment_item">
+		<field name="objid" primary="true"/>
+		<field name="receivableid" required="true"/>
+		<field name="businessid" required="true"/>
+		<field name="paymentid" required="true"/>
+		<field name="iqtr" />
+		<field name="iyear"/>
+		<field name="amtpaid" required="true"/>
+		<field name="surchargepaid" required="true"/>
+		<field name="interestpaid" required="true"/>
+		<field name="discount" required="true"/>
 		<field name="voided" required="true"/>
 	</element>	
 

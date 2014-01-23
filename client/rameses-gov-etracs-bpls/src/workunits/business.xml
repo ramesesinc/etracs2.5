@@ -194,6 +194,7 @@
                     p.message = o.message;
                     p.assignee = o.assignee;
                     service.submitForApproval(p); 
+                    entity.task?.state = 'approval';
                     pass= true;
                     refresh();
                     MsgBox.alert("Document successfully submitted");

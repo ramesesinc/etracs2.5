@@ -130,8 +130,8 @@ public class BPInfoRuleService  {
 		def actions = new RuleAction();
 		actions.addCommand( "ask_business_info", new AskBusinessInfo( infoBuilder: infoBuilder, request:request ));
 		actions.addCommand( "assert_business_info", new AssertBusinessInfo(request:request, infoBuilder: infoBuilder,  comparator: comparator));
-
 		actions.addCommand( "add_requirement", new AddRequirement(request:request, BR: br));
+			
 		actions.addCommand( "print_test", new PrintTest());
 		return actions;
 	}

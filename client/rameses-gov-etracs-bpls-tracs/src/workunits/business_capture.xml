@@ -1,7 +1,7 @@
 <workunit>
     
     <invokers>
-        <invoker type="home.action" action="start" target="window" role="CAPTURE_ENCODER" caption="Register Business (TRACS Capture)" index="51"/>
+        <invoker type="home.action" action="start" target="window" role="CAPTURE_ENCODER" caption="Register Business (Verification - BIN Assignment)" index="51"/>
         <invoker type="extActions" action="printBIN" caption="Print BIN" visibleWhen="#{state=='success'}" />
     </invokers>
     

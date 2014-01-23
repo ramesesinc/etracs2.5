@@ -1,0 +1,48 @@
+<workunit>
+    <invokers>
+        <invoker type="business:info" action="init" caption="Tax Credit" index="41"  />
+    </invokers>
+    
+    <code>
+        <![CDATA[    
+        import com.rameses.rcp.annotations.*
+        import com.rameses.rcp.common.*
+        import com.rameses.osiris2.client.*
+        import com.rameses.osiris2.common.*
+        import java.rmi.server.*;
+        import com.rameses.osiris2.reports.*;
+        
+        class  BPTaxCreditController  {
+            
+            @Service("BusinessTaxCreditService")
+            def service; 
+        
+            def entity;
+            def selectedItem;
+            
+            String title = "Business Tax Credit";
+            
+            def init() {
+                entity = service.findByBusinessid( [businessid: entity.objid] );
+                if(!entity) {
+                    return "new";
+                }    
+                return "default";    
+            }
+        
+            def taxcreditModel = [
+                fetchList: { o->
+                    return entity.details;
+                }
+            ] as BasicListModel;
+            
+         }   
+        ]]>
+    </code>
+    
+    <pages>
+        <page template="com.rameses.gov.etracs.bpls.business.taxcredit.BusinessTaxCredit"/>
+        <page name="new" template="com.rameses.gov.etracs.bpls.business.taxcredit.AddTaxCreditAccount"/>
+    </pages>
+    
+</workunit>

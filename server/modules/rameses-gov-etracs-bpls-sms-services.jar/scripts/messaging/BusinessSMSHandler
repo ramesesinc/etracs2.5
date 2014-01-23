@@ -1,0 +1,97 @@
+import com.rameses.annotations.*;
+import com.rameses.http.*;
+
+class BPSMSHandler {
+	
+	@Service(value="SMSService", connection="sms_sender")
+	def smsSvc;
+
+	@Service("BusinessWorkflowService")
+	def bpSvc;
+
+	@ActiveDB("business_sms")
+	def em;
+
+	@Service("DateService")
+	def dateService;
+
+	@OnMessage(value="sms_listener", eval="#{data.keyword == 'BPSTAT'}") 
+	public void respondBPStat(def params)  {
+		def bin = params.message;
+		def buff = new StringBuffer();
+		def data = null;
+		try {
+			data = bpSvc.findByBIN( [bin: bin] );
+		}
+		catch(e){;}
+		if(!data) {
+			buff.append( "BIN not found");
+		}
+		else if(data.application) {
+			def tsk = data.application.task;
+			if(tsk) {
+				def state = tsk.state;
+				switch(state) {
+					case 'assign-assessor':
+						buff.append("Your application is in assessors office but has not been assigned yet to an assessor");
+						break;
+					case 'assessment':
+						buff.append("Your application is still being assessed by "+tsk.assignee?.name + " starting last " + tsk.startdate);
+						break;
+					case 'approval':
+						buff.append("Your application is still being reviewed for approval by "+tsk.assignee?.name + " starting last " + tsk.startdate);
+						break;
+					case 'payment':
+						buff.append("Your application is now ready for payment. Your bill is XXX due on or before YYY" );
+						break;
+					case 'release':
+						buff.append("Your application is now ready for release. " );
+						break;
+				}
+			}
+		}
+		else {
+			buff.append("There is no recent activity for this record" );
+		}
+		
+		def r = [:];
+		r.objid = params.objid;
+		r.phoneno = params.phoneno;
+		r.message = buff.toString();
+		r.refid = params.objid;
+		def fr = smsSvc.send(r); 
+
+		//save to sms database
+		def m = [objid:r.objid];
+		m.logdate = dateService.serverDate;
+		m.businessid = data.objid;
+		m.traceid = fr.traceid;
+		m.message = params.message;
+		m.phoneno = r.phoneno;
+		m.action = params.keyword;
+		m.amount = 2.0;
+		m.amtpaid = 0.0;
+		em.create(m);
+	} 
+
+	@OnMessage(value="sms_listener", eval="#{data.keyword == 'BPBILL'}") 
+	public void respondBPBill(def params)  {
+		println "BP BILL " + params.message;
+		/*
+		def bin = params.message.replace( 'BPBILL', '' ).trim();
+		def data = bpInfoSvc.findByBIN( [bin: bin] );
+		total_q1= result.total_q1;
+        total_q2 = result.total_q2;
+        total_q3 = result.total_q3;
+        total_q4 = result.total_q4;
+        total = result.total;
+        def r = [:];
+		r.objid = params.objid;
+		r.phoneno = params.phoneno;
+		r.message = 'YOUR BIN IS ' + bin;
+		smsSvc.send(r); 
+		*/
+		
+	} 
+
+}

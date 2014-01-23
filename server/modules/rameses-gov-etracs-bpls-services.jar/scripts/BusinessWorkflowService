@@ -31,6 +31,13 @@ public class BusinessWorkflowService  {
 			app.barcode = b.barcode;
 			app.orgtypename = b.orgtypename;
 			b.application = app;
+
+			//retrieve the assessor
+			if(app.assessedby?.objid) {
+				def u = appDB.findAssessedBy( [objid:app.objid] );
+				if(u) app.assessedby.putAll( u );
+				println app.assessedby;
+			}
 		}
 
 		if(b.currentpermitid) {
@@ -63,8 +70,8 @@ public class BusinessWorkflowService  {
 		app.username = env.USER;
 		def result = [:];
 		def m = appDB.findAssessedBy( [objid:app.objid] );
-		if(m?.assessedby?.name) {
-			throw new Exception("This document is already assigned to " + m.assessedby.name);
+		if(m?.assessedby?.objid) {
+			throw new Exception("This document is already assigned to " + m.lastname+ ", " + m.firstname);
 		}
 		appDB.updateAssessedBy(app);
 		o.assignee = [objid:env.USERID, name:env.USER];
@@ -103,13 +110,19 @@ public class BusinessWorkflowService  {
 			throw new Exception("Please indicate at least one taxfee item");
 		def ledger = [:];
 		ledger.items = app.taxfees;
-		ledger.items.each {
-			it.applicationid = app.objid;
-			it.businessid = app.businessid;
-			it.iyear = app.appyear;
-			it.amtpaid = 0;
-			it.discount = 0;
+		ledger.items.each { r->
+			if(r.lob?.objid) {
+				def applob = app.lobs.find{it.lobid==r.lob.objid};
+				r.lob.assessmenttype = applob.assessmenttype;
+			}
+			r.applicationid = app.objid;
+			r.businessid = app.businessid;
+			r.iyear = app.appyear;
+			r.amtpaid = 0;
+			r.discount = 0;
 		}
+		
+
 		ledgerSvc.postReceivables(ledger);
 		app.appid = app.objid;
 		app.taskid = app.task.objid;
