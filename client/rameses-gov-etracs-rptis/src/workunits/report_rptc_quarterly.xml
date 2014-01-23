@@ -1,0 +1,60 @@
+<workunit extends="rpt_wtemplates/ReportController.xml" >
+    <invokers>
+        <invoker folderid="/explorer/txn/landtax/report" action="init" caption="Real Property Tax Collection" target="window" index="100" 
+            role="LANDTAX_REPORT"/>
+    </invokers>
+    <code>
+
+<![CDATA[
+
+import com.rameses.rcp.common.*;
+import com.rameses.rcp.annotations.*;
+import com.rameses.osiris2.client.*;
+import com.rameses.osiris2.reports.*;
+
+class RPTCController extends com.rameses.gov.etracs.rpt.report.ReportController
+{
+    @Service('LandTaxReportService') 
+    def svc
+    
+    String title = 'Real Property Tax Collection';
+    String reportpath = 'com/rameses/gov/etracs/rpt/report/landtax/'
+    String reportName = reportpath + 'rptcollection.jasper'
+    
+    def data 
+        
+    def getReportData(){
+        return svc.generateRPTCollectionReport(entity);
+    }
+    
+    Map getParameters(){
+        return [:]
+    }
+    
+    
+   def formControl = [
+        getFormControls: {
+            return [
+                new FormControl( "combo", [caption:'Period', name:'entity.period', items:'periods', required:true, immediate:true, preferredSize:'100,19', captionWidth:100]), 
+                new FormControl( "integer", [caption:'Year', name:'entity.year', required:true, preferredSize:'100,19', captionWidth:100]), 
+                new FormControl( "combo", [caption:'Quarter', name:'entity.qtr', items:'quarters', immediate:true, preferredSize:'100,19', captionWidth:100]),
+                new FormControl( "combo", [caption:'Month', name:'entity.month', items:'monthsByQtr', depends:'entity.qtr', expression:'#{item.name}', dynamic:true, preferredSize:'100,19', captionWidth:100]),
+            ]    
+        },
+   ] as FormPanelModel;
+   
+   SubReport[] getSubReports() {
+        return [ 
+            new SubReport("rptcollectionitem", reportpath + "rptcollectionitem.jasper")
+        ] as SubReport[]; 
+   }
+   
+   List getPeriods() {
+        return ['YEARLY', 'QUARTERLY', 'MONTHLY']
+   }
+   
+}
+]]>        
+        
+    </code>
+</workunit>

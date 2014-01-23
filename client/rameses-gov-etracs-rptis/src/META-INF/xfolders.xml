@@ -13,7 +13,8 @@
             </folder>
             <folder id="landtax" caption="Land Tax" index="2">
                 <folder id="list" caption="Listing" index="1"/>
-                <folder id="txn" caption="Transaction" index="1"/>
+                <folder id="txn" caption="Transaction" index="2"/>
+                <folder id="report" caption="Report" index="3"/> 
             </folder>
         </folder>
         <folder id="setting" caption="Settings" index="3">
