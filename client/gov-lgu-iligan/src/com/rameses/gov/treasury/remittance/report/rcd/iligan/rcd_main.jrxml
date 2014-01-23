@@ -41,6 +41,7 @@
 	<parameter name="CollectionSummary" isForPrompting="false" class="java.lang.Object"/>
 	<parameter name="Denomination" isForPrompting="false" class="java.lang.Object"/>
 	<parameter name="LOGOTREASURY" isForPrompting="false" class="java.lang.String"/>
+	<parameter name="CancelSeries" isForPrompting="false" class="java.lang.Object"/>
 
 	<field name="otherpayments" class="java.lang.Object"/>
 	<field name="collector.name" class="java.lang.String"/>
@@ -59,6 +60,8 @@
 	<field name="nonserialsummary" class="java.lang.Object"/>
 	<field name="collectionsummaries" class="java.lang.Object"/>
 	<field name="cashbreakdown" class="java.lang.Object"/>
+	<field name="hascancelseries" class="java.lang.Boolean"/>
+	<field name="cancelseries" class="java.lang.Object"/>
 
 
 		<group  name="TYPE_GROUP" >
@@ -146,6 +149,32 @@
 						positionType="Float"/>
 					<dataSourceExpression><![CDATA[$F{remittedforms}]]></dataSourceExpression>
 					<subreportExpression  class="net.sf.jasperreports.engine.JasperReport"><![CDATA[$P{RemittedForms}]]></subreportExpression>
+				</subreport>
+			</band>
+			</groupHeader>
+			<groupFooter>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+			</groupFooter>
+		</group>
+		<group  name="CS_GROUP" >
+			<groupExpression><![CDATA[]]></groupExpression>
+			<groupHeader>
+			<band height="14"  isSplitAllowed="true" >
+				<printWhenExpression><![CDATA[new Boolean($F{hascancelseries}.booleanValue() == true)]]></printWhenExpression>
+				<subreport  isUsingCache="true">
+					<reportElement
+						mode="Transparent"
+						x="0"
+						y="0"
+						width="540"
+						height="13"
+						forecolor="#000000"
+						backcolor="#FFFFFF"
+						key="subreport-10"
+						positionType="Float"/>
+					<dataSourceExpression><![CDATA[$F{cancelseries}]]></dataSourceExpression>
+					<subreportExpression  class="net.sf.jasperreports.engine.JasperReport"><![CDATA[$P{CancelSeries}]]></subreportExpression>
 				</subreport>
 			</band>
 			</groupHeader>
