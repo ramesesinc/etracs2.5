@@ -62,7 +62,12 @@ class LandRpuInterceptor
 
 	@After(pattern="RPUService.reviseRpu", eval="#{result.rputype == 'land'}") 
 	public void reviseRpu( evt ) {
-		grSvc.reviseLandRpu(evt.result)
+		try{
+			grSvc.reviseLandRpu(evt.result)
+		}
+		catch(e){
+			throw e
+		}
 	}
 
 }

@@ -17,7 +17,7 @@ public class RealPropertyController
     def lguSvc;
     
     String getTitle(){
-        return 'Real Property (' + entity.state + ')'
+        return 'Real Property'
     }
     
     def entity;
@@ -31,12 +31,15 @@ public class RealPropertyController
     boolean allowDelete = true;
     boolean allowApprove = true;
     boolean allowEdit = true;
+    boolean allowEditPinInfo = false;
     
     boolean autoEdit = false;
     boolean autoCreate = false;
     
     
     def onupdate; //handler 
+    
+    def ryList;
     
     public boolean getAllowEdit(){
         if ( entity.state.toUpperCase().matches('CURRENT|CANCELLED'))
@@ -80,18 +83,22 @@ public class RealPropertyController
     
                 
     void init(){
-        if (!entity.datacapture){
+        ryList = svc.getRyList();
+        println 'rylist -> ' + ryList;
+        println 'ry -> ' + entity.ry 
+        
+        if (!entity){
             entity = svc.init();
-            isection = null;
-            iparcel = null;
+            entity.isection = null;
+            entity.iparcel = null;
+            allowEditPinInfo = true;
         }
         mode = MODE_CREATE;
     }
         
     void open(){
+        ryList = svc.getRyList();
         entity.putAll(svc.open(entity));
-        section = RPTUtil.toInteger(entity.section);
-        parcel = RPTUtil.toInteger(entity.parcel);
         
         mode = MODE_READ;
         if (showEditAction && autoEdit){
@@ -103,11 +110,13 @@ public class RealPropertyController
     void create(){
         entity = svc.create(entity);
         mode = MODE_READ;
+        entity.isnew = false;
     }
     
     void update(){
         entity = svc.update(entity);
         mode = MODE_READ;
+        entity.isnew = false;
     }
     
     def oldEntity;
@@ -126,7 +135,7 @@ public class RealPropertyController
     
     def cancelCreate(){
        if (MsgBox.confirm('Cancel new record?')) {
-           return '_close';
+           return close();
        }
        return null;
     }
@@ -153,38 +162,15 @@ public class RealPropertyController
     
     @Close
     def close(){
-        entity.isnew = false;
         if (onupdate) onupdate(entity);
         return '_close';
     }
     
-    
-    def section = 0;
-    def parcel = 0;
-    
-    void setSection(section){
-        this.section = section;
-        def ssection = section.toString();
-        ssection = ( entity.pintype == 'new' ? ssection.padLeft(3,'0') : ssection.padLeft(2,'0'));
-        if (entity.pintype == 'new' && ssection.length() > 3) throw new Exception('Invalid section.')
-        if (entity.pintype == 'old' && ssection.length() > 2) throw new Exception('Invalid section.')
-            
-    }
-    
-    void setParcel(parcel){
-        this.parcel = parcel;
-        def sparcel = parcel.toString();
-        sparcel = ( entity.pintype == 'new' ? sparcel.padLeft(2,'0') : sparcel.padLeft(3,'0'));
-        if (entity.pintype == 'new' && sparcel.length() > 2) throw new Exception('Invalid section.')
-        if (entity.pintype == 'old' && sparcel.length() > 3) throw new Exception('Invalid section.')
-    }
-                
                 
     void buildPin(){       
         RPTUtil.buildPin(entity);
         binding?.refresh('entity.pin');
     }
-    
     
     
     def getLookupBarangay(){
@@ -205,10 +191,6 @@ public class RealPropertyController
     
     def getPinTypes(){
         return ['new','old'];
-    }
-    
-    List getRyList(){
-        return svc.getRyList();
     }
             
 }

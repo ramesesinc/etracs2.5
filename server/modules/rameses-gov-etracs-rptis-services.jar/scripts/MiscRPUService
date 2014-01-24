@@ -205,7 +205,12 @@ class MiscRPUService
             em.save(item, SCHEMA_ITEM)
 
             item.params.each{param ->
-                em.save(param, SCHEMA_PARAM)
+                try{
+                    em.create(param, SCHEMA_PARAM)
+                }
+                catch(e){
+                    em.updateImmediate(param, SCHEMA_PARAM)
+                }
             }
         }
     }

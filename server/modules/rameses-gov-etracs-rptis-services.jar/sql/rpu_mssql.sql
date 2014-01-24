@@ -32,7 +32,7 @@ WHERE rpu.realpropertyid = $P{realpropertyid}
 
 
 [updateRpuState]
-UPDATE rpu SET state = $P{state} WHERE objid = $P{objid} AND state = $P{prevstate}
+UPDATE rpu SET state = $P{state} WHERE objid = $P{objid}
 
 
 [updateBldgRpuLandRpuId]  

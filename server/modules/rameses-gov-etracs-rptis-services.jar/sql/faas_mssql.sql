@@ -105,7 +105,6 @@ UPDATE rpu SET state = 'CANCELLED' WHERE objid = $P{objid}
 
 
 
-
 #---------------------------------------------------------
 #
 #  LOOKUP SUPPORT
@@ -200,3 +199,28 @@ select
 	inner join faas f on f.rpuid = r.objid 
 	inner join realproperty rp on rp.objid = r.realpropertyid 
 where r.objid=$P{landrpuid} and r.rputype ='land'
+
+
+[findState]   
+SELECT state FROM faas WHERE objid = $P{objid}
+
+
+
+[findOpenRealProperty]
+SELECT rp.objid 
+FROM realproperty rp
+	LEFT JOIN faas f ON rp.objid = f.realpropertyid
+WHERE rp.pin = $P{pin}
+  AND rp.state NOT IN ('CURRENT', 'CANCELLED')
+  AND rp.claimno = $P{claimno}
+  AND f.objid IS NULL
+
+
+[findOpenRpu]
+SELECT rpu.objid 
+FROM rpu rpu
+	LEFT JOIN faas f ON rpu.objid = f.rpuid
+WHERE rpu.realpropertyid = $P{realpropertyid}
+  AND rpu.state NOT IN ('CURRENT', 'CANCELLED')
+  AND rpu.rputype = $P{rputype}
+  AND f.objid IS NULL

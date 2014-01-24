@@ -19,6 +19,14 @@ update realproperty set lguid = '169'
 go
 
 
+alter table realproperty drop constraint ux_realproperty_rypinclaimno
+go 
+
+alter table realproperty add constraint ux_realproperty_rypinclaimnostate unique(ry,pin,claimno, state)
+go 
+
+
+
 
 
 
@@ -59,3 +67,11 @@ go
   
   
   
+  
+CREATE NONCLUSTERED INDEX ix_faas_realproperty
+ON [dbo].[faas] ([realpropertyid])
+INCLUDE ([objid])
+GO
+
+
+

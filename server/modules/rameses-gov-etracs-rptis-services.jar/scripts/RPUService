@@ -134,7 +134,6 @@ class RPUService
     public def approveRpu( rpu ) {
         checkLandStateCurrent(rpu)
 
-        rpu.prevstate = STATE_INTERIM
         rpu.state = STATE_CURRENT
         def retval = em.updateRpuState(rpu)
         if (retval == 0) 

@@ -80,6 +80,7 @@ class RealPropertyService
 	@ProxyMethod
 	public def approve( entity ) {
 		entity.state = STATE_CURRENT
+		em.cancelPreviousRealProperty(entity)
 		def retval = em.approve(entity)	
 		if (retval == 0) throw new Exception('Real Property has already been cancelled.')
 		return entity

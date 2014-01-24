@@ -58,7 +58,12 @@ class BldgRpuInterceptor
 
 	@After(pattern="RPUService.reviseRpu", eval="#{result.rputype == 'bldg'}") 
 	public void reviseRpu( evt ) {
-		grSvc.reviseBldgRpu(evt.result)
+		try{
+			grSvc.reviseBldgRpu(evt.result)
+		}
+		catch(e){
+			throw e;
+		}
 	}
 
 }

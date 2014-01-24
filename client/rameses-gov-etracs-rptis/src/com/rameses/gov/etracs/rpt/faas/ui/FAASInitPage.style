@@ -39,3 +39,13 @@
     enabled:false;
     visible:false;
 }
+
+
+"entity.ry|entity.txntype|entity.pintype"[newDiscovery == null || newDiscovery == false]{
+    enabled:true;
+}
+
+"entity.ry|entity.txntype|entity.pintype"[newDiscovery != null && newDiscovery == true]{
+    enabled:false;
+}
+

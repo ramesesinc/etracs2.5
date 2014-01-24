@@ -101,10 +101,52 @@ class FAASService
 		faas.lguid = faas.rp.lguid 
 		faas.lgutype = faas.rp.lgutype 
 		faas.rpuid = faas.rpu.objid
-		println 'faas.lguid ->' + faas.lguid 
 		return faas
 	}
 
+
+	@ProxyMethod
+	public def initTransaction( info ) {
+		def faas = faasSvc.loadFaas( info.faas )
+		validateFaasForTransaction(faas)
+		initNewFaasInfo(info, faas)
+
+
+		if (faas.rpu.rputype == 'land' && faas.txntype.newrealproperty){
+			def rp = em.findOpenRealProperty([pin:faas.rp.pin, claimno:info.claimno])
+			if (rp){
+				println 'rp is old'
+				faas.rp = rpSvc.open(rp)
+			}
+			else {
+				def oldrpid 	= faas.rp.objid 
+				def newrpid 	= utilSvc.generateId('RP')
+				faas.rp.previd 	= oldrpid
+				faas.rp.objid 	= newrpid 
+				faas.rp.state 	= STATE_INTERIM
+				faas.rp.isnew   = true
+			}
+		}
+
+		if (faas.txntype.newrpu ){
+			def rpu = em.findOpenRpu([realproperytid:faas.rp.objid, rputype:faas.rpu.rputype])
+			if (rpu){
+				faas.rpu = rpuSvc.openRpu(rpu)
+			}
+			else{
+				faas.rpu.previd = faas.rpu.objid 
+				rpuSvc.generateNewIds(faas.rpu)
+				faas.rpu.state 	= STATE_INTERIM
+				faas.rpu.isnew  = true;
+			}
+		}
+
+		
+		faas.realpropertyid 	= faas.rp.objid
+		faas.rpu.realpropertyid = faas.rp.objid
+		faas.rpuid  			= faas.rpu.objid 
+		return faas
+	}
 
 
 	@ProxyMethod
@@ -169,8 +211,29 @@ class FAASService
 	}
 
 
+	@ProxyMethod
+	public def deleteFaas( faas ) {
+		def currentstate = getState(faas.objid)
+		if (currentstate == STATE_FORPROVAPPROVAL)  throw new Exception('FAAS has already been submitted to province.')
+		if (currentstate == STATE_CURRENT)  throw new Exception('FAAS is already current.')
+		if (currentstate == STATE_CANCELLED)  throw new Exception('FAAS has already been cancelled.')
 
+		txnRef.delete(faas.objid)
+		em.getPreviousFaases([faasid:faas.objid]).each{
+			em.delete(it, SCHEMA_PREVIOUSFAAS)
+		}
+		em.delete(faas)
+		signatorySvc.deleteSignatories(faas)
+		wsSvc.deleteAll(faas.objid)
 
+		if (faas.txntype.newrpu){
+			rpuSvc.deleteRpu(rpuSvc.openRpu(faas.rpu))
+		}
+		if (faas.rpu.rputype == 'land' && faas.txntype.newrealproperty){
+			rpSvc.removeEntity(rpSvc.open(faas.rp) )
+		}
+		return faas 
+	}
 
 
 	/*------------------------------------------------
@@ -219,9 +282,6 @@ class FAASService
 		def retval = updateFaasState(faas, STATE_FORAPPROVAL, STATE_INTERIM)
 		if (retval == 0) 
 			throw new Exception('Unable to disapprove FAAS. Only FOR APPROVAL record is allowed.')
-
-		rpSvc.disapprove(faas.rp)
-		rpuSvc.disapproveRpu( faas.rpu )
 		return faas 
 	}
 
@@ -309,8 +369,8 @@ class FAASService
 		return [
             [objid:'TR', 	name:'Transfer of Ownership', 		newledger:false, 	newrpu:false],
             [objid:'TRE', 	name:'Transfer with Reassessment', 	newledger:false, 	newrpu:true],
-            [objid:'TRC', 	name:'Transfer with Correction', 	newledger:false, 	newrpu:true],
-            [objid:'CE', 	name:'Correction', 					newledger:false, 	newrpu:true],
+            [objid:'TRC', 	name:'Transfer with Correction', 	newledger:false, 	newrpu:true, newrealproperty:true],
+            [objid:'CE', 	name:'Correction', 					newledger:false, 	newrpu:true, newrealproperty:true],
             [objid:'CC', 	name:'Change Classification', 		newledger:false, 	newrpu:true],
             [objid:'CT', 	name:'Change Taxability', 			newledger:false, 	newrpu:true],
             [objid:'CD', 	name:'Change Depreciation', 		newledger:false, 	newrpu:true],
@@ -381,6 +441,14 @@ class FAASService
 	public def getAnnotatedStatus(faasid){
 		def annotations = annotationSvc.getAnnotationsByFaasId(faasid)
 		return annotations.size() > 0
+	}
+
+
+	@ProxyMethod
+	public def getState(faasid){
+		def faas = em.findState([objid:faasid])
+		if (!faas) throw new Exception('FAAS does not exist or has already been deleted.')
+		return faas.state 
 	}
     
 	/*------------------------------------------------------------------------
@@ -479,7 +547,9 @@ class FAASService
 				cancelledtimestamp : dtSvc.buildCustomTimeStamp(approver.dtsigned),
 			]
 			em.cancelFaas(params)
-			em.cancelRpu([objid:it.prevrpuid])
+			if (faas.txntype.newrpu){
+				em.cancelRpu([objid:it.prevrpuid])
+			}
 		}
 	}
 	
@@ -496,6 +566,47 @@ class FAASService
 		}
 		faas.utdno = faas.tdno 
     }
+
+
+	void validateFaasForTransaction(faas){
+		if (faas.state != STATE_CURRENT)
+			throw new Exception('FAAS ' + faas.tdno + ' is not current.')
+
+		txnRef.checkReference(faas.objid)
+	}
+
+
+	void initNewFaasInfo(info, newfaas){
+		def pdate 	= dtSvc.parseCurrentDate()
+
+		def oldid  			 	= newfaas.objid 
+		def newid 			 	= utilSvc.generateId('F')
+		newfaas.objid 			= newid 
+		newfaas.previousfaases  = [[faasid:newid, prevfaasid:oldid]]
+		newfaas.state 			= STATE_INTERIM
+		newfaas.txntype 		= getTxnType( info.txntype.objid )
+		newfaas.datacapture 	= false
+		newfaas.autonumber 	    = utilSvc.toBoolean(var.td_autonumber, false)
+		newfaas.backtaxyrs   	= 0
+		newfaas.backtaxes 		= []
+		newfaas.effectivityyear = pdate.year + 1
+		newfaas.effectivityqtr  = 1
+		
+		newfaas.prevtdno		= newfaas.tdno
+		newfaas.prevpin		 	= newfaas.rpu.fullpin
+		newfaas.prevowner		= newfaas.owner.name
+		newfaas.prevav			= newfaas.rpu.totalav
+		newfaas.prevmv			= newfaas.rpu.totalmv
+		
+		//clear not applicable info 
+		newfaas.tdno 			= null
+		newfaas.utdno 			= null
+		newfaas.titletype		= null
+		newfaas.titleno			= null
+		newfaas.titledate		= null
+		newfaas.memoranda		= null
+		signatorySvc.initSignatories(newfaas, signatories)
+	}
 
 }
 

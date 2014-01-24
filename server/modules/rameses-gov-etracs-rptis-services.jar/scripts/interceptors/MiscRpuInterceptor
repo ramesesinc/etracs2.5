@@ -54,7 +54,13 @@ class MiscRpuInterceptor
 
 	@After(pattern="RPUService.reviseRpu", eval="#{result.rputype == 'misc'}") 
 	public void reviseRpu( evt ) {
-		grSvc.reviseMiscRpu(evt.result)
+		try {
+			grSvc.reviseMiscRpu(evt.result)
+		}
+		catch(Exception e) {
+			throw e			
+		}
+		
 	}
 
 }

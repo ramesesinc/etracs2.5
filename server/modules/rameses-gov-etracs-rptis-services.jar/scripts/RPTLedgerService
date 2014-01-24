@@ -149,6 +149,16 @@ class RPTLedgerService
     }
 
     @ProxyMethod
+    public def checkLedgerApprovedState(faasid){
+        def ledger = getLedgerByFaasId(faasid)
+        if (ledger.state == STATE_CANCELLED)
+            throw new Exception('Ledger has already been cancelled.')
+        if (ledger.state == STATE_PENDING)
+            throw new Exception('Ledger is still pending.')
+
+    }
+
+    @ProxyMethod
     public void clearNextBillDateByLedger( ledgerid ) {
         em.clearNextBillDateByLedger([objid:ledgerid])
     }

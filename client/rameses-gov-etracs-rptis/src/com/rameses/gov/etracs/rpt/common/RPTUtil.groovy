@@ -120,6 +120,10 @@ class RPTUtil
                 entity.fullpin += '-' + entity.suffix;
         }
         
+        if (entity.claimno){
+            entity.fullpin += '-' + entity.claimno
+        }
+        
         
     }
     

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workunit extends="rpt_wtemplates/FAASTxnInitController.xml">
+    <invokers>
+        <invoker folderid="/explorer/txn/rpt/txn" action="init"  caption="Transfer of Ownership" index="1" txntype="TR" role="APPRAISER" permission="faas.createTransfer"/>
+        <invoker type="quick_launcher" code="TR01" action="init"  caption="Transfer of Ownership" index="1" txntype="TR" role="APPRAISER" permission="faas.createTransfer"/>
+        
+        <invoker folderid="/explorer/txn/rpt/txn" action="init"  caption="Transfer with Reassessment" index="2" txntype="TRE" role="APPRAISER" permission="faas.createTransfer"/>
+        <invoker type="quick_launcher" code="TR02" action="init"  caption="Transfer with Reassessment" index="2" txntype="TRE" role="APPRAISER" permission="faas.createTransfer"/>        
+        
+        <invoker folderid="/explorer/txn/rpt/txn" action="init"  caption="Transfer with Correction" index="3" txntype="TRC" role="APPRAISER" permission="faas.createTransfer"/>
+        <invoker type="quick_launcher" code="TR03" action="init"  caption="Transfer with Correction" index="3" txntype="TRC" role="APPRAISER" permission="faas.createTransfer"/>        
+        
+        <invoker folderid="/explorer/txn/rpt/txn" action="init"  caption="Correction of Entry" index="4" txntype="CE" role="APPRAISER" permission="faas.createCorrection"/>
+        <invoker type="quick_launcher" code="CE01" action="init"  caption="Correction of Entry" index="4" txntype="CE" role="APPRAISER" permission="faas.createCorrection"/>        
+        
+        <invoker folderid="/explorer/txn/rpt/txn" action="init"  caption="Change Classification" index="5" txntype="CC" role="APPRAISER" permission="faas.createChangeClassification"/>
+        <invoker type="quick_launcher" code="CC01" action="init"  caption="Change Classification" index="5" txntype="CC" role="APPRAISER" permission="faas.createChangeClassification"/>        
+        
+        <invoker folderid="/explorer/txn/rpt/txn" action="init"  caption="Change Taxability" index="6" txntype="CT" role="APPRAISER" permission="faas.createChangeTaxability"/>
+        <invoker type="quick_launcher" code="CT01" action="init"  caption="Change Taxability" index="6" txntype="CT" role="APPRAISER" permission="faas.createChangeTaxability"/>        
+        
+        <invoker folderid="/explorer/txn/rpt/txn" action="init"  caption="Change Depreciation" index="7" txntype="CD" role="APPRAISER" permission="faas.createChangeDepreciation"/>
+        <invoker type="quick_launcher" code="CD01" action="init"  caption="Change Depreciation" index="7" txntype="CD" role="APPRAISER" permission="faas.createChangeDepreciation"/>        
+
+        
+        
+        <invoker folderid="/explorer/txn/rpt/txn" action="init"  caption="Re-Assessment" index="10" txntype="RE" role="APPRAISER" permission="faas.createReassessment"/>
+        <invoker type="quick_launcher" code="RE01" action="init"  caption="Re-Assessment" index="10" txntype="RE" role="APPRAISER" permission="faas.createReassessment"/>        
+        
+    </invokers>
+</workunit>
+
+

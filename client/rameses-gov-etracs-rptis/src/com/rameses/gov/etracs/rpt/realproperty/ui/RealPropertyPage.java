@@ -32,8 +32,8 @@ public class RealPropertyPage extends javax.swing.JPanel {
     private void initComponents() {
         formPanel3 = new com.rameses.rcp.util.FormPanel();
         xLabel1 = new com.rameses.rcp.control.XLabel();
-        xComboBox1 = new com.rameses.rcp.control.XComboBox();
         xComboBox2 = new com.rameses.rcp.control.XComboBox();
+        xComboBox1 = new com.rameses.rcp.control.XComboBox();
         xLookupField1 = new com.rameses.rcp.control.XLookupField();
         xLabel2 = new com.rameses.rcp.control.XLabel();
         xLabel3 = new com.rameses.rcp.control.XLabel();
@@ -69,15 +69,6 @@ public class RealPropertyPage extends javax.swing.JPanel {
         xLabel1.setPreferredSize(new java.awt.Dimension(0, 30));
         formPanel3.add(xLabel1);
 
-        xComboBox1.setCaption("Revision Year");
-        xComboBox1.setCaptionMnemonic('r');
-        xComboBox1.setIndex(-1);
-        xComboBox1.setItems("ryList");
-        xComboBox1.setName("entity.ry");
-        xComboBox1.setPreferredSize(new java.awt.Dimension(100, 20));
-        xComboBox1.setRequired(true);
-        formPanel3.add(xComboBox1);
-
         xComboBox2.setAllowNull(false);
         xComboBox2.setCaption("PIN Type");
         xComboBox2.setImmediate(true);
@@ -86,6 +77,13 @@ public class RealPropertyPage extends javax.swing.JPanel {
         xComboBox2.setPreferredSize(new java.awt.Dimension(100, 22));
         xComboBox2.setRequired(true);
         formPanel3.add(xComboBox2);
+
+        xComboBox1.setCaption("Revision Year");
+        xComboBox1.setItems("ryList");
+        xComboBox1.setName("entity.ry");
+        xComboBox1.setPreferredSize(new java.awt.Dimension(100, 20));
+        xComboBox1.setRequired(true);
+        formPanel3.add(xComboBox1);
 
         xLookupField1.setCaption("Barangay");
         xLookupField1.setDisabledTextColor(new java.awt.Color(0, 0, 0));

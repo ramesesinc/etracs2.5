@@ -55,3 +55,10 @@ WHERE realpropertyid = $P{realpropertyid}
   AND objid <> $P{objid}
   AND state <> 'CANCELLED'
 
+
+[cancelPreviousRealProperty]
+UPDATE prevrp SET
+	prevrp.state = 'CANCELLED'
+FROM realproperty rp 
+	INNER JOIN realproperty prevrp ON rp.previd = prevrp.objid 
+WHERE rp.objid = $P{objid}

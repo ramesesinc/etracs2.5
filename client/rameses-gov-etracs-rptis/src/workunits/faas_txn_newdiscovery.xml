@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workunit extends="rpt_wtemplates/FaasController.xml">
+    <invokers>
+        <invoker type="faas_ND:create" action="init" caption="FAAS: New Discovery" role="APPRAISER" permission="faas.read" />
+        <invoker type="faas_ND:open" action="open" caption="FAAS: New Discovery" role="APPRAISER" permission="faas.read" />
+        
+        <invoker type="navActions" action="viewBackTaxes" caption="View Back Taxes" immediate="true" visibleWhen="#{entity != null}"/>
+    </invokers>
+        
+    <code>
+        
+    import com.rameses.rcp.annotations.* 
+    import com.rameses.rcp.common.* 
+    import com.rameses.osiris2.client.*
+    import com.rameses.osiris2.common.*
+
+    class NewDiscoveryController extends com.rameses.gov.etracs.rpt.faas.ui.AbstractFaasController
+    {
+        boolean allowEditOwner = true;
+        boolean allowEditPin = true;
+        
+        
+        def onupdateBackTaxes = {
+            binding.refresh('faas.backtaxyrs')
+        }
+        
+        def viewBackTaxes(){
+            return InvokerUtil.lookupOpener("backtax:open", 
+                    [faas       : faas, 
+                     svc        : svc, 
+                     mode       : mode, 
+                     onupdate   : onupdateBackTaxes, 
+                    allowEdit   : allowEdit,
+                    ]
+            )
+        }
+    }        
+    
+    </code>
+
+    <pages>
+    </pages>
+</workunit>
+

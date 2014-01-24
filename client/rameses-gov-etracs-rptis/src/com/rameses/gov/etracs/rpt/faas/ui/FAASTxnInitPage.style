@@ -1,15 +1,17 @@
-"autonumber" [ allowAutoNumber == true ] {
-    enabled:true;
-}
-
-"autonumber" [ allowAutoNumber != true ] {
-    enabled:false;
-}
-
-"initinfo.claimno" [multipleClaim == false] {
+"entity.claimno" [multipleClaim == null || multipleClaim == false] {
     visible:false;
 }
 
-"initinfo.claimno" [multipleClaim == true] {
+"entity.claimno" [multipleClaim != null && multipleClaim == true] {
     visible:true;
+    required:true;
+}
+
+"entity.newrysetting" [generalRevision == null || generalRevision == false] {
+    visible:false;
+}
+
+"entity.newrysetting" [generalRevision != null && generalRevision == true] {
+    visible:true;
+    required:true;
 }

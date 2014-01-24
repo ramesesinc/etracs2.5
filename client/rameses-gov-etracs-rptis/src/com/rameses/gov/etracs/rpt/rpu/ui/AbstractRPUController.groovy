@@ -73,7 +73,6 @@ public abstract class AbstractRPUController
         if (! rpu._loaded) {
             rpu = service.openRpu(rpu);
         }
-        classification = rpu.classification;
         rpu._loaded = true;
         afterOpen();
         mode = MODE_READ;
@@ -83,6 +82,7 @@ public abstract class AbstractRPUController
     void loadComboItems(){
         classifications = service.getClassifications();
         exemptions = service.getExemptionTypes();
+        classification = rpu.classification;
     }
     
     
@@ -103,8 +103,6 @@ public abstract class AbstractRPUController
             rpu.putAll( service.updateRpu(rpu) );
             
         mode = MODE_READ;
-        rpu.isnew = false;
-        rpu._loaded = true;
         if (autoClose)
             return close();
         return null;
@@ -127,6 +125,8 @@ public abstract class AbstractRPUController
 
     @Close
     def close(){
+        rpu.isnew = false;
+        rpu._loaded = true;
         if (onupdate) onupdate(rpu)
         return '_close';
     }

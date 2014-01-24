@@ -86,9 +86,10 @@ class FaasServiceInterceptor
 
 
 
-	@Before(pattern="FAASService.initFaasTransaction")  
+	@Before(pattern="FAASService.initTransaction")  
 	public void interceptInitFaasTransaction( evt ) {
 		def info = evt.args[0]
+		ledgerSvc.checkLedgerApprovedState(info.faas.objid)
 		if (info.txntype.objid != 'GR') {
 			if ( util.toBoolean(var.allow_faas_transaction_with_balance, false) == false ){
 				ledgerSvc.checkLedgerBalance(info.faas.objid)
@@ -96,31 +97,53 @@ class FaasServiceInterceptor
 		}
 	}
 
-	@After(pattern="FAASService.initFaasTransaction", eval="#{result.txntype.objid == 'TR'}", index=10) 
+	@After(pattern="FAASService.initTransaction", eval="#{result.txntype.objid == 'TR'}", index=10) 
 	public void initSimpleTransfer( evt ) {
 		def faas = evt.result 
 		clearInfo(faas)
 		
 	}
 
-	@After(pattern="FAASService.initFaasTransaction", eval="#{result.txntype.objid == 'TRE'}", index=10) 
+	@After(pattern="FAASService.initTransaction", eval="#{result.txntype.objid == 'TRE'}", index=10) 
 	public void initTransferWithReassessment( evt ) {
 		def faas = evt.result 
 		clearInfo(faas)
 	}
 
-	@After(pattern="FAASService.initFaasTransaction", eval="#{result.txntype.objid == 'TRC'}", index=10) 
+	@After(pattern="FAASService.initTransaction", eval="#{result.txntype.objid == 'TRC'}", index=10) 
 	public void initTransferWithCorrection( evt ) {
 		def faas = evt.result 
 		clearInfo(faas)
 	}
 
-	@After(pattern="FAASService.initFaasTransaction", eval="#{result.txntype.objid == 'CD'}", index=10) 
+	@After(pattern="FAASService.initTransaction", eval="#{result.txntype.objid == 'CD'}", index=10) 
 	public void initChangeDepreciation( evt ) {
 		def faas = evt.result 
 		if (faas.rpu.rputype == 'land') {
 			throw new Exception('Cannot depreciate Land property.')
 		}
+	}
+
+	@After(pattern="FAASService.initCapture", eval="#{result.txntype.objid == 'ND'}", index=10) 
+	public void initNewDiscovery( evt ) {
+		def faas = evt.result 
+		faas.autonumber = util.toBoolean(var.td_autonumber, false)
+	}
+
+	@After(pattern="FAASService.initTransaction", eval="#{result.txntype.objid == 'MC'}", index=10) 
+	public void initMultipleClaim( evt ) {
+		def info = evt.args[0]
+		def faas = evt.result 
+		faas.rp.claimno = info.claimno 
+		faas.rpu.fullpin += ' (' + info.claimno + ')'
+		faas.prevtdno = null
+		faas.prevpin = null
+		faas.prevowner = null
+		faas.prevav = 0.0
+		faas.prevmv = 0.0
+		faas.rpu.previd = null
+		faas.rp.previd = null
+		clearInfo(faas)
 	}
 
 

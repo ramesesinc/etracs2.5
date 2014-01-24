@@ -53,7 +53,12 @@ class PlantTreeRpuInterceptor
 
 	@After(pattern="RPUService.reviseRpu", eval="#{result.rputype == 'planttree'}") 
 	public void reviseRpu( evt ) {
-		grSvc.revisePlantTreeRpu(evt.result)
+		try {
+			grSvc.revisePlantTreeRpu(evt.result)
+		}
+		catch( e) {
+			throw e			
+		}
 	}
 
 }

@@ -1,11 +1,14 @@
-"entity.*|section|parcel" [mode == 'read']{
-    enabled:false;
-}
-
-"entity.*|section|parcel" [mode != 'read']{
+"entity.*" [allowEdit == true]{
     enabled:true;
 }
 
-"entity.ry|entity.pintype|entity.barangay|entity.isection|entity.iparcel|entity.claimno" [entity.datacapture == true]{
+
+"entity.*" [allowEdit == false]{
     enabled:false;
 }
+
+
+"entity.pintype|entity.barangay|entity.isection|entity.iparcel|entity.claimno" [entity.datacapture == true || allowEditPinInfo == false]{
+    enabled:false;
+}
+

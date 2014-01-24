@@ -15,7 +15,6 @@ class PinService
 	@Service('LGUService')
 	def lguSvc 
 
-
 	def STATE_INTERIM       = 'INTERIM  '
     
 	@ProxyMethod
@@ -70,7 +69,6 @@ class PinService
 	@ProxyMethod
 	public void renumberPin( rpu ){
 		def rp = rpu.rp 
-		def prevpin = rp.pin 
 		
 		def renumberpin = utilSvc.toBoolean( var.gr_renumber_pin, false )
 		if (renumberpin == false ) return 

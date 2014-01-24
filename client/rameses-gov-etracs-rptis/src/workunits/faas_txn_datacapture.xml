@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <workunit extends="rpt_wtemplates/FaasController.xml">
     <invokers>
-        <invoker type="faas_DC:create" action="init" caption="FAAS" role="APPRAISER" permission="faas.read" />
-        <invoker type="faas_DC:open" action="open" caption="FAAS" role="APPRAISER" permission="faas.read" />
+        <invoker type="faas_DC:create" action="init" caption="FAAS: Data Capture" role="APPRAISER" permission="faas.read" />
+        <invoker type="faas_DC:open" action="open" caption="FAAS: Data Capture" role="APPRAISER" permission="faas.read" />
     </invokers>
         
 <code>

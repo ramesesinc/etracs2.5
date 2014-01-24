@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workunit extends="rpt_wtemplates/FAASTxnInitController.xml">
+    <invokers>
+        <invoker folderid="/explorer/txn/rpt/txn" action="init"  caption="New Discovery" index="11" txntype="ND" role="APPRAISER" permission="faas.createNewDiscovery"/>
+        <invoker type="quick_launcher" code="ND01" action="init"  caption="New Discovery" index="11" txntype="ND" role="APPRAISER" permission="faas.createNewDiscovery"/>                
+    </invokers>
+    <code>
+        
+import com.rameses.rcp.annotations.* 
+import com.rameses.rcp.common.* 
+import com.rameses.osiris2.client.*
+import com.rameses.osiris2.common.*
+import com.rameses.gov.etracs.rpt.common.RPTUtil;
+
+class NewDiscoveryInitController extends com.rameses.gov.etracs.rpt.faas.ui.FaasDataCaptureInitController
+{
+ 
+    String title = 'New Discovery Initial Information';
+   
+    boolean newDiscovery = true;
+    
+    void afterInit(){
+        entity.txntype = txnTypes.find{it.objid == 'ND'}
+    }
+    
+    def process(){
+        def faas = svc.initCapture(entity);
+        faas.datacapture = false;
+        entity.
+        return InvokerUtil.lookupOpener('faas_ND:create', [entity:faas])
+    }
+    
+    
+}
+        
+    </code>
+    <pages>
+        <page template="com.rameses.gov.etracs.rpt.faas.ui.FAASInitPage"/>
+    </pages>
+</workunit>
+
+

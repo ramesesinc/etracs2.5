@@ -120,6 +120,7 @@ public abstract class AbstractFaasController extends PageFlowController
     
     void save(){
         if (rp.isnew) throw new Exception('PIN requires verification.')
+        if (rpu.isnew) throw new Exception('RPU requires verification.')
         updateSignatoryInfo()
         if (mode == MODE_CREATE)
             entity = service.createFaas(entity);
@@ -337,21 +338,23 @@ public abstract class AbstractFaasController extends PageFlowController
      *
      *===============================================*/
     def viewRealProperty() {
-        def allowModify = (rpu == null || rpu.rputype == 'land' ? true : false)
-        def action = (mode == MODE_CREATE && (rp == null || rp.isnew == true) ? 'create' : 'open')
+        def allowModify = (rpu == null || rpu.rputype == 'land' ? true : false);
+        def action = (mode == MODE_CREATE && (rp == null || rp.isnew == true) ? 'create' : 'open');
         def opener = InvokerUtil.lookupOpener('realproperty:' + action, [
             entity      : rp,
             allowCreate : false,
             autoCreate  : (mode == MODE_CREATE ? allowModify : false),
             allowDelete : false,
-            allowEdit   : (mode == MODE_EDIT ? allowModify : false),
-            autoEdit    : (mode == MODE_EDIT ? allowModify : false),
+            allowEdit   : (mode == MODE_EDIT || mode == MODE_CREATE ? allowModify : false),
+            autoEdit    : (mode == MODE_EDIT || mode == MODE_CREATE ? allowModify : false),
+            allowEditPinInfo : allowEditPinInfo,
                 
             onupdate : { 
                 if (! rp ) rp = [:]
                 entity.realpropertyid = it.objid;
                 rp.putAll(it);
-                binding.refresh('rp.*');
+                buildFullPin();
+                binding.refresh('rp.*|rpu.fullpin');
             },
         ])
         
@@ -359,6 +362,14 @@ public abstract class AbstractFaasController extends PageFlowController
         return opener;
     }
     
+    void buildFullPin(){
+        if (rpu){
+            rpu.fullpin = rp.pin;
+            if (rpu.rputype != 'land')
+                rpu.fullpin += '-' + rpu.suffix;
+        }
+        
+    }
     
     /*===============================================
      *
@@ -382,6 +393,7 @@ public abstract class AbstractFaasController extends PageFlowController
          def allowEdit = getAllowEdit();
          rpu.dtappraised = appraiser?.dtsigned;
          rpu.realpropertyid = rp?.objid;
+         rpu.ry = rp?.ry;
          def opener = rpu.rputype + 'rpu:' + (rpu.isnew ? 'create' : 'open')
          def autoClose = (rpu.isnew || allowEdit ? true : false);
          return InvokerUtil.lookupOpener(opener, [
