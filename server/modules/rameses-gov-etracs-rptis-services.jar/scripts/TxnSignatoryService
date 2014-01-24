@@ -18,6 +18,18 @@ class TxnSignatoryService
 
 
 	@ProxyMethod
+	public def init(entity, signatories){
+		entity.signatories = []
+		signatories.eachWithIndex{ signatory, idx ->
+			entity.signatories << [
+				refid : entity.objid,
+				type : signatory,
+				seqno : idx,
+			]
+		}
+	}
+
+	@ProxyMethod
 	public def initSignatories(entity, signatories){
 		entity.signatories = []
 		signatories.eachWithIndex{ signatory, idx ->

@@ -1,4 +1,4 @@
-"entity.*" [allowEdit == true]{
+"entity.*|appraiser.*|recommender.*|taxmapper.*|approver.*" [allowEdit == true]{
     enabled:true;
 }
 
@@ -7,7 +7,7 @@
 }
 
 
-"entity.*" [allowEdit != true]{
+"entity.*|appraiser.*|recommender.*|taxmapper.*|approver.*" [allowEdit != true]{
     enabled:false;
 }
 

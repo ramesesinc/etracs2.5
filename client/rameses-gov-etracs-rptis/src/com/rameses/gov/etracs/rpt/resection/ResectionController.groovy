@@ -37,6 +37,11 @@ public class ResectionController extends PageFlowController
     def affectedlands;
     def affectedimprovements;
     
+    def appraiser = [:];
+    def recommender = [:];
+    def taxmapper = [:];
+    def approver = [:];
+    
     def init(){
         entity = [objid:RPTUtil.generateId('RS'), newsectioncount:2]
         return super.signal('init')
@@ -46,6 +51,7 @@ public class ResectionController extends PageFlowController
     def open(){
         entity = svc.openResection( entity.objid );
         initItems();
+        initSignatoryVars();
         mode = MODE_READ;
         return super.signal('open');
     }
@@ -55,6 +61,18 @@ public class ResectionController extends PageFlowController
         def items = svc.getResectionAffectedRpus(entity.objid)
         affectedlands = items.findAll{it.rputype == 'land'}
         affectedimprovements = items.findAll{it.rputype != 'land'}
+    }
+    
+    void initSignatoryVars(){
+        appraiser = entity.signatories.find{it.type == 'appraiser'};
+        recommender = entity.signatories.find{it.type == 'recommender'};
+        taxmapper = entity.signatories.find{it.type == 'taxmapper'};
+        approver = entity.signatories.find{it.type == 'approver'};
+        appraiser = (appraiser ? appraiser : [:])
+        recommender = (recommender ? recommender : [:])
+        taxmapper = (taxmapper ? taxmapper : [:])
+        approver = (approver ? approver : [:])
+        
     }
     
     
@@ -76,6 +94,7 @@ public class ResectionController extends PageFlowController
     }
     
     void save(){
+        updateSignatoryInfo()
         if (mode == MODE_CREATE)
             entity = svc.createResection(entity);
         else 
@@ -182,6 +201,8 @@ public class ResectionController extends PageFlowController
     def selectedLand;
             
     def landListHandler = [
+        getRows   : { 1000 },
+            
         fetchList : { return affectedlands },
         
         onColumnUpdate : { item, colname ->
@@ -195,8 +216,8 @@ public class ResectionController extends PageFlowController
                 sectionListHandler.refresh();
             }
             buildNewPin(item);
-            def impv = affectedimprovements.find{it.prevrpid == item.prevrpid}
-            if (impv){
+            def improvements = affectedimprovements.findAll{it.prevrpid == item.prevrpid}
+            improvements.each{ impv ->
                 impv.newsection = item.newsection;
                 impv.newparcel = item.newparcel;
                 impv.newpin = item.newpin;
@@ -211,11 +232,22 @@ public class ResectionController extends PageFlowController
             RPTUtil.required('New Parcel', item.newparcel);
             RPTUtil.required('New TD No.', item.newtdno);
             RPTUtil.required('Memoranda', item.memoranda);
+            checkDuplicateLand(item);
             item.putAll(svc.saveAffectedRpu(item));
         },
     ] as EditorListModel
             
                 
+    void checkDuplicateLand(item){
+        //check duplicate section and parcel
+        def dup = affectedlands.find{ it.objid != item.objid && 
+                                      it.newsection == item.newsection && 
+                                      it.newparcel == item.newparcel
+                                }
+        if (dup)
+            throw new Exception('Duplicate Section and Parcel is not allowed.');
+    }
+        
     void buildNewPin(item){
         item.newpin = entity.barangaypin;
         if (item.newsection)
@@ -235,6 +267,7 @@ public class ResectionController extends PageFlowController
     def selectedAffectedRpu;
         
     def affectedrpuListHandler = [
+        getRows   : { 1000 },
         fetchList : { return affectedimprovements },
 
         onColumnUpdate : { item, colname ->
@@ -251,34 +284,80 @@ public class ResectionController extends PageFlowController
             RPTUtil.required('New Suffix', item.newsuffix);
             RPTUtil.required('New TD No.', item.newtdno);
             RPTUtil.required('Memoranda', item.memoranda);
+            checkDuplicateSuffix(item);
             item.putAll(svc.saveAffectedRpu(item));
         }
         
     ] as EditorListModel 
             
-
+                
+    void checkDuplicateSuffix(item){
+        //check duplicate section and parcel
+        def dup = affectedimprovements.find{ it.objid != item.objid && 
+                                      it.newpin == item.newpin && 
+                                      it.newsuffix == item.newsuffix
+                                }
+        if (dup)
+            throw new Exception('Duplicate Suffix is not allowed.');
+    }
+    
     /*===============================================
      * Lookup Support
      *===============================================*/
     def getLookupAppraiser(){
-        return InvokerUtil.lookupOpener('rptofficer:lookup',[role:'APPRAISER']);
+        return InvokerUtil.lookupOpener('txnsignatory:lookup',[
+            doctype : 'RPTAPPRAISER',
+            onselect : { updateSignatory(appraiser, it) },
+            onempty  : { clearSignatoryInfo(appraiser) },
+        ])
+        
     }
-    
     
     def getLookupRecommender(){
-        return InvokerUtil.lookupOpener('rptofficer:lookup',[role:'RECOMMENDER']);
+        return InvokerUtil.lookupOpener('txnsignatory:lookup',[
+            doctype : 'RPTRECOMMENDER',
+            onselect : { updateSignatory(recommender, it) },
+            onempty  : { clearSignatoryInfo(recommender) },
+        ])
+        
     }
     
-    
     def getLookupTaxmapper(){
-        return InvokerUtil.lookupOpener('rptofficer:lookup',[role:'TAXMAPPER']);
+        return InvokerUtil.lookupOpener('txnsignatory:lookup',[
+            doctype : 'RPTTAXMAPPER',
+            onselect : { updateSignatory(taxmapper, it) },
+            onempty  : { clearSignatoryInfo(taxmapper) },
+        ])
+        
     }
     
     def getLookupApprover(){
-        return InvokerUtil.lookupOpener('rptofficer:lookup',[role:'APPROVER']);
+        return InvokerUtil.lookupOpener('txnsignatory:lookup',[
+            doctype : 'RPTAPPROVER',
+            onselect : { updateSignatory(approver, it) },
+            onempty  : { clearSignatoryInfo(approver) },
+        ])
+        
     }
     
+    void updateSignatory(signatory, data){
+        signatory.personnelid = data.objid;
+        signatory.name = data.name;
+        signatory.title = data.title;
+    }
     
+    void clearSignatoryInfo(signatory){
+        signatory.personnelid = null;
+        signatory.name = null;
+        signatory.title = null;
+    }
+    
+    void updateSignatoryInfo(){
+        entity.signatories.find{it.type == 'appraiser'}?.putAll(appraiser);
+        entity.signatories.find{it.type == 'recommender'}?.putAll(recommender);
+        entity.signatories.find{it.type == 'taxmapper'}?.putAll(taxmapper);
+        entity.signatories.find{it.type == 'approver'}?.putAll(approver);
+    }
     
     
     /*===============================================

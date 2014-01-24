@@ -115,7 +115,6 @@ class FAASService
 		if (faas.rpu.rputype == 'land' && faas.txntype.newrealproperty){
 			def rp = em.findOpenRealProperty([pin:faas.rp.pin, claimno:info.claimno])
 			if (rp){
-				println 'rp is old'
 				faas.rp = rpSvc.open(rp)
 			}
 			else {
@@ -233,6 +232,14 @@ class FAASService
 			rpSvc.removeEntity(rpSvc.open(faas.rp) )
 		}
 		return faas 
+	}
+
+
+	@ProxyMethod
+	public void deleteFaasById( faasid ) {
+		if (faasid) {
+			deleteFaas(faasSvc.openFaas([objid:faasid]))
+		}
 	}
 
 

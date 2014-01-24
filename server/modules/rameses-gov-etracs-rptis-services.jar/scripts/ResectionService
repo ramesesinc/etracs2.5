@@ -1,10 +1,12 @@
 import com.rameses.annotations.*
 import com.rameses.common.*;
 import com.rameses.util.*
+import com.rameses.services.extended.*
 
 class ResectionService 
 {
-	@PersistenceContext('rpt')
+
+	@ActiveDB('resection')
 	def em 
 	
 	@Service('SequenceService')
@@ -12,6 +14,9 @@ class ResectionService
 	
 	@Service('TxnRefService')
 	def txnRef
+
+    @Service('TxnSignatoryService')
+    def signatorySvc 
 	
 	@Service('WorkflowStateService')
 	def workflowRef 
@@ -28,6 +33,10 @@ class ResectionService
 	@Service('FAASService')
 	def faasSvc
 
+
+	@Service('RealPropertyService')
+	def rpSvc
+
 	@Service('RPUService')
 	def rpuSvc 
 
@@ -37,10 +46,9 @@ class ResectionService
 	@Env
 	def env
 
-
-	def SCHEMA_NAME 		= 'resection'
-	def SCHEMA_SECTION 		= 'resection:section'
-	def SCHEMA_AFFECTEDRPU  = 'resection:affectedrpu'
+	def SCHEMA_NAME			= 'resection'
+	def SCHEMA_SECTION 		= 'section'
+	def SCHEMA_AFFECTEDRPU  = 'affectedrpu'
 	
 	def STATE_DRAFT 			= 'DRAFT'
 	def STATE_FORAPPROVAL 		= 'FORAPPROVAL'
@@ -51,6 +59,8 @@ class ResectionService
 	
 	def TXNTYPE_RS				= 'RS'
 
+	def signatories = ['appraiser', 'recommender', 'taxmapper', 'approver']
+
 	@ProxyMethod
 	public def initResection(resection){
 		if (resection.newsectioncount < 2) 
@@ -58,28 +68,24 @@ class ResectionService
 
 		if (!resection.objid) resection.objid = util.generateId('R')
 
-		resection.affectedrpus = em.sqlContext.createNamedQuery('resection:getAffectedRpus')
-								.setParameter('barangayid', resection.barangay.objid)
-								.setParameter('section', resection.section)
-								.resultList.each{
-									it.objid = util.generateId('AR')
-									it.resectionid = resection.objid
-									it.memoranda = resection.memoranda
-									it.newutdno = faasSvc.generateUniqueTdNo(it)
-								}
+		resection.affectedrpus = em.getAffectedRpus([barangayid:resection.barangay.objid, section:resection.section])
+									.each{
+										it.objid = util.generateId('AR')
+										it.resectionid = resection.objid
+										it.memoranda = resection.memoranda
+										it.newutdno = faasSvc.generateUniqueTdNo(it)
+									}
 
 		if (!resection.affectedrpus) 
 			throw new Exception('Invalid section or section has currently no real property units.')
 
-		def lastsection = em.sqlContext.createNamedQuery('resection:getBarangayLastSection')
-								.setParameter('barangayid', resection.barangay.objid)
-								.singleResult
+		def lastsection = em.findBarangayLastSection([barangayid:resection.barangay.objid])
 		if (!lastsection) 
 			throw new Exception('Last section does not exist for Barangay ' + resection.barangay.name)
 
 		resection.sections = []
 		
-		def lastsectionno = util.toInteger(lastsection.section) 
+		def lastsectionno = util.toInteger(lastsection.section) + 1
 		1.upto(resection.newsectioncount){
 			def newsection = (lastsectionno + it).toString().padLeft(resection.section.length(), '0')
 			resection.sections += [
@@ -89,6 +95,7 @@ class ResectionService
 				landcount		: 0
 			]
 		}
+		signatorySvc.init(resection, signatories)
 		return createResection(resection)
 	}
 
@@ -108,18 +115,20 @@ class ResectionService
         resection.pintype  			= var.pin_type
 		resection.barangayid 		= resection.barangay.objid 
 		resection.barangaypin		= resection.barangay.pin 
-		
-    	em.create(SCHEMA_NAME, EntityUtil.mapToField(resection))
+		resection.lgutype 			= var.lgu_type 
+
+    	em.create(resection)
     	workflowRef.insert(resection)
 
     	resection.sections.each{
     		saveSection(resection, it)
     	}
     	resection.affectedrpus.each{
-    		em.save(SCHEMA_AFFECTEDRPU, it)
+    		em.create(it, SCHEMA_AFFECTEDRPU)
     	}
     	resection.sections = null 
     	resection.affectedrpus = null
+    	
     	return resection
 	}
 
@@ -128,42 +137,39 @@ class ResectionService
 	public def updateResection( resection ) {
 		if (getOldState(resection) != resection.state)	
 			throw new Exception('Document state has already been modified. Requery the data and try again.')
-		def xresection = EntityUtil.mapToField(resection)
-		em.validate(SCHEMA_NAME, xresection)
-		em.save(SCHEMA_NAME, xresection )
+		em.update(resection )
 		return resection 
 	}
 
 	@ProxyMethod
 	public def openResection( objid ) {
-		def resection = em.read(SCHEMA_NAME, [objid:objid])
-		resection = EntityUtil.fieldToMap(resection)
+		def resection = em.read([objid:objid])
 		resection.lgutype = var.lgu_type 
+		resection.barangay = brgySvc.getById(resection.barangayid)
 		resection.autonumber = util.toBoolean(resection.autonumber, false)
+		if (!resection.signatories){
+			signatorySvc.init(resection, signatories)
+		}
 		return resection
 	}
 
 	@ProxyMethod
 	public def getResectionItems( objid ) {
-		return em.sqlContext.createNamedQuery('resection:getResectionItems')
-							.setParameter('resectionid', objid)
-							.resultList
+		return em.getResectionItems([resectionid:objid])
 	}
 
 	@ProxyMethod
 	public def getResectionAffectedRpus( objid ) {
-		return em.sqlContext.createNamedQuery('resection:getResectionAffectedRpus')
-							.setParameter('resectionid', objid)
-							.resultList
+		return em.getResectionAffectedRpus([resectionid:objid])
 	}
 
 
 	@ProxyMethod
 	public void deleteResection(resection){
 		deleteFaasRecords(resection)
-		em.sqlContext.createNamedExecutor('resection:deleteResectionItems').setParameter('resectionid', resection.objid).execute()
-		em.sqlContext.createNamedExecutor('resection:deleteResectionAffectedRpus').setParameter('resectionid', resection.objid).execute()
-		em.delete(SCHEMA_NAME, resection)
+		em.deleteResectionItems(resection)
+		em.deleteResectionAffectedRpus(resection)
+		em.delete(resection)
 	}
 
 	@ProxyMethod 
@@ -173,22 +179,17 @@ class ResectionService
 		if (section.newsection.length() != resection.section.length()){
 			throw new Exception('Resectioned Section and New Section length does not match.')
 		}
-		def s = em.sqlContext.createNamedQuery('resection:getSection')
-				.setParameter('barangayid', resection.barangayid )
-				.setParameter('section', section.newsection )
-				.singleResult
+		def s = em.findSection([barangayid:resection.barangayid, section:section.newsection])
 		if (s.section) throw new Exception('Section is already existing in this barangay.')
 
-		em.validate(SCHEMA_SECTION, section)	
-		em.save(SCHEMA_SECTION, section)	
+		em.save(section, SCHEMA_SECTION)	
 	}
 
 
 	@ProxyMethod
 	public def saveAffectedRpu(arpu){
 		arpu.newutdno = faasSvc.generateUniqueTdNo(arpu)
-		em.validate(SCHEMA_AFFECTEDRPU, arpu)
-		em.save(SCHEMA_AFFECTEDRPU, arpu)
+		em.save(arpu, SCHEMA_AFFECTEDRPU)
 	}
 
 
@@ -199,19 +200,28 @@ class ResectionService
  	*
  	------------------------------------------------------------------------*/
 
+    def updateState( resection, fromstate, tostate){
+		resection.state = tostate
+		return em.updateState([objid:resection.objid, state:tostate, prevstate:fromstate])
+	}
 
  	@ProxyMethod
     public def submitForApproval(resection) {
-        workflowRef.insert(resection)
-    	updateInfo(resection)
+    	def retval = updateState(resection, STATE_DRAFT, resection.state)
+		if (retval == 0) 
+			throw new Exception('Unable to submit for approval. Only DRAFT record is allowed.')
+		workflowRef.insert(resection)
+		createFaasRecords(resection)
     	return resection 
     }
 
     @ProxyMethod
     public def disapproveResection(resection) {
         workflowRef.delete(resection)
-    	resection.state = STATE_DRAFT
-    	updateInfo(resection)
+    	def retval = updateState(resection, STATE_FORAPPROVAL, STATE_DRAFT)
+		if (retval == 0) 
+			throw new Exception('Unable to submit for approval. Only FOR APPROVAL record is allowed.')
+
     	deleteFaasRecords(resection)
     	return resection
     }
@@ -219,10 +229,10 @@ class ResectionService
 
     @ProxyMethod
     public def approveResection(resection) {
-    	resection.state = STATE_APPROVED
+    	def retval = updateState(resection, STATE_FORAPPROVAL, STATE_APPROVED)
+		if (retval == 0) 
+			throw new Exception('Unable to approve. Only FOR APPROVAL record is allowed.')
     	workflowRef.insert(resection)
-    	updateInfo(resection)
-        createFaasRecords(resection)
     	doApproveResection(resection)
     	return resection 
     }
@@ -231,9 +241,10 @@ class ResectionService
 
     @ProxyMethod
     public def submitToProvince(resection) {
-    	resection.state = STATE_FORPROVAPPROVAL
+    	def retval = updateState(resection, STATE_FORPROVSUBMISSION, STATE_FORPROVAPPROVAL)
+		if (retval == 0) 
+			throw new Exception('Unable to submit. Only FOR PROVINCE SUBMISSION record is allowed.')
     	workflowRef.insert(resection)
-    	updateInfo(resection)
         createFaasRecords(resection)
     	return resection 
     }
@@ -242,8 +253,11 @@ class ResectionService
     @ProxyMethod
     public def disapproveSubmitToProvice(resection) {
         workflowRef.delete(resection)
-    	resection.state = STATE_DRAFT
-    	updateInfo(resection)
+
+    	def retval = updateState(resection, STATE_FORPROVAPPROVAL, STATE_DRAFT)
+		if (retval == 0) 
+			throw new Exception('Unable to disapprove. Only FOR PROVINCE SUBMISSION record is allowed.')
+			
     	deleteFaasRecords(resection)
     	return resection
     }
@@ -251,9 +265,11 @@ class ResectionService
 
     @ProxyMethod
     public def approveSubmittedToProvince(resection) {
-    	resection.state = STATE_APPROVED
+    	def retval = updateState(resection, STATE_FORPROVAPPROVAL, STATE_APPROVED)
+		if (retval == 0) 
+			throw new Exception('Unable to approve. Only FOR PROVINCE APPROVAL record is allowed.')
+
     	workflowRef.insert(resection)
-    	updateInfo(resection)
         doApproveResection(resection)
     	return resection 
     }
@@ -262,8 +278,11 @@ class ResectionService
     @ProxyMethod
     public def disapproveSubmittedToProvince(resection) {
         workflowRef.delete(resection)
-        resection.state = STATE_FORPROVSUBMISSION
-        updateInfo(resection)
+
+    	def retval = updateState(resection, STATE_FORPROVSUBMISSION, STATE_FORPROVAPPROVAL)
+		if (retval == 0) 
+			throw new Exception('Unable to disapprove. Only FOR PROVINCE SUBMISSION record is allowed.')
+
         deleteFaasRecords(resection)
         return resection
     }
@@ -272,8 +291,11 @@ class ResectionService
     @ProxyMethod
     public def disapproveByProvince(resection) {
         workflowRef.delete(resection)
-    	resection.state = STATE_FORPROVSUBMISSION
-    	updateInfo(resection)
+
+        def retval = updateState(resection, STATE_FORPROVAPPROVAL, STATE_FORPROVSUBMISSION)
+		if (retval == 0) 
+			throw new Exception('Unable to disapprove. Only FOR PROVINCE APPROVAL record is allowed.')
+
     	deleteFaasRecords(resection)
     	return resection
     }
@@ -281,9 +303,11 @@ class ResectionService
     
     @ProxyMethod
     public def approveByProvince(resection) {
-    	resection.state = STATE_APPROVED
+    	def retval = updateState(resection, STATE_FORPROVAPPROVAL, STATE_APPROVED)
+		if (retval == 0) 
+			throw new Exception('Unable to approve. Only FOR PROVINCE APPROVAL record is allowed.')
+
     	workflowRef.insert(resection)
-    	updateInfo(resection)
     	doApproveResection(resection)
     	return resection 
     }
@@ -299,7 +323,7 @@ class ResectionService
 
 	@ProxyMethod
 	public def getBarangays(  ) {
-		return brgySvc.lookupBarangays([:]) 
+		return brgySvc.getList([:]) 
 	}
 
 	@ProxyMethod
@@ -311,10 +335,7 @@ class ResectionService
  	void deleteFaasRecords(resection){
  		def items = getResectionAffectedRpus(resection.objid)
 
- 		em.sqlContext.createNamedExecutor('resection:clearAffectedRpuNewRefIds')
- 				.setParameter('resectionid', resection.objid)
- 				.execute()
-            
+ 		em.clearAffectedRpuNewRefIds(resection)
 		items.findAll{it.rputype != 'land'}.each{
 			faasSvc.deleteFaasById(it.newfaasid)
 		}
@@ -324,9 +345,7 @@ class ResectionService
  	}
 
 	def getOldState(resection){
-		def old = em.sqlContext.createNamedQuery('resection:getState')
-						.setParameter('objid', resection.objid)
-						.singleResult
+		def old = em.findState(resection)
 		if (old){
 			return old.state 
 		}
@@ -355,14 +374,12 @@ class ResectionService
  				faas 		: [objid:land.prevfaasid],
  				txntype 	: faasSvc.getTxnType(TXNTYPE_RS),
  			]
- 			def faas = faasSvc.openFaas(info.faas.objid)
- 			faasSvc.initNewFaasInfo(info,faas)
+ 			info.faas = faasSvc.openFaas(info.faas)
+ 			def faas = faasSvc.initTransaction(info)
  			updateFaasInfo(faas, resection, land)
  			
  			def rpu = faas.rpu 
- 			def rp  = rpu.rp 
- 			rp.previd = rp.objid 
- 			rp.objid = util.generateId('RP')
+ 			def rp  = faas.rp 
  			rp.section = land.newsection 
  			rp.parcel = land.newparcel 
  			rp.pin = land.newpin
@@ -373,6 +390,8 @@ class ResectionService
  			land.newrpuid = rpu.objid
  			land.newrpid = rp.objid 
 
+ 			rpSvc.create(faas.rp)
+ 			rpuSvc.createRpu(faas.rpu)
  			faasSvc.createFaas(faas)
  			saveAffectedRpu(land)
 	 	}
@@ -384,12 +403,12 @@ class ResectionService
  				faas 		: [objid:arpu.prevfaasid],
  				txntype 	: faasSvc.getTxnType(TXNTYPE_RS),
  			]
- 			def faas = faasSvc.openFaas(info.faas.objid)
- 			faasSvc.initNewFaasInfo(info,faas)
+ 			info.faas = faasSvc.openFaas(info.faas)
+ 			faasSvc.initTransaction(info)
  			updateFaasInfo(faas, resection, arpu)
 
  			def rpu = faas.rpu 
- 			def rp  = rpu.rp 
+ 			def rp  = faas.rp
  			rpu.rp.objid = landref.newrpid 
  			rpu.realpropertyid = landref.newrpid
  			rpu.suffix = arpu.newsuffix 
@@ -407,19 +426,12 @@ class ResectionService
 
 
  	void doApproveResection(resection){
-		em.sqlContext.createNamedExecutor('resection:approveResection')
-            .setParameter('objid', resection.objid)
-            .execute()
-
+		em.approveResection(resection)
         getResectionAffectedRpus(resection.objid).each{ arpu ->
-            def faas = faasSvc.openFaas(arpu.newfaasid)
+            def faas = faasSvc.openFaas([objid:arpu.newfaasid])
             faasSvc.approveFaas(faas)
         }
  	}
 
- 	void updateInfo(resection){
- 		def xresection = EntityUtil.mapToField(resection)
-		em.validate(SCHEMA_NAME, xresection)
-		em.save(SCHEMA_NAME, xresection )
- 	}
+
 }

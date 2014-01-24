@@ -75,3 +75,10 @@ GO
 
 
 
+
+alter table resection add signatories varchar(2000)
+go
+
+
+alter table resectionaffectedrpu drop constraint ux_reseectionaffectedrpu_sect_rtype_suffix_newrpid
+

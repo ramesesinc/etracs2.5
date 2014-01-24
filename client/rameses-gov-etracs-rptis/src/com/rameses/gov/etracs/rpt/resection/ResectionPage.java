@@ -108,9 +108,9 @@ public class ResectionPage extends javax.swing.JPanel {
         xLookupField5.setCaption("Appraised By");
         xLookupField5.setCaptionWidth(115);
         xLookupField5.setCellPadding(new java.awt.Insets(0, 0, 0, 5));
-        xLookupField5.setExpression("#{entity.appraiser.name}");
+        xLookupField5.setExpression("#{appraiser.name}");
         xLookupField5.setHandler("lookupAppraiser");
-        xLookupField5.setName("entity.appraiser");
+        xLookupField5.setName("appraiser");
         xLookupField5.setPreferredSize(new java.awt.Dimension(0, 19));
         xLookupField5.setRequired(true);
         formPanel3.add(xLookupField5);
@@ -118,7 +118,7 @@ public class ResectionPage extends javax.swing.JPanel {
         xDateField14.setCaption("Date Signed");
         xDateField14.setCaptionWidth(115);
         xDateField14.setCellPadding(new java.awt.Insets(0, 0, 0, 5));
-        xDateField14.setName("entity.appraiser.dtsigned");
+        xDateField14.setName("appraiser.dtsigned");
         xDateField14.setPreferredSize(new java.awt.Dimension(0, 19));
         xDateField14.setRequired(true);
         formPanel3.add(xDateField14);
@@ -126,41 +126,41 @@ public class ResectionPage extends javax.swing.JPanel {
         xLookupField6.setCaption("Recommended By");
         xLookupField6.setCaptionWidth(115);
         xLookupField6.setCellPadding(new java.awt.Insets(0, 0, 0, 5));
-        xLookupField6.setExpression("#{entity.recommender.name}");
+        xLookupField6.setExpression("#{recommender.name}");
         xLookupField6.setHandler("lookupRecommender");
-        xLookupField6.setName("entity.recommender");
+        xLookupField6.setName("recommender");
         xLookupField6.setPreferredSize(new java.awt.Dimension(0, 19));
         formPanel3.add(xLookupField6);
 
         xDateField15.setCaption("Date Signed");
         xDateField15.setCaptionWidth(115);
         xDateField15.setCellPadding(new java.awt.Insets(0, 0, 0, 5));
-        xDateField15.setName("entity.recommender.dtsigned");
+        xDateField15.setName("recommender.dtsigned");
         xDateField15.setPreferredSize(new java.awt.Dimension(0, 19));
         formPanel3.add(xDateField15);
 
         xLookupField7.setCaption("Taxmapped By");
         xLookupField7.setCaptionWidth(115);
         xLookupField7.setCellPadding(new java.awt.Insets(0, 0, 0, 5));
-        xLookupField7.setExpression("#{entity.taxmapper.name}");
+        xLookupField7.setExpression("#{taxmapper.name}");
         xLookupField7.setHandler("lookupTaxmapper");
-        xLookupField7.setName("entity.taxmapper");
+        xLookupField7.setName("taxmapper");
         xLookupField7.setPreferredSize(new java.awt.Dimension(0, 19));
         formPanel3.add(xLookupField7);
 
         xDateField16.setCaption("Date Signed");
         xDateField16.setCaptionWidth(115);
         xDateField16.setCellPadding(new java.awt.Insets(0, 0, 0, 5));
-        xDateField16.setName("entity.taxmapper.dtsigned");
+        xDateField16.setName("taxmapper.dtsigned");
         xDateField16.setPreferredSize(new java.awt.Dimension(0, 19));
         formPanel3.add(xDateField16);
 
         xLookupField8.setCaption("Approved By");
         xLookupField8.setCaptionWidth(115);
         xLookupField8.setCellPadding(new java.awt.Insets(0, 0, 0, 5));
-        xLookupField8.setExpression("#{entity.approver.name}");
+        xLookupField8.setExpression("#{approver.name}");
         xLookupField8.setHandler("lookupApprover");
-        xLookupField8.setName("entity.approver");
+        xLookupField8.setName("approver");
         xLookupField8.setPreferredSize(new java.awt.Dimension(0, 19));
         xLookupField8.setRequired(true);
         formPanel3.add(xLookupField8);
@@ -168,7 +168,7 @@ public class ResectionPage extends javax.swing.JPanel {
         xDateField17.setCaption("Date Signed");
         xDateField17.setCaptionWidth(115);
         xDateField17.setCellPadding(new java.awt.Insets(0, 0, 0, 5));
-        xDateField17.setName("entity.approver.dtsigned");
+        xDateField17.setName("approver.dtsigned");
         xDateField17.setPreferredSize(new java.awt.Dimension(0, 19));
         xDateField17.setRequired(true);
         formPanel3.add(xDateField17);
@@ -201,12 +201,36 @@ public class ResectionPage extends javax.swing.JPanel {
         xTitledBorder3.setTitle("New Sections");
         xDataTable1.setBorder(xTitledBorder3);
         xDataTable1.setColumns(new com.rameses.rcp.common.Column[]{
-            new com.rameses.rcp.common.Column("newsection", "New Section*", 100, 0, 0, false, true, true, true, null, new com.rameses.rcp.common.TextColumnHandler()),
-            new com.rameses.rcp.common.Column("landcount", "Land Count", 100, 0, 0, false, true, true, false, null, new com.rameses.rcp.common.IntegerColumnHandler("#,##0", -1, -1))
+            new com.rameses.rcp.common.Column(new Object[]{
+                new Object[]{"name", "newsection"}
+                , new Object[]{"caption", "New Section*"}
+                , new Object[]{"width", 100}
+                , new Object[]{"minWidth", 0}
+                , new Object[]{"maxWidth", 0}
+                , new Object[]{"required", false}
+                , new Object[]{"resizable", true}
+                , new Object[]{"nullWhenEmpty", true}
+                , new Object[]{"editable", true}
+                , new Object[]{"editableWhen", null}
+                , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
+                , new Object[]{"typeHandler", new com.rameses.rcp.common.TextColumnHandler()}
+            }),
+            new com.rameses.rcp.common.Column(new Object[]{
+                new Object[]{"name", "landcount"}
+                , new Object[]{"caption", "Land Count"}
+                , new Object[]{"width", 100}
+                , new Object[]{"minWidth", 0}
+                , new Object[]{"maxWidth", 0}
+                , new Object[]{"required", false}
+                , new Object[]{"resizable", true}
+                , new Object[]{"nullWhenEmpty", true}
+                , new Object[]{"editable", false}
+                , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
+                , new Object[]{"typeHandler", new com.rameses.rcp.common.IntegerColumnHandler("#,##0", -1, -1)}
+            })
         });
         xDataTable1.setHandler("sectionListHandler");
         xDataTable1.setName("selectedSection");
-        xDataTable1.setShowRowHeader(true);
 
         org.jdesktop.layout.GroupLayout jPanel2Layout = new org.jdesktop.layout.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -229,18 +253,105 @@ public class ResectionPage extends javax.swing.JPanel {
         );
 
         xDataTable2.setColumns(new com.rameses.rcp.common.Column[]{
-            new com.rameses.rcp.common.Column("tdno", "TD No.", 120, 0, 0, false, true, true, false, null, new com.rameses.rcp.common.TextColumnHandler()),
-            new com.rameses.rcp.common.Column("fullpin", "Old PIN", 130, 0, 0, false, true, true, false, null, new com.rameses.rcp.common.TextColumnHandler()),
-            new com.rameses.rcp.common.Column("newsection", "New Section*", 50, 0, 0, true, true, true, true, null, new com.rameses.rcp.common.TextColumnHandler()),
-            new com.rameses.rcp.common.Column("newparcel", "New Parcel*", 50, 0, 0, true, true, true, true, null, new com.rameses.rcp.common.TextColumnHandler()),
-            new com.rameses.rcp.common.Column("newpin", "New PIN", 130, 0, 0, false, true, true, false, null, new com.rameses.rcp.common.TextColumnHandler()),
-            new com.rameses.rcp.common.Column("newtdno", "New TD No.*", 130, 0, 0, true, true, true, true, null, new com.rameses.rcp.common.TextColumnHandler()),
-            new com.rameses.rcp.common.Column("memoranda", "Memoranda*", 150, 0, 0, true, true, true, true, null, new com.rameses.rcp.common.TextColumnHandler())
+            new com.rameses.rcp.common.Column(new Object[]{
+                new Object[]{"name", "tdno"}
+                , new Object[]{"caption", "TD No."}
+                , new Object[]{"width", 120}
+                , new Object[]{"minWidth", 0}
+                , new Object[]{"maxWidth", 0}
+                , new Object[]{"required", false}
+                , new Object[]{"resizable", true}
+                , new Object[]{"nullWhenEmpty", true}
+                , new Object[]{"editable", false}
+                , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
+                , new Object[]{"typeHandler", new com.rameses.rcp.common.TextColumnHandler()}
+            }),
+            new com.rameses.rcp.common.Column(new Object[]{
+                new Object[]{"name", "fullpin"}
+                , new Object[]{"caption", "Old PIN"}
+                , new Object[]{"width", 130}
+                , new Object[]{"minWidth", 0}
+                , new Object[]{"maxWidth", 0}
+                , new Object[]{"required", false}
+                , new Object[]{"resizable", true}
+                , new Object[]{"nullWhenEmpty", true}
+                , new Object[]{"editable", false}
+                , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
+                , new Object[]{"typeHandler", new com.rameses.rcp.common.TextColumnHandler()}
+            }),
+            new com.rameses.rcp.common.Column(new Object[]{
+                new Object[]{"name", "newsection"}
+                , new Object[]{"caption", "New Section*"}
+                , new Object[]{"width", 50}
+                , new Object[]{"minWidth", 0}
+                , new Object[]{"maxWidth", 0}
+                , new Object[]{"required", true}
+                , new Object[]{"resizable", true}
+                , new Object[]{"nullWhenEmpty", true}
+                , new Object[]{"editable", true}
+                , new Object[]{"editableWhen", null}
+                , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
+                , new Object[]{"typeHandler", new com.rameses.rcp.common.TextColumnHandler()}
+            }),
+            new com.rameses.rcp.common.Column(new Object[]{
+                new Object[]{"name", "newparcel"}
+                , new Object[]{"caption", "New Parcel*"}
+                , new Object[]{"width", 50}
+                , new Object[]{"minWidth", 0}
+                , new Object[]{"maxWidth", 0}
+                , new Object[]{"required", true}
+                , new Object[]{"resizable", true}
+                , new Object[]{"nullWhenEmpty", true}
+                , new Object[]{"editable", true}
+                , new Object[]{"editableWhen", null}
+                , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
+                , new Object[]{"typeHandler", new com.rameses.rcp.common.TextColumnHandler()}
+            }),
+            new com.rameses.rcp.common.Column(new Object[]{
+                new Object[]{"name", "newpin"}
+                , new Object[]{"caption", "New PIN"}
+                , new Object[]{"width", 130}
+                , new Object[]{"minWidth", 0}
+                , new Object[]{"maxWidth", 0}
+                , new Object[]{"required", false}
+                , new Object[]{"resizable", true}
+                , new Object[]{"nullWhenEmpty", true}
+                , new Object[]{"editable", false}
+                , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
+                , new Object[]{"typeHandler", new com.rameses.rcp.common.TextColumnHandler()}
+            }),
+            new com.rameses.rcp.common.Column(new Object[]{
+                new Object[]{"name", "newtdno"}
+                , new Object[]{"caption", "New TD No.*"}
+                , new Object[]{"width", 130}
+                , new Object[]{"minWidth", 0}
+                , new Object[]{"maxWidth", 0}
+                , new Object[]{"required", true}
+                , new Object[]{"resizable", true}
+                , new Object[]{"nullWhenEmpty", true}
+                , new Object[]{"editable", true}
+                , new Object[]{"editableWhen", null}
+                , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
+                , new Object[]{"typeHandler", new com.rameses.rcp.common.TextColumnHandler()}
+            }),
+            new com.rameses.rcp.common.Column(new Object[]{
+                new Object[]{"name", "memoranda"}
+                , new Object[]{"caption", "Memoranda*"}
+                , new Object[]{"width", 150}
+                , new Object[]{"minWidth", 0}
+                , new Object[]{"maxWidth", 0}
+                , new Object[]{"required", true}
+                , new Object[]{"resizable", true}
+                , new Object[]{"nullWhenEmpty", true}
+                , new Object[]{"editable", true}
+                , new Object[]{"editableWhen", null}
+                , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
+                , new Object[]{"typeHandler", new com.rameses.rcp.common.TextColumnHandler()}
+            })
         });
         xDataTable2.setHandler("landListHandler");
         xDataTable2.setImmediate(true);
         xDataTable2.setName("selectedLand");
-        xDataTable2.setShowRowHeader(true);
 
         org.jdesktop.layout.GroupLayout jPanel4Layout = new org.jdesktop.layout.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
@@ -261,18 +372,104 @@ public class ResectionPage extends javax.swing.JPanel {
         jTabbedPane1.addTab("Affected Land", jPanel4);
 
         xDataTable3.setColumns(new com.rameses.rcp.common.Column[]{
-            new com.rameses.rcp.common.Column("rputype", "Type ", 60, 0, 0, false, true, true, false, null, new com.rameses.rcp.common.TextColumnHandler()),
-            new com.rameses.rcp.common.Column("tdno", "Old TD No.", 130, 0, 0, false, true, true, false, null, new com.rameses.rcp.common.TextColumnHandler()),
-            new com.rameses.rcp.common.Column("fullpin", "Old PIN", 130, 0, 0, false, true, true, false, null, new com.rameses.rcp.common.TextColumnHandler()),
-            new com.rameses.rcp.common.Column("newtdno", "New TD No.*", 130, 0, 0, false, true, true, true, null, new com.rameses.rcp.common.TextColumnHandler()),
-            new com.rameses.rcp.common.Column("newsuffix", "New Suffix*", 70, 0, 0, false, true, true, true, null, new com.rameses.rcp.common.IntegerColumnHandler("0000", -1, -1)),
-            new com.rameses.rcp.common.Column("newpin", "New PIN", 150, 0, 0, false, true, true, false, null, new com.rameses.rcp.common.TextColumnHandler()),
-            new com.rameses.rcp.common.Column("memoranda", "Memoranda*", 100, 0, 0, false, true, true, true, null, new com.rameses.rcp.common.TextColumnHandler())
+            new com.rameses.rcp.common.Column(new Object[]{
+                new Object[]{"name", "rputype"}
+                , new Object[]{"caption", "Type "}
+                , new Object[]{"width", 60}
+                , new Object[]{"minWidth", 0}
+                , new Object[]{"maxWidth", 0}
+                , new Object[]{"required", false}
+                , new Object[]{"resizable", true}
+                , new Object[]{"nullWhenEmpty", true}
+                , new Object[]{"editable", false}
+                , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
+                , new Object[]{"typeHandler", new com.rameses.rcp.common.TextColumnHandler()}
+            }),
+            new com.rameses.rcp.common.Column(new Object[]{
+                new Object[]{"name", "tdno"}
+                , new Object[]{"caption", "Old TD No."}
+                , new Object[]{"width", 130}
+                , new Object[]{"minWidth", 0}
+                , new Object[]{"maxWidth", 0}
+                , new Object[]{"required", false}
+                , new Object[]{"resizable", true}
+                , new Object[]{"nullWhenEmpty", true}
+                , new Object[]{"editable", false}
+                , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
+                , new Object[]{"typeHandler", new com.rameses.rcp.common.TextColumnHandler()}
+            }),
+            new com.rameses.rcp.common.Column(new Object[]{
+                new Object[]{"name", "fullpin"}
+                , new Object[]{"caption", "Old PIN"}
+                , new Object[]{"width", 130}
+                , new Object[]{"minWidth", 0}
+                , new Object[]{"maxWidth", 0}
+                , new Object[]{"required", false}
+                , new Object[]{"resizable", true}
+                , new Object[]{"nullWhenEmpty", true}
+                , new Object[]{"editable", false}
+                , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
+                , new Object[]{"typeHandler", new com.rameses.rcp.common.TextColumnHandler()}
+            }),
+            new com.rameses.rcp.common.Column(new Object[]{
+                new Object[]{"name", "newtdno"}
+                , new Object[]{"caption", "New TD No.*"}
+                , new Object[]{"width", 130}
+                , new Object[]{"minWidth", 0}
+                , new Object[]{"maxWidth", 0}
+                , new Object[]{"required", false}
+                , new Object[]{"resizable", true}
+                , new Object[]{"nullWhenEmpty", true}
+                , new Object[]{"editable", true}
+                , new Object[]{"editableWhen", null}
+                , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
+                , new Object[]{"typeHandler", new com.rameses.rcp.common.TextColumnHandler()}
+            }),
+            new com.rameses.rcp.common.Column(new Object[]{
+                new Object[]{"name", "newsuffix"}
+                , new Object[]{"caption", "New Suffix*"}
+                , new Object[]{"width", 70}
+                , new Object[]{"minWidth", 0}
+                , new Object[]{"maxWidth", 0}
+                , new Object[]{"required", false}
+                , new Object[]{"resizable", true}
+                , new Object[]{"nullWhenEmpty", true}
+                , new Object[]{"editable", true}
+                , new Object[]{"editableWhen", null}
+                , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
+                , new Object[]{"typeHandler", new com.rameses.rcp.common.IntegerColumnHandler("0000", -1, -1)}
+            }),
+            new com.rameses.rcp.common.Column(new Object[]{
+                new Object[]{"name", "newpin"}
+                , new Object[]{"caption", "New PIN"}
+                , new Object[]{"width", 150}
+                , new Object[]{"minWidth", 0}
+                , new Object[]{"maxWidth", 0}
+                , new Object[]{"required", false}
+                , new Object[]{"resizable", true}
+                , new Object[]{"nullWhenEmpty", true}
+                , new Object[]{"editable", false}
+                , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
+                , new Object[]{"typeHandler", new com.rameses.rcp.common.TextColumnHandler()}
+            }),
+            new com.rameses.rcp.common.Column(new Object[]{
+                new Object[]{"name", "memoranda"}
+                , new Object[]{"caption", "Memoranda*"}
+                , new Object[]{"width", 100}
+                , new Object[]{"minWidth", 0}
+                , new Object[]{"maxWidth", 0}
+                , new Object[]{"required", false}
+                , new Object[]{"resizable", true}
+                , new Object[]{"nullWhenEmpty", true}
+                , new Object[]{"editable", true}
+                , new Object[]{"editableWhen", null}
+                , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
+                , new Object[]{"typeHandler", new com.rameses.rcp.common.TextColumnHandler()}
+            })
         });
         xDataTable3.setHandler("affectedrpuListHandler");
         xDataTable3.setImmediate(true);
         xDataTable3.setName("selectedAffectedRpu");
-        xDataTable3.setShowRowHeader(true);
 
         org.jdesktop.layout.GroupLayout jPanel7Layout = new org.jdesktop.layout.GroupLayout(jPanel7);
         jPanel7.setLayout(jPanel7Layout);

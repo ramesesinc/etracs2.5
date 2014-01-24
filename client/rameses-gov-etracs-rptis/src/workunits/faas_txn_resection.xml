@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <workunit extends="rpt_wtemplates/FaasController.xml">
     <invokers>
-        <invoker type="faas_RS:open" action="open" caption="FAAS" role="APPRAISER" permission="faas.read" />
+        <invoker type="faas_RS:create" action="init" caption="FAAS: Resection" role="APPRAISER" permission="faas.read" />
+        <invoker type="faas_RS:open" action="open" caption="FAAS: Resection" role="APPRAISER" permission="faas.read" />
     </invokers>
         
     <code>
@@ -13,10 +14,6 @@
 
     class ResectionFaasController extends com.rameses.gov.etracs.rpt.faas.ui.AbstractFaasController
     {
-        @Service('FAASService')
-        def svc;
-
-        def getService(){ return svc }
     }        
     
     </code>
@@ -24,5 +21,4 @@
     <pages>
     </pages>
 </workunit>
-
 

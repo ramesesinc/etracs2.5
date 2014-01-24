@@ -8,7 +8,7 @@ where 1=1 ${filters}
 ORDER BY r.txnno DESC 
 
 
-[getBarangayLastSection]
+[findBarangayLastSection]
 SELECT MAX(section) AS section
 FROM realproperty 
 WHERE barangayid = $P{barangayid}
@@ -23,12 +23,14 @@ SELECT
 	rp.objid AS prevrpid,
 	f.tdno,
 	r.fullpin
-FROM realproperty rp
-	INNER JOIN rpu r ON rp.objid = r.realpropertyid
-	INNER JOIN faas f ON r.objid = f.rpuid 
+FROM faas f 
+	INNER JOIN rpu r ON f.rpuid = r.objid
+	INNER JOIN realproperty rp ON f.realpropertyid = rp.objid
 WHERE rp.barangayid = $P{barangayid}
   AND rp.section = $P{section}
   AND f.state = 'CURRENT' 
+  AND r.state = 'CURRENT'
+  AND rp.state = 'CURRENT'
 ORDER BY r.fullpin   
 
 
@@ -36,6 +38,7 @@ ORDER BY r.fullpin
 SELECT *
 FROM resectionitem 
 WHERE resectionid = $P{resectionid}
+ORDER BY newsection
 
 
 [getResectionAffectedRpus]
@@ -56,21 +59,21 @@ ORDER BY r.fullpin
 
 
 [deleteResectionItems]
-DELETE FROM resectionitem WHERE resectionid = $P{resectionid}
+DELETE FROM resectionitem WHERE resectionid = $P{objid}
 
 [deleteResectionAffectedRpus]
-DELETE FROM resectionaffectedrpu WHERE resectionid = $P{resectionid}
+DELETE FROM resectionaffectedrpu WHERE resectionid = $P{objid}
 
 
 
-[getSection]
+[findSection]
 SELECT MAX(section) AS section
 FROM realproperty 
 WHERE barangayid = $P{barangayid}
   AND section = $P{section}
 
 
-[getState]  
+[findState]  
 SELECT state FROM resection WHERE objid = $P{objid}
 
 
@@ -78,7 +81,11 @@ SELECT state FROM resection WHERE objid = $P{objid}
 [clearAffectedRpuNewRefIds]
 UPDATE resectionaffectedrpu SET 
 	newfaasid = null, newrpuid = null, newrpid = null 
-WHERE resectionid = $P{resectionid}
+WHERE resectionid = $P{objid}
 
 [approveResection]
 UPDATE resection SET state = 'APPROVED' WHERE objid = $P{objid}
+
+
+[updateState]
+UPDATE resection SET state = $P{state} WHERE objid = $P{objid} AND state = $P{prevstate}
