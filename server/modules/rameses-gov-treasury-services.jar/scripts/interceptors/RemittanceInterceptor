@@ -35,9 +35,11 @@ class RemittanceInterceptor {
 			if( it.startseries ) {
 				m.startseries = it.startseries;
 				m.endseries = it.endseries;
-				m.qty= (it.endseries - it.startseries) + 1;
+				m.qty= it.qty;
+				m.cqty = it.cqty;
 				m.startstub = 0;
-				m.endstub = 0;
+				m.endstub = 0; 
+				m.cancelSeriesList = it.cancelSeriesList
 				afSerialSvc.postIssue(m);
 			}
 			else {
@@ -47,6 +49,8 @@ class RemittanceInterceptor {
 				cashTicketSvc.postIssue( m );
 			}
 		}
+
+
 
 		//update the remittanceid for all 
 		//for each controlid, find maximum ending balance and credit it as begin	

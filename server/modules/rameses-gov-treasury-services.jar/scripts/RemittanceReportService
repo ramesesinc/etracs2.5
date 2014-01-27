@@ -27,6 +27,18 @@ class RemittanceReportService  {
 		remittance.collectiontype = em.sqlContext.createNamedQuery('remittancereport:getRCDCollectionType').setParameter('remittanceid', remittance.objid ).resultList
 		remittance.collectionsummaries = em.sqlContext.createNamedQuery('remittancereport:getRCDCollectionSummaries').setParameter('remittanceid', remittance.objid ).resultList
 		remittance.remittedforms = getRemittedSerials(rem)
+		remittance.cancelseries = []
+		remittance.hascancelseries = false 
+		remittance.remittedforms.each{
+			if( it.cancelled ) {
+				remittance.cancelseries	<< [
+					formno: it.formno, qty: it.qtycancelled, 
+					series: it.cancelled 
+				]
+				remittance.hascancelseries = true 
+			}
+		}
+
 		remittance.otherpayments = em.sqlContext.createNamedQuery('remittancereport:getRCDOtherPayment').setParameter('remittanceid', remittance.objid ).resultList
 		remittance.nonserialremittances = afremSvc.getRemittedCashTickets( remittance)
 		remittance.nonserialsummary = afremSvc.getRemittedCashTickets( remittance)

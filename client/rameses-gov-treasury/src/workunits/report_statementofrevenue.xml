@@ -1,6 +1,6 @@
 <workunit extends="wtemplates/gov/treasury/ReportController.xml" >
     <invokers>
-        <invoker folderid="/menu/report/treasury" action="init" caption="Statement of Revenue" target="window" index="3" 
+        <invoker folderid="/explorer/txn/treasury/reports" action="init" caption="Statement of Revenue" target="window" index="3" 
             role="TREASURY_REPORT" />
     </invokers>
     <code>
