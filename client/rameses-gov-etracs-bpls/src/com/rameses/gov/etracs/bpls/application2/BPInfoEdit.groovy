@@ -108,6 +108,9 @@ public abstract class BPInfoEdit extends PageFlowController {
                 i.type = "combo";
                 i.itemsObject = x.attribute.arrayvalues;
             }
+            else if( i.type == 'decimal' ) {
+                i.preferredSize = '150,20';
+            }
             else if( i.type == "string" ) {
                 i.type = "text";
             }

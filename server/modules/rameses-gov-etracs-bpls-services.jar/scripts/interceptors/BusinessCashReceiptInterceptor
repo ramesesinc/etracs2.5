@@ -58,7 +58,9 @@ public class BusinessCashReceiptInterceptor {
 		pmt.payoption = result.payoption;
 		pmt.refno = result.receiptno;
 		pmt.refdate = result.receiptdate;
-		pmt.receiptid = result.objid;
+		pmt.refid = result.objid;
+		pmt.reftype = 'cashreceipt';
+
 		pmt.amount = result.amount;
 		pmt.remarks = null;
 		pmt.voided = 0;
@@ -77,7 +79,8 @@ public class BusinessCashReceiptInterceptor {
 			m.surchargepaid = it.surcharge;
 			m.interestpaid = it.interest;
 			m.discount = it.discount;
-			m.voided = 0;
+			m.account = it.account;
+			m.lob = it.lob;
 			bpledger.create( m, "paymentitem");
 		}
 		
@@ -97,7 +100,7 @@ public class BusinessCashReceiptInterceptor {
 			def entry = [businessid: pmt.businessid];
 			entry.refno = pmt.refno;
 			entry.refdate = pmt.refdate;
-			entry.refid = pmt.receiptid;
+			entry.refid = pmt.refid;
 			entry.refdate = pmt.refdate;
 			entry.dr = result.totalcredit;
 			entry.reftype = "cashreceipt";
