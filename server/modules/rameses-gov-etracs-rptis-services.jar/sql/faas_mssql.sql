@@ -65,6 +65,43 @@ WHERE f.objid = $P{objid}
 
 
 
+[findByTdNo]
+SELECT  
+	f.*,
+	rpu.rputype AS rpu_rputype,
+	rpu.ry AS rpu_ry,
+	rpu.objid AS rpu_objid, 
+	rpu.suffix AS rpu_suffix, 
+	rpu.fullpin AS rpu_fullpin,
+	rpu.taxable AS rpu_taxable,
+	rpu.totalmv AS rpu_totalmv,
+	rpu.totalav AS rpu_totalav,
+	rpu.reclassed AS rpu_reclassed,
+	rpu.realpropertyid AS rpu_realpropertyid,
+	pc.objid AS rpu_classification_objid,
+	pc.code AS rpu_classification_code,
+	rp.objid AS rp_objid,
+	rp.pin AS rp_pin,
+	rp.surveyno AS rp_surveyno,
+	rp.cadastrallotno AS rp_cadastrallotno,
+	rp.blockno AS rp_blockno,
+	rp.purok AS rp_purok,
+	rp.street AS rp_street,
+	rp.north AS rp_north,
+	rp.south AS rp_south,
+	rp.east AS rp_east,
+	rp.west AS rp_west,
+	b.name AS rp_barangay_name,
+	b.objid AS rp_barangay_objid,
+	b.parentid AS rp_barangay_parentid
+FROM faas f
+	INNER JOIN rpu rpu ON f.rpuid = rpu.objid
+	INNER JOIN propertyclassification pc ON rpu.classification_objid = pc.objid 
+	INNER  JOIN realproperty rp ON f.realpropertyid = rp.objid
+	INNER JOIN barangay b ON rp.barangayid = b.objid 
+WHERE f.objid = $P{objid}
+
+
 [getFaasIds]
 select
   f.objid, f.tdno
@@ -164,7 +201,7 @@ UPDATE faas SET state = $P{state} WHERE objid = $P{objid} AND state = $P{prevsta
 UPDATE faas SET 
 	state = $P{state}, utdno = $P{utdno}, tdno = $P{tdno} 
 WHERE objid = $P{objid}  
-  AND state = $P{prevstate}
+  AND state IN ('FORAPPROVAL', 'FORPROVAPPROVAL')
 
 
 [updateRpuMasterInfo]

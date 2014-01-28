@@ -1,0 +1,7 @@
+"entity.effectivity.*|appraiser.*|recommender.*|taxmapper.*|approver.*" [allowEdit == true]{
+    enabled:true;
+}
+
+"entity.effectivity.*|appraiser.*|recommender.*|taxmapper.*|approver.*" [allowEdit == false]{
+    enabled:false;
+}

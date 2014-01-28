@@ -82,3 +82,28 @@ go
 
 alter table resectionaffectedrpu drop constraint ux_reseectionaffectedrpu_sect_rtype_suffix_newrpid
 
+
+
+
+alter table subdividedland alter column newrpuid varchar(50) null
+go
+
+
+
+alter table subdividedland add constraint ux_subdividedland unique(subdivisionid, newrpid)
+go
+
+
+
+
+
+
+alter table subdivision add lguid varchar(50)
+go
+
+
+update subdivision set lguid = '169'
+go 
+
+
+

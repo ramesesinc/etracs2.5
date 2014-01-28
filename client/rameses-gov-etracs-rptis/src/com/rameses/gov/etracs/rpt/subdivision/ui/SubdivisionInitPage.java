@@ -36,9 +36,9 @@ public class SubdivisionInitPage extends javax.swing.JPanel {
         formPanel1.setCaptionWidth(115);
         xLookupField1.setCaption("Land to Subdivide");
         xLookupField1.setCaptionWidth(145);
-        xLookupField1.setExpression("#{subdivision.motherfaas.tdno}");
+        xLookupField1.setExpression("#{entity.motherfaas.tdno}");
         xLookupField1.setHandler("lookupFaas");
-        xLookupField1.setName("subdivision.motherfaas");
+        xLookupField1.setName("entity.motherfaas");
         xLookupField1.setPreferredSize(new java.awt.Dimension(0, 20));
         xLookupField1.setRequired(true);
         formPanel1.add(xLookupField1);
@@ -48,7 +48,7 @@ public class SubdivisionInitPage extends javax.swing.JPanel {
         xTextArea1.setWrapStyleWord(true);
         xTextArea1.setCaption("Default Memoranda");
         xTextArea1.setCaptionWidth(145);
-        xTextArea1.setName("subdivision.memoranda");
+        xTextArea1.setName("entity.memoranda");
         xTextArea1.setRequired(true);
         jScrollPane1.setViewportView(xTextArea1);
 

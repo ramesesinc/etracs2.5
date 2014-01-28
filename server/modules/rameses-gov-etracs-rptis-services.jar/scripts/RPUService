@@ -121,6 +121,12 @@ class RPUService
 
 
     @ProxyMethod
+    public def findRpuInfoById( rpuid ) {
+        return em.findRpuInfoById([objid:rpuid])    
+    }
+
+
+    @ProxyMethod
     public def deleteRpu( rpu ) {
         def retval = em.deleteRpu(rpu)
         if (retval == 0) 

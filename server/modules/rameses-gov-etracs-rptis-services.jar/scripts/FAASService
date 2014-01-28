@@ -615,5 +615,18 @@ class FAASService
 		signatorySvc.initSignatories(newfaas, signatories)
 	}
 
+	@ProxyMethod
+	public void checkDuplicateTdNo( faasid, tdno ) {
+		if (tdno == null || tdno == '-') return 
+		def faas = getFaasByTdNo(tdno)	
+		if (faas && faas.objid != faasid)
+			throw new Exception('TD No. ' + tdno + ' already exist.')
+	}	
+
+
+	@ProxyMethod
+	public def getFaasByTdNo(tdno){
+		return em.findByTdNo([tdno:tdno])
+	}
 }
 

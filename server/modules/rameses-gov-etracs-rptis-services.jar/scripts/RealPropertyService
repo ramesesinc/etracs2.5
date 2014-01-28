@@ -77,6 +77,7 @@ class RealPropertyService
 		em.delete(entity)	
 	}
 
+
 	@ProxyMethod
 	public def approve( entity ) {
 		entity.state = STATE_CURRENT
@@ -112,6 +113,56 @@ class RealPropertyService
     }
 
 
+	@ProxyMethod
+	public def buildPin( rp, info ) {
+		if (! info.pintype ) {
+			info.pintype = var.pin_type 
+		}
+		util.required('Pin Type', info.pintype)
+		util.required('Barangay PIN', info.barangay.pin)
+		util.required('Section', info.section)
+		util.required('Parcel', info.parcel)
+		
+		def maxsectionlen = null
+		def maxparcellen = null
+		def pin = null
+		
+		if (info.pintype.toLowerCase() == 'new'){
+			maxsectionlen = SECTION_NEW_MAX
+			maxparcellen  = PARCEL_NEW_MAX
+			pin = info.barangay.pin
+		}
+		else {
+			maxsectionlen = SECTION_OLD_MAX
+			maxparcellen  = PARCEL_OLD_MAX
+			pin = info.barangay.oldpin
+		}
+		
+		validateLength('Section', info.section.toString().length(), maxsectionlen)
+		validateLength('Parcel', info.parcel.toString().length(), maxparcellen)
+
+		def section = info.section.toString().padLeft(maxsectionlen,'0')
+		def parcel  = info.parcel.toString().padLeft(maxparcellen,'0')
+		pin = pin + '-' + section + '-' + parcel 
+
+		if (info.claimno) {
+			pin += '-' + info.claimno
+		}
+
+		rp.pintype = info.pintype 
+		rp.section = section 
+		rp.parcel  = parcel 
+		rp.pin     = pin 
+		return rp 
+	}
+
+	@ProxyMethod
+    public def checkDuplicatePin(params) {
+    	def rp = em.findDuplicatePin(params)
+    	if (rp)
+    		throw new Exception('Duplicate PIN No. ' + params.pin + ' is not allowed.')
+    }
+
 	void validateSectionParcelLength(entity){
 		if (entity.pintype == 'new' && entity.section.length() > 3) 
 			throw new Exception('Invalid section. Section must be less than or equal to 999.')
@@ -124,5 +175,11 @@ class RealPropertyService
         	throw new Exception('Invalid parcel. Parcel must be less than or equal to 999.')
 	}
  
+	void validateLength(type, value, maxvalue ){
+		if (value > maxvalue)
+			throw new Exception(type + ' must not exceed ' + maxvalue + '.')
 
+		if (value < 0)
+		throw new Exception(type + ' must not be zero.')
+	}
 }

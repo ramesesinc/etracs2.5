@@ -17,6 +17,10 @@ WHERE objid <> $P{objid} AND ry = $P{ry} AND fullpin = $P{fullpin}
 DELETE FROM rpu WHERE objid = $P{objid} AND state NOT IN ('CURRENT', 'CANCELLED')
 
 
+[findRpuInfoById]
+SELECT * FROM rpu WHERE objid = $P{objid}
+
+
 [findLandRpuById]
 SELECT *
 FROM rpu 

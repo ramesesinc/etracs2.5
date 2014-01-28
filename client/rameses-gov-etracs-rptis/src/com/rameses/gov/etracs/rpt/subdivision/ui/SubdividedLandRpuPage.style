@@ -1,0 +1,7 @@
+"selectedItem" [entity.state != 'APPROVED']{
+    readonly:false;
+}
+
+"selectedItem" [entity.state == 'APPROVED']{
+    readonly:true;
+}

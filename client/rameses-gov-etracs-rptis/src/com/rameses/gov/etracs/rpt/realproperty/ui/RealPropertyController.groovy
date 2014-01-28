@@ -32,11 +32,14 @@ public class RealPropertyController
     boolean allowApprove = true;
     boolean allowEdit = true;
     boolean allowEditPinInfo = false;
+    boolean allowEditSectionParcel = false;
     
     boolean autoEdit = false;
     boolean autoCreate = false;
+    boolean autoClose = false;
     
     
+    def oncreate; //handler 
     def onupdate; //handler 
     
     def ryList;
@@ -84,8 +87,6 @@ public class RealPropertyController
                 
     void init(){
         ryList = svc.getRyList();
-        println 'rylist -> ' + ryList;
-        println 'ry -> ' + entity.ry 
         
         if (!entity){
             entity = svc.init();
@@ -93,6 +94,7 @@ public class RealPropertyController
             entity.iparcel = null;
             allowEditPinInfo = true;
         }
+        entity.ry = ryList.find{it == entity.ry}
         mode = MODE_CREATE;
     }
         
@@ -107,16 +109,22 @@ public class RealPropertyController
     }
     
     
-    void create(){
+    def create(){
         entity = svc.create(entity);
         mode = MODE_READ;
         entity.isnew = false;
+        if (oncreate) oncreate(entity);
+        if (autoClose)
+            return close();
     }
     
-    void update(){
+    def update(){
         entity = svc.update(entity);
         mode = MODE_READ;
         entity.isnew = false;
+        if (onupdate) onupdate(entity);
+        if (autoClose)
+            return close();
     }
     
     def oldEntity;
@@ -125,18 +133,22 @@ public class RealPropertyController
         mode = MODE_EDIT;
     }
     
-    void cancelEdit(){
+    def cancelEdit(){
         if (MsgBox.confirm('Discard any changes?')){
             entity.putAll(oldEntity);
             oldEntity = null;
             mode = MODE_READ;
         }
+        if (autoClose)
+            return close();
     }
     
     def cancelCreate(){
        if (MsgBox.confirm('Cancel new record?')) {
            return close();
        }
+       if (autoClose)
+           return close();
        return null;
     }
     
@@ -162,7 +174,6 @@ public class RealPropertyController
     
     @Close
     def close(){
-        if (onupdate) onupdate(entity);
         return '_close';
     }
     

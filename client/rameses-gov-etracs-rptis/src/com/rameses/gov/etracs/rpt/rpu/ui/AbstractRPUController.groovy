@@ -90,7 +90,9 @@ public abstract class AbstractRPUController
         mode = MODE_EDIT;
     }
     
-    void cancelEdit(){
+    def cancelEdit(){
+        if (autoClose)
+            return close();
         rpu.putAll(service.openRpu(rpu));
         rpu._loaded = true;
         mode = MODE_READ;
@@ -102,7 +104,13 @@ public abstract class AbstractRPUController
         else 
             rpu.putAll( service.updateRpu(rpu) );
             
+        if (onupdate) onupdate(rpu)
+        
         mode = MODE_READ;
+        
+        rpu.isnew = false;
+        rpu._loaded = true;
+        
         if (autoClose)
             return close();
         return null;
@@ -125,9 +133,6 @@ public abstract class AbstractRPUController
 
     @Close
     def close(){
-        rpu.isnew = false;
-        rpu._loaded = true;
-        if (onupdate) onupdate(rpu)
         return '_close';
     }
     

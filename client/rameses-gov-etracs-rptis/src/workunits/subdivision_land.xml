@@ -18,8 +18,11 @@
     </code>
     
     <pages>
+        <page template="com.rameses.gov.etracs.rpt.subdivision.ui.SubdivisionLandPage"/>
+        <!--
         <page name="rp" template="com.rameses.gov.etracs.rpt.realproperty.ui.RealPropertyPage" />
         <page name="rpu" template="com.rameses.gov.etracs.rpt.subdivision.ui.SubdivisionLandRpuPage" />
+        -->
         <page name="info" template="com.rameses.gov.etracs.rpt.subdivision.ui.SubdividedLandInfoPage" />
     </pages>
 </workunit>

@@ -48,6 +48,8 @@ UPDATE realproperty SET  state = 'INTERIM' WHERE objid = $P{objid} AND state NOT
 [getLandRevisionYears]
 SELECT ry FROM landrysetting ORDER BY ry 
 
+[delete]
+DELETE FROM realproperty WHERE objid = $P{objid}
 
 [findFaasByRealPropertyId]
 SELECT objid, tdno FROM faas 
@@ -62,3 +64,13 @@ UPDATE prevrp SET
 FROM realproperty rp 
 	INNER JOIN realproperty prevrp ON rp.previd = prevrp.objid 
 WHERE rp.objid = $P{objid}
+
+
+
+
+[findDuplicatePin]
+SELECT * 
+FROM realproperty 
+WHERE objid <> $P{objid}
+AND pin = $P{pin} 
+AND ry = $P{ry}

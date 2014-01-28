@@ -16,11 +16,12 @@ class SubdivisionInterceptor
 	@Service('RPTUtil')
 	def util
 
+/*
 	@Before(pattern="FAASService.deleteFaas", eval="#{args[0].rpu.rputype != 'land'}") 
 	public void deleteAffectedRpu( evt ) {
 		svc.deleteAffectedRpuByPrevFaasId(evt.args[0].objid)
 	}
-
+*/
 
 	@Before(pattern="SubdivisionService.createSubdivision") 
 	public void interceptCreateSubdivision( evt ) {

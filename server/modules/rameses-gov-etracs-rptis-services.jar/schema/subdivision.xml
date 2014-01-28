@@ -11,6 +11,7 @@
         <field name="effectivityqtr" required="true" type="integer" />
         <field name="motherfaasid" required="true" />
         <field name="memoranda" required="true" />
+        <field name="lguid" required="true" />
     </element>
 
     <element name="subdividedland" tablename="subdividedland">
@@ -35,7 +36,7 @@
         <field name="owner_name" />
         <field name="owner_address" />
         <field name="newrpid" required="true" />
-        <field name="newrpuid" required="true" />
+        <field name="newrpuid"  />
         <field name="newfaasid" />
     </element>
 

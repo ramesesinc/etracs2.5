@@ -2,8 +2,8 @@
 <workunit>
     <invokers>
         <invoker type="quick_launcher" code="RP01" caption="Real Property" role="APPRAISER,TAXMAPPER" target="popup" />
-        <invoker type="realproperty:create" action="init" caption="Real Property" role="APPRAISER,TAXMAPPER" />
-        <invoker type="realproperty:open" action="open" caption="Real Property" role="APPRAISER,TAXMAPPER" />
+        <invoker type="realproperty:create" action="init" caption="Real Property" role="APPRAISER,TAXMAPPER" target="popup"/>
+        <invoker type="realproperty:open" action="open" caption="Real Property" role="APPRAISER,TAXMAPPER"  target="popup"/>
         
         <invoker type="extActions" action="close" caption="Close" mnemonic="c" visibleWhen="#{mode == 'read'}" />
         <invoker type="extActions" action="cancelCreate" caption="Cancel" mnemonic="c" visibleWhen="#{mode == 'create'}" immediate="true" />

@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workunit>
+    <invokers>
+        <invoker type="subdivision:info" action="init" caption="RPU Assessments" index="5"/>
+        
+        <invoker type="formActions" action="refresh" caption="Refresh" mnemonic="r" />
+        <invoker type="formActions" action="assess" caption="Assess" mnemonic="a" visibleWhen="#{entity.state != 'APPROVED'}"/>
+        <invoker type="formActions" action="open" caption="Open" mnemonic="o" visibleWhen="#{entity.state == 'APPROVED'}"/>
+   </invokers>
+   <code>
+
+<![CDATA[
+        
+import com.rameses.rcp.annotations.* 
+import com.rameses.rcp.common.* 
+import com.rameses.osiris2.client.*
+import com.rameses.osiris2.common.*
+import com.rameses.gov.etracs.rpt.common.RPTUtil;
+
+class SubdividedLandRpuController
+{
+    @Binding
+    def binding;
+    
+    @Service('RPUService')
+    def rpuSvc;
+    
+    def svc;
+    
+    def entity;
+    def selectedItem;
+    
+    String title = 'Subdivided Land Assessment';
+    def lands;
+    
+    void init(){
+        lands = svc.getSubdividedLands(entity.objid)
+    }
+    
+    
+    void refresh(){
+        init();
+        listHandler.load();
+    }
+    
+    def assess(){
+        if (!selectedItem) throw new Exception('Select an item.');
+        if (selectedItem.newrpuid)
+            return open();
+        return add();
+    }
+    
+    
+    def onupdateRpu = {
+        selectedItem.newrpuid = it.objid;
+        selectedItem.areasqm = it.totalareasqm;
+        selectedItem.areaha = it.totalareaha;
+        selectedItem.rpu = it;
+        svc.updateSubdividedLand(selectedItem);
+        listHandler.load();
+        binding.refresh('totalAreaHa|totalAreaSqm');
+    }
+    
+    def add(){
+        return InvokerUtil.lookupOpener('landrpu:create', [
+            rpu         : createLandRpu(),
+            lguid       : entity.lguid,
+            autoClose   : true,
+            onupdate    : onupdateRpu,
+        ])
+    }
+    
+    def createLandRpu(){
+        return rpuSvc.initRpu([
+            ry              : selectedItem.rp.ry,
+            suffix          : 0, 
+            fullpin         : selectedItem.newpin,
+            realpropertyid  : selectedItem.newrpid,
+        ])
+    }
+    
+    
+    def open(){
+        if (!selectedItem ) throw new Exception('Select an item to open.');
+        
+        def rpu = [objid:selectedItem.newrpuid];
+        if (selectedItem.rpu?._loaded)
+            rpu = selectedItem.rpu;
+            
+        return InvokerUtil.lookupOpener('landrpu:open', [
+            rpu         : [objid:selectedItem.newrpuid],
+            lguid       : entity.lguid,
+            autoClose   : true,
+            allowCreate : false,
+            onupdate    : onupdateRpu,
+        ])
+    }
+    
+    
+    def listHandler = [
+        fetchList : { return lands },
+        getRows   : { return 500 },
+        validate  : { li ->
+            def item = li.item;
+            RPTUtil.required(item.newtdno, 'New TD No.');
+            RPTUtil.required(item.memoranda, 'Memoranda');
+            svc.updateSubdividedLand(item);
+        },
+    ] as EditorListModel
+    
+    
+    def getTotalAreaHa(){
+        def items = lands.findAll{it.newrpuid != null}
+        if (items)
+            return items.areaha.sum();
+        return 0.0;
+    }
+    
+    def getTotalAreaSqm(){
+        def items = lands.findAll{it.newrpuid != null}
+        if (items)
+            return items.areasqm.sum();
+        return 0.0;
+    }
+    
+}
+       
+]]>
+
+   </code>
+    
+    <pages> 
+        <page template="com.rameses.gov.etracs.rpt.subdivision.ui.SubdividedLandRpuPage"/>
+    </pages>
+</workunit>
+
+

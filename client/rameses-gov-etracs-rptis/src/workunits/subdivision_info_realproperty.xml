@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workunit>
+    <invokers>
+        <invoker type="subdivision:info" action="init" caption="Land PINs" index="1"/>
+        
+        <invoker type="formActions" action="refresh" caption="Refresh" mnemonic="r" />
+        <invoker type="formActions" action="add" caption="Add" mnemonic="a" visibleWhen="#{entity.state != 'APPROVED'}" depends="selectedItem"/>
+        <invoker type="formActions" action="open" caption="Open" mnemonic="o" />
+        <invoker type="formActions" action="delete" caption="Delete" mnemonic="d" visibleWhen="#{entity.state != 'APPROVED'" depends="selectedItem"/>
+   </invokers>
+   <code>
+
+<![CDATA[
+        
+import com.rameses.rcp.annotations.* 
+import com.rameses.rcp.common.* 
+import com.rameses.osiris2.client.*
+import com.rameses.osiris2.common.*
+import com.rameses.gov.etracs.rpt.common.RPTUtil;
+
+class SubdividedLandPinController
+{
+    @Binding
+    def binding;
+    
+    @Service('RealPropertyService')
+    def rpSvc;
+    
+    def svc;
+    
+    def entity;
+    def selectedItem;
+    
+    String title = 'Subdivided Land PIN Information';
+    def lands;
+    
+    void init(){
+        lands = svc.getSubdividedLands(entity.objid)
+    }
+    
+    
+    void refresh(){}
+    
+    
+    def add(){
+        return InvokerUtil.lookupOpener('realproperty:create', [
+            entity      : createRealProperty(),
+            allowEditSectionParcel : true,
+            autoClose : true,
+            
+            oncreate : {
+                def land = svc.initSubdividedLand(entity);
+                land.itemno = lands.size() + 1;
+                land.newpin = it.pin;
+                land.newrpid = it.objid;
+                land.rp = it;
+                lands << svc.createSubdividedLand(land);
+                listHandler.load();
+                binding.refresh('count');
+            }
+        ])
+    }
+    
+    def createRealProperty(){
+        def rp = rpSvc.init();
+        rp.barangay = entity.motherfaas.barangay;
+        rp.barangayid = rp.barangay.objid;
+        return rp;
+    }
+    
+    
+    def open(){
+        if (!selectedItem ) throw new Exception('Select an item to open.');
+        
+        return InvokerUtil.lookupOpener('realproperty:open', [
+            entity : [objid:selectedItem.newrpid],
+            autoClose : true,
+            allowCreate : false,
+            
+            onupdate : {
+                selectedItem.newpin = it.pin;
+                svc.updateSubdividedLand(selectedItem);
+                listHandler.load();
+            }
+        ])
+    }
+    
+    
+    void delete(){
+        if (!selectedItem ) throw new Exception('Select an item to delete.');
+        svc.deleteSubdividedLand(selectedItem);
+        lands.remove(selectedItem);
+        listHandler.load();
+        binding.refresh('count');
+    }
+    
+    
+    def listHandler = [
+        fetchList : { return lands },
+        getRows   : { return 250 },
+    ] as BasicListModel
+    
+    
+    def getCount(){
+        return lands?.size();
+    }
+    
+}
+       
+]]>
+
+   </code>
+    
+    <pages> 
+        <page template="com.rameses.gov.etracs.rpt.subdivision.ui.SubdividedLandPage"/>
+    </pages>
+</workunit>
+
+

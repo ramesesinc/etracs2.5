@@ -6,9 +6,6 @@
             
         <invoker type="faasupdate:open" action="open" caption="FAAS Information Update" target="window"  />
         
-         <invoker folderid="/menu/txn/rpt/faas" action="init"  caption="Update FAAS Information" index="300"
-            role="APPRAISER" permission="faasupdate.create" />
-            
         <invoker folderid="/explorer/txn/rpt/txn" action="init"  caption="Update FAAS Information" index="300"
             role="APPRAISER" permission="faasupdate.create" />
          

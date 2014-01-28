@@ -2,6 +2,7 @@
 SELECT 
 	s.*,
 	f.tdno AS tdno,
+	f.tdno AS motherfaas_tdno,
 	f.owner_name, 
 	f.owner_address,
 	r.totalareaha,
@@ -13,7 +14,7 @@ SELECT
 	rp.cadastrallotno,
 	rp.blockno,
 	pc.code AS classfication_code,
-	pc.name AS classification_name
+	pc.name AS classification_name	
 FROM subdivision s
 	INNER JOIN faas f ON s.motherfaasid = f.objid 
 	INNER JOIN rpu r ON f.rpuid = r.objid 
@@ -25,7 +26,7 @@ WHERE s.state LIKE $P{state}
 ORDER BY s.txnno        
 
 
-[openSubdivision]
+[findSubdivisionById]
 SELECT s.*,
 	f.tdno AS motherfaas_tdno, 
 	f.taxpayer_objid AS motherfaas_taxpayer_objid,
@@ -36,6 +37,7 @@ SELECT s.*,
 	f.lguid AS motherfaas_lguid, 
 	f.txntype_objid AS motherfaas_txntype_objid,
 	f.datacapture AS motherfaas_datacapture,
+	r.ry AS motherfaas_ry, 
 	r.objid AS motherfaas_rpuid, 
 	r.totalareaha AS motherfaas_totalareaha, 
 	r.totalareasqm AS motherfaas_totalareasqm, 
@@ -67,10 +69,28 @@ DELETE FROM faas WHERE objid = $P{objid}
 
 [getSubdividedLands]
 SELECT sl.*,
-	r.totalav,
-	r.totalmv 
+	rp.objid AS rp_objid,
+	rp.ry AS rp_ry,
+	rp.state AS rp_state,
+	rp.claimno AS rp_claimno,
+	rp.cadastrallotno AS rp_cadastrallotno,
+	rp.surveyno AS rp_surveyno,
+	rp.north AS rp_north,
+	rp.east AS rp_east,
+	rp.west AS rp_west,
+	rp.south AS rp_south,
+	b.name AS rp_barangay_name,
+	r.objid AS rpu_objid,
+	r.rputype AS rpu_rputype,
+	r.fullpin AS rpu_fullpin,
+	r.totalareasqm AS rpu_totalareasqm,
+	r.totalareaha AS rpu_totalareaha,
+	r.totalav AS rpu_totalav,
+	r.totalmv AS rpu_totalmv 
 FROM subdividedland sl
-	INNER JOIN rpu r ON sl.newrpuid = r.objid  
+	INNER JOIN realproperty rp ON sl.newrpid = rp.objid 
+	INNER JOIN barangay b ON rp.barangayid = b.objid 
+	LEFT JOIN rpu r ON sl.newrpuid = r.objid  
 WHERE sl.subdivisionid = $P{subdivisionid}
 ORDER BY sl.newpin 
 	
@@ -180,7 +200,7 @@ UPDATE rpu SET fullpin = $P{fullpin} WHERE objid = $P{objid}
 [findFaasByNewRpuId]
 SELECT 
 	r.ry AS rpu_ry, 
-	rp.barangayid AS rpu_rp_barangayid
+	rp.barangayid AS rp_barangay_objid
 FROM rpu r 
 	INNER JOIN realproperty rp ON r.realpropertyid = rp.objid 
 WHERE r.objid =  $P{newrpuid}	
