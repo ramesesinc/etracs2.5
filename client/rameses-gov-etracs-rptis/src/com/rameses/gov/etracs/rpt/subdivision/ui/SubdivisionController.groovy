@@ -142,11 +142,20 @@ public class SubdivisionController extends PageFlowController
         initOpen();
     }
 
+    
+    
     void disapproveSubdivision() {
         entity =  svc.disapproveSubdivision(entity);
     }
 
     
+    void submitForTaxmapping(){
+        entity = svc.submitForTaxmapping(entity);
+    }
+    
+    void submitForAppraisal(){
+        entity = svc.submitForAppraisal(entity);
+    }
 
     void submitToProvince() {
         entity =  svc.submitToProvince(entity);

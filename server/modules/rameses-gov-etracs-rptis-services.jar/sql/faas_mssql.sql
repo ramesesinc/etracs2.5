@@ -201,7 +201,7 @@ UPDATE faas SET state = $P{state} WHERE objid = $P{objid} AND state = $P{prevsta
 UPDATE faas SET 
 	state = $P{state}, utdno = $P{utdno}, tdno = $P{tdno} 
 WHERE objid = $P{objid}  
-  AND state IN ('FORAPPROVAL', 'FORPROVAPPROVAL')
+  AND state IN ('FORAPPROVAL', 'FORPROVAPPROVAL', 'PENDING')
 
 
 [updateRpuMasterInfo]

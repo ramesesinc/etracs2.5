@@ -1,4 +1,4 @@
-"selectedItem" [entity.state != 'APPROVED']{
+"selectedItem" [entity.state != 'APPROVED' || mode == 'edit']{
     readonly:false;
 }
 

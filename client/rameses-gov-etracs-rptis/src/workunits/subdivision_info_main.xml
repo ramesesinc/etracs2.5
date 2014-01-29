@@ -4,8 +4,8 @@
         <invoker type="subdivision:info" action="init" caption="Info" index="-10"/>
         
         <invoker type="formActions" action="refresh" caption="Refresh" mnemonic="r" />
-        <invoker type="formActions" action="edit" caption="Edit" mnemonic="e" visibleWhen="#{mode == 'read' &amp;&amp; entity.state != 'APPROVED'}"/>
-        <invoker type="formActions" action="save" caption="Save" mnemonic="s" shortcut="ctrl S" visibleWhen="#{mode != 'read'}"/>
+        <invoker type="formActions" action="edit" caption="Edit" mnemonic="e" visibleWhen="#{showActions}" role="APPRAISER"/>
+        <invoker type="formActions" action="save" caption="Save" mnemonic="s" shortcut="ctrl S" visibleWhen="#{mode != 'read'}" />
    </invokers>
    <code>
 
@@ -138,6 +138,13 @@ class SubdivisionMainInfoController
             onempty  : { clearSignatoryInfo(approver) },
         ])
         
+    }
+    
+    
+    boolean getShowActions(){
+        if (entity.state.matches('FORAPPROVAL|FORPROVAPPROVAL|APPROVED')) return false;
+        if (mode != MODE_READ) return false;
+        return true;
     }
     
 }

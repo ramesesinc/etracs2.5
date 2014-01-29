@@ -61,7 +61,9 @@ class SubdivisionService
 	def SCHEMA_SUBDIVIDED_LAND 	= 'subdividedland'
 	def SCHEMA_AFFECTED_RPU 	= 'affectedrpu'
 
-	def STATE_DRAFT 			= 'DRAFT'
+    def STATE_DRAFT             = 'DRAFT'
+    def STATE_FORTAXMAPPING     = 'FORTAXMAPPING'
+	def STATE_FORAPPRAISAL     	= 'FORAPPRAISAL'
 	def STATE_FORAPPROVAL 		= 'FORAPPROVAL'
 	def STATE_FORPROVSUBMISSION = 'FORPROVSUBMISSION'
 	def STATE_FORPROVAPPROVAL 	= 'FORPROVAPPROVAL'
@@ -165,8 +167,6 @@ class SubdivisionService
 
     @ProxyMethod
     public def updateSubdividedLand( sland ) {
-        //sland.newutdno = faasSvc.generateUniqueTdNo(sland)
-        // validateSubdividedLand(sland)
         em.save(sland, SCHEMA_SUBDIVIDED_LAND)
         return sland 
     }
@@ -247,6 +247,21 @@ class SubdivisionService
  	*
  	------------------------------------------------------------------------*/
 
+    @ProxyMethod
+    public def submitForTaxmapping(subdivision) {
+        subdivision.state = STATE_FORTAXMAPPING
+        workflowRef.insert(subdivision)
+        updateSubdivision(subdivision)
+        return subdivision 
+    }
+
+    @ProxyMethod
+    public def submitForAppraisal(subdivision) {
+        subdivision.state = STATE_FORAPPRAISAL
+        workflowRef.insert(subdivision)
+        updateSubdivision(subdivision)
+        return subdivision 
+    }
 
  	@ProxyMethod
     public def submitForApproval(subdivision) {
@@ -510,7 +525,7 @@ class SubdivisionService
     def createFaasFromSubdividedLand(subdivision, sl){
         def faas = [
             objid               : 'F' + sl.objid,
-            state               : STATE_FORAPPROVAL, 
+            state               : STATE_PENDING, 
             datacapture         : false,
             autonumber          : util.toBoolean(var.td_autonumber, false),
             tdno                : sl.newtdno, 
@@ -564,7 +579,7 @@ class SubdivisionService
         faas.prevmv =  faas.rpu.totalmv 
 
         faas.objid = 'F' + arpu.objid 
-        faas.state = STATE_FORAPPROVAL
+        faas.state = STATE_PENDING
         faas.txntype  = faasSvc.getTxnType(TXNTYPE_SD)
         faas.effectivityyear = subdivision.effectivityyear
         faas.effectivityqtr = subdivision.effectivityqtr

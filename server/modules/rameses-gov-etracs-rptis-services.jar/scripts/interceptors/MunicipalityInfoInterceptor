@@ -17,20 +17,20 @@ class MunicipalityInfoInterceptor
 	}
 
 
-	@Before(pattern="SubdivisionService.submitForApproval", eval="#{args[0].motherfaas.lgutype.equalsIgnoreCase('municipality') && args[0].state == 'DRAFT'}") 
+	@Before(pattern="SubdivisionService.submitForApproval", eval="#{args[0].motherfaas.lgutype.equalsIgnoreCase('municipality') && args[0].state.matches('DRAFT|FORAPPRAISAL)')}") 
 	public void submitSubdivisionForApproval( evt ) {
 		def subdivision = evt.args[0]
 		subdivision.state = STATE_FORPROVSUBMISSION
 	}
 
 
-	@Before(pattern="ConsolidationService.submitForApproval", eval="#{args[0].lgutype.equalsIgnoreCase('municipality') && args[0].state == 'DRAFT'}") 
+	@Before(pattern="ConsolidationService.submitForApproval", eval="#{args[0].lgutype.equalsIgnoreCase('municipality') && args[0].state.matches('DRAFT|FORAPPRAISAL)')}") 
 	public void submitConsolidationForApproval( evt ) {
 		def consolidation = evt.args[0]
 		consolidation.state = STATE_FORPROVSUBMISSION
 	}
 
-	@Before(pattern="ResectionService.submitForApproval", eval="#{args[0].lgutype.equalsIgnoreCase('municipality') && args[0].state == 'DRAFT'}") 
+	@Before(pattern="ResectionService.submitForApproval", eval="#{args[0].lgutype.equalsIgnoreCase('municipality') && args[0].state.matches('DRAFT|FORAPPRAISAL)')}") 
 	public void submitResectionForApproval( evt ) {
 		def resection = evt.args[0]
 		resection.state = STATE_FORPROVSUBMISSION

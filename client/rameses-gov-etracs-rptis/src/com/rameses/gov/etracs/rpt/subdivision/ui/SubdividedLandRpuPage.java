@@ -61,7 +61,7 @@ public class SubdividedLandRpuPage extends javax.swing.JPanel {
             }),
             new com.rameses.rcp.common.Column(new Object[]{
                 new Object[]{"name", "newtdno"}
-                , new Object[]{"caption", "New TD No.*"}
+                , new Object[]{"caption", "New TD No."}
                 , new Object[]{"width", 120}
                 , new Object[]{"minWidth", 0}
                 , new Object[]{"maxWidth", 0}

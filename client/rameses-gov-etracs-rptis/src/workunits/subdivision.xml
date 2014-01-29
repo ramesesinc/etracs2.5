@@ -33,6 +33,8 @@
         
         <process name="open">
             <transition to="default" cond="#{entity.state == 'DRAFT'}"/>
+            <transition to="taxmapping" cond="#{entity.state == 'FORTAXMAPPING'}"/>
+            <transition to="forappraisal" cond="#{entity.state == 'FORAPPRAISAL'}"/>
             <transition to="forapproval" cond="#{entity.state == 'FORAPPROVAL'}"/>
             <transition to="forprovsubmission" cond="#{entity.state == 'FORPROVSUBMISSION'}"/>
             <transition to="forprovapproval" cond="#{entity.state == 'FORPROVAPPROVAL'}"/>
@@ -43,7 +45,7 @@
         <page name="default" title="Subdivision (Draft)">
             <transition caption="Close"  to="end"      mnemonic="c" icon="images/toolbars/cancel.png" visibleWhen="#{mode == 'read'}"/>
             <transition caption="Delete" to="delete"  action="delete" confirm="Delete record?"    mnemonic="d" icon="images/toolbars/trash.png"  visibleWhen="#{mode == 'read'}" role="APPRAISER" permission="subdivision.delete"/>
-            <transition caption="Submit" to="submit" action="submitForApproval"  mnemonic="m"  visibleWhen="#{mode == 'read'}" confirm="Submit Subdivision for approval?" role="APPRAISER" permission="subdivision.submit"/>
+            <transition caption="Submit to Taxmapping" to="taxmapping" action="submitForTaxmapping"  mnemonic="m"  visibleWhen="#{mode == 'read'}" confirm="Submit Subdivision to Tax Mapping?" role="APPRAISER" permission="subdivision.submit"/>
         </page>
         
         <process name="back-to-default">
@@ -53,6 +55,19 @@
         <process name="delete">
             <transition to="end"/>
         </process>
+        
+        
+        <page name="taxmapping" title="Subdivision (For Taxmapping)">
+            <transition caption="Close"  to="end"      mnemonic="c" icon="images/toolbars/cancel.png" visibleWhen="#{mode == 'read'}"/>
+            <transition caption="Submit for Appraisal" to="forappraisal" action="submitForAppraisal"  mnemonic="m"  visibleWhen="#{mode == 'read'}" confirm="Submit Subdivision for appraisal?" role="TAXMAPPER"/>
+        </page>
+        
+        
+        <page name="forappraisal" title="Subdivision (For Appraisal)">
+            <transition caption="Close"  to="end"      mnemonic="c" icon="images/toolbars/cancel.png" visibleWhen="#{mode == 'read'}"/>
+            <transition caption="Submit for Approval" to="submit" action="submitForApproval"  mnemonic="m"  visibleWhen="#{mode == 'read'}" confirm="Submit Subdivision for approval?" role="APPRAISER"/>
+        </page>
+        
         
         <process name="submit">
             <transition to="forapproval" cond="#{entity.state == 'FORAPPROVAL'}"/>
@@ -117,6 +132,8 @@
     <pages> 
         <page name="init" template="com.rameses.gov.etracs.rpt.subdivision.ui.SubdivisionInitPage"/>
         <page name="default" template="com.rameses.gov.etracs.rpt.subdivision.ui.SubdivisionInfoPage"/>
+        <page name="taxmapping" template="com.rameses.gov.etracs.rpt.subdivision.ui.SubdivisionInfoPage"/>
+        <page name="forappraisal" template="com.rameses.gov.etracs.rpt.subdivision.ui.SubdivisionInfoPage"/>
         <page name="forapproval" template="com.rameses.gov.etracs.rpt.subdivision.ui.SubdivisionInfoPage"/>
         <page name="forprovsubmission" template="com.rameses.gov.etracs.rpt.subdivision.ui.SubdivisionInfoPage"/>
         <page name="provsubmissionapproval" template="com.rameses.gov.etracs.rpt.subdivision.ui.SubdivisionInfoPage"/>

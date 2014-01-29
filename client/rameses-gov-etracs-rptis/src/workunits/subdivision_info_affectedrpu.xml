@@ -3,6 +3,8 @@
     <invokers>
         <invoker type="subdivision:info" action="init" caption="Affected RPUs" index="10"/>
         <invoker type="formActions" action="refresh" caption="Refresh" mnemonic="r" />
+        <invoker type="formActions" action="edit" caption="Edit" mnemonic="e" visibleWhen="#{showActions}" depends="selectedItem" role="APPRAISER,TAXMAPPER"/>
+        <invoker type="formActions" action="save" caption="Save" mnemonic="s" visibleWhen="#{mode != 'read'}" depends="selectedItem" role="APPRAISER,TAXMAPPER"/>
    </invokers>
    <code>
 
@@ -28,10 +30,24 @@ class SubdivisionAffectedRpuController
     
     def lands;
     def affectedrpus;
+    def mode;
+    
+    def MODE_READ = 'read';
+    def MODE_EDIT = 'edit';
     
     void init(){
         lands = svc.getSubdividedLands(entity.objid);
         affectedrpus = svc.getAffectedRpus(entity.objid);
+        mode = MODE_READ;
+    }
+    
+    
+    void edit(){
+        mode = MODE_EDIT;
+    }
+    
+    void save(){
+        mode = MODE_READ;
     }
     
     void refresh(){
@@ -54,7 +70,6 @@ class SubdivisionAffectedRpuController
         validate : { li -> 
             def arpu = li.item;
             RPTUtil.required('New PIN', arpu.newpin);
-            RPTUtil.required('New TD No.', arpu.newtdno);
             RPTUtil.required('New Suffix', arpu.newsuffix)
             RPTUtil.required('Memoranda', arpu.memoranda)
             validateNewPin(arpu)
@@ -77,6 +92,13 @@ class SubdivisionAffectedRpuController
         if (affectedrpus)
             return affectedrpus.size();
         return 0;
+    }
+    
+        
+    boolean getShowActions(){
+        if (entity.state.matches('FORAPPROVAL|FORPROVAPPROVAL|APPROVED')) return false;
+        if (mode != MODE_READ) return false;
+        return true;
     }
     
 }

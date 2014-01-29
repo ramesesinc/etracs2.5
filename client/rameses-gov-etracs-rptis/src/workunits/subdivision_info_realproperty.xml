@@ -3,10 +3,10 @@
     <invokers>
         <invoker type="subdivision:info" action="init" caption="Land PINs" index="1"/>
         
-        <invoker type="formActions" action="refresh" caption="Refresh" mnemonic="r" />
-        <invoker type="formActions" action="add" caption="Add" mnemonic="a" visibleWhen="#{entity.state != 'APPROVED'}" depends="selectedItem"/>
+        <invoker type="formActions" action="init" caption="Refresh" mnemonic="r" />
+        <invoker type="formActions" action="add" caption="Add" mnemonic="a" visibleWhen="#{showActions}" depends="selectedItem" role="TAXMAPPER"/>
         <invoker type="formActions" action="open" caption="Open" mnemonic="o" />
-        <invoker type="formActions" action="delete" caption="Delete" mnemonic="d" visibleWhen="#{entity.state != 'APPROVED'" depends="selectedItem"/>
+        <invoker type="formActions" action="delete" caption="Delete" mnemonic="d" visibleWhen="#{showActions}" depends="selectedItem" role="TAXMAPPER" />
    </invokers>
    <code>
 
@@ -35,11 +35,9 @@ class SubdividedLandPinController
     def lands;
     
     void init(){
-        lands = svc.getSubdividedLands(entity.objid)
+        lands = svc.getSubdividedLands(entity.objid);
+        listHandler?.load();
     }
-    
-    
-    void refresh(){}
     
     
     def add(){
@@ -105,6 +103,12 @@ class SubdividedLandPinController
         return lands?.size();
     }
     
+    
+    
+    boolean getShowActions(){
+        if (entity.state.matches('FORAPPROVAL|FORPROVAPPROVAL|APPROVED')) return false;
+        return true;
+    }
 }
        
 ]]>
