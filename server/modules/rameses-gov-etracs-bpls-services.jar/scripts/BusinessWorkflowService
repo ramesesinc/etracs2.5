@@ -69,8 +69,9 @@ public class BusinessWorkflowService  {
 		app.userid = env.USERID;
 		app.username = env.USER;
 		def result = [:];
+		
 		def m = appDB.findAssessedBy( [objid:app.objid] );
-		if(m?.assessedby?.objid) {
+		if(m.objid) {
 			throw new Exception("This document is already assigned to " + m.lastname+ ", " + m.firstname);
 		}
 		appDB.updateAssessedBy(app);
@@ -104,10 +105,42 @@ public class BusinessWorkflowService  {
 		return [state:'assessment'];
 	}
 
-	@ProxyMethod
-	public def approve(app) {
-		if(!app.taxfees)
-			throw new Exception("Please indicate at least one taxfee item");
+	@ProxyMethod 
+	public void postApplication(o) {
+		//we need to open the applicaton first
+		def app = appDB.read( [objid: o.objid] );
+
+		/*******************************************************
+		* load lobs 
+		*******************************************************/
+		app.lobs.each {
+			it.businessid = app.businessid;
+			it.applicationid = app.objid;	
+			it.iyear = app.appyear;	
+		}
+		bizInfoSvc.createLobs( app.lobs );
+		/*******************************************************
+		* load infos 
+		*******************************************************/
+		app.appinfos.each {
+			it.businessid = app.businessid;	
+			it.applicationid = app.objid;
+			it.iyear = app.appyear;
+		}
+		bizInfoSvc.createInfos( app.appinfos );
+		/*******************************************************
+		* load assessment infos 
+		*******************************************************/
+		app.assessmentinfos.each {
+			it.businessid = app.businessid;
+			it.applicationid = app.objid;
+			it.iyear = app.appyear;
+		}
+		bizInfoSvc.createAssessmentInfos( app.assessmentinfos );
+
+		/*******************************************************
+		* post ledger 
+		*******************************************************/
 		def ledger = [:];
 		ledger.items = app.taxfees;
 		ledger.items.each { r->
@@ -118,6 +151,21 @@ public class BusinessWorkflowService  {
 			r.discount = 0;
 		}
 		ledgerSvc.postReceivables(ledger);
+	}
+
+	@ProxyMethod
+	public void revertPostApplication(app) {
+		bizDB.removeInfos([objid:app.objid]);
+		bizDB.removeLOB([objid:app.objid]);
+		bizDB.removeAssessmentInfos([objid:app.objid]);
+		ledgerSvc.revertReceivables( [applicationid: app.objid ] );
+	}
+
+	@ProxyMethod
+	public def approve(app) {
+		if(!app.taxfees)
+			throw new Exception("Please indicate at least one taxfee item");
+		postApplication(app);
 		app.appid = app.objid;
 		app.taskid = app.task.objid;
 		return [state:'payment'];
@@ -128,7 +176,7 @@ public class BusinessWorkflowService  {
 		if(!app.approvedby?.objid)
 			throw new Exception("approver is required");
 		app.assignee = app.approvedby;
-		ledgerSvc.revertReceivables( [applicationid: app.objid ] );
+		revertPostApplication(app);
 		app.appid = app.objid;
 		app.taskid = app.task.objid;
 		return [state:'approval'];

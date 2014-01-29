@@ -6,27 +6,18 @@
             visibleWhen="#{entity.application!=null}" role="ASSESSOR,APPROVER" />
         -->    
             
+
         <invoker type="businessinfo:application:formActions" caption="View Assessment" index="30" action="load" role="ASSESSOR,APPROVER" />    
 
+         <invoker type="formActions" caption="Back" action="_close" immediate="true" 
+            icon="images/toolbars/arrow_left.png" />
+            
         <!-- form Actions -->    
         <invoker type="formActions" caption="Save" index="0" action="save" role="ASSESSOR"
             visibleWhen="#{editable==true}"/>
         
-        <!--    
-        <invoker type="formActions" caption="Edit Line of Business" index="30" action="updateLOB" role="ASSESSOR"
-            visibleWhen="#{editable == true}"/>
-        -->    
-            
-        <!--
-        <invoker type="formActions" caption="Edit Assessment Info" index="30" action="updateAssessmentInfo" role="ASSESSOR"
-            visibleWhen="#{editable==true}"/>
-        -->
-        
-        <invoker type="formActions" caption="Back" action="_close" immediate="true" icon="images/toolbars/arrow_left.png"/>
-        
         <invoker type="formActions" caption="Calculate Taxes/Fees" index="30" action="calculateTaxfee" role="ASSESSOR"
             visibleWhen="#{editable==true}"/>
-            
             
     </invokers>
     

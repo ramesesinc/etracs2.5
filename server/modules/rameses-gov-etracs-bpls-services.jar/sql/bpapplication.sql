@@ -67,6 +67,5 @@ WHERE objid=$P{objid}
 [changeState]
 UPDATE bpapplication SET state = $P{state} WHERE objid = $P{objid}
 
-
-
-
+[getTaskList]
+SELECT * FROM bpapplication_task WHERE applicationid=$P{objid} ORDER BY startdate ASC

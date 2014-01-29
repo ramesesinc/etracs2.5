@@ -136,5 +136,9 @@ public class BPApplicationService extends ActiveCrudService {
 		bizInfoSvc.update(b);
 	}
 
+	@ProxyMethod
+	public def getTaskList(o) {
+		return em.getTaskList(o);
+	}
 
 }

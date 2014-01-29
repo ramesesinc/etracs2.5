@@ -1,6 +1,6 @@
 <workunit>
     <invokers>
-        <invoker type="bpapplication:changerequest" caption="Request for Change" target="popup" />
+        <invoker type="bpapplication:changerequest" caption="Request for Change" target="popup"  />
     </invokers>
     
     <code>

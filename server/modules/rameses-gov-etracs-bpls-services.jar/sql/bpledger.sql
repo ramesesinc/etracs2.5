@@ -63,7 +63,7 @@ GROUP BY br.applicationid, br.businessid
 [findReceivablePaymentForVoid]
 SELECT * 
 FROM bppayment 
-WHERE receiptid=$P{receiptid}
+WHERE refid=$P{receiptid}
 
 [getPaymentItemsForVoid]
 SELECT * 
@@ -78,7 +78,7 @@ WHERE objid=$P{receivableid}
 [updateReceivablePaymentForVoiding]
 UPDATE bppayment 
 SET voided = 1 
-WHERE receiptid=$P{receiptid}
+WHERE refid=$P{receiptid}
 
 
 ###############################################
