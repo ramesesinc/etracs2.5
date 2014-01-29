@@ -4,7 +4,7 @@
         <invoker type="subdivision:info" action="init" caption="Info" index="-10"/>
         
         <invoker type="formActions" action="refresh" caption="Refresh" mnemonic="r" />
-        <invoker type="formActions" action="edit" caption="Edit" mnemonic="e" visibleWhen="#{showActions}" role="APPRAISER"/>
+        <invoker type="formActions" action="edit" caption="Edit" mnemonic="e" visibleWhen="#{showActions == true}" role="APPRAISER"/>
         <invoker type="formActions" action="save" caption="Save" mnemonic="s" shortcut="ctrl S" visibleWhen="#{mode != 'read'}" />
    </invokers>
    <code>
@@ -23,7 +23,10 @@ class SubdivisionMainInfoController
     
     def svc;
     
-    def mode = 'read';
+    def MODE_READ = 'read';
+    def MODE_EDIT = 'edit';
+    
+    def mode;
     
     def entity;
     def appraiser = [:];
@@ -37,7 +40,7 @@ class SubdivisionMainInfoController
     void init(){
         entity = svc.openSubdivision( entity.objid );
         initSignatoryVars();
-        mode = 'read';
+        mode = MODE_READ;
     }
     
     
@@ -49,13 +52,13 @@ class SubdivisionMainInfoController
     
     
     void edit(){
-        mode = 'edit';
+        mode = MODE_EDIT;
     }
     
     
     void save(){
         entity.putAll( svc.updateSubdivision(entity) );
-        mode = 'read';
+        mode = MODE_READ;
     }
     
     void refresh(){}

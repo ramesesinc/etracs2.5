@@ -4,9 +4,9 @@
         <invoker type="subdivision:info" action="init" caption="Land PINs" index="1"/>
         
         <invoker type="formActions" action="init" caption="Refresh" mnemonic="r" />
-        <invoker type="formActions" action="add" caption="Add" mnemonic="a" visibleWhen="#{showActions}" depends="selectedItem" role="TAXMAPPER"/>
+        <invoker type="formActions" action="add" caption="Add" mnemonic="a" visibleWhen="#{showActions == true}" depends="selectedItem" role="TAXMAPPER"/>
         <invoker type="formActions" action="open" caption="Open" mnemonic="o" />
-        <invoker type="formActions" action="delete" caption="Delete" mnemonic="d" visibleWhen="#{showActions}" depends="selectedItem" role="TAXMAPPER" />
+        <invoker type="formActions" action="delete" caption="Delete" mnemonic="d" visibleWhen="#{showActions == true}" depends="selectedItem" role="TAXMAPPER" />
    </invokers>
    <code>
 

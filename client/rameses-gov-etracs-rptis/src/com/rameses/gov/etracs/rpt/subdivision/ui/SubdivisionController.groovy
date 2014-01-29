@@ -25,13 +25,7 @@ public class SubdivisionController extends PageFlowController
     
     @FormTitle
     def formTitle;
-            
-    
-    def MODE_CREATE = 'create';
-    def MODE_EDIT   = 'edit';
-    def MODE_READ   = 'read';
-    
-    def mode;
+           
     def entity;
     
     def sections;
@@ -52,9 +46,8 @@ public class SubdivisionController extends PageFlowController
     void initOpen(){
         entity = svc.openSubdivision(entity.objid);
         loadSections();
-        mode = MODE_READ;
-        formId = entity.motherfaas.tdno;
-        formTitle = 'SD: ' + entity.motherfaas.tdno;
+        formId = entity.txnno;
+        formTitle = 'SD: ' + entity.txnno;
     }
     
     
@@ -196,23 +189,6 @@ public class SubdivisionController extends PageFlowController
         return InvokerUtil.lookupOpener('faas:lookup', [:])
     }
     
-    
-    
-    /*===============================================
-     *
-     * EDITABILITY SUPPORT
-     *
-     *===============================================*/
-    
-        
-    boolean getAllowEdit() {
-        if ( mode == MODE_READ) return false;
-        if ( entity.state == 'FORREVIEW' ) return false;
-        if ( entity.state == 'FORPROVAPPROVAL' ) return false;
-        if ( entity.state == 'CURRENT' ) return false;
-        if ( entity.state == 'CANCELLED' ) return false;
-        return true;
-    }
     
 }
 

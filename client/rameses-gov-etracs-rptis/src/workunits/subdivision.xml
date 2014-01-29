@@ -43,9 +43,9 @@
         </process>
         
         <page name="default" title="Subdivision (Draft)">
-            <transition caption="Close"  to="end"      mnemonic="c" icon="images/toolbars/cancel.png" visibleWhen="#{mode == 'read'}"/>
-            <transition caption="Delete" to="delete"  action="delete" confirm="Delete record?"    mnemonic="d" icon="images/toolbars/trash.png"  visibleWhen="#{mode == 'read'}" role="APPRAISER" permission="subdivision.delete"/>
-            <transition caption="Submit to Taxmapping" to="taxmapping" action="submitForTaxmapping"  mnemonic="m"  visibleWhen="#{mode == 'read'}" confirm="Submit Subdivision to Tax Mapping?" role="APPRAISER" permission="subdivision.submit"/>
+            <transition caption="Close"  to="end"      mnemonic="c" icon="images/toolbars/cancel.png" />
+            <transition caption="Delete" to="delete"  action="delete" confirm="Delete record?"    mnemonic="d" icon="images/toolbars/trash.png"  role="APPRAISER" permission="subdivision.delete"/>
+            <transition caption="Submit to Taxmapping" to="taxmapping" action="submitForTaxmapping"  mnemonic="m"  confirm="Submit Subdivision to Tax Mapping?" role="APPRAISER" permission="subdivision.submit"/>
         </page>
         
         <process name="back-to-default">
@@ -58,14 +58,14 @@
         
         
         <page name="taxmapping" title="Subdivision (For Taxmapping)">
-            <transition caption="Close"  to="end"      mnemonic="c" icon="images/toolbars/cancel.png" visibleWhen="#{mode == 'read'}"/>
-            <transition caption="Submit for Appraisal" to="forappraisal" action="submitForAppraisal"  mnemonic="m"  visibleWhen="#{mode == 'read'}" confirm="Submit Subdivision for appraisal?" role="TAXMAPPER"/>
+            <transition caption="Close"  to="end"      mnemonic="c" icon="images/toolbars/cancel.png" />
+            <transition caption="Submit for Appraisal" to="forappraisal" action="submitForAppraisal"  mnemonic="m"   confirm="Submit Subdivision for appraisal?" role="TAXMAPPER"/>
         </page>
         
         
         <page name="forappraisal" title="Subdivision (For Appraisal)">
-            <transition caption="Close"  to="end"      mnemonic="c" icon="images/toolbars/cancel.png" visibleWhen="#{mode == 'read'}"/>
-            <transition caption="Submit for Approval" to="submit" action="submitForApproval"  mnemonic="m"  visibleWhen="#{mode == 'read'}" confirm="Submit Subdivision for approval?" role="APPRAISER"/>
+            <transition caption="Close"  to="end"      mnemonic="c" icon="images/toolbars/cancel.png" />
+            <transition caption="Submit for Approval" to="submit" action="submitForApproval"  mnemonic="m"   confirm="Submit Subdivision for approval?" role="APPRAISER"/>
         </page>
         
         
@@ -77,9 +77,9 @@
         
         <!-- CITY-->
         <page name="forapproval" title="Subdivision (For Approval)">
-            <transition caption="Close" to="end" mnemonic="c" icon="images/toolbars/cancel.png" visibleWhen="#{mode == 'read'}" />
-            <transition caption="Disapprove" to="default" action="disapproveSubdivision" mnemonic="d" visibleWhen="#{mode == 'read'}" confirm="Disapprove Subdivision?" role="APPROVER"/>
-            <transition caption="Approve" to="wait" action="approveSubdivision" mnemonic="v" icon="images/toolbars/approve.png" visibleWhen="#{mode == 'read'}" confirm="Approve Subdivision?" role="APPROVER"/>
+            <transition caption="Close" to="end" mnemonic="c" icon="images/toolbars/cancel.png"  />
+            <transition caption="Disapprove" to="default" action="disapproveSubdivision" mnemonic="d"  confirm="Disapprove Subdivision?" role="APPROVER"/>
+            <transition caption="Approve" to="wait" action="approveSubdivision" mnemonic="v" icon="images/toolbars/approve.png"  confirm="Approve Subdivision?" role="APPROVER"/>
         </page>
         
         <page name="wait" title="Approval of Subdivision">
@@ -94,9 +94,9 @@
         
         <!-- MUNICIPALIY -->
         <page name="forprovsubmission" title="Subdivision (For Submission to Province)">
-            <transition caption="Close"  to="end" mnemonic="c" icon="images/toolbars/cancel.png" visibleWhen="#{mode == 'read'}" />
-            <transition caption="Disapprove" to="default" action="disapproveSubmitToProvice"  mnemonic="d" visibleWhen="#{mode == 'read'}" confirm="Disapprove Subdivision?"  role="RECOMMENDER"/>
-            <transition caption="Submit to Province" to="provsubmissionapproval" action="submitToProvince" mnemonic="m" visibleWhen="#{mode == 'read'}" confirm="Submit Subdivision to province?"  role="RECOMMENDER"/>
+            <transition caption="Close"  to="end" mnemonic="c" icon="images/toolbars/cancel.png"  />
+            <transition caption="Disapprove" to="default" action="disapproveSubmitToProvice"  mnemonic="d"  confirm="Disapprove Subdivision?"  role="RECOMMENDER"/>
+            <transition caption="Submit to Province" to="provsubmissionapproval" action="submitToProvince" mnemonic="m"  confirm="Submit Subdivision to province?"  role="RECOMMENDER"/>
         </page>
         
         <process name="back-to-prov-submission">
@@ -112,9 +112,9 @@
         
         <!-- PROVINCE -->
         <page name="forprovapproval" title="Subdivision (Province Approval)">
-            <transition caption="Close" to="end" mnemonic="c" icon="images/toolbars/cancel.png" visibleWhen="#{mode == 'read'}" />
-            <transition caption="Disapprove" to="forprovsubmission" action="disapproveByProvince"  mnemonic="d"  visibleWhen="#{mode == 'read'}" confirm="Disapprove Subdivision?" role="APPROVER"/>
-            <transition caption="Approve" to="approved" action="approveByProvince"  mnemonic="v" visibleWhen="#{mode == 'read'}" confirm="Approve Subdivision?" role="APPROVER"/>
+            <transition caption="Close" to="end" mnemonic="c" icon="images/toolbars/cancel.png"  />
+            <transition caption="Disapprove" to="forprovsubmission" action="disapproveByProvince"  mnemonic="d"   confirm="Disapprove Subdivision?" role="APPROVER"/>
+            <transition caption="Approve" to="approved" action="approveByProvince"  mnemonic="v"  confirm="Approve Subdivision?" role="APPROVER"/>
         </page>
         
         <process name="back-to-forprovapproval">

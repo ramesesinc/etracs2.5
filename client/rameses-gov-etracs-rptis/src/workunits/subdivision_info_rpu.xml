@@ -4,7 +4,7 @@
         <invoker type="subdivision:info" action="init" caption="RPU Assessments" index="5"/>
         
         <invoker type="formActions" action="refresh" caption="Refresh" mnemonic="r" />
-        <invoker type="formActions" action="assess" caption="Assess" mnemonic="a" visibleWhen="#{showActions}" role="APPRAISER" />
+        <invoker type="formActions" action="assess" caption="Assess" mnemonic="a" visibleWhen="#{showActions == true}" role="APPRAISER" />
         <invoker type="formActions" action="open" caption="Open" mnemonic="o" visibleWhen="#{entity.state == 'APPROVED'}"/>
    </invokers>
    <code>

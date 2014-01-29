@@ -1,7 +1,7 @@
-"selectedItem" [entity.state != 'APPROVED' || mode == 'edit']{
+"selectedItem" [allowEdit == true]{
     readonly:false;
 }
 
-"selectedItem" [entity.state == 'APPROVED']{
+"selectedItem" [allowEdit == false]{
     readonly:true;
 }
