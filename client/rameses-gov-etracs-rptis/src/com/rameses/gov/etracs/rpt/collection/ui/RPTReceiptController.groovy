@@ -94,6 +94,7 @@ class RPTReceiptController extends com.rameses.enterprise.treasury.cashreceipt.A
     }
     
     public void validateBeforePost() {
+        super.validateBeforePost()
         entity.rptitems = itemsforpayment.findAll{it.pay == true}
     }
     
