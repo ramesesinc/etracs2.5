@@ -14,7 +14,7 @@ INNER JOIN businessaccount ba ON br.account_objid = ba.objid
 INNER JOIN revenueitem r ON  r.objid=ba.objid 
 LEFT JOIN bpapplication app ON app.objid=br.applicationid
 WHERE br.businessid=$P{objid} AND ((br.amount-br.amtpaid- br.discount) > 0) 
-ORDER BY br.iyear DESC, br.lob_name ASC
+ORDER BY br.iyear DESC, br.lob_name DESC, r.code ASC
 
 [getPayments]
 SELECT * FROM bppayment WHERE businessid=$P{objid} ORDER BY refdate DESC
@@ -39,6 +39,7 @@ FROM bpreceivable br
 INNER JOIN revenueitem r ON br.account_objid=r.objid 
 LEFT JOIN businessaccount ba ON ba.objid=r.objid 
 WHERE br.businessid=$P{businessid}  AND ((br.amount-br.amtpaid- br.discount) > 0) 
+
 
 ##########################################
 # used by BusinessCashReceiptInterceptor
@@ -66,7 +67,7 @@ WHERE receiptid=$P{receiptid}
 
 [getPaymentItemsForVoid]
 SELECT * 
-FROM bpreceivable_item WHERE paymentid=$P{paymentid} 
+FROM bppayment_item WHERE paymentid=$P{paymentid} 
 
 [reverseReceivablePayment]
 UPDATE bpreceivable 
@@ -89,3 +90,17 @@ SELECT * FROM bpreceivable WHERE applicationid=$P{applicationid} AND amtpaid > 0
 [removeReceivablesForApplication]
 DELETE FROM bpreceivable WHERE applicationid=$P{applicationid}
 
+
+[findTaxCreditAccount]
+SELECT 
+r.objid,
+r.code,
+r.title,
+r.fund_objid, 
+r.fund_title 
+FROM businessaccount ba
+INNER JOIN revenueitem r ON r.objid=ba.objid
+WHERE ba.taxfeetype = 'TAXCREDIT'
+
+[getPaymentItems]
+SELECT * FROM bppayment_item WHERE paymentid=$P{objid} ORDER BY lob_name DESC, account_code ASC

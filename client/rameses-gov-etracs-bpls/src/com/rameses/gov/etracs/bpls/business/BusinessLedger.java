@@ -36,7 +36,6 @@ public class BusinessLedger extends javax.swing.JPanel {
         jLabel2 = new javax.swing.JLabel();
         xFormPanel1 = new com.rameses.rcp.control.XFormPanel();
         xIntegerField1 = new com.rameses.rcp.control.XIntegerField();
-        xIntegerField2 = new com.rameses.rcp.control.XIntegerField();
 
         xDataTable1.setColumns(new com.rameses.rcp.common.Column[]{
             new com.rameses.rcp.common.Column(new Object[]{
@@ -61,6 +60,19 @@ public class BusinessLedger extends javax.swing.JPanel {
                 , new Object[]{"maxWidth", 0}
                 , new Object[]{"required", false}
                 , new Object[]{"resizable", true}
+                , new Object[]{"nullWhenEmpty", true}
+                , new Object[]{"editable", false}
+                , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
+                , new Object[]{"typeHandler", new com.rameses.rcp.common.TextColumnHandler()}
+            }),
+            new com.rameses.rcp.common.Column(new Object[]{
+                new Object[]{"name", "lob.assessmenttype"}
+                , new Object[]{"caption", "Assmt. Type"}
+                , new Object[]{"width", 80}
+                , new Object[]{"minWidth", 80}
+                , new Object[]{"maxWidth", 80}
+                , new Object[]{"required", false}
+                , new Object[]{"resizable", false}
                 , new Object[]{"nullWhenEmpty", true}
                 , new Object[]{"editable", false}
                 , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
@@ -208,11 +220,6 @@ public class BusinessLedger extends javax.swing.JPanel {
         xIntegerField1.setName("entity.activeyear");
         xFormPanel1.add(xIntegerField1);
 
-        xIntegerField2.setCaption("Last Qtr Paid");
-        xIntegerField2.setEnabled(false);
-        xIntegerField2.setName("entity.qtrpaid");
-        xFormPanel1.add(xIntegerField2);
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -220,10 +227,10 @@ public class BusinessLedger extends javax.swing.JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(xDataTable2, javax.swing.GroupLayout.PREFERRED_SIZE, 472, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(xDataTable1, javax.swing.GroupLayout.PREFERRED_SIZE, 1044, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 719, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(xDataTable2, javax.swing.GroupLayout.PREFERRED_SIZE, 472, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(xFormPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 489, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(83, Short.MAX_VALUE))
         );
@@ -239,8 +246,8 @@ public class BusinessLedger extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(xDataTable2, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(95, 95, 95))
+                .addComponent(xDataTable2, javax.swing.GroupLayout.DEFAULT_SIZE, 130, Short.MAX_VALUE)
+                .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
     
@@ -252,7 +259,6 @@ public class BusinessLedger extends javax.swing.JPanel {
     private com.rameses.rcp.control.XDataTable xDataTable2;
     private com.rameses.rcp.control.XFormPanel xFormPanel1;
     private com.rameses.rcp.control.XIntegerField xIntegerField1;
-    private com.rameses.rcp.control.XIntegerField xIntegerField2;
     // End of variables declaration//GEN-END:variables
     
 }

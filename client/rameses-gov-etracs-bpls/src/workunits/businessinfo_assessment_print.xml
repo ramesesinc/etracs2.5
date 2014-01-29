@@ -1,7 +1,7 @@
 <workunit>
     <invokers>
-        <invoker type="businessinfo:assessment:formActions" caption="Print Assessment" 
-            action="viewReport" target="window" visibleWhen="#{!entity.task?.state?.matches('assign-assessor|assessment')}"/>
+        <invoker type="businessinfo:assessment:formActions" caption="Print" icon="images/toolbars/printer.png" 
+            action="viewReport" visibleWhen="#{!entity.task?.state?.matches('assign-assessor|assessment')}"/>
             
         <invoker type="formActions" caption="Close" action="_close"/>
     </invokers>
@@ -71,9 +71,8 @@
                  };
                 //ctcno: "CCI2012-191919191", 
                 //ctcdate: java.sql.Date.valueOf("2013-02-01"),
-                boolean temporary = (entity.task?.state == 'approval');
                data = [
-                   temporary: temporary,
+                   temporary: false,
                    appno: entity.appno, 
                    apptype:entity.apptype,
                    dtfiled: entity.dtfiled,
@@ -92,7 +91,10 @@
                         taxes: taxfees.findAll{ it.taxfeetype == "TAX" },  
                         regfees:taxfees.findAll{ it.taxfeetype == "REGFEE" },  
                         charges:taxfees.findAll{ it.taxfeetype == "OTHERCHARGE" },  
-                    ]
+                   ],
+                   assessedbylastname: entity.assessedby.lastname,
+                   assessedbyfirstname: entity.assessedby.firstname,
+                   assessedbyjobtitle: entity.assessedby.jobtitle,
                 ]
                 report.viewReport();
             } 

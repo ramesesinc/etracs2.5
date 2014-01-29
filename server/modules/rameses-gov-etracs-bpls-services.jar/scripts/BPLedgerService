@@ -16,6 +16,10 @@ class BPLedgerService {
 		if(!o.items)
 			throw new Exception("Error in BPLedger.postReceivables. Must have at least one item");
 		for(item in o.items) {
+			if(item.lob?.objid) {
+				if(!item.lob.assessmenttype) 
+					throw new Exception("LOB must have an assessment type for use in billing");
+			}
 			em.create( item, "receivable");
 		}
 		return o;	

@@ -67,6 +67,11 @@
         <Component class="com.rameses.rcp.control.XLookupField" name="xLookupField2">
           <Properties>
             <Property name="caption" type="java.lang.String" value="Surcharge Account"/>
+            <Property name="depends" type="[Ljava.lang.String;" editor="org.netbeans.beaninfo.editors.StringArrayEditor">
+              <StringArray count="1">
+                <StringItem index="0" value="entity.taxfeetype"/>
+              </StringArray>
+            </Property>
             <Property name="expression" type="java.lang.String" value="#{entity.surcharge.code} #{entity.surcharge.title}"/>
             <Property name="handler" type="java.lang.String" value="lookupSurchargeAccount"/>
             <Property name="name" type="java.lang.String" value="entity.surcharge"/>
@@ -78,6 +83,11 @@
         <Component class="com.rameses.rcp.control.XLookupField" name="xLookupField3">
           <Properties>
             <Property name="caption" type="java.lang.String" value="Interest Account"/>
+            <Property name="depends" type="[Ljava.lang.String;" editor="org.netbeans.beaninfo.editors.StringArrayEditor">
+              <StringArray count="1">
+                <StringItem index="0" value="entity.taxfeetype"/>
+              </StringArray>
+            </Property>
             <Property name="expression" type="java.lang.String" value="#{entity.interest.code} #{entity.interest.title}"/>
             <Property name="handler" type="java.lang.String" value="lookupInterestAccount"/>
             <Property name="name" type="java.lang.String" value="entity.interest"/>
@@ -89,6 +99,11 @@
         <Component class="com.rameses.rcp.control.XComboBox" name="xComboBox3">
           <Properties>
             <Property name="caption" type="java.lang.String" value="Ext. Dept"/>
+            <Property name="depends" type="[Ljava.lang.String;" editor="org.netbeans.beaninfo.editors.StringArrayEditor">
+              <StringArray count="1">
+                <StringItem index="0" value="entity.taxfeetype"/>
+              </StringArray>
+            </Property>
             <Property name="expression" type="java.lang.String" value="#{item.value}"/>
             <Property name="itemKey" type="java.lang.String" value="key"/>
             <Property name="items" type="java.lang.String" value="extDepts"/>

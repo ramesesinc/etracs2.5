@@ -1,7 +1,7 @@
 <workunit>
     <invokers>
-        <invoker type="businessinfo:application:formActions" name="print"
-            caption="Print Unified Form" action="viewReport" target="window" 
+        <invoker type="businessinfo:application:formActions" icon="images/toolbars/printer.png"
+            caption="Print Unified Form" action="viewReport" 
             index="0" visibleWhen="#{entity.task?.objid==null}"/>
 
         <invoker type="formActions" caption="Close" action="_close"/>

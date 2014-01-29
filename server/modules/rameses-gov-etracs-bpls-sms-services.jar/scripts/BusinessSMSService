@@ -1,0 +1,24 @@
+import com.rameses.annotations.*;
+import com.rameses.util.*;
+import java.rmi.server.*;
+import com.rameses.services.extended.*;
+
+public class BusinessSMSService extends ActiveCrudListService {
+
+	@ActiveDB("business_sms")
+	def em;
+
+	@ProxyMethod
+	public def getColumns(o) {
+		return [
+			[name: 'traceid', caption: 'Trace ID' ],
+			[name: 'logdate', caption: 'Log Date' ],
+			[name: 'action', caption: 'Action' ],
+			[name: 'phoneno', caption: 'Phone No' ],
+			[name: 'message', caption: 'Message' ],
+		];
+	}
+	
+
+
+}

@@ -31,7 +31,10 @@ WHERE parentid=$P{taskid} AND enddate IS NULL
 UPDATE bpapplication SET task_objid=$P{taskid} WHERE objid=$P{objid}
 
 [findAssessedBy]
-SELECT assessedby_name FROM bpapplication WHERE objid=$P{objid} 
+SELECT u.lastname, u.firstname, u.jobtitle, u.objid   
+FROM bpapplication ba 
+LEFT JOIN sys_user u ON u.objid=ba.assessedby_objid
+WHERE ba.objid=$P{objid} 
 
 [findApprovedBy]
 SELECT approvedby_name FROM bpapplication WHERE objid=$P{objid} 

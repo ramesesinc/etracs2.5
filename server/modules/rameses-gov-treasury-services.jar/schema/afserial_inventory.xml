@@ -58,5 +58,10 @@
 		<field name="remarks" required="true" />
 	</element>
 		
+	<element name="detail_cancelseries" tablename="afserial_inventory_detail_cancelseries">
+		<field name="objid" primary="true" />
+		<field name="series" required="true" />
+		<field name="controlid" required="true" />
+	</element>	
 
 </schema>

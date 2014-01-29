@@ -136,3 +136,41 @@ ${whereclause}
 GROUP BY xr.receiptno, xr.txndate, f.taxpayer_name, f.tdno, b.name, pc.code 	
 ORDER BY xr.receiptno;
 
+
+[generateRPTCollectionReport]
+SELECT  
+	pc.name as classname, 
+	sum( case when ri.revtype='current' then ri.basic else 0.0 end ) as basiccurrent,
+	SUM( case when ri.revtype='current' then ri.basicdisc else 0.0 end ) as basicdisc,
+	SUM( case when ri.revtype in ('previous', 'prior') then ri.basic else 0.0 end ) as basicprev,
+	sum( case when ri.revtype='current' then ri.basicint else 0.0 end ) as basiccurrentint,
+	SUM(  case when ri.revtype in ('previous', 'prior') then ri.basicint else 0.0 end ) as basicprevint,
+	sum( ri.basic - ri.basicdisc + ri.basicint) as basicnet, 
+	sum( case when ri.revtype='current' then ri.sef else 0.0 end ) as sefcurrent,
+	SUM( case when ri.revtype='current' then ri.sefdisc else 0.0 end ) as sefdisc,
+	SUM( case when ri.revtype in ('previous', 'prior') then ri.sef else 0.0 end ) as sefprev,
+	sum( case when ri.revtype='current' then ri.sefint else 0.0 end ) as sefcurrentint,
+	SUM(  case when ri.revtype in ('previous', 'prior') then ri.sefint else 0.0 end ) as sefprevint,
+	sum( ri.sef - ri.sefdisc + sefint) as sefnet,  
+	sum( ri.basic - ri.basicdisc + ri.basicint + ri.sef - ri.sefdisc + sefint ) as netgrandtotal, 
+	0.0 as idlecurrent, 0.0 as idleprev, 0.0 as idledisc, 0.0 as idleint, 0.0 as idlenet, 0.0 as levynet, 
+	sum( ri.brgyshare + ri.brgyintshare ) as brgyshare, sum( ri.lgushare + ri.lguintshare ) as lgushare,
+	sum( ri.provshare + provintshare) as provshare 
+FROM ( 
+	  select
+		distinct lf.liquidationid
+	  from bankdeposit b 
+		inner join bankdeposit_liquidation bl on b.objid = bl.bankdepositid
+		inner join liquidation_cashier_fund lf on lf.objid = bl.objid 
+	    where b.dtposted between $P{fromdate} and $P{todate} 
+  ) a 
+	INNER JOIN liquidation_remittance lr on lr.liquidationid = a.liquidationid 
+	INNER JOIN remittance_cashreceipt xr on xr.remittanceid = lr.objid 
+	INNER JOIN cashreceiptitem_rpt ri ON xr.objid = ri.rptreceiptid 
+	INNER JOIN rptledger rl ON ri.rptledgerid = rl.objid 
+	INNER JOIN faas f ON rl.faasid = f.objid 
+	INNER JOIN rpu r ON f.rpuid = r.objid
+	INNER JOIN propertyclassification pc ON r.classification_objid = pc.objid 
+	LEFT JOIN cashreceipt_void v ON xr.objid = v.receiptid
+GROUP BY pc.objid, pc.name 	
+ORDER BY min(pc.orderno)  

@@ -17,6 +17,7 @@
             @Service("BPLedgerService")
             def service;
 
+            
             String entityName = "businessinfo:ledger"
             String title = "Business Ledger";
             
@@ -34,8 +35,18 @@
             def paymentsModel = [
                 fetchList: { o->
                     return service.getPayments( entity ); 
+                },
+                onOpenItem: { o, col->
+                    def opener = InvokerUtil.lookupOpener("bppayment:open", [ entity: [objid: o.objid] ]);
+                    opener.target = "popup";
+                    return opener;
                 }
             ] as BasicListModel;
+            
+            void reload() {
+                receivableModel.reload();
+                paymentsModel.reload();
+            }
             
         }
         ]]>

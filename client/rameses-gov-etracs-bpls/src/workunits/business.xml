@@ -149,6 +149,12 @@
                 loadSections();
             }
             
+            void reloadSection() {
+                MsgBox.alert("reload section " + binding);
+                MsgBox.alert("reload section " + currentSection);
+                binding.refresh("subform");
+            }
+            
             void loadSections() {
                 sections = InvokerUtil.lookupOpeners( "business:info", [entity: entity ] ).findAll {
                     def vw = it.properties.visibleWhen;
@@ -159,6 +165,10 @@
                 }    
             }
             
+            void reloadCurrentSection() {
+                MsgBox.alert( currentSection.name );
+            }
+
             void checkSaved() {
                 if(dirty) throw new Exception("Please save the changes first");
             }
@@ -194,6 +204,7 @@
                     p.message = o.message;
                     p.assignee = o.assignee;
                     service.submitForApproval(p); 
+                    entity.task?.state = 'approval';
                     pass= true;
                     refresh();
                     MsgBox.alert("Document successfully submitted");

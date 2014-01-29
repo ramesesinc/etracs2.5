@@ -51,6 +51,7 @@
                         new SubReport("NonSerialSummary", reportPath + "nonserialsummary.jasper"),
                         new SubReport("OtherPayments", reportPath + "otherpayments.jasper"),
                         new SubReport("Denomination", reportPath + "denomination.jasper"),
+                        new SubReport("CancelSeries", reportPath + "cancelseries.jasper"),
                     ] as SubReport[];    
                  }
             ] as ReportModel

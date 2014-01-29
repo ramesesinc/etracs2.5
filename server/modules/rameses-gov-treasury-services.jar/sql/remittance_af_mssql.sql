@@ -37,8 +37,9 @@ FROM
    MIN( a.issuedstartseries ) AS issuedstartseries, 
    MIN( a.issuedendseries ) AS  issuedendseries,  
    MAX( a.endingstartseries ) AS endingstartseries,
-   MAX( a.endingendseries ) AS endingendseries
-
+   MAX( a.endingendseries ) AS endingendseries,
+   SUM( qtycancelled ) as qtycancelled,
+   MAX( cancelled) as cancelled 
 FROM 
    
 (SELECT 
@@ -51,7 +52,9 @@ FROM
    NULL AS issuedstartseries, 
    NULL AS  issuedendseries,  
    MAX( ad.endingstartseries ) AS endingstartseries,
-   MAX( ad.endingendseries ) AS endingendseries
+   MAX( ad.endingendseries ) AS endingendseries,
+   0 as qtycancelled, 
+   NULL as cancelled
 FROM afserial_inventory_detail ad 
 INNER JOIN afserial_inventory ai ON ad.controlid=ai.objid
 LEFT JOIN remittance_afserial r ON r.objid=ad.objid
@@ -69,18 +72,30 @@ SELECT
     MIN(c.series) AS issuedstartseries,
     MAX(c.series) AS issuedendseries,
     MAX(c.series)+1 AS endingstartseries,
-    NULL AS endingendseries
+    NULL AS endingendseries,
+    sum(case when c.state = 'CANCELLED' then 1 else 0 end ) as qtycancelled, 
+    STUFF(
+  (select 
+    ',' + convert(varchar(50),series ) 
+  from  cashreceipt cr
+    LEFT JOIN remittance_cashreceipt crem ON crem.objid=cr.objid
+   where cr.state='CANCELLED'
+    and cr.controlid = c.controlid 
+    and crem.objid is null 
+  for xml path('')), 1,1,'') as cancelled 
 FROM cashreceipt c
 INNER JOIN afserial_inventory ai on ai.objid = c.controlid 
 LEFT JOIN remittance_cashreceipt r ON r.objid=c.objid
 WHERE r.objid IS NULL 
-AND c.state = 'POSTED'   
+AND c.state in ('POSTED', 'CANCELLED')   
 AND c.collector_objid =  $P{collectorid}
 AND c.formtype = 'serial'
 GROUP BY c.formno, c.controlid) a
 GROUP BY a.formno, a.controlid) b
   left join afserialcapture ac on ac.controlid = b.controlid 
 where ac.controlid is null 
+
+
 
 [getUnremittedCashTickets]
 SELECT b.*,  
@@ -151,7 +166,12 @@ SELECT a.*,
     (a.receivedendseries-a.receivedstartseries+1) AS qtyreceived,
     (a.beginendseries-a.beginstartseries+1) AS qtybegin,
     (a.issuedendseries-a.issuedstartseries+1) AS qtyissued,
-    aid.endingstartseries, aid.endingendseries, aid.qtyending 
+    aid.endingstartseries, aid.endingendseries, aid.qtyending,
+    (select count(objid) from afserial_inventory_detail_cancelseries where objid = aid.objid) as qtycancelled, 
+  STUFF( (select ',' + convert(varchar(50),series ) 
+      from afserial_inventory_detail_cancelseries
+      where objid =  aid.objid 
+      for xml path('')), 1,1,'') as cancelled 
 FROM
 (SELECT 
    ai.afid AS formno, 

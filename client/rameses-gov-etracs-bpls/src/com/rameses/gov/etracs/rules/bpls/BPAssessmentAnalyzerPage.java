@@ -7,6 +7,7 @@
 package com.rameses.gov.etracs.rules.bpls;
 
 import com.rameses.osiris2.themes.FormPage;
+import com.rameses.rcp.framework.UIViewPanel;
 import com.rameses.rcp.ui.annotations.StyleSheet;
 import com.rameses.rcp.ui.annotations.Template;
 
@@ -21,6 +22,7 @@ public class BPAssessmentAnalyzerPage extends javax.swing.JPanel {
     /** Creates new form BPRuleAnalyzerPage */
     public BPAssessmentAnalyzerPage() {
         initComponents();
+        UIViewPanel vw;
     }
     
     /** This method is called from within the constructor to

@@ -1,7 +1,7 @@
 <workunit>
     <invokers>
         <invoker type="businessinfo:ledger:formActions" caption="Billing Statement" index="2"  
-            action="viewReport" target="window" states="payment" />
+            action="viewReport"  states="payment" />
         
        <invoker type="formActions" caption="Back" action="_close" mnemonic="b" shortcut="ctrl B" /> 
     </invokers>
