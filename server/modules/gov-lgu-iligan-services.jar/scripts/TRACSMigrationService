@@ -126,4 +126,17 @@ public class TRACSMigrationService {
 
 	}
 
+	@ProxyMethod 
+	def generateReportByFund( params ) {
+		if(! params.fundid ) params.fundid = '%'
+
+		def data = em2.findRemittance(params);
+		data.receipts = em2.getReceiptsByRemittanceFund( params )
+
+		if( ! data.receipts ) throw new Exception("No record(s) found ");
+		data.acctsummaries = em2.getRevenueItemSummaryByFund( params ) 
+
+		return data;
+	}
+
 }
