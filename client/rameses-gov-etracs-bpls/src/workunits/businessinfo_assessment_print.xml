@@ -1,7 +1,7 @@
 <workunit>
     <invokers>
-        <invoker type="businessinfo:assessment:formActions" caption="Print Assessment" 
-            action="viewReport" target="window" visibleWhen="#{!entity.task?.state?.matches('assign-assessor|assessment')}"/>
+        <invoker type="businessinfo:assessment:formActions" caption="Print" icon="images/toolbars/printer.png" 
+            action="viewReport" visibleWhen="#{!entity.task?.state?.matches('assign-assessor|assessment')}"/>
             
         <invoker type="formActions" caption="Close" action="_close"/>
     </invokers>

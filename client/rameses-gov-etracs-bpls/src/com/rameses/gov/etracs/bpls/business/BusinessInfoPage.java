@@ -51,6 +51,7 @@ public class BusinessInfoPage extends javax.swing.JPanel {
         xSubFormPanel1.setDepends(new String[] {"currentSection"});
         xSubFormPanel1.setDynamic(true);
         xSubFormPanel1.setHandler("currentSection");
+        xSubFormPanel1.setName("subform");
         javax.swing.GroupLayout xSubFormPanel1Layout = new javax.swing.GroupLayout(xSubFormPanel1);
         xSubFormPanel1.setLayout(xSubFormPanel1Layout);
         xSubFormPanel1Layout.setHorizontalGroup(

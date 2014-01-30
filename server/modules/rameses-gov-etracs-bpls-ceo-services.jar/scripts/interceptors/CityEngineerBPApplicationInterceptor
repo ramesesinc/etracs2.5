@@ -21,7 +21,7 @@ public class CityEngineerBPApplicationInterceptor {
 		if( m?.value == true ) {
 			def z = em.findInfo([businessid:app.businessid]);
 			if(!z) {
-				z = [objid: "BUSCEO"+ new UID()];
+				z = [objid: app.businessid];
 				z.businessid = app.businessid;
 				z.state = 'PENDING';
 				em.create(z);

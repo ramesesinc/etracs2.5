@@ -1,7 +1,7 @@
 <workunit>
     <invokers>
-        <invoker type="businessinfo:application:formActions" name="print"
-            caption="Print Application" action="viewReport" target="window" index="0" />
+        <invoker type="businessinfo:application:formActions" icon="images/toolbars/printer.png"
+            caption="Print Application" action="viewReport" index="0" />
         
         <invoker type="formActions" caption="Close" action="_close"/>
     </invokers>

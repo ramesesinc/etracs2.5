@@ -42,7 +42,7 @@
             def info;
             
             void open() {
-                info = service.getInfo([objid:entity.objid]);
+                info = service.getInfo(entity);
                 total = info.fees.sum{ it.amount };
             }
           
@@ -100,6 +100,7 @@
                     entity = service.activate(entity);
                     MsgBox.alert("Fees Activated");
                     open();
+                    taxfeeModel.reload();
                 }
             }
             
@@ -108,6 +109,7 @@
                     entity = service.deactivate(entity);
                     MsgBox.alert("Fees Deactivated");
                     open();
+                    taxfeeModel.reload();
                 }
             }
             
