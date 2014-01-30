@@ -1,8 +1,9 @@
 <workunit>
     <invokers>
         <invoker type="cashreceipt:cashticket"/>
-        <invoker type="formActions" action="_close" caption="Back" immediate="true"/>
-        <invoker type="formActions" action="save" caption="Submit"/>
+        <invoker type="formActions" action="_close" caption="Back" immediate="true" visibleWhen="#{ mode=='init' }" mnemonic="b" shortcut="ctrl B"  icon="images/toolbars/arrow_left.png"/>
+        <invoker type="formActions" action="save" caption="Submit" visibleWhen="#{ mode=='init' }" mnemonic="s" shortcut="ctrl S"/>
+        <invoker type="formActions" action="_quit" caption="Close" visibleWhen="#{ mode=='completed' }" mnemonic="c" shortcut="ctrl W" icon="images/toolbars/cancel.png"/>
     </invokers>
     
     <code>
@@ -10,7 +11,9 @@
         import com.rameses.rcp.annotations.*
         import com.rameses.rcp.common.*
         import com.rameses.osiris2.client.*
+        import com.rameses.osiris2.reports.*;
         import com.rameses.osiris2.common.*
+        import com.rameses.util.*;
         import com.rameses.enterprise.treasury.cashreceipt.*
         
         class  CashTicketReceiptController {
@@ -25,6 +28,9 @@
             def itemAmount = 0.0;
             def entity;
             
+            
+            def mode = "init"
+            def infoHtml
            
             @PropertyChangeListener
             def listener = [
@@ -88,20 +94,23 @@
                     throw new Exception("Please specify at least one item");
                 if(itemAmount!= entity.amount)
                     throw new Exception("Total of items must be equal to amount collected");
-                if( MsgBox.confirm('You are about to post this transaction. Continue?')) {
+                if( MsgBox.confirm('You are about to post this transaction. Continue?')) { 
                     entity = service.post( entity );
                     MsgBox.alert( "Receipt has been successfully saved.");
-                    return "_close";
+                    mode = "completed"
+                    infoHtml = TemplateProvider.instance.getResult( "com/rameses/enterprise/treasury/cashreceipt/cashreceipt.gtpl", [entity:entity] );
+                    binding.refresh("infoHtml")
+                    return "completed";
                 }
             }
-            
-        }
+         } 
         ]]>
         
     </code>
     
     <pages>
         <page template="com.rameses.gov.treasury.cashticket.CashTicketReceiptPage"/>
+        <page name="completed" template="com.rameses.enterprise.treasury.cashreceipt.CashReceiptInfoPage"/>
     </pages>
     
 </workunit>
