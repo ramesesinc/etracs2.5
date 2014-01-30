@@ -147,3 +147,36 @@ where r.objid=$P{objid} and cr.amount > 0.0
 group by b.objid 
 
 
+[getReceiptsByRemittanceFund]
+select 
+	bt.* 
+from (
+	select 
+	  min(cr.formno) as afid, 
+	  min(cr.receiptdate) as txndate, min(ri.fund_title) as fundname, null as remarks, 
+	  min(cr.receiptno) as serialno,  min(cr.paidby) AS payer,
+	  min(cri.item_title)  AS particulars,min(cr.paidbyaddress) AS payeraddress,
+	  sum(cri.amount) as amount 
+	from tracs_remittance rem 
+	   inner join tracs_cashreceipt cr on cr.remittanceid = rem.objid 
+	   inner join tracs_cashreceiptitem cri on cri.receiptid = cr.objid 
+	   inner join revenueitem ri on ri.objid = cri.item_objid
+	   inner join fund fu on ri.fund_objid = fu.objid
+	where rem.objid=$P{objid} and fu.objid like $P{fundid} 
+		and cr.amount > 0.0 
+	group by cr.formno, cr.receiptno, cri.item_code 
+
+	union
+
+	select 
+	  cr.formno as afid, cr.receiptdate as txndate, null as fundname, null as remarks, 
+	  cr.receiptno as serialno,  '***VOIDED***' AS payer, '***VOIDED***' AS particulars,
+	  '' AS payeraddress,  cr.amount
+	from tracs_remittance rem 
+	   inner join tracs_cashreceipt cr on cr.remittanceid = rem.objid 
+	where rem.objid=$P{objid} 
+		and cr.amount  = 0.0
+   ) bt 
+ORDER BY afid, serialno, payer 
+
+
