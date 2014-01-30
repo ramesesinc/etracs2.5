@@ -145,7 +145,7 @@ public class BatchCapturePage extends javax.swing.JPanel {
                 , new Object[]{"resizable", true}
                 , new Object[]{"nullWhenEmpty", true}
                 , new Object[]{"editable", true}
-                , new Object[]{"editableWhen", "#{mode=='create'}"}
+                , new Object[]{"editableWhen", "#{entity.state == 'DRAFT'}"}
                 , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
                 , new Object[]{"typeHandler", new com.rameses.rcp.common.DateColumnHandler(null, "yyyy-MM-dd", null)}
             }),
@@ -159,7 +159,7 @@ public class BatchCapturePage extends javax.swing.JPanel {
                 , new Object[]{"resizable", true}
                 , new Object[]{"nullWhenEmpty", true}
                 , new Object[]{"editable", true}
-                , new Object[]{"editableWhen", "#{mode=='create'}"}
+                , new Object[]{"editableWhen", "#{entity.state == 'DRAFT'}"}
                 , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
                 , new Object[]{"typeHandler", new com.rameses.rcp.common.TextColumnHandler()}
             }),
@@ -173,7 +173,7 @@ public class BatchCapturePage extends javax.swing.JPanel {
                 , new Object[]{"resizable", true}
                 , new Object[]{"nullWhenEmpty", true}
                 , new Object[]{"editable", true}
-                , new Object[]{"editableWhen", "#{mode=='create'}"}
+                , new Object[]{"editableWhen", "#{entity.state == 'DRAFT'}"}
                 , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
                 , new Object[]{"typeHandler", new com.rameses.rcp.common.TextColumnHandler()}
             }),
@@ -187,7 +187,7 @@ public class BatchCapturePage extends javax.swing.JPanel {
                 , new Object[]{"resizable", true}
                 , new Object[]{"nullWhenEmpty", true}
                 , new Object[]{"editable", true}
-                , new Object[]{"editableWhen", "#{mode=='create'}"}
+                , new Object[]{"editableWhen", "#{entity.state == 'DRAFT'}"}
                 , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
                 , new Object[]{"typeHandler", new com.rameses.rcp.common.LookupColumnHandler("#{item.acctinfo}", "lookupAccount")}
             }),
@@ -201,7 +201,7 @@ public class BatchCapturePage extends javax.swing.JPanel {
                 , new Object[]{"resizable", true}
                 , new Object[]{"nullWhenEmpty", true}
                 , new Object[]{"editable", true}
-                , new Object[]{"editableWhen", "#{mode=='create'}"}
+                , new Object[]{"editableWhen", "#{entity.state == 'DRAFT'}"}
                 , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
                 , new Object[]{"typeHandler", new com.rameses.rcp.common.DecimalColumnHandler("#,##0.00", -1.0, -1.0, false, 2)}
             }),
@@ -215,7 +215,7 @@ public class BatchCapturePage extends javax.swing.JPanel {
                 , new Object[]{"resizable", true}
                 , new Object[]{"nullWhenEmpty", true}
                 , new Object[]{"editable", true}
-                , new Object[]{"editableWhen", null}
+                , new Object[]{"editableWhen", "#{entity.state == 'DRAFT'}"}
                 , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
                 , new Object[]{"typeHandler", new com.rameses.rcp.common.TextColumnHandler()}
             }),
@@ -229,7 +229,7 @@ public class BatchCapturePage extends javax.swing.JPanel {
                 , new Object[]{"resizable", true}
                 , new Object[]{"nullWhenEmpty", true}
                 , new Object[]{"editable", true}
-                , new Object[]{"editableWhen", null}
+                , new Object[]{"editableWhen", "#{entity.state == 'DRAFT'}"}
                 , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
                 , new Object[]{"typeHandler", new com.rameses.rcp.common.CheckBoxColumnHandler(java.lang.Integer.class, 1, 0)}
             })
