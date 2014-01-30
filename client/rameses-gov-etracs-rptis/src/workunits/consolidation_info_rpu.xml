@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workunit>
+    <invokers>
+        <invoker type="consolidation:info" action="init" caption="Consolidation Land Appraisal" index="5"/>
+        
+        <invoker type="formActions" action="refresh" caption="Refresh" mnemonic="r" />
+        <!--
+        <invoker type="formActions" action="assess" caption="Assess" mnemonic="a" visibleWhen="#{showActions == true}" role="APPRAISER" />
+        <invoker type="formActions" action="open" caption="Open" mnemonic="o" visibleWhen="#{entity.state == 'APPROVED'}"/>
+        -->
+   </invokers>
+   <code>
+
+<![CDATA[
+        
+import com.rameses.rcp.annotations.* 
+import com.rameses.rcp.common.* 
+import com.rameses.osiris2.client.*
+import com.rameses.osiris2.common.*
+import com.rameses.gov.etracs.rpt.common.RPTUtil;
+
+class ConsolidationLandRpuController
+{
+    @Binding
+    def binding;
+    
+    @Service('RPUService')
+    def rpuSvc;
+    
+    def svc;
+    
+    def entity;
+    def rpu;
+    def opener;
+    
+    
+    String title = 'Consolidation Land Assessment';
+    
+    void init(){
+        if (entity.newrpuid)
+            opener = open();
+        else
+            opener = create();
+    }
+    
+    
+    void refresh(){
+    }
+    
+    
+    def onupdateRpu = {
+        entity.newrpuid = it.objid;
+        svc.updateConsolidation(entity);
+    }
+    
+    def create(){
+        return InvokerUtil.lookupOpener('landrpu:create', [
+            rpu         : createLandRpu(),
+            lguid       : entity.lguid,
+            onupdate    : onupdateRpu,
+            showClose   : false,
+        ])
+    }
+    
+    def createLandRpu(){
+        return rpuSvc.initRpu([
+            ry              : entity.rp.ry,
+            suffix          : 0, 
+            fullpin         : entity.rp.pin,
+            realpropertyid  : entity.rp.objid,
+        ])
+    }
+    
+    
+    def open(){
+        rpu = [objid:entity.newrpuid];
+        return InvokerUtil.lookupOpener('landrpu:open', [
+            rpu         : rpu,
+            lguid       : entity.lguid,
+            onupdate    : onupdateRpu,
+            allowCreate : false,
+            showClose   : false,
+        ])
+    }
+    
+    boolean getShowActions(){
+        if (entity.state.matches('FORAPPROVAL|FORPROVAPPROVAL|APPROVED')) return false;
+        return true;
+    }    
+    
+}
+       
+]]>
+
+   </code>
+    
+    <pages> 
+        <page template="com.rameses.gov.etracs.rpt.consolidation.ui.ConsolidationRPUPage"/>
+    </pages>
+</workunit>
+
+

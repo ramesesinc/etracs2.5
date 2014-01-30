@@ -1,15 +1,13 @@
 import com.rameses.annotations.*
 import com.rameses.common.*;
 import com.rameses.util.*;
+import com.rameses.services.extended.*;
 
 
 class ConsolidationService
 {
-	@PersistenceContext('rpt')
-	def em
-    
-  @ActiveDB('consolidation')
-   def adb 
+	@ActiveDB('consolidation')
+   def em
 
 	@Env
 	def env
@@ -52,10 +50,12 @@ class ConsolidationService
     def ledgerSvc
 
     def SCHEMA_CONSOLIDATION 		= 'consolidation'
-    def SCHEMA_CONSOLIDATED_LAND 	= 'consolidation:consolidatedland'
-    def SCHEMA_AFFECTED_RPU 		= 'consolidation:affectedrpu'
+    def SCHEMA_CONSOLIDATED_LAND 	= 'consolidatedland'
+    def SCHEMA_AFFECTED_RPU 		= 'affectedrpu'
 
     def STATE_DRAFT 			= 'DRAFT'
+    def STATE_FORTAXMAPPING     = 'FORTAXMAPPING'
+    def STATE_FORAPPRAISAL      = 'FORAPPRAISAL'
 	def STATE_FORAPPROVAL 		= 'FORAPPROVAL'
 	def STATE_FORPROVSUBMISSION = 'FORPROVSUBMISSION'
 	def STATE_FORPROVAPPROVAL 	= 'FORPROVAPPROVAL'
@@ -119,32 +119,26 @@ class ConsolidationService
         consolidation.newutdno = faasSvc.generateUniqueTdNo(consolidation)
         consolidation.txntype = faasSvc.getTxnType(TXNTYPE_CS)
         consolidation.autonumber = util.toBoolean(var.td_autonumber, false)
-        consolidation.effectivityyear = pdate.year + 1
-        consolidation.effectivityqtr  = 1
-        consolidation.newrpuid = consolidation.newrpu.objid 
-        consolidation.newrpid = consolidation.newrpu.realpropertyid
-
     	workflowRef.insert(consolidation)
-    	rpuSvc.createRpu(consolidation.newrpu, consolidation.txntype )
-        em.create(SCHEMA_CONSOLIDATION, consolidation, false)
+    	em.create(consolidation)
         signatorySvc.saveSignatories(consolidation.signatories)
     	return consolidation   			
    	}
 
    	@ProxyMethod
    	public def updateConsolidation( consolidation ) {
-   		def old = em.read(SCHEMA_CONSOLIDATION, consolidation )
+   		def old = em.read(consolidation )
         if( !old ) throw new Exception('Consolidation does not exist or has already been deleted.')
         if( old.state == STATE_APPROVED ) throw new Exception('Consolidation has already been approved.')
         if( old.state == STATE_FORPROVAPPROVAL ) throw new Exception('Consolidation has already been submitted to province.')
-        em.update(SCHEMA_CONSOLIDATION, consolidation)
+        em.update(consolidation)
         signatorySvc.saveSignatories(consolidation.signatories)
 		return consolidation   			
    	}
 
    	@ProxyMethod
    	public def openConsolidation( objid ) {
-   		def consolidation = em.sqlContext.createNamedQuery('consolidation:open').setParameter('objid', objid).singleResult
+        def consolidation = em.findById([objid:objid])
    		if (! consolidation) throw new Exception('Consolidation does not exist or has already been deleted.')
    		consolidation.txntype = faasSvc.getTxnType(TXNTYPE_CS)
    		consolidation.autonumber = util.toBoolean(var.td_autonumber, false)
@@ -157,21 +151,34 @@ class ConsolidationService
    	public void deleteConsolidation( consolidation ) {
    		def rpu = null 
         getAffectedRpus(consolidation.objid).each{arpu ->
-            em.delete(SCHEMA_AFFECTED_RPU, arpu)
+            em.delete(arpu, SCHEMA_AFFECTED_RPU)
 
-            faasSvc.deleteFaasById(arpu.newfaasid)
-            rpu = rpuSvc.openRpu(arpu.newrpuid)
-            if (rpu ) rpuSvc.deleteRpu(rpu)
+            if (arpu.newfaasid)
+                faasSvc.deleteFaasById(arpu.newfaasid)
+
+            if (arpu.newrpuid) {
+                rpu = rpuSvc.openRpu(arpu.newrpuid)
+                if (rpu ) rpuSvc.deleteRpu(rpu)
+            }
         }
+
         getConsolidatedLands(consolidation.objid).each{ cl ->
-            em.delete(SCHEMA_CONSOLIDATED_LAND, cl)
+            em.delete(cl. SCHEMA_CONSOLIDATED_LAND)
  		}
+
  		workflowRef.deleteAll(consolidation.objid)
         txnRef.delete(consolidation.objid)
         signatorySvc.deleteSignatories(consolidation)
-        em.delete(SCHEMA_CONSOLIDATION, consolidation)
-        rpu = rpuSvc.openRpu(consolidation.newrpuid)
- 		if (rpu) rpuSvc.deleteRpu(rpu)
+        em.delete(consolidation)
+
+        if (consolidation.newrpuid){
+            rpu = rpuSvc.openRpu(consolidation.newrpuid)
+     		if (rpu) rpuSvc.deleteRpu(rpu)
+        }
+
+        if (consolidation.newrpid){
+            rpSvc.removeEntity(consolidation.rp)
+        }
         
    	}
 
@@ -179,8 +186,7 @@ class ConsolidationService
 
    	@ProxyMethod
    	public List getConsolidatedLands( consolidationid ) {
-   		return em.sqlContext.createNamedQuery('consolidation:getConsolidatedLands')
-                .setParameter('consolidationid', consolidationid).resultList
+        return em.getConsolidatedLands([consolidationid:consolidationid])
    	}
 
 
@@ -189,17 +195,12 @@ class ConsolidationService
         util.required('TD No.', consolidatedland.faas);
 
         //check duplicate entry 
-        def dup = em.sqlContext.createNamedQuery('consolidation:getDuplicateConsolidatedLand')
-                .setParameter('consolidationid', consolidatedland.consolidationid)
-                .setParameter('landfaasid', consolidatedland.faas.objid)
-                .singleResult
+        def dup = em.findDuplicateConsolidatedLand([consolidationid:consolidatedland.consolidationid, landfaasid:consolidatedland.faas.objid])
         if (dup) throw new Exception('Duplicate item is not allowed.')
 
         //check same barangay consolidation
         if (util.isTrue(var.consolidation_allow_same_barangay_property_only)){
-            def brgy = em.sqlContext.createNamedQuery('consolidation:getConsolidationBarangay')
-                    .setParameter('consolidationid', consolidatedland.consolidationid)
-                    .singleResult
+            def brgy = em.findBarangayId([objid:consolidatedland.consolidationid])
             if (brgy.barangayid != consolidatedland.faas.barangayid ){
                 throw new Exception('Consolidation is allowed only for properties within the same barangay.')
             }
@@ -213,42 +214,31 @@ class ConsolidationService
 
    	@ProxyMethod
    	public def saveConsolidatedLand( consolidatedland ) {
-   		em.validate(SCHEMA_CONSOLIDATED_LAND, consolidatedland)	
-   		em.save(SCHEMA_CONSOLIDATED_LAND, consolidatedland)	
+   		em.save(consolidatedland, SCHEMA_CONSOLIDATED_LAND)	
         createAffectedRpusByConsolidatedLand(consolidatedland)
    		return consolidatedland
    	}
 
    	@ProxyMethod
    	public def deleteConsolidatedLand( consolidatedland ) {
-        def affectedrpus = em.sqlContext.createNamedQuery('consolidation:getAffectedRpusByConsolidatedLandId')
-                            .setParameter('landfaasid', consolidatedland.landfaasid )
-                            .resultList 
-
-   		em.sqlContext.createNamedExecutor('consolidation:deleteAffectedRpuByLandFaasId')
-   				.setParameter('landfaasid', consolidatedland.landfaasid)
-   				.execute()	
-
+        def affectedrpus = em.getAffectedRpusByConsolidatedLandId([landfaasid:consolidatedland.landfaasid ])
+        em.deleteAffectedRpuByLandFaasId(consolidatedland)
         affectedrpus.each{ arpu ->
             rpuSvc.deleteRpu(arpu)
         }
-
-
-   		em.delete(SCHEMA_CONSOLIDATED_LAND, consolidatedland)
+   		em.delete(consolidatedland, SCHEMA_CONSOLIDATED_LAND)
    	}
 
 
    	@ProxyMethod
    	public List getAffectedRpus( consolidationid ) {
-   		return em.sqlContext.createNamedQuery('consolidation:getAffectedRpus')
-                .setParameter('consolidationid', consolidationid).resultList
+        return em.getAffectedRpus([consolidationid:consolidationid])
    	}
 
 
    	@ProxyMethod
    	public def saveAffectedRpu( arpu ) {
-   		em.validate(SCHEMA_AFFECTED_RPU, arpu)
-   		em.save(SCHEMA_AFFECTED_RPU, arpu)
+   		em.save(arpu, SCHEMA_AFFECTED_RPU)
    		return arpu 	
    	}
 
@@ -261,34 +251,28 @@ class ConsolidationService
    	*
    	-----------------------------------------------------------------*/
    	@ProxyMethod
-    public def initRealProperty(info){
-    	def rp = rpSvc.initRealProperty(info, 'land')
-    	rpSvc.checkDuplicatePin(rp)
-    	return rp 
+    public def submitForTaxmapping(consolidation) {
+        consolidation.state = STATE_FORTAXMAPPING
+        workflowRef.insert(consolidation)
+        em.update(consolidation)
+        return consolidation 
+    }
+
+
+    @ProxyMethod
+    public def submitForAppraisal(consolidation) {
+        consolidation.state = STATE_FORAPPRAISAL
+        workflowRef.insert(consolidation)
+        em.update(consolidation)
+        return consolidation 
     }
 
 
    	@ProxyMethod
-   	public def initRpu( rp ) {
-   		rp.suffix = 0
-   		def rpu = rpuSvc.initRpu(rp)	
-   		rpu.realpropertyid = rp.objid 
-   		rpu.rp = rp
-   		return rpu 
-   	}
-
-
-   	@ProxyMethod
-   	public def validateRpu( rpu ) {
-   		return rpu 	
-   	}
-
-   	
-   	@ProxyMethod
    	public def submitForApproval( consolidation ) {
    		validate(consolidation)
         workflowRef.insert(consolidation)
-    	em.update(SCHEMA_CONSOLIDATION, consolidation)
+    	em.update(consolidation)
    		return consolidation	
    	}
 
@@ -299,7 +283,7 @@ class ConsolidationService
     	workflowRef.insert(consolidation)
         createFaasRecords(consolidation)
         validate(consolidation)
-        em.update(SCHEMA_CONSOLIDATION, consolidation)
+        em.update(consolidation)
     	doApproveConsolidation(consolidation)
     	return consolidation 
    	}
@@ -310,7 +294,7 @@ class ConsolidationService
    		workflowRef.delete(consolidation)
     	deleteFaasRecords(consolidation)
         consolidation.state = STATE_DRAFT
-        em.update(SCHEMA_CONSOLIDATION, consolidation)
+        em.update(consolidation)
    		return consolidation	
    	}
 
@@ -321,7 +305,7 @@ class ConsolidationService
     	workflowRef.insert(consolidation)
         validate(consolidation)
         createFaasRecords(consolidation)
-        em.update(SCHEMA_CONSOLIDATION, consolidation)
+        em.update(consolidation)
    		return consolidation	
    	}
 
@@ -330,7 +314,7 @@ class ConsolidationService
 		workflowRef.delete(consolidation)
         deleteFaasRecords(consolidation)
         consolidation.state = STATE_DRAFT
-        em.update(SCHEMA_CONSOLIDATION, consolidation)
+        em.update(consolidation)
     	return consolidation
    	}
 
@@ -339,7 +323,7 @@ class ConsolidationService
    	public def approveSubmittedToProvince( consolidation ) {
    		consolidation.state = STATE_APPROVED
     	workflowRef.insert(consolidation)
-    	em.update(SCHEMA_CONSOLIDATION, consolidation)
+    	em.update(consolidation)
         doApproveConsolidation(consolidation)
    		return consolidation	
    	}
@@ -349,7 +333,7 @@ class ConsolidationService
    		workflowRef.delete(consolidation)
         deleteFaasRecords(consolidation)
         consolidation.state = STATE_FORPROVSUBMISSION
-        em.update(SCHEMA_CONSOLIDATION, consolidation)
+        em.update(consolidation)
    		return consolidation	
    	}
 
@@ -358,7 +342,7 @@ class ConsolidationService
    	public def approveByProvince( consolidation ) {
    		consolidation.state = STATE_APPROVED
     	workflowRef.insert(consolidation)
-    	em.update(SCHEMA_CONSOLIDATION, consolidation)
+    	em.update(consolidation)
     	doApproveConsolidation(consolidation)
    		return consolidation	
    	}
@@ -369,7 +353,7 @@ class ConsolidationService
    		workflowRef.delete(consolidation)
     	deleteFaasRecords(consolidation)
         consolidation.state = STATE_FORPROVSUBMISSION
-        em.update(SCHEMA_CONSOLIDATION, consolidation)
+        em.update(consolidation)
    		return consolidation	
    	}
 
@@ -382,12 +366,8 @@ class ConsolidationService
    	-----------------------------------------------------------------*/
     @ProxyMethod
     public void createNewlyCreatedAffectedRpus(consolidation){
-        consolidation.newrpu = rpuSvc.openRpu(consolidation.newrpuid)
-  
-        def affectedrpus = em.sqlContext.createNamedQuery('consolidation:getNewlyCreatedAffectedRpus')
-                                .setParameter('consolidationid', consolidation.objid)
-                                .resultList 
-
+        consolidation.rpu = rpuSvc.openRpu([objid:consolidation.newrpuid])
+        def affectedrpus = em.getNewlyCreatedAffectedRpus([consolidationid:consolidation.objid])
         affectedrpus.each{ arpu -> 
             doCreateAffectedRpu(consolidation, arpu)
         }
@@ -395,9 +375,7 @@ class ConsolidationService
 
    	@ProxyMethod
     public def deleteAffectedRpuByPrevFaasId( prevfaasid ) {
-        em.sqlContext.createNamedExecutor('consolidation:deleteAffectedRpuByPrevFaasId')
-            .setParameter('prevfaasid', prevfaasid)
-            .execute()    
+        em.deleteAffectedRpuByPrevFaasId([prevfaasid:prevfaasid])
     }
 
 
@@ -413,41 +391,34 @@ class ConsolidationService
    	*
    	-----------------------------------------------------------------*/
    	void doApproveConsolidation(consolidation){
-		    def faas = faasSvc.openFaas(consolidation.newfaasid)
+		def faas = faasSvc.openFaas([objid:consolidation.newfaasid])
         faasSvc.approveFaas(faas)
+        rpSvc.approve([objid:consolidation.newrpid])
+        rpuSvc.approveRpu([objid:consolidation.newrpuid])
 
         getAffectedRpus(consolidation.objid).each{ arpu ->
-            faas = faasSvc.openFaas(arpu.newfaasid)
+            faas = faasSvc.openFaas([objid:arpu.newfaasid])
             faasSvc.approveFaas(faas)
         }
 
         getConsolidatedLands(consolidation.objid).each{cl ->
-        	em.sqlContext.createNamedExecutor('consolidation:cancelRealProperty')
-		            .setParameter('objid', cl.rpu.realpropertyid)
-		            .execute()
-          em.sqlContext.createNamedExecutor('consolidation:cancelLandLedger')
-                .setParameter('faasid', cl.landfaasid)
-                .execute()
+            em.cancelRealProperty([objid:cl.rpu.realpropertyid])
+            em.cancelLandLedger([faasid:cl.landfaasid])
         }
 
-        em.sqlContext.createNamedExecutor('consolidation:approveConsolidation')
-            .setParameter('objid', consolidation.objid)
-            .execute()
-
-      
-
+        em.approveConsolidation(consolidation)
  	}
 
    	void createFaasRecords(consolidation){
         def faas = createFaasFromConsolidation(consolidation)
-   	 	faasSvc.createFaasOnly(faas)
+   	 	faasSvc.createFaas(faas)
         consolidation.newfaasid = faas.objid 
  		
  		getAffectedRpus(consolidation.objid).each{ arpu ->
- 			arpu.rpu = rpuSvc.openRpu(arpu.newrpuid)
-            arpu.rp = arpu.rpu.rp 
+ 			arpu.rpu = rpuSvc.openRpu([objid:arpu.newrpuid])
+            arpu.rp = rpSvc.open([objid:consolidation.newrpid])
  			faas = createFaasFromAffectedRpu(consolidation, arpu)
- 			faasSvc.createFaasOnly(faas)
+ 			faasSvc.createFaas(faas)
  			arpu.newfaasid = faas.objid 
  			saveAffectedRpu(arpu)
  		}
@@ -487,6 +458,7 @@ class ConsolidationService
             lguid               : consolidation.lguid,
             rpu                 : [objid:consolidation.newrpuid],
             rpuid               : consolidation.newrpuid,
+            realpropertyid      : consolidation.newrpid,
         ]
 
         faas.previousfaases = []
@@ -506,7 +478,7 @@ class ConsolidationService
     }
 
     def createFaasFromAffectedRpu(consolidation, arpu){
-        def faas = faasSvc.openFaas(arpu.prevfaasid)
+        def faas = faasSvc.openFaas([objid:arpu.prevfaasid])
 
         faas.prevtdno = faas.tdno
         faas.prevpin =  faas.rpu.fullpin 
@@ -524,6 +496,7 @@ class ConsolidationService
         faas.memoranda = arpu.memoranda
         faas.rpu = arpu.rpu 
         faas.rpuid = arpu.rpu.objid 
+        faas.realpropertyid = arpu.rp.objid
         faas.previousfaases = [[faasid:faas.objid, prevfaasid:arpu.prevfaasid]]
         initFaasSignatories(faas, consolidation)
         return faas 
@@ -531,47 +504,46 @@ class ConsolidationService
 
 
     void deleteFaasRecords(consolidation){
-        em.sqlContext.createNamedExecutor('consolidation:clearConsolidationFaasId').setParameters(consolidation).execute()
-        faasSvc.deleteFaasOnly([objid:consolidation.newfaasid])
+        em.clearConsolidationFaasId(consolidation)
+        faasSvc.deleteFaasById(consolidation.newfaasid)
         consolidation.newfaasid = null
 
  		getAffectedRpus(consolidation.objid).each{ arpu ->
-            em.sqlContext.createNamedExecutor('consolidation:clearAffectedRpuNewFaasId')
-                    .setParameter('objid', arpu.objid).execute()
-            faasSvc.deleteFaasOnly([objid:arpu.newfaasid])
+            em.clearAffectedRpuNewFaasId(arpu)
+            faasSvc.deleteFaasById(arpu.newfaasid)
  		}
  	}
 
    	
     def createAffectedRpusByConsolidatedLand(consolidatedland){
-        def affectedrpus = em.sqlContext.createNamedQuery('consolidation:getAffectedRpusByConsolidatedLand')
-                          .setParameter('consolidationid', consolidatedland.consolidationid)
-                          .setParameter('realpropertyid', consolidatedland.rpid)
-                          .resultList
+        def affectedrpus = em.getAffectedRpusByConsolidatedLand([
+                                consolidationid     : consolidatedland.consolidationid,
+                                realpropertyid      : consolidatedland.rpid,
+                            ])
         
         def consolidation = openConsolidation(consolidatedland.consolidationid)
-        consolidation.newrpu = rpuSvc.openRpu(consolidation.newrpuid)
+        if (consolidation.newrpuid){
+            consolidation.rpu = rpuSvc.openRpu(consolidation.newrpuid)
+        }
+
         affectedrpus.each{arpu -> 
             doCreateAffectedRpu(consolidation, arpu)
         }
-
-        
     }
 
 
     void doCreateAffectedRpu(consolidation, arpu){
-        def rpu = rpuSvc.openRpu(arpu.prevrpuid)
+        def rpu = rpuSvc.openRpu([objid:arpu.prevrpuid])
         rpuSvc.generateNewIds(rpu)
-        rpu.rp = rpSvc.openRealProperty(consolidation.newrpid)
-        rpu.realpropertyid = rpu.rp.objid 
-        rpu.fullpin = rpu.rp.pin + '-' + rpu.suffix  
+        rpu.realpropertyid = consolidation.newrpid 
+        rpu.fullpin = consolidation.rp?.pin + '-' + rpu.suffix  
         rpu.ry  = consolidation.ry 
-        rpuSvc.createRpu(rpu, consolidation.txntype)
+        rpuSvc.createRpu(rpu)
 
         arpu.memoranda  = consolidation.memoranda
         arpu.newutdno   = faasSvc.generateUniqueTdNo(arpu)
         arpu.newrpuid   = rpu.objid
-        arpu.newrpid    = rpu.rp.objid 
+        arpu.newrpid    = consolidation.rp.objid 
         saveAffectedRpu(arpu)
 
         txnRef.insertRef(arpu.prevfaasid, consolidation.objid, "FAAS is currently referenced by Consolidation No. $consolidation.txnno.")
@@ -581,22 +553,21 @@ class ConsolidationService
     public void validate(consolidation){
 
         getAffectedRpus(consolidation.objid).each{arpu ->
-            if (util.isEmpty(arpu.newtdno)) 
-                throw new Exception("New TD No. for affected rpu $arpu.prevtdno is required.")
             if (util.isEmpty(arpu.newsuffix)) 
                 throw new Exception("New Suffix for affected rpu $arpu.prevtdno is required.")
             if (util.isEmpty(arpu.memoranda)) 
                 throw new Exception("Memoranda for affected rpu $arpu.prevtdno is required.")
-            if (faasSvc.isDuplicateTdNo(arpu.newfaasid, arpu.newtdno)) 
+            if (faasSvc.checkDuplicateTdNo(arpu.newfaasid, arpu.newtdno)) 
                 throw new Exception("Duplicate TD No. $arpu.newtdno for affected rpu $arpu.tdno.")
         }
 
 
-    	def data = em.sqlContext.createNamedQuery('consolidation:getTotalConsolidatedLandArea').setParameter('consolidationid', consolidation.objid).singleResult
-        if( ! data || data.totalareasqm == null  ) throw new Exception('Consolidated lands are required.')
+        def data = em.findTotalConsolidatedLandArea([consolidationid:consolidation.objid])
+        if( ! data || data.totalareasqm == null  ) 
+            throw new Exception('Consolidated lands are required.')
 		
   		if( util.isTrue(var.consolidation_allow_equal_area_only) ) {
-  			if( data.totalareasqm != consolidation.newrpu.totalareasqm) 
+  			if( data.totalareasqm != consolidation.rpu.totalareasqm) 
   				throw new Exception('Total consolidated land area must be equal to ' + consolidation.areasqm + ' sqm.')
   		}
     }
@@ -617,18 +588,20 @@ class ConsolidationService
     @ProxyMethod
     public def assignNewTdNosAsync(consolidation){
         if (consolidation.newtdno == null || consolidation.newtdno == '-'){
-            def faas = adb.findFaasByNewRpuId(consolidation)
+            def faas = em.findFaasByNewRpuId(consolidation)
+            println '='*50
+            println faas 
             consolidation.newtdno = faasSvc.generateNextTdNo(faas)
             consolidation.newutdno = consolidation.newtdno 
-            adb.updateConsolidationNewTdNo(consolidation)
+            em.updateConsolidationNewTdNo(consolidation)
         }
         
         getAffectedRpus(consolidation.objid).each{arpu ->
             if (arpu.newtdno == null || arpu.newtdno == '-'){
-                def faas = adb.findFaasByNewRpuId(arpu)
+                def faas = em.findFaasByNewRpuId(arpu)
                 arpu.newtdno = faasSvc.generateNextTdNo(faas)
                 arpu.newutdno = arpu.newtdno 
-                adb.updateAffectedNewTdNo(arpu)
+                em.updateAffectedNewTdNo(arpu)
             }
         }
         return consolidation;
@@ -637,11 +610,11 @@ class ConsolidationService
     @ProxyMethod
     public def createConsolidatedLandFaasAsync(consolidation){
         def faas = createFaasFromConsolidation(consolidation)
-        faasSvc.createFaasOnly(faas)
+        faasSvc.createFaas(faas)
         consolidation.newfaasid = faas.objid 
-        adb.updateConsolidationNewFaasId(consolidation)
+        em.updateConsolidationNewFaasId(consolidation)
 
-        faas = faasSvc.openFaas(consolidation.newfaasid)
+        faas = faasSvc.openFaas([objid:consolidation.newfaasid])
         faasSvc.approveFaas(faas)
 
         return consolidation
@@ -649,14 +622,14 @@ class ConsolidationService
 
     @ProxyMethod
     public def createAffectedRpuFaasRecordAsync(consolidation, arpu){
-        arpu.rpu = rpuSvc.openRpu(arpu.newrpuid)
-        arpu.rp = arpu.rpu.rp 
+        arpu.rpu = rpuSvc.openRpu([objid:arpu.newrpuid])
+        arpu.rp = rpSvc.open([objid:arpu.newrpid])
         def faas = createFaasFromAffectedRpu(consolidation, arpu)
-        faasSvc.createFaasOnly(faas)
+        faasSvc.createFaas(faas)
         arpu.newfaasid = faas.objid 
         saveAffectedRpu(arpu)
 
-        faas = faasSvc.openFaas(arpu.newfaasid)
+        faas = faasSvc.openFaas([objid:arpu.newfaasid])
         faasSvc.approveFaas(faas)
     }
 
@@ -664,11 +637,11 @@ class ConsolidationService
     @ProxyMethod
     public def approveConsolidationAsync(consolidation){
         getConsolidatedLands(consolidation.objid).each{cl ->
-            adb.cancelRealProperty([objid:cl.rpu.realpropertyid])
-            adb.cancelLandLedger([faasid:cl.landfaasid])
+            em.cancelRealProperty([objid:cl.rpu.realpropertyid])
+            em.cancelLandLedger([faasid:cl.landfaasid])
         }
 
-        adb.approveConsolidation(consolidation)
+        em.approveConsolidation(consolidation)
     }
 
 

@@ -107,3 +107,13 @@ go
 
 
 
+
+
+alter table consolidation alter column newrpid varchar(50) null
+go
+alter table consolidation alter column newrpuid varchar(50) null
+go
+
+
+
+

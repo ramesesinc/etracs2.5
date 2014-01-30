@@ -1,23 +1,19 @@
 /*
- * SubdivisionLandMain.java
+ * SubdivisionPage.java
  *
- * Created on July 18, 2011, 1:24 PM
+ * Created on July 1, 2011, 4:55 PM
  */
 
 package com.rameses.gov.etracs.rpt.consolidation.ui;
 
 import com.rameses.osiris2.themes.FormPage;
+import com.rameses.rcp.ui.annotations.StyleSheet;
 import com.rameses.rcp.ui.annotations.Template;
 
-/**
- *
- * @author  jzamora
- */
-@Template(FormPage.class)
-public class ConsolidationRpuPage extends javax.swing.JPanel {
+public class ConsolidationRPUPage extends javax.swing.JPanel {
     
-    /** Creates new form SubdivisionLandMain */
-    public ConsolidationRpuPage() {
+    /** Creates new form SubdivisionPage */
+    public ConsolidationRPUPage() {
         initComponents();
     }
     
@@ -32,16 +28,17 @@ public class ConsolidationRpuPage extends javax.swing.JPanel {
 
         setLayout(new java.awt.BorderLayout());
 
+        xSubFormPanel1.setDynamic(true);
         xSubFormPanel1.setHandler("opener");
         org.jdesktop.layout.GroupLayout xSubFormPanel1Layout = new org.jdesktop.layout.GroupLayout(xSubFormPanel1);
         xSubFormPanel1.setLayout(xSubFormPanel1Layout);
         xSubFormPanel1Layout.setHorizontalGroup(
             xSubFormPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 400, Short.MAX_VALUE)
+            .add(0, 433, Short.MAX_VALUE)
         );
         xSubFormPanel1Layout.setVerticalGroup(
             xSubFormPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 300, Short.MAX_VALUE)
+            .add(0, 290, Short.MAX_VALUE)
         );
         add(xSubFormPanel1, java.awt.BorderLayout.CENTER);
 

@@ -135,6 +135,7 @@ class RPTLedgerService
 
     @ProxyMethod
     public void checkLedgerBalance(faasid){
+        println 'faasid -> ' + faasid 
         def ledger = em.findApprovedLedgerByFaasId([faasid:faasid])
         if (!ledger)
             throw new Exception('Ledger does not exist or has already been deleted.')

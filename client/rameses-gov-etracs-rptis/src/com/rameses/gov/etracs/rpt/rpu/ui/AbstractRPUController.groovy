@@ -17,11 +17,13 @@ public abstract class AbstractRPUController
     def onupdate; //handler
     def ondelete; //handler
     
+    def showClose = true;
     def autoClose = false;
     def allowEdit = true;
     def datacapture;
     def rpu;
     def lguid;
+    
     
     def MODE_CREATE = 'create';
     def MODE_EDIT   = 'edit';

@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workunit>
+    <invokers>
+        <invoker type="consolidation:info" action="init" caption="General Info" index="-10"/>
+        
+        <invoker type="formActions" action="refresh" caption="Refresh" mnemonic="r" />
+        <invoker type="formActions" action="edit" caption="Edit" mnemonic="e" visibleWhen="#{showActions == true}" role="APPRAISER" immediate="true" />
+        <invoker type="formActions" action="save" caption="Save" mnemonic="s" shortcut="ctrl S" visibleWhen="#{mode != 'read'}" />
+   </invokers>
+   <code>
+
+   
+<![CDATA[       
+   
+
+import com.rameses.rcp.annotations.* 
+import com.rameses.rcp.common.* 
+import com.rameses.osiris2.client.*
+import com.rameses.osiris2.common.*
+import com.rameses.gov.etracs.rpt.common.RPTUtil;
+
+class ConsolidationMainInfoController
+{
+    @Binding
+    def binding;
+    
+    def svc;
+    
+    def MODE_READ = 'read';
+    def MODE_EDIT = 'edit';
+    
+    def mode;
+    
+    def entity;
+    def appraiser = [:];
+    def recommender = [:];
+    def taxmapper = [:];
+    def approver = [:];
+    
+    String title = 'General Information'
+    
+    
+    void init(){
+        entity = svc.openConsolidation( entity.objid );
+        initSignatoryVars();
+        mode = MODE_READ;
+    }
+    
+    
+    void edit(){
+        mode = MODE_EDIT;
+    }
+    
+    
+    void save(){
+        entity.putAll( svc.updateConsolidation(entity) );
+        mode = MODE_READ;
+    }
+    
+    void refresh(){}
+    
+    
+    void updateSignatoryInfo(signatory, data){
+        signatory.personnelid = data.objid;
+        signatory.name = data.name;
+        signatory.title = data.title;
+    }
+    
+    void clearSignatoryInfo(signatory){
+        signatory.personnelid = null;
+        signatory.name = null;
+        signatory.title = null;
+    }
+ 
+    
+    void initSignatoryVars(){
+        appraiser = entity.signatories.find{it.type == 'appraiser'};
+        recommender = entity.signatories.find{it.type == 'recommender'};
+        taxmapper = entity.signatories.find{it.type == 'taxmapper'};
+        approver = entity.signatories.find{it.type == 'approver'};
+        appraiser = (appraiser ? appraiser : [:])
+        recommender = (recommender ? recommender : [:])
+        taxmapper = (taxmapper ? taxmapper : [:])
+        approver = (approver ? approver : [:])
+        
+    }
+    
+        
+    void saveSignatoryInfo(){
+        entity.signatories.find{it.type == 'appraiser'}?.putAll(appraiser);
+        entity.signatories.find{it.type == 'recommender'}?.putAll(recommender);
+        entity.signatories.find{it.type == 'taxmapper'}?.putAll(taxmapper);
+        entity.signatories.find{it.type == 'approver'}?.putAll(approver);
+    }
+ 
+    
+
+    
+    List getQuarters(){
+        return [1,2,3,4]
+    }
+    
+    def getLookupTaxpayer(){
+        return InvokerUtil.lookupOpener('entity:lookup',[
+            onselect : { 
+                entity.taxpayer = it;
+                entity.owner    = it;
+            },
+            onempty  : { 
+                entity.taxpayer = null;
+                entity.owner    = null;
+            } 
+        ])
+    }
+    
+    def getLookupAppraiser(){
+        return InvokerUtil.lookupOpener('txnsignatory:lookup',[
+            doctype : 'RPTAPPRAISER',
+            onselect : { updateSignatoryInfo(appraiser, it) },
+            onempty  : { clearSignatoryInfo(appraiser) },
+        ])
+        
+    }
+    
+    def getLookupRecommender(){
+        return InvokerUtil.lookupOpener('txnsignatory:lookup',[
+            doctype : 'RPTRECOMMENDER',
+            onselect : { updateSignatoryInfo(recommender, it) },
+            onempty  : { clearSignatoryInfo(recommender) },
+        ])
+        
+    }
+    
+    def getLookupTaxmapper(){
+        return InvokerUtil.lookupOpener('txnsignatory:lookup',[
+            doctype : 'RPTTAXMAPPER',
+            onselect : { updateSignatoryInfo(taxmapper, it) },
+            onempty  : { clearSignatoryInfo(taxmapper) },
+        ])
+        
+    }
+    
+    def getLookupApprover(){
+        return InvokerUtil.lookupOpener('txnsignatory:lookup',[
+            doctype : 'RPTAPPROVER',
+            onselect : { updateSignatoryInfo(approver, it) },
+            onempty  : { clearSignatoryInfo(approver) },
+        ])
+        
+    }
+    
+    
+    boolean getShowActions(){
+        if (entity.state.matches('FORTAXMAPPING|FORAPPROVAL|FORPROVAPPROVAL|APPROVED')) return false;
+        if (mode != MODE_READ) return false;
+        return true;
+    }
+    
+    
+    boolean getAllowEdit(){
+        if (entity.state.matches('FORTAXMAPPING|FORAPPROVAL|FORPROVAPPROVAL|APPROVED')) return false;
+        if (mode == MODE_READ) return false;
+        return true;
+    }
+    
+}
+       
+
+]]>
+
+
+   </code>
+    
+    <pages> 
+        <page name="init" template="com.rameses.gov.etracs.rpt.consolidation.ui.ConsolidationPage"/>
+    </pages>
+</workunit>
+
+

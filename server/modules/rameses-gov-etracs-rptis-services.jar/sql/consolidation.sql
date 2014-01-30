@@ -1,24 +1,45 @@
 [getList]
 SELECT 
 	c.*,
-	r.fullpin AS newrpu_fullpin,
-	r.totalareaha AS newrpu_totalareaha,
-	r.totalareasqm AS newrpu_totalareasqm
+	rp.pin AS rp_pin,
+	r.totalareaha AS rpu_totalareaha,
+	r.totalareasqm AS rpu_totalareasqm
 FROM consolidation c
-	INNER JOIN rpu r ON c.newrpuid = r.objid 
+	LEFT JOIN rpu r ON c.newrpuid = r.objid 
+	LEFT JOIN realproperty rp ON c.newrpid = rp.objid 
 where 1=1 ${filters}	
 ORDER BY c.txnno DESC 
 
 
-[open]
-SELECT 
-	c.*,
-	r.fullpin AS newrpu_fullpin,
-	r.totalareaha AS newrpu_totalareaha,
-	r.totalareasqm AS newrpu_totalareasqm
-FROM consolidation c 
-	INNER JOIN rpu r ON c.newrpuid = r.objid 
-WHERE c.objid = $P{objid}
+
+[findById]
+SELECT c.*,
+	r.ry AS rpu_ry, 
+	r.objid AS rpu_objid, 
+	r.totalareaha AS rpu_totalareaha, 
+	r.totalareasqm AS rpu_totalareasqm, 
+	r.fullpin AS rpu_fullpin, 
+	r.rputype AS rpu_rputype, 
+	r.totalmv AS rpu_totalmv, 
+	r.totalav AS rpu_totalav, 
+	pc.code AS rpu_classfication_code,
+	pc.name AS rpu_classification_name,
+
+	rp.objid AS rp_objid,
+	rp.pin AS rp_pin,
+	rp.ry AS rp_ry,
+	rp.surveyno AS rp_surveyno,
+	rp.cadastrallotno AS rp_cadastrallotno,
+	rp.blockno AS rp_blockno,
+	rp.lgutype AS rp_lgutype, 
+	rp.barangayid AS rp_barangayid, 
+	rp.claimno AS rp_claimno
+FROM consolidation c
+	LEFT JOIN faas f ON c.newfaasid = f.objid 
+	LEFT JOIN realproperty rp ON c.newrpid = rp.objid 
+	LEFT JOIN rpu r ON c.newrpuid = r.objid 
+	LEFT JOIN propertyclassification pc ON r.classification_objid = pc.objid 
+WHERE c.objid = $P{objid}	
 
 
 [getConsolidatedLands]
@@ -30,15 +51,17 @@ SELECT cl.*,
 	r.totalmv AS rpu_totalmv,
 	r.totalav AS rpu_totalav,
 	r.totalareaha AS rpu_totalareaha,
-	r.totalareasqm AS rpu_totalareasqm
+	r.totalareasqm AS rpu_totalareasqm,
+	rp.barangayid
 FROM consolidatedland cl
 	INNER JOIN faas f ON cl.landfaasid = f.objid 
 	INNER JOIN rpu r ON f.rpuid = r.objid 
+	INNER JOIN realproperty rp ON f.realpropertyid = rp.objid 
 WHERE cl.consolidationid = $P{consolidationid}
 ORDER BY r.fullpin 
 
 
-[getDuplicateConsolidatedLand]
+[findDuplicateConsolidatedLand]
 SELECT * FROM consolidatedland 
 WHERE consolidationid = $P{consolidationid} AND landfaasid = $P{landfaasid}
 
@@ -120,7 +143,7 @@ DELETE FROM consolidationaffectedrpu WHERE landfaasid = $P{landfaasid}
 DELETE FROM consolidationaffectedrpu WHERE prevfaasid = $P{prevfaasid}
 
   
-[getTotalConsolidatedLandArea]  
+[findTotalConsolidatedLandArea]  
 SELECT SUM( r.totalareasqm ) AS totalareasqm 
 FROM consolidatedland cl
 	INNER JOIN rpu r on cl.rpuid = r.objid 
@@ -169,7 +192,7 @@ UPDATE rptledger SET state = 'CANCELLED' WHERE faasid = $P{faasid}
 [findFaasByNewRpuId]
 SELECT 
 	r.ry AS rpu_ry, 
-	rp.barangayid AS rpu_rp_barangayid
+	rp.barangayid AS rp_barangay_objid
 FROM rpu r 
 	INNER JOIN realproperty rp ON r.realpropertyid = rp.objid 
 WHERE r.objid =  $P{newrpuid}	
@@ -195,3 +218,9 @@ WHERE objid =$P{objid}
 
 
 
+
+[findBarangayId]
+SELECT rp.barangayid
+FROM consolidation c
+	LEFT JOIN realproperty rp ON c.newrpid = rp.objid 
+WHERE c.objid = $P{objid}	

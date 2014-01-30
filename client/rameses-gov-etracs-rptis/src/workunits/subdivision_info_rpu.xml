@@ -125,6 +125,7 @@ class SubdividedLandRpuController
     
     boolean getShowActions(){
         if (entity.state.matches('FORAPPROVAL|FORPROVAPPROVAL|APPROVED')) return false;
+        if ( ! entity.state.matches('FORAPPRAISAL') ) return false;
         return true;
     }    
     

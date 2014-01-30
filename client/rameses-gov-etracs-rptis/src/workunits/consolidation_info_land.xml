@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workunit>
+    <invokers>
+        <invoker type="consolidation:info" action="init" caption="Consolidated Lands" index="5"/>
+        
+        <invoker type="formActions" action="refresh" caption="Refresh" mnemonic="r" />
+        <invoker type="formActions" action="createPin" caption="Create Consolidation PIN" mnemonic="c" visibleWhen="#{showActions == true &amp;&amp; entity.newrpid == null}" role="TAXMAPPER" />
+        <invoker type="formActions" action="openPin" caption="Open PIN" mnemonic="o" visibleWhen="#{showActions == true &amp;&amp; entity.newrpid != null}" role="TAXMAPPER" />
+   </invokers>
+   <code>
+
+<![CDATA[
+        
+import com.rameses.rcp.annotations.* 
+import com.rameses.rcp.common.* 
+import com.rameses.osiris2.client.*
+import com.rameses.osiris2.common.*
+import com.rameses.gov.etracs.rpt.common.RPTUtil;
+
+class ConsolidatedLandController
+{
+    @Binding
+    def binding;
+    
+    @Service('RealPropertyService')
+    def rpSvc;
+    
+    def svc;
+    
+    def entity;
+    def rp;
+    def selectedItem;
+    def lands;
+    
+    String title = 'Consolidated Lands';
+    
+    
+    void refresh(){
+        init();
+        landListHandler?.load();
+    }
+    
+    void init(){
+        lands = svc.getConsolidatedLands(entity.objid)
+        
+        rp = [:];
+        if (entity.newrpid){
+            rp = rpSvc.open([objid:entity.newrpid]);
+            entity.rp = rp;
+        }   
+    }
+    
+    
+    def createPin(){
+        return InvokerUtil.lookupOpener('realproperty:create', [
+            allowEditPinInfo : true,
+            allowEditSectionParcel : true,
+            autoClose : true,
+            
+            oncreate : {
+                if (!rp) rp = [:]
+                rp.putAll(it);
+                entity.newrpid = rp.objid;
+                svc.updateConsolidation(entity);
+                binding.refresh('rp.*');
+            }
+        ])
+    }
+
+        
+    def openPin(){
+        if (!entity.newrpid) 
+            return 
+        
+        return InvokerUtil.lookupOpener('realproperty:open', [
+            entity : rp,
+            autoClose : true,
+            allowCreate : false,
+            
+            onupdate : {
+                rp.putAll(it);
+                binding.refresh('rp.*');
+            }
+        ])
+    }
+    
+    
+    def getLookupFaas(){
+        return InvokerUtil.lookupOpener('faas:lookup', [
+            onselect : { 
+                selectedItem.faas = it;
+                selectedItem.rpuid = it.rpuid;
+                selectedItem.rpid  = it.realpropertyid;
+                selectedItem.landfaasid = it.objid;
+                        
+                selectedItem.rpu = [
+                    fullpin      : it.fullpin,
+                    totalareasqm : it.totalareasqm,
+                    totalareaha  : it.totalareaha,
+                ];
+            },
+                
+            onempty : {
+                selectedItem.faas = null;
+                selectedItem.rpu  = null;
+                selectedItem.landfaasid = null;
+            }
+        ])
+    }
+    
+    
+    def landListHandler = [
+        getRows : { return 50 },
+            
+        createItem : { return [
+            consolidationid : entity.objid,
+        ]},
+                
+        fetchList : { return lands },
+                
+        validate : {li ->
+            def item = li.item;
+            svc.validateConsolidatedLand(item)
+        },
+                
+        onAddItem : { item ->
+            item.objid = RPTUtil.generateId('CI')
+            svc.saveConsolidatedLand(item);
+            lands.add(item);
+        },
+                
+        onRemoveItem : { item ->
+            if (MsgBox.confirm('Delete selected item?')){
+                svc.deleteConsolidatedLand(item);
+                lands.remove(item);
+                return true;
+            }
+            return false;
+        }
+    ] as EditorListModel
+    
+    
+    
+    
+    
+    def getTotalAreaHa(){
+        if (lands)
+            return lands.rpu.totalareaha.sum();
+        return 0.0;
+    }
+    
+    def getTotalAreaSqm(){
+        if (lands)
+            return lands.rpu.totalareasqm.sum();
+        return 0.0;
+    }
+    
+    def getCount(){
+        return lands.size();
+    }
+    
+    
+    boolean getShowActions(){
+        if (entity.state.matches('FORAPPROVAL|FORPROVAPPROVAL|APPROVED')) return false;
+        return true;
+    }    
+    
+}
+       
+]]>
+
+   </code>
+    
+    <pages> 
+        <page template="com.rameses.gov.etracs.rpt.consolidation.ui.ConsolidatedLandPage"/>
+    </pages>
+</workunit>
+
+
