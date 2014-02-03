@@ -24,20 +24,13 @@
             @Binding 
             def binding
             
+            @Service("CollectionGroupService")
+            def colGroupSvc
+            
             void init(){    
                 if( entity.paymentitems) payment = entity.paymentitems[0]
             }
-
-            def getLookupPayer() {
-                return InvokerUtil.lookupOpener("entity:lookup", [
-                    onselect: { o->
-                        entity.payer = o;
-                        entity.paidby = o.name;
-                        entity.paidbyaddress = o.address;
-                    }
-                ]);
-            }
-            
+ 
             def getLookupAccount() {
                 return InvokerUtil.lookupOpener("cashreceiptitem:lookup", [ 
                     "query.collectorid": entity.collector.objid,
@@ -124,6 +117,16 @@
 
             def doCancel() {
                 return "_close";
+            }
+            
+            def getCollectionGroupHandler() {
+                return InvokerUtil.lookupOpener("collectiongroup:lookup", [ 
+                    onselect: { o-> 
+                            entity.items= colGroupSvc.getRevenueItems(o.objid).each {
+                                it.fund = it.item.fund 
+                            }
+                            listModel.reload();
+                    }]  );
             }
             
             

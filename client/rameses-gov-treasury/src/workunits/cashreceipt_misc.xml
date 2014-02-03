@@ -14,6 +14,18 @@
         class  MiscCashReceiptController extends BasicCashReceipt {
             
             String entityName = "misc_cashreceipt"
+            
+            @Service("CollectionGroupService")
+            def colGroupSvc
+            
+            def getCollectionGroupHandler() {
+                return InvokerUtil.lookupOpener("collectiongroup:lookup", [ 
+                    onselect: { o-> 
+                            entity.items= colGroupSvc.getRevenueItems(o.objid)
+                            itemListModel.reload();
+                    }]  );
+            }
+            
         }
         ]]>
         

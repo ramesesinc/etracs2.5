@@ -153,7 +153,6 @@ public class BatchCaptureController  {
 
             svc.addUpdateItem(o)
             entity.batchitems << o 
-            println "added ->" + o
         },
         
         isColumnEditable:{item, colname-> 

@@ -48,4 +48,23 @@ class CollectionGroupService extends ActiveCrudListService {
 		}
 	}
 
+	@ProxyMethod
+	public def getRevenueItems( objid ) {
+		def items = []
+		def ri = em.getRevenueItems([objid:objid]).each{
+			items << [
+				objid:'RCTI' + new java.rmi.server.UID(),
+				amount:it.defaultvalue ? it.defaultvalue : 0.0 , 
+				item: [
+					objid: it.objid,
+					code: it.code,
+					title: it.title,
+					fund: it.fund 
+				]
+			]
+			
+		} 
+		return items;
+	}
+
 }
