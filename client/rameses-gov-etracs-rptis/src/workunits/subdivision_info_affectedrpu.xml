@@ -21,6 +21,9 @@ class SubdivisionAffectedRpuController
     @Binding
     def binding;
     
+    @Caller
+    def caller;
+    
     def svc;
     
     def entity;
@@ -43,10 +46,12 @@ class SubdivisionAffectedRpuController
     
     
     void edit(){
+        caller.addMessage([type:'affectedrpu', msg:'Affected RPUs is still in editing mode.']);
         mode = MODE_EDIT;
     }
     
     void save(){
+        caller.clearMessages('affectedrpu');
         mode = MODE_READ;
     }
     

@@ -24,6 +24,9 @@ class ConsolidationMainInfoController
     @Binding
     def binding;
     
+    @Caller
+    def caller;
+    
     def svc;
     
     def MODE_READ = 'read';
@@ -48,12 +51,14 @@ class ConsolidationMainInfoController
     
     
     void edit(){
+        caller.addMessage([type:'main', msg:'General Info is still in editing mode.']);
         mode = MODE_EDIT;
     }
     
     
     void save(){
         entity.putAll( svc.updateConsolidation(entity) );
+        caller.clearMessages('main');
         mode = MODE_READ;
     }
     

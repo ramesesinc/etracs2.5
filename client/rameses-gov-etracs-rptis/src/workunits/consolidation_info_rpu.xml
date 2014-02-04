@@ -24,6 +24,10 @@ class ConsolidationLandRpuController
     @Binding
     def binding;
     
+    @Caller
+    def caller;
+    
+    
     @Service('RPUService')
     def rpuSvc;
     
@@ -51,6 +55,11 @@ class ConsolidationLandRpuController
     def onupdateRpu = {
         entity.newrpuid = it.objid;
         svc.updateConsolidation(entity);
+        caller.clearMessages('rpu');
+    }
+    
+    def oneditRpu = {
+        caller.addMessage([type:'rpu', msg:'Consolidation Land Appraisal is still in editing mode.']);
     }
     
     def create(){
@@ -58,6 +67,7 @@ class ConsolidationLandRpuController
             rpu         : createLandRpu(),
             lguid       : entity.lguid,
             onupdate    : onupdateRpu,
+            onedit      : oneditRpu,
             showClose   : false,
         ])
     }
@@ -78,6 +88,7 @@ class ConsolidationLandRpuController
             rpu         : rpu,
             lguid       : entity.lguid,
             onupdate    : onupdateRpu,
+            onedit      : oneditRpu,
             allowCreate : false,
             showClose   : false,
         ])

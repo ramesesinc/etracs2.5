@@ -35,6 +35,8 @@ public class ConsolidationController extends PageFlowController
     def sections;
     def selectedSection;
     
+    def messages = [];
+    
     def init(){
         formTitle = 'Consolidation (New)';
         entity = svc.initConsolidation();
@@ -192,6 +194,27 @@ public class ConsolidationController extends PageFlowController
     void disapproveByProvince() {
         entity = svc.disapproveByProvince(entity);
     }
+    
+    
+            
+    
+    
+    void addMessage(msg){
+        messages << msg;
+    }
+    
+    
+    void clearMessages(type){
+        messages.removeAll( messages.findAll{it.type == type} )
+    }
+    
+
+    void checkMessages(){
+        if (messages)
+            throw new Exception(messages[0].msg);
+    }   
+    
+    
     
 }
 

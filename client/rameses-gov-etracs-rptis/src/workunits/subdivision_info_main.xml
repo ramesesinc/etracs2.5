@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <workunit>
     <invokers>
-        <invoker type="subdivision:info" action="init" caption="Info" index="-10"/>
+        <invoker type="subdivision:info" action="init" caption="General Info" index="-10"/>
         
         <invoker type="formActions" action="refresh" caption="Refresh" mnemonic="r" />
         <invoker type="formActions" action="edit" caption="Edit" mnemonic="e" visibleWhen="#{showActions == true}" role="APPRAISER"/>
@@ -20,6 +20,10 @@ class SubdivisionMainInfoController
 {
     @Binding
     def binding;
+    
+    @Caller
+    def caller;
+    
     
     def svc;
     
@@ -52,12 +56,14 @@ class SubdivisionMainInfoController
     
     
     void edit(){
+        caller.addMessage([type:'main', msg:'General Info is still in editing mode.']);
         mode = MODE_EDIT;
     }
     
     
     void save(){
         entity.putAll( svc.updateSubdivision(entity) );
+        caller.clearMessages('main');
         mode = MODE_READ;
     }
     

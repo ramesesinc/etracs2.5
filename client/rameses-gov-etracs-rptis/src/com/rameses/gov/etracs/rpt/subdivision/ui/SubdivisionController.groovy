@@ -30,6 +30,8 @@ public class SubdivisionController extends PageFlowController
     
     def sections;
     def selectedSection;
+    
+    def messages = [];
         
     def init(){
         formTitle = 'Subdivision (New)'
@@ -188,6 +190,26 @@ public class SubdivisionController extends PageFlowController
     def getLookupFaas() {
         return InvokerUtil.lookupOpener('faas:lookup', [:])
     }
+    
+    
+        
+    
+    
+    void addMessage(msg){
+        messages << msg;
+    }
+    
+    
+    void clearMessages(type){
+        messages.removeAll( messages.findAll{it.type == type} )
+    }
+    
+
+    void checkMessages(){
+        if (messages)
+            throw new Exception(messages[0].msg);
+    }   
+    
     
     
 }

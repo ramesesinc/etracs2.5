@@ -19,6 +19,10 @@ class ConsolidationAffectedRpuController
     @Binding
     def binding;
     
+        
+    @Caller
+    def caller;
+    
     def svc;
     
     def entity;
@@ -41,10 +45,12 @@ class ConsolidationAffectedRpuController
     
     
     void edit(){
+        caller.addMessage([type:'affectedrpu', msg:'Affected RPUs is still in editing mode.']);
         mode = MODE_EDIT;
     }
     
     void save(){
+        caller.clearMessages('affectedrpu');
         mode = MODE_READ;
     }
     
