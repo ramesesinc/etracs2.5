@@ -194,11 +194,11 @@ SELECT
 	SUM(t.amount) AS amount
 FROM (
 	SELECT
-		bi.basicacctid AS item_objid,
+		rb.objid AS item_objid,
 		rb.code AS item_code, 
 		rb.title AS item_title,
 		rb.fund_objid AS item_fund_objid, rb.fund_code AS item_fund_code, rb.fund_title AS item_fund_title,
-		bi.basic - bi.basicpaid - (bi.basicdisc - bi.basicdisctaken) AS amount
+		bi.lgushare AS amount
 	FROM rptledger rl
 		INNER JOIN rptledgerbillitem bi ON rl.objid = bi.rptledgerid
 		INNER JOIN revenueitem rb ON bi.basicacctid = rb.objid 
@@ -207,20 +207,77 @@ FROM (
 	UNION ALL
 
 	SELECT
-		bi.basicintacctid AS item_objid,
+		rb.objid AS item_objid,
 		rb.code AS item_code,
 		rb.title AS item_title,
 		rb.fund_objid AS item_fund_objid, rb.fund_code AS item_fund_code, rb.fund_title AS item_fund_title,
-		bi.basicint - bi.basicintpaid  AS amount
+		bi.lguintshare  AS amount
 	FROM rptledger rl
 		INNER JOIN rptledgerbillitem bi ON rl.objid = bi.rptledgerid
 		INNER JOIN revenueitem rb ON bi.basicintacctid = rb.objid 
 	WHERE ${filter}
+	  AND bi.lguintshare > 0.0
 	  
 	UNION ALL
 	
 	SELECT
-		bi.sefacctid AS item_objid,
+		rb.objid AS item_objid,
+		rb.code AS item_code, 
+		rb.title AS item_title,
+		rb.fund_objid AS item_fund_objid, rb.fund_code AS item_fund_code, rb.fund_title AS item_fund_title,
+		bi.brgyshare AS amount
+	FROM rptledger rl
+		INNER JOIN rptledgerbillitem bi ON rl.objid = bi.rptledgerid
+		INNER JOIN revenueitem rb ON bi.brgyshareacctid = rb.objid 
+	WHERE ${filter}
+	  
+	UNION ALL
+
+	SELECT
+		rb.objid AS item_objid,
+		rb.code AS item_code,
+		rb.title AS item_title,
+		rb.fund_objid AS item_fund_objid, rb.fund_code AS item_fund_code, rb.fund_title AS item_fund_title,
+		bi.brgyintshare  AS amount
+	FROM rptledger rl
+		INNER JOIN rptledgerbillitem bi ON rl.objid = bi.rptledgerid
+		INNER JOIN revenueitem rb ON bi.brgyintshareacctid = rb.objid 
+	WHERE ${filter}
+	  AND bi.brgyintshare > 0.0 
+	  
+	UNION ALL
+	
+	SELECT
+		rb.objid AS item_objid,
+		rb.code AS item_code, 
+		rb.title AS item_title,
+		rb.fund_objid AS item_fund_objid, rb.fund_code AS item_fund_code, rb.fund_title AS item_fund_title,
+		bi.provshare AS amount
+	FROM rptledger rl
+		INNER JOIN rptledgerbillitem bi ON rl.objid = bi.rptledgerid
+		INNER JOIN revenueitem rb ON bi.provshareacctid = rb.objid 
+	WHERE ${filter}
+	  
+	UNION ALL
+
+	SELECT
+		rb.objid AS item_objid,
+		rb.code AS item_code,
+		rb.title AS item_title,
+		rb.fund_objid AS item_fund_objid, rb.fund_code AS item_fund_code, rb.fund_title AS item_fund_title,
+		bi.provintshare  AS amount
+	FROM rptledger rl
+		INNER JOIN rptledgerbillitem bi ON rl.objid = bi.rptledgerid
+		INNER JOIN revenueitem rb ON bi.provintshareacctid = rb.objid 
+	WHERE ${filter}
+	  AND bi.provintshare > 0.0 
+	  
+	  
+	  
+	UNION ALL
+	
+	SELECT
+		rb.objid AS item_objid,
 		rb.code AS item_code,
 		rb.title AS item_title,
 		rb.fund_objid AS item_fund_objid, rb.fund_code AS item_fund_code, rb.fund_title AS item_fund_title,
@@ -233,7 +290,7 @@ FROM (
 	UNION ALL
 
 	SELECT
-		bi.sefintacctid AS item_objid,
+		rb.objid AS item_objid,
 		rb.code AS item_code,
 		rb.title AS item_title,
 		rb.fund_objid AS item_fund_objid, rb.fund_code AS item_fund_code, rb.fund_title AS item_fund_title,
@@ -242,11 +299,12 @@ FROM (
 		INNER JOIN rptledgerbillitem bi ON rl.objid = bi.rptledgerid
 		INNER JOIN revenueitem rb ON bi.sefintacctid = rb.objid 
 	WHERE ${filter}
+	  AND bi.sefint - bi.sefintpaid > 0.0
 
 	UNION ALL
 	
 	SELECT
-		bi.firecodeacctid AS item_objid,
+		rb.objid AS item_objid,
 		rb.code AS item_code,
 		rb.title AS item_title,
 		rb.fund_objid AS item_fund_objid, rb.fund_code AS item_fund_code, rb.fund_title AS item_fund_title,
@@ -259,6 +317,7 @@ FROM (
 ) t	  
 GROUP BY t.item_objid, t.item_code, t.item_title, t.item_fund_objid, t.item_fund_code, t.item_fund_title
 	
+
 
 
 [getItemsForPrinting]	
