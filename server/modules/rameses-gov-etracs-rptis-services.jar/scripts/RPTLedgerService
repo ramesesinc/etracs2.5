@@ -287,8 +287,8 @@ class RPTLedgerService
 
         def partial = info.partialbasic + info.partialbasicint + info.partialsef + info.partialsefint
         if ( partial > 0){
-            info.partialledyear = (info.lastqtrpaid == 1 ? info.lastyearpaid - 1 : info.lastyearpaid) 
-            info.partialledqtr =  (info.lastqtrpaid == 1 ? 4 : info.lastqtrpaid)
+            info.partialledyear = info.lastyearpaid
+            info.partialledqtr =  info.lastqtrpaid
         }
         em.fixLedgerInfo(info)
         try{
