@@ -109,7 +109,7 @@ class RPUService
     public def openRpu( rpu ) {
         rpu = em.read(rpu)
         if (!rpu) throw new Exception('Cannot open RPU. The record does not exist or has already been deleted.')
-
+        updatePin(rpu)
         rpu.classification  = classSvc.findById(rpu.classification.objid)
         rpu.exemptiontype   = exemptSvc.findById(rpu.exemptiontype.objid)
         rpu.taxable         = util.toBoolean(rpu.taxable, true)
@@ -287,6 +287,24 @@ class RPUService
                 throw new Exception('PIN ' + rpu.fullpin + ' already exist.' )
             }
         }
+    }
+
+
+    void updatePin(rpu){
+        if (! rpu.realpropertyid) return
+        if (rpu.state.matches(STATE_CURRENT, STATE_CANCELLED)) return 
+        def rp = rpSvc.open([objid:rpu.realpropertyid]);
+        if (rp){
+            def fullpin = rp.pin 
+            if (rpu.rputype != RPUTYPE_LAND){
+                fullpin += '-' + rpu.suffix 
+            }
+            if (rpu.subsuffix){
+                fullpin += '-' + rpu.subsuffix
+            }
+            rpu.fullpin = fullpin 
+        }
+        println 'rpu.fullpin -> ' + rpu.fullpin
     }
 
 }

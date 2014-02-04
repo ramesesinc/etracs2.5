@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workunit extends="rpt_wtemplates/FaasTxnOnlineInitController.xml">
+    <invokers>       
+        <invoker type="quick_launcher" code="GR11" action="init" caption="General Revision" 
+            txntype="GR" role="APPRAISER" permission="faas.createGeneralRevision" index="13"  />
+            
+        <invoker folderid="/explorer/txn/rpt/online" action="init" caption="General Revision" 
+            txntype="GR" role="APPRAISER" permission="faas.createGeneralRevision" index="13"  />
+            
+    </invokers>
+    <code>
+        
+
+import com.rameses.rcp.annotations.* 
+import com.rameses.rcp.common.* 
+import com.rameses.osiris2.client.*
+import com.rameses.osiris2.common.*
+
+
+class FaasOnlineGRInitController extends com.rameses.gov.etracs.rpt.faas.ui.FaasTxnOnlineInitController
+{
+    @Service('GeneralRevisionService')
+    def grSvc;
+    
+    boolean generalRevision = true;
+    
+    
+    def getRevisionyears(){
+        return grSvc.getRyList(entity.faas?.lguid, entity.faas?.ry, entity.faas?.rputype );
+    }
+    
+    void afterLookupFaas(){
+        binding.refresh('entity.newrysetting');
+    }
+    
+}
+
+    </code>
+</workunit>
+
+

@@ -41,6 +41,14 @@ class LandRPUService
 	@ProxyMethod
 	public def initLandRpu(rpu) {
 		rpu.idleland    	= false
+		rpu.totallandbmv = 0.0
+		rpu.totallandmv = 0.0
+		rpu.totallandav = 0.0
+		rpu.totalplanttreebmv = 0.0
+		rpu.totalplanttreeadjustment = 0.0
+		rpu.totalplanttreemv = 0.0
+		rpu.totalplanttreeav = 0.0
+		rpu.landvalueadjustment = 0.0
 		rpu.landdetails 	= []
 		rpu.planttrees  	= []
 		rpu.landadjustments = []

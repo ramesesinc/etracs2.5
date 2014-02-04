@@ -66,8 +66,12 @@ class RealPropertyService
 		entity = em.read(entity)	
 		entity.autonumber = util.toBoolean(entity.autonumber, false)
 		entity.barangay = lguSvc.lookupBarangayById(entity.barangayid)
-		entity.isection = util.toInteger(entity.section)
-		entity.iparcel = util.toInteger(entity.parcel)
+		entity.isection = null
+		entity.iparcel = null
+		if (entity.section)
+			entity.isection = util.toInteger(entity.section)
+		if (entity.parcel)			
+			entity.iparcel = util.toInteger(entity.parcel)
 		return entity 
 	}
 
@@ -164,14 +168,14 @@ class RealPropertyService
     }
 
 	void validateSectionParcelLength(entity){
-		if (entity.pintype == 'new' && entity.section.length() > 3) 
+		if (entity.pintype == 'new' && entity.section?.length() > 3) 
 			throw new Exception('Invalid section. Section must be less than or equal to 999.')
-        if (entity.pintype == 'old' && entity.section.length() > 2) 
+        if (entity.pintype == 'old' && entity.section?.length() > 2) 
         	throw new Exception('Invalid section. Section must be less than or equal to 99.')
 
-        if (entity.pintype == 'new' && entity.parcel.length() > 2) 
+        if (entity.pintype == 'new' && entity.parcel?.length() > 2) 
         	throw new Exception('Invalid parcel. Parcel must be less than or equal to 99.')
-        if (entity.pintype == 'old' && entity.parcel.length() > 3) 
+        if (entity.pintype == 'old' && entity.parcel?.length() > 3) 
         	throw new Exception('Invalid parcel. Parcel must be less than or equal to 999.')
 	}
  

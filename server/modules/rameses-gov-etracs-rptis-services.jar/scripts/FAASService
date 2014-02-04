@@ -51,6 +51,8 @@ class FAASService
 	def SCHEMA_BACKTAX			= 'backtax'
 	
 	def STATE_INTERIM 			= 'INTERIM'
+	def STATE_FORTAXMAPPING 	= 'FORTAXMAPPING'
+	def STATE_FORAPPRAISAL 		= 'FORAPPRAISAL'
 	def STATE_FORAPPROVAL 		= 'FORAPPROVAL'
 	def STATE_FORPROVSUBMISSION = 'FORPROVSUBMISSION'
 	def STATE_FORPROVAPPROVAL 	= 'FORPROVAPPROVAL'
@@ -59,6 +61,18 @@ class FAASService
 
 	def UTDNO_KEY 				= 'UNIQUE_TDNO'
 
+
+
+	@ProxyMethod
+	public def initNewDiscovery( info ) {
+		def faas = initCapture(info)
+		faas.datacapture = false
+        faas.rp.barangayid = info.barangay.objid
+        rpSvc.create(faas.rp)
+        rpuSvc.createRpu(faas.rpu)
+        createFaas(faas)
+        return faas
+	}
 
 	@ProxyMethod
 	public def initCapture( info ) {
@@ -104,6 +118,23 @@ class FAASService
 		return faas
 	}
 
+
+	@ProxyMethod
+	public def initOnlineTransaction( info ) {
+		info.txntype = getTxnType(info.txntype.objid)
+		def faas = faasSvc.initTransaction(info)
+		faas.memoranda = ' '
+
+		if (faas.txntype.newrealproperty){
+			rpSvc.create(faas.rp)
+		}
+		if (faas.txntype.newrpu){
+			rpuSvc.createRpu(faas.rpu)
+		}
+
+		createFaas(faas)
+		return faas;
+	}
 
 	@ProxyMethod
 	public def initTransaction( info ) {
@@ -153,6 +184,7 @@ class FAASService
 		checkTxnReference(faas)
 		faas.utdno = generateUniqueTdNo(faas)
 		def approver = getSignatory(faas, 'approver')
+		if (!approver.dtsigned) approver.dtsigned = dtSvc.serverDate
 		if (approver.dtsigned) {
 			faas.txntimestamp = dtSvc.buildCustomTimeStamp(approver.dtsigned)
 		}
@@ -221,6 +253,11 @@ class FAASService
 		em.getPreviousFaases([faasid:faas.objid]).each{
 			em.delete(it, SCHEMA_PREVIOUSFAAS)
 		}
+
+		faas.backtaxes.each{
+			em.delete(it, SCHEMA_BACKTAX)
+		}
+
 		em.delete(faas)
 		signatorySvc.deleteSignatories(faas)
 		wsSvc.deleteAll(faas.objid)
@@ -243,6 +280,12 @@ class FAASService
 	}
 
 
+
+	@ProxyMethod
+	public def getHistory( faasid ) {
+		return em.getHistory([faasid:faasid])
+	}
+
 	/*------------------------------------------------
 	*
 	* WORKFLOW ACTIONS
@@ -250,10 +293,33 @@ class FAASService
 	-------------------------------------------------*/
 
 	@ProxyMethod
+	public def submitForTaxmapping( faas ) {
+		def retval = updateFaasState(faas, STATE_INTERIM, STATE_FORTAXMAPPING)
+		if (retval == 0) 
+			throw new Exception('Unable to submit FAAS. Only INTERIM record is allowed.')
+
+		wsSvc.insert(faas)
+		return faas
+	}
+
+
+	@ProxyMethod
+	public def submitForAppraisal( faas ) {
+		def retval = updateFaasState(faas, STATE_FORTAXMAPPING, STATE_FORAPPRAISAL)
+		if (retval == 0) 
+			throw new Exception('Unable to submit FAAS. Only FOR TAXMAPPING record is allowed.')
+
+		wsSvc.insert(faas)
+		return faas
+	}
+
+
+	@ProxyMethod
 	public def submitFaasForApproval( faas ) {
 		validateSignatories(faas)
-
-		def retval = updateFaasState(faas, STATE_INTERIM, faas.state)
+		println '='*50
+		println 'state -> ' + faas.state 
+		def retval = em.submitForApproval(faas)
 		if (retval == 0) 
 			throw new Exception('Unable to submit FAAS for approval. Only INTERIM record is allowed.')
 
@@ -268,7 +334,7 @@ class FAASService
 		faas.state = STATE_CURRENT
 		faas.prevstate = STATE_FORAPPROVAL
 		updateTDNo(faas)
-
+		println 'faas.tdno -> ' + faas.tdno 
 		def retval = em.approveFaas(faas)
 		if (retval == 0) 
 			throw new Exception('Unable to approve FAAS. Only FOR APPROVAL record is allowed.')
@@ -501,9 +567,9 @@ class FAASService
 
 
 	void updateNameInfo(faas){
-		def len = faas.owner.name.length()
+		def len = faas.owner?.name?.length()
 		if (len > 100) len = 100
-		faas.name = faas.owner.name.substring(0,len)
+		faas.name = faas.owner?.name?.substring(0,len)
 	}
 
 
@@ -627,6 +693,12 @@ class FAASService
 	@ProxyMethod
 	public def getFaasByTdNo(tdno){
 		return em.findByTdNo([tdno:tdno])
+	}
+
+
+	@ProxyMethod
+	public def getMaximumBackTaxYearsPolicy(  ) {
+		return 10;
 	}
 }
 

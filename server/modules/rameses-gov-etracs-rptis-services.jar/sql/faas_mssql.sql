@@ -22,7 +22,7 @@ FROM faas f
 	LEFT JOIN rpu rpu ON f.rpuid = rpu.objid
 	LEFT  JOIN realproperty rp ON f.realpropertyid = rp.objid
 	INNER JOIN barangay b ON rp.barangayid = b.objid 
-	INNER JOIN propertyclassification pc ON rpu.classification_objid = pc.objid 
+	LEFT JOIN propertyclassification pc ON rpu.classification_objid = pc.objid 
 WHERE 1=1
 ${filters}
 
@@ -43,6 +43,7 @@ SELECT
 	pc.objid AS rpu_classification_objid,
 	pc.code AS rpu_classification_code,
 	rp.objid AS rp_objid,
+	rp.ry AS rp_ry,
 	rp.pin AS rp_pin,
 	rp.surveyno AS rp_surveyno,
 	rp.cadastrallotno AS rp_cadastrallotno,
@@ -58,7 +59,7 @@ SELECT
 	b.parentid AS rp_barangay_parentid
 FROM faas f
 	INNER JOIN rpu rpu ON f.rpuid = rpu.objid
-	INNER JOIN propertyclassification pc ON rpu.classification_objid = pc.objid 
+	LEFT JOIN propertyclassification pc ON rpu.classification_objid = pc.objid 
 	INNER  JOIN realproperty rp ON f.realpropertyid = rp.objid
 	INNER JOIN barangay b ON rp.barangayid = b.objid 
 WHERE f.objid = $P{objid}
@@ -195,7 +196,8 @@ where b.objid = $P{barangayid}
 [updateFaasState]
 UPDATE faas SET state = $P{state} WHERE objid = $P{objid} AND state = $P{prevstate}
 
-
+[submitForApproval]
+UPDATE faas SET state = $P{state} WHERE objid = $P{objid} AND state IN ('INTERIM', 'FORAPPRAISAL')
 
 [approveFaas]
 UPDATE faas SET 
@@ -261,3 +263,39 @@ WHERE rpu.realpropertyid = $P{realpropertyid}
   AND rpu.state NOT IN ('CURRENT', 'CANCELLED')
   AND rpu.rputype = $P{rputype}
   AND f.objid IS NULL
+
+
+
+[getHistory]
+SELECT 
+	f.*,
+	rpu.rputype,
+	rpu.ry,
+	rpu.fullpin ,
+	rpu.taxable,
+	rpu.totalareaha,
+	rpu.totalareasqm,
+	rpu.totalbmv,
+	rpu.totalmv,
+	rpu.totalav,
+	rp.section,
+	rp.parcel,
+	rp.surveyno,
+	rp.cadastrallotno,
+	rp.blockno,
+	rp.claimno,
+	b.name AS barangay_name,
+	pc.code AS classification_code
+FROM faas cf
+	INNER JOIN rpu rpu ON cf.rpuid = rpu.objid
+	INNER JOIN rpu prpu ON rpu.rpumasterid = prpu.rpumasterid
+	INNER JOIN faas f ON prpu.objid = f.rpuid 
+	INNER JOIN realproperty rp ON f.realpropertyid = rp.objid
+	INNER JOIN barangay b ON rp.barangayid = b.objid 
+	INNER JOIN propertyclassification pc ON rpu.classification_objid = pc.objid 
+WHERE cf.objid = $P{faasid}
+  AND cf.tdno <> f.tdno 
+ORDER BY f.txntimestamp DESC 
+
+
+

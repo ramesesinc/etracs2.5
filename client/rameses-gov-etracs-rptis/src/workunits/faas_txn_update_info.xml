@@ -6,7 +6,7 @@
             
         <invoker type="faasupdate:open" action="open" caption="FAAS Information Update" target="window"  />
         
-        <invoker folderid="/explorer/txn/rpt/txn" action="init"  caption="Update FAAS Information" index="300"
+        <invoker folderid="/explorer/txn/rpt/util" action="init"  caption="Update FAAS Information" index="300"
             role="APPRAISER" permission="faasupdate.create" />
          
          <invoker type="quick_launcher" code="UFI01" action="init"  caption="Update FAAS Information" index="300" 

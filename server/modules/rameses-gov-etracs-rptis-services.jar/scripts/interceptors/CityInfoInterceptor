@@ -10,7 +10,7 @@ class CityInfoInterceptor
 
 	def STATE_FORAPPROVAL = 'FORAPPROVAL'
 	
-	@Before(pattern="FAASService.submitFaasForApproval", eval="#{args[0].lgutype.equalsIgnoreCase('city') && args[0].state == 'INTERIM'}") 
+	@Before(pattern="FAASService.submitFaasForApproval", eval="#{args[0].lgutype.equalsIgnoreCase('city') && args[0].state.matches('INTERIM|FORAPPRAISAL')}") 
 	public void submitFaasForApproval( evt ) {
 		def faas = evt.args[0]
 		faas.state = STATE_FORAPPROVAL

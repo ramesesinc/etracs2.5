@@ -14,18 +14,18 @@
 		<field name="titledate" />
 		<field name="rpuid" />
 		<field name="realpropertyid" />
-		<field name="taxpayer_objid" required="true"/>
-		<field name="taxpayer_name" required="true"/>
-		<field name="taxpayer_address" required="true"/>
-		<field name="owner_name" required="true"/>
-		<field name="owner_address" required="true"/>
+		<field name="taxpayer_objid" />
+		<field name="taxpayer_name" />
+		<field name="taxpayer_address" />
+		<field name="owner_name" />
+		<field name="owner_address" />
 		<field name="administrator_objid" />
 		<field name="administrator_name" />
 		<field name="administrator_address" />
 		<field name="beneficiary_objid" />
 		<field name="beneficiary_name" />
 		<field name="beneficiary_address" />
-		<field name="memoranda" required="true"/>
+		<field name="memoranda" />
 		<field name="cancelnote" />
 		<field name="restrictionid" />
 		<field name="backtaxyrs" required="true"/>

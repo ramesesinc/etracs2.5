@@ -1,0 +1,68 @@
+"entity.*|taxpayer|administrator|appraiser.*|recommender.*|taxmapper.*|approver.*" [allowEdit == true] {
+    enabled:true;
+}
+
+"selectedSignatory" [allowEdit == true]{
+    readonly:false;
+}
+
+
+"taxpayer|entity.owner.*|entity.taxpayer.*|entity.administrator.*"[ allowEditOwner == false ] {
+    enabled:false;
+}
+
+
+"entity.prev.*" [ allowEditPrevInfo == false  ] {
+    enabled:false;
+}
+
+"entity.tdno" [ entity.autonumber == true] {
+    enabled:false;
+}
+
+"entity.titleno|entity.titledate" [ entity.titletype == null] {
+    enabled:false;
+}
+
+"entity.titletype" [entity.txntype == 'TR' && entity.datacapture == false ] {
+    enabled:false;
+}
+
+"entity.tdno" [ enableTdno == true ] {
+    enabled:true;
+}
+
+"entity.tdno" [ enableTdno == false ] {
+    enabled:false;
+}
+
+"entity.*|taxpayer|administrator|appraiser.*|recommender.*|taxmapper.*|approver.*" [allowEdit == false] {
+    enabled:false;
+}
+
+"selectedSignatory" [allowEdit == false]{
+    readonly:true;
+}
+
+"entity.cancelnote" [entity.datacapture == true ] {
+    enabled:false;
+}
+
+
+"entity.backtaxyrs|rpu.totalmv|rpu.totalav" [  true == true ] {
+    enabled:false;
+}
+
+"annotated" [showAnnotation == true]{
+    visible:true;
+}
+
+"annotated" [showAnnotation != true]{
+    visible:false;
+}
+
+
+"rp.*" [ true == true ] {
+    enabled:false;
+}
+

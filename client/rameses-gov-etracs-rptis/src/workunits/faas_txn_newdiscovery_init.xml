@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <workunit extends="rpt_wtemplates/FAASTxnInitController.xml">
     <invokers>
+        <!--
         <invoker folderid="/explorer/txn/rpt/txn" action="init"  caption="New Discovery" index="11" txntype="ND" role="APPRAISER" permission="faas.createNewDiscovery"/>
         <invoker type="quick_launcher" code="ND01" action="init"  caption="New Discovery" index="11" txntype="ND" role="APPRAISER" permission="faas.createNewDiscovery"/>                
+        -->
     </invokers>
     <code>
         

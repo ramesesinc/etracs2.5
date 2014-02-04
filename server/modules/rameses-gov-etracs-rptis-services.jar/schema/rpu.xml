@@ -8,7 +8,7 @@
         <field name="fullpin"  />
         <field name="suffix"  />
         <field name="subsuffix"  />
-        <field name="classification_objid" required="true" />
+        <field name="classification_objid" />
         <field name="exemptiontype_objid" />
         <field name="taxable" required="true" type="boolean"  />
         <field name="totalareaha" required="true" />

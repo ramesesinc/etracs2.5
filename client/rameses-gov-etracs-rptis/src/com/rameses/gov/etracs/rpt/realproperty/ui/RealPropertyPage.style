@@ -12,7 +12,7 @@
     enabled:false;
 }
 
-"entity.isection|entity.iparcel" [allowEditSectionParcel == true]{
+"entity.isection|entity.iparcel" [allowEdit == true && allowEditSectionParcel == true]{
     enabled:true;
 }
 

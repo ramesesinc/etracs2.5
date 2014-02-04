@@ -117,3 +117,77 @@ go
 
 
 
+
+
+
+alter table faas alter column taxpayer_objid varchar(50) null
+go
+alter table faas alter column taxpayer_name text null
+go
+alter table faas alter column taxpayer_address varchar(150) null
+go
+alter table faas alter column owner_name text null
+go
+alter table faas alter column owner_address varchar(150) null
+go
+
+
+
+alter table realproperty alter column section varchar(3) null
+go
+
+alter table realproperty alter column parcel varchar(3) null
+go
+
+alter table realproperty alter column north varchar(255) null
+go
+alter table realproperty alter column south varchar(255) null
+go
+alter table realproperty alter column east varchar(255) null
+go
+alter table realproperty alter column west varchar(255) null
+go
+
+alter table rpu alter column classification_objid varchar(50) null
+go
+
+
+
+
+
+
+create table rpttask
+(
+	taskid varchar(50) primary key,
+	state varchar(50) not null,
+	objid varchar(50) not null,
+	refno varchar(50) not null,
+	filetype varchar(50) not null,
+	msg varchar(100) not null,
+	startdate datetime not null,
+	enddate datetime null,
+	createdbyid varchar(50) not null,
+	createdby varchar(150) not null,
+	createdbytitle varchar(50) ,
+	assignedtoid varchar(50),
+	assignedto varchar(150),
+	assignedtotitle varchar(50)
+)
+go
+
+create index ix_rpttask_refid on rpttask(refid)
+go
+
+create index ix_rpttask_createdbyid on rpttask(createdbyid)
+go
+create index ix_rpttask_createdby on rpttask(createdby)
+go
+create index ix_rpttask_createdbyid_state on rpttask(createdbyid, state)
+go
+
+create index ix_rpttask_assignedtoid on rpttask(assignedtoid)
+go
+create index ix_rpttask_assignedto on rpttask(assignedto)
+go
+
+

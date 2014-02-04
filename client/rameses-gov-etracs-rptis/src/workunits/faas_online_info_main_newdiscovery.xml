@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workunit extends="rpt_wtemplates/FaasMainInfoController.xml">
+    <invokers>
+        <invoker type="faasonline_ND:info" action="init" caption="General Info" index="-10"/>
+        <invoker type="formActions" action="viewBackTaxes" caption="Back Taxes" immediate="true" mnemonic="b" />
+   </invokers>
+    <code>
+        
+import com.rameses.rcp.annotations.* 
+import com.rameses.rcp.common.* 
+import com.rameses.osiris2.client.*
+import com.rameses.osiris2.common.*
+import com.rameses.gov.etracs.rpt.common.RPTUtil;
+
+class FaasNDMainInfoController extends com.rameses.gov.etracs.rpt.faas.ui.FaasMainInfoController
+{
+    boolean allowEditOwner = true;
+    boolean allowEditPin = true;
+    
+    def onupdateBackTaxes = {
+        binding.refresh('entity.backtaxyrs')
+    }
+
+    def viewBackTaxes(){
+        return InvokerUtil.lookupOpener("backtax:open", 
+                [faas       : entity, 
+                 svc        : svc, 
+                 mode       : mode, 
+                 onupdate   : onupdateBackTaxes, 
+                allowEdit   : allowEdit,
+                ]
+        )
+    }
+}
+
+    </code>
+</workunit>
+
+

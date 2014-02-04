@@ -1,0 +1,333 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workunit>
+    <invokers>
+        <invoker type="faasonline:open" action="open" caption="FAAS" target="window"  />
+   </invokers>
+   
+   <code>
+       
+<![CDATA[       
+
+import com.rameses.rcp.annotations.* 
+import com.rameses.rcp.common.* 
+import com.rameses.osiris2.client.*
+import com.rameses.osiris2.common.*
+import com.rameses.gov.etracs.rpt.common.RPTUtil;
+import com.rameses.util.MapBeanUtils;
+
+public class AbstractOnlineFaasController extends PageFlowController
+{
+
+    @Binding
+    def binding;
+    
+    @Service('FAASService')
+    def svc 
+            
+    @Invoker
+    def invoker 
+    
+    
+    @FormId
+    def formId;
+    
+    @FormTitle
+    def formTitle;
+           
+    def entity;
+    def txntype;
+    def txntypes;
+    
+    def sections;
+    def selectedSection;
+    def addlInfoOpener;
+    
+    def messages = [];
+    
+    
+    def getAddlInfoOpener(){
+        addlInfoOpener = null;
+        if (txntype)
+            addlInfoOpener = InvokerUtil.lookupOpener('faasonline:addlinfo:' + txntype.properties.txntype, [entity:entity]);
+        return addlInfoOpener;
+    }
+        
+    def open(){
+        initData()
+        return super.signal('open');
+    }
+    
+    void initData(){
+        entity = svc.openFaas(entity);
+        loadSections();
+        formId = entity.tdno;
+        formTitle = 'FAAS: ' + ( entity.tdno ? entity.tdno : entity.utdno);
+    }
+    
+    
+    void loadSections(){
+        if (sections == null) 
+            sections = []
+            
+        def type = entity.txntype?.objid;
+        if (txntype) 
+            type = txntype.properties.txntype
+        
+        sections += InvokerUtil.lookupOpeners('faasonline_' + type + ':info', [entity:entity, svc:svc])
+        sections += InvokerUtil.lookupOpeners('faasonline:info', [entity:entity, svc:svc])
+        if (sections){
+            selectedSection = sections[0];
+        }
+    }
+    
+        
+    def getLookupFaas(){
+        return InvokerUtil.lookupOpener('faas:lookup', [
+            onselect: {
+                if (it.state == 'CANCELLED')
+                    throw new Exception('FAAS has already been cancelled.');
+                if (it.state != 'CURRENT')
+                    throw new Exception('Cannot process record. The FAAS is not yet current.')
+                    
+                 entity.faas = it;
+                 binding.refresh('addlInfoOpener');
+            },
+            
+            enempty :{ entity.faas = null; }
+        ])
+    }
+    
+    void delete(){
+        svc.deleteFaas(entity);
+    }
+    
+    
+    /*-----------------------------------------------------
+     * 
+     * WORKFLOW ACTIONS
+     *
+     *----------------------------------------------------*/
+     
+    void createFaas(){
+        entity.txntype = [objid:txntype.properties.txntype]
+        entity = svc.initOnlineTransaction(entity);
+        initData();
+    }
+     
+    void submitForTaxmapping(){
+        checkMessages();
+        entity = svc.submitForTaxmapping(entity);
+    }
+
+
+    void submitForAppraisal(){
+        checkMessages();
+        entity = svc.submitForAppraisal(entity);
+    }
+
+
+    void submitForApproval(){
+        checkMessages();
+        entity = svc.submitFaasForApproval( entity );
+    }
+
+
+    void approveFaas() {
+        checkMessages();
+        entity = svc.approveFaas( entity );
+        initData();
+    }
+
+
+    void disapproveFaas() {
+        checkMessages();
+        entity = svc.disapproveFaas( entity );
+    }
+
+
+    void submitFaasToProvince() {
+        checkMessages();
+        entity = svc.submitFaasToProvince( entity );
+    }
+
+
+    void approveFaasSubmissionToProvince() {
+        checkMessages();
+        entity = svc.approveFaasSubmissionToProvince( entity );
+    }
+
+
+    void disapproveFaasSubmissionToProvince() {
+        checkMessages();
+        entity = svc.disapproveFaasSubmissionToProvince( entity );
+    }
+
+
+    void approveFaasByProvince() {
+        checkMessages();
+        entity = svc.approveFaasByProvince(entity);
+    }
+
+
+    void disapproveFaasByProvince() {
+        checkMessages();
+        entity = svc.disapproveFaasByProvince( entity );
+    }
+
+    
+    
+    void addMessage(msg){
+        messages << msg;
+    }
+    
+    
+    void clearMessages(type){
+        messages.removeAll( messages.findAll{it.type == type} )
+    }
+    
+
+    void checkMessages(){
+        if (messages)
+            throw new Exception(messages[0].msg);
+    }   
+    
+}
+
+]]>
+
+   </code>
+
+    <pageflow>
+        <start>
+            <transition name="init" to="init" />
+            <transition name="open" to="open"/>
+        </start>
+        
+        <page name="init" title="FAAS (New)">
+            <transition caption="Close"  to="end"  mnemonic="c" icon="images/toolbars/cancel.png" />
+            <transition caption="Process"  to="default"  action="createFaas" mnemonic="p" />
+        </page>
+        
+        <process name="open">
+            <transition to="default" cond="#{entity.state == 'INTERIM'}"/>
+            <transition to="fortaxmapping" cond="#{entity.state == 'FORTAXMAPPING'}"/>
+            <transition to="forappraisal" cond="#{entity.state == 'FORAPPRAISAL'}"/>
+            <transition to="forapproval" cond="#{entity.state == 'FORAPPROVAL'}"/>
+            <transition to="forprovsubmission" cond="#{entity.state == 'FORPROVSUBMISSION'}"/>
+            <transition to="forprovapproval" cond="#{entity.state == 'FORPROVAPPROVAL'}"/>
+            <transition to="current" cond="#{entity.state == 'CURRENT'}"/>
+            <transition to="cancelled" cond="#{entity.state == 'CANCELLED'}"/>
+            <transition to="readonly" cond="#{entity.state == 'PENDING'}"/>
+        </process>
+        
+        <page name="default" title="FAAS #{entity.txntype.name} (Interim)">
+            <transition caption="Close"  to="end"      mnemonic="c" icon="images/toolbars/cancel.png" />
+            <transition caption="Delete" to="delete"  action="delete" confirm="Delete record?"    mnemonic="d" icon="images/toolbars/trash.png"  role="APPRAISER" permission="faas.delete"/>
+            <transition caption="Submit to Taxmapping" to="fortaxmapping" action="submitForTaxmapping"  mnemonic="m"  confirm="Submit FAAS for approval?" role="APPRAISER" permission="faas.submit"/>
+        </page>
+        
+        <process name="back-to-default">
+            <transition to="default" />
+        </process>
+        
+        <process name="delete">
+            <transition to="end"/>
+        </process>
+        
+        
+        <page name="fortaxmapping" title="FAAS (For Taxmapping)">
+            <transition caption="Close"  to="end"      mnemonic="c" icon="images/toolbars/cancel.png" />
+            <transition caption="Submit for Appraisal" to="forappraisal" action="submitForAppraisal"  mnemonic="m"   confirm="Submit FAAS for appraisal?" role="TAXMAPPER"/>
+        </page>
+        
+        
+        <page name="forappraisal" title="FAAS (For Appraisal)">
+            <transition caption="Close"  to="end"      mnemonic="c" icon="images/toolbars/cancel.png" />
+            <transition caption="Submit for Approval" to="submit" action="submitForApproval"  mnemonic="m"   confirm="Submit FAAS for approval?" role="APPRAISER"/>
+        </page>
+        
+        <process name="submit">
+            <transition to="forapproval" cond="#{entity.state == 'FORAPPROVAL'}"/>
+            <transition to="forprovapproval" cond="#{entity.state == 'FORPROVAPPROVAL'}"/>
+            <transition to="forprovsubmission" cond="#{entity.state == 'FORPROVSUBMISSION'}"/>
+        </process>
+        
+        
+        <!-- CITY-->
+        <page name="forapproval" title="FAAS #{entity.txntype.name} (For Approval)">
+            <transition caption="Close" to="end" mnemonic="c" icon="images/toolbars/cancel.png"  />
+            <transition caption="Disapprove" to="default" action="disapproveFaas" mnemonic="d"  confirm="Disapprove FAAS?" role="APPROVER"/>
+            <transition caption="Approve" to="current" action="approveFaas" mnemonic="v" icon="images/toolbars/approve.png" confirm="Approve FAAS?" role="APPROVER" />
+        </page>
+        
+        <process name="back-to-forapproval">
+            <transition to="forapproval"/>
+        </process>
+        
+        
+        <!-- MUNICIPALIY -->
+        <page name="forprovsubmission" title="FAAS #{entity.txntype.name} (For Submission to Province)">
+            <transition caption="Close"  to="end" mnemonic="c" icon="images/toolbars/cancel.png"  />
+            <transition caption="Disapprove" to="default" action="disapproveFaasSubmissionToProvince"  mnemonic="d"  confirm="Disapprove FAAS?" role="RECOMMENDER" permission="faas.disapprove"/>
+            <transition caption="Submit to Province" to="provsubmissionapproval" action="submitFaasToProvince" mnemonic="m"  confirm="Submit FAAS to province?" role="RECOMMENDER" permission="faas.submitToProvince"/>
+        </page>
+        
+        <process name="back-to-prov-submission">
+            <transition to="forprovsubmission"/>
+        </process>
+        
+        <page name="provsubmissionapproval" title="FAAS #{entity.txntype.name} (For Province Approval)">
+            <transition caption="Close" to="end" mnemonic="c" icon="images/toolbars/cancel.png"/>
+            <transition caption="Disapprove" to="forprovsubmission" action="disapproveFaasByProvince"  mnemonic="d" confirm="Disapprove FAAS?" role="RECOMMENDER" permission="faas.disapprove"/>
+            <transition caption="Approve" to="current" action="approveFaasByProvince"  mnemonic="v" confirm="Approve FAAS?" role="RECOMMENDER" permission="faas.approve"/>
+        </page>
+        
+        
+        <!-- PROVINCE -->
+        <page name="forprovapproval" title="FAAS #{entity.txntype.name} (Province Approval)">
+            <transition caption="Close" to="end" mnemonic="c" icon="images/toolbars/cancel.png"  />
+            <transition caption="Disapprove" to="default" action="disapproveFaasByProvince"  mnemonic="d"   confirm="Disapprove FAAS?" role="APPROVER" permission="faas.disapprove"/>
+            <transition caption="Approve" to="current" action="approveFaasByProvince"  mnemonic="v"  confirm="Approve FAAS?" role="APPROVER" permission="faas.approve"/>
+        </page>
+        
+        <process name="back-to-forprovapproval">
+            <transition to="forprovapproval"/>
+        </process>
+        
+        <page name="current" title="FAAS #{entity.txntype.name} (Current)">
+            <transition caption="Close" to="end" mnemonic="c" icon="images/toolbars/cancel.png"/>
+        </page>
+        
+        <page name="cancelled" title="FAAS #{entity.txntype.name} (Cancelled)">
+            <transition caption="Close" to="end" mnemonic="c" icon="images/toolbars/cancel.png"/>
+        </page>
+        
+        <page name="readonly" title="FAAS #{entity.txntype.name} (View Only)">
+            <transition caption="Close" to="end" mnemonic="c" icon="images/toolbars/cancel.png"/>
+        </page>
+        
+        <page name="previous" title="FAAS #{entity.txntype.name}">
+            <transition caption="Close" to="closeForm" mnemonic="c" icon="images/toolbars/cancel.png"/>
+        </page>
+        
+        
+        <end />
+        
+    </pageflow>
+    
+    <pages> 
+        <page name="default" template="com.rameses.gov.etracs.rpt.common.InfoPage"/>
+        <page name="fortaxmapping" template="com.rameses.gov.etracs.rpt.common.InfoPage"/>
+        <page name="forappraisal" template="com.rameses.gov.etracs.rpt.common.InfoPage"/>
+        <page name="forapproval" template="com.rameses.gov.etracs.rpt.common.InfoPage"/>
+        <page name="forprovsubmission" template="com.rameses.gov.etracs.rpt.common.InfoPage"/>
+        <page name="provsubmissionapproval" template="com.rameses.gov.etracs.rpt.common.InfoPage"/>
+        <page name="forprovapproval" template="com.rameses.gov.etracs.rpt.common.InfoPage"/>
+        <page name="current" template="com.rameses.gov.etracs.rpt.common.InfoPage"/>
+        <page name="cancelled" template="com.rameses.gov.etracs.rpt.common.InfoPage"/>
+        <page name="previous" template="com.rameses.gov.etracs.rpt.common.InfoPage"/>
+        <page name="readonly" template="com.rameses.gov.etracs.rpt.common.InfoPage"/>
+    </pages>
+</workunit>
+
+

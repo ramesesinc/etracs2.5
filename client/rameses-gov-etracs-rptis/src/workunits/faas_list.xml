@@ -3,6 +3,8 @@
         <invoker folderid="/explorer/txn/rpt/list" caption="FAAS Management"  target="window" index="101" role="ASSESSOR_SHARED" />
         <invoker type="home.action" caption="FAAS Management"  target="window" index="101" role="ASSESSOR_SHARED" />
         <invoker type="quick_launcher" code="FA00" caption="FAAS Management" role="ASSESSOR_SHARED" />
+        
+        <invoker type="formActions" action="openOnline" caption="Open Online" />
     </invokers>
     <code>
         import com.rameses.rcp.common.*
@@ -64,6 +66,12 @@
                     onsearch : onsearch,
                     states    : states,
                 ])
+            }
+            
+            
+            def openOnline(){
+                if (!selectedEntity) return;
+                return InvokerUtil.lookupOpener('faasonline:open', [entity:selectedEntity])
             }
         }
     </code>

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <workunit extends="rpt_wtemplates/FAASTxnInitController.xml">
     <invokers>
+        <!--
         <invoker folderid="/explorer/txn/rpt/txn" action="init"  caption="Transfer of Ownership" index="1" txntype="TR" role="APPRAISER" permission="faas.createTransfer"/>
         <invoker type="quick_launcher" code="TR01" action="init"  caption="Transfer of Ownership" index="1" txntype="TR" role="APPRAISER" permission="faas.createTransfer"/>
         
@@ -26,7 +27,7 @@
         
         <invoker folderid="/explorer/txn/rpt/txn" action="init"  caption="Re-Assessment" index="10" txntype="RE" role="APPRAISER" permission="faas.createReassessment"/>
         <invoker type="quick_launcher" code="RE01" action="init"  caption="Re-Assessment" index="10" txntype="RE" role="APPRAISER" permission="faas.createReassessment"/>        
-        
+        -->
     </invokers>
 </workunit>
 

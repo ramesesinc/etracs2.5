@@ -15,6 +15,7 @@ public abstract class AbstractRPUController
     def service;
     
     def onupdate; //handler
+    def onedit;   //handler 
     def ondelete; //handler
     
     def showClose = true;
@@ -47,7 +48,7 @@ public abstract class AbstractRPUController
         else if ( rpu?.rputype == 'misc')
             s += 'Miscellaneous RPU';
         else s += 'RPU';
-        return s + ' (' + rpu.state + ')'
+        return s ;
     }
     
     
@@ -90,6 +91,7 @@ public abstract class AbstractRPUController
     
     void edit(){
         mode = MODE_EDIT;
+        if (onedit) onedit(rpu);
     }
     
     def cancelEdit(){
@@ -98,6 +100,7 @@ public abstract class AbstractRPUController
         rpu.putAll(service.openRpu(rpu));
         rpu._loaded = true;
         mode = MODE_READ;
+        if (onupdate) onupdate(rpu)
     }
     
     def save(){
@@ -147,7 +150,8 @@ public abstract class AbstractRPUController
     }
     
     boolean getShowEdit(){
-        if (rpu.state == 'CURRENT') return false;
+        if ( rpu.state.toUpperCase().matches('CURRENT|CANCELLED'))
+            return false;
         if (mode != MODE_READ) return false;
         return allowEdit;
     }

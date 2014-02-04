@@ -21,36 +21,9 @@ class FAASListService
     def STATE_CURRENT           = 'CURRENT'
     def STATE_CANCELLED         = 'CANCELLED'
 
+
     @ProxyMethod
     public def getList( params ) {
-        return getListAdvance(params)
-        
-        /*
-        params.tdno = params.searchtext
-        params.barangay = params.searchtext
-        params.blockno = params.searchtext
-        params.ry = params.searchtext
-        params.searchtext = (params.searchtext ? params.searchtext : '') + '%'
-
-        def whereclause = ''
-        if (params.state){
-            whereclause += ' f.state = $P{state} AND '
-        }
-
-        def filters = [
-            whereclause + 'f.tdno LIKE $P{searchtext}',
-            whereclause + 'f.owner_name LIKE $P{searchtext}',
-            whereclause + 'rpu.fullpin LIKE $P{searchtext}',
-            whereclause + 'rp.surveyno LIKE $P{searchtext}',
-            whereclause + 'rp.cadastrallotno LIKE $P{searchtext}',
-            whereclause + 'rp.blockno = $P{blockno}',
-            whereclause + 'b.name = $P{blockno}',
-        ]
-        return util.getListFromQuery( 'faas:getList' , filters, params, 'f.objid' )
-        */
-    }
-
-    def getListAdvance(params){
         def whereclause = ''
         if (params.state ) {
             if (whereclause) whereclause += ' AND '

@@ -37,10 +37,12 @@ public class RealPropertyController
     boolean autoEdit = false;
     boolean autoCreate = false;
     boolean autoClose = false;
+    boolean showClose = true;
     
     
     def oncreate; //handler 
     def onupdate; //handler 
+    def onedit;   //handler
     
     def ryList;
     
@@ -64,6 +66,8 @@ public class RealPropertyController
     public boolean getShowDeleteAction(){
         if ( entity.state.toUpperCase().matches('CURRENT|CANCELLED'))
             return false;
+        if ( ! entity.state.toUpperCase().matches('FORTAXMAPPING'))
+            return false;
         if (mode != MODE_READ)
             return false;
         return allowDelete;
@@ -72,6 +76,8 @@ public class RealPropertyController
         
     public boolean getShowApproveAction(){
         if ( entity.state.toUpperCase().matches('CURRENT|CANCELLED'))
+            return false;
+        if ( ! entity.state.toUpperCase().matches('FORTAXMAPPING'))
             return false;
         if (mode != MODE_READ)
             return false;
@@ -94,6 +100,10 @@ public class RealPropertyController
             entity.iparcel = null;
             allowEditPinInfo = true;
         }
+        
+        if (entity.isection == null || entity.iparcel == null)
+            allowEditSectionParcel = true;
+        
         entity.ry = ryList.find{it == entity.ry}
         mode = MODE_CREATE;
     }
@@ -101,6 +111,9 @@ public class RealPropertyController
     void open(){
         ryList = svc.getRyList();
         entity.putAll(svc.open(entity));
+        
+        if (entity.isection == null || entity.iparcel == null)
+            allowEditSectionParcel = true;
         
         mode = MODE_READ;
         if (showEditAction && autoEdit){
@@ -131,6 +144,7 @@ public class RealPropertyController
     void edit(){
         oldEntity = MapBeanUtils.copy(entity);
         mode = MODE_EDIT;
+        if (onedit) onedit(entity);
     }
     
     def cancelEdit(){
@@ -139,6 +153,7 @@ public class RealPropertyController
             oldEntity = null;
             mode = MODE_READ;
         }
+        if (onupdate) onupdate(entity);
         if (autoClose)
             return close();
     }

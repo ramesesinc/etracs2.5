@@ -5,11 +5,8 @@
             role="APPRAISER" permission="annotation.create"/>
         
         <invoker type="faasannotation:open" action="open" caption="FAAS Annotation" target="window"  />
-         
-         <invoker folderid="/menu/txn/rpt/faas" action="init"  caption="Annotation" index="21" 
-            role="APPRAISER" permission="annotation.create"/>
             
-        <invoker folderid="/explorer/txn/rpt/txn" action="init"  caption="Annotation" index="21" 
+        <invoker folderid="/explorer/txn/rpt/online" action="init"  caption="Annotation" index="21" 
             role="APPRAISER" permission="annotation.create"/>
          
          <invoker type="quick_launcher" code="FA01" action="init"  caption="Annotation" index="21" 

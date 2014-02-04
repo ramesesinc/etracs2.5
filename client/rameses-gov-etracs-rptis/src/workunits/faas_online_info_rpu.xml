@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workunit>
+    <invokers>
+        <invoker type="faasonline:info" action="init" caption="RPU Assessment" index="10"/>
+   </invokers>
+   <code>
+
+<![CDATA[
+        
+import com.rameses.rcp.annotations.* 
+import com.rameses.rcp.common.* 
+import com.rameses.osiris2.client.*
+import com.rameses.osiris2.common.*
+import com.rameses.gov.etracs.rpt.common.RPTUtil;
+
+class FaasInfoRpuController
+{
+    @Binding
+    def binding;
+    
+    @Service('RPUService')
+    def rpuSvc;
+    
+    @Caller
+    def caller;
+    
+    def svc;
+    
+    def entity;
+    def rpu;
+    def opener;
+    
+    
+    String title = 'RPU Assessment Detail';
+    
+    void init(){
+        if (entity.rpuid)
+            opener = open();
+        else
+            opener = create();
+    }
+    
+    
+    void refresh(){
+    }
+    
+    
+    def onupdateRpu = {
+        entity.rpuid = it.objid;
+        svc.updateFaas(entity);
+        caller.clearMessages('rpu');
+    }
+    
+    def oneditRpu = {
+        caller.addMessage([type:'rpu', msg:'RPU Assessment is still in editing mode.']);
+    }
+    
+    def create(){
+        return InvokerUtil.lookupOpener('landrpu:create', [
+            rpu         : createLandRpu(),
+            lguid       : entity.lguid,
+            onupdate    : onupdateRpu,
+            onedit      : oneditRpu,
+            showClose   : false,
+        ])
+    }
+    
+    def createLandRpu(){
+        return rpuSvc.initRpu([
+            ry              : entity.rp.ry,
+            suffix          : 0, 
+            fullpin         : entity.rp.pin,
+            realpropertyid  : entity.rp.objid,
+        ])
+    }
+    
+    
+    def open(){
+        rpu = [objid:entity.rpuid];
+        return InvokerUtil.lookupOpener('landrpu:open', [
+            rpu         : rpu,
+            lguid       : entity.lguid,
+            onupdate    : onupdateRpu,
+            onedit      : oneditRpu,
+            allowCreate : false,
+            showClose   : false,
+        ])
+    }
+}
+       
+]]>
+
+   </code>
+    
+    <pages> 
+        <page template="com.rameses.gov.etracs.rpt.faas.ui.FAASOnlineInfoOpenerPage"/>
+    </pages>
+</workunit>
+
+

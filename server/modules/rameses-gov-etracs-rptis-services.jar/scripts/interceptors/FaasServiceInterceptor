@@ -89,10 +89,12 @@ class FaasServiceInterceptor
 	@Before(pattern="FAASService.initTransaction")  
 	public void interceptInitFaasTransaction( evt ) {
 		def info = evt.args[0]
-		ledgerSvc.checkLedgerApprovedState(info.faas.objid)
-		if (info.txntype.objid != 'GR') {
-			if ( util.toBoolean(var.allow_faas_transaction_with_balance, false) == false ){
-				ledgerSvc.checkLedgerBalance(info.faas.objid)
+		if (info.faas && info.faas.objid){
+			ledgerSvc.checkLedgerApprovedState(info.faas.objid)
+			if (info.txntype.objid != 'GR') {
+				if ( util.toBoolean(var.allow_faas_transaction_with_balance, false) == false ){
+					ledgerSvc.checkLedgerBalance(info.faas.objid)
+				}
 			}
 		}
 	}
