@@ -175,7 +175,7 @@ create table rpttask
 )
 go
 
-create index ix_rpttask_refid on rpttask(refid)
+create index ix_rpttask_objid on rpttask(objid)
 go
 
 create index ix_rpttask_createdbyid on rpttask(createdbyid)
