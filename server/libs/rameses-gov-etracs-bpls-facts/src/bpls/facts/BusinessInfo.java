@@ -15,6 +15,7 @@ package bpls.facts;
  */
 public class BusinessInfo {
     
+    private BPApplication application;
     private String objid;
     private LOB	lob;
     private String name;
@@ -124,6 +125,14 @@ public class BusinessInfo {
 
     public void setQtr(int qtr) {
         this.qtr = qtr;
+    }
+
+    public BPApplication getApplication() {
+        return application;
+    }
+
+    public void setApplication(BPApplication application) {
+        this.application = application;
     }
     
 }

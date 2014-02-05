@@ -15,6 +15,7 @@ package bpls.facts;
  */
 public class LOB {
     
+    private BPApplication application;
     private String objid; 			
     private String lobid;			
     private String name;
@@ -72,6 +73,14 @@ public class LOB {
 
     public void setAssessmenttype(String assessmenttype) {
         this.assessmenttype = assessmenttype;
+    }
+
+    public BPApplication getApplication() {
+        return application;
+    }
+
+    public void setApplication(BPApplication application) {
+        this.application = application;
     }
     
 }

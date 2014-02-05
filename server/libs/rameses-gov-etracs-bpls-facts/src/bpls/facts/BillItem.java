@@ -17,7 +17,7 @@ import java.util.Date;
  */
 public class BillItem {
     
-    
+    private BPApplication application;
     private String objid;
     private String acctid;
     private BPLedger ledger;
@@ -211,6 +211,14 @@ public class BillItem {
 
     public void setAmtdue(double amtdue) {
         this.amtdue = amtdue;
+    }
+
+    public BPApplication getApplication() {
+        return application;
+    }
+
+    public void setApplication(BPApplication application) {
+        this.application = application;
     }
     
 }

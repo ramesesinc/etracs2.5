@@ -15,6 +15,7 @@ package bpls.facts;
  */
 public class BPApplication {
     
+    private String objid;
     private String orgtype;
     private String officetype;
     private String apptype;
@@ -72,6 +73,14 @@ public class BPApplication {
 
     public void setAppyear(int appyear) {
         this.appyear = appyear;
+    }
+
+    public String getObjid() {
+        return objid;
+    }
+
+    public void setObjid(String objid) {
+        this.objid = objid;
     }
     
     

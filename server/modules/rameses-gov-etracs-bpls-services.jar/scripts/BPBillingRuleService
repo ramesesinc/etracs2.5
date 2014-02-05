@@ -131,6 +131,54 @@ public class BPBillingRuleService  {
 	* payoption (has type:full or qtr, qtr: if qtr )
 	* 
 	**********************************************/
+	private def buildFacts(def list) {
+		def factMap = [:];
+		list.each {
+			def app = it.application;
+			def fapp = factMap[app.objid];
+			if( !fapp ) {
+				fapp = new BPApplication();
+				fapp.objid = app.objid;
+				fapp.appyear = app.appyear;
+				factMap.put( app.objid, fapp );
+			}
+			def lob = it.lob;
+			def flob = null;
+			if( lob?.objid ) {
+				flob = factMap[lob.objid];
+				if(!flob) {
+					flob = new LOB();
+					flob.application = fapp;
+					flob.objid = lob.lobid;
+					flob.lobid = lob.lobid;
+					flob.assessmenttype = lob.assessmenttype;
+					flob.name = lob.name;
+					flob.classification = lob.classification?.objid;
+					factMap.put( lob.objid, flob);
+				}
+			}
+			def tf = createBillItem( it, app.appyear, [] );
+			tf.lob = flob;
+			tf.application = fapp;
+			tf.objid = it.objid;
+			if( tf.amtdue > 0 ) {
+				factMap.put(it.objid, tf);
+			}
+		}	
+		return factMap.values();
+	}
+
+
+	/********************************************************
+	* parameter format:
+	* list: objid, account : [title, taxfeetype, objid, department, code, interest:[objid,title,code],
+           surcharge:[objid,title,code]],
+		   lob : [objid, lobid, name, classification: [objid,name], assessmenttype]
+		   application: [objid, appyear]
+		   taxfeetype,paymentmode,assessedvalue,amount,amtpaid  
+	* 	   
+	*********************************************************/
+
 	@ProxyMethod
 	public def getBillItems(def o, def _billdate, def payoption) throws Exception {
 		if(!_billdate)
@@ -143,7 +191,6 @@ public class BPBillingRuleService  {
 			throw new Exception("Please provide a qtr in payoption qtr")
 		}	
 		
-
 		if(!o.application)
 			throw new Exception("Please specify application");
 		if(!o.application.appyear)
@@ -154,9 +201,13 @@ public class BPBillingRuleService  {
 		//this will be used in excess payment. do not remove.
 		def billdt = dateSvc.parse("yyyy-MM-dd", _billdate );
 
-		def facts = [];
 		def app = o.application;
-		
+
+		def factList = buildFacts( o.list );
+		def facts = [];
+		facts.addAll( factList );
+
+		/*
 		appFactBuilder.buildApplication( app, facts );
 		//build the billitems
 		app.taxfees.each {
@@ -165,7 +216,7 @@ public class BPBillingRuleService  {
 				facts << tf;
 			}
 		}		
-		
+		*/
 		def billdate = new BillDate( billdt );
 		facts << new EffectiveDate( billdt );
 		facts << new CurrentDate( dateSvc.serverDate );
