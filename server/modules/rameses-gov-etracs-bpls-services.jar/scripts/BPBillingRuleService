@@ -127,22 +127,32 @@ public class BPBillingRuleService  {
 
 	/**********************************************
 	* The parameter here is the application
+	* billdate is the billing date
+	* payoption (has type:full or qtr, qtr: if qtr )
+	* 
 	**********************************************/
 	@ProxyMethod
-	public def getBillItems(def o) throws Exception {
-		if(!o.billdate)
+	public def getBillItems(def o, def _billdate, def payoption) throws Exception {
+		if(!_billdate)
 			throw new Exception("Please specify billdate");
+		if(!payoption)
+			throw new Exception("Please specify payoption");
+		if( !payoption.type )	
+			throw new Exception("Please provide a payoption type")
+		if( payoption.type == 'FULLQTR' && payoption.qtr==null ) {
+			throw new Exception("Please provide a qtr in payoption qtr")
+		}	
+		
+
 		if(!o.application)
 			throw new Exception("Please specify application");
 		if(!o.application.appyear)
 			throw new Exception("Please provide an app year in application");
-		if(!o.payoption)
-			throw new Exception("Please specify payoption");
 		if(!o.application.taxfees || !o.application.taxfees.findAll{ (it.amount-it.amtpaid) > 0 }  )
 			throw new Exception("No receivables found for this application");
 
 		//this will be used in excess payment. do not remove.
-		def billdt = dateSvc.parse("yyyy-MM-dd", o.billdate );
+		def billdt = dateSvc.parse("yyyy-MM-dd", _billdate );
 
 		def facts = [];
 		def app = o.application;
@@ -157,9 +167,6 @@ public class BPBillingRuleService  {
 		}		
 		
 		def billdate = new BillDate( billdt );
-		if( o.partialpmt > 0 ) {
-			facts << new Payment( o.partialpmt );	
-		}
 		facts << new EffectiveDate( billdt );
 		facts << new CurrentDate( dateSvc.serverDate );
 		facts << billdate;
@@ -167,7 +174,12 @@ public class BPBillingRuleService  {
 		facts << createQtrDeadline( app.appyear, 2 );
 		facts << createQtrDeadline( app.appyear, 3 );
 		facts << createQtrDeadline( app.appyear, 4 );
-		facts << new PayOption( o.payoption, ((o.qtr==null)?0:o.qtr) );
+
+		//payoption....
+		if( payoption.partialpmt > 0 ) {
+			facts << new Payment( payoption.partialpmt );	
+		}
+		facts << new PayOption(payoption.type, ((payoption.qtr==null)?0:payoption.qtr) );
 		
 		def request = [items: [], facts: facts ];
 		def actions = buildActions( request );
