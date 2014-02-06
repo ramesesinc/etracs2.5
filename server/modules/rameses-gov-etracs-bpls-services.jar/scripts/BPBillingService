@@ -26,7 +26,7 @@ public class BPBillingReportService  {
 
 	@ProxyMethod
 	public def getReport(def o) throws Exception {
-
+		
 		/**
 		* To calculate next due date do the following:
 		* For new business, next due date would mean January 1 of next year. 
@@ -36,22 +36,25 @@ public class BPBillingReportService  {
 		*    If date is Mar 25 next due date would be April 1
 		*    If date is April 2 next due date would be April 20. 
 		*/
-		def m = [:];
-		m.payoption = 'FULLYEAR';
-		m.billdate = dateSvc.serverDate;
-		m.application = o;
-		m.application.taxfees = bpLedger.getUnpaidReceivables([businessid:m.application.businessid]);
-
-
-		def z = billingSvc.getBillItems(m);	
+		
+		def payoption = [type: 'FULLYEAR'];
+		def billdate = dateSvc.serverDate;
+		def list = bpLedger.getUnpaidForBilling([businessid: o.objid]);
+		list.each {
+			if(it.lob?.objid && !it.lob?.assessmenttype)
+				throw new Exception("Please rebuild the ledger. There is no line of business type");
+		}
+		
+		def z = billingSvc.getBillItems(list, billdate, payoption);	
+		//check if there is a line w/o assessment type
+		
 		def result = [:];	
-
 		result.billitems = z.items;
 		def barcode = "51005:"+o.bin;
 		def  data = [
            ownername: o.owner.name, 
            owneraddress: o.owner.address, 
-           billdate: m.billdate, 
+           billdate: billdate, 
            expirydate:z.validUntil,
            barcode: barcode
         ];

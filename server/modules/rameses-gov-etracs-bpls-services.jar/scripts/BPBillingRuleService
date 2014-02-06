@@ -35,61 +35,6 @@ public class BPBillingRuleService  {
 
 	String RULESET = "bpbilling";
 
-	
-	//check if there is expiry date specified, if not use the default date of 21
-	private def createQtrDeadline( y, q ) { 
-		def bd = dateSvc.getBeginningQtrDate( q, y, 1 );
-		def qtrDate = dateSvc.parseDate( bd, null );
-		def ed = expiryDate.findExpiryDate([year:y, qtr: q]);
-		if(ed) {
-			qtrDate.deadline = ed.expirydate;
-		}	
-		else {
-			int mon = qtrDate.month;
-			def smon = "-"+mon+"-";
-			if( mon < 10) smon = "-0"+mon+"-"; 
-			qtrDate.deadline = dateSvc.parseDate(y+smon+"20", null).date;
-		}
-		def qd = new QtrDeadline();
-		BeanUtils.copyProperties( qd, qtrDate );
-		return qd;
-	}
-
-
-
-	private def createBillItem( def x, def yr, def facts ) {
-		if(x.amtpaid==null) x.amtpaid = 0;
-		def tf = new BillItem();
-		tf.acctid = x.account.objid;
-		tf.type = x.account.taxfeetype;
-		tf.amount = numberSvc.round(x.amount);
-		tf.amtpaid = numberSvc.round(x.amtpaid);
-		tf.amtdue = numberSvc.round(x.amount - x.amtpaid);
-		tf.total = tf.amtdue;
-		tf.account = x.account;
-
-		if(x.lob) {
-			//find the lob in the facts
-			tf.lob = facts.find{ z-> (z instanceof bpls.facts.LOB) && z.lobid==x.lob.objid };
-		}
-
-		//x.objid is the receivable id.
-		tf.receivableid = x.objid;
-		tf.qtr = 0;
-		if(yr) tf.year = yr;
-		
-		if(tf.type == "TAX") {
-			tf.paypriority = 3;
-		}
-		else if(tf.type == "REGFEE") {
-			tf.paypriority = 2;
-		}
-		else {
-			tf.paypriority = 1;
-		}		
-		return tf;
-	}
-
 	def buildActions(def req) {
 		def addItems = { tf, request ->
 			request.items << [
@@ -114,6 +59,7 @@ public class BPBillingRuleService  {
 			];	
 		}	
 		def actions = new RuleAction();
+		actions.addCommand( "set_qtr_deadline", new SetQtrDeadline( request:req, dateSvc:dateSvc, expiryDate:expiryDate ));
 		actions.addCommand( "split_by_qtr", new SplitByQtr( request:req, NS:numberSvc ));
 		actions.addCommand( "calc_surcharge", new CalcSurcharge( request:req, NS:numberSvc ));
 		actions.addCommand( "calc_interest",  new CalcInterest( request:req, NS:numberSvc ));
@@ -137,30 +83,59 @@ public class BPBillingRuleService  {
 			def app = it.application;
 			def fapp = factMap[app.objid];
 			if( !fapp ) {
+				
 				fapp = new BPApplication();
 				fapp.objid = app.objid;
 				fapp.appyear = app.appyear;
+				fapp.apptype = app.apptype;
 				factMap.put( app.objid, fapp );
+				println "load app " + fapp;
+				println fapp.apptype;
 			}
 			def lob = it.lob;
 			def flob = null;
+			
 			if( lob?.objid ) {
 				flob = factMap[lob.objid];
 				if(!flob) {
 					flob = new LOB();
 					flob.application = fapp;
-					flob.objid = lob.lobid;
+					flob.objid = lob.objid;
 					flob.lobid = lob.lobid;
 					flob.assessmenttype = lob.assessmenttype;
 					flob.name = lob.name;
 					flob.classification = lob.classification?.objid;
 					factMap.put( lob.objid, flob);
+					println "load lob " + flob;
+					println flob.assessmenttype;
 				}
 			}
-			def tf = createBillItem( it, app.appyear, [] );
+			def tf = new BillItem();
+			if(it.amtpaid==null) it.amtpaid = 0;
+			tf.acctid = it.account.objid;
+			tf.amount = numberSvc.round(it.amount);
+			tf.amtpaid = numberSvc.round(it.amtpaid);
+			tf.amtdue = numberSvc.round(it.amount - it.amtpaid);
+			tf.total = tf.amtdue;
+			tf.account = it.account;
 			tf.lob = flob;
 			tf.application = fapp;
 			tf.objid = it.objid;
+			//x.objid is the receivable id.
+			tf.receivableid = it.objid;
+			tf.qtr = 0;
+			tf.year = app.appyear;
+			tf.type = it.account.taxfeetype;
+
+			if(tf.type == "TAX") {
+				tf.paypriority = 3;
+			}
+			else if(tf.type == "REGFEE") {
+				tf.paypriority = 2;
+			}
+			else {
+				tf.paypriority = 1;
+			}	
 			if( tf.amtdue > 0 ) {
 				factMap.put(it.objid, tf);
 			}
@@ -178,54 +153,30 @@ public class BPBillingRuleService  {
 		   taxfeetype,paymentmode,assessedvalue,amount,amtpaid  
 	* 	   
 	*********************************************************/
-
 	@ProxyMethod
-	public def getBillItems(def o, def _billdate, def payoption) throws Exception {
+	public def getBillItems(def list, def _billdate, def payoption) throws Exception {
 		if(!_billdate)
 			throw new Exception("Please specify billdate");
 		if(!payoption)
 			throw new Exception("Please specify payoption");
 		if( !payoption.type )	
 			throw new Exception("Please provide a payoption type")
-		if( payoption.type == 'FULLQTR' && payoption.qtr==null ) {
+		if( payoption.type == 'FULLQTR' && !payoption.qtr ) {
 			throw new Exception("Please provide a qtr in payoption qtr")
 		}	
 		
-		if(!o.application)
-			throw new Exception("Please specify application");
-		if(!o.application.appyear)
-			throw new Exception("Please provide an app year in application");
-		if(!o.application.taxfees || !o.application.taxfees.findAll{ (it.amount-it.amtpaid) > 0 }  )
-			throw new Exception("No receivables found for this application");
-
 		//this will be used in excess payment. do not remove.
 		def billdt = dateSvc.parse("yyyy-MM-dd", _billdate );
 
-		def app = o.application;
-
-		def factList = buildFacts( o.list );
+		def factList = buildFacts( list );
 		def facts = [];
 		facts.addAll( factList );
 
-		/*
-		appFactBuilder.buildApplication( app, facts );
-		//build the billitems
-		app.taxfees.each {
-			def tf = createBillItem( it, app.appyear, facts );
-			if( tf.amtdue > 0 ) {
-				facts << tf;
-			}
-		}		
-		*/
 		def billdate = new BillDate( billdt );
 		facts << new EffectiveDate( billdt );
 		facts << new CurrentDate( dateSvc.serverDate );
 		facts << billdate;
-		facts << createQtrDeadline( app.appyear, 1 );
-		facts << createQtrDeadline( app.appyear, 2 );
-		facts << createQtrDeadline( app.appyear, 3 );
-		facts << createQtrDeadline( app.appyear, 4 );
-
+		
 		//payoption....
 		if( payoption.partialpmt > 0 ) {
 			facts << new Payment( payoption.partialpmt );	
@@ -285,6 +236,33 @@ public class BPBillingRuleService  {
 /********************************************************
 * specify which taxfees will be penalized in qtr basis
 *********************************************************/
+public class SetQtrDeadline implements RuleActionHandler {
+	def request;
+	def dateSvc;
+	def expiryDate;
+
+	public void execute(def params, def drools) {
+		def entry = params.entry;
+		def q = entry.qtr;
+		def y = entry.year;
+		def bd = dateSvc.getBeginningQtrDate( q, y, 1 );
+		def qtrDate = dateSvc.parseDate( bd, null );
+		def ed = expiryDate.findExpiryDate([year:y, qtr: q]);
+		if(ed) {
+			entry.deadline = ed.expirydate;
+		}	
+		else {
+			int mon = qtrDate.month;
+			def smon = "-"+mon+"-";
+			if( mon < 10) smon = "-0"+mon+"-"; 
+			entry.deadline = dateSvc.parseDate(y+smon+"20", null).date;
+		}
+		//add to request facts. very impt. otherwise this cannot be seen in other rule groups.
+		request.facts << entry;
+	}
+}
+
+
 public class SplitByQtr implements RuleActionHandler {
 	def request;
 	def NS;
@@ -305,6 +283,8 @@ public class SplitByQtr implements RuleActionHandler {
 				continue;
 			}	
 			def _tf = new BillItem();
+			_tf.objid = tf.objid + "_" + i;
+			_tf.application = tf.application;
 			_tf.acctid = tf.acctid;
 			_tf.type = tf.type;
 			_tf.amount = amt;
@@ -403,6 +383,7 @@ public class CollectExcess implements RuleActionHandler {
 
 public class PrintTest implements RuleActionHandler {
 	public void execute(def params, def drools) {
+		println "enter print ";
 		def msg = params.message;
 		println "-------------- Print Message ------------------";
 		println msg.stringValue; 

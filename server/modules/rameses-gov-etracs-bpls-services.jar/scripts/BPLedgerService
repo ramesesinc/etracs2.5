@@ -42,4 +42,11 @@ class BPLedgerService {
 		return em.getPayments(o);	
 	}
 
+	@ProxyMethod
+	public def rebuildLedger( o ) {
+		//this rebuilds the lines of business, app infos and assessment infos
+		
+		return em.getReceivables(o);	
+	}
+
 }

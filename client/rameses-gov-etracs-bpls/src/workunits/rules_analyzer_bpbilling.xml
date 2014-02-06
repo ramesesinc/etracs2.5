@@ -62,12 +62,12 @@
                         if(z.lob?.objid) {
                             m.lob = entity.lobs.find{ z.lob.objid == it.lobid }
 			}
-                        m.application = [objid:'APP', appyear:entity.appyear];
+                        m.application = [objid:'APP', appyear:entity.appyear, apptype: entity.apptype];
                         list << m;
                     }
                     query.list = list;
                     
-                    result = billSvc.getBillItems( query, query.billdate, poption );
+                    result = billSvc.getBillItems( query.list, query.billdate, poption );
                     
                     result.items.each {
                         it.balancedue = it.total;

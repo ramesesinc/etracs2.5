@@ -7,6 +7,33 @@ import java.math.*;
 
 global RuleAction action;
 
+rule "assert-qtr-deadlines"
+	agenda-group "initial"
+	salience -20
+	no-loop
+	when
+		BPApplication($year: appyear)
+	then
+		insert( new QtrDeadline($year, 1));
+		insert( new QtrDeadline($year, 2));
+		insert( new QtrDeadline($year, 3));
+		insert( new QtrDeadline($year, 4));
+		drools.setFocus( "dd" );
+end
+
+rule "set-qtr-deadline"
+	agenda-group "dd"
+	salience -30
+	no-loop
+	when
+		$q: QtrDeadline()
+	then	
+		Map map = new HashMap();
+		map.put("entry", $q);
+		action.execute( "set_qtr_deadline", map, drools );
+		update($q);
+end
+
 rule "set-deadline-newbusiness"
 	agenda-group "initial"
 	salience -40
@@ -28,7 +55,7 @@ rule "set-deadline"
 	no-loop
 	when
 		BillDate( $date: date )
-		QtrDeadline( $qtr:qtr, $deadline: deadline)
+		QtrDeadline( $qtr:qtr, $deadline: deadline!=null)
 		TF: BillItem( qtr == $qtr )
 	then
 		TF.setDeadline( $deadline );
