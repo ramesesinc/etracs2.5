@@ -110,7 +110,7 @@
                 }
                 
                 if (callerListModel) callerListModel.refreshSelectedItem(); 
-                if (calculateHandler) calculateHandler(); 
+                if (calculateHandler) calculateHandler( entity   ); 
                 
                 return "_close"; 
             }
