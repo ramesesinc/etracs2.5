@@ -129,7 +129,7 @@ public class BankDepositCaptureInitPage extends javax.swing.JPanel {
         xButton1.setText("Select All");
 
         xButton2.setMnemonic('d');
-        xButton2.setName("Deselect All");
+        xButton2.setName("deselectAll");
         xButton2.setText("Deselect All");
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 1, 14));

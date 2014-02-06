@@ -114,10 +114,10 @@ public class BatchCaptureController  {
             def m  = [:];
             m.objid = "BCCE" + new java.rmi.server.UID();
 	    m.parentid = entity.objid
-            m.receiptno =  formatSeries(entity.currentseries);
+            m.series = getNextSeries();
+            m.receiptno =  formatSeries(m.series);
             m.receiptdate = entity.defaultreceiptdate;
             m.collectiontype = entity.collectiontype
-            m.series = getNextSeries();
             m._filetype = "batchcapture:misc"
             m.amount = 0.0; 
             m.totalcash = 0.0
@@ -142,17 +142,21 @@ public class BatchCaptureController  {
         getOpenerParams: {o-> 
             return [
                 callerListModel: listModel, 
-                calculateHandler: { calculate(); } 
+                calculateHandler: {  en ->              
+                    calculate(); 
+                    svc.addUpdateItem(entity, en) 
+                } 
             ]; 
         },
         onAddItem: { o->
             validateItem(o) 
-            
             prevEntity = o.clone();
-            moveNext();
 
-            svc.addUpdateItem(o)
+            calculate(); 
+            svc.addUpdateItem(entity, o)
             entity.batchitems << o 
+            
+            moveNext();
         },
         
         isColumnEditable:{item, colname-> 
@@ -165,16 +169,14 @@ public class BatchCaptureController  {
             if (colname == 'amount') {
                 item.items[0].amount = item[colname]; 
                 item.totalcash = item.amount
-                item.totalnoncash = 0.0 
+                item.totalnoncash = 0.0
+                calculate()
+                svc.addUpdateItem(entity, item) 
             }  
             if( colname == 'voided') {
-                svc.addUpdateItem(item)
                 calculate()
+                svc.addUpdateItem(entity, item)
             }
-        },
-        
-        onCommitItem : { o-> 
-            calculate() 
         },
 
         onRemoveItem: { o ->
@@ -183,7 +185,7 @@ public class BatchCaptureController  {
 
             svc.removeItem(o)    
             entity.currentseries -= 1;   
-            entity.batchitems.remove(o);
+            entity.batchitems.remove(o);\
             return true;
         }
         
@@ -248,6 +250,7 @@ public class BatchCaptureController  {
     
     void submitForPosting() {
         if (MsgBox.confirm('Submit captured receipts for posting?')){
+            calculate() 
             entity = svc.submitForPosting( entity);
             listModel.reload();
         }
