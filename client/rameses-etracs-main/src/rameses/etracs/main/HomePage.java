@@ -26,13 +26,12 @@ public class HomePage extends javax.swing.JPanel {
      */
     // <editor-fold defaultstate="collapsed" desc=" Generated Code ">//GEN-BEGIN:initComponents
     private void initComponents() {
-        xActionBar1 = new com.rameses.rcp.control.XActionBar();
+        xTileView1 = new com.rameses.rcp.control.XTileView();
 
         setBackground(new java.awt.Color(255, 255, 255));
-        xActionBar1.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
-        xActionBar1.setName("formActions");
-        xActionBar1.setOpaque(false);
-        xActionBar1.setOrientation(com.rameses.rcp.constant.UIConstants.XFLOW);
+        xTileView1.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        xTileView1.setName("model");
+        xTileView1.setOpaque(false);
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(this);
         this.setLayout(layout);
@@ -40,21 +39,21 @@ public class HomePage extends javax.swing.JPanel {
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(layout.createSequentialGroup()
                 .addContainerGap()
-                .add(xActionBar1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 604, Short.MAX_VALUE)
+                .add(xTileView1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 604, Short.MAX_VALUE)
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(layout.createSequentialGroup()
                 .addContainerGap()
-                .add(xActionBar1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 344, Short.MAX_VALUE)
+                .add(xTileView1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 344, Short.MAX_VALUE)
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
     
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private com.rameses.rcp.control.XActionBar xActionBar1;
+    private com.rameses.rcp.control.XTileView xTileView1;
     // End of variables declaration//GEN-END:variables
     
 }

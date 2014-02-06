@@ -2,26 +2,28 @@ package rameses.etracs.main;
 
 import com.rameses.rcp.common.*;
 import com.rameses.rcp.annotations.*;
-import com.rameses.rcp.framework.*;
-import com.rameses.util.*;
-import com.rameses.osiris2.*;
 import com.rameses.osiris2.client.*;
 
-public class HomeControllerImpl {
-
-    def formActions = [];
+public class HomeControllerImpl 
+{
+    def model;
+    def items;
     
-    void init(){
-        
-        def actionProvider = ClientContext.currentContext.actionProvider;
-        formActions = actionProvider.lookupActions('home.action');
-        formActions.each{ 
+    void init() { 
+        items = [];
+        items.addAll(Inv.lookupActions('home.action'));
+        items.each { 
             if (!it.icon) it.icon = 'images/home-icon.png';
-
-            def target = it.properties.target+'';
-            if (!target.matches('window|popup|process|_window|_popup|_process')) 
-            	it.properties.target = 'window'; 
-        }
-    }
-
+        } 
+                
+        model = [
+            fetchList: {o-> 
+                return items; 
+            }, 
+            
+            onOpenItem: {o->             
+                o.execute();
+            }
+        ] as TileViewModel
+    } 
 }
