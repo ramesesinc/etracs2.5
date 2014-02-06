@@ -19,7 +19,6 @@ public class BatchCaptureController  {
     
     def mode;
     def entity;
-    def batchItems = [];
     def selectedItem;
 
     def formTypes;
@@ -75,17 +74,7 @@ public class BatchCaptureController  {
                     lookupexpression = entity.sstartseries + " - " +  entity.sendseries  
                 }]);
     }    
-
-    def getLookupPayer() {
-        return InvokerUtil.lookupOpener("entity:lookup", [
-            onselect: { o->
-                selectedItem.payer = o;
-                selectedItem.paidby = o.name;
-                selectedItem.paidbyaddress = o.address;
-            }
-        ]);
-    }
-            
+        
     def getLookupAccount() {
         return InvokerUtil.lookupOpener("cashreceiptitem:lookup", [ 
             "query.collectorid": entity.collector.objid,
@@ -102,7 +91,7 @@ public class BatchCaptureController  {
         entity.totalcash = 0.0
         entity.totalnoncash = 0.0
         entity.totalamount = 0.0
-        batchItems.each {
+        entity.batchitems.each {
             if( it.voided == 0) {
                 entity.totalcash += it.totalcash
                 entity.totalnoncash += it.totalnoncash
@@ -113,18 +102,22 @@ public class BatchCaptureController  {
     }
      
     def prevEntity = [:]
+
     def listModel = [
         fetchList: { o->
-            return batchItems;
+            return entity.batchitems;
         },
         createItem: {
             if( entity.currentseries > entity.endseries)
                     throw new Exception("Current Series already exceeds the end series.  ");
+
             def m  = [:];
-            m.receiptno =  formatSeries(entity.currentseries);
+            m.objid = "BCCE" + new java.rmi.server.UID();
+	    m.parentid = entity.objid
+            m.series = getNextSeries();
+            m.receiptno =  formatSeries(m.series);
             m.receiptdate = entity.defaultreceiptdate;
             m.collectiontype = entity.collectiontype
-            m.series = getNextSeries();
             m._filetype = "batchcapture:misc"
             m.amount = 0.0; 
             m.totalcash = 0.0
@@ -134,7 +127,7 @@ public class BatchCaptureController  {
             m.voided = 0
             if( copyprevinfo ) {
                 if(prevEntity ) {
-                    if( prevEntity.items && prevEntity.item.size() > 0 ) {
+                    if( prevEntity.items && prevEntity.items.size() > 0 ) {
                         def item =  prevEntity.items[0].clone();
                         item.amount = 0.0 
                         m.items = [ item ]
@@ -149,17 +142,21 @@ public class BatchCaptureController  {
         getOpenerParams: {o-> 
             return [
                 callerListModel: listModel, 
-                calculateHandler: { calculate(); } 
+                calculateHandler: {  en ->              
+                    calculate(); 
+                    svc.addUpdateItem(entity, en) 
+                } 
             ]; 
         },
         onAddItem: { o->
+            validateItem(o) 
             prevEntity = o.clone();
-            batchItems << o; 
-            moveNext();
-        },
 
-        onCommitItem:{o-> 
-            calculate();
+            calculate(); 
+            svc.addUpdateItem(entity, o)
+            entity.batchitems << o 
+            
+            moveNext();
         },
         
         isColumnEditable:{item, colname-> 
@@ -172,25 +169,36 @@ public class BatchCaptureController  {
             if (colname == 'amount') {
                 item.items[0].amount = item[colname]; 
                 item.totalcash = item.amount
-                item.totalnoncash = 0.0 
+                item.totalnoncash = 0.0
+                calculate()
+                svc.addUpdateItem(entity, item) 
             }  
-            if(colname == 'voided') { 
-                calculate();
+            if( colname == 'voided') {
+                calculate()
+                svc.addUpdateItem(entity, item)
             }
-            
         },
+
         onRemoveItem: { o ->
             if(! MsgBox.confirm('Remove item? ')) return false;
-            if( batchItems.indexOf(o) != (batchItems.size()-1)) return false;
+            if( entity.batchitems.indexOf(o) != (entity.batchitems.size()-1)) return false;
 
-            batchItems.remove(o);
-            calculate()
-            entity.currentseries -= 1
+            svc.removeItem(o)    
+            entity.currentseries -= 1;   
+            entity.batchitems.remove(o);\
             return true;
         }
         
     ] as EditorListModel;
-
+    
+    void validateItem( o ) {
+        if(! o.receiptdate) throw new Exception("Rct Date is required.   ")
+        if(! o.paidby) throw new Exception("Paid By is required.   ")
+        if(! o.paidbyaddress) throw new Exception("Address is required.   ")
+        if(! o.acctinfo) throw new Exception("Account is required.   ")
+        if(o.amount == null) throw new Exception("Amount is required.   ")
+        if(o.amount < 0.0 ) throw new Exception("Amount must not less than zero.   ")
+    }
 
     public String formatSeries( series ) {
         def p = (entity.prefix)?entity.prefix:'';
@@ -219,36 +227,22 @@ public class BatchCaptureController  {
 
     def open() {
         entity = svc.open(entity)
-        batchItems = entity.batchitems
         entity.sstartseries = formatSeries(entity.startseries);
         entity.sendseries = formatSeries(entity.endseries);
-        mode = 'saved'
+        mode = 'create'
         return 'main';
     }
     
     def next() {
-        entity = svc.initBatchCapture(entity);
-        entity.totalamount = 0.0
-        copyprevinfo = false
+        entity = svc.initBatchCapture(entity); 
+        copyprevinfo = false 
         mode='create'
-        return 'main';
+        return 'main'; 
     }
 
-    void save() {
-        if(!MsgBox.confirm("Save captured collections? ")) return;
-        calculate()
-        entity.batchitems = batchItems
-        entity = svc.create( entity )
-        mode = 'saved'
-    }
-
-    void edit() {
-        mode = 'create'
-    }
-    
     def delete(){
         if (MsgBox.confirm('Delete record?')){
-            svc.removeEntity([objid:entity.objid]);
+            svc.removeBatchCapture([objid:entity.objid]);
             return '_close';
         }
         return null;
@@ -256,26 +250,20 @@ public class BatchCaptureController  {
     
     void submitForPosting() {
         if (MsgBox.confirm('Submit captured receipts for posting?')){
+            calculate() 
             entity = svc.submitForPosting( entity);
+            listModel.reload();
         }
     }
     
     void disapprove(){
         entity = svc.disapproved( entity);
-    }
-
-    def doCancel() {
-        if(mode != 'create') return "_close"
-
-        if(!MsgBox.confirm("Discard changes? ")) return null;
-
-        return "_close"
+        listModel.reload();
     }
 
     void post() {
         if(!MsgBox.confirm("You are about to post this captured collection. Continue? ")) return;
 
-        mode = 'posted'
         entity = svc.post( entity);
         if (onPost) onPost();
     }

@@ -138,39 +138,87 @@ ORDER BY xr.receiptno;
 
 
 [generateRPTCollectionReport]
-SELECT  
-	pc.name as classname, 
-	sum( case when ri.revtype='current' then ri.basic else 0.0 end ) as basiccurrent,
-	SUM( case when ri.revtype='current' then ri.basicdisc else 0.0 end ) as basicdisc,
-	SUM( case when ri.revtype in ('previous', 'prior') then ri.basic else 0.0 end ) as basicprev,
-	sum( case when ri.revtype='current' then ri.basicint else 0.0 end ) as basiccurrentint,
-	SUM(  case when ri.revtype in ('previous', 'prior') then ri.basicint else 0.0 end ) as basicprevint,
-	sum( ri.basic - ri.basicdisc + ri.basicint) as basicnet, 
-	sum( case when ri.revtype='current' then ri.sef else 0.0 end ) as sefcurrent,
-	SUM( case when ri.revtype='current' then ri.sefdisc else 0.0 end ) as sefdisc,
-	SUM( case when ri.revtype in ('previous', 'prior') then ri.sef else 0.0 end ) as sefprev,
-	sum( case when ri.revtype='current' then ri.sefint else 0.0 end ) as sefcurrentint,
-	SUM(  case when ri.revtype in ('previous', 'prior') then ri.sefint else 0.0 end ) as sefprevint,
-	sum( ri.sef - ri.sefdisc + sefint) as sefnet,  
-	sum( ri.basic - ri.basicdisc + ri.basicint + ri.sef - ri.sefdisc + sefint ) as netgrandtotal, 
-	0.0 as idlecurrent, 0.0 as idleprev, 0.0 as idledisc, 0.0 as idleint, 0.0 as idlenet, 0.0 as levynet, 
-	sum( ri.brgyshare + ri.brgyintshare ) as brgyshare, sum( ri.lgushare + ri.lguintshare ) as lgushare,
-	sum( ri.provshare + provintshare) as provshare 
-FROM ( 
-	  select
-		distinct lf.liquidationid
-	  from bankdeposit b 
-		inner join bankdeposit_liquidation bl on b.objid = bl.bankdepositid
-		inner join liquidation_cashier_fund lf on lf.objid = bl.objid 
-	    where b.dtposted between $P{fromdate} and $P{todate} 
-  ) a 
-	INNER JOIN liquidation_remittance lr on lr.liquidationid = a.liquidationid 
-	INNER JOIN remittance_cashreceipt xr on xr.remittanceid = lr.objid 
-	INNER JOIN cashreceiptitem_rpt ri ON xr.objid = ri.rptreceiptid 
-	INNER JOIN rptledger rl ON ri.rptledgerid = rl.objid 
-	INNER JOIN faas f ON rl.faasid = f.objid 
-	INNER JOIN rpu r ON f.rpuid = r.objid
-	INNER JOIN propertyclassification pc ON r.classification_objid = pc.objid 
-	LEFT JOIN cashreceipt_void v ON xr.objid = v.receiptid
-GROUP BY pc.objid, pc.name 	
-ORDER BY min(pc.orderno)  
+select 
+	t.classname, 
+	sum( basiccurrent ) as basiccurrent, sum( basicdisc ) as basicdisc, sum( basicprev ) as basicprev, 
+	sum( basiccurrentint ) as basiccurrentint, sum( basicprevint ) as basicprevint, sum( basicnet ) as basicnet, 
+	sum( sefcurrent ) as sefcurrent, sum( sefdisc ) as sefdisc, sum( sefprev ) as sefprev, 
+	sum( sefcurrentint ) as sefcurrentint, sum( sefprevint ) as sefprevint, sum( sefnet ) as sefnet, 
+	sum( netgrandtotal ) as netgrandtotal, sum( idlecurrent ) as idlecurrent, sum( idleprev ) as idleprev, 
+	sum( idledisc ) as idledisc, sum( idleint ) as idleint, sum( idlenet ) as idlenet,sum( levynet ) as levynet,
+	sum( brgyshare ) as brgyshare, sum( lgushare ) as lgushare, sum( provshare ) as provshare 
+from ( 
+	SELECT  
+		pc.name as classname, pc.orderno, 
+		case when ri.revtype='current' then ri.basic else 0.0 end  as basiccurrent,
+		case when ri.revtype='current' then ri.basicdisc else 0.0 end  as basicdisc,
+		case when ri.revtype in ('previous', 'prior') then ri.basic else 0.0 end  as basicprev,
+		case when ri.revtype='current' then ri.basicint else 0.0 end  as basiccurrentint,
+		case when ri.revtype in ('previous', 'prior') then ri.basicint else 0.0 end  as basicprevint,
+		(ri.basic - ri.basicdisc + ri.basicint) as basicnet, 
+		case when ri.revtype='current' then ri.sef else 0.0 end  as sefcurrent,
+		case when ri.revtype='current' then ri.sefdisc else 0.0 end  as sefdisc,
+		case when ri.revtype in ('previous', 'prior') then ri.sef else 0.0 end  as sefprev,
+		case when ri.revtype='current' then ri.sefint else 0.0 end  as sefcurrentint,
+		case when ri.revtype in ('previous', 'prior') then ri.sefint else 0.0 end as sefprevint,
+		(ri.sef - ri.sefdisc + ri.sefint) as sefnet,  
+		(ri.basic - ri.basicdisc + ri.basicint + ri.sef - ri.sefdisc + ri.sefint ) as netgrandtotal, 
+		0.0 as idlecurrent, 0.0 as idleprev, 0.0 as idledisc, 0.0 as idleint, 0.0 as idlenet, 0.0 as levynet, 
+		( ri.brgyshare + ri.brgyintshare ) as brgyshare, ( ri.lgushare + ri.lguintshare ) as lgushare,
+		( ri.provshare + ri.provintshare) as provshare 
+	FROM ( 
+		  select
+			distinct lf.liquidationid
+		  from bankdeposit b 
+			inner join bankdeposit_liquidation bl on b.objid = bl.bankdepositid
+			inner join liquidation_cashier_fund lf on lf.objid = bl.objid 
+		    where b.dtposted between $P{fromdate} and $P{todate} 
+	  ) a 
+		INNER JOIN liquidation_remittance lr on lr.liquidationid = a.liquidationid 
+		INNER JOIN remittance_cashreceipt xr on xr.remittanceid = lr.objid 
+		INNER JOIN cashreceiptitem_rpt ri ON xr.objid = ri.rptreceiptid 
+		INNER JOIN rptledger rl ON ri.rptledgerid = rl.objid 
+		INNER JOIN faas f ON rl.faasid = f.objid 
+		INNER JOIN rpu r ON f.rpuid = r.objid
+		INNER JOIN propertyclassification pc ON r.classification_objid = pc.objid 
+		LEFT JOIN cashreceipt_void v ON xr.objid = v.receiptid
+	where v.objid is null 	
+		
+	union all 
+
+	SELECT  
+		pc.name as classname, pc.orderno, 
+		case when ri.revtype='current' then ri.basic else 0.0 end  as basiccurrent,
+		case when ri.revtype='current' then ri.basicdisc else 0.0 end  as basicdisc,
+		case when ri.revtype in ('previous', 'prior') then ri.basic else 0.0 end  as basicprev,
+		case when ri.revtype='current' then ri.basicint else 0.0 end  as basiccurrentint,
+		case when ri.revtype in ('previous', 'prior') then ri.basicint else 0.0 end  as basicprevint,
+		(ri.basic - ri.basicdisc + ri.basicint) as basicnet, 
+		case when ri.revtype='current' then ri.sef else 0.0 end  as sefcurrent,
+		case when ri.revtype='current' then ri.sefdisc else 0.0 end  as sefdisc,
+		case when ri.revtype in ('previous', 'prior') then ri.sef else 0.0 end  as sefprev,
+		case when ri.revtype='current' then ri.sefint else 0.0 end  as sefcurrentint,
+		case when ri.revtype in ('previous', 'prior') then ri.sefint else 0.0 end as sefprevint,
+		(ri.sef - ri.sefdisc + ri.sefint) as sefnet,  
+		(ri.basic - ri.basicdisc + ri.basicint + ri.sef - ri.sefdisc + ri.sefint ) as netgrandtotal, 
+		0.0 as idlecurrent, 0.0 as idleprev, 0.0 as idledisc, 0.0 as idleint, 0.0 as idlenet, 0.0 as levynet, 
+		( ri.brgyshare + ri.brgyintshare ) as brgyshare, ( ri.lgushare + ri.lguintshare ) as lgushare,
+		( ri.provshare + ri.provintshare) as provshare 
+	FROM ( 
+		  select
+			distinct lf.liquidationid
+		  from bankdeposit b 
+			inner join bankdeposit_liquidation bl on b.objid = bl.bankdepositid
+			inner join liquidation_cashier_fund lf on lf.objid = bl.objid 
+		    where b.dtposted between  $P{fromdate} and $P{todate} 
+	  ) a 
+		INNER JOIN liquidation_remittance lr on lr.liquidationid = a.liquidationid 
+		INNER JOIN remittance_cashreceipt xr on xr.remittanceid = lr.objid 
+		INNER JOIN cashreceiptitem_rpt ri ON xr.objid = ri.rptreceiptid 
+		INNER JOIN cashreceiptitem_rpt_noledger ril on ril.objid = ri.objid 
+		INNER JOIN propertyclassification pc ON ril.classification_objid = pc.objid 
+		LEFT JOIN cashreceipt_void v ON xr.objid = v.receiptid
+	where v.objid is null 	
+ ) t 	
+group by t.classname
+ORDER BY min(t.orderno)  
