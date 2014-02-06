@@ -18,7 +18,7 @@ class StatementOfRevenueController extends com.rameses.gov.treasury.report.Repor
     @Service('StatementOfRevenueService') 
     def svc
     
-    String title = 'Statement of Revenue'
+    String title = 'Statement of Revenue 2'
     String reportpath = 'com/rameses/gov/treasury/report/statementofrevenue2/'
     String reportName = reportpath + 'statementofrevenue2.jasper'
     
@@ -31,7 +31,6 @@ class StatementOfRevenueController extends com.rameses.gov.treasury.report.Repor
     
     def data
     def getReportData(){
-        entity.type = 'standard'
         data = svc.generateReport(entity);
         return data.reportdata
     }
@@ -40,6 +39,7 @@ class StatementOfRevenueController extends com.rameses.gov.treasury.report.Repor
         getFormControls: {
             return [
                 new FormControl( "combo", [caption:'Chart Type', name:'entity.charttype', items:'charttypes', required:true, captionWidth:120, allowNull:false]),
+                new FormControl( "combo", [caption:'Format', name:'entity.type', items:'reportTypes', required:true, allowNull:false, captionWidth:120]),
                 new FormControl( "integer", [caption:'Year', name:'entity.year', required:true, preferredSize:'80,19', captionWidth:120]),
                 new FormControl( "combo", [caption:'Quarter', name:'entity.qtr', items:'quarters', required:true, immediate:true, preferredSize:'80,19', captionWidth:120]),
                 new FormControl( "combo", [caption:'Month', name:'entity.month', items:'monthsByQtr', depends:'entity.qtr', expression:'#{item.name}', dynamic:true, preferredSize:'80,19', captionWidth:120]),
@@ -54,8 +54,12 @@ class StatementOfRevenueController extends com.rameses.gov.treasury.report.Repor
     }
     
     def getCharttypes(){
-        return ['NGAS', 'SRE']
+        return ['SRE', 'NGAS']
     }
+    
+    def getReportTypes(){
+        return ['standard', 'extended']
+    }   
     
 }
 
