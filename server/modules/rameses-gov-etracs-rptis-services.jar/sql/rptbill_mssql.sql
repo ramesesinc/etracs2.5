@@ -171,9 +171,18 @@ UPDATE rptledgerbillitem  SET
 	basic = $P{partialbasic},
 	basicint = $P{partialbasicint},
 	basicdisc = $P{partialbasicdisc},
+
+	basicpaid = 0,
+	basicintpaid = 0,
+	basicdisctaken = 0,
+
 	sef = $P{partialsef},
 	sefint = $P{partialsefint},
 	sefdisc = $P{partialsefdisc},
+
+	sefpaid = 0,
+	sefintpaid = 0,
+	sefdisctaken = 0,
 
 	partialbasic = $P{partialbasic},
 	partialbasicint = $P{partialbasicint},
@@ -184,11 +193,34 @@ UPDATE rptledgerbillitem  SET
 	partial = 1,
 
 	brgyshare = ROUND( ( $P{partialbasic} - $P{partialbasicdisc}) * brgyshare / (lgushare + brgyshare), 2),
-	lgushare  = ( $P{partialbasic} - $P{partialbasicdisc}) - ROUND(( $P{partialbasic} - $P{partialbasicdisc}) * brgyshare / (lgushare + brgyshare), 2),
+	provshare = ROUND( ( $P{partialbasic} - $P{partialbasicdisc}) * provshare / (lgushare + brgyshare), 2),
+	lgushare  = ( $P{partialbasic} - $P{partialbasicdisc}) 
+					- ROUND(( $P{partialbasic} - $P{partialbasicdisc}) * brgyshare / (lgushare + brgyshare), 2)
+					- ROUND( ( $P{partialbasic} - $P{partialbasicdisc}) * provshare / (lgushare + brgyshare), 2),
 
 	brgyintshare = ROUND( $P{partialbasicint} * brgyshare / (lgushare + brgyshare), 2),
-	lguintshare = $P{partialbasicint} -  ROUND( $P{partialbasicint} * brgyshare / (lgushare + brgyshare), 2)
+	provintshare = ROUND( $P{partialbasicint} * provshare / (lgushare + brgyshare), 2),
+	lguintshare = $P{partialbasicint} 
+						- ROUND( $P{partialbasicint} * brgyshare / (lgushare + brgyshare), 2)
+						- ROUND( $P{partialbasicint} * provshare / (lgushare + brgyshare), 2)
 WHERE objid = $P{objid}	
+
+
+[updateShareInfo]
+UPDATE rptledgerbillitem  SET
+	brgyshare = ROUND( ( $P{basic} - $P{basicdisc}) * brgyshare / (lgushare + brgyshare), 2),
+	provshare = ROUND( ( $P{basic} - $P{basicdisc}) * provshare / (lgushare + brgyshare), 2),
+	lgushare  = ( $P{basic} - $P{basicdisc}) 
+							- ROUND(( $P{basic} - $P{basicdisc}) * brgyshare / (lgushare + brgyshare), 2)
+							- ROUND( ( $P{basic} - $P{basicdisc}) * provshare / (lgushare + brgyshare), 2),
+
+	brgyintshare = ROUND( $P{basicint} * brgyshare / (lgushare + brgyshare), 2),
+	provintshare = ROUND( $P{basicint} * provshare / (lgushare + brgyshare), 2),
+	lguintshare = $P{basicint} 
+						- ROUND( $P{basicint} * brgyshare / (lgushare + brgyshare), 2)
+						- ROUND( $P{basicint} * provshare / (lgushare + brgyshare), 2)
+WHERE objid = $P{objid}	
+
 
 
 [applyPartialPayment]
@@ -262,7 +294,7 @@ SELECT * FROM rptbill_ledger WHERE rptbillid = $P{objid}
 
 [findPartialTotal]
 SELECT 
-	SUM(basic - basicdisc + basicint + firecode) AS totalgeneral,
-	SUM(sef - sefdisc + sefint) AS totalsef
+	SUM( (basic - basicpaid) - (basicdisc - basicdisctaken) + (basicint - basicintpaid) + firecode) AS totalgeneral,
+	SUM( (sef - sefpaid ) - (sefdisc - sefdisctaken) + (sefint - sefintpaid ) ) AS totalsef
 FROM rptledgerbillitem 
 WHERE rptledgerid = $P{rptledgerid}

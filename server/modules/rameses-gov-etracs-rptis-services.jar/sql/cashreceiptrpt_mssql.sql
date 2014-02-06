@@ -174,18 +174,69 @@ DELETE FROM rptledgerbillitem WHERE rptledgerid = $P{rptledgerid}
 UPDATE rptledger SET 
 	lastyearpaid = $P{toyear},
 	lastqtrpaid = $P{toqtr},
-	partialbasic = $P{partialbasic},
-	partialbasicint = 	$P{partialbasicint},
-	partialbasicdisc = 	$P{partialbasicdisc},
-	partialsef = 	$P{partialsef},
-	partialsefint = 	$P{partialsefint},
-	partialsefdisc = 	$P{partialsefdisc},
+	partialbasic = CASE WHEN lastyearpaid = $P{toyear} AND lastqtrpaid = $P{toqtr} 
+						THEN partialbasic + $P{partialbasic} 
+						ELSE $P{partialbasic} 
+					END,
+	partialbasicint = CASE WHEN lastyearpaid = $P{toyear} AND lastqtrpaid = $P{toqtr} 
+						THEN partialbasicint + $P{partialbasicint} 
+						ELSE $P{partialbasicint} 
+					END,
+	partialbasicdisc = CASE WHEN lastyearpaid = $P{toyear} AND lastqtrpaid = $P{toqtr} 
+						THEN partialbasicdisc + $P{partialbasicdisc} 
+						ELSE $P{partialbasicdisc} 
+					END,
+	partialsef = CASE WHEN lastyearpaid = $P{toyear} AND lastqtrpaid = $P{toqtr} 
+						THEN partialsef + $P{partialsef} 
+						ELSE $P{partialsef} 
+					END,
+	partialsefint = CASE WHEN lastyearpaid = $P{toyear} AND lastqtrpaid = $P{toqtr} 
+						THEN partialsefint + $P{partialsefint} 
+						ELSE $P{partialsefint} 
+					END,
+	partialsefdisc = CASE WHEN lastyearpaid = $P{toyear} AND lastqtrpaid = $P{toqtr} 
+						THEN partialsefdisc + $P{partialsefdisc} 
+						ELSE $P{partialsefdisc} 
+					END,
 	partialledyear = $P{partialledyear},
 	partialledqtr  = $P{partialledqtr},
 	lastbilledyear = $P{lastbilledyear},
 	lastbilledqtr  = $P{lastbilledqtr}
 WHERE objid = $P{rptledgerid}	
 
+[resetVoidedLedgerYearQtrPaid]
+UPDATE rptledger SET 
+	lastyearpaid = $P{toyear},
+	lastqtrpaid = $P{toqtr},
+	partialbasic = CASE WHEN lastyearpaid = $P{toyear} AND lastqtrpaid = $P{toqtr} 
+						THEN partialbasic + $P{partialbasic} 
+						ELSE $P{partialbasic} 
+					END,
+	partialbasicint = CASE WHEN lastyearpaid = $P{toyear} AND lastqtrpaid = $P{toqtr} 
+						THEN partialbasicint + $P{partialbasicint} 
+						ELSE $P{partialbasicint} 
+					END,
+	partialbasicdisc = CASE WHEN lastyearpaid = $P{toyear} AND lastqtrpaid = $P{toqtr} 
+						THEN partialbasicdisc + $P{partialbasicdisc} 
+						ELSE $P{partialbasicdisc} 
+					END,
+	partialsef = CASE WHEN lastyearpaid = $P{toyear} AND lastqtrpaid = $P{toqtr} 
+						THEN partialsef + $P{partialsef} 
+						ELSE $P{partialsef} 
+					END,
+	partialsefint = CASE WHEN lastyearpaid = $P{toyear} AND lastqtrpaid = $P{toqtr} 
+						THEN partialsefint + $P{partialsefint} 
+						ELSE $P{partialsefint} 
+					END,
+	partialsefdisc = CASE WHEN lastyearpaid = $P{toyear} AND lastqtrpaid = $P{toqtr} 
+						THEN partialsefdisc + $P{partialsefdisc} 
+						ELSE $P{partialsefdisc} 
+					END,
+	partialledyear = $P{partialledyear},
+	partialledqtr  = $P{partialledqtr},
+	lastbilledyear = $P{lastbilledyear},
+	lastbilledqtr  = $P{lastbilledqtr}
+WHERE objid = $P{rptledgerid}	
 
 [getSummarizedCashReceiptItems]
 SELECT 
@@ -436,16 +487,18 @@ FROM
 			cr.rptreceiptid, 
 			cr.rptledgerid, 
 			MIN(cr.year) AS minyear,
-			0 AS partialbasic, 
-			0 AS partialbasicint, 
-			0 AS partialsef, 
-			0 AS partialsefint
+			0.0 AS partialbasic, 
+			0.0 AS partialbasicdisc, 
+			0.0 AS partialbasicint, 
+			0.0 AS partialsef, 
+			0.0 AS partialsefdisc, 
+			0.0 AS partialsefint
 		FROM cashreceiptitem_rpt cr 
 		WHERE cr.rptreceiptid = $P{rptreceiptid}
 		GROUP BY cr.rptreceiptid, cr.rptledgerid
 	)t
 	INNER JOIN cashreceiptitem_rpt ri ON t.rptreceiptid = ri.rptreceiptid AND t.minyear = ri.year 
-	GROUP BY t.rptreceiptid, t.rptledgerid, t.minyear, t.partialbasic, t.partialbasicint, t.partialsef, t.partialsefint
+	GROUP BY t.rptreceiptid, t.rptledgerid, t.minyear, t.partialbasic, t.partialbasicdisc, t.partialbasicint, t.partialsef, t.partialsefint, t.partialsefdisc 
 ) x	
 
 
@@ -531,3 +584,35 @@ WHERE cr.collector_objid = $P{userid}
   AND rc.objid IS NULL 
 ORDER BY cr.txndate DESC   
   
+
+[findReceiptPartialInfo]
+SELECT 
+	basic AS partialbasic, 
+	basicdisc AS partialbasicdisc, 
+	basicint AS partialbasicint, 
+	sef AS partialsef, 
+	sefdisc AS partialsefdisc, 
+	sefint  AS partialsefint
+FROM cashreceiptitem_rpt cr
+WHERE cr.rptreceiptid = $P{rptreceiptid}
+  AND cr.partialled = 1
+  
+
+
+[resetVoidedLedgerInfo]
+UPDATE rptledger SET 
+	nextbilldate = null,
+	lastyearpaid = $P{toyear},
+	lastqtrpaid = $P{toqtr},
+	partialbasic = partialbasic - $P{partialbasic},
+	partialbasicint = partialbasicint - $P{partialbasicint},
+	partialbasicdisc = partialbasicdisc - $P{partialbasicdisc},
+
+	partialsef = partialsef - $P{partialsef},
+	partialsefint = partialsefint - $P{partialsefint},
+	partialsefdisc = partialsefdisc - $P{partialsefdisc},
+	partialledyear = $P{partialledyear},
+	partialledqtr  = $P{partialledqtr},
+	lastbilledyear = $P{lastbilledyear},
+	lastbilledqtr  = $P{lastbilledqtr}
+WHERE objid = $P{rptledgerid}	

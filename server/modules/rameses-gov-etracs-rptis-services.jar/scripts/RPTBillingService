@@ -609,6 +609,7 @@ public class RPTBillingService
 			def amtdue = pitem.total 
 			if ( payment >= amtdue){
 				payment -= amtdue 
+				em.updateShareInfo(pitem)
 			}
 			else 
 			{
