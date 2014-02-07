@@ -180,14 +180,14 @@ public class SubdivisionInfoMainPage extends javax.swing.JPanel {
         formPanel4.setShowCaption(false);
         xLookupField1.setCaption("Appraiser");
         xLookupField1.setCaptionWidth(90);
-        xLookupField1.setExpression("#{appraiser.name}");
+        xLookupField1.setExpression("#{entity.appraiser.name}");
         xLookupField1.setHandler("lookupAppraiser");
-        xLookupField1.setName("appraiser");
+        xLookupField1.setName("entity.appraiser");
         xLookupField1.setPreferredSize(new java.awt.Dimension(200, 20));
         xLookupField1.setRequired(true);
         formPanel4.add(xLookupField1);
 
-        xDateField3.setName("appraiser.dtsigned");
+        xDateField3.setName("entity.appraiser.dtsigned");
         xDateField3.setPreferredSize(new java.awt.Dimension(90, 20));
         xDateField3.setShowCaption(false);
         formPanel4.add(xDateField3);
@@ -200,13 +200,13 @@ public class SubdivisionInfoMainPage extends javax.swing.JPanel {
         formPanel6.setShowCaption(false);
         xLookupField2.setCaption("Recommender");
         xLookupField2.setCaptionWidth(90);
-        xLookupField2.setExpression("#{recommender.name}");
+        xLookupField2.setExpression("#{entity.recommender.name}");
         xLookupField2.setHandler("lookupRecommender");
-        xLookupField2.setName("recommender");
+        xLookupField2.setName("entity.recommender");
         xLookupField2.setPreferredSize(new java.awt.Dimension(200, 20));
         formPanel6.add(xLookupField2);
 
-        xDateField4.setName("recommender.dtsigned");
+        xDateField4.setName("entity.recommender.dtsigned");
         xDateField4.setPreferredSize(new java.awt.Dimension(90, 20));
         xDateField4.setShowCaption(false);
         formPanel6.add(xDateField4);
@@ -219,13 +219,13 @@ public class SubdivisionInfoMainPage extends javax.swing.JPanel {
         formPanel8.setShowCaption(false);
         xLookupField3.setCaption("Taxmapper");
         xLookupField3.setCaptionWidth(90);
-        xLookupField3.setExpression("#{taxmapper.name}");
+        xLookupField3.setExpression("#{entity.taxmapper.name}");
         xLookupField3.setHandler("lookupTaxmapper");
-        xLookupField3.setName("taxmapper");
+        xLookupField3.setName("entity.taxmapper");
         xLookupField3.setPreferredSize(new java.awt.Dimension(200, 20));
         formPanel8.add(xLookupField3);
 
-        xDateField5.setName("taxmapper.dtsigned");
+        xDateField5.setName("entity.taxmapper.dtsigned");
         xDateField5.setPreferredSize(new java.awt.Dimension(90, 20));
         xDateField5.setShowCaption(false);
         formPanel8.add(xDateField5);
@@ -238,14 +238,14 @@ public class SubdivisionInfoMainPage extends javax.swing.JPanel {
         formPanel9.setShowCaption(false);
         xLookupField4.setCaption("Approver");
         xLookupField4.setCaptionWidth(90);
-        xLookupField4.setExpression("#{approver.name}");
+        xLookupField4.setExpression("#{entity.approver.name}");
         xLookupField4.setHandler("lookupApprover");
-        xLookupField4.setName("approver");
+        xLookupField4.setName("entity.approver");
         xLookupField4.setPreferredSize(new java.awt.Dimension(200, 20));
         xLookupField4.setRequired(true);
         formPanel9.add(xLookupField4);
 
-        xDateField6.setName("approver.dtsigned");
+        xDateField6.setName("entity.approver.dtsigned");
         xDateField6.setPreferredSize(new java.awt.Dimension(90, 20));
         xDateField6.setShowCaption(false);
         formPanel9.add(xDateField6);

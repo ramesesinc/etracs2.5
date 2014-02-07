@@ -191,3 +191,42 @@ create index ix_rpttask_assignedto on rpttask(assignedto)
 go
 
 
+
+
+
+
+/*========================================================================
+**
+** SIGNATORIES
+**
+========================================================================*/
+
+alter table faas add signatories varchar(1000)
+go
+
+update faas set signatories = null  
+go
+
+
+
+alter table subdivision add signatories varchar(1000)
+go
+
+update subdivision set signatories = null  
+go
+
+
+
+alter table consolidation add signatories varchar(1000)
+go
+
+update consolidation set signatories = null  
+go
+
+
+
+alter table txnsignatory drop constraint DF__txnsignat__dtsig__492FC531
+go
+
+alter table txnsignatory alter column dtsigned date null
+go

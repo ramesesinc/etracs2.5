@@ -356,9 +356,9 @@
                           <Properties>
                             <Property name="caption" type="java.lang.String" value="Appraiser"/>
                             <Property name="captionWidth" type="int" value="90"/>
-                            <Property name="expression" type="java.lang.String" value="#{appraiser.name}"/>
+                            <Property name="expression" type="java.lang.String" value="#{entity.appraiser.name}"/>
                             <Property name="handler" type="java.lang.String" value="lookupAppraiser"/>
-                            <Property name="name" type="java.lang.String" value="appraiser"/>
+                            <Property name="name" type="java.lang.String" value="entity.appraiser"/>
                             <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                               <Dimension value="[250, 20]"/>
                             </Property>
@@ -368,7 +368,7 @@
                         <Component class="com.rameses.rcp.control.XDateField" name="xDateField3">
                           <Properties>
                             <Property name="hint" type="java.lang.String" value="Date Appraised"/>
-                            <Property name="name" type="java.lang.String" value="appraiser.dtsigned"/>
+                            <Property name="name" type="java.lang.String" value="entity.appraiser.dtsigned"/>
                             <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                               <Dimension value="[91, 20]"/>
                             </Property>
@@ -393,9 +393,9 @@
                           <Properties>
                             <Property name="caption" type="java.lang.String" value="Recommender"/>
                             <Property name="captionWidth" type="int" value="90"/>
-                            <Property name="expression" type="java.lang.String" value="#{recommender.name}"/>
+                            <Property name="expression" type="java.lang.String" value="#{entity.recommender.name}"/>
                             <Property name="handler" type="java.lang.String" value="lookupRecommender"/>
-                            <Property name="name" type="java.lang.String" value="recommender"/>
+                            <Property name="name" type="java.lang.String" value="entity.recommender"/>
                             <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                               <Dimension value="[250, 20]"/>
                             </Property>
@@ -403,7 +403,7 @@
                         </Component>
                         <Component class="com.rameses.rcp.control.XDateField" name="xDateField4">
                           <Properties>
-                            <Property name="name" type="java.lang.String" value="recommender.dtsigned"/>
+                            <Property name="name" type="java.lang.String" value="entity.recommender.dtsigned"/>
                             <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                               <Dimension value="[91, 20]"/>
                             </Property>
@@ -428,9 +428,9 @@
                           <Properties>
                             <Property name="caption" type="java.lang.String" value="Taxmapper"/>
                             <Property name="captionWidth" type="int" value="90"/>
-                            <Property name="expression" type="java.lang.String" value="#{taxmapper.name}"/>
+                            <Property name="expression" type="java.lang.String" value="#{entity.taxmapper.name}"/>
                             <Property name="handler" type="java.lang.String" value="lookupTaxmapper"/>
-                            <Property name="name" type="java.lang.String" value="taxmapper"/>
+                            <Property name="name" type="java.lang.String" value="entity.taxmapper"/>
                             <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                               <Dimension value="[250, 20]"/>
                             </Property>
@@ -438,7 +438,7 @@
                         </Component>
                         <Component class="com.rameses.rcp.control.XDateField" name="xDateField5">
                           <Properties>
-                            <Property name="name" type="java.lang.String" value="taxmapper.dtsigned"/>
+                            <Property name="name" type="java.lang.String" value="entity.taxmapper.dtsigned"/>
                             <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                               <Dimension value="[91, 20]"/>
                             </Property>
@@ -463,9 +463,9 @@
                           <Properties>
                             <Property name="caption" type="java.lang.String" value="Approver"/>
                             <Property name="captionWidth" type="int" value="90"/>
-                            <Property name="expression" type="java.lang.String" value="#{approver.name}"/>
+                            <Property name="expression" type="java.lang.String" value="#{entity.approver.name}"/>
                             <Property name="handler" type="java.lang.String" value="lookupApprover"/>
-                            <Property name="name" type="java.lang.String" value="approver"/>
+                            <Property name="name" type="java.lang.String" value="entity.approver"/>
                             <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                               <Dimension value="[250, 20]"/>
                             </Property>
@@ -475,7 +475,7 @@
                         <Component class="com.rameses.rcp.control.XDateField" name="xDateField6">
                           <Properties>
                             <Property name="hint" type="java.lang.String" value="Date Approved"/>
-                            <Property name="name" type="java.lang.String" value="approver.dtsigned"/>
+                            <Property name="name" type="java.lang.String" value="entity.approver.dtsigned"/>
                             <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                               <Dimension value="[91, 20]"/>
                             </Property>

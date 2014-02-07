@@ -90,11 +90,9 @@ class SubdivisionService
         subdivision.effectivityyear = pdate.year
         subdivision.effectivityqtr  = 1
         subdivision.motherfaasid    = info.motherfaas.objid
-        signatorySvc.initSignatories(subdivision, signatories)
-
-
+        signatorySvc.init(subdivision, signatories)
+        signatorySvc.buildSignatories(subdivision, signatories)
     	em.create(subdivision)
-        signatorySvc.saveSignatories(subdivision.signatories)
     	txnRef.insertRef(subdivision.motherfaasid, subdivision.objid, 'FAAS is currently referenced by Subdivision No. ' + subdivision.txnno +'.')
     	workflowRef.insert(subdivision)
         createAffectedRpus(subdivision)
@@ -105,7 +103,6 @@ class SubdivisionService
     @ProxyMethod
     public def updateSubdivision(subdivision) {
     	em.update(subdivision)
-        signatorySvc.saveSignatories(subdivision.signatories)
     	return subdivision
     }
 
@@ -114,9 +111,9 @@ class SubdivisionService
     public def openSubdivision( objid ) {
         def subdivision = em.findSubdivisionById([objid:objid])
         subdivision.txntype = faasSvc.getTxnType(TXNTYPE_SD)
-        subdivision.signatories = signatorySvc.getSignatories(subdivision)
         subdivision.autonumber = util.toBoolean(subdivision.autonumber, false)
         subdivision.motherfaas.barangay = lguSvc.lookupBarangayById(subdivision.motherfaas.barangayid)
+        signatorySvc.loadSignatories('subdivision', subdivision)
         createAffectedRpus(subdivision);
         return subdivision 
     }

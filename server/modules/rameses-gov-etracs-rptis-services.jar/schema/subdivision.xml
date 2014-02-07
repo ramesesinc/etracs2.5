@@ -12,6 +12,7 @@
         <field name="motherfaasid" required="true" />
         <field name="memoranda" required="true" />
         <field name="lguid" required="true" />
+        <complex name="signatories" type="list" serializer="default" />
     </element>
 
     <element name="subdividedland" tablename="subdividedland">

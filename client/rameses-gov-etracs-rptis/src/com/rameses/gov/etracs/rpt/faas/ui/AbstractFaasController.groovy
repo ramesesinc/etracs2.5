@@ -36,13 +36,7 @@ public abstract class AbstractFaasController extends PageFlowController
     def rpu;
     def mode;
     
-    
-    def appraiser = [:];
-    def recommender = [:];
-    def taxmapper = [:];
-    def approver = [:];
-    
-    
+        
     @FormId
     public String getFormId(){
         return 'FAAS : ' + entity?.tdno
@@ -81,24 +75,10 @@ public abstract class AbstractFaasController extends PageFlowController
         rp = entity.rp;
         rpu = entity.rpu;
         afterOpen();
-        initSignatoryVars()
         mode = MODE_READ;
         return super.signal('open');
     }
     
-    
-    void initSignatoryVars(){
-        appraiser = entity.signatories.find{it.type == 'appraiser'};
-        recommender = entity.signatories.find{it.type == 'recommender'};
-        taxmapper = entity.signatories.find{it.type == 'taxmapper'};
-        approver = entity.signatories.find{it.type == 'approver'};
-        appraiser = (appraiser ? appraiser : [:])
-        recommender = (recommender ? recommender : [:])
-        taxmapper = (taxmapper ? taxmapper : [:])
-        approver = (approver ? approver : [:])
-        
-    }
-
     
     /*-----------------------------------------------------
      * 
@@ -121,7 +101,6 @@ public abstract class AbstractFaasController extends PageFlowController
     void save(){
         if (rp.isnew) throw new Exception('PIN requires verification.')
         if (rpu.isnew) throw new Exception('RPU requires verification.')
-        updateSignatoryInfo()
         if (mode == MODE_CREATE)
             entity = service.createFaas(entity);
         else 
@@ -129,14 +108,7 @@ public abstract class AbstractFaasController extends PageFlowController
         mode = MODE_READ;
     }
     
-    
-    void updateSignatoryInfo(){
-        entity.signatories.find{it.type == 'appraiser'}?.putAll(appraiser);
-        entity.signatories.find{it.type == 'recommender'}?.putAll(recommender);
-        entity.signatories.find{it.type == 'taxmapper'}?.putAll(taxmapper);
-        entity.signatories.find{it.type == 'approver'}?.putAll(approver);
-    }
-    
+
     
     void delete(){
         service.deleteFaas(entity);
@@ -194,17 +166,12 @@ public abstract class AbstractFaasController extends PageFlowController
     /*===============================================
      * Signatory Lookup Support
      *===============================================*/
-    def selectedSignatory 
-            
-    def signatoryListHandler = [
-        fetchList : { return entity.signatories }
-    ] as EditorListModel
             
     def getLookupAppraiser(){
         return InvokerUtil.lookupOpener('txnsignatory:lookup',[
             doctype : 'RPTAPPRAISER',
-            onselect : { updateSignatoryInfo(appraiser, it) },
-            onempty  : { clearSignatoryInfo(appraiser) },
+            onselect : { entity.appraiser.putAll(it)},
+            onempty  : {clearSignatory(entity.appraiser)},
         ])
         
     }
@@ -212,8 +179,8 @@ public abstract class AbstractFaasController extends PageFlowController
     def getLookupRecommender(){
         return InvokerUtil.lookupOpener('txnsignatory:lookup',[
             doctype : 'RPTRECOMMENDER',
-            onselect : { updateSignatoryInfo(recommender, it) },
-            onempty  : { clearSignatoryInfo(recommender) },
+            onselect : { entity.recommender.putAll(it) },
+            onempty  : { clearSignatory(entity.recommender)},
         ])
         
     }
@@ -221,8 +188,8 @@ public abstract class AbstractFaasController extends PageFlowController
     def getLookupTaxmapper(){
         return InvokerUtil.lookupOpener('txnsignatory:lookup',[
             doctype : 'RPTTAXMAPPER',
-            onselect : { updateSignatoryInfo(taxmapper, it) },
-            onempty  : { clearSignatoryInfo(taxmapper) },
+            onselect : { entity.taxmapper.putAll(it) },
+            onempty  : { clearSignatory(entity.taxmapper) },
         ])
         
     }
@@ -230,16 +197,10 @@ public abstract class AbstractFaasController extends PageFlowController
     def getLookupApprover(){
         return InvokerUtil.lookupOpener('txnsignatory:lookup',[
             doctype : 'RPTAPPROVER',
-            onselect : { updateSignatoryInfo(approver, it) },
-            onempty  : { clearSignatoryInfo(approver) },
+            onselect : { entity.approver.putAll(it)},
+            onempty  : { clearSignatory(entity.approver)},
         ])
         
-    }
-    
-    void updateSignatoryInfo(signatory, data){
-        signatory.personnelid = data.objid;
-        signatory.name = data.name;
-        signatory.title = data.title;
     }
     
     void clearSignatoryInfo(signatory){
@@ -248,24 +209,6 @@ public abstract class AbstractFaasController extends PageFlowController
         signatory.title = null;
     }
             
-    def getLookupSignatory(){
-         def doctype = 'RPT' + selectedSignatory.type.toUpperCase();
-         return InvokerUtil.lookupOpener('txnsignatory:lookup',[
-            doctype : doctype,
-                 
-            onselect : { 
-                selectedSignatory.personnelid = it.objid;
-                selectedSignatory.name = it.name;
-                selectedSignatory.title = it.title;
-            },
-            onempty  : { 
-                selectedSignatory.name = null;
-                selectedSignatory.dtsigned = null;
-                selectedSignatory.title = null;
-            },
-        ])
-    }
-    
     def getLookupTaxpayer(){
         return InvokerUtil.lookupOpener('entity:lookup',[
             onselect : { 

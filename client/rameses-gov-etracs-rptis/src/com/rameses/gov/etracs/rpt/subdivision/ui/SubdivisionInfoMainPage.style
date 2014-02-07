@@ -1,7 +1,7 @@
-"entity.effectivity.*|appraiser.*|recommender.*|taxmapper.*|approver.*" [allowEdit == true]{
+"entity.effectivity.*|entity.appraiser.*|entity.recommender.*|entity.taxmapper.*|entity.approver.*" [allowEdit == true]{
     enabled:true;
 }
 
-"entity.effectivity.*|appraiser.*|recommender.*|taxmapper.*|approver.*" [allowEdit == false]{
+"entity.effectivity.*|entity.appraiser.*|entity.recommender.*|entity.taxmapper.*|entity.approver.*" [allowEdit == false]{
     enabled:false;
 }

@@ -35,17 +35,12 @@ class ConsolidationMainInfoController
     def mode;
     
     def entity;
-    def appraiser = [:];
-    def recommender = [:];
-    def taxmapper = [:];
-    def approver = [:];
     
     String title = 'General Information'
     
     
     void init(){
         entity = svc.openConsolidation( entity.objid );
-        initSignatoryVars();
         mode = MODE_READ;
     }
     
@@ -65,42 +60,6 @@ class ConsolidationMainInfoController
     void refresh(){}
     
     
-    void updateSignatoryInfo(signatory, data){
-        signatory.personnelid = data.objid;
-        signatory.name = data.name;
-        signatory.title = data.title;
-    }
-    
-    void clearSignatoryInfo(signatory){
-        signatory.personnelid = null;
-        signatory.name = null;
-        signatory.title = null;
-    }
- 
-    
-    void initSignatoryVars(){
-        appraiser = entity.signatories.find{it.type == 'appraiser'};
-        recommender = entity.signatories.find{it.type == 'recommender'};
-        taxmapper = entity.signatories.find{it.type == 'taxmapper'};
-        approver = entity.signatories.find{it.type == 'approver'};
-        appraiser = (appraiser ? appraiser : [:])
-        recommender = (recommender ? recommender : [:])
-        taxmapper = (taxmapper ? taxmapper : [:])
-        approver = (approver ? approver : [:])
-        
-    }
-    
-        
-    void saveSignatoryInfo(){
-        entity.signatories.find{it.type == 'appraiser'}?.putAll(appraiser);
-        entity.signatories.find{it.type == 'recommender'}?.putAll(recommender);
-        entity.signatories.find{it.type == 'taxmapper'}?.putAll(taxmapper);
-        entity.signatories.find{it.type == 'approver'}?.putAll(approver);
-    }
- 
-    
-
-    
     List getQuarters(){
         return [1,2,3,4]
     }
@@ -118,11 +77,12 @@ class ConsolidationMainInfoController
         ])
     }
     
+    
     def getLookupAppraiser(){
         return InvokerUtil.lookupOpener('txnsignatory:lookup',[
             doctype : 'RPTAPPRAISER',
-            onselect : { updateSignatoryInfo(appraiser, it) },
-            onempty  : { clearSignatoryInfo(appraiser) },
+            onselect : { entity.appraiser.putAll(it)},
+            onempty  : {clearSignatory(entity.appraiser)},
         ])
         
     }
@@ -130,8 +90,8 @@ class ConsolidationMainInfoController
     def getLookupRecommender(){
         return InvokerUtil.lookupOpener('txnsignatory:lookup',[
             doctype : 'RPTRECOMMENDER',
-            onselect : { updateSignatoryInfo(recommender, it) },
-            onempty  : { clearSignatoryInfo(recommender) },
+            onselect : { entity.recommender.putAll(it) },
+            onempty  : { clearSignatory(entity.recommender)},
         ])
         
     }
@@ -139,8 +99,8 @@ class ConsolidationMainInfoController
     def getLookupTaxmapper(){
         return InvokerUtil.lookupOpener('txnsignatory:lookup',[
             doctype : 'RPTTAXMAPPER',
-            onselect : { updateSignatoryInfo(taxmapper, it) },
-            onempty  : { clearSignatoryInfo(taxmapper) },
+            onselect : { entity.taxmapper.putAll(it) },
+            onempty  : { clearSignatory(entity.taxmapper) },
         ])
         
     }
@@ -148,10 +108,17 @@ class ConsolidationMainInfoController
     def getLookupApprover(){
         return InvokerUtil.lookupOpener('txnsignatory:lookup',[
             doctype : 'RPTAPPROVER',
-            onselect : { updateSignatoryInfo(approver, it) },
-            onempty  : { clearSignatoryInfo(approver) },
+            onselect : { entity.approver.putAll(it)},
+            onempty  : { clearSignatory(entity.approver)},
         ])
         
+    }
+    
+    
+    void clearSignatoryInfo(signatory){
+        signatory.personnelid = null;
+        signatory.name = null;
+        signatory.title = null;
     }
     
     
@@ -177,7 +144,7 @@ class ConsolidationMainInfoController
    </code>
     
     <pages> 
-        <page name="init" template="com.rameses.gov.etracs.rpt.consolidation.ui.ConsolidationPage"/>
+        <page name="init" template="com.rameses.gov.etracs.rpt.consolidation.ui.ConsolidationInfoPage"/>
     </pages>
 </workunit>
 

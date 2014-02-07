@@ -30,6 +30,7 @@
         <field name="taxpayer_address" />
         <field name="owner_name" />
         <field name="owner_address" />
+        <complex name="signatories" type="list" serializer="default" />
     </element>
 
     <element name="consolidatedland" tablename="consolidatedland">

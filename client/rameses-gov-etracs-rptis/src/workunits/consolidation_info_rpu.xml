@@ -106,7 +106,7 @@ class ConsolidationLandRpuController
    </code>
     
     <pages> 
-        <page template="com.rameses.gov.etracs.rpt.consolidation.ui.ConsolidationRPUPage"/>
+        <page template="com.rameses.gov.etracs.rpt.faas.ui.FAASOnlineInfoOpenerPage"/>
     </pages>
 </workunit>
 

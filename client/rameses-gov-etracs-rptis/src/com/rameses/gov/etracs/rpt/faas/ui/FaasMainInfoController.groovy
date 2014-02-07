@@ -24,10 +24,6 @@ class FaasMainInfoController
     def mode;
     
     def entity;
-    def appraiser = [:];
-    def recommender = [:];
-    def taxmapper = [:];
-    def approver = [:];
     
     boolean allowEditOwner = false;
     boolean allowEditPrevInfo = false;
@@ -37,7 +33,6 @@ class FaasMainInfoController
     
     void init(){
         entity = svc.openFaas(entity);
-        initSignatoryVars();
         mode = MODE_READ;
     }
     
@@ -54,42 +49,8 @@ class FaasMainInfoController
         mode = MODE_READ;
     }
     
+    
     void refresh(){}
-    
-    
-    void updateSignatoryInfo(signatory, data){
-        signatory.personnelid = data.objid;
-        signatory.name = data.name;
-        signatory.title = data.title;
-    }
-    
-    void clearSignatoryInfo(signatory){
-        signatory.personnelid = null;
-        signatory.name = null;
-        signatory.title = null;
-    }
- 
-    
-    void initSignatoryVars(){
-        appraiser = entity.signatories.find{it.type == 'appraiser'};
-        recommender = entity.signatories.find{it.type == 'recommender'};
-        taxmapper = entity.signatories.find{it.type == 'taxmapper'};
-        approver = entity.signatories.find{it.type == 'approver'};
-        appraiser = (appraiser ? appraiser : [:])
-        recommender = (recommender ? recommender : [:])
-        taxmapper = (taxmapper ? taxmapper : [:])
-        approver = (approver ? approver : [:])
-        
-    }
-    
-        
-    void saveSignatoryInfo(){
-        entity.signatories.find{it.type == 'appraiser'}?.putAll(appraiser);
-        entity.signatories.find{it.type == 'recommender'}?.putAll(recommender);
-        entity.signatories.find{it.type == 'taxmapper'}?.putAll(taxmapper);
-        entity.signatories.find{it.type == 'approver'}?.putAll(approver);
-    }
- 
     
     
     List getQuarters(){
@@ -115,8 +76,8 @@ class FaasMainInfoController
     def getLookupAppraiser(){
         return InvokerUtil.lookupOpener('txnsignatory:lookup',[
             doctype : 'RPTAPPRAISER',
-            onselect : { updateSignatoryInfo(appraiser, it) },
-            onempty  : { clearSignatoryInfo(appraiser) },
+            onselect : { entity.appraiser.putAll(it)},
+            onempty  : {clearSignatory(entity.appraiser)},
         ])
         
     }
@@ -124,8 +85,8 @@ class FaasMainInfoController
     def getLookupRecommender(){
         return InvokerUtil.lookupOpener('txnsignatory:lookup',[
             doctype : 'RPTRECOMMENDER',
-            onselect : { updateSignatoryInfo(recommender, it) },
-            onempty  : { clearSignatoryInfo(recommender) },
+            onselect : { entity.recommender.putAll(it) },
+            onempty  : { clearSignatory(entity.recommender)},
         ])
         
     }
@@ -133,8 +94,8 @@ class FaasMainInfoController
     def getLookupTaxmapper(){
         return InvokerUtil.lookupOpener('txnsignatory:lookup',[
             doctype : 'RPTTAXMAPPER',
-            onselect : { updateSignatoryInfo(taxmapper, it) },
-            onempty  : { clearSignatoryInfo(taxmapper) },
+            onselect : { entity.taxmapper.putAll(it) },
+            onempty  : { clearSignatory(entity.taxmapper) },
         ])
         
     }
@@ -142,12 +103,19 @@ class FaasMainInfoController
     def getLookupApprover(){
         return InvokerUtil.lookupOpener('txnsignatory:lookup',[
             doctype : 'RPTAPPROVER',
-            onselect : { updateSignatoryInfo(approver, it) },
-            onempty  : { clearSignatoryInfo(approver) },
+            onselect : { entity.approver.putAll(it)},
+            onempty  : { clearSignatory(entity.approver)},
         ])
         
     }
     
+    
+    void clearSignatoryInfo(signatory){
+        signatory.personnelid = null;
+        signatory.name = null;
+        signatory.title = null;
+    }
+ 
     
     boolean getShowActions(){
         if (entity.state.matches('FORTAXMAPPING|CURRENT|CANCELLED')) return false;
@@ -161,5 +129,7 @@ class FaasMainInfoController
         if (mode == 'read') return false;
         return true;
     }
+    
+    
     
 }

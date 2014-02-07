@@ -21,3 +21,7 @@ UPDATE txnsignatory SET
 	title = $P{title},
 	dtsigned =  $P{dtsigned}
 WHERE objid = $P{objid}	
+
+
+[updateSignatories]
+UPDATE ${tablename} SET signatories = $P{signatories} WHERE objid = $P{objid}

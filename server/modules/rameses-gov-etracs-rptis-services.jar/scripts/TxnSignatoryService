@@ -6,6 +6,10 @@ import java.rmi.server.UID;
 
 class TxnSignatoryService
 {
+	@PersistenceContext('main')
+	def pem 
+
+
 	@ActiveDB('txnsignatory')
 	def em
 
@@ -19,10 +23,8 @@ class TxnSignatoryService
 
 	@ProxyMethod
 	public def init(entity, signatories){
-		entity.signatories = []
 		signatories.eachWithIndex{ signatory, idx ->
-			entity.signatories << [
-				refid : entity.objid,
+			entity[signatory] = [
 				type : signatory,
 				seqno : idx,
 			]
@@ -41,6 +43,16 @@ class TxnSignatoryService
 			]
 		}
 	}
+
+	
+	@ProxyMethod
+	public def buildSignatories(entity, signatories){
+		entity.signatories = []
+		signatories.eachWithIndex{ signatory, idx ->
+			entity.signatories << entity[signatory]
+		}
+	}
+
 
 	@ProxyMethod
 	public void saveSignatories(signatories) {
@@ -75,6 +87,23 @@ class TxnSignatoryService
 	@ProxyMethod
 	public def deleteSignatories(entity){
 		em.deleteSignatories([refid:entity.objid])
+	}
+
+
+	@ProxyMethod
+	public void loadSignatories(tablename, entity){
+		def signatories = null 
+		if (!entity.signatories){
+			signatories = getSignatories(entity)
+			em.updateSignatories([tablename:tablename, objid:entity.objid, signatories:pem.serializer.write(signatories)])
+		}
+		else {
+			signatories = pem.serializer.read(entity.signatories)
+		}
+		signatories.each{
+			entity[it.type] = it 
+		}
+		entity.remove('signatories')
 	}
 
 }

@@ -6,6 +6,8 @@ import com.rameses.services.extended.*
 
 class FAASService
 {
+	@PersistenceContext('main')
+	def pem
 
 	@ActiveDB('faas')	
 	def em 
@@ -183,14 +185,10 @@ class FAASService
 	public def createFaas( faas ) {
 		checkTxnReference(faas)
 		faas.utdno = generateUniqueTdNo(faas)
-		def approver = getSignatory(faas, 'approver')
-		if (!approver.dtsigned) approver.dtsigned = dtSvc.serverDate
-		if (approver.dtsigned) {
-			faas.txntimestamp = dtSvc.buildCustomTimeStamp(approver.dtsigned)
-		}
+		updateTxnTimeStamp(faas)
 		updateNameInfo(faas)
+		signatorySvc.buildSignatories(faas, signatories)
 		em.create(faas)
-		signatorySvc.createSignatories(faas.signatories)
 		faas.previousfaases.each{
 			em.create(it, SCHEMA_PREVIOUSFAAS)
 		}
@@ -209,7 +207,7 @@ class FAASService
 		faas.previousfaases = em.getPreviousFaases([faasid:faas.objid])
 		faas.backtaxes      = em.getBackTaxes([faasid: faas.objid]).each{ it.taxable = utilSvc.toBoolean(it.taxable, true) }
 		faas.annotated      = getAnnotatedStatus(faas.objid)
-		faas.signatories 	= signatorySvc.getSignatories(faas)
+		signatorySvc.loadSignatories('faas', faas)
 		return faas 
 	}
 
@@ -222,7 +220,7 @@ class FAASService
 		faas.previousfaases = em.getPreviousFaases([faasid:faas.objid])
 		faas.backtaxes      = em.getBackTaxes([faasid: faas.objid]).each{ it.taxable = utilSvc.toBoolean(it.taxable, true) }
 		faas.annotated      = getAnnotatedStatus(faas.objid)
-		faas.signatories 	= signatorySvc.getSignatories(faas)
+		signatorySvc.loadSignatories('faas', faas)
 		faas.rp = rpSvc.open(faas.rp)
 		faas.rpu = rpuSvc.openRpu(faas.rpu)
 		return faas 
@@ -230,12 +228,9 @@ class FAASService
 
 	@ProxyMethod
 	public def updateFaas( faas ) {
-		def approver = getSignatory(faas, 'approver')
-		if (approver.dtsigned) {
-			faas.txntimestamp = dtSvc.buildCustomTimeStamp(approver.dtsigned)
-		}
+		updateTxnTimeStamp(faas)
+		signatorySvc.buildSignatories(faas, signatories)
 		em.updateImmediate(faas)
-		signatorySvc.updateSignatories(faas.signatories)
 		saveBackTaxes(faas)
 		updateRpuMasterInfo(faas)
 		return faas;	
@@ -317,8 +312,6 @@ class FAASService
 	@ProxyMethod
 	public def submitFaasForApproval( faas ) {
 		validateSignatories(faas)
-		println '='*50
-		println 'state -> ' + faas.state 
 		def retval = em.submitForApproval(faas)
 		if (retval == 0) 
 			throw new Exception('Unable to submit FAAS for approval. Only INTERIM record is allowed.')
@@ -334,7 +327,6 @@ class FAASService
 		faas.state = STATE_CURRENT
 		faas.prevstate = STATE_FORAPPROVAL
 		updateTDNo(faas)
-		println 'faas.tdno -> ' + faas.tdno 
 		def retval = em.approveFaas(faas)
 		if (retval == 0) 
 			throw new Exception('Unable to approve FAAS. Only FOR APPROVAL record is allowed.')
@@ -548,7 +540,7 @@ class FAASService
 			owner 			: [:],
 			administrator   : [:],
 		]
-		signatorySvc.initSignatories(faas, signatories)
+		signatorySvc.init(faas, signatories)
 		return faas 
 	}
 
@@ -700,5 +692,15 @@ class FAASService
 	public def getMaximumBackTaxYearsPolicy(  ) {
 		return 10;
 	}
+
+
+
+	void updateTxnTimeStamp(faas){
+		if (!faas.approver.dtsigned) faas.approver.dtsigned = dtSvc.serverDate
+		if (faas.approver.dtsigned) {
+			faas.txntimestamp = dtSvc.buildCustomTimeStamp(faas.approver.dtsigned)
+		}
+	}
+
 }
 

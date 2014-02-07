@@ -1,4 +1,4 @@
-"entity.*|taxpayer|administrator|appraiser.*|recommender.*|taxmapper.*|approver.*" [allowEdit == true] {
+"entity.*|taxpayer|administrator" [allowEdit == true] {
     enabled:true;
 }
 
@@ -36,7 +36,7 @@
     enabled:false;
 }
 
-"entity.*|taxpayer|administrator|appraiser.*|recommender.*|taxmapper.*|approver.*" [allowEdit == false] {
+"entity.*|taxpayer|administrator" [allowEdit == false] {
     enabled:false;
 }
 

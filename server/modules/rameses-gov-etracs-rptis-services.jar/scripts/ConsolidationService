@@ -105,7 +105,7 @@ class ConsolidationService
             consolidatedlands : [],
             affectedrpus : [],
         ]
-        signatorySvc.initSignatories(consolidation, signatories)
+        signatorySvc.init(consolidation, signatories)
         return consolidation
     }
 
@@ -119,9 +119,9 @@ class ConsolidationService
         consolidation.newutdno = faasSvc.generateUniqueTdNo(consolidation)
         consolidation.txntype = faasSvc.getTxnType(TXNTYPE_CS)
         consolidation.autonumber = util.toBoolean(var.td_autonumber, false)
-    	workflowRef.insert(consolidation)
-    	em.create(consolidation)
-        signatorySvc.saveSignatories(consolidation.signatories)
+        signatorySvc.buildSignatories(consolidation, signatories)
+        workflowRef.insert(consolidation)
+        em.create(consolidation)
     	return consolidation   			
    	}
 
@@ -131,8 +131,8 @@ class ConsolidationService
         if( !old ) throw new Exception('Consolidation does not exist or has already been deleted.')
         if( old.state == STATE_APPROVED ) throw new Exception('Consolidation has already been approved.')
         if( old.state == STATE_FORPROVAPPROVAL ) throw new Exception('Consolidation has already been submitted to province.')
+        signatorySvc.buildSignatories(consolidation, signatories)
         em.update(consolidation)
-        signatorySvc.saveSignatories(consolidation.signatories)
 		return consolidation   			
    	}
 
@@ -142,7 +142,7 @@ class ConsolidationService
    		if (! consolidation) throw new Exception('Consolidation does not exist or has already been deleted.')
    		consolidation.txntype = faasSvc.getTxnType(TXNTYPE_CS)
    		consolidation.autonumber = util.toBoolean(var.td_autonumber, false)
-        consolidation.signatories = signatorySvc.getSignatories(consolidation)
+        signatorySvc.loadSignatories('consolidation', consolidation)
 		return consolidation   			
    	}
 

@@ -1,7 +1,0 @@
-"entity.*|appraiser.*|recommender.*|taxmapper.*|approver.*" [allowEdit == true]{
-    enabled:true;
-}
-
-"entity.*|appraiser.*|recommender.*|taxmapper.*|approver.*" [allowEdit != true]{
-    enabled:false;
-}
