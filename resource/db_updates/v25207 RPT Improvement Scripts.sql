@@ -249,3 +249,5 @@ alter table miscrpu alter column actualuse_objid varchar(50) null
 go
 
 
+alter table rpu drop constraint FK_rpu_realpropertyid
+

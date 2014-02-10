@@ -86,10 +86,12 @@ class SubdividedLandPinController
     
     void delete(){
         if (!selectedItem ) throw new Exception('Select an item to delete.');
-        svc.deleteSubdividedLand(selectedItem);
-        lands.remove(selectedItem);
-        listHandler.load();
-        binding.refresh('count');
+        if (MsgBox.confirm('Delete item?')) {
+            svc.deleteSubdividedLand(selectedItem);
+            lands.remove(selectedItem);
+            listHandler.load();
+            binding.refresh('count');
+        }
     }
     
     

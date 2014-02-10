@@ -556,7 +556,7 @@ class FAASService
 
 
     void checkTxnReference(faas){
-		if (faas.previousfaases){
+		if (faas.previousfaases && ! faas.txntype.objid.matches('SD|CS')){
 			def prevfaasid = faas.previousfaases[0].prevfaasid
 			txnRef.checkReference(prevfaasid)
 		}
@@ -571,7 +571,7 @@ class FAASService
 
 
 	void insertTxnReference(faas){
-		if (faas.previousfaases){
+		if (faas.previousfaases &&  ! faas.txntype.objid.matches('SD|CS')){
 			def prevfaasid = faas.previousfaases[0].prevfaasid
 			txnRef.insert([objid:prevfaasid, refid:faas.objid, msg:'FAAS is currently referenced by TD No. ' + faas.tdno])
 		}
@@ -673,7 +673,7 @@ class FAASService
 		newfaas.titledate		= null
 		newfaas.memoranda		= null
 		newfaas.lgutype 		= (newfaas.lgutype ? newfaas.lgutype : var.lgu_type)
-		signatorySvc.initSignatories(newfaas, signatories)
+		signatorySvc.init(newfaas, signatories)
 	}
 
 	@ProxyMethod

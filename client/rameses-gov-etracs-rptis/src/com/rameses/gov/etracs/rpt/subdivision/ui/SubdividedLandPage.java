@@ -25,6 +25,15 @@ public class SubdividedLandPage extends javax.swing.JPanel {
         xDataTable1 = new com.rameses.rcp.control.XDataTable();
         xFormPanel1 = new com.rameses.rcp.control.XFormPanel();
         xIntegerField1 = new com.rameses.rcp.control.XIntegerField();
+        formPanel5 = new com.rameses.rcp.util.FormPanel();
+        xFormPanel2 = new com.rameses.rcp.control.XFormPanel();
+        xButton1 = new com.rameses.rcp.control.XButton();
+        xLabel18 = new com.rameses.rcp.control.XLabel();
+        xLabel17 = new com.rameses.rcp.control.XLabel();
+        xLabel16 = new com.rameses.rcp.control.XLabel();
+        xLabel25 = new com.rameses.rcp.control.XLabel();
+        xLabel28 = new com.rameses.rcp.control.XLabel();
+        xLabel29 = new com.rameses.rcp.control.XLabel();
 
         xDataTable1.setColumns(new com.rameses.rcp.common.Column[]{
             new com.rameses.rcp.common.Column(new Object[]{
@@ -170,6 +179,69 @@ public class SubdividedLandPage extends javax.swing.JPanel {
         xIntegerField1.setPreferredSize(new java.awt.Dimension(0, 20));
         xFormPanel1.add(xIntegerField1);
 
+        com.rameses.rcp.control.border.XTitledBorder xTitledBorder1 = new com.rameses.rcp.control.border.XTitledBorder();
+        xTitledBorder1.setTitle("Mother FAAS Information");
+        formPanel5.setBorder(xTitledBorder1);
+        formPanel5.setCellspacing(1);
+        formPanel5.setPreferredSize(new java.awt.Dimension(120, 80));
+
+        xFormPanel2.setOrientation(com.rameses.rcp.constant.UIConstants.HORIZONTAL);
+        xFormPanel2.setPadding(new java.awt.Insets(0, 0, 0, 0));
+        xFormPanel2.setPreferredSize(new java.awt.Dimension(300, 23));
+        xFormPanel2.setShowCaption(false);
+        xButton1.setCellPadding(new java.awt.Insets(0, 0, 0, 20));
+        xButton1.setEnabled(false);
+        xButton1.setName("viewMotherFaas");
+        xButton1.setShowCaption(false);
+        xButton1.setText("  TD No.  ");
+        xFormPanel2.add(xButton1);
+
+        xLabel18.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(153, 153, 153)));
+        xLabel18.setCaption("TD No.");
+        xLabel18.setCaptionWidth(100);
+        xLabel18.setFont(new java.awt.Font("Tahoma", 1, 14));
+        xLabel18.setName("entity.motherfaas.tdno");
+        xLabel18.setPreferredSize(new java.awt.Dimension(200, 22));
+        xLabel18.setShowCaption(false);
+        xFormPanel2.add(xLabel18);
+
+        formPanel5.add(xFormPanel2);
+
+        xLabel17.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(153, 153, 153)));
+        xLabel17.setCaption("Owner");
+        xLabel17.setCaptionWidth(100);
+        xLabel17.setName("entity.motherfaas.owner.name");
+        xLabel17.setPreferredSize(new java.awt.Dimension(0, 19));
+        formPanel5.add(xLabel17);
+
+        xLabel16.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(153, 153, 153)));
+        xLabel16.setCaption(" PIN");
+        xLabel16.setCaptionWidth(100);
+        xLabel16.setName("entity.motherfaas.fullpin");
+        xLabel16.setPreferredSize(new java.awt.Dimension(0, 19));
+        formPanel5.add(xLabel16);
+
+        xLabel25.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(153, 153, 153)));
+        xLabel25.setCaption("Cadastral Lot No.");
+        xLabel25.setCaptionWidth(100);
+        xLabel25.setName("entity.motherfaas.cadastrallotno");
+        xLabel25.setPreferredSize(new java.awt.Dimension(0, 19));
+        formPanel5.add(xLabel25);
+
+        xLabel28.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(153, 153, 153)));
+        xLabel28.setCaption("Area (sqm)");
+        xLabel28.setCaptionWidth(100);
+        xLabel28.setName("entity.motherfaas.totalareasqm");
+        xLabel28.setPreferredSize(new java.awt.Dimension(0, 19));
+        formPanel5.add(xLabel28);
+
+        xLabel29.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(153, 153, 153)));
+        xLabel29.setCaption("Area (ha.)");
+        xLabel29.setCaptionWidth(100);
+        xLabel29.setName("entity.motherfaas.totalareaha");
+        xLabel29.setPreferredSize(new java.awt.Dimension(0, 19));
+        formPanel5.add(xLabel29);
+
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -177,6 +249,7 @@ public class SubdividedLandPage extends javax.swing.JPanel {
             .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
+                    .add(org.jdesktop.layout.GroupLayout.LEADING, formPanel5, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 627, Short.MAX_VALUE)
                     .add(xDataTable1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 627, Short.MAX_VALUE)
                     .add(xFormPanel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 265, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
@@ -185,7 +258,9 @@ public class SubdividedLandPage extends javax.swing.JPanel {
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .add(xDataTable1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 427, Short.MAX_VALUE)
+                .add(formPanel5, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 168, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(xDataTable1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 425, Short.MAX_VALUE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(xFormPanel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 34, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
         );
@@ -193,9 +268,18 @@ public class SubdividedLandPage extends javax.swing.JPanel {
     
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private com.rameses.rcp.util.FormPanel formPanel5;
+    private com.rameses.rcp.control.XButton xButton1;
     private com.rameses.rcp.control.XDataTable xDataTable1;
     private com.rameses.rcp.control.XFormPanel xFormPanel1;
+    private com.rameses.rcp.control.XFormPanel xFormPanel2;
     private com.rameses.rcp.control.XIntegerField xIntegerField1;
+    private com.rameses.rcp.control.XLabel xLabel16;
+    private com.rameses.rcp.control.XLabel xLabel17;
+    private com.rameses.rcp.control.XLabel xLabel18;
+    private com.rameses.rcp.control.XLabel xLabel25;
+    private com.rameses.rcp.control.XLabel xLabel28;
+    private com.rameses.rcp.control.XLabel xLabel29;
     // End of variables declaration//GEN-END:variables
     
 }

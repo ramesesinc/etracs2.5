@@ -116,6 +116,7 @@ public class ConsolidatedLandPage extends javax.swing.JPanel {
         xFormPanel1.setPadding(new java.awt.Insets(0, 0, 5, 0));
         xDecimalField1.setCaption("Total Area (ha)");
         xDecimalField1.setCaptionWidth(100);
+        xDecimalField1.setDepends(new String[] {"selectedItem"});
         xDecimalField1.setDisabledTextColor(new java.awt.Color(0, 0, 0));
         xDecimalField1.setEnabled(false);
         xDecimalField1.setFont(new java.awt.Font("Courier New", 1, 14));
@@ -128,6 +129,7 @@ public class ConsolidatedLandPage extends javax.swing.JPanel {
         xDecimalField2.setCaption("Area (sqm)");
         xDecimalField2.setCaptionWidth(80);
         xDecimalField2.setCellPadding(new java.awt.Insets(0, 10, 0, 0));
+        xDecimalField2.setDepends(new String[] {"selectedItem"});
         xDecimalField2.setDisabledTextColor(new java.awt.Color(0, 0, 0));
         xDecimalField2.setEnabled(false);
         xDecimalField2.setFont(new java.awt.Font("Courier New", 1, 14));
@@ -138,6 +140,7 @@ public class ConsolidatedLandPage extends javax.swing.JPanel {
         xFormPanel2.setPadding(new java.awt.Insets(0, 0, 5, 0));
         xIntegerField1.setCaption("No. of Consolidated Land ");
         xIntegerField1.setCaptionWidth(150);
+        xIntegerField1.setDepends(new String[] {"selectedItem"});
         xIntegerField1.setDisabledTextColor(new java.awt.Color(0, 0, 0));
         xIntegerField1.setEnabled(false);
         xIntegerField1.setFont(new java.awt.Font("Courier New", 1, 14));

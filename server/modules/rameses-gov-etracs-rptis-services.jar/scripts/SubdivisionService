@@ -102,6 +102,7 @@ class SubdivisionService
 
     @ProxyMethod
     public def updateSubdivision(subdivision) {
+        signatorySvc.buildSignatories(subdivision, signatories)
     	em.update(subdivision)
     	return subdivision
     }
@@ -180,6 +181,8 @@ class SubdivisionService
 
  	@ProxyMethod
  	public def deleteSubdividedLand(sland){
+        em.clearAffectedNewRpuRealPropertyId(sland)
+        em.clearAffectedRpuNewRealPropertyInfo(sland)
  		em.delete(sland, SCHEMA_SUBDIVIDED_LAND)
         if (sland.newrpuid){
             def rpu = rpuSvc.openRpu([objid:sland.newrpuid])
@@ -559,10 +562,8 @@ class SubdivisionService
     }
 
     void initFaasSignatories(faas, subdivision){
-        faas.signatories = signatorySvc.getSignatories(subdivision)
-        faas.signatories.each{
-            it.refid = faas.objid 
-            it.objid = util.generateId('S')
+        signatories.eachWithIndex{ signatory, idx ->
+            faas[signatory] = subdivision[signatory]
         }
     }
 

@@ -127,6 +127,7 @@ class ConsolidatedLandController
             item.objid = RPTUtil.generateId('CI')
             svc.saveConsolidatedLand(item);
             lands.add(item);
+            
         },
                 
         onRemoveItem : { item ->

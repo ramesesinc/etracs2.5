@@ -71,10 +71,10 @@ class ConsolidationService
     public def getList( params ) {
     	params.searchtext = (params.searchtext ? params.searchtext : '') + '%'
         def filters = [
-            ' and c.newtdno LIKE $P{searchtext}',
-            ' and c.owner_name LIKE $P{searchtext}',
-            ' and c.txnno LIKE $P{searchtext}',
-            ' and r.fullpin LIKE $P{searchtext}',
+            ' and (c.newtdno LIKE $P{searchtext} OR c.newtdno IS NULL)',
+            ' and (c.owner_name LIKE $P{searchtext} OR c.owner_name IS NULL)',
+            ' and (c.txnno LIKE $P{searchtext} OR c.txnno IS NULL) ',
+            ' and (r.fullpin LIKE $P{searchtext} OR r.fullpin IS NULL)',
         ]
         return util.getListFromQuery( 'consolidation:getList' , filters, params, 'c.objid' )
     }
@@ -434,6 +434,7 @@ class ConsolidationService
             autonumber      : consolidation.autonumber,
             tdno            : consolidation.newtdno,
             utdno           : consolidation.newutdno,
+            txntype         : faasSvc.getTxnType(consolidation.txntype.objid),
             txntype_objid   : consolidation.txntype.objid,
             effectivityyear : consolidation.effectivityyear,
             effectivityqtr  : consolidation.effectivityqtr,
@@ -470,10 +471,8 @@ class ConsolidationService
     }
 
     void initFaasSignatories(faas, consolidation){
-        faas.signatories = signatorySvc.getSignatories(consolidation)
-        faas.signatories.each{
-            it.refid = faas.objid 
-            it.objid = util.generateId('S')
+        signatories.eachWithIndex{ signatory, idx ->
+            faas[signatory] = consolidation[signatory]
         }
     }
 

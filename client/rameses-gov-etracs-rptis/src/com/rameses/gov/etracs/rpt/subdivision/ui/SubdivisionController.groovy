@@ -110,6 +110,7 @@ public class SubdivisionController extends PageFlowController
     }
     
     void approveSubdivision() {
+        checkMessages();
         info = '';
         processing = true;
         approveTask = new ApproveSubdivisionTask(
@@ -140,44 +141,53 @@ public class SubdivisionController extends PageFlowController
     
     
     void disapproveSubdivision() {
+        checkMessages();
         entity =  svc.disapproveSubdivision(entity);
     }
 
     
     void submitForTaxmapping(){
+        checkMessages();
         entity = svc.submitForTaxmapping(entity);
     }
     
     void submitForAppraisal(){
+        checkMessages();
         entity = svc.submitForAppraisal(entity);
     }
 
     void submitToProvince() {
+        checkMessages();
         entity =  svc.submitToProvince(entity);
     }
 
    
     void disapproveSubmitToProvice() {
+        checkMessages();
         entity =  svc.disapproveSubmitToProvice(entity);
     }
 
 
     void approveSubmittedToProvince(){
+        checkMessages();
         entity =  svc.approveSubmittedToProvince(entity)
     }
     
     
     void disapproveSubmittedToProvince(){
+        checkMessages();
         entity =  svc.disapproveSubmittedToProvince(entity)
     }
     
     
     void approveByProvince() {
+        checkMessages();
         entity =  svc.approveByProvince(entity);
     }
 
 
     void disapproveByProvince() {
+        checkMessages();
         entity =  svc.disapproveByProvince(entity);
     }
     

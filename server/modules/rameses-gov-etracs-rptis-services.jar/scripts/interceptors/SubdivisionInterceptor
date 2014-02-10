@@ -1,11 +1,12 @@
 import com.rameses.annotations.*
-import com.rameses.eserver.*;
 import com.rameses.common.*;
+import com.rameses.services.extended.*;
+
 
 class SubdivisionInterceptor
 {
-	@Service('SubdivisionService')
-	def svc 
+	@ActiveDB('subdivision')
+	def em;
 
 	@Service('RPTLedgerService')
 	def ledgerSvc 
@@ -16,12 +17,6 @@ class SubdivisionInterceptor
 	@Service('RPTUtil')
 	def util
 
-/*
-	@Before(pattern="FAASService.deleteFaas", eval="#{args[0].rpu.rputype != 'land'}") 
-	public void deleteAffectedRpu( evt ) {
-		svc.deleteAffectedRpuByPrevFaasId(evt.args[0].objid)
-	}
-*/
 
 	@Before(pattern="SubdivisionService.createSubdivision") 
 	public void interceptCreateSubdivision( evt ) {
@@ -30,5 +25,17 @@ class SubdivisionInterceptor
 			ledgerSvc.checkLedgerBalance(info.motherfaas.objid)
 		}
 	}
+
+
+	@Before(pattern="SubdivisionService.submitForAppraisal") 
+	public void submitForAppraisalIntercept( evt ) {
+		def subdivision = evt.args[0]
+		
+		//check all affected rpus are assigned with new PIN
+		def nopinRpus = em.getAffectedRpuWithNoPin(subdivision)
+		if (nopinRpus)
+			throw new Exception('Affected RPU with TD No. ' + nopinRpus[0].tdno + ' is not assigned with a new PIN.');
+	}
+
 }
 

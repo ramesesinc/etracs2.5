@@ -222,3 +222,21 @@ WHERE objid =$P{objid}
 
 
 
+[getAffectedRpuWithNoPin]
+SELECT pf.tdno
+FROM subdivisionaffectedrpu sr
+	INNER JOIN faas pf ON sr.prevfaasid = pf.objid 
+WHERE sr.subdivisionid = $P{objid}	
+  AND sr.newrpid IS NULL 
+
+
+[clearAffectedNewRpuRealPropertyId]
+UPDATE r SET 
+	r.realpropertyid = null 
+FROM subdivisionaffectedrpu sr 
+	INNER JOIN rpu r ON sr.newrpuid = r.objid 
+ WHERE sr.subdividedlandid = $P{objid}
+
+
+[clearAffectedRpuNewRealPropertyInfo]
+UPDATE subdivisionaffectedrpu SET subdividedlandid = null, newrpid = null, newpin = null WHERE subdividedlandid = $P{objid}
