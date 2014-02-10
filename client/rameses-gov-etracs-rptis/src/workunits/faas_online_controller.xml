@@ -12,8 +12,10 @@ import com.rameses.rcp.annotations.*
 import com.rameses.rcp.common.* 
 import com.rameses.osiris2.client.*
 import com.rameses.osiris2.common.*
+import com.rameses.util.*;
+import com.rameses.common.*;
 import com.rameses.gov.etracs.rpt.common.RPTUtil;
-import com.rameses.util.MapBeanUtils;
+
 
 public class AbstractOnlineFaasController extends PageFlowController
 {
@@ -76,6 +78,12 @@ public class AbstractOnlineFaasController extends PageFlowController
         
         sections += InvokerUtil.lookupOpeners('faasonline_' + type + ':info', [entity:entity, svc:svc])
         sections += InvokerUtil.lookupOpeners('faasonline:info', [entity:entity, svc:svc])
+        
+        sections = sections.findAll{
+            def vw = it.properties.visibleWhen;
+            return  ((!vw)  ||  ExpressionResolver.getInstance().evalBoolean( vw, [entity:entity] ));
+        }
+        
         if (sections){
             selectedSection = sections[0];
         }

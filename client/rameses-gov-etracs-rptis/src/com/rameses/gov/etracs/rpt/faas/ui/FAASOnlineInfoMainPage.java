@@ -298,7 +298,7 @@ public class FAASOnlineInfoMainPage extends javax.swing.JPanel {
         jPanel4.add(xFormPanel11);
         xFormPanel11.setBounds(358, 42, 434, 118);
 
-        xLabel2.setExpression("#{'ANNOTATED'}");
+        xLabel2.setExpression("#{annotated}");
         xLabel2.setFont(new java.awt.Font("Tahoma", 1, 14));
         xLabel2.setForeground(new java.awt.Color(204, 0, 0));
         xLabel2.setName("annotated");

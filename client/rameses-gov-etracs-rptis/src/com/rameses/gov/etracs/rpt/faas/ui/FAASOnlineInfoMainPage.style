@@ -53,11 +53,11 @@
     enabled:false;
 }
 
-"annotated" [showAnnotation == true]{
+"annotated" [entity.annotated == true]{
     visible:true;
 }
 
-"annotated" [showAnnotation != true]{
+"annotated" [entity.annotated != true]{
     visible:false;
 }
 

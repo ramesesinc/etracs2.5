@@ -67,7 +67,9 @@ class FaasMainInfoController
     }
     
     
-    void refresh(){}
+    void refresh(){
+        binding.refresh('annotated');
+    }
     
     
     List getQuarters(){
@@ -145,6 +147,12 @@ class FaasMainInfoController
         if (entity.state == 'APPROVED') return false;
         if (mode == 'read') return false;
         return true;
+    }
+    
+    def getAnnotated(){
+        if (entity.annotated)
+            return 'ANNOTATED';
+        return '';
     }
     
     
