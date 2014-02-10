@@ -9,6 +9,11 @@ class FaasReportService
 	@Service('NumberService')
 	def numberSvc
 
+
+	@Service('TxnSignatoryService')
+	def signatorySvc 
+
+
 	@Service('RPTUtil')
 	def util
 	
@@ -45,7 +50,7 @@ class FaasReportService
 		faas.propertylocation = ( muni ? muni.name + ', ' : '') + ( prov ? prov.name : city.name )
 
 		getOwnerContactNo( faas )
-		loadSignatories(faas)
+		signatorySvc.loadSignatories('faas', faas)
 		
 		if( faas.rpu.rputype == 'land' ) { 
 			LISTLIMITSIZE1 = 10
@@ -617,13 +622,5 @@ class FaasReportService
 		return listlimitsize
 	}
 
-	private void loadSignatories(faas) {
-	    def appraiser = faas.signatories.find{it.type == 'appraiser'};
-        def recommender = faas.signatories.find{it.type == 'recommender'};
-        def approver = faas.signatories.find{it.type == 'approver'};
-        faas.appraiser = (appraiser ? appraiser : [:])
-        faas.recommender = (recommender ? recommender : [:])
-        faas.approver = (approver ? approver : [:])
 
-	}
 }

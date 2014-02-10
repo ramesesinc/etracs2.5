@@ -9,6 +9,8 @@ class TxnSignatoryService
 	@PersistenceContext('main')
 	def pem 
 
+	@Service('DateService')
+	def dtSvc
 
 	@ActiveDB('txnsignatory')
 	def em
@@ -101,6 +103,8 @@ class TxnSignatoryService
 			signatories = pem.serializer.read(entity.signatories)
 		}
 		signatories.each{
+			if (it.dtsigned) 
+				it.dtsigned = dtSvc.parse('yyyy-MM-dd', it.dtsigned)
 			entity[it.type] = it 
 		}
 		entity.remove('signatories')

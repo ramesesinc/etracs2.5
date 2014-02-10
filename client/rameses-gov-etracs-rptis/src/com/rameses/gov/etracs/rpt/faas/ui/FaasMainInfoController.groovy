@@ -29,6 +29,8 @@ class FaasMainInfoController
     boolean allowEditPrevInfo = false;
     
     
+    String entityName = 'faasmain';
+    
     String getTitle(){
         def t = 'FAAS Information'
         def rputype = entity.rpu?.rputype;
