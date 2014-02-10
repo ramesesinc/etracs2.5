@@ -22,10 +22,9 @@ go
 alter table realproperty drop constraint ux_realproperty_rypinclaimno
 go 
 
-alter table realproperty add constraint ux_realproperty_rypinclaimnostate unique(ry,pin,claimno, state)
-go 
 
-
+alter table realproperty drop constraint ux_realproperty_rypinclaimnostate
+go
 
 
 
@@ -230,3 +229,23 @@ go
 
 alter table txnsignatory alter column dtsigned date null
 go
+
+
+
+
+
+
+alter table faas alter column rpuid varchar(50) null
+go
+
+alter table bldgrpu alter column bldgtype_objid varchar(50) null
+go
+alter table bldgrpu alter column bldgkindbucc_objid varchar(50) null
+go
+
+
+
+alter table miscrpu alter column actualuse_objid varchar(50) null
+go
+
+

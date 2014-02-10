@@ -3,5 +3,6 @@
         <invoker type="formActions" action="close" caption="Close" mnemonic="c" immediate="true" icon="images/toolbars/cancel.png" visibleWhen="#{mode=='read' &amp;&amp; showClose == true}"/>
         <invoker type="formActions" action="edit" caption="Edit" shortcut="ctrl E" mnemonic="e" icon="images/toolbars/edit.png" visibleWhen="#{showEdit}" role="APPRAISER"/> 
         <invoker type="formActions" action="save" caption="Save" shortcut="ctrl S" mnemonic="s" icon="images/toolbars/save.png" visibleWhen="#{mode != 'read'}"/>                
+        <invoker type="formActions" action="changeSuffix" caption="Change Suffix"  mnemonic="s" visibleWhen="#{showEdit &amp;&amp; rpu.rputype != 'land'}" role="TAXMAPPER"/>                
     </invokers>
 </workunit>

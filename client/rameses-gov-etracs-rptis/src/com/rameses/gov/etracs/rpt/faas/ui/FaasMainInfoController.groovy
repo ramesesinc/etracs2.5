@@ -28,11 +28,28 @@ class FaasMainInfoController
     boolean allowEditOwner = false;
     boolean allowEditPrevInfo = false;
     
-    String title = 'FAAS Information';
+    
+    String getTitle(){
+        def t = 'FAAS Information'
+        def rputype = entity.rpu?.rputype;
+        if ( rputype != null){
+            if (rputype == 'land') 
+                t = 'Land FAAS Information';
+            if (rputype == 'bldg') 
+                t = 'Building FAAS Information';
+            if (rputype == 'mach') 
+                t = 'Machine FAAS Information';
+            if (rputype == 'planttree') 
+                t = 'Plant/Tree FAAS Information';
+            if (rputype == 'misc') 
+                t = 'Miscellaneous FAAS Information';
+        }
+        return t;
+    }
     
     
     void init(){
-        entity = svc.openFaas(entity);
+        entity.putAll(svc.openFaas(entity));
         mode = MODE_READ;
     }
     

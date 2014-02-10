@@ -33,6 +33,12 @@ class FaasOnlineGRInitController extends com.rameses.gov.etracs.rpt.faas.ui.Faas
         binding.refresh('entity.newrysetting');
     }
     
+        
+    def process(){
+        def faas = grSvc.initOnlineGeneralRevision( entity );
+        return InvokerUtil.lookupOpener('faasonline:open', [entity:faas]);
+    }
+    
 }
 
     </code>

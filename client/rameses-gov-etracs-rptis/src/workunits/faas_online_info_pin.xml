@@ -49,6 +49,7 @@ class FaasInfoPinController
     
     
     def onupdateRealProperty = {
+        faas.rp.putAll(it);
         faas.realpropertyid = it.objid;
         svc.updateFaas(faas);
         caller.clearMessages('rp');

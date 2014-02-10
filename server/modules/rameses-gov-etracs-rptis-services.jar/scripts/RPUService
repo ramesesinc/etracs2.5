@@ -9,6 +9,9 @@ class RPUService
     @ActiveDB('rpu')
     def em
 
+    @Service('RealPropertyService')
+    def rpSvc;
+    
     @Service('PropertyClassificationService')
     def classSvc 
 
@@ -241,12 +244,22 @@ class RPUService
                 throw new Exception('Land RPU does not exist.')
             }
 
+            /*
             if (landrpu.state == STATE_CANCELLED)
             throw new Exception('Land RPU has already been cancelled.')
+            */
 
-            if (landrpu.state != STATE_CURRENT)
+            if (landrpu.state == STATE_INTERIM)
             throw new Exception('Land RPU is not yet current.')
         }
+    }
+
+
+
+
+    @ProxyMethod 
+    public void updateSuffix(rpu) {
+        em.updateSuffix(rpu)
     }
 
 
@@ -304,7 +317,29 @@ class RPUService
             }
             rpu.fullpin = fullpin 
         }
-        println 'rpu.fullpin -> ' + rpu.fullpin
     }
+
+
+    @ProxyMethod
+    public def getNextSuffix(info) {
+        if (info.rputype.equalsIgnoreCase(RPUTYPE_LAND))
+            info.suffix = 0
+        else if (info.rputype.equalsIgnoreCase(RPUTYPE_BLDG))
+            info.suffix = 1001
+        else if (info.rputype.equalsIgnoreCase(RPUTYPE_MACH))
+            info.suffix = 2001
+        else if (info.rputype.equalsIgnoreCase(RPUTYPE_PLANTTREE))
+            info.suffix = 3001
+        else if (info.rputype.equalsIgnoreCase(RPUTYPE_MISC))
+            info.suffix = 7001
+
+        def suffixes = em.getNextSuffixes([realpropertyid:info.realpropertyid])
+        def suffix = suffixes.find{it.rputype == info.rputype}
+        if (suffix){
+            info.suffix = suffix.nextsuffix
+        }
+        return info.suffix 
+    }
+
 
 }

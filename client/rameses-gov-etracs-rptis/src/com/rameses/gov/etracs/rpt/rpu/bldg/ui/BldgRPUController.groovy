@@ -25,10 +25,6 @@ public class BldgRPUController extends com.rameses.gov.etracs.rpt.rpu.ui.Abstrac
         },
     ]
     
-    public def getService(){
-        return svc 
-    }
-    
     void beforeInit(){
         initInfo();
     }
@@ -269,4 +265,5 @@ public class BldgRPUController extends com.rameses.gov.etracs.rpt.rpu.ui.Abstrac
     void loadSetting(){
         setting = svc.getBldgRySetting(bldgtype?.bldgrysettingid)
     }
+    
 }

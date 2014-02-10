@@ -5,6 +5,9 @@ import com.rameses.common.*;
 class FaasServiceInterceptor
 {
 
+	@Service('RealPropertyService')
+	def rpSvc 
+
 	@Service('RPUService')
 	def rpuSvc 
 
@@ -82,7 +85,49 @@ class FaasServiceInterceptor
 	}
 
 
+	@Before(pattern="FAASService.submitFaasForApproval", eval="#{args[0].txntype.objid.matches('CT')}", index=10) 
+	public void validateChangeTaxabilityForApproval( evt ) {
+		def faas = evt.args[0]
+		def rpu = rpuSvc.findRpuInfoById(faas.rpu.objid)
+		def prevrpu = rpuSvc.findRpuInfoById(rpu.previd)
 
+		if (rpu.taxable == 0 && (rpu.exemptiontype == null || rpu.exemptiontype.objid == null))
+			throw new Exception('Exemption Type is required.')
+		
+		if (prevrpu){
+			def invalid = false 
+			if ( prevrpu.taxable == 1 && prevrpu.taxable == rpu.taxable ) 
+				invalid = true
+			else if (prevrpu.taxable != 1 && prevrpu.exemptiontype.objid == rpu.exemptiontype.objid)
+				invalid = true 
+
+			if (invalid)
+				throw new Exception('Current Taxability must not be equal to previous taxability.')
+		}
+	}
+
+
+	@Before(pattern="FAASService.submitForAppraisal", eval="#{args[0].txntype.objid.matches('ND')}", index=10) 
+	public void validateNewDiscoverySubmit( evt ) {
+		def faas = evt.args[0]
+		def rp = rpSvc.open(faas.rp)
+		if (!rp) throw new Exception('Real Property does not exist or has already been deleted.')
+
+		util.required('Section No.', rp.section)
+		util.required('Parcel No.', rp.parcel)
+	}
+
+
+	@Before(pattern="FAASService.submitForTaxmapping", eval="#{args[0].txntype.objid.matches('TR|TRC|TRE')}", index=10) 
+	public void validateTransferSubmit( evt ) {
+		def faas = evt.args[0]
+		util.required('Owner', faas.taxpayer.objid)
+		util.required('Declared Owner', faas.owner.name)
+		if(faas.owner.name.equalsIgnoreCase(faas.prevowner)){
+			throw new Exception('Current Owner must not be equal to previous owner.')
+		}
+		util.required('Memoranda', faas.memoranda)
+	}
 
 
 
@@ -99,24 +144,13 @@ class FaasServiceInterceptor
 		}
 	}
 
-	@After(pattern="FAASService.initTransaction", eval="#{result.txntype.objid == 'TR'}", index=10) 
-	public void initSimpleTransfer( evt ) {
+	@After(pattern="FAASService.initTransaction", eval="#{result.txntype.objid.matches('TR|TRE|TRC')}", index=10) 
+	public void initTransfer( evt ) {
 		def faas = evt.result 
 		clearInfo(faas)
 		
 	}
 
-	@After(pattern="FAASService.initTransaction", eval="#{result.txntype.objid == 'TRE'}", index=10) 
-	public void initTransferWithReassessment( evt ) {
-		def faas = evt.result 
-		clearInfo(faas)
-	}
-
-	@After(pattern="FAASService.initTransaction", eval="#{result.txntype.objid == 'TRC'}", index=10) 
-	public void initTransferWithCorrection( evt ) {
-		def faas = evt.result 
-		clearInfo(faas)
-	}
 
 	@After(pattern="FAASService.initTransaction", eval="#{result.txntype.objid == 'CD'}", index=10) 
 	public void initChangeDepreciation( evt ) {
@@ -125,6 +159,7 @@ class FaasServiceInterceptor
 			throw new Exception('Cannot depreciate Land property.')
 		}
 	}
+
 
 	@After(pattern="FAASService.initCapture", eval="#{result.txntype.objid == 'ND'}", index=10) 
 	public void initNewDiscovery( evt ) {
@@ -147,7 +182,6 @@ class FaasServiceInterceptor
 		faas.rp.previd = null
 		clearInfo(faas)
 	}
-
 
 	/*---------------------------------------------------
 	*

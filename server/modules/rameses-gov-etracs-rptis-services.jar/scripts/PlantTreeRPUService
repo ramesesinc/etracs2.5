@@ -35,6 +35,8 @@ class PlantTreeRPUService
         if (!landrpu) throw new Exception('Land RPU Reference does not exists.')
 
         rpu.landrpuid   = landrpu.objid 
+        rpu.productive = 0.0
+        rpu.nonproductive = 0.0
         rpu.planttrees  = []
         return rpu 
     }
@@ -183,7 +185,7 @@ class PlantTreeRPUService
 
     void savePlantTrees(planttrees){
     	planttrees.each{pt ->
-    		em.save(xpt, SCHEMA_DETAIL)
+    		em.save(pt, SCHEMA_DETAIL)
     	}
     }
 

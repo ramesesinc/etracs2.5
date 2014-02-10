@@ -75,3 +75,17 @@ WHERE m.objid = r.objid
   AND r.state <> 'CANCELLED'     
   
 
+
+[getNextSuffixes]
+SELECT 
+  rputype,
+  MAX(suffix +1) AS nextsuffix 
+FROM rpu 
+WHERE realpropertyid = $P{realpropertyid}
+AND state <> 'CANCELLED'
+AND rputype <> 'land'
+GROUP BY rputype 
+
+
+[updateSuffix]
+UPDATE rpu SET suffix = $P{suffix}, fullpin = $P{fullpin} WHERE objid = $P{objid}

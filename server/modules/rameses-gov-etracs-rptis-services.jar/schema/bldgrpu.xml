@@ -7,9 +7,9 @@
 		<field name="permitno" />
 		<field name="permitdate" />
 		<field name="permitissuedby" />
-		<field name="bldgtype_objid" required="true" />
-		<field name="bldgkindbucc_objid" required="true" />
-		<field name="basevalue" required="true" type="decimal" />
+		<field name="bldgtype_objid" />
+		<field name="bldgkindbucc_objid" />
+		<field name="basevalue" type="decimal" />
 		<field name="dtcompleted" />
 		<field name="dtoccupied" />
 		<field name="floorcount" required="true" type="integer" />

@@ -31,6 +31,7 @@ class RPTUtil
     public void required( caption, value ) {
         def msg = caption + ' is required.'
         if ( value == null ) throw new Exception(msg)
+        if (value.toString().trim().length() == 0 ) throw new Exception(msg )
         if ( !(value instanceof Number)  && !value) throw new Exception( msg )
     }
 

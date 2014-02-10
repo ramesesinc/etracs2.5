@@ -58,7 +58,7 @@ SELECT
 	b.objid AS rp_barangay_objid,
 	b.parentid AS rp_barangay_parentid
 FROM faas f
-	INNER JOIN rpu rpu ON f.rpuid = rpu.objid
+	LEFT JOIN rpu rpu ON f.rpuid = rpu.objid
 	LEFT JOIN propertyclassification pc ON rpu.classification_objid = pc.objid 
 	INNER  JOIN realproperty rp ON f.realpropertyid = rp.objid
 	INNER JOIN barangay b ON rp.barangayid = b.objid 
@@ -229,7 +229,7 @@ FROM rpu r
 	LEFT JOIN faas f ON r.objid = f.rpuid
 WHERE r.fullpin = $P{fullpin} 
   AND r.ry = $P{ry}
-
+  AND r.rputype = $P{rputype}
 
 [getLandReference]
 select
@@ -269,15 +269,15 @@ WHERE rpu.realpropertyid = $P{realpropertyid}
 [getHistory]
 SELECT 
 	f.*,
-	rpu.rputype,
-	rpu.ry,
-	rpu.fullpin ,
-	rpu.taxable,
-	rpu.totalareaha,
-	rpu.totalareasqm,
-	rpu.totalbmv,
-	rpu.totalmv,
-	rpu.totalav,
+	prpu.rputype,
+	prpu.ry,
+	prpu.fullpin ,
+	prpu.taxable,
+	prpu.totalareaha,
+	prpu.totalareasqm,
+	prpu.totalbmv,
+	prpu.totalmv,
+	prpu.totalav,
 	rp.section,
 	rp.parcel,
 	rp.surveyno,
@@ -295,7 +295,4 @@ FROM faas cf
 	INNER JOIN propertyclassification pc ON rpu.classification_objid = pc.objid 
 WHERE cf.objid = $P{faasid}
   AND cf.tdno <> f.tdno 
-ORDER BY f.txntimestamp DESC 
-
-
-
+ORDER BY f.tdno 

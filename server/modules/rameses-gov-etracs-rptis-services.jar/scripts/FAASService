@@ -67,10 +67,17 @@ class FAASService
 
 	@ProxyMethod
 	public def initNewDiscovery( info ) {
+		if (info.rputype != 'land'){
+			info.suffix = rpuSvc.getNextSuffix([rputype:info.rputype, realpropertyid:info.rp.objid])
+			info.fullpin = info.rp.pin + '-' + info.suffix 
+		}
 		def faas = initCapture(info)
 		faas.datacapture = false
+		faas.autonumber  = utilSvc.toBoolean(var.td_autonumber, false)
         faas.rp.barangayid = info.barangay.objid
-        rpSvc.create(faas.rp)
+        if (info.rputype == 'land'){
+        	rpSvc.create(faas.rp)
+        }
         rpuSvc.createRpu(faas.rpu)
         createFaas(faas)
         return faas
@@ -102,7 +109,7 @@ class FAASService
 			info.realpropertyid = info.rp.objid
 		}
 
-		def rpu = em.findRpu([ry:info.ry, fullpin:info.fullpin])
+		def rpu = em.findRpu([ry:info.ry, fullpin:info.fullpin, rputype:info.rputype])
 		if (rpu && rpu.faasid)
 			throw new Exception('RPU is already referenced by TD No. ' + rpu.tdno + '.')
 
@@ -125,6 +132,7 @@ class FAASService
 	public def initOnlineTransaction( info ) {
 		info.txntype = getTxnType(info.txntype.objid)
 		def faas = faasSvc.initTransaction(info)
+		signatorySvc.init(faas, signatories)
 		faas.memoranda = ' '
 
 		if (faas.txntype.newrealproperty){
@@ -143,7 +151,7 @@ class FAASService
 		def faas = faasSvc.loadFaas( info.faas )
 		validateFaasForTransaction(faas)
 		initNewFaasInfo(info, faas)
-
+		signatorySvc.init(faas, signatories)
 
 		if (faas.rpu.rputype == 'land' && faas.txntype.newrealproperty){
 			def rp = em.findOpenRealProperty([pin:faas.rp.pin, claimno:info.claimno])
@@ -331,7 +339,9 @@ class FAASService
 		if (retval == 0) 
 			throw new Exception('Unable to approve FAAS. Only FOR APPROVAL record is allowed.')
 
-		rpSvc.approve(faas.rp)
+		if (faas.txntype.newrealproperty){
+			rpSvc.approve(faas.rp)
+		}
 		rpuSvc.approveRpu(faas.rpu)
 		wsSvc.insert(faas)
 		cancelPreviousFaases(faas)
@@ -553,11 +563,6 @@ class FAASService
 	}
 
 
-	def getSignatory(faas, type){
-		return faas.signatories.find{it.type == type }
-	}
-
-
 	void updateNameInfo(faas){
 		def len = faas.owner?.name?.length()
 		if (len > 100) len = 100
@@ -590,26 +595,23 @@ class FAASService
 
 
 	void validateSignatories(faas){
-		def appraiser = getSignatory(faas, 'appraiser')
-		utilSvc.required('Appraiser', appraiser)
-		utilSvc.required('Appraiser', appraiser.name)
-		utilSvc.required('Appraiser Date Signed', appraiser.dtsigned)
+		utilSvc.required('Appraiser', faas.appraiser)
+		utilSvc.required('Appraiser', faas.appraiser.name)
+		utilSvc.required('Appraiser Date Signed', faas.appraiser.dtsigned)
 
-		def approver = getSignatory(faas, 'approver')
-		utilSvc.required('Approver', approver)
-		utilSvc.required('Approver', approver.name)
-		utilSvc.required('Approver Date Signed', approver.dtsigned)
+		utilSvc.required('Approver', faas.approver)
+		utilSvc.required('Approver', faas.approver.name)
+		utilSvc.required('Approver Date Signed', faas.approver.dtsigned)
 	}
 
 	void cancelPreviousFaases(faas){
 		em.getPreviousFaases([faasid:faas.objid]).each{
-			def approver = getSignatory(faas, 'approver')
 			def params = [
 				objid  			: it.prevfaasid,
 				cancelreason	: faas.txntype.objid,
-				canceldate		: approver.dtsigned,
+				canceldate		: faas.approver.dtsigned,
 				cancelledbytdnos: faas.tdno,
-				cancelledtimestamp : dtSvc.buildCustomTimeStamp(approver.dtsigned),
+				cancelledtimestamp : dtSvc.buildCustomTimeStamp(faas.approver.dtsigned),
 			]
 			em.cancelFaas(params)
 			if (faas.txntype.newrpu){
@@ -670,6 +672,7 @@ class FAASService
 		newfaas.titleno			= null
 		newfaas.titledate		= null
 		newfaas.memoranda		= null
+		newfaas.lgutype 		= (newfaas.lgutype ? newfaas.lgutype : var.lgu_type)
 		signatorySvc.initSignatories(newfaas, signatories)
 	}
 
@@ -693,6 +696,27 @@ class FAASService
 		return 10;
 	}
 
+
+	@ProxyMethod
+	public def getHistoryColumns(  ) {
+        return [
+            [name:"state", caption:"State", width:100],
+            [name:"ry", caption:"RY", width:50, type:'integer', format:'0000'],
+            [name:"tdno", caption:"TD No.", width:140],
+            [name:"prevtdno", caption:"Previous TD No.", width:140],
+            [name:"txntype.objid", caption:"Txn", width:50],
+            [name:"classification.code", caption:"Class", width:50], 
+            [name:"fullpin", caption:"PIN", width:200],
+            [name:"owner.name", caption:"Owner Name", width:250],
+            [name:"cadastrallotno", caption:"Lot No.", width:100],
+            [name:"totalareasqm", caption:"Area (sqm)", width:120, type:'decimal', format:'#,##0.00'],
+            [name:"totalmv", caption:"Market Value", width:100, type:'decimal', format:'#,##0.00'],
+            [name:"totalav", caption:"Assessed Value", width:100, type:'decimal', format:'#,##0.00'],
+            [name:"cancelreason", caption:"Cancel Reason", width:100],
+            [name:"canceldate", caption:"Cancel Date", width:100],
+            
+        ]
+	}
 
 
 	void updateTxnTimeStamp(faas){

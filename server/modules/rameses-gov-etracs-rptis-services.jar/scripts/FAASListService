@@ -15,6 +15,8 @@ class FAASListService
 
 
     def STATE_INTERIM           = 'INTERIM'
+    def STATE_FORTAXMAPPING     = 'FORTAXMAPPING'
+    def STATE_FORAPPRAISAL      = 'FORAPPRAISAL'
     def STATE_FORAPPROVAL       = 'FORAPPROVAL'
     def STATE_FORPROVSUBMISSION = 'FORPROVSUBMISSION'
     def STATE_FORPROVAPPROVAL   = 'FORPROVAPPROVAL'
@@ -120,6 +122,8 @@ class FAASListService
         if ('city'.equalsIgnoreCase(var.lgu_type)){
             return [
                 STATE_INTERIM, 
+                STATE_FORTAXMAPPING, 
+                STATE_FORAPPRAISAL, 
                 STATE_FORAPPROVAL,
                 STATE_CURRENT,
                 STATE_CANCELLED,
@@ -128,6 +132,8 @@ class FAASListService
         else{
             return [
                 STATE_INTERIM, 
+                STATE_FORTAXMAPPING, 
+                STATE_FORAPPRAISAL, 
                 STATE_FORPROVSUBMISSION,
                 STATE_FORPROVAPPROVAL,
                 STATE_CURRENT,

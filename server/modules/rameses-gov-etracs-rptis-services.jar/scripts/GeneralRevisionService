@@ -36,6 +36,19 @@ class GeneralRevisionService
 
 
 	@ProxyMethod
+	public def initOnlineGeneralRevision( info ) {
+		def faas = initGeneralRevision(info)
+		if (faas.rpu.rputype == 'land'){
+			rpSvc.create(faas.rp)
+		}
+		rpuSvc.createRpu(faas.rpu)
+		faasSvc.createFaas(faas)
+		return faas 
+	}
+
+
+
+	@ProxyMethod
 	public def initGeneralRevision( info ) {
 		utilSvc.required('Property to process', info.faas)
 		utilSvc.required('New Revision Year', info.newrysetting)

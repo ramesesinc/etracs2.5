@@ -280,6 +280,15 @@ public abstract class AbstractFaasController extends PageFlowController
      * RealProperty Support
      *
      *===============================================*/
+    def onupdateRealProperty = {
+        if (! rp ) rp = [:]
+        entity.realpropertyid = it.objid;
+        rp.putAll(it);
+        buildFullPin();
+        binding.refresh('rp.*|rpu.fullpin');
+    }
+    
+    
     def viewRealProperty() {
         def allowModify = (rpu == null || rpu.rputype == 'land' ? true : false);
         def action = (mode == MODE_CREATE && (rp == null || rp.isnew == true) ? 'create' : 'open');
@@ -291,14 +300,8 @@ public abstract class AbstractFaasController extends PageFlowController
             allowEdit   : (mode == MODE_EDIT || mode == MODE_CREATE ? allowModify : false),
             autoEdit    : (mode == MODE_EDIT || mode == MODE_CREATE ? allowModify : false),
             allowEditPinInfo : allowEditPinInfo,
-                
-            onupdate : { 
-                if (! rp ) rp = [:]
-                entity.realpropertyid = it.objid;
-                rp.putAll(it);
-                buildFullPin();
-                binding.refresh('rp.*|rpu.fullpin');
-            },
+            oncreate : onupdateRealProperty,    
+            onupdate : onupdateRealProperty,
         ])
         
         opener.target = 'popup';
@@ -334,7 +337,7 @@ public abstract class AbstractFaasController extends PageFlowController
      
      def viewAssessment(){
          def allowEdit = getAllowEdit();
-         rpu.dtappraised = appraiser?.dtsigned;
+         rpu.dtappraised = entity.appraiser?.dtsigned;
          rpu.realpropertyid = rp?.objid;
          rpu.ry = rp?.ry;
          def opener = rpu.rputype + 'rpu:' + (rpu.isnew ? 'create' : 'open')

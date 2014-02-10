@@ -47,6 +47,7 @@ class FaasInfoRpuController
     
     def onupdateRpu = {
         entity.rpuid = it.objid;
+        entity.rpu.putAll(it);
         svc.updateFaas(entity);
         caller.clearMessages('rpu');
     }
@@ -77,7 +78,7 @@ class FaasInfoRpuController
     
     def open(){
         rpu = [objid:entity.rpuid];
-        return InvokerUtil.lookupOpener('landrpu:open', [
+        return InvokerUtil.lookupOpener(entity.rpu.rputype + 'rpu:open', [
             rpu         : rpu,
             lguid       : entity.lguid,
             onupdate    : onupdateRpu,

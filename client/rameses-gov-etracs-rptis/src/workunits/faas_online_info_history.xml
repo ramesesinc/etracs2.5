@@ -36,6 +36,7 @@ class FaasListInfoController
     
     def listHandler = [
         fetchList : { return list; },
+        getColumns : { svc.getHistoryColumns() }
     ] as BasicListModel
     
 }

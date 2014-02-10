@@ -68,6 +68,7 @@ public class AbstractOnlineFaasController extends PageFlowController
     void loadSections(){
         if (sections == null) 
             sections = []
+        sections.clear();
             
         def type = entity.txntype?.objid;
         if (txntype) 
@@ -235,13 +236,13 @@ public class AbstractOnlineFaasController extends PageFlowController
         </process>
         
         
-        <page name="fortaxmapping" title="FAAS (For Taxmapping)">
+        <page name="fortaxmapping" title="FAAS #{entity.txntype.name} (For Taxmapping)">
             <transition caption="Close"  to="end"      mnemonic="c" icon="images/toolbars/cancel.png" />
             <transition caption="Submit for Appraisal" to="forappraisal" action="submitForAppraisal"  mnemonic="m"   confirm="Submit FAAS for appraisal?" role="TAXMAPPER"/>
         </page>
         
         
-        <page name="forappraisal" title="FAAS (For Appraisal)">
+        <page name="forappraisal" title="FAAS #{entity.txntype.name} (For Appraisal)">
             <transition caption="Close"  to="end"      mnemonic="c" icon="images/toolbars/cancel.png" />
             <transition caption="Submit for Approval" to="submit" action="submitForApproval"  mnemonic="m"   confirm="Submit FAAS for approval?" role="APPRAISER"/>
         </page>

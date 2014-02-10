@@ -72,11 +72,11 @@ public abstract class AbstractRPUController
     
     
     final void open(){
-        loadComboItems();
         if (! rpu._loaded) {
             rpu = service.openRpu(rpu);
         }
         rpu._loaded = true;
+        loadComboItems();
         afterOpen();
         mode = MODE_READ;
     }
@@ -85,7 +85,7 @@ public abstract class AbstractRPUController
     void loadComboItems(){
         classifications = service.getClassifications();
         exemptions = service.getExemptionTypes();
-        classification = rpu.classification;
+        classification = rpu.classification
     }
     
     
@@ -160,4 +160,24 @@ public abstract class AbstractRPUController
         this.classification = classification;
         rpu.classification = classification;
     }
+    
+    
+    
+    def changeSuffix(){
+        return InvokerUtil.lookupOpener('rpu:changesuffix', [
+            rpu         : rpu,
+                
+            onupdate    : { newsuffix -> 
+                if (rpu.rputype != 'land'){
+                    def oldsuffix = rpu.suffix;
+                    rpu.suffix = newsuffix;
+                    rpu.fullpin = rpu.fullpin.replace(oldsuffix.toString(), newsuffix.toString());
+                    service.updateSuffix([objid:rpu.objid, suffix:rpu.suffix, fullpin:rpu.fullpin]);
+                    binding.refresh('rpu.fullpin');
+                }
+            }   
+                
+        ])
+    }
+    
 }

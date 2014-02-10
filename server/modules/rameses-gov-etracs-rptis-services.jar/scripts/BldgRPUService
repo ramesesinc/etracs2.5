@@ -46,12 +46,13 @@ class BldgRPUService
 
 		rpu.landrpuid 			= landrpu.objid 
 		rpu.totalarea 			= 0.0
-		rpu.floorcount 			= 0 
+		rpu.floorcount 			= 1
+		rpu.basevalue 			= 0.0
 		rpu.depreciation 		= 0.0
 		rpu.depreciationvalue	= 0.0
 		rpu.totaladjustment 	= 0.0
 		rpu.firstfloorbasevalue = 0.0
-		rpu.bldgage 			= 0.0
+		rpu.bldgage 			= 0
 		rpu.swornstatement 		= false
 		rpu.swornamount 		= 0.0
 		rpu.useswornamount 		= false

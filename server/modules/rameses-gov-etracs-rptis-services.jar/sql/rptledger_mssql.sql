@@ -61,7 +61,7 @@ FROM rptledgerfaas rlf
 	INNER JOIN propertyclassification pc ON rlf.classification_objid = pc.objid 
 	LEFT JOIN propertyclassification pc1 ON rlf.actualuse_objid = pc1.objid 
 WHERE rlf.rptledgerid = $P{rptledgerid} 
-ORDER BY rlf.fromyear  
+ORDER BY rlf.fromyear, rlf.tdno   DESC 
 
 [findLedgerFaasByFaasId]
 SELECT rlf.*,
