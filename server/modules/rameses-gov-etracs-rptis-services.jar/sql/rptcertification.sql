@@ -12,7 +12,7 @@ SELECT
 	f.objid 
 FROM faas f
 	INNER JOIN rpu r ON f.rpuid = r.objid 
-	INNER JOIN realproperty rp ON r.realpropertyid = rp.objid 
+	INNER JOIN realproperty rp ON f.realpropertyid = rp.objid 
 	INNER JOIN propertyclassification pc ON r.classification_objid = pc.objid 
 	INNER JOIN barangay b ON rp.barangayid = b.objid 
 WHERE f.taxpayer_objid	= $P{taxpayerid}
@@ -27,16 +27,18 @@ SELECT
 	f.objid 
 FROM faas f
 	INNER JOIN rpu r ON f.rpuid = r.objid 
-	INNER JOIN realproperty rp ON r.realpropertyid = rp.objid 
+	INNER JOIN realproperty rp ON f.realpropertyid = rp.objid 
 	INNER JOIN propertyclassification pc ON r.classification_objid = pc.objid 
 	INNER JOIN barangay b ON rp.barangayid = b.objid 
 WHERE f.taxpayer_objid	= $P{taxpayerid}
   AND f.state = 'CURRENT' 
   AND r.rputype = 'land'
-  AND EXISTS( SELECT * FROM rpu 
-  			  WHERE realpropertyid = r.realpropertyid 
-  			    AND state = 'CURRENT' 
-  			    AND rputype <> 'land'
+  AND EXISTS( SELECT * 
+  			  FROM faas f 
+  			  	INNER JOIN rpu rpu ON f.rpuid = rpu.objid 
+  			  WHERE f.realpropertyid = r.realpropertyid 
+  			    AND f.state = 'CURRENT' 
+  			    AND rpu.rputype <> 'land'
   			)
 
 [insertLandHoldingWithNoImprovementItems]
@@ -46,7 +48,7 @@ SELECT
 	f.objid 
 FROM faas f
 	INNER JOIN rpu r ON f.rpuid = r.objid 
-	INNER JOIN realproperty rp ON r.realpropertyid = rp.objid 
+	INNER JOIN realproperty rp ON f.realpropertyid = rp.objid 
 	INNER JOIN propertyclassification pc ON r.classification_objid = pc.objid 
 	INNER JOIN barangay b ON rp.barangayid = b.objid 
 WHERE f.taxpayer_objid	= $P{taxpayerid}
@@ -77,11 +79,11 @@ SELECT
 FROM rptcertificationitem rci 
 	INNER JOIN faas f ON rci.refid = f.objid 
 	INNER JOIN rpu r ON f.rpuid = r.objid 
-	INNER JOIN realproperty rp ON r.realpropertyid = rp.objid 
+	INNER JOIN realproperty rp ON f.realpropertyid = rp.objid 
 	INNER JOIN propertyclassification pc ON r.classification_objid = pc.objid 
 	INNER JOIN barangay b ON rp.barangayid = b.objid 
 WHERE rci.rptcertificationid = $P{rptcertificationid}
-ORDER BY r.fullpin
+ORDER BY f.tdno, r.fullpin
 
 [insertMultipleItems]
 INSERT INTO rptcertificationitem (rptcertificationid,refid)
@@ -90,7 +92,7 @@ SELECT
 	f.objid 
 FROM faas f
 	INNER JOIN rpu r ON f.rpuid = r.objid 
-	INNER JOIN realproperty rp ON r.realpropertyid = rp.objid 
+	INNER JOIN realproperty rp ON f.realpropertyid = rp.objid 
 	INNER JOIN propertyclassification pc ON r.classification_objid = pc.objid 
 	INNER JOIN barangay b ON rp.barangayid = b.objid 
 WHERE f.taxpayer_objid	= $P{taxpayerid}
@@ -116,7 +118,7 @@ SELECT
 FROM rptcertificationitem rci 
 	INNER JOIN faas f ON rci.refid = f.objid 
 	INNER JOIN rpu r ON f.rpuid = r.objid 
-	INNER JOIN realproperty rp ON r.realpropertyid = rp.objid 
+	INNER JOIN realproperty rp ON f.realpropertyid = rp.objid 
 	INNER JOIN propertyclassification pc ON r.classification_objid = pc.objid 
 	INNER JOIN barangay b ON rp.barangayid = b.objid 
 WHERE rci.rptcertificationid = $P{rptcertificationid}  
@@ -134,7 +136,7 @@ SELECT
 	b.name AS barangay_name
 FROM faas f
 	INNER JOIN rpu r ON f.rpuid = r.objid 
-	INNER JOIN realproperty rp ON r.realpropertyid = rp.objid 
+	INNER JOIN realproperty rp ON f.realpropertyid = rp.objid 
 	INNER JOIN propertyclassification pc ON r.classification_objid = pc.objid 
 	INNER JOIN barangay b ON rp.barangayid = b.objid 
 WHERE f.objid = $P{faasid}
@@ -185,7 +187,7 @@ SELECT
 FROM rptcertificationitem rci 
 	INNER JOIN faas f ON rci.refid = f.objid 
 	INNER JOIN rpu r ON f.rpuid = r.objid 
-	INNER JOIN realproperty rp ON r.realpropertyid = rp.objid 
+	INNER JOIN realproperty rp ON f.realpropertyid = rp.objid 
 	INNER JOIN propertyclassification pc ON r.classification_objid = pc.objid 
 	INNER JOIN barangay b ON rp.barangayid = b.objid 
 WHERE rci.rptcertificationid = $P{rptcertificationid}
@@ -202,7 +204,7 @@ SELECT
 	f.objid 
 FROM faas f
 	INNER JOIN rpu r ON f.rpuid = r.objid 
-	INNER JOIN realproperty rp ON r.realpropertyid = rp.objid 
+	INNER JOIN realproperty rp ON f.realpropertyid = rp.objid 
 	INNER JOIN propertyclassification pc ON r.classification_objid = pc.objid 
 	INNER JOIN barangay b ON rp.barangayid = b.objid 
 WHERE f.objid = $P{faasid} 
@@ -215,7 +217,7 @@ SELECT
 	f.objid 
 FROM faas f 
 	INNER JOIN rpu r ON f.rpuid = r.objid 
-	INNER JOIN realproperty rp ON r.realpropertyid = rp.objid 
+	INNER JOIN realproperty rp ON f.realpropertyid = rp.objid 
 	INNER JOIN propertyclassification pc ON r.classification_objid = pc.objid 
 	INNER JOIN barangay b ON rp.barangayid = b.objid 
 WHERE f.state = 'CURRENT'
@@ -235,6 +237,6 @@ SELECT
 	b.name AS barangay
 FROM faas f 
 	INNER JOIN rpu r ON f.rpuid = r.objid 
-	INNER JOIN realproperty rp ON r.realpropertyid = rp.objid 
+	INNER JOIN realproperty rp ON f.realpropertyid = rp.objid 
 	INNER JOIN barangay b ON rp.barangayid = b.objid 
 WHERE f.objid = $P{faasid}

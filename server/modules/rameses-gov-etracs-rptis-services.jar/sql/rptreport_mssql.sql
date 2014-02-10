@@ -21,36 +21,32 @@ SELECT
 	pc.code AS classcode
 FROM faas f 
 	INNER JOIN rpu r ON f.rpuid = r.objid
-	INNER JOIN realproperty rp ON r.realpropertyid = rp.objid 
+	INNER JOIN realproperty rp ON f.realpropertyid = rp.objid 
 	INNER JOIN propertyclassification pc ON r.classification_objid = pc.objid 
-	INNER JOIN txnsignatory s ON f.objid = s.refid AND s.type = 'approver'
 WHERE f.state IN ('CURRENT', 'CANCELLED')
 	AND rp.barangayid LIKE $P{barangayid}
-	AND YEAR(s.dtsigned) = $P{year}  
-	AND DATEPART(q, s.dtsigned) = $P{quarter}      
-	AND MONTH(s.dtsigned) LIKE $P{month} 
-
+	AND f.txntimestamp LIKE $P{currenttimestamp} 
 ORDER BY r.fullpin 	
 
 
 [getMasterListing]
 SELECT t.* FROM (  
 	SELECT 
-		f.state, f.owner_name, r.fullpin, f.tdno, f.titleno, rp.cadastrallotno,  
+		f.state, f.owner_name, f.name, r.fullpin, f.tdno, f.titleno, rp.cadastrallotno,  
 		r.rputype, pc.code AS classcode, r.totalareaha, r.totalareasqm, r.totalmv, r.totalav, f.effectivityyear, 
 		f.prevtdno, f.prevowner, f.prevmv, f.prevav, 
 		NULL AS cancelledbytdnos, NULL AS cancelreason, canceldate 
 	FROM faas f
 		INNER JOIN rpu r ON f.rpuid = r.objid 
-		INNER JOIN realproperty rp ON r.realpropertyid = rp.objid 
+		INNER JOIN realproperty rp ON f.realpropertyid = rp.objid 
 		INNER JOIN propertyclassification pc ON r.classification_objid = pc.objid 
 	WHERE f.state = 'CURRENT'  
 	  ${classidfilter}
 
-	UNION 
+	UNION ALL
 
 	SELECT 
-		f.state, f.owner_name, r.fullpin, f.tdno, f.titleno, rp.cadastrallotno,  
+		f.state, f.owner_name, f.name, r.fullpin, f.tdno, f.titleno, rp.cadastrallotno,  
 		r.rputype, pc.code AS classcode, r.totalareaha, r.totalareasqm, r.totalmv, r.totalav, f.effectivityyear, 
 		f.prevtdno, f.prevowner, f.prevmv, f.prevav, 
 		cancelledbytdnos, cancelreason, canceldate 
@@ -62,7 +58,7 @@ SELECT t.* FROM (
 	  AND YEAR(f.canceldate) = $P{currentyear}  
 	  ${classidfilter}
 ) t 
-${orderby} 
+${orderbyclause} 
 
 
 
@@ -80,7 +76,7 @@ SELECT
 	r.fullpin, f.prevtdno, f.memoranda, rp.barangayid 
 FROM faas f
 	INNER JOIN rpu r ON f.rpuid = r.objid 
-	INNER JOIN realproperty rp ON r.realpropertyid = rp.objid
+	INNER JOIN realproperty rp ON f.realpropertyid = rp.objid
 	INNER JOIN propertyclassification pc ON r.classification_objid = pc.objid 
 	INNER JOIN barangay b ON rp.barangayid = b.objid 
 	LEFT JOIN municipality m ON b.parentid = m.objid  
@@ -109,7 +105,7 @@ SELECT
 	f.memoranda, et.code AS legalbasis  
 FROM faas f
 	INNER JOIN rpu r ON f.rpuid = r.objid 
-	INNER JOIN realproperty rp ON r.realpropertyid = rp.objid
+	INNER JOIN realproperty rp ON f.realpropertyid = rp.objid
 	INNER JOIN propertyclassification pc ON r.classification_objid = pc.objid 
 	INNER JOIN barangay b ON rp.barangayid = b.objid 
 	LEFT JOIN exemptiontype et ON r.exemptiontype_objid = et.objid 
@@ -171,7 +167,7 @@ FROM faasannotation fa
 	INNER JOIN barangay b ON rp.barangayid = b.objid 
 WHERE fa.state = 'APPROVED'  
   AND f.state = 'CURRENT'  
-${orderby} 
+${orderbyclause} 
 
 
 
@@ -212,7 +208,7 @@ SELECT
 	r.totalareasqm, r.totalareaha, r.totalav, f.txntype_objid AS txntype
 FROM faas f
 	INNER JOIN rpu r ON f.rpuid = r.objid 
-	INNER JOIN realproperty rp ON r.realpropertyid = rp.objid
+	INNER JOIN realproperty rp ON f.realpropertyid = rp.objid
 	INNER JOIN propertyclassification pc ON r.classification_objid = pc.objid 
 	INNER JOIN barangay b ON rp.barangayid = b.objid 
 WHERE f.taxpayer_objid = $P{taxpayerid} 

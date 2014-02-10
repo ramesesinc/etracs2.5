@@ -2,7 +2,7 @@
 <workunit>
     <invokers>
         <invoker type="quick_launcher" code="BGR01" action="init" caption="Batch General Revision"  mnemonic="b" role="APPRAISER" permission="batchgr.create"/>
-         <invoker folderid="/explorer/txn/rpt/online" action="init"  caption="Batch General Revision" index="100" role="APPRAISER" permission="batchgr.create"/>
+         <invoker folderid="/explorer/txn/rpt/util" action="init"  caption="Batch General Revision" index="100" role="APPRAISER" permission="batchgr.create"/>
         
         <invoker type="formActions" action="_close" caption="Close" mnemonic="c" immediate="true" icon="images/toolbars/cancel.png" visibleWhen="#{processing==false}"/>
         <invoker type="formActions" action="cancel" caption="Cancel" mnemonic="c" immediate="true" icon="images/toolbars/cancel.png" visibleWhen="#{processing==true}"/>
