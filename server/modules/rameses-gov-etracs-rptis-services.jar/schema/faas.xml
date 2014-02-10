@@ -42,6 +42,7 @@
 		<field name="txntimestamp" required="true" />
 		<field name="cancelledtimestamp"/>
 		<field name="name"/>
+		<field name="dtapproved" />
 		<complex name="signatories" type="list" serializer="default" />
 	</element>
 

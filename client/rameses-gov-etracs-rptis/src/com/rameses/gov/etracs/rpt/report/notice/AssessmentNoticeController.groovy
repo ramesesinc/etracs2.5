@@ -55,6 +55,7 @@ class AssessmentNoticeController
             if (!includeditems) throw new Exception('At least one property must be included.');
             entity.items = includeditems;
             entity = svc.createNotice(entity);
+            listHandler.load();
             mode = MODE_READ;
             return 'default'
         }

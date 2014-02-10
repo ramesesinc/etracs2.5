@@ -52,7 +52,7 @@ SELECT t.* FROM (
 		cancelledbytdnos, cancelreason, canceldate 
 	FROM faas f
 		INNER JOIN rpu r ON f.rpuid = r.objid 
-		INNER JOIN realproperty rp ON r.realpropertyid = rp.objid 
+		INNER JOIN realproperty rp ON f.realpropertyid = rp.objid 
 		INNER JOIN propertyclassification pc ON r.classification_objid = pc.objid 
 	WHERE f.state = 'CANCELLED'  
 	  AND YEAR(f.canceldate) = $P{currentyear}  
@@ -128,7 +128,7 @@ SELECT
 	r.fullpin, r.totalareasqm, r.totalareasqm, r.totalav, r.totalmv 
 FROM faas f
 	INNER JOIN rpu r ON f.rpuid = r.objid 
-	INNER JOIN realproperty rp ON r.realpropertyid = rp.objid
+	INNER JOIN realproperty rp ON f.realpropertyid = rp.objid
 	INNER JOIN propertyclassification pc ON r.classification_objid = pc.objid 
 	INNER JOIN barangay b ON rp.barangayid = b.objid 
 WHERE rp.barangayid = $P{barangayid} 
@@ -139,18 +139,17 @@ ORDER BY fullpin
 
 [getJAT]
 SELECT 
-	b.name AS barangay, s.dtsigned AS issuedate, f.tdno, r.fullpin, 
+	b.name AS barangay, f.dtapproved AS issuedate, f.tdno, r.fullpin, 
 	f.txntype_objid AS txntype, f.owner_name, r.rputype, pc.code AS classcode, 
 	r.totalareaha, r.totalmv, r.totalav, f.state 
 FROM faas f
 	INNER JOIN rpu r ON f.rpuid = r.objid 
-	INNER JOIN realproperty rp ON r.realpropertyid = rp.objid
+	INNER JOIN realproperty rp ON f.realpropertyid = rp.objid
 	INNER JOIN propertyclassification pc ON r.classification_objid = pc.objid 
 	INNER JOIN barangay b ON rp.barangayid = b.objid 
-	INNER JOIN txnsignatory s ON f.objid = s.refid AND s.type = 'approver'
 WHERE rp.barangayid = $P{barangayid} 
   AND f.state IN ('CURRENT', 'CANCELLED')
-ORDER BY s.dtsigned, tdno 
+ORDER BY f.dtapproved, tdno 
 
 
 [getAnnotationListing]
@@ -162,7 +161,7 @@ FROM faasannotation fa
 	INNER JOIN faasannotationtype fat ON fa.annotationtype_objid = fat.objid 
 	INNER JOIN faas f ON fa.faasid = f.objid 
 	INNER JOIN rpu r ON f.rpuid = r.objid 
-	INNER JOIN realproperty rp ON r.realpropertyid = rp.objid
+	INNER JOIN realproperty rp ON f.realpropertyid = rp.objid
 	INNER JOIN propertyclassification pc ON r.classification_objid = pc.objid 
 	INNER JOIN barangay b ON rp.barangayid = b.objid 
 WHERE fa.state = 'APPROVED'  
@@ -171,7 +170,7 @@ ${orderbyclause}
 
 
 
-[getRDAP-RPTA-100]
+[getRDAPRPTA100]
 SELECT 
 	b.pin,
 	b.name AS barangay,
@@ -191,8 +190,8 @@ SELECT
 	SUM( CASE WHEN r.taxable = 0 THEN r.totalav ELSE 0.0 END ) AS avexempt
 FROM barangay b
 	LEFT JOIN realproperty rp ON b.objid = rp.barangayid 
-	LEFT JOIN rpu r ON rp.objid = r.realpropertyid 
-	LEFT JOIN faas f ON r.objid = f.rpuid 
+	LEFT JOIN faas f ON rp.objid = f.realpropertyid
+	LEFT JOIN rpu r ON f.rpuid = r.objid 
 WHERE f.objid IS NULL
   OR (f.state = 'CURRENT' 	AND f.txntimestamp <= $P{txntimestamp})
   AND r.rputype = 'land' 
@@ -234,7 +233,7 @@ SELECT
 	SUM( CASE WHEN r.taxable = 0 THEN r.totalav ELSE 0.0 END ) AS preceedingexemptav 
 FROM faas f
 	INNER JOIN rpu r ON f.rpuid = r.objid 
-	INNER JOIN realproperty rp ON r.realpropertyid = rp.objid
+	INNER JOIN realproperty rp ON f.realpropertyid = rp.objid
 	INNER JOIN propertyclassification pc ON r.classification_objid = pc.objid 
 	INNER JOIN barangay b ON rp.barangayid = b.objid 
 WHERE f.txntimestamp < $P{currenttimestamp} 
@@ -253,7 +252,7 @@ SELECT
 	SUM( CASE WHEN r.taxable = 0 THEN r.totalav ELSE 0.0 END ) AS currentexemptav 
 FROM faas f
 	INNER JOIN rpu r ON f.rpuid = r.objid 
-	INNER JOIN realproperty rp ON r.realpropertyid = rp.objid
+	INNER JOIN realproperty rp ON f.realpropertyid = rp.objid
 	INNER JOIN propertyclassification pc ON r.classification_objid = pc.objid 
 	INNER JOIN barangay b ON rp.barangayid = b.objid 
 WHERE f.txntimestamp LIKE $P{currenttimestamp} 
@@ -272,7 +271,7 @@ SELECT
 	SUM( CASE WHEN r.taxable = 0 THEN r.totalav ELSE 0.0 END ) AS cancelledexemptav 
 FROM faas f
 	INNER JOIN rpu r ON f.rpuid = r.objid 
-	INNER JOIN realproperty rp ON r.realpropertyid = rp.objid
+	INNER JOIN realproperty rp ON f.realpropertyid = rp.objid
 	INNER JOIN propertyclassification pc ON r.classification_objid = pc.objid 
 	INNER JOIN barangay b ON rp.barangayid = b.objid 
 WHERE f.cancelledtimestamp LIKE $P{currenttimestamp} 
@@ -291,7 +290,7 @@ SELECT
 	SUM( CASE WHEN r.taxable = 0 THEN r.totalav ELSE 0.0 END ) AS endingexemptav 
 FROM faas f
 	INNER JOIN rpu r ON f.rpuid = r.objid 
-	INNER JOIN realproperty rp ON r.realpropertyid = rp.objid
+	INNER JOIN realproperty rp ON f.realpropertyid = rp.objid
 	INNER JOIN propertyclassification pc ON r.classification_objid = pc.objid 
 	INNER JOIN barangay b ON rp.barangayid = b.objid 
 WHERE f.txntimestamp < $P{endingtimestamp} 
@@ -745,7 +744,7 @@ SELECT
 
 FROM faas f
 	INNER JOIN rpu r ON f.rpuid = r.objid 
-	INNER JOIN realproperty rp ON r.realpropertyid = rp.objid
+	INNER JOIN realproperty rp ON f.realpropertyid = rp.objid
 	INNER JOIN propertyclassification pc ON r.classification_objid = pc.objid 
 WHERE f.txntimestamp <= $P{txntimestamp} 
   AND f.state = 'CURRENT' 
@@ -783,7 +782,7 @@ SELECT
 
 FROM faas f
 	INNER JOIN rpu r ON f.rpuid = r.objid 
-	INNER JOIN realproperty rp ON r.realpropertyid = rp.objid
+	INNER JOIN realproperty rp ON f.realpropertyid = rp.objid
 	INNER JOIN exemptiontype e ON r.exemptiontype_objid = e.objid 
 WHERE f.txntimestamp <= $P{txntimestamp} 
   AND f.state = 'CURRENT' 

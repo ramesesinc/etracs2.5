@@ -18,8 +18,8 @@
         <invoker type="formActions" action="receive" caption="Receive" mnemonic="r" visibleWhen="#{mode=='read' &amp;&amp; entity.state != 'RECEIVED'}"/>
         
         <!-- receive -->
-        <invoker type="formActions" action="cancelReceive" caption="Cancel" mnemonic="c" icon="images/toolbars/cancel.png" visibleWhen="#{mode=='receive'}"/>
-        <invoker type="formActions" action="receiveNotice" caption="Save" mnemonic="s" visibleWhen="#{mode=='receive'"/>
+        <invoker type="formActions" action="cancelReceive" caption="Cancel" mnemonic="c" icon="images/toolbars/cancel.png" visibleWhen="#{mode=='receive'}" immediate="true"/>
+        <invoker type="formActions" action="receiveNotice" caption="Save" mnemonic="s" visibleWhen="#{mode=='receive'}"/>
         
         <!-- preview -->
         <invoker type="formActions" action="back" caption="Back" mnemonic="b" icon="images/toolbars/back.png" visibleWhen="#{mode=='preview'}"/>

@@ -332,6 +332,7 @@ class FAASService
 	@ProxyMethod
 	public def approveFaas( faas ) {
 		validateSignatories(faas)
+		faas.dtapproved = faas.approver.dtsigned
 		faas.state = STATE_CURRENT
 		faas.prevstate = STATE_FORAPPROVAL
 		updateTDNo(faas)

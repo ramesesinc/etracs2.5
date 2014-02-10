@@ -82,7 +82,7 @@ class RPTReportService
     @ProxyMethod
 	public def generateTMCR( params )  {
 		params.barangayid = params.barangay?.objid
-		def list = em.sqlContext.createNamedQuery('rptreport:getTmcrList').setParameters( params ).resultList
+		def list = em.getTmcrList(params)
 		if( ! list ) throw new Exception('Records not found.')
 		return list 
 	}
@@ -90,9 +90,7 @@ class RPTReportService
 
 	@ProxyMethod
 	public def generateJAT( params )  {
-		def list = em.sqlContext.createNamedQuery('rptreport:getJAT')
-						.setParameter( 'barangayid', params.barangay.objid)
-						.resultList
+		def list = em.getJAT([barangayid:params.barangay.objid])
 		if( ! list ) throw new Exception('Records not found.')
 		return list 
 	}
@@ -124,9 +122,8 @@ class RPTReportService
 		def periodtype = 'MONTH'  
 		
 		def txntimestamp = util.calculateEndingTimeStamp( year, params.month.qtr, params.month.index )
-		def reportdata   = em.sqlContext.createNamedQuery('rptreport:getRDAP-RPTA-100')
-								.setParameter('txntimestamp', txntimestamp)
-								.resultList.each{
+		def reportdata   = em.getRDAPRPTA100([txntimestamp:txntimestamp])
+								.each{
 									it.tdcount = util.toInteger(it.tdcount)
 								} 
 		return [
@@ -168,10 +165,10 @@ class RPTReportService
 		params.currenttimestamp		= util.calculateCurrentTimeStamp( params.year, params.qtr, params.month?.month )
 		params.endingtimestamp 		= util.calculateEndingTimeStamp( params.year, params.qtr, params.month?.month )
 		
-		def preceedingassessments = em.sqlContext.createNamedQuery('rptreport:getPreceedingRPAAccomplishment').setParameters( params ).resultList 
-		def currentassessments = em.sqlContext.createNamedQuery('rptreport:getCurrentRPAAccomplishment').setParameters( params ).resultList 
-		def cancelledassessments = em.sqlContext.createNamedQuery('rptreport:getCancelledRPAAccomplishment').setParameters( params ).resultList 
-		def endingassessments = em.sqlContext.createNamedQuery('rptreport:getEndingRPAAccomplishment').setParameters( params ).resultList 
+		def preceedingassessments = em.getPreceedingRPAAccomplishment(params)
+		def currentassessments = em.getCurrentRPAAccomplishment(params)
+		def cancelledassessments = em.getCancelledRPAAccomplishment(params)
+		def endingassessments = em.getEndingRPAAccomplishment(params)
 		
 		def updateBrgyAccomplishment = { lgu, list ->
 			def info = list.find{ it.barangayid == lgu.objid }
@@ -254,15 +251,15 @@ class RPTReportService
 		params.currenttimestamp		= util.calculateCurrentTimeStamp( params.year, params.qtr, params.month?.month )
 		params.endingtimestamp 		= util.calculateEndingTimeStamp( params.year, params.qtr, params.month?.month )
 		
-		def taxablepreceedings 	= em.sqlContext.createNamedQuery('rptreport:getPreceedingComparativeAV').setParameters( params ).resultList 
-		def taxablecurrents 	= em.sqlContext.createNamedQuery('rptreport:getCurrentComparativeAV').setParameters( params ).resultList 
-		def taxablecancelleds 	= em.sqlContext.createNamedQuery('rptreport:getCancelledComparativeAV').setParameters( params ).resultList 
-		def taxableendings 		= em.sqlContext.createNamedQuery('rptreport:getEndingComparativeAV').setParameters( params ).resultList 
+		def taxablepreceedings 	= em.getPreceedingComparativeAV(params)
+		def taxablecurrents 	= em.getCurrentComparativeAV(params)
+		def taxablecancelleds 	= em.getCancelledComparativeAV(params)
+		def taxableendings 		= em.getEndingComparativeAV(params)
 		
-		def exemptpreceedings 	= em.sqlContext.createNamedQuery('rptreport:getPreceedingComparativeAVExempt').setParameters( params ).resultList 
-		def exemptcurrents 	= em.sqlContext.createNamedQuery('rptreport:getCurrentComparativeAVExempt').setParameters( params ).resultList 
-		def exemptcancelleds 	= em.sqlContext.createNamedQuery('rptreport:getCancelledComparativeAVExempt').setParameters( params ).resultList 
-		def exemptendings 		= em.sqlContext.createNamedQuery('rptreport:getEndingComparativeAVExempt').setParameters( params ).resultList 
+		def exemptpreceedings 	= em.getPreceedingComparativeAVExempt(params)
+		def exemptcurrents 		= em.getCurrentComparativeAVExempt(params)
+		def exemptcancelleds 	= em.getCancelledComparativeAVExempt(params)
+		def exemptendings 		= em.getEndingComparativeAVExempt(params)
 		
 		def loadSumaryInfo = { data, list ->
 			def info = list.find{ it.classid == data.classid }
@@ -346,15 +343,14 @@ class RPTReportService
 		params.currenttimestamp		= util.calculateCurrentTimeStamp( params.year, params.qtr, params.month?.month )
 		params.endingtimestamp 		= util.calculateEndingTimeStamp( params.year, params.qtr, params.month?.month )
 		
-		def taxablepreceedings 	= em.sqlContext.createNamedQuery('rptreport:getPreceedingComparativeRpuCount').setParameters( params ).resultList 
-		def taxablecurrents 	= em.sqlContext.createNamedQuery('rptreport:getNewDiscoveryComparativeRpuCount').setParameters( params ).resultList 
-		def taxablecancelleds 	= em.sqlContext.createNamedQuery('rptreport:getCancelledComparativeRpuCount').setParameters( params ).resultList 
-		def taxableendings 		= em.sqlContext.createNamedQuery('rptreport:getEndingComparativeRpuCount').setParameters( params ).resultList 
-		
-		def exemptpreceedings 	= em.sqlContext.createNamedQuery('rptreport:getPreceedingComparativeRpuCountExempt').setParameters( params ).resultList 
-		def exemptcurrents 	= em.sqlContext.createNamedQuery('rptreport:getNewDiscoveryComparativeRpuCountExempt').setParameters( params ).resultList 
-		def exemptcancelleds 	= em.sqlContext.createNamedQuery('rptreport:getCancelledComparativeRpuCountExempt').setParameters( params ).resultList 
-		def exemptendings 		= em.sqlContext.createNamedQuery('rptreport:getEndingComparativeRpuCountExempt').setParameters( params ).resultList 
+		def taxablepreceedings 	= em.getPreceedingComparativeRpuCount(params)
+		def taxablecurrents 	= em.getNewDiscoveryComparativeRpuCount(params)
+		def taxablecancelleds 	= em.getCancelledComparativeRpuCount(params)
+		def taxableendings 		= em.getEndingComparativeRpuCount(params)
+		def exemptpreceedings 	= em.getPreceedingComparativeRpuCountExempt(params)
+		def exemptcurrents 	= em.getNewDiscoveryComparativeRpuCountExempt(params)
+		def exemptcancelleds 	= em.getCancelledComparativeRpuCountExempt(params)
+		def exemptendings 		= em.getEndingComparativeRpuCountExempt(params)
 		
 		def loadSumaryInfo = { data, list ->
 			def info = list.find{ it.classid == data.classid }
@@ -438,10 +434,10 @@ class RPTReportService
 		params.currenttimestamp		= util.calculateCurrentTimeStamp( params.year, params.qtr, params.month?.month )
 		params.endingtimestamp 		= util.calculateEndingTimeStamp( params.year, params.qtr, params.month?.month )
 		
-		def starttaxables 	= em.sqlContext.createNamedQuery('rptreport:getStartComparativeMV').setParameters( params ).resultList 
-		def endtaxables		= em.sqlContext.createNamedQuery('rptreport:getEndComparativeMV').setParameters( params ).resultList 
-		def startexempts 	= em.sqlContext.createNamedQuery('rptreport:getStartComparativeMVExempt').setParameters( params ).resultList 
-		def endexempts		= em.sqlContext.createNamedQuery('rptreport:getEndComparativeMVExempt').setParameters( params ).resultList 
+		def starttaxables 	= em.getStartComparativeMV(params)
+		def endtaxables		= em.getEndComparativeMV(params)
+		def startexempts 	= em.getStartComparativeMVExempt(params)
+		def endexempts		= em.getEndComparativeMVExempt(params)
 		
 		def loadMVSumaryInfo = { data, list ->
 			def info = list.find{ it.classid == data.classid }
@@ -514,11 +510,7 @@ class RPTReportService
 		params.lguid = var.lgu_objid
 		params.txntimestamp	= util.calculateCurrentTimeStamp( params.year, params.qtr, params.month?.month ).replace('%','Z') 
 
-		println 'txntimestamp -> ' + params.txntimestamp
-		
-		def taxables = em.sqlContext.createNamedQuery('rptreport:getReportOnRPATaxable')
-							.setParameters(params)
-							.resultList 
+		def taxables = em.getReportOnRPATaxable(params)
 							.each{ it.rpucount = util.toInteger2( it.rpucount, 0)}
 		
 		int lineno = 1
@@ -543,9 +535,7 @@ class RPTReportService
 			}
 		}
 		
-		def exempts  = em.sqlContext.createNamedQuery('rptreport:getReportOnRPAExempt')
-							.setParameters(params)
-							.resultList 
+		def exempts  = em.getReportOnRPAExempt(params)
 							.each{ it.rpucount = util.toInteger2( it.rpucount, 0)}
 		
 		lineno = 1 

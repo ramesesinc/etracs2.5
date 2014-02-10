@@ -201,7 +201,7 @@ UPDATE faas SET state = $P{state} WHERE objid = $P{objid} AND state IN ('INTERIM
 
 [approveFaas]
 UPDATE faas SET 
-	state = $P{state}, utdno = $P{utdno}, tdno = $P{tdno} 
+	state = $P{state}, utdno = $P{utdno}, tdno = $P{tdno}, dtapproved = $P{dtapproved} 
 WHERE objid = $P{objid}  
   AND state IN ('FORAPPROVAL', 'FORPROVAPPROVAL', 'PENDING')
 

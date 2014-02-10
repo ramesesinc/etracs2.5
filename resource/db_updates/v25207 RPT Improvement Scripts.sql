@@ -27,7 +27,8 @@ alter table realproperty drop constraint ux_realproperty_rypinclaimnostate
 go
 
 
-
+alter table faas add dtapproved date 
+go
 
 
 alter table rpumaster add currentfaasid varchar(50)
