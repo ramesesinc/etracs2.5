@@ -249,3 +249,17 @@ go
 alter table miscrpu alter column actualuse_objid varchar(50) null
 go
 
+
+
+
+create table rpttracking
+(
+	objid varchar(50) not null primary key,
+	filetype varchar(50) not null,
+	trackingno varchar(25) not null,
+	msg varchar(150)
+)
+go
+
+alter table rpttracking add constraint ux_rpttracking_trackingno unique(trackingno)
+go

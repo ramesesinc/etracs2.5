@@ -17,12 +17,14 @@ SELECT
 	rp.blockno,
 	rp.claimno,
 	b.name AS barangay_name,
-	pc.code AS classification_code
+	pc.code AS classification_code,
+	t.trackingno
 FROM faas f
 	LEFT JOIN rpu rpu ON f.rpuid = rpu.objid
 	LEFT  JOIN realproperty rp ON f.realpropertyid = rp.objid
 	LEFT JOIN barangay b ON rp.barangayid = b.objid 
 	LEFT JOIN propertyclassification pc ON rpu.classification_objid = pc.objid 
+	LEFT JOIN rpttracking t ON f.objid = t.objid 
 WHERE 1=1
 ${filters}
 
@@ -56,12 +58,14 @@ SELECT
 	rp.west AS rp_west,
 	b.name AS rp_barangay_name,
 	b.objid AS rp_barangay_objid,
-	b.parentid AS rp_barangay_parentid
+	b.parentid AS rp_barangay_parentid,
+	t.trackingno
 FROM faas f
 	LEFT JOIN rpu rpu ON f.rpuid = rpu.objid
 	LEFT JOIN propertyclassification pc ON rpu.classification_objid = pc.objid 
 	INNER  JOIN realproperty rp ON f.realpropertyid = rp.objid
 	INNER JOIN barangay b ON rp.barangayid = b.objid 
+	LEFT JOIN rpttracking t ON f.objid = t.objid 
 WHERE f.objid = $P{objid}
 
 
@@ -158,12 +162,14 @@ SELECT
 	r.ry, r.realpropertyid, r.rputype, r.fullpin, r.totalmv, r.totalav,
 	r.totalareasqm, r.totalareaha,
 	rp.barangayid, rp.cadastrallotno, rp.blockno, rp.surveyno,
-	b.name AS barangay_name
+	b.name AS barangay_name,
+	t.trackingno
 FROM faas f
 	INNER JOIN rpu r ON f.rpuid = r.objid 
 	INNER JOIN realproperty rp ON r.realpropertyid = rp.objid 
 	INNER JOIN propertyclassification pc ON r.classification_objid = pc.objid 
 	INNER JOIN barangay b ON rp.barangayid = b.objid 
+	LEFT JOIN rpttracking t ON f.objid = t.objid 
 where 1=1 ${filters}	
 ORDER BY f.tdno 
 

@@ -39,6 +39,7 @@ class FaasReportService
 	public def getReportData( faasid ) {
 		def faas = faasSvc.loadFaas([objid:faasid])
 		if( !faas ) throw new Exception('Cannot open FAAS with ID No. ' + faasid + '.')
+		println 'faas.trackingno -> '+ faas.trackingno
 		
 		faas.taxeffectivity = faas.effectivityqtr + "Q - " + faas.effectivityyear
 		faas.taxability = ( faas.rpu.taxable ? "TAXABLE" : "EXEMPT" )

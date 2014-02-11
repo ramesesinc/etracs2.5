@@ -44,7 +44,6 @@ public class FAASOnlineInfoMainPage extends javax.swing.JPanel {
         formPanel1 = new com.rameses.rcp.util.FormPanel();
         xLabel1 = new com.rameses.rcp.control.XLabel();
         xLabel16 = new com.rameses.rcp.control.XLabel();
-        xLabel17 = new com.rameses.rcp.control.XLabel();
         xFormPanel11 = new com.rameses.rcp.control.XFormPanel();
         xComboBox6 = new com.rameses.rcp.control.XComboBox();
         formPanel4 = new com.rameses.rcp.util.FormPanel();
@@ -72,6 +71,9 @@ public class FAASOnlineInfoMainPage extends javax.swing.JPanel {
         jScrollPane1 = new javax.swing.JScrollPane();
         xTextArea1 = new com.rameses.rcp.control.XTextArea();
         xTextField21 = new com.rameses.rcp.control.XTextField();
+        formPanel2 = new com.rameses.rcp.util.FormPanel();
+        xLabel18 = new com.rameses.rcp.control.XLabel();
+        xLabel19 = new com.rameses.rcp.control.XLabel();
         xFormPanel1 = new com.rameses.rcp.control.XFormPanel();
         xTextField13 = new com.rameses.rcp.control.XTextField();
         xTextField22 = new com.rameses.rcp.control.XTextField();
@@ -176,32 +178,27 @@ public class FAASOnlineInfoMainPage extends javax.swing.JPanel {
 
         formPanel1.setCaptionBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
         formPanel1.setCellpadding(new java.awt.Insets(0, 0, 0, 10));
+        formPanel1.setFont(new java.awt.Font("Tahoma", 1, 12));
         formPanel1.setOrientation(com.rameses.rcp.constant.UIConstants.HORIZONTAL);
         xLabel1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
         xLabel1.setCaption("Transaction");
-        xLabel1.setCaptionWidth(75);
-        xLabel1.setFont(new java.awt.Font("Arial", 1, 11));
-        xLabel1.setName("entity.txntype.objid");
-        xLabel1.setPreferredSize(new java.awt.Dimension(40, 19));
+        xLabel1.setCaptionFont(new java.awt.Font("Tahoma", 0, 14));
+        xLabel1.setCaptionWidth(92);
+        xLabel1.setExpression("#{entity.txntype.objid}");
+        xLabel1.setFont(new java.awt.Font("Arial", 1, 14));
+        xLabel1.setForeground(new java.awt.Color(204, 0, 0));
+        xLabel1.setPreferredSize(new java.awt.Dimension(40, 22));
         formPanel1.add(xLabel1);
 
         xLabel16.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
-        xLabel16.setCaption("Cancel Reason");
-        xLabel16.setCaptionWidth(90);
-        xLabel16.setFont(new java.awt.Font("Arial", 1, 11));
+        xLabel16.setCaption("Tracking No.");
+        xLabel16.setCaptionFont(new java.awt.Font("Tahoma", 0, 14));
+        xLabel16.setCaptionWidth(100);
+        xLabel16.setExpression("#{entity.trackingno}");
+        xLabel16.setFont(new java.awt.Font("Arial", 1, 14));
         xLabel16.setForeground(new java.awt.Color(204, 0, 0));
-        xLabel16.setName("entity.cancelreason");
-        xLabel16.setPreferredSize(new java.awt.Dimension(40, 19));
+        xLabel16.setPreferredSize(new java.awt.Dimension(190, 22));
         formPanel1.add(xLabel16);
-
-        xLabel17.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
-        xLabel17.setCaption("Date Cancelled");
-        xLabel17.setCaptionWidth(90);
-        xLabel17.setFont(new java.awt.Font("Arial", 1, 11));
-        xLabel17.setForeground(new java.awt.Color(204, 0, 0));
-        xLabel17.setName("entity.canceldate");
-        xLabel17.setPreferredSize(new java.awt.Dimension(73, 19));
-        formPanel1.add(xLabel17);
 
         jPanel4.add(formPanel1);
         formPanel1.setBounds(350, 6, 446, 28);
@@ -392,6 +389,31 @@ public class FAASOnlineInfoMainPage extends javax.swing.JPanel {
         xTextField21.setPreferredSize(new java.awt.Dimension(0, 19));
         formPanel3.add(xTextField21);
 
+        formPanel2.setCaptionBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
+        formPanel2.setCellpadding(new java.awt.Insets(0, 0, 0, 10));
+        formPanel2.setOrientation(com.rameses.rcp.constant.UIConstants.HORIZONTAL);
+        formPanel2.setPadding(new java.awt.Insets(0, 0, 0, 0));
+        formPanel2.setShowCaption(false);
+        xLabel18.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
+        xLabel18.setCaption("Cancel Reason");
+        xLabel18.setCaptionWidth(110);
+        xLabel18.setFont(new java.awt.Font("Arial", 1, 11));
+        xLabel18.setForeground(new java.awt.Color(204, 0, 0));
+        xLabel18.setName("entity.cancelreason");
+        xLabel18.setPreferredSize(new java.awt.Dimension(100, 19));
+        formPanel2.add(xLabel18);
+
+        xLabel19.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
+        xLabel19.setCaption("Date Cancelled");
+        xLabel19.setCaptionWidth(90);
+        xLabel19.setFont(new java.awt.Font("Arial", 1, 11));
+        xLabel19.setForeground(new java.awt.Color(204, 0, 0));
+        xLabel19.setName("entity.canceldate");
+        xLabel19.setPreferredSize(new java.awt.Dimension(110, 19));
+        formPanel2.add(xLabel19);
+
+        formPanel3.add(formPanel2);
+
         jPanel3.add(formPanel3);
         formPanel3.setBounds(386, 332, 422, 160);
 
@@ -453,6 +475,7 @@ public class FAASOnlineInfoMainPage extends javax.swing.JPanel {
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private com.rameses.rcp.util.FormPanel formPanel1;
+    private com.rameses.rcp.util.FormPanel formPanel2;
     private com.rameses.rcp.util.FormPanel formPanel3;
     private com.rameses.rcp.util.FormPanel formPanel4;
     private com.rameses.rcp.util.FormPanel formPanel5;
@@ -480,7 +503,8 @@ public class FAASOnlineInfoMainPage extends javax.swing.JPanel {
     private com.rameses.rcp.control.XFormPanel xFormPanel6;
     private com.rameses.rcp.control.XLabel xLabel1;
     private com.rameses.rcp.control.XLabel xLabel16;
-    private com.rameses.rcp.control.XLabel xLabel17;
+    private com.rameses.rcp.control.XLabel xLabel18;
+    private com.rameses.rcp.control.XLabel xLabel19;
     private com.rameses.rcp.control.XLabel xLabel2;
     private com.rameses.rcp.control.XLabel xLabel4;
     private com.rameses.rcp.control.XLookupField xLookupField1;

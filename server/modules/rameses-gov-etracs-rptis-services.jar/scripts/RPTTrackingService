@@ -1,0 +1,29 @@
+import com.rameses.annotations.*
+import com.rameses.common.*;
+import com.rameses.services.extended.*;
+
+
+class RPTTrackingService
+{
+	@ActiveDB('rpttracking')
+	def em 
+
+
+	@ProxyMethod
+	public void create( tracking	) {
+		em.insertTracking(tracking)
+	}
+
+
+	@ProxyMethod
+	public void delete( tracking ) {
+		em.deleteTracking(tracking)
+	}
+
+
+	@ProxyMethod
+	public void updateMessage( tracking ) {
+		em.updateMsg(tracking)
+	}
+}
+

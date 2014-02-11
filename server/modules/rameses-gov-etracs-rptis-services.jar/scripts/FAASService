@@ -42,6 +42,9 @@ class FAASService
     @Service('TxnSignatoryService')
     def signatorySvc 
 
+    @Service('RPTTrackingService')
+    def trackingSvc
+
     @Service('FAASService')
     def faasSvc
 
@@ -62,8 +65,6 @@ class FAASService
 	def STATE_CANCELLED  		= 'CANCELLED'
 
 	def UTDNO_KEY 				= 'UNIQUE_TDNO'
-
-
 
 	@ProxyMethod
 	public def initNewDiscovery( info ) {
@@ -203,6 +204,7 @@ class FAASService
 		saveBackTaxes(faas)
 		insertTxnReference(faas)
 		updateRpuMasterInfo(faas)
+		assignTrackingNo(faas, 'Document is currently reviewed.')
 		return faas
 	}
 
@@ -252,6 +254,7 @@ class FAASService
 		if (currentstate == STATE_CURRENT)  throw new Exception('FAAS is already current.')
 		if (currentstate == STATE_CANCELLED)  throw new Exception('FAAS has already been cancelled.')
 
+		trackingSvc.delete([objid:faas.objid])
 		txnRef.delete(faas.objid)
 		em.getPreviousFaases([faasid:faas.objid]).each{
 			em.delete(it, SCHEMA_PREVIOUSFAAS)
@@ -302,6 +305,7 @@ class FAASService
 			throw new Exception('Unable to submit FAAS. Only INTERIM record is allowed.')
 
 		wsSvc.insert(faas)
+		trackingSvc.updateMessage([objid:faas.objid, msg:'Document is now in taxmapping.'])
 		return faas
 	}
 
@@ -313,6 +317,7 @@ class FAASService
 			throw new Exception('Unable to submit FAAS. Only FOR TAXMAPPING record is allowed.')
 
 		wsSvc.insert(faas)
+		trackingSvc.updateMessage([objid:faas.objid, msg:'Document is now in appraisal.'])
 		return faas
 	}
 
@@ -325,6 +330,7 @@ class FAASService
 			throw new Exception('Unable to submit FAAS for approval. Only INTERIM record is allowed.')
 
 		wsSvc.insert(faas)
+		trackingSvc.updateMessage([objid:faas.objid, msg:'Document is now for approval.'])
 		return faas
 	}
 
@@ -347,6 +353,7 @@ class FAASService
 		wsSvc.insert(faas)
 		cancelPreviousFaases(faas)
 		txnRef.delete(faas.objid)
+		trackingSvc.updateMessage([objid:faas.objid, msg:'Document has already been approved.'])
 		return faas 
 	}
 
@@ -358,6 +365,7 @@ class FAASService
 		def retval = updateFaasState(faas, STATE_FORAPPROVAL, STATE_INTERIM)
 		if (retval == 0) 
 			throw new Exception('Unable to disapprove FAAS. Only FOR APPROVAL record is allowed.')
+		trackingSvc.updateMessage([objid:faas.objid, msg:'Document is currently reviewed.'])
 		return faas 
 	}
 
@@ -369,6 +377,7 @@ class FAASService
 			throw new Exception('Unable to submit FAAS. Only INTERIM record is allowed.')
 
 		wsSvc.insert(faas)
+		trackingSvc.updateMessage([objid:faas.objid, msg:'Document is ready for submission to province.'])
 		return faas;
 	}
 
@@ -383,6 +392,7 @@ class FAASService
 		cancelPreviousFaases(faas)
 		txnRef.delete(faas.objid)
 		updateTDNo(faas)
+		trackingSvc.updateMessage([objid:faas.objid, msg:'Document has already been submitted to the province for approval.'])
 		return faas
 	}
 
@@ -395,6 +405,8 @@ class FAASService
 		if (retval == 0) 
 			throw new Exception('Unable to disapprove FAAS. Only FOR PROVINCE APPROVAL record is allowed.')
 
+		trackingSvc.updateMessage([objid:faas.objid, msg:'Document is ready for submission to province.'])
+		
 		return faas
 	}
 
@@ -411,6 +423,7 @@ class FAASService
 		cancelPreviousFaases(faas)
 		txnRef.delete(faas.objid)
 		updateTDNo(faas)
+		trackingSvc.updateMessage([objid:faas.objid, msg:'Document has already been approved by the province.'])
 		return faas
 	}
 
@@ -425,6 +438,7 @@ class FAASService
 
 		rpSvc.disapprove(faas.rp)
 		rpuSvc.disapproveRpu(faas.rpu)
+		trackingSvc.updateMessage([objid:faas.objid, msg:'Document is currently reviewed.'])
 		return faas
 	}
 
@@ -726,6 +740,20 @@ class FAASService
 			faas.txntimestamp = dtSvc.buildCustomTimeStamp(faas.approver.dtsigned)
 		}
 	}
+
+
+	void assignTrackingNo(faas, msg){
+		def cy = dtSvc.serverYear 
+		def key = '300:R' + faas.lguid + cy
+		def trackingno = key + seqSvc.getNextFormattedSeries(key)
+		trackingSvc.create([
+			objid 		: faas.objid,
+			filetype	: 'faasonline',
+			trackingno 	: trackingno,
+			msg 		: msg,
+		])
+	}
+
 
 }
 

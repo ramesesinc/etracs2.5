@@ -11,7 +11,8 @@ SELECT
 	b.name AS barangay,  
 	b.indexno AS barangayindex, 
 	et.code AS legalbasis, 
-	ry.ordinanceno, ry.ordinancedate, ry.sangguniangname   
+	ry.ordinanceno, ry.ordinancedate, ry.sangguniangname,
+	t.trackingno 
 FROM faas f
 	INNER JOIN rpu r ON f.rpuid = r.objid 
 	INNER JOIN realproperty rp ON f.realpropertyid = rp.objid
@@ -23,6 +24,7 @@ FROM faas f
 	LEFT JOIN province p ON m.parentid = p.objid 
 	LEFT JOIN city c ON d.parentid = c.objid 
 	LEFT JOIN rysettinginfo ry on ry.ry = r.ry 
+	LEFT JOIN rpttracking t ON f.objid = t.objid 
 WHERE f.objid = $P{faasid}
 
 

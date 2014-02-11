@@ -39,6 +39,7 @@ class FAASAdvanceSearch
                 new FormControl( "text", [captionWidth:100, caption:'Cadastral Lot No.', name:'query.cadastrallotno']),
                 new FormControl( "text", [captionWidth:100, caption:'Survey No.', name:'query.surveyno']),
                 new FormControl( "combo", [captionWidth:100, caption:'Barangay', name:'query.barangay', items:'barangays', expression:'#{item.name}']),
+                new FormControl( "text", [captionWidth:100, caption:'Tracking No.', name:'query.trackingno']),
             ]    
         },
    ] as FormPanelModel;

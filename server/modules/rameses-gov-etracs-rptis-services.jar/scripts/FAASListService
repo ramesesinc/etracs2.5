@@ -70,6 +70,10 @@ class FAASListService
             if (whereclause) whereclause += ' AND '
             whereclause += ' rp.cadastrallotno = $P{cadastrallotno} '
         }
+        if (params.trackingno){
+            if (whereclause) whereclause += ' AND '
+            whereclause += ' t.trackingno = $P{trackingno} '
+        }
         if (params.titleno){
             params.titleno += '%'
             if (whereclause) whereclause += ' AND ' 

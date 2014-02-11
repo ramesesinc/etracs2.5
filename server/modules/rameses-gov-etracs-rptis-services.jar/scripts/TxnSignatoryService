@@ -94,10 +94,14 @@ class TxnSignatoryService
 
 	@ProxyMethod
 	public void loadSignatories(tablename, entity){
-		def signatories = null 
+		def signatories = [] 
 		if (!entity.signatories){
-			signatories = getSignatories(entity)
-			em.updateSignatories([tablename:tablename, objid:entity.objid, signatories:pem.serializer.write(signatories)])
+			try{
+				signatories = getSignatories(entity)
+				em.updateSignatories([tablename:tablename, objid:entity.objid, signatories:pem.serializer.write(signatories)])
+			}
+			catch(e)
+			{}
 		}
 		else {
 			signatories = pem.serializer.read(entity.signatories)
