@@ -28,6 +28,15 @@ AND ac.respcenter_objid='AFO'
 AND ac.qtybalance > 0
 ORDER BY ac.startstub 
 
+[getCashticketDetails]
+select 
+	 d.qtyreceived as qtyissued,
+	 d.remarks
+from cashticket_inventory_detail d
+	inner join cashticket_inventory ci on ci.objid = d.controlid 
+where d.refid=$P{stockissueid}
+	and ci.afid = $P{afid}
+	and ci.respcenter_type = 'COLLECTOR'  
 
 
 
