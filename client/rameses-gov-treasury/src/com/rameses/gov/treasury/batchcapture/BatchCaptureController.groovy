@@ -91,8 +91,8 @@ public class BatchCaptureController  {
         entity.totalcash = 0.0
         entity.totalnoncash = 0.0
         entity.totalamount = 0.0
-        entity.batchitems.each {
-            if( it.voided == 0) {
+        entity.batchitems.each { 
+            if( it.voided != 1 ) { 
                 entity.totalcash += it.totalcash
                 entity.totalnoncash += it.totalnoncash
                 entity.totalamount += it.amount 
@@ -142,7 +142,7 @@ public class BatchCaptureController  {
         getOpenerParams: {o-> 
             return [
                 callerListModel: listModel, 
-                calculateHandler: {  en ->              
+                calculateHandler: {  en ->    
                     calculate(); 
                     svc.addUpdateItem(entity, en) 
                 } 
@@ -151,11 +151,11 @@ public class BatchCaptureController  {
         onAddItem: { o->
             validateItem(o) 
             prevEntity = o.clone();
-
+            
+            entity.batchitems << o 
             calculate(); 
             svc.addUpdateItem(entity, o)
-            entity.batchitems << o 
-            
+    
             moveNext();
         },
         
@@ -170,6 +170,7 @@ public class BatchCaptureController  {
                 item.items[0].amount = item[colname]; 
                 item.totalcash = item.amount
                 item.totalnoncash = 0.0
+  
                 calculate()
                 svc.addUpdateItem(entity, item) 
             }  
@@ -185,7 +186,7 @@ public class BatchCaptureController  {
 
             svc.removeItem(o)    
             entity.currentseries -= 1;   
-            entity.batchitems.remove(o);\
+            entity.batchitems.remove(o);
             return true;
         }
         
