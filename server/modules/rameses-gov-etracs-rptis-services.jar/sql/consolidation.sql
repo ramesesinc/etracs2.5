@@ -4,11 +4,11 @@ SELECT
 	rp.pin AS rp_pin,
 	r.totalareaha AS rpu_totalareaha,
 	r.totalareasqm AS rpu_totalareasqm,
-	CASE WHEN t.trackingno IS NULL THE c.txnno ELSE t.trackingno END AS trackingno
+	CASE WHEN t.trackingno IS NULL THEN c.txnno ELSE t.trackingno END AS trackingno
 FROM consolidation c
 	LEFT JOIN rpu r ON c.newrpuid = r.objid 
 	LEFT JOIN realproperty rp ON c.newrpid = rp.objid 
-	LEFT JOIN rpttracking t ON s.objid = t.objid 
+	LEFT JOIN rpttracking t ON c.objid = t.objid 
 where 1=1 ${filters}	
 ORDER BY c.txnno DESC 
 

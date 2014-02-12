@@ -67,6 +67,11 @@ class SubdivisionTaskInterceptor
 
 
 
+	@After(pattern="SubdivisionService.approveSubdivisionAsync") 
+	public void approveSubdivisionAsync( evt ) {
+		taskSvc.closeTask([objid:evt.result.objid])
+	}
+
 	@After(pattern="SubdivisionService.approveSubdivision") 
 	public void approveSubdivision( evt ) {
 		taskSvc.closeTask([objid:evt.result.objid])

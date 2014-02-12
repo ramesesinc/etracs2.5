@@ -18,3 +18,10 @@ DELETE FROM rpttask WHERE objid = $P{objid}
 [findCurrentTask]
 SELECT * FROM rpttask WHERE objid = $P{objid} AND enddate IS NULL 
 
+[getListById]
+SELECT 
+	t.*,
+	DATEDIFF(mi, startdate, ISNULL(enddate,GETDATE())) AS duration
+FROM rpttask t 
+WHERE objid = $P{objid}
+ORDER BY startdate 

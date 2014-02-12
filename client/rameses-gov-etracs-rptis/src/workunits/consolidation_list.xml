@@ -35,6 +35,7 @@
                     new Column(name:"owner.address", caption:"New Owner Address", width:250),
                     new Column(name:"rpu.totalareasqm", caption:"New Area (sqm)", width:120, type:'decimal', format:'#,##0.00'),
                     new Column(name:"rpu.totalareaha", caption:"New Area (ha)", width:120, type:'decimal', format:'#,##0.0000'),
+                    new Column(name:"trackingno", caption:"Tracking No.", width:180),
                 ]
             }
         }

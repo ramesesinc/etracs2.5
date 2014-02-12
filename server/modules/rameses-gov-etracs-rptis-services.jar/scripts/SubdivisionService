@@ -671,10 +671,11 @@ class SubdivisionService
     }
 
     @ProxyMethod
-    public void approveSubdivisionAsync(subdivision){
+    public def approveSubdivisionAsync(subdivision){
         em.approveSubdivision(subdivision)
         em.cancelRealProperty([objid:subdivision.motherfaas.realpropertyid])
         em.cancelMotherLandLedger([faasid:subdivision.motherfaasid])
+        return subdivision
     }
 
 }

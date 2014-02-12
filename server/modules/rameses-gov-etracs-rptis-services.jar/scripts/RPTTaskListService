@@ -62,4 +62,21 @@ class RPTTaskListService extends ActiveListService
 	}
 	
     
+    @ProxyMethod
+    public def getLogs( objid ) {
+        return em.getListById([objid:objid])
+    }
+
+    @ProxyMethod
+    public def getLogColumns(params) {
+        return [
+            [name:"action", caption:"Action", width:200],
+            [name:"startdate", caption:"Start Date", width:150],
+            [name:"enddate", caption:"End Date", width:150],
+            [name:"createdby.name", caption:"Created By", width:200],
+            [name:"assignedto.name", caption:"Assigned To", width:200],
+            [name:"duration", caption:"Duration (min)", width:200],
+        ]
+    }
+
 }

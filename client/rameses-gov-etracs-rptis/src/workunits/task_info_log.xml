@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workunit>
+    <invokers>
+        <invoker type="faasonline:info" action="init" caption="Logs" index="2000" />
+        <invoker type="subdivision:info" action="init" caption="Logs" index="2000" />
+        <invoker type="consolidation:info" action="init" caption="Logs" index="2000" />
+        <invoker type="formActions" action="refresh" caption="Refresh" mnemonic="r" />
+   </invokers>
+   <code>
+
+        
+import com.rameses.rcp.annotations.* 
+import com.rameses.rcp.common.* 
+import com.rameses.osiris2.client.*
+import com.rameses.osiris2.common.*
+
+class RPTTaskLogInfoController
+{
+    @Binding
+    def binding;
+    
+    @Service('RPTTaskListService')
+    def taskSvc;
+    
+    def svc;
+    
+    def entity;
+    def list;
+    
+    String title = 'Logs'
+    
+    void init(){
+        list = taskSvc.getLogs(entity.objid);
+        listHandler?.load();
+    }
+    
+    void refresh(){
+        init();
+    }
+    
+    
+    def listHandler = [
+        fetchList : { return list; },
+        getColumns : { taskSvc.getLogColumns([:]) }
+    ] as BasicListModel
+    
+    
+    def getDuration(){
+        def totalduration = 0;
+        if (list)
+            totalduration = list.duration.sum();
+        def hours = (int) (totalduration / 60);
+        def mins = totalduration - (60 * hours);
+        if (hours == 0 )
+            return mins + ' minutes';
+        return hours + ' ' + (hours == 1 ? 'hour' : 'hours') + ' ' + mins + ' ' + ( mins == 1 ? 'minute' : 'minutes')
+    }
+}
+       
+   </code>
+    
+    <pages> 
+        <page template="com.rameses.gov.etracs.rpt.common.LogPage"/>
+    </pages>
+</workunit>
+
+

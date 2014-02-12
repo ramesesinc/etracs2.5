@@ -592,8 +592,6 @@ class ConsolidationService
     public def assignNewTdNosAsync(consolidation){
         if (consolidation.newtdno == null || consolidation.newtdno == '-'){
             def faas = em.findFaasByNewRpuId(consolidation)
-            println '='*50
-            println faas 
             consolidation.newtdno = faasSvc.generateNextTdNo(faas)
             consolidation.newutdno = consolidation.newtdno 
             em.updateConsolidationNewTdNo(consolidation)
@@ -645,6 +643,7 @@ class ConsolidationService
         }
 
         em.approveConsolidation(consolidation)
+        return consolidation
     }
 
 

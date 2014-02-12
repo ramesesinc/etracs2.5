@@ -67,6 +67,11 @@ class ConsolidationTaskInterceptor
 
 
 
+	@After(pattern="ConsolidationService.approveConsolidationAsync") 
+	public void approveConsolidationAsync( evt ) {
+		taskSvc.closeTask([objid:evt.result.objid])
+	}
+
 	@After(pattern="ConsolidationService.approveConsolidation") 
 	public void approveConsolidation( evt ) {
 		taskSvc.closeTask([objid:evt.result.objid])
