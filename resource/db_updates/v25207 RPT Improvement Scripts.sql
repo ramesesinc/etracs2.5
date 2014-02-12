@@ -156,40 +156,44 @@ go
 
 
 
+
 create table rpttask
 (
 	taskid varchar(50) primary key,
-	state varchar(50) not null,
 	objid varchar(50) not null,
+	action varchar(50) not null,
 	refno varchar(50) not null,
 	filetype varchar(50) not null,
-	msg varchar(100) not null,
+	msg varchar(100),
 	startdate datetime not null,
 	enddate datetime null,
-	createdbyid varchar(50) not null,
-	createdby varchar(150) not null,
-	createdbytitle varchar(50) ,
-	assignedtoid varchar(50),
-	assignedto varchar(150),
-	assignedtotitle varchar(50)
+	createdby_objid varchar(50) not null,
+	createdby_name varchar(150) not null,
+	createdby_title varchar(50) ,
+	assignedto_objid varchar(50),
+	assignedto_name varchar(150),
+	assignedto_title varchar(50),
 )
 go
 
 create index ix_rpttask_objid on rpttask(objid)
 go
 
-create index ix_rpttask_createdbyid on rpttask(createdbyid)
+create index ix_rpttask_createdby_objid on rpttask(createdby_objid)
 go
-create index ix_rpttask_createdby on rpttask(createdby)
-go
-create index ix_rpttask_createdbyid_state on rpttask(createdbyid, state)
+create index ix_rpttask_createdby_name on rpttask(createdby_name)
 go
 
-create index ix_rpttask_assignedtoid on rpttask(assignedtoid)
+create index ix_rpttask_assignedto_objid on rpttask(assignedto_objid)
 go
-create index ix_rpttask_assignedto on rpttask(assignedto)
+create index ix_rpttask_assignedto_name on rpttask(assignedto_name)
 go
 
+create index ix_rpttask_enddate on rpttask(enddate)
+go
+
+create index ix_rpttask_assignedto_enddate on rpttask(assignedto_objid,enddate)
+go
 
 
 

@@ -38,6 +38,7 @@ public class RealPropertyController
     boolean autoCreate = false;
     boolean autoClose = false;
     boolean showClose = true;
+    boolean viewOnly = false;
     
     
     def oncreate; //handler 

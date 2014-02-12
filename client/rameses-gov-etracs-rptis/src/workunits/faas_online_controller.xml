@@ -25,6 +25,9 @@ public class AbstractOnlineFaasController extends PageFlowController
     
     @Service('FAASService')
     def svc 
+    
+    @Service('RPTTaskService')
+    def taskSvc;
             
     @Invoker
     def invoker 
@@ -205,6 +208,34 @@ public class AbstractOnlineFaasController extends PageFlowController
             throw new Exception(messages[0].msg);
     }   
     
+    
+    
+    
+    def nextaction;
+    
+    void assignTaxmapper(){
+        nextaction = 'fortaxmapping'
+        doAssignTask()
+    }
+    
+    void assignAppraiser(){
+        nextaction = 'forappraisal'
+        doAssignTask()
+    }
+    
+    void assignApprover(){
+        nextaction = 'forapproval'
+        doAssignTask()
+    }
+    
+    void doAssignTask(){
+        def task = taskSvc.findCurrentTask(entity.objid);
+        task.action = nextaction;
+        task.msg = '';
+        taskSvc.createNextUserTask(task);
+        initData();
+    }
+    
 }
 
 ]]>
@@ -223,6 +254,7 @@ public class AbstractOnlineFaasController extends PageFlowController
         </page>
         
         <process name="open">
+            <transition to="unassigned" cond="#{entity.taskaction &amp;&amp; entity.taskaction.matches('assign.*')}"/>
             <transition to="default" cond="#{entity.state == 'INTERIM'}"/>
             <transition to="fortaxmapping" cond="#{entity.state == 'FORTAXMAPPING'}"/>
             <transition to="forappraisal" cond="#{entity.state == 'FORAPPRAISAL'}"/>
@@ -234,10 +266,17 @@ public class AbstractOnlineFaasController extends PageFlowController
             <transition to="readonly" cond="#{entity.state == 'PENDING'}"/>
         </process>
         
+        <page name="unassigned" title="FAAS #{entity.txntype.name} (#{entity.state} - Unassigned)">
+            <transition caption="Close"  to="end"      mnemonic="c" icon="images/toolbars/cancel.png" />
+            <transition to="open" action="assignTaxmapper" caption="Assign To Me" role="TAXMAPPER"  visibleWhen="#{entity.taskaction == 'assign-taxmapper'}" confirm="Assign task to you?"/>
+            <transition to="open" action="assignAppraiser" caption="Assign To Me" role="APPRAISER" visibleWhen="#{entity.taskaction == 'assign-appraiser'}" confirm="Assign task to you?"/>
+            <transition to="open" action="assignApprover" caption="Assign To Me" role="APPROVER" visibleWhen="#{entity.taskaction == 'assign-approver'}" confirm="Assign task to you?"/>
+        </page>
+        
         <page name="default" title="FAAS #{entity.txntype.name} (Interim)">
             <transition caption="Close"  to="end"      mnemonic="c" icon="images/toolbars/cancel.png" />
             <transition caption="Delete" to="delete"  action="delete" confirm="Delete record?"    mnemonic="d" icon="images/toolbars/trash.png"  role="APPRAISER" permission="faas.delete"/>
-            <transition caption="Submit to Taxmapping" to="fortaxmapping" action="submitForTaxmapping"  mnemonic="m"  confirm="Submit FAAS for approval?" role="APPRAISER" permission="faas.submit"/>
+            <transition caption="Submit to Taxmapping" to="open" action="submitForTaxmapping"  mnemonic="m"  confirm="Submit FAAS for approval?" role="APPRAISER" permission="faas.submit"/>
         </page>
         
         <process name="back-to-default">
@@ -251,13 +290,13 @@ public class AbstractOnlineFaasController extends PageFlowController
         
         <page name="fortaxmapping" title="FAAS #{entity.txntype.name} (For Taxmapping)">
             <transition caption="Close"  to="end"      mnemonic="c" icon="images/toolbars/cancel.png" />
-            <transition caption="Submit for Appraisal" to="forappraisal" action="submitForAppraisal"  mnemonic="m"   confirm="Submit FAAS for appraisal?" role="TAXMAPPER"/>
+            <transition caption="Submit for Appraisal" to="open" action="submitForAppraisal"  mnemonic="m"   confirm="Submit FAAS for appraisal?" role="TAXMAPPER"/>
         </page>
         
         
         <page name="forappraisal" title="FAAS #{entity.txntype.name} (For Appraisal)">
             <transition caption="Close"  to="end"      mnemonic="c" icon="images/toolbars/cancel.png" />
-            <transition caption="Submit for Approval" to="submit" action="submitForApproval"  mnemonic="m"   confirm="Submit FAAS for approval?" role="APPRAISER"/>
+            <transition caption="Submit for Approval" to="open" action="submitForApproval"  mnemonic="m"   confirm="Submit FAAS for approval?" role="APPRAISER"/>
         </page>
         
         <process name="submit">
@@ -330,6 +369,7 @@ public class AbstractOnlineFaasController extends PageFlowController
     </pageflow>
     
     <pages> 
+        <page name="unassigned" template="com.rameses.gov.etracs.rpt.common.InfoPage"/>
         <page name="default" template="com.rameses.gov.etracs.rpt.common.InfoPage"/>
         <page name="fortaxmapping" template="com.rameses.gov.etracs.rpt.common.InfoPage"/>
         <page name="forappraisal" template="com.rameses.gov.etracs.rpt.common.InfoPage"/>

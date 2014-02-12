@@ -66,3 +66,7 @@
     enabled:false;
 }
 
+"entity.appraiser.*|entity.approver.*|entity.recommender.*|entity.taxmapper.*"[true == true]{
+    enabled:false;
+}
+

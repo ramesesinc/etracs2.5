@@ -59,13 +59,15 @@ SELECT
 	b.name AS rp_barangay_name,
 	b.objid AS rp_barangay_objid,
 	b.parentid AS rp_barangay_parentid,
-	t.trackingno
+	t.trackingno,
+	CASE WHEN task.taskid IS NULL THEN '' ELSE task.action END AS taskaction
 FROM faas f
 	LEFT JOIN rpu rpu ON f.rpuid = rpu.objid
 	LEFT JOIN propertyclassification pc ON rpu.classification_objid = pc.objid 
 	INNER  JOIN realproperty rp ON f.realpropertyid = rp.objid
 	INNER JOIN barangay b ON rp.barangayid = b.objid 
 	LEFT JOIN rpttracking t ON f.objid = t.objid 
+	LEFT JOIN rpttask task ON f.objid = task.objid AND task.enddate IS NULL 
 WHERE f.objid = $P{objid}
 
 
@@ -300,5 +302,5 @@ FROM faas cf
 	INNER JOIN barangay b ON rp.barangayid = b.objid 
 	INNER JOIN propertyclassification pc ON rpu.classification_objid = pc.objid 
 WHERE cf.objid = $P{faasid}
-  AND cf.tdno <> f.tdno 
-ORDER BY f.tdno 
+  AND ISNULL(cf.tdno,'') <> f.tdno 
+ORDER BY f.tdno DESC 

@@ -139,6 +139,7 @@ class FaasMainInfoController
  
     
     boolean getShowActions(){
+        if (entity.taskaction && entity.taskaction.matches('assign.*')) return false;
         if (entity.state.matches('FORTAXMAPPING|CURRENT|CANCELLED')) return false;
         if (mode != MODE_READ) return false;
         return true;

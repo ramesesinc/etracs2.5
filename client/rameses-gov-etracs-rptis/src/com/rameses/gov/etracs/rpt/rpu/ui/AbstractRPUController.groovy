@@ -31,6 +31,8 @@ public abstract class AbstractRPUController
     def MODE_READ   = 'read';
     def mode;
     
+    boolean viewOnly = false;
+    
     def classification;
     def classifications;
     def exemptions;

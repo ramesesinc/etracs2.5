@@ -63,6 +63,7 @@ class FaasInfoRpuController
             onupdate    : onupdateRpu,
             onedit      : oneditRpu,
             showClose   : false,
+            viewOnly    : entity.taskaction.matches('assign.*'),
         ])
     }
     
@@ -85,6 +86,7 @@ class FaasInfoRpuController
             onedit      : oneditRpu,
             allowCreate : false,
             showClose   : false,
+            viewOnly    : entity.taskaction.matches('assign.*'),
         ])
     }
 }

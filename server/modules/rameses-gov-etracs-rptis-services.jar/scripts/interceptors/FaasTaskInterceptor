@@ -1,0 +1,152 @@
+import com.rameses.annotations.*
+import com.rameses.eserver.*;
+import com.rameses.common.*;
+
+class FaasTaskInterceptor
+{
+	@Service('FAASService')
+	def faasSvc
+
+	@Service('RPTTaskService')
+	def taskSvc
+
+	@Env
+	def env 
+
+
+	def createTask(faas, msg){
+		def refno = faas.trackingno
+		if (!refno && faas.tdno )
+			refno = faas.tdno 
+		else 
+			refno = faas.utdno 
+		return [
+			objid		: faas.objid,
+			refno		: refno,
+			filetype	: 'faasonline',
+			msg			: msg,
+		]
+	}
+
+
+	@Before(pattern="FAASService.deleteFaas") 
+	public void deleteFaas( evt ) {
+		def faas = evt.args[0]
+		taskSvc.delete(faas)
+	}
+
+
+	@After(pattern="FAASService.(initOnlineTransaction|initNewDiscovery)") 
+	public void initTransaction( evt ) {
+		def task = createTask(evt.result, 'Receive FAAS for processing.')
+		task.action = 'receive'
+		task = taskSvc.createTask(task)
+		taskSvc.assignTask(task)
+	}
+
+
+	@After(pattern="FAASService.submitForTaxmapping") 
+	public void submitForTaxmapping( evt ) {
+		def task = createTask(evt.result, 'FAAS requires taxmapper.')
+		task.action = 'assign-taxmapper'
+		taskSvc.createTask(task)
+		evt.result.taskaction = task.action
+	}
+
+
+	@After(pattern="FAASService.submitForAppraisal") 
+	public void submitForAppraisal( evt ) {
+		def task = createTask(evt.result, 'FAAS requires appraisal.')
+		task.action = 'assign-appraiser'
+		taskSvc.createTask(task)
+		evt.result.taskaction = task.action
+	}
+
+	@After(pattern="FAASService.submitFaasForApproval") 
+	public void submitFaasForApproval( evt ) {
+		def task = createTask(evt.result, 'FAAS requires approval.')
+		task.action = 'assign-approver'
+		taskSvc.createTask(task)
+		evt.result.taskaction = task.action
+	}
+
+
+
+	@After(pattern="FAASService.approveFaas") 
+	public void approveFaas( evt ) {
+		taskSvc.closeTask([objid:evt.result.objid])
+	}
+
+	@After(pattern="FAASService.disapproveFaas") 
+	public void disapproveFaas( evt ) {
+		taskSvc.closeTask([objid:evt.result.objid])
+	}
+
+
+	@After(pattern="FAASService.submitFaasToProvince") 
+	public void submitFaasToProvince( evt ) {
+	}
+
+	@After(pattern="FAASService.approveFaasSubmissionToProvince") 
+	public void approveFaasSubmissionToProvince( evt ) {
+	}
+
+	@After(pattern="FAASService.disapproveFaasSubmissionToProvince") 
+	public void disapproveFaasSubmissionToProvince( evt ) {
+	}
+
+	@After(pattern="FAASService.approveFaasByProvince") 
+	public void approveFaasByProvince( evt ) {
+	}
+
+	@After(pattern="FAASService.disapproveFaasByProvince") 
+	public void disapproveFaasByProvince( evt ) {
+	}
+
+
+
+
+
+
+	@After(pattern="RPTTaskService.createNextUserTask", eval="#{result.action.equalsIgnoreCase('fortaxmapping') && result.filetype == 'faasonline'}") 
+	public void updateTaxmapperInfo( evt ) {
+		def task = evt.result 
+		def faas = faasSvc.openFaas([objid:task.objid])
+		faas.taxmapper.dtsigned = task.startdate 
+		faas.taxmapper.name = task.assignedto.name 
+		faas.taxmapper.title = task.assignedto.title
+		faasSvc.updateFaas(faas) 
+	}
+
+	@After(pattern="RPTTaskService.createNextUserTask", eval="#{result.action.equalsIgnoreCase('forappraisal') && result.filetype == 'faasonline'}") 
+	public void updateAppraiserInfo( evt ) {
+		def task = evt.result 
+		def faas = faasSvc.openFaas([objid:task.objid])
+		faas.appraiser.dtsigned = task.startdate 
+		faas.appraiser.name = task.assignedto.name 
+		faas.appraiser.title = task.assignedto.title
+		faasSvc.updateFaas(faas) 
+	}
+
+	@After(pattern="RPTTaskService.createNextUserTask", eval="#{result.action.equalsIgnoreCase('forapproval') && result.filetype == 'faasonline'}") 
+	public void updateApproverInfo( evt ) {
+		def task = evt.result 
+		def faas = faasSvc.openFaas([objid:task.objid])
+		faas.approver.dtsigned = task.startdate 
+		faas.approver.name = task.assignedto.name 
+		faas.approver.title = task.assignedto.title
+		faasSvc.updateFaas(faas) 
+	}
+
+
+		@After(pattern="RPTTaskService.createNextUserTask", eval="#{result.action.equalsIgnoreCase('forprovsubmission') && result.filetype == 'faasonline'}") 
+	public void updateRecommenderInfo( evt ) {
+		def task = evt.result 
+		def faas = faasSvc.openFaas([objid:task.objid])
+		faas.recommender.dtsigned = task.startdate 
+		faas.recommender.name = task.assignedto.name 
+		faas.recommender.title = task.assignedto.title
+		faasSvc.updateFaas(faas) 
+	}
+}
+

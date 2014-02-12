@@ -324,7 +324,6 @@ class FAASService
 
 	@ProxyMethod
 	public def submitFaasForApproval( faas ) {
-		validateSignatories(faas)
 		def retval = em.submitForApproval(faas)
 		if (retval == 0) 
 			throw new Exception('Unable to submit FAAS for approval. Only INTERIM record is allowed.')
@@ -715,7 +714,6 @@ class FAASService
 	@ProxyMethod
 	public def getHistoryColumns(  ) {
         return [
-            [name:"state", caption:"State", width:100],
             [name:"ry", caption:"RY", width:50, type:'integer', format:'0000'],
             [name:"tdno", caption:"TD No.", width:140],
             [name:"prevtdno", caption:"Previous TD No.", width:140],
@@ -735,10 +733,10 @@ class FAASService
 
 
 	void updateTxnTimeStamp(faas){
-		if (!faas.approver.dtsigned) faas.approver.dtsigned = dtSvc.serverDate
-		if (faas.approver.dtsigned) {
-			faas.txntimestamp = dtSvc.buildCustomTimeStamp(faas.approver.dtsigned)
-		}
+		def dt =  dtSvc.serverDate
+		if (faas.approver.dtsigned) 
+			dt = faas.approver.dtsigned
+		faas.txntimestamp = dtSvc.buildCustomTimeStamp(dt)
 	}
 
 

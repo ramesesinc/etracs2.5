@@ -222,7 +222,6 @@ public class FAASOnlineInfoMainPage extends javax.swing.JPanel {
         xLookupField1.setHandler("lookupAppraiser");
         xLookupField1.setName("entity.appraiser");
         xLookupField1.setPreferredSize(new java.awt.Dimension(250, 20));
-        xLookupField1.setRequired(true);
         formPanel4.add(xLookupField1);
 
         xDateField3.setHint("Date Appraised");
@@ -281,7 +280,6 @@ public class FAASOnlineInfoMainPage extends javax.swing.JPanel {
         xLookupField4.setHandler("lookupApprover");
         xLookupField4.setName("entity.approver");
         xLookupField4.setPreferredSize(new java.awt.Dimension(250, 20));
-        xLookupField4.setRequired(true);
         formPanel7.add(xLookupField4);
 
         xDateField6.setHint("Date Approved");
