@@ -8,6 +8,29 @@ class RPTTrackingService
 	@ActiveDB('rpttracking')
 	def em 
 
+	@Service('DateService')
+	def dtSvc
+
+	@Service('Var')
+	def var
+
+	@Service('SequenceService')
+	def seqSvc
+
+
+	@ProxyMethod
+	public def assignTrackingNo( entity, filetype, msg ) {
+		def cy = dtSvc.serverYear 
+		def key = '300:R' + var.lgu_objid + cy
+		def trackingno = key + seqSvc.getNextFormattedSeries(key)
+		create([
+			objid 		: entity.objid,
+			filetype	: filetype,
+			trackingno 	: trackingno,
+			msg 		: msg,
+		])
+	}
+
 
 	@ProxyMethod
 	public void create( tracking	) {

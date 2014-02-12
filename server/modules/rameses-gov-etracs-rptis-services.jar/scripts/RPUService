@@ -21,6 +21,9 @@ class RPUService
     @Service('RPTUtil')
     def util 
 
+    @Service('Var')
+    def var
+
     
     def RPUTYPE_LAND       = 'land' 
     def RPUTYPE_BLDG       = 'bldg'
@@ -36,11 +39,11 @@ class RPUService
     @ProxyMethod
     public def initRpu( info ) {
         def rputype = getTypeFromSuffix( info.suffix )
-
+        def ry = (info.ry == null ? var.current_ry : info.ry)
         def rpu = [
             objid           : util.generateId('RPU'),
             state           : STATE_INTERIM,
-            ry              : util.toInteger(info.ry),
+            ry              : util.toInteger(ry),
             suffix          : info.suffix,
             subsuffix       : info.subsuffix,
             fullpin         : info.fullpin,

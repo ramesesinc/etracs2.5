@@ -1,0 +1,142 @@
+import com.rameses.annotations.*
+import com.rameses.eserver.*;
+import com.rameses.common.*;
+
+class SubdivisionTaskInterceptor
+{
+	@Service('SubdivisionService')
+	def svc 
+
+	@Service('RPTTaskService')
+	def taskSvc
+
+	@Env
+	def env 
+
+
+	def createTask(entity, msg){
+		return [
+			objid		: entity.objid,
+			refno		: entity.txnno,
+			filetype	: 'subdivision',
+			msg			: msg,
+		]
+	}
+
+
+	@Before(pattern="SubdivisionService.deleteSubdivision") 
+	public void deleteSubdivision( evt ) {
+		def entity = evt.args[0]
+		taskSvc.delete(entity)
+	}
+
+
+	@After(pattern="SubdivisionService.createSubdivision") 
+	public void initTransaction( evt ) {
+		def task = createTask(evt.result, 'Receive Subdivision for processing.')
+		task.action = 'receive'
+		task = taskSvc.createTask(task)
+		taskSvc.assignTask(task)
+	}
+
+
+	@After(pattern="SubdivisionService.submitForTaxmapping") 
+	public void submitForTaxmapping( evt ) {
+		def task = createTask(evt.result, 'Subdivision requires taxmapper.')
+		task.action = 'assign-taxmapper'
+		taskSvc.createTask(task)
+		evt.result.taskaction = task.action
+	}
+
+
+	@After(pattern="SubdivisionService.submitForAppraisal") 
+	public void submitForAppraisal( evt ) {
+		def task = createTask(evt.result, 'Subdivision requires appraisal.')
+		task.action = 'assign-appraiser'
+		taskSvc.createTask(task)
+		evt.result.taskaction = task.action
+	}
+
+	@After(pattern="SubdivisionService.submitForApproval") 
+	public void submitForApproval( evt ) {
+		def task = createTask(evt.result, 'Subdivision requires approval.')
+		task.action = 'assign-approver'
+		taskSvc.createTask(task)
+		evt.result.taskaction = task.action
+	}
+
+
+
+	@After(pattern="SubdivisionService.approveSubdivision") 
+	public void approveSubdivision( evt ) {
+		taskSvc.closeTask([objid:evt.result.objid])
+	}
+
+	@After(pattern="SubdivisionService.disapproveSubdivision") 
+	public void disapproveSubdivision( evt ) {
+		taskSvc.closeTask([objid:evt.result.objid])
+	}
+
+	@After(pattern="SubdivisionService.submitToProvince") 
+	public void submitToProvince( evt ) {
+	}
+
+	@After(pattern="SubdivisionService.disapproveSubmitToProvice") 
+	public void disapproveSubmitToProvice( evt ) {
+	}
+
+	@After(pattern="SubdivisionService.approveByProvince") 
+	public void approveByProvince( evt ) {
+	}
+
+	@After(pattern="SubdivisionService.disapproveByProvince") 
+	public void disapproveByProvince( evt ) {
+	}
+
+
+
+
+
+
+	@After(pattern="RPTTaskService.createNextUserTask", eval="#{result.action.equalsIgnoreCase('fortaxmapping') && result.filetype == 'subdivision'}") 
+	public void updateTaxmapperInfo( evt ) {
+		def task = evt.result 
+		def entity = svc.openSubdivision(task.objid)
+		entity.taxmapper.dtsigned = task.startdate 
+		entity.taxmapper.name = task.assignedto.name 
+		entity.taxmapper.title = task.assignedto.title
+		svc.updateSubdivision(entity) 
+	}
+
+	@After(pattern="RPTTaskService.createNextUserTask", eval="#{result.action.equalsIgnoreCase('forappraisal') && result.filetype == 'subdivision'}") 
+	public void updateAppraiserInfo( evt ) {
+		def task = evt.result 
+		def entity = svc.openSubdivision(task.objid)
+		entity.appraiser.dtsigned = task.startdate 
+		entity.appraiser.name = task.assignedto.name 
+		entity.appraiser.title = task.assignedto.title
+		svc.updateSubdivision(entity) 
+	}
+
+	@After(pattern="RPTTaskService.createNextUserTask", eval="#{result.action.equalsIgnoreCase('forapproval') && result.filetype == 'subdivision'}") 
+	public void updateApproverInfo( evt ) {
+		def task = evt.result 
+		def entity = svc.openSubdivision(task.objid)
+		entity.approver.dtsigned = task.startdate 
+		entity.approver.name = task.assignedto.name 
+		entity.approver.title = task.assignedto.title
+		svc.updateSubdivision(entity) 
+	}
+
+
+	@After(pattern="RPTTaskService.createNextUserTask", eval="#{result.action.equalsIgnoreCase('forprovsubmission') && result.filetype == 'subdivision'}") 
+	public void updateRecommenderInfo( evt ) {
+		def task = evt.result 
+		def entity = svc.openSubdivision(task.objid)
+		entity.recommender.dtsigned = task.startdate 
+		entity.recommender.name = task.assignedto.name 
+		entity.recommender.title = task.assignedto.title
+		svc.updateSubdivision(entity) 
+	}
+}
+

@@ -40,6 +40,7 @@ public class ConsolidationInfoPage extends javax.swing.JPanel {
         xLookupField4 = new com.rameses.rcp.control.XLookupField();
         xDateField6 = new com.rameses.rcp.control.XDateField();
         formPanel3 = new com.rameses.rcp.util.FormPanel();
+        xLabel1 = new com.rameses.rcp.control.XLabel();
         xTextField4 = new com.rameses.rcp.control.XTextField();
         formPanel8 = new com.rameses.rcp.util.FormPanel();
         xIntegerField2 = new com.rameses.rcp.control.XIntegerField();
@@ -135,6 +136,13 @@ public class ConsolidationInfoPage extends javax.swing.JPanel {
         xTitledBorder2.setTitle("Consolidation Information");
         formPanel3.setBorder(xTitledBorder2);
         formPanel3.setCaptionWidth(120);
+        xLabel1.setCaption("Tracking No.");
+        xLabel1.setExpression("#{entity.trackingno}");
+        xLabel1.setFont(new java.awt.Font("Tahoma", 1, 12));
+        xLabel1.setForeground(new java.awt.Color(204, 0, 0));
+        xLabel1.setPreferredSize(new java.awt.Dimension(0, 19));
+        formPanel3.add(xLabel1);
+
         xTextField4.setCaption("TD No.");
         xTextField4.setName("entity.newtdno");
         xTextField4.setPreferredSize(new java.awt.Dimension(282, 20));
@@ -253,7 +261,6 @@ public class ConsolidationInfoPage extends javax.swing.JPanel {
         xLookupField10.setHandler("lookupAppraiser");
         xLookupField10.setName("entity.appraiser");
         xLookupField10.setPreferredSize(new java.awt.Dimension(235, 20));
-        xLookupField10.setRequired(true);
         formPanel7.add(xLookupField10);
 
         xDateField12.setDisabledTextColor(new java.awt.Color(0, 0, 0));
@@ -314,7 +321,6 @@ public class ConsolidationInfoPage extends javax.swing.JPanel {
         xLookupField13.setHandler("lookupApprover");
         xLookupField13.setName("entity.approver");
         xLookupField13.setPreferredSize(new java.awt.Dimension(235, 20));
-        xLookupField13.setRequired(true);
         formPanel12.add(xLookupField13);
 
         xDateField15.setDisabledTextColor(new java.awt.Color(0, 0, 0));
@@ -374,6 +380,7 @@ public class ConsolidationInfoPage extends javax.swing.JPanel {
     private com.rameses.rcp.control.XFormPanel xFormPanel11;
     private com.rameses.rcp.control.XFormPanel xFormPanel13;
     private com.rameses.rcp.control.XIntegerField xIntegerField2;
+    private com.rameses.rcp.control.XLabel xLabel1;
     private com.rameses.rcp.control.XLookupField xLookupField1;
     private com.rameses.rcp.control.XLookupField xLookupField10;
     private com.rameses.rcp.control.XLookupField xLookupField11;

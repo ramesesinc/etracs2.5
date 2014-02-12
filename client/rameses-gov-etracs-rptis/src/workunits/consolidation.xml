@@ -28,6 +28,7 @@
         </page>
         
         <process name="open">
+            <transition to="unassigned" cond="#{entity.taskaction &amp;&amp; entity.taskaction.matches('assign.*')}"/>
             <transition to="default" cond="#{entity.state == 'DRAFT'}"/>
             <transition to="taxmapping" cond="#{entity.state == 'FORTAXMAPPING'}"/>
             <transition to="forappraisal" cond="#{entity.state == 'FORAPPRAISAL'}"/>
@@ -38,9 +39,18 @@
             <transition to="cancelled" cond="#{entity.state == 'CANCELLED'}"/>
         </process>
         
+        
+        <page name="unassigned" title="Consolidation (#{entity.state} - Unassigned)">
+            <transition caption="Close"  to="end"      mnemonic="c" icon="images/toolbars/cancel.png" />
+            <transition to="open" name="taxmapper" action="assignTaxmapper" caption="Assign To Me" role="TAXMAPPER"  visibleWhen="#{entity.taskaction == 'assign-taxmapper'}" confirm="Assign task to you?"/>
+            <transition to="open" name="appraiser" action="assignAppraiser" caption="Assign To Me" role="APPRAISER" visibleWhen="#{entity.taskaction == 'assign-appraiser'}" confirm="Assign task to you?"/>
+            <transition to="open" name="approver" action="assignApprover" caption="Assign To Me" role="APPROVER" visibleWhen="#{entity.taskaction == 'assign-approver'}" confirm="Assign task to you?"/>
+        </page>
+        
+        
         <page name="default" title="Consolidation (Draft)">
             <transition caption="Close"  to="end"      mnemonic="c" icon="images/toolbars/cancel.png" />
-            <transition caption="Submit to Taxmapping" to="taxmapping" action="submitForTaxmapping"  mnemonic="m"   confirm="Submit to taxmapping?" role="APPRAISER" />
+            <transition caption="Submit to Taxmapping" to="open" action="submitForTaxmapping"  mnemonic="m"   confirm="Submit to taxmapping?" role="APPRAISER" />
         </page>
         
         <process name="back-to-default">
@@ -54,13 +64,13 @@
                 
         <page name="taxmapping" title="Consolidation (For Taxmapping)">
             <transition caption="Close"  to="end"      mnemonic="c" icon="images/toolbars/cancel.png" />
-            <transition caption="Submit for Appraisal" to="forappraisal" action="submitForAppraisal"  mnemonic="m"   confirm="Submit for appraisal?" role="TAXMAPPER"/>
+            <transition caption="Submit for Appraisal" to="open" action="submitForAppraisal"  mnemonic="m"   confirm="Submit for appraisal?" role="TAXMAPPER"/>
         </page>
         
         
         <page name="forappraisal" title="Consolidation (For Appraisal)">
             <transition caption="Close"  to="end"      mnemonic="c" icon="images/toolbars/cancel.png" />
-            <transition caption="Submit for Approval" to="submit" action="submitForApproval"  mnemonic="m"   confirm="Submit for approval?" role="APPRAISER"/>
+            <transition caption="Submit for Approval" to="open" action="submitForApproval"  mnemonic="m"   confirm="Submit for approval?" role="APPRAISER"/>
         </page>
         
         
@@ -95,7 +105,7 @@
         <page name="forprovsubmission" title="Consolidation (For Submission to Province)">
             <transition caption="Close"  to="end" mnemonic="c" icon="images/toolbars/cancel.png"  />
             <transition caption="Disapprove" to="default" action="disapproveSubmitToProvince"  mnemonic="d"  confirm="Disapprove Consolidation?" role="RECOMMENDER"/>
-            <transition caption="Submit to Province" to="provsubmissionapproval" action="submitToProvince" mnemonic="m"  confirm="Submit to province?" role="RECOMMENDER"/>
+            <transition caption="Submit to Province" to="open" action="submitToProvince" mnemonic="m"  confirm="Submit to province?" role="RECOMMENDER"/>
         </page>
         
         <process name="back-to-prov-submission">
@@ -130,6 +140,7 @@
     
     <pages> 
         <page name="init" template="com.rameses.gov.etracs.rpt.consolidation.ui.ConsolidationInitPage"/>
+        <page name="unassigned" template="com.rameses.gov.etracs.rpt.common.InfoPage"/>
         <page name="default" template="com.rameses.gov.etracs.rpt.common.InfoPage"/>
         <page name="taxmapping" template="com.rameses.gov.etracs.rpt.common.InfoPage"/>
         <page name="forappraisal" template="com.rameses.gov.etracs.rpt.common.InfoPage"/>

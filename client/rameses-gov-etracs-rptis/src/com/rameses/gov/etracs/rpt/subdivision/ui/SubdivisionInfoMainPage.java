@@ -73,12 +73,12 @@ public class SubdivisionInfoMainPage extends javax.swing.JPanel {
         formPanel3.add(xLabel14);
 
         xLabel15.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(153, 153, 153)));
-        xLabel15.setCaption("Txn No.");
+        xLabel15.setCaption("Tracking No.");
         xLabel15.setCaptionWidth(115);
-        xLabel15.setExpression("#{entity.txnno}");
+        xLabel15.setExpression("#{entity.trackingno}");
         xLabel15.setFont(new java.awt.Font("Arial", 1, 14));
         xLabel15.setForeground(new java.awt.Color(153, 0, 0));
-        xLabel15.setPreferredSize(new java.awt.Dimension(130, 19));
+        xLabel15.setPreferredSize(new java.awt.Dimension(0, 21));
         formPanel3.add(xLabel15);
 
         xLabel3.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(153, 153, 153)));
@@ -184,7 +184,6 @@ public class SubdivisionInfoMainPage extends javax.swing.JPanel {
         xLookupField1.setHandler("lookupAppraiser");
         xLookupField1.setName("entity.appraiser");
         xLookupField1.setPreferredSize(new java.awt.Dimension(200, 20));
-        xLookupField1.setRequired(true);
         formPanel4.add(xLookupField1);
 
         xDateField3.setName("entity.appraiser.dtsigned");
@@ -242,7 +241,6 @@ public class SubdivisionInfoMainPage extends javax.swing.JPanel {
         xLookupField4.setHandler("lookupApprover");
         xLookupField4.setName("entity.approver");
         xLookupField4.setPreferredSize(new java.awt.Dimension(200, 20));
-        xLookupField4.setRequired(true);
         formPanel9.add(xLookupField4);
 
         xDateField6.setName("entity.approver.dtsigned");

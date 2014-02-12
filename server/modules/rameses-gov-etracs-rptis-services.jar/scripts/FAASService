@@ -204,7 +204,7 @@ class FAASService
 		saveBackTaxes(faas)
 		insertTxnReference(faas)
 		updateRpuMasterInfo(faas)
-		assignTrackingNo(faas, 'Document is currently reviewed.')
+		trackingSvc.assignTrackingNo(faas, 'faasonline', 'Document is currently reviewed.')
 		return faas
 	}
 
@@ -738,20 +738,6 @@ class FAASService
 			dt = faas.approver.dtsigned
 		faas.txntimestamp = dtSvc.buildCustomTimeStamp(dt)
 	}
-
-
-	void assignTrackingNo(faas, msg){
-		def cy = dtSvc.serverYear 
-		def key = '300:R' + faas.lguid + cy
-		def trackingno = key + seqSvc.getNextFormattedSeries(key)
-		trackingSvc.create([
-			objid 		: faas.objid,
-			filetype	: 'faasonline',
-			trackingno 	: trackingno,
-			msg 		: msg,
-		])
-	}
-
 
 }
 

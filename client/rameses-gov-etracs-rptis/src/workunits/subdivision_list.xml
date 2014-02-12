@@ -34,10 +34,10 @@
                     new Column(name:"owner.name", caption:"Owner Name", width:250),
                     new Column(name:"owner.address", caption:"Owner Address", width:250),
                     new Column(name:"cadastrallotno", caption:"Lot No.", width:100),
-                    new Column(name:"surveyno", caption:"Survey No.", width:100),
                     new Column(name:"totalareasqm", caption:"Mother Area (sqm)", width:120, type:'decimal', format:'#,##0.00'),
                     new Column(name:"totalmv", caption:"Market Value", width:100, type:'decimal', format:'#,##0.00'),
                     new Column(name:"totalav", caption:"Assessed Value", width:100, type:'decimal', format:'#,##0.00'),
+                    new Column(name:"trackingno", caption:"Tracking No.", width:100),
                 ]
             }
         }

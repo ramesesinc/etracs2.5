@@ -9,7 +9,8 @@
    </invokers>
    <code>
 
-        
+<![CDATA[
+
 import com.rameses.rcp.annotations.* 
 import com.rameses.rcp.common.* 
 import com.rameses.osiris2.client.*
@@ -116,6 +117,7 @@ class SubdivisionMainInfoController
     
     
     boolean getShowActions(){
+        if (entity.taskaction && entity.taskaction.matches('assign.*')) return false;
         if (entity.state.matches('FORAPPROVAL|FORPROVAPPROVAL|APPROVED')) return false;
         if (mode != MODE_READ) return false;
         return true;
@@ -123,6 +125,8 @@ class SubdivisionMainInfoController
     
 }
        
+
+]]>
    </code>
     
     <pages> 

@@ -4,10 +4,6 @@
         <invoker type="consolidation:info" action="init" caption="Consolidation Land Appraisal" index="5"/>
         
         <invoker type="formActions" action="refresh" caption="Refresh" mnemonic="r" />
-        <!--
-        <invoker type="formActions" action="assess" caption="Assess" mnemonic="a" visibleWhen="#{showActions == true}" role="APPRAISER" />
-        <invoker type="formActions" action="open" caption="Open" mnemonic="o" visibleWhen="#{entity.state == 'APPROVED'}"/>
-        -->
    </invokers>
    <code>
 
@@ -69,6 +65,7 @@ class ConsolidationLandRpuController
             onupdate    : onupdateRpu,
             onedit      : oneditRpu,
             showClose   : false,
+            viewOnly    : entity.taskaction.matches('assign.*'),
         ])
     }
     
@@ -91,10 +88,12 @@ class ConsolidationLandRpuController
             onedit      : oneditRpu,
             allowCreate : false,
             showClose   : false,
+            viewOnly    : entity.taskaction.matches('assign.*'),
         ])
     }
     
     boolean getShowActions(){
+        if (entity.taskaction && entity.taskaction.matches('assign.*')) return false;
         if (entity.state.matches('FORAPPROVAL|FORPROVAPPROVAL|APPROVED')) return false;
         return true;
     }    

@@ -7,6 +7,9 @@
         <invoker type="formActions" action="save" caption="Save" mnemonic="s" visibleWhen="#{mode != 'read'}" depends="selectedItem" role="TAXMAPPER"/>
    </invokers>
    <code>
+ 
+
+<![CDATA[       
 
 import com.rameses.rcp.annotations.* 
 import com.rameses.rcp.common.* 
@@ -82,6 +85,7 @@ class ConsolidationAffectedRpuController
     
         
     boolean getShowActions(){
+        if (entity.taskaction && entity.taskaction.matches('assign.*')) return false;
         if (entity.state.matches('FORAPPROVAL|FORPROVAPPROVAL|APPROVED')) return false;
         if (! entity.state.matches('FORTAXMAPPING')) return false;
         if (mode != MODE_READ) return false;
@@ -95,6 +99,8 @@ class ConsolidationAffectedRpuController
     }
     
 }
+
+]]>
 
    </code>
     

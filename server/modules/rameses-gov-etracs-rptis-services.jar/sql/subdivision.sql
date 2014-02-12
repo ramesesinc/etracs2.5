@@ -14,15 +14,17 @@ SELECT
 	rp.cadastrallotno,
 	rp.blockno,
 	pc.code AS classfication_code,
-	pc.name AS classification_name	
+	pc.name AS classification_name,
+	t.trackingno
 FROM subdivision s
 	INNER JOIN faas f ON s.motherfaasid = f.objid 
 	INNER JOIN rpu r ON f.rpuid = r.objid 
 	INNER JOIN realproperty rp ON r.realpropertyid = rp.objid 
 	INNER JOIN propertyclassification pc ON r.classification_objid = pc.objid 
+	LEFT JOIN rpttracking t ON s.objid = t.objid 
 WHERE s.state LIKE $P{state}
   AND (s.txnno LIKE $P{searchtext} OR f.tdno LIKE $P{searchtext} OR 
-       f.owner_name LIKE $P{searchtext} OR r.fullpin LIKE $P{searchtext} )
+       f.owner_name LIKE $P{searchtext} OR r.fullpin LIKE $P{searchtext} OR t.trackingno LIKE $P{searchtext})
 ORDER BY s.txnno        
 
 
@@ -53,12 +55,16 @@ SELECT s.*,
 	rp.barangayid AS motherfaas_barangayid, 
 	rp.claimno AS motherfaas_claimno, 
 	pc.code AS classfication_code,
-	pc.name AS classification_name
+	pc.name AS classification_name,
+	t.trackingno,
+	CASE WHEN task.taskid IS NULL THEN '' ELSE task.action END AS taskaction
 FROM subdivision s
 	INNER JOIN faas f ON s.motherfaasid = f.objid 
 	INNER JOIN rpu r ON f.rpuid = r.objid 
 	INNER JOIN realproperty rp ON r.realpropertyid = rp.objid 
 	INNER JOIN propertyclassification pc ON r.classification_objid = pc.objid 
+	LEFT JOIN rpttracking t ON s.objid = t.objid 
+	LEFT JOIN rpttask task ON s.objid = task.objid AND task.enddate IS NULL 
 WHERE s.objid = $P{objid}	
 
 

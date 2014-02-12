@@ -14,7 +14,11 @@ public class ConsolidationController extends PageFlowController
     def binding;
     
     @Service('ConsolidationService')
-    def svc 
+    def svc;
+    
+    @Service('RPTTaskService')
+    def taskSvc;
+        
             
     @Invoker
     def invoker 
@@ -84,16 +88,19 @@ public class ConsolidationController extends PageFlowController
     
     void submitForTaxmapping(){
         entity = svc.submitForTaxmapping(entity);
+        loadSections();
     }
     
     
     void submitForAppraisal(){
         entity = svc.submitForAppraisal(entity);
+        loadSections();
     }
     
     
     void submitForApproval(){
         entity = svc.submitForApproval(entity);
+        loadSections();
     }
     
     
@@ -162,37 +169,44 @@ public class ConsolidationController extends PageFlowController
 
     void disapproveConsolidation() {
         entity = svc.disapproveConsolidation(entity);
+        loadSections();
     }
 
     
 
     void submitToProvince() {
         entity = svc.submitToProvince(entity);
+        loadSections();
     }
 
    
     void disapproveSubmitToProvince() {
         entity = svc.disapproveSubmitToProvince(entity);
+        loadSections();
     }
 
 
     void approveSubmittedToProvince(){
         entity = svc.approveSubmittedToProvince(entity);
+        loadSections();
     }
     
     
     void disapproveSubmittedToProvince(){
         entity = svc.disapproveSubmittedToProvince(entity);
+        loadSections();
     }
     
     
     void approveByProvince() {
         entity = svc.approveByProvince(entity);
+        loadSections();
     }
 
 
     void disapproveByProvince() {
         entity = svc.disapproveByProvince(entity);
+        loadSections();
     }
     
     
@@ -213,6 +227,32 @@ public class ConsolidationController extends PageFlowController
         if (messages)
             throw new Exception(messages[0].msg);
     }   
+    
+    
+    
+    
+    
+    
+    void assignTaxmapper(){
+        doAssignTask('fortaxmapping')
+    }
+    
+    void assignAppraiser(){
+        doAssignTask('forappraisal')
+    }
+    
+    void assignApprover(){
+        doAssignTask('forapproval')
+    }
+    
+    void doAssignTask(newaction){
+        def task = taskSvc.findCurrentTask(entity.objid);
+        task.action = newaction;
+        task.msg = '';
+        taskSvc.createNextUserTask(task);
+        initOpen();
+    }    
+    
     
     
     

@@ -49,6 +49,9 @@ class ConsolidationService
     @Service('RPTLedgerService')
     def ledgerSvc
 
+    @Service('RPTTrackingService')
+    def trackingSvc
+
     def SCHEMA_CONSOLIDATION 		= 'consolidation'
     def SCHEMA_CONSOLIDATED_LAND 	= 'consolidatedland'
     def SCHEMA_AFFECTED_RPU 		= 'affectedrpu'
@@ -122,6 +125,7 @@ class ConsolidationService
         signatorySvc.buildSignatories(consolidation, signatories)
         workflowRef.insert(consolidation)
         em.create(consolidation)
+        trackingSvc.assignTrackingNo(consolidation, 'consolidation', 'Document is currently reviewed.')
     	return consolidation   			
    	}
 

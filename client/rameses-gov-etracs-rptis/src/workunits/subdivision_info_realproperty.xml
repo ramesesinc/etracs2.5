@@ -45,6 +45,7 @@ class SubdividedLandPinController
             entity      : createRealProperty(),
             allowEditSectionParcel : true,
             autoClose : true,
+            viewOnly    : entity.taskaction.matches('assign.*'),
             
             oncreate : {
                 def land = svc.initSubdividedLand(entity);
@@ -74,6 +75,7 @@ class SubdividedLandPinController
             entity : [objid:selectedItem.newrpid],
             autoClose : true,
             allowCreate : false,
+            viewOnly    : entity.taskaction.matches('assign.*'),
             
             onupdate : {
                 selectedItem.newpin = it.pin;
@@ -108,6 +110,7 @@ class SubdividedLandPinController
     
     
     boolean getShowActions(){
+        if (entity.taskaction && entity.taskaction.matches('assign.*')) return false;
         if (entity.state.matches('FORAPPROVAL|FORPROVAPPROVAL|APPROVED')) return false;
         if ( ! entity.state.matches('FORTAXMAPPING') ) return false;
         return true;

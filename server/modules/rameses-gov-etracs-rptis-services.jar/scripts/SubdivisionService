@@ -57,6 +57,10 @@ class SubdivisionService
     def signatorySvc 
 
 
+    @Service('RPTTrackingService')
+    def trackingSvc    
+
+
 	def SCHEMA_SUBDIVISION 		= 'subdivision'
 	def SCHEMA_SUBDIVIDED_LAND 	= 'subdividedland'
 	def SCHEMA_AFFECTED_RPU 	= 'affectedrpu'
@@ -96,6 +100,7 @@ class SubdivisionService
     	txnRef.insertRef(subdivision.motherfaasid, subdivision.objid, 'FAAS is currently referenced by Subdivision No. ' + subdivision.txnno +'.')
     	workflowRef.insert(subdivision)
         createAffectedRpus(subdivision)
+        trackingSvc.assignTrackingNo(subdivision, 'subdivision', 'Document is currently reviewed.')
     	return openSubdivision(subdivision.objid)
     }
 

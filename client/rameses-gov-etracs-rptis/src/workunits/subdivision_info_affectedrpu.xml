@@ -101,6 +101,7 @@ class SubdivisionAffectedRpuController
     
         
     boolean getShowActions(){
+        if (entity.taskaction && entity.taskaction.matches('assign.*')) return false;
         if (entity.state.matches('FORAPPROVAL|FORPROVAPPROVAL|APPROVED')) return false;
         if (mode != MODE_READ) return false;
         return true;

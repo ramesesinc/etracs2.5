@@ -67,6 +67,7 @@ class SubdividedLandRpuController
             lguid       : entity.lguid,
             autoClose   : true,
             onupdate    : onupdateRpu,
+            viewOnly    : entity.taskaction.matches('assign.*'),
         ])
     }
     
@@ -93,6 +94,7 @@ class SubdividedLandRpuController
             autoClose   : true,
             allowCreate : false,
             onupdate    : onupdateRpu,
+            viewOnly    : entity.taskaction.matches('assign.*'),
         ])
     }
     
