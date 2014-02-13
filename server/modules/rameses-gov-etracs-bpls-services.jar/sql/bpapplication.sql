@@ -53,7 +53,7 @@ WHERE objid=$P{objid}
 SELECT  u.objid, u.name, ug.role, ug.domain
 FROM sys_usergroup_member sgm
 INNER JOIN sys_user u ON u.objid=sgm.user_objid
-INNER JOIN sys_usergroup ug ON ug.objid=sgm.usergroupid
+INNER JOIN sys_usergroup ug ON ug.objid=sgm.usergroup_objid
 WHERE ug.domain='BPLS' AND ug.role='APPROVER' 
 ORDER BY u.name
 

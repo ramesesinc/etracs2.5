@@ -40,6 +40,9 @@ public class BillItem {
     private double balance;
     private String receivableid;
     
+    private Object surchargeaccount;
+    private Object interestaccount;
+    
     /** Creates a new instance of BillItem */
     public BillItem() {
     }
@@ -219,6 +222,22 @@ public class BillItem {
 
     public void setApplication(BPApplication application) {
         this.application = application;
+    }
+
+    public Object getSurchargeaccount() {
+        return surchargeaccount;
+    }
+
+    public void setSurchargeaccount(Object surchargeaccount) {
+        this.surchargeaccount = surchargeaccount;
+    }
+
+    public Object getInterestaccount() {
+        return interestaccount;
+    }
+
+    public void setInterestaccount(Object interestaccount) {
+        this.interestaccount = interestaccount;
     }
     
 }

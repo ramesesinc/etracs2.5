@@ -17,7 +17,7 @@ class ReportParameterService{
 	
 	@ProxyMethod
 	public def getStandardParameter(){
-		def org = em.sqlContext.createQuery('SELECT * FROM sys_org WHERE parentid IS NULL').singleResult
+		def org = em.sqlContext.createQuery('SELECT * FROM sys_org WHERE parent_objid IS NULL').singleResult
 		org = (org ? org : [:])
 		def lgu = null 
 		if ('city'.equalsIgnoreCase(org.orgclass)){

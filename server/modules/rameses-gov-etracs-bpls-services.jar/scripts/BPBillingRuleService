@@ -11,6 +11,9 @@ public class BPBillingRuleService  {
 	@ActiveDB("bpbilling")
 	def em;
 
+	@ActiveDB("revenueitem")
+	def ba;
+
 	@Resource("RuleService")
 	def ruleSvc;
 
@@ -55,14 +58,16 @@ public class BPBillingRuleService  {
 
 				//this is the full amt.
 				amount: tf.amount,
-				amtpaid: tf.amtpaid
+				amtpaid: tf.amtpaid,
+				interestaccount: tf.interestaccount,
+				surchargeaccount: tf.surchargeaccount
 			];	
 		}	
 		def actions = new RuleAction();
 		actions.addCommand( "set_qtr_deadline", new SetQtrDeadline( request:req, dateSvc:dateSvc, expiryDate:expiryDate ));
 		actions.addCommand( "split_by_qtr", new SplitByQtr( request:req, NS:numberSvc ));
-		actions.addCommand( "calc_surcharge", new CalcSurcharge( request:req, NS:numberSvc ));
-		actions.addCommand( "calc_interest",  new CalcInterest( request:req, NS:numberSvc ));
+		actions.addCommand( "calc_surcharge", new CalcSurcharge( request:req, NS:numberSvc, BA:ba ));
+		actions.addCommand( "calc_interest",  new CalcInterest( request:req, NS:numberSvc, BA:ba ));
 		actions.addCommand( "calc_discount",  new CalcDiscount( request:req, NS:numberSvc ));
 		actions.addCommand( "collect_full",  new CollectFullPayment( request:req, addItems: addItems ));
 		actions.addCommand( "collect_partial",  new CollectPartialPayment( request:req, addItems: addItems, NS:numberSvc ));
@@ -83,18 +88,14 @@ public class BPBillingRuleService  {
 			def app = it.application;
 			def fapp = factMap[app.objid];
 			if( !fapp ) {
-				
 				fapp = new BPApplication();
 				fapp.objid = app.objid;
 				fapp.appyear = app.appyear;
 				fapp.apptype = app.apptype;
 				factMap.put( app.objid, fapp );
-				println "load app " + fapp;
-				println fapp.apptype;
 			}
 			def lob = it.lob;
 			def flob = null;
-			
 			if( lob?.objid ) {
 				flob = factMap[lob.objid];
 				if(!flob) {
@@ -106,8 +107,6 @@ public class BPBillingRuleService  {
 					flob.name = lob.name;
 					flob.classification = lob.classification?.objid;
 					factMap.put( lob.objid, flob);
-					println "load lob " + flob;
-					println flob.assessmenttype;
 				}
 			}
 			def tf = new BillItem();
@@ -228,6 +227,15 @@ public class BPBillingRuleService  {
 
 		result.validUntil = billdate.validUntil;
 		result.taxcredit = request.taxcredit;
+
+		//organize by account
+		def acctitems = request.items?.sort{ it.duedate };
+		acctitems.each {
+			println "***********";
+			it.each{ k,v->
+				println k +"="+v;
+			}
+		}
 		return result;
 	}
 
@@ -310,22 +318,39 @@ public class SplitByQtr implements RuleActionHandler {
 public class CalcSurcharge implements RuleActionHandler {
 	def request;
 	def NS;
+	def BA;
 	public void execute(def params, def drools) {
 		def tf = params.billitem;
 		def amt = params.amount.doubleValue;
+		def sa = params.account;
+		if(!sa) {
+			throw new Exception("CalcSurcharge rule error. Please provide surcharge account");
+		}
 		tf.surcharge = NS.round(amt);
 		tf.total += NS.round( tf.surcharge );
+		tf.surchargeaccount = BA.findSingleEntry( [objid: sa.key] );
+		if(!tf.surchargeaccount) {
+			throw new Exception("CalcSurcharge rule error. surcharge account not found " + sa.title);
+		}
 	}
 }
 
 public class CalcInterest implements RuleActionHandler {
 	def request;
 	def NS;
+	def BA;
 	public void execute(def params, def drools) {
 		def tf = params.billitem;
 		def amt = params.amount.doubleValue;
+		def sa = params.account;
+		if(!sa) 
+			throw new Exception("CalcInterest rule error. Please provide interest account");
 		tf.interest = NS.round(amt);
 		tf.total += NS.round( tf.interest );
+		tf.interestaccount = BA.findSingleEntry( [objid: sa.key] );
+		if(!tf.interestaccount) {
+			throw new Exception("CalcSurcharge rule error. interest account not found " + sa.title);
+		}
 	}
 }
 

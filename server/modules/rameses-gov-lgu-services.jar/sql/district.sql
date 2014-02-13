@@ -1,5 +1,11 @@
+[getList]
+SELECT b.objid, b.state, b.indexno, b.pin, b.name, 'DISTRICT' AS orgclass 
+FROM district b 
+WHERE b.name LIKE $P{name}  
+ORDER BY b.name 
+
 [lookup]
-SELECT b.objid, b.state, b.indexno, b.pin, b.name 
+SELECT b.objid, b.state, b.indexno, b.pin, b.name, 'DISTRICT' AS orgclass  
 FROM district b 
 WHERE b.name LIKE $P{name}  
 ORDER BY b.name 

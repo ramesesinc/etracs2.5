@@ -36,7 +36,6 @@ public class BPBillingReportService  {
 		*    If date is Mar 25 next due date would be April 1
 		*    If date is April 2 next due date would be April 20. 
 		*/
-		
 		def payoption = [type: 'FULLYEAR'];
 		def billdate = dateSvc.serverDate;
 		def list = bpLedger.getUnpaidForBilling([businessid: o.objid]);
@@ -48,6 +47,7 @@ public class BPBillingReportService  {
 		def z = billingSvc.getBillItems(list, billdate, payoption);	
 		//check if there is a line w/o assessment type
 		
+		
 		def result = [:];	
 		result.billitems = z.items;
 		def barcode = "51005:"+o.bin;
@@ -58,6 +58,7 @@ public class BPBillingReportService  {
            expirydate:z.validUntil,
            barcode: barcode
         ];
+        
 
         data.items = [];
         def app = [:]
@@ -99,7 +100,7 @@ public class BPBillingReportService  {
         data.grandtotal = app.grandtotal;
         
         data.items << app;
-		return  data;
+        return  data;
 	}
 
 
