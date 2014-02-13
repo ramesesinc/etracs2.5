@@ -91,8 +91,8 @@ public class BatchCaptureController  {
         entity.totalcash = 0.0
         entity.totalnoncash = 0.0
         entity.totalamount = 0.0
-        entity.batchitems.each {
-            if( it.voided == 0) {
+        entity.batchitems.each { 
+            if( it.voided != 1 ) { 
                 entity.totalcash += it.totalcash
                 entity.totalnoncash += it.totalnoncash
                 entity.totalamount += it.amount 
@@ -114,17 +114,17 @@ public class BatchCaptureController  {
             def m  = [:];
             m.objid = "BCCE" + new java.rmi.server.UID();
 	    m.parentid = entity.objid
-            m.receiptno =  formatSeries(entity.currentseries);
+            m.series = getNextSeries();
+            m.receiptno =  formatSeries(m.series);
             m.receiptdate = entity.defaultreceiptdate;
             m.collectiontype = entity.collectiontype
-            m.series = getNextSeries();
             m._filetype = "batchcapture:misc"
-            m.amount = 0.0; 
             m.totalcash = 0.0
             m.totalnoncash = 0.0
             m.collector = entity.collector;
             m.paymentitems = []
             m.voided = 0
+            m.newitem = true
             if( copyprevinfo ) {
                 if(prevEntity ) {
                     if( prevEntity.items && prevEntity.items.size() > 0 ) {
@@ -142,18 +142,18 @@ public class BatchCaptureController  {
         getOpenerParams: {o-> 
             return [
                 callerListModel: listModel, 
-                calculateHandler: { calculate(); } 
+                calculateHandler: {  en, mode ->    
+                    calculate(); 
+                    if( mode == 'edit') {
+                        svc.addUpdateItem(entity, en) 
+                     }   
+                } 
             ]; 
         },
         onAddItem: { o->
             validateItem(o) 
-            
             prevEntity = o.clone();
-            moveNext();
-
-            svc.addUpdateItem(o)
-            entity.batchitems << o 
-            println "added ->" + o
+            calculate(); 
         },
         
         isColumnEditable:{item, colname-> 
@@ -166,25 +166,36 @@ public class BatchCaptureController  {
             if (colname == 'amount') {
                 item.items[0].amount = item[colname]; 
                 item.totalcash = item.amount
-                item.totalnoncash = 0.0 
-            }  
+                item.totalnoncash = 0.0
+            }
             if( colname == 'voided') {
-                svc.addUpdateItem(item)
                 calculate()
+                svc.addUpdateItem(entity, item)
             }
         },
-        
-        onCommitItem : { o-> 
-            calculate() 
+        onCommitItem: { o-> 
+            if( o.newitem ) {
+                 o.newitem = false 
+                 entity.batchitems << o 
+                 moveNext()
+            }
+            calculate();
+            svc.addUpdateItem(entity, o)
         },
-
+        
         onRemoveItem: { o ->
-            if(! MsgBox.confirm('Remove item? ')) return false;
             if( entity.batchitems.indexOf(o) != (entity.batchitems.size()-1)) return false;
-
-            svc.removeItem(o)    
+            if(! MsgBox.confirm('Remove item? ')) return false;
+            
+            if( o.voided != 1) {
+                entity.totalcash -= o.totalcash
+                entity.totalnoncash -= o.totalnoncash
+                entity.totalamount -= o.amount 
+            }    
+            svc.removeItem(o, entity)    
             entity.currentseries -= 1;   
             entity.batchitems.remove(o);
+            binding.refresh("entity.totalcash|entity.totalnoncash|entity.totalamount")
             return true;
         }
         
@@ -249,6 +260,7 @@ public class BatchCaptureController  {
     
     void submitForPosting() {
         if (MsgBox.confirm('Submit captured receipts for posting?')){
+            calculate() 
             entity = svc.submitForPosting( entity);
             listModel.reload();
         }

@@ -46,7 +46,7 @@ public class BatchCaptureCollectionService  {
 	}
 
 	@ProxyMethod 
-	public def addUpdateItem( item ){
+	public def addUpdateItem( entity, item ){
 		em.deleteBatchEntryItem( item );
 
 		if(  em.findBatchEntry( item ) ) {
@@ -62,12 +62,16 @@ public class BatchCaptureCollectionService  {
 			it.amount = it.amount ? it.amount : item.amount ;
 			em.create(it, "entry_item")
 		}
+		
+		em.update(entity, "batchcapture_collection" )
 	} 
 
 	@ProxyMethod 
-	public def removeItem( item ){
+	public def removeItem( item, entity ){
 		em.deleteBatchEntryItem( item );
 		em.delete(item, "entry"); 
+
+		em.update(entity, "batchcapture_collection" )
 	}
 
 

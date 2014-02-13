@@ -5,6 +5,9 @@
         <invoker type="home.action" caption="AF Issue" action="create" index="1" role="AFO" target="window"/>
         <invoker type="quick_launcher" code="AFISS" caption="Accountable Form Issuance" action="create" index="1" role="AFO" target="window"/>
         <invoker folderid="/menu/txn/treasury" caption="Accountable Form Issuance" action="create" index="10" role="AFO"/>
+        
+        <invoker type="issueafrequest:create" caption="Accountable Form Issuance" action="create" role="AFO" target="window"/>
+        <invoker type="issueafrequest:open" caption="Accountable Form Issuance" action="open" role="AFO" target="window"/>
     </invokers>
     
     <code>

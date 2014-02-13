@@ -524,7 +524,7 @@ public class RPTBillingService
 
     boolean determineQtrlyPaymentAvailed( bill, item ) {
         if( bill.billtoqtr != 4 ) return true 
-        if( bill.billtoqtr == 4 && item.lastqtrpaid != 4 ) return true 
+        if( bill.billtoqtr == 4 && item.lastqtrpaid != 4 && bill.ledger?.partialled == 0 ) return true 
         return false 
     }
 
@@ -609,6 +609,7 @@ public class RPTBillingService
 			def amtdue = pitem.total 
 			if ( payment >= amtdue){
 				payment -= amtdue 
+				em.updateShareInfo(pitem)
 			}
 			else 
 			{
@@ -925,4 +926,4 @@ public class CalcProvIntShare implements RuleActionHandler {
 			params.rptledger.provintshareacctid = ledger.provintshareacctid
 		}
 	}
-}	
+}

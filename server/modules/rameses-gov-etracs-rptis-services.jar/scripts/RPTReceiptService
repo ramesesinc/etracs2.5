@@ -87,12 +87,7 @@ class RPTReceiptService
 			def partialsefint = 0.0
 			def partialsefdisc = 0.0
 
-			def toyear = it.toyear
-			def toqtr = it.toqtr 
 			if (it.partialled){
-				toyear = (it.toqtr == 1 ? toyear - 1 : toyear)
-				toqtr  = it.fromqtr 
-				// toqtr  = (it.toqtr == 1 ? 4 : toqtr - 1)
 				partialbasic = it.partialbasic
 				partialbasicint = it.partialbasicint
 				partialbasicdisc = it.partialbasicdisc
@@ -106,8 +101,8 @@ class RPTReceiptService
 				rptledgerid		: it.rptledgerid,
 				fromyear		: it.fromyear,
 				fromqtr 		: it.fromqtr,
-				toyear			: toyear,
-				toqtr 			: toqtr,
+				toyear			: it.toyear,
+				toqtr 			: it.toqtr,
 				partialbasic 	: partialbasic,
 				partialbasicint : partialbasicint,
 				partialbasicdisc : partialbasicdisc,
@@ -116,8 +111,8 @@ class RPTReceiptService
 				partialsefdisc 	: partialsefdisc,
 				partialledyear  : it.partialledyear,
 				partialledqtr   : it.partialledqtr,
-				lastbilledyear  : toyear,
-				lastbilledqtr   : toqtr,
+				lastbilledyear  : it.toyear,
+				lastbilledqtr   : it.toqtr,
 				billid 			: it.billid,
 			]
 
@@ -156,12 +151,25 @@ class RPTReceiptService
 			it.toqtr = (it.minqtr <= 1 ? 4 : it.minqtr - 1) 
 			it.lastbilledyear = null
 			it.lastbilledqtr = null
-			if (it.partialbasic > 0.0){
-				it.partialledyear = it.toyear
-				it.partialledqtr = (it.qtr > 0 ? it.qtr : it.toqtr )
+			it.partialledyear = it.minyear
+			it.partialledqtr = it.fromqtr 
+			
+			def prevrct = em.findReceiptPartialInfo(it)
+
+			if (! prevrct ){
+				prevrct = [
+					partialbasic : 0.0,
+					partialbasicint : 0.0,
+					partialbasicdisc : 0.0,
+					partialsef : 0.0,
+					partialsefint : 0.0,
+					partialsefdisc : 0.0,
+				]
 			}
-			em.updateLedgerYearQtrPaid(it)
-			billingSvc.generateBillByLedgerId(it.rptledgerid)
+			it.putAll(prevrct)
+
+			em.resetVoidedLedgerInfo(it)
+			//billingSvc.generateBillByLedgerId(it.rptledgerid)
 		}
 	}
 

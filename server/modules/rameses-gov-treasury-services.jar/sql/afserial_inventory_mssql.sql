@@ -27,3 +27,16 @@ AND ac.respcenter_objid = 'AFO'
 AND ac.qtybalance > 0
 ORDER BY ad.txndate, ac.currentseries
 
+[getAFSerialDetails]
+select   
+   MIN(ai.startseries) as startseries,
+   max(ai.endseries) as endseries, 
+   MIN(ai.startstub) as startstub,
+   MAX(ai.endstub) as endstub,
+   SUM(ai.qtyin) as qtyissued
+from afserial_inventory_detail d 
+   inner join afserial_inventory ai on d.controlid = ai.objid
+where d.refid=$P{stockissueid}
+   AND ai.afid=$P{afid}
+   and ai.respcenter_type = 'COLLECTOR'
+
