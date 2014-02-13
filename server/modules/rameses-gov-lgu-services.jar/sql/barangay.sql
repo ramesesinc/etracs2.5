@@ -1,8 +1,9 @@
 [getList]
 SELECT b.objid, b.state, b.indexno, b.pin, b.name, b.oldpin, b.oldindexno, 
-o.code, o.parent_orgclass, o.parent_name 
+o.code, op.orgclass AS parent_orgclass, op.name AS parent_name
 FROM barangay b
 INNER JOIN sys_org o ON b.objid=o.objid 
+LEFT JOIN sys_org op ON o.parent_objid=op.objid 
 WHERE b.name LIKE $P{name}  
 ORDER BY b.name 
  
