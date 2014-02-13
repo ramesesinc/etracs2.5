@@ -1,7 +1,6 @@
 [getList]
 SELECT 
-	r.objid, r.state, r.pintype, r.txnno, r.section, r.appraiser_name, r.appraiser_title,
-	b.name AS barangay 
+	r.objid, r.state, r.pintype, r.txnno, r.section, b.name AS barangay 
 FROM resection r 
 	INNER JOIN barangay b ON r.barangayid = b.objid 
 where 1=1 ${filters}	
@@ -54,8 +53,18 @@ FROM resectionaffectedrpu arpu
 	INNER JOIN faas f ON arpu.prevfaasid = f.objid
 	INNER JOIN rpu r ON f.rpuid = r.objid
 	INNER JOIN realproperty rp ON r.realpropertyid = rp.objid 
-WHERE arpu.resectionid = $P{resectionid} AND f.state = 'CURRENT' 
+WHERE arpu.resectionid = $P{resectionid}
 ORDER BY r.fullpin 
+
+
+
+[findAffectedLandByPrevId]
+SELECT *
+FROM resectionaffectedrpu arpu
+WHERE arpu.prevrpid = $P{prevrpid}
+ AND arpu.rputype = 'land' 
+  
+
 
 
 [deleteResectionItems]
@@ -89,3 +98,36 @@ UPDATE resection SET state = 'APPROVED' WHERE objid = $P{objid}
 
 [updateState]
 UPDATE resection SET state = $P{state} WHERE objid = $P{objid} AND state = $P{prevstate}
+
+
+[updateAffectedRpu]
+UPDATE resectionaffectedrpu SET 
+	newfaasid = $P{newfaasid},
+	newrpuid = $P{newrpuid},
+	newrpid = $P{newrpid},
+	newtdno = $P{newtdno},
+	newutdno = $P{newutdno}
+WHERE objid = $P{objid}	
+
+
+[updateFaasTdInfo]
+UPDATE faas SET 
+	tdno = $P{newtdno},
+	utdno = $P{newutdno}
+WHERE objid = $P{newfaasid}
+
+#===============================================================
+#
+#  ASYNCHRONOUS APPROVAL SUPPORT 
+#
+#================================================================
+
+[findFaasByNewRpuId]
+SELECT 
+	r.ry AS rpu_ry, 
+	rp.barangayid AS rp_barangay_objid
+FROM rpu r 
+	INNER JOIN realproperty rp ON r.realpropertyid = rp.objid 
+WHERE r.objid =  $P{newrpuid}	
+
+

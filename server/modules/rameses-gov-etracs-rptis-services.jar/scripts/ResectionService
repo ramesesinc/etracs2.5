@@ -5,6 +5,8 @@ import com.rameses.services.extended.*
 
 class ResectionService 
 {
+	@PersistenceContext('main')
+	def pem 
 
 	@ActiveDB('resection')
 	def em 
@@ -51,6 +53,8 @@ class ResectionService
 	def SCHEMA_AFFECTEDRPU  = 'affectedrpu'
 	
 	def STATE_DRAFT 			= 'DRAFT'
+	def STATE_FORTAXMAPPING 	= 'FORTAXMAPPING'
+	def STATE_FORAPPRAISAL 		= 'FORAPPRAISAL'
 	def STATE_FORAPPROVAL 		= 'FORAPPROVAL'
 	def STATE_FORPROVSUBMISSION = 'FORPROVSUBMISSION'
 	def STATE_FORPROVAPPROVAL 	= 'FORPROVAPPROVAL'
@@ -73,6 +77,7 @@ class ResectionService
 										it.objid = util.generateId('AR')
 										it.resectionid = resection.objid
 										it.memoranda = resection.memoranda
+										it.tdno = null
 										it.newutdno = faasSvc.generateUniqueTdNo(it)
 									}
 
@@ -116,8 +121,10 @@ class ResectionService
 		resection.barangayid 		= resection.barangay.objid 
 		resection.barangaypin		= resection.barangay.pin 
 		resection.lgutype 			= var.lgu_type 
+		signatorySvc.buildSignatories(resection, signatories)
 
     	em.create(resection)
+    	
     	workflowRef.insert(resection)
 
     	resection.sections.each{
@@ -125,6 +132,7 @@ class ResectionService
     	}
     	resection.affectedrpus.each{
     		em.create(it, SCHEMA_AFFECTEDRPU)
+    		txnRef.insert([objid:it.prevfaasid, refid:resection.objid, msg:'FAAS is currently referenced by Resection No. ' + resection.txnno + '.'])
     	}
     	resection.sections = null 
     	resection.affectedrpus = null
@@ -137,19 +145,18 @@ class ResectionService
 	public def updateResection( resection ) {
 		if (getOldState(resection) != resection.state)	
 			throw new Exception('Document state has already been modified. Requery the data and try again.')
+		signatorySvc.buildSignatories(resection, signatories)
 		em.update(resection )
 		return resection 
 	}
 
 	@ProxyMethod
 	public def openResection( objid ) {
-		def resection = em.read([objid:objid])
+		def resection = pem.read(SCHEMA_NAME, [objid:objid])
 		resection.lgutype = var.lgu_type 
 		resection.barangay = brgySvc.getById(resection.barangayid)
 		resection.autonumber = util.toBoolean(resection.autonumber, false)
-		if (!resection.signatories){
-			signatorySvc.init(resection, signatories)
-		}
+		signatorySvc.loadSignatories('resection', resection)
 		return resection
 	}
 
@@ -166,6 +173,8 @@ class ResectionService
 
 	@ProxyMethod
 	public void deleteResection(resection){
+		signatorySvc.deleteSignatories(resection)
+		txnRef.delete(resection.objid)
 		deleteFaasRecords(resection)
 		em.deleteResectionItems(resection)
 		em.deleteResectionAffectedRpus(resection)
@@ -205,15 +214,36 @@ class ResectionService
 		return em.updateState([objid:resection.objid, state:tostate, prevstate:fromstate])
 	}
 
+    @ProxyMethod
+    public def submitForTaxmapping(resection) {
+    	def retval = updateState(resection, STATE_DRAFT, STATE_FORTAXMAPPING)
+		if (retval == 0) 
+			throw new Exception('Unable to submit for taxmapping. Only DRAFT record is allowed.')
+		workflowRef.insert(resection)
+    	return resection 
+    }
+
+
+    @ProxyMethod
+    public def submitForAppraisal(resection) {
+    	def retval = updateState(resection, STATE_FORTAXMAPPING, STATE_FORAPPRAISAL)
+		if (retval == 0) 
+			throw new Exception('Unable to submit for appraisal. Only FOR TAXMAPPING record is allowed.')
+		workflowRef.insert(resection)
+    	return resection 
+    }
+
+
  	@ProxyMethod
     public def submitForApproval(resection) {
-    	def retval = updateState(resection, STATE_DRAFT, resection.state)
+    	def retval = updateState(resection, STATE_FORAPPRAISAL, resection.state)
 		if (retval == 0) 
 			throw new Exception('Unable to submit for approval. Only DRAFT record is allowed.')
 		workflowRef.insert(resection)
-		createFaasRecords(resection)
     	return resection 
     }
+
+
 
     @ProxyMethod
     public def disapproveResection(resection) {
@@ -233,6 +263,8 @@ class ResectionService
 		if (retval == 0) 
 			throw new Exception('Unable to approve. Only FOR APPROVAL record is allowed.')
     	workflowRef.insert(resection)
+    	txnRef.delete(resection.objid)
+    	createFaasRecords(resection)
     	doApproveResection(resection)
     	return resection 
     }
@@ -356,8 +388,8 @@ class ResectionService
 		faas.state 			= 'PENDING'
 		faas.effectivityyear = resection.effectivityyear
 		faas.effectivityqtr = resection.effectivityqtr
+		faas.utdno 			= item.newutdno 
 		faas.tdno 			= item.newtdno 
-		faas.utdno  		= item.newutdno 
 		faas.memoranda 		= item.memoranda 
 		faas.appraiser 		= resection.appraiser
 		faas.recommender	= resection.recommender
@@ -375,7 +407,7 @@ class ResectionService
  				txntype 	: faasSvc.getTxnType(TXNTYPE_RS),
  			]
  			info.faas = faasSvc.openFaas(info.faas)
- 			def faas = faasSvc.initTransaction(info)
+ 			def faas = faasSvc.initOnlineTransaction(info)
  			updateFaasInfo(faas, resection, land)
  			
  			def rpu = faas.rpu 
@@ -390,9 +422,9 @@ class ResectionService
  			land.newrpuid = rpu.objid
  			land.newrpid = rp.objid 
 
- 			rpSvc.create(faas.rp)
- 			rpuSvc.createRpu(faas.rpu)
- 			faasSvc.createFaas(faas)
+ 			rpSvc.update(faas.rp)
+ 			rpuSvc.updateRpu(faas.rpu)
+ 			faasSvc.updateFaas(faas)
  			saveAffectedRpu(land)
 	 	}
 
@@ -404,12 +436,12 @@ class ResectionService
  				txntype 	: faasSvc.getTxnType(TXNTYPE_RS),
  			]
  			info.faas = faasSvc.openFaas(info.faas)
- 			faasSvc.initTransaction(info)
+ 			def faas = faasSvc.initOnlineTransaction(info)
  			updateFaasInfo(faas, resection, arpu)
 
  			def rpu = faas.rpu 
  			def rp  = faas.rp
- 			rpu.rp.objid = landref.newrpid 
+ 			rpu.realpropertyid = landref.newrpid 
  			rpu.realpropertyid = landref.newrpid
  			rpu.suffix = arpu.newsuffix 
  			rpu.fullpin = arpu.newpin 
@@ -419,7 +451,7 @@ class ResectionService
  			arpu.newrpuid = rpu.objid
  			arpu.newrpid = rp.objid 
 
- 			faasSvc.createFaas(faas)
+ 			faasSvc.updateFaas(faas)
  			saveAffectedRpu(arpu)
 	 	}
  	}
@@ -429,9 +461,121 @@ class ResectionService
 		em.approveResection(resection)
         getResectionAffectedRpus(resection.objid).each{ arpu ->
             def faas = faasSvc.openFaas([objid:arpu.newfaasid])
+            println 'faas.previousfaases -> ' + faas.previousfaases
             faasSvc.approveFaas(faas)
         }
  	}
+
+
+
+
+    /*============================================================================
+    **
+    ** ASYNCHRONOUS APPROVAL SUPPORT 
+    **
+    ============================================================================*/
+    @ProxyMethod
+    public void initApproveResectionAsync(resection) {
+        try{
+        	txnRef.delete(resection.objid)
+            workflowRef.insert(resection)
+        }
+        catch(e){
+            // ignore repeated approval
+        }
+        //validate(resection)
+    }
+
+    @ProxyMethod
+    public def assignNewTdNos(resection){
+    	getResectionAffectedRpus(resection.objid).each{ 
+    		if (it.newtdno == null || it.newtdno == '-'){
+                def faas = em.findFaasByNewRpuId(it)
+                it.newtdno = faasSvc.generateNextTdNo(faas)
+                it.newutdno = it.newtdno 
+                em.updateAffectedRpu(it)
+                em.updateFaasTdInfo(it)
+            }
+    	}
+    }
+
+    @ProxyMethod
+    public void createLandFaasRecord(resection, land){
+        def info = [
+			faas 		: [objid:land.prevfaasid],
+			txntype 	: faasSvc.getTxnType(TXNTYPE_RS),
+		]
+		info.faas = faasSvc.openFaas(info.faas)
+		def faas = faasSvc.initOnlineTransaction(info)
+		updateFaasInfo(faas, resection, land)
+		
+		def rpu = faas.rpu 
+		def rp  = faas.rp 
+		rp.section = land.newsection 
+		rp.parcel = land.newparcel 
+		rp.pin = land.newpin
+		rpu.realpropertyid = rp.objid 
+		rpu.fullpin = land.newpin 
+
+		land.newfaasid = faas.objid 
+		land.newrpuid = rpu.objid
+		land.newrpid = rp.objid 
+
+		rpSvc.update(faas.rp)
+		rpuSvc.updateRpu(faas.rpu)
+		faasSvc.updateFaas(faas)
+
+		em.updateAffectedRpu(land)
+    }
+
+
+    @ProxyMethod
+    public void createImprovementFaasRecord(resection, arpu){
+        def landref = em.findAffectedLandByPrevId(arpu)
+        if (!landref) 
+        	throw new Exception('New Land Reference is invalid.')
+
+		def info = [
+			faas 		: [objid:arpu.prevfaasid],
+			txntype 	: faasSvc.getTxnType(TXNTYPE_RS),
+		]
+		info.faas = faasSvc.openFaas(info.faas)
+		def faas = faasSvc.initOnlineTransaction(info)
+		updateFaasInfo(faas, resection, arpu)
+
+		def rpu = faas.rpu 
+		def rp  = faas.rp
+		rpu.realpropertyid = landref.newrpid 
+		faas.realpropertyid = landref.newrpid
+		rpu.suffix = arpu.newsuffix 
+		rpu.fullpin = arpu.newpin 
+
+		//update realproperty
+		arpu.newfaasid = faas.objid 
+		arpu.newrpuid = rpu.objid
+		arpu.newrpid = rp.objid 
+
+		faasSvc.updateFaas(faas)
+
+		em.updateAffectedRpu(arpu)
+    }
+
+
+    @ProxyMethod
+    public void approveFaasRecordAsync( arpu ) {
+    	def faas = faasSvc.openFaas([objid:arpu.newfaasid])
+    	if (! faas.state.equalsIgnoreCase('CURRENT')){
+        	faasSvc.approveFaas(faas)
+    	}
+    }
+
+
+    @ProxyMethod
+    public def approveResectionAsync(resection){
+    	resection.state = STATE_APPROVED;
+        em.approveResection(resection)
+        return resection
+    }
 
 
 }

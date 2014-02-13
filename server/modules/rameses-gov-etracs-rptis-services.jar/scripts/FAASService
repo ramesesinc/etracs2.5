@@ -136,7 +136,7 @@ class FAASService
 		signatorySvc.init(faas, signatories)
 		faas.memoranda = ' '
 
-		if (faas.txntype.newrealproperty){
+		if (faas.rpu.rputype == 'land' && faas.txntype.newrealproperty){
 			rpSvc.create(faas.rp)
 		}
 		if (faas.txntype.newrpu){
@@ -465,14 +465,14 @@ class FAASService
             [objid:'CD', 	name:'Change Depreciation', 		newledger:false, 	newrpu:true],
             [objid:'RE', 	name:'Reassessment', 				newledger:false, 	newrpu:true],
 
-            [objid:'GR', 	name:'General Revision', 			newledger:false, 	newrpu:true, newrealproperty:true],
-            [objid:'ND', 	name:'New Discovery', 				newledger:true, 	newrpu:true, newrealproperty:true],
+            [objid:'GR', 	name:'General Revision', 			newledger:false, 	newrpu:true, newrealproperty:true, checkbalance:false],
+            [objid:'ND', 	name:'New Discovery', 				newledger:true, 	newrpu:true, newrealproperty:true, checkbalance:false],
             [objid:'SD', 	name:'Subdivision', 				newledger:true, 	newrpu:true, newrealproperty:true],
             [objid:'CS', 	name:'Consolidation', 				newledger:true, 	newrpu:true, newrealproperty:true],
             [objid:'CTD', 	name:'Cancellation', 				newledger:false, 	newrpu:false],
-            [objid:'MC', 	name:'Multiple Claim', 				newledger:true, 	newrpu:true, newrealproperty:true],
+            [objid:'MC', 	name:'Multiple Claim', 				newledger:true, 	newrpu:true, newrealproperty:true, checkbalance:false],
             
-            [objid:'RS', 	name:'Resection', 					newledger:false, 	newrpu:true, newrealproperty:true],
+            [objid:'RS', 	name:'Resection', 					newledger:false, 	newrpu:true, newrealproperty:true, checkbalance:false],
             
             [objid:'DC', 	name:'Data Capture', 				newledger:true, 	newrpu:true],
         ]

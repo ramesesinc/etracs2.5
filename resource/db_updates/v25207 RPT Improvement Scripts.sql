@@ -267,3 +267,226 @@ go
 
 alter table rpttracking add constraint ux_rpttracking_trackingno unique(trackingno)
 go
+
+
+
+
+
+
+
+DROP TABLE resectionitem
+go
+drop table resectionaffectedrpu
+go
+drop table resection
+go 
+
+
+
+/****** Object:  Table [dbo].[resection]    Script Date: 02/13/2014 11:00:17 ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+SET ANSI_PADDING ON
+GO
+
+CREATE TABLE [dbo].[resection](
+	[objid] [varchar](50) NOT NULL,
+	[state] [varchar](20) NOT NULL,
+	[pintype] [varchar](5) NOT NULL,
+	[barangayid] [varchar](50) NOT NULL,
+	[barangaypin] [varchar](15) NOT NULL,
+	[section] [varchar](3) NOT NULL,
+	[ry] [int] NOT NULL,
+	[txntype_objid] [varchar](5) NOT NULL,
+	[txnno] [varchar](10) NOT NULL,
+	[txndate] [datetime] NOT NULL,
+	[autonumber] [int] NOT NULL,
+	[effectivityyear] [int] NOT NULL,
+	[effectivityqtr] [int] NOT NULL,
+	[memoranda] [varchar](500) NOT NULL,
+	[signatories] [varchar](2000) NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[objid] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY],
+ CONSTRAINT [ux_resection_sectionno] UNIQUE NONCLUSTERED 
+(
+	[barangayid] ASC,
+	[section] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+
+SET ANSI_PADDING OFF
+GO
+
+
+
+/****** Object:  Table [dbo].[resectionitem]    Script Date: 02/13/2014 11:01:46 ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+SET ANSI_PADDING ON
+GO
+
+CREATE TABLE [dbo].[resectionitem](
+	[objid] [varchar](50) NOT NULL,
+	[resectionid] [varchar](50) NOT NULL,
+	[newsection] [varchar](3) NOT NULL,
+	[landcount] [int] NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[objid] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY],
+ CONSTRAINT [ux_resectionitem_sectionno] UNIQUE NONCLUSTERED 
+(
+	[resectionid] ASC,
+	[newsection] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+
+SET ANSI_PADDING OFF
+GO
+
+ALTER TABLE [dbo].[resectionitem]  WITH CHECK ADD  CONSTRAINT [FK_resectionitem_resection] FOREIGN KEY([resectionid])
+REFERENCES [dbo].[resection] ([objid])
+GO
+
+ALTER TABLE [dbo].[resectionitem] CHECK CONSTRAINT [FK_resectionitem_resection]
+GO
+
+
+
+
+/****** Object:  Table [dbo].[resectionaffectedrpu]    Script Date: 02/13/2014 11:01:32 ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+SET ANSI_PADDING ON
+GO
+
+CREATE TABLE [dbo].[resectionaffectedrpu](
+	[objid] [varchar](50) NOT NULL,
+	[resectionid] [varchar](50) NOT NULL,
+	[rputype] [varchar](10) NOT NULL,
+	[prevfaasid] [varchar](50) NOT NULL,
+	[prevrpuid] [varchar](50) NOT NULL,
+	[prevrpid] [varchar](50) NOT NULL,
+	[newsection] [varchar](3) NULL,
+	[newparcel] [varchar](3) NULL,
+	[newtdno] [varchar](20) NULL,
+	[newutdno] [varchar](20) NOT NULL,
+	[newpin] [varchar](25) NULL,
+	[newsuffix] [int] NULL,
+	[newfaasid] [varchar](50) NULL,
+	[newrpuid] [varchar](50) NULL,
+	[newrpid] [varchar](50) NULL,
+	[memoranda] [varchar](500) NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[objid] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY],
+ CONSTRAINT [ux_reseectionaffectedrpu_newutdno] UNIQUE NONCLUSTERED 
+(
+	[newutdno] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+
+SET ANSI_PADDING OFF
+GO
+
+ALTER TABLE [dbo].[resectionaffectedrpu]  WITH CHECK ADD  CONSTRAINT [FK_resectionaffectedrpu_newfaas] FOREIGN KEY([newfaasid])
+REFERENCES [dbo].[faas] ([objid])
+GO
+
+ALTER TABLE [dbo].[resectionaffectedrpu] CHECK CONSTRAINT [FK_resectionaffectedrpu_newfaas]
+GO
+
+ALTER TABLE [dbo].[resectionaffectedrpu]  WITH CHECK ADD  CONSTRAINT [FK_resectionaffectedrpu_newrp] FOREIGN KEY([newrpid])
+REFERENCES [dbo].[realproperty] ([objid])
+GO
+
+ALTER TABLE [dbo].[resectionaffectedrpu] CHECK CONSTRAINT [FK_resectionaffectedrpu_newrp]
+GO
+
+ALTER TABLE [dbo].[resectionaffectedrpu]  WITH CHECK ADD  CONSTRAINT [FK_resectionaffectedrpu_newrpu] FOREIGN KEY([newrpuid])
+REFERENCES [dbo].[rpu] ([objid])
+GO
+
+ALTER TABLE [dbo].[resectionaffectedrpu] CHECK CONSTRAINT [FK_resectionaffectedrpu_newrpu]
+GO
+
+ALTER TABLE [dbo].[resectionaffectedrpu]  WITH CHECK ADD  CONSTRAINT [FK_resectionaffectedrpu_prevfaas] FOREIGN KEY([prevfaasid])
+REFERENCES [dbo].[faas] ([objid])
+GO
+
+ALTER TABLE [dbo].[resectionaffectedrpu] CHECK CONSTRAINT [FK_resectionaffectedrpu_prevfaas]
+GO
+
+ALTER TABLE [dbo].[resectionaffectedrpu]  WITH CHECK ADD  CONSTRAINT [FK_resectionaffectedrpu_prevrp] FOREIGN KEY([prevrpid])
+REFERENCES [dbo].[realproperty] ([objid])
+GO
+
+ALTER TABLE [dbo].[resectionaffectedrpu] CHECK CONSTRAINT [FK_resectionaffectedrpu_prevrp]
+GO
+
+ALTER TABLE [dbo].[resectionaffectedrpu]  WITH CHECK ADD  CONSTRAINT [FK_resectionaffectedrpu_prevrpu] FOREIGN KEY([prevrpuid])
+REFERENCES [dbo].[rpu] ([objid])
+GO
+
+ALTER TABLE [dbo].[resectionaffectedrpu] CHECK CONSTRAINT [FK_resectionaffectedrpu_prevrpu]
+GO
+
+ALTER TABLE [dbo].[resectionaffectedrpu]  WITH CHECK ADD  CONSTRAINT [FK_resectionaffectedrpu_resection] FOREIGN KEY([resectionid])
+REFERENCES [dbo].[resection] ([objid])
+GO
+
+ALTER TABLE [dbo].[resectionaffectedrpu] CHECK CONSTRAINT [FK_resectionaffectedrpu_resection]
+GO
+
+ALTER TABLE [dbo].[resectionaffectedrpu] ADD  DEFAULT (NULL) FOR [newsection]
+GO
+
+ALTER TABLE [dbo].[resectionaffectedrpu] ADD  DEFAULT (NULL) FOR [newparcel]
+GO
+
+ALTER TABLE [dbo].[resectionaffectedrpu] ADD  DEFAULT (NULL) FOR [newtdno]
+GO
+
+ALTER TABLE [dbo].[resectionaffectedrpu] ADD  DEFAULT (NULL) FOR [newpin]
+GO
+
+ALTER TABLE [dbo].[resectionaffectedrpu] ADD  DEFAULT (NULL) FOR [newsuffix]
+GO
+
+ALTER TABLE [dbo].[resectionaffectedrpu] ADD  DEFAULT (NULL) FOR [newfaasid]
+GO
+
+ALTER TABLE [dbo].[resectionaffectedrpu] ADD  DEFAULT (NULL) FOR [newrpuid]
+GO
+
+ALTER TABLE [dbo].[resectionaffectedrpu] ADD  DEFAULT (NULL) FOR [newrpid]
+GO
+
+ALTER TABLE [dbo].[resectionaffectedrpu] ADD  DEFAULT (NULL) FOR [memoranda]
+GO
+
+
+
+
+

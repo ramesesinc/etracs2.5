@@ -103,8 +103,11 @@ class TxnSignatoryService
 			catch(e)
 			{}
 		}
-		else {
+		else if (entity.signatories instanceof String){
 			signatories = pem.serializer.read(entity.signatories)
+		}
+		else {
+			signatories = entity.signatories
 		}
 		signatories.each{
 			if (it.dtsigned) 

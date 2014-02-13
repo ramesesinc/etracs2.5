@@ -17,7 +17,6 @@ class ResectionListService
             ' and r.txnno LIKE $P{searchtext}',
             ' and r.section LIKE $P{searchtext}',
             ' and b.name LIKE $P{searchtext}',
-            ' and r.appraiser_name LIKE $P{searchtext}',
         ]
         return util.getListFromQuery( 'resection:getList' , filters, params, 'r.objid' )
     }
@@ -31,8 +30,6 @@ class ResectionListService
 			[name:'pintype', caption:'PIN Type'],
 			[name:'barangay', caption:'Barangay'],
 			[name:'section', caption:'Resectioned Section'],
-			[name:'appraiser.name', caption:'Appraiser'],
-			[name:'appraiser.title', caption:'Job Position'],
 		]	
 	}
 }

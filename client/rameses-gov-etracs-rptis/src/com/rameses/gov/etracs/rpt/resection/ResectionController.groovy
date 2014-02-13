@@ -1,4 +1,4 @@
-package com.rameses.gov.etracs.rpt.entity.ui;
+package com.rameses.gov.etracs.rpt.resection;
         
 import com.rameses.rcp.annotations.* 
 import com.rameses.rcp.common.* 
@@ -13,98 +13,68 @@ public class ResectionController extends PageFlowController
     @Binding
     def binding;
     
+            
+    @Service('RPTTaskService')
+    def taskSvc;
+    
     @Service('ResectionService')
     def svc 
             
     @Invoker
     def invoker 
+            
+    @FormId
+    def formId;
     
-    def MODE_CREATE = 'create';
-    def MODE_EDIT   = 'edit';
-    def MODE_READ   = 'read';
-    
-    def STATE_INTERIM           = 'INTERIM';
-    def STATE_FORAPPROVAL       = 'FORAPPROVAL';
-    def STATE_FORPROVSUBMISSION = 'FORPROVSUBMISSION';
-    def STATE_FORPROVAPPROVAL   = 'FORPROVAPPROVAL';
-    def STATE_CURRENT           = 'CURRENT';
-    def STATE_CANCELLED         = 'CANCELLED';
-    
-    
-    def mode;
+    @FormTitle
+    def formTitle;
+   
+               
     def entity;
     def sections;
-    def affectedlands;
-    def affectedimprovements;
+    def selectedSection;
+    def messages = [];
     
-    def appraiser = [:];
-    def recommender = [:];
-    def taxmapper = [:];
-    def approver = [:];
     
     def init(){
-        entity = [objid:RPTUtil.generateId('RS'), newsectioncount:2]
+        formTitle = 'Resection (New)'
+        entity =  [objid:RPTUtil.generateId('RS'), newsectioncount:2]
         return super.signal('init')
     }
     
     
     def open(){
-        entity = svc.openResection( entity.objid );
-        initItems();
-        initSignatoryVars();
-        mode = MODE_READ;
+        initOpen()
         return super.signal('open');
     }
     
-    void initItems(){
-        sections = svc.getResectionItems(entity.objid)
-        def items = svc.getResectionAffectedRpus(entity.objid)
-        affectedlands = items.findAll{it.rputype == 'land'}
-        affectedimprovements = items.findAll{it.rputype != 'land'}
+    
+    void initOpen(){
+        entity = svc.openResection(entity.objid);
+        loadSections();
+        formId = entity.txnno;
+        formTitle = 'Resection: ' + entity.txnno;
     }
-    
-    void initSignatoryVars(){
-        appraiser = entity.signatories.find{it.type == 'appraiser'};
-        recommender = entity.signatories.find{it.type == 'recommender'};
-        taxmapper = entity.signatories.find{it.type == 'taxmapper'};
-        approver = entity.signatories.find{it.type == 'approver'};
-        appraiser = (appraiser ? appraiser : [:])
-        recommender = (recommender ? recommender : [:])
-        taxmapper = (taxmapper ? taxmapper : [:])
-        approver = (approver ? approver : [:])
-        
-    }
-    
-    
-    
+      
+    void loadSections(){
+        sections = InvokerUtil.lookupOpeners('resection:info', [entity:entity, svc:svc])
+        if (sections){
+            selectedSection = sections[0];
+        }
+    }    
 
     /*-----------------------------------------------------
      * 
      * DOCUMENT SUPPORT 
      *
-     *----------------------------------------------------*/
-    void edit(){
-        mode = MODE_EDIT;
-    }
-    
-    
-    void cancelEdit(){
-        entity = svc.openResection(entity.objid);
-        mode = MODE_READ;
-    }
-    
-    void save(){
-        updateSignatoryInfo()
-        if (mode == MODE_CREATE)
-            entity = svc.createResection(entity);
-        else 
-            entity = svc.updateResection(entity);
-        mode = MODE_READ;
-    }    
-   
+     *----------------------------------------------------*/   
     
     void delete(){
         svc.deleteResection(entity);
+    }
+    
+    List getBarangays(){
+        return svc.getBarangays();
     }
     
     
@@ -116,270 +86,262 @@ public class ResectionController extends PageFlowController
      *----------------------------------------------------*/
     void initResection(){
         entity =  svc.initResection(entity);
-        initItems();
-        mode = MODE_EDIT;
+        initOpen();
     }
     
+    
+    void submitForTaxmapping(){
+        checkMessages();
+        entity = svc.submitForTaxmapping(entity);
+        loadSections();
+    }
+    
+    void submitForAppraisal(){
+        checkMessages();
+        entity = svc.submitForAppraisal(entity);
+        loadSections();
+    }    
     
     void submitForApproval(){
+        checkMessages();
         entity = svc.submitForApproval(entity);
+        loadSections();
     }
     
+    /*
     
     void approveResection() {
+        checkMessages();
         entity = svc.approveResection(entity);
+        loadSections();
     }
+     */
+    void approveResection() {
+        checkMessages();
+        info = '';
+        processing = true;
+        approveTask = new ApproveTask(
+                    svc             : svc, 
+                    entity          : entity,
+                    oncomplete      : oncomplete,
+                    showinfo        : showinfo,
+                    onerror         : onerror,
+                );
+        Thread t = new Thread(approveTask);
+        t.start();
+    }    
 
 
     void disapproveResection() {
+        checkMessages();
         entity = svc.disapproveResection(entity);
+        loadSections();
     }
 
     
 
     void submitToProvince() {
+        checkMessages();
         entity = svc.submitToProvince(entity);
+        loadSections();
     }
 
    
     void disapproveSubmitToProvice() {
+        checkMessages();
         entity = svc.disapproveSubmitToProvice(entity);
+        loadSections();
     }
 
 
     void approveSubmittedToProvince(){
+        checkMessages();
         entity = svc.approveSubmittedToProvince(entity)
+        loadSections();
     }
     
     
     void disapproveSubmittedToProvince(){
+        checkMessages();
         entity = svc.disapproveSubmittedToProvince(entity)
+        loadSections();
     }
     
     
     void approveByProvince() {
+        checkMessages();
         entity = svc.approveByProvince(entity);
+        loadSections();
     }
 
 
     void disapproveByProvince() {
+        checkMessages();
         entity = svc.disapproveByProvince(entity);
+        loadSections();
     }
     
     
-    /*-----------------------------------------------------
-     * 
-     * INIT PAGE SUPPORT
-     *  
-     *----------------------------------------------------*/
-    List getBarangays(){
-        return svc.getBarangays();
+    
+    
+    
+    def approveTask = null;
+    def info;
+    def processing = false;
+    def haserror = false;
+    
+    
+    def oncomplete = {
+        haserror = false;
+        processing = false;
+        approveTask = null;
+        binding.refresh();
     }
     
-            
-     /*-----------------------------------------------------
-     * 
-     * SECTIONS SUPPORT
-     *  
-     *----------------------------------------------------*/
-    def selectedSection;
-            
-    def sectionListHandler = [
-        fetchList : { return sections },
-        validate  : { li ->
-            def item = li.item;
-            item.putAll(svc.saveSection(entity, item));
-        },
-    ] as EditorListModel
-            
+    def onerror = {
+        haserror = true;
+        processing = false;
+        approveTask = null;
+        showinfo('ERROR: ' + it)
+    }
     
-    /*-----------------------------------------------------
-     * 
-     * AFFECTED LAND SUPPORT
-     *  
-     *----------------------------------------------------*/
-    def selectedLand;
-            
-    def landListHandler = [
-        getRows   : { 1000 },
-            
-        fetchList : { return affectedlands },
+    def showinfo = { msg ->
+        info += msg;
+        binding.refresh('info');
+    }
+    
         
-        onColumnUpdate : { item, colname ->
-            if (colname == 'newsection'){
-                def section = sections.find{it.newsection == item.newsection}
-                if (!section){
-                    throw new Exception('Invalid section. Section must be one of the new sections defined.')
-                }
-                section.landcount++;
-                section.putAll(svc.saveSection(entity, section));
-                sectionListHandler.refresh();
-            }
-            buildNewPin(item);
-            def improvements = affectedimprovements.findAll{it.prevrpid == item.prevrpid}
-            improvements.each{ impv ->
-                impv.newsection = item.newsection;
-                impv.newparcel = item.newparcel;
-                impv.newpin = item.newpin;
-                affectedrpuListHandler.refresh();
-                impv.putAll(svc.saveAffectedRpu(impv));
-            }
-        },
-            
-        validate  : { li ->
-            def item = li.item;
-            RPTUtil.required('New Section', item.newsection);
-            RPTUtil.required('New Parcel', item.newparcel);
-            RPTUtil.required('New TD No.', item.newtdno);
-            RPTUtil.required('Memoranda', item.memoranda);
-            checkDuplicateLand(item);
-            item.putAll(svc.saveAffectedRpu(item));
-        },
-    ] as EditorListModel
-            
-                
-    void checkDuplicateLand(item){
-        //check duplicate section and parcel
-        def dup = affectedlands.find{ it.objid != item.objid && 
-                                      it.newsection == item.newsection && 
-                                      it.newparcel == item.newparcel
-                                }
-        if (dup)
-            throw new Exception('Duplicate Section and Parcel is not allowed.');
+    void checkErrors(){
+        if (processing)
+            throw new Exception('Resection Approval is ongoing.');
     }
-        
-    void buildNewPin(item){
-        item.newpin = entity.barangaypin;
-        if (item.newsection)
-            item.newpin += '-' + item.newsection;
-        if (item.newparcel)
-            item.newpin += '-' + item.newparcel;
-        if (item.newsuffix != null && item.newsuffix > 0) {
-            item.newpin += '-' + item.newsuffix;
-        }
+    
+    void checkFinish(){
+        if (haserror)
+            throw new Exception('Approval cannot be completed due to errors. Fix errors before finishing the transaction.')
+        if (processing)
+            throw new Exception('Resection Approval is ongoing.');
+        initOpen();
     }
-                
-    /*-----------------------------------------------------
-     * 
-     * AFFECTED RPUS SUPPORT
-     *
-     *----------------------------------------------------*/
-    def selectedAffectedRpu;
-        
-    def affectedrpuListHandler = [
-        getRows   : { 1000 },
-        fetchList : { return affectedimprovements },
 
-        onColumnUpdate : { item, colname ->
-            RPTUtil.required('New Section', item.newsection);
-            RPTUtil.required('New Parcel', item.newparcel);
-            if (colname == 'newsuffix'){
-                svc.validateSuffix(item.rputype, item.newsuffix)
-            }
-            buildNewPin(item);
-        },
+    
+    
+    
+    
+    
+    
+    
+    void addMessage(msg){
+        messages << msg;
+    }
+    
+    
+    void clearMessages(type){
+        messages.removeAll( messages.findAll{it.type == type} )
+    }
+    
+
+    void checkMessages(){
+        if (messages)
+            throw new Exception(messages[0].msg);
+    }   
+    
+    
+
+    
+    void assignTaxmapper(){
+        doAssignTask('fortaxmapping')
+    }
+    
+    void assignAppraiser(){
+        doAssignTask('forappraisal')
+    }
+    
+    void assignApprover(){
+        doAssignTask('forapproval')
+    }
+    
+    void doAssignTask(newaction){
+        def task = taskSvc.findCurrentTask(entity.objid);
+        task.action = newaction;
+        task.msg = '';
+        taskSvc.createNextUserTask(task);
+        initOpen();
+    }    
+    
         
-        validate : { li -> 
-            def item = li.item;
-            RPTUtil.required('New Suffix', item.newsuffix);
-            RPTUtil.required('New TD No.', item.newtdno);
-            RPTUtil.required('Memoranda', item.memoranda);
-            checkDuplicateSuffix(item);
-            item.putAll(svc.saveAffectedRpu(item));
-        }
+}
+
+
+
+
+
+
+public class ApproveTask implements Runnable{
+    def svc;
+    def entity;
+    def oncomplete;
+    def onerror;
+    def showinfo;
+
+    public void run(){
+        try{
+            showinfo('Initializing');
+            svc.initApproveResectionAsync(entity);
+            showinfo(' .... Done\n');
         
-    ] as EditorListModel 
             
-                
-    void checkDuplicateSuffix(item){
-        //check duplicate section and parcel
-        def dup = affectedimprovements.find{ it.objid != item.objid && 
-                                      it.newpin == item.newpin && 
-                                      it.newsuffix == item.newsuffix
-                                }
-        if (dup)
-            throw new Exception('Duplicate Suffix is not allowed.');
+            showinfo('\nProcessing Land FAAS...\n');
+            svc.getResectionAffectedRpus(entity.objid).findAll{it.rputype == 'land'}.each{ land ->
+                if ( ! land.newfaasid) {
+                    showinfo('Creating new Land FAAS for TD No. ' + land.tdno );
+                    svc.createLandFaasRecord(entity, land);
+                    showinfo(' .... Done\n');
+                }
+            }
+            
+            showinfo('\nProcessing Improvement FAAS...\n');
+            svc.getResectionAffectedRpus(entity.objid).findAll{it.rputype != 'land'}.each{ arpu ->
+                if ( ! arpu.newfaasid) {
+                    showinfo('Creating new FAAS for TD No. ' + arpu.tdno );
+                    svc.createImprovementFaasRecord(entity, arpu);
+                    showinfo(' .... Done\n');
+                }
+            }
+            
+            
+            showinfo('\nAssigning new TD No. to Lands and Affected Improvements...');
+            svc.assignNewTdNos(entity);
+            showinfo(' .... Done\n');
+            
+            showinfo('\nApproving new FAAS Records...\n');
+            svc.getResectionAffectedRpus(entity.objid).each{ arpu ->
+                showinfo('Approving New TD No. ' + arpu.tdno );
+                svc.approveFaasRecordAsync(arpu);
+                showinfo(' .... Done\n');
+            }
+                    
+            
+
+            showinfo('\nResection Approval')
+            svc.approveResectionAsync(entity);
+            entity.state = 'APPROVED';
+            showinfo(' .... Done\n');
+            
+            
+            oncomplete()
+        }
+        catch(e){
+            onerror('\n\n' + e.message )
+        }
     }
     
-    /*===============================================
-     * Lookup Support
-     *===============================================*/
-    def getLookupAppraiser(){
-        return InvokerUtil.lookupOpener('txnsignatory:lookup',[
-            doctype : 'RPTAPPRAISER',
-            onselect : { updateSignatory(appraiser, it) },
-            onempty  : { clearSignatoryInfo(appraiser) },
-        ])
-        
+    void doSleep(){
+        try{
+            Thread.sleep(2000);
+        }
+        catch(e){
+            ;
+        }
     }
-    
-    def getLookupRecommender(){
-        return InvokerUtil.lookupOpener('txnsignatory:lookup',[
-            doctype : 'RPTRECOMMENDER',
-            onselect : { updateSignatory(recommender, it) },
-            onempty  : { clearSignatoryInfo(recommender) },
-        ])
-        
-    }
-    
-    def getLookupTaxmapper(){
-        return InvokerUtil.lookupOpener('txnsignatory:lookup',[
-            doctype : 'RPTTAXMAPPER',
-            onselect : { updateSignatory(taxmapper, it) },
-            onempty  : { clearSignatoryInfo(taxmapper) },
-        ])
-        
-    }
-    
-    def getLookupApprover(){
-        return InvokerUtil.lookupOpener('txnsignatory:lookup',[
-            doctype : 'RPTAPPROVER',
-            onselect : { updateSignatory(approver, it) },
-            onempty  : { clearSignatoryInfo(approver) },
-        ])
-        
-    }
-    
-    void updateSignatory(signatory, data){
-        signatory.personnelid = data.objid;
-        signatory.name = data.name;
-        signatory.title = data.title;
-    }
-    
-    void clearSignatoryInfo(signatory){
-        signatory.personnelid = null;
-        signatory.name = null;
-        signatory.title = null;
-    }
-    
-    void updateSignatoryInfo(){
-        entity.signatories.find{it.type == 'appraiser'}?.putAll(appraiser);
-        entity.signatories.find{it.type == 'recommender'}?.putAll(recommender);
-        entity.signatories.find{it.type == 'taxmapper'}?.putAll(taxmapper);
-        entity.signatories.find{it.type == 'approver'}?.putAll(approver);
-    }
-    
-    
-    /*===============================================
-     *
-     * EDITABILITY SUPPORT
-     *
-     *===============================================*/
-    
-        
-    boolean getAllowEdit() {
-        if ( mode == MODE_READ) return false;
-        if ( entity.state == 'FORREVIEW' ) return false;
-        if ( entity.state == 'FORPROVAPPROVAL' ) return false;
-        if ( entity.state == 'CURRENT' ) return false;
-        if ( entity.state == 'CANCELLED' ) return false;
-        return true;
-    }
-    
-    
-    List getQuarters(){
-        return [1,2,3,4]
-    }
-    
-     
 }
