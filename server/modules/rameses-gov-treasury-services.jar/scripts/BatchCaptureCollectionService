@@ -67,9 +67,11 @@ public class BatchCaptureCollectionService  {
 	} 
 
 	@ProxyMethod 
-	public def removeItem( item ){
+	public def removeItem( item, entity ){
 		em.deleteBatchEntryItem( item );
 		em.delete(item, "entry"); 
+
+		em.update(entity, "batchcapture_collection" )
 	}
 
 

@@ -119,12 +119,12 @@ public class BatchCaptureController  {
             m.receiptdate = entity.defaultreceiptdate;
             m.collectiontype = entity.collectiontype
             m._filetype = "batchcapture:misc"
-            m.amount = 0.0; 
             m.totalcash = 0.0
             m.totalnoncash = 0.0
             m.collector = entity.collector;
             m.paymentitems = []
             m.voided = 0
+            m.newitem = true
             if( copyprevinfo ) {
                 if(prevEntity ) {
                     if( prevEntity.items && prevEntity.items.size() > 0 ) {
@@ -142,21 +142,18 @@ public class BatchCaptureController  {
         getOpenerParams: {o-> 
             return [
                 callerListModel: listModel, 
-                calculateHandler: {  en ->    
+                calculateHandler: {  en, mode ->    
                     calculate(); 
-                    svc.addUpdateItem(entity, en) 
+                    if( mode == 'edit') {
+                        svc.addUpdateItem(entity, en) 
+                     }   
                 } 
             ]; 
         },
         onAddItem: { o->
             validateItem(o) 
             prevEntity = o.clone();
-            
-            entity.batchitems << o 
             calculate(); 
-            svc.addUpdateItem(entity, o)
-    
-            moveNext();
         },
         
         isColumnEditable:{item, colname-> 
@@ -170,23 +167,35 @@ public class BatchCaptureController  {
                 item.items[0].amount = item[colname]; 
                 item.totalcash = item.amount
                 item.totalnoncash = 0.0
-  
-                calculate()
-                svc.addUpdateItem(entity, item) 
-            }  
+            }
             if( colname == 'voided') {
                 calculate()
                 svc.addUpdateItem(entity, item)
             }
         },
-
+        onCommitItem: { o-> 
+            if( o.newitem ) {
+                 o.newitem = false 
+                 entity.batchitems << o 
+                 moveNext()
+            }
+            calculate();
+            svc.addUpdateItem(entity, o)
+        },
+        
         onRemoveItem: { o ->
-            if(! MsgBox.confirm('Remove item? ')) return false;
             if( entity.batchitems.indexOf(o) != (entity.batchitems.size()-1)) return false;
-
-            svc.removeItem(o)    
+            if(! MsgBox.confirm('Remove item? ')) return false;
+            
+            if( o.voided != 1) {
+                entity.totalcash -= o.totalcash
+                entity.totalnoncash -= o.totalnoncash
+                entity.totalamount -= o.amount 
+            }    
+            svc.removeItem(o, entity)    
             entity.currentseries -= 1;   
             entity.batchitems.remove(o);
+            binding.refresh("entity.totalcash|entity.totalnoncash|entity.totalamount")
             return true;
         }
         
