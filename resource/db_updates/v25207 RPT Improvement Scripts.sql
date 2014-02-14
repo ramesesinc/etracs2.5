@@ -490,3 +490,82 @@ GO
 
 
 
+
+/*==================================================================
+*
+* MULTIPLE CLAIM SETTLEMENT UPDATE 
+*
+===================================================================*/
+create table mcsettlement
+(
+	objid varchar(50) primary key,
+	state varchar(25), 
+	txnno varchar(25),
+	effectivityyear int not null,
+	effectivityqtr int not null,
+	memoranda varchar(2000), 
+	prevfaas_objid varchar(50), 
+	newfaas_objid varchar(50),
+	newtdno varchar(25),
+	signatories varchar(1000) not null,
+	lgutype varchar(25) not null,
+	lguid varchar(50) not null,
+	constraint FK_mcsettlement_prevfaas  foreign key (prevfaas_objid)
+		references faas(objid),
+	constraint FK_mcsettlement_newfaas foreign key (newfaas_objid)
+		references faas(objid)
+)
+go
+
+create index ix_mcsettlement_state on mcsettlement(state)
+go
+create index ix_mcsettlement_txnno on mcsettlement(txnno)
+go
+
+
+create table mcsettlement_otherclaim
+(
+	objid varchar(50) primary key,
+	mcsettlementid varchar(50) not null,
+	faas_objid varchar(50) not null,
+	constraint FK_mcotherclaim_mc foreign key (mcsettlementid)
+		references mcsettlement(objid),
+	constraint FK_mcotherclaim_faas foreign key (faas_objid)
+		references faas(objid),
+	constraint ux_mcotherclaim_faas_objid unique(faas_objid)
+)
+go
+
+create index ix_mcotherclaim_mcid on mcsettlement_otherclaim(mcsettlementid)
+go
+create index ix_mcotherclaim_faas_objid on mcsettlement_otherclaim(faas_objid)
+go
+
+
+
+
+create table mcsettlement_affectedrpu
+(
+	objid varchar(50) primary key,
+	mcsettlementid varchar(50) not null,
+	rputype varchar(15)  not null,
+	prevfaas_objid varchar(50) not null,
+	newfaas_objid varchar(50) null,
+	newtdno varchar(50) null,
+	constraint FK_mcaffectedrpu_mc foreign key (mcsettlementid)
+		references mcsettlement(objid),
+	constraint FK_mcaffectedrpu_prevfaas foreign key (prevfaas_objid)
+		references faas(objid),
+	constraint FK_mcaffectedrpu_newfaas foreign key (newfaas_objid)
+		references faas(objid),
+	constraint ux_mcaffectedrpu_prevfaas_objid unique(prevfaas_objid)
+)
+create index ix_mcaffectedrpu_mcid on mcsettlement_affectedrpu(mcsettlementid)
+go
+create index ix_mcaffectedrpu_prevfaas_objid on mcsettlement_affectedrpu(prevfaas_objid)
+go
+create index ix_mcaffectedrpu_newfaas_objid on mcsettlement_affectedrpu(newfaas_objid)
+go
+
+
+

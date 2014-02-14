@@ -1,0 +1,7 @@
+"selectedClaim|selectedRpu" [mode == 'read']{
+    readonly:true;
+}
+
+"selectedClaim|selectedRpu" [mode != 'read']{
+    readonly:false;
+}

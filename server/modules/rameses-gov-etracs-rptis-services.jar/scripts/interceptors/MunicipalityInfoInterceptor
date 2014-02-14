@@ -36,6 +36,11 @@ class MunicipalityInfoInterceptor
 		resection.state = STATE_FORPROVSUBMISSION
 	}
 
+	@Before(pattern="MCSettlementService.submitForApproval", eval="#{args[0].lgutype.equalsIgnoreCase('municipality') && args[0].state.matches('DRAFT|FORAPPRAISAL')}") 
+	public void submitMCSettlementForApproval( evt ) {
+		def entity = evt.args[0]
+		entity.state = STATE_FORAPPROVAL
+	}
 
 	@After(pattern="RPUService.getLgus", eval="#{'municipality'.equalsIgnoreCase(args[0])}")
 	public void getLgus(evt){

@@ -36,6 +36,11 @@ class ProvinceInfoInterceptor
 		resection.state = STATE_FORPROVAPPROVAL
 	}
 
+	@Before(pattern="MCSettlementService.submitForApproval", eval="#{args[0].lgutype.equalsIgnoreCase('province') && args[0].state.matches('DRAFT|FORAPPRAISAL')}") 
+	public void submitMCSettlementForApproval( evt ) {
+		def entity = evt.args[0]
+		entity.state = STATE_FORAPPROVAL
+	}
 
 	@After(pattern="RPUService.getLgus", eval="#{'province'.equalsIgnoreCase(args[0])}")
 	public void getLgus(evt){

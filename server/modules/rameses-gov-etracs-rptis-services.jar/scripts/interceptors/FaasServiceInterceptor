@@ -181,6 +181,7 @@ class FaasServiceInterceptor
 		faas.rpu.previd = null
 		faas.rp.previd = null
 		clearInfo(faas)
+		faas.previousfaases = []
 	}
 
 	/*---------------------------------------------------

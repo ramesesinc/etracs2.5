@@ -1,0 +1,8 @@
+"entity.effectivity.*|entity.memoranda|entity.newtdno" [allowEdit == true]{
+    enabled:true;
+}
+
+
+"entity.effectivity.*|entity.memoranda|entity.newtdno" [allowEdit != true]{
+    enabled:false;
+}

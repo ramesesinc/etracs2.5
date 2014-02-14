@@ -1,0 +1,12 @@
+"settlement.*|selectedAffectedRpu" [settlement.docstate == 'DRAFT']{
+    enabled:true;
+}
+
+"settlement.*|selectedAffectedRpu" [settlement.docstate != 'DRAFT']{
+    enabled:false;
+}
+
+"settlement.newtdno" [settlement.autonumber == true ] {
+    enabled: false;
+}
+

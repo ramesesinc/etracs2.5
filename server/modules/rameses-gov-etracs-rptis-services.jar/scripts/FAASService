@@ -240,7 +240,7 @@ class FAASService
 	public def updateFaas( faas ) {
 		updateTxnTimeStamp(faas)
 		signatorySvc.buildSignatories(faas, signatories)
-		em.updateImmediate(faas)
+		em.update(faas)
 		saveBackTaxes(faas)
 		updateRpuMasterInfo(faas)
 		return faas;	
@@ -471,6 +471,7 @@ class FAASService
             [objid:'CS', 	name:'Consolidation', 				newledger:true, 	newrpu:true, newrealproperty:true],
             [objid:'CTD', 	name:'Cancellation', 				newledger:false, 	newrpu:false],
             [objid:'MC', 	name:'Multiple Claim', 				newledger:true, 	newrpu:true, newrealproperty:true, checkbalance:false],
+            [objid:'MS', 	name:'Multiple Claim Settlement',	newledger:false, 	newrpu:true, newrealproperty:true, checkbalance:false],
             
             [objid:'RS', 	name:'Resection', 					newledger:false, 	newrpu:true, newrealproperty:true, checkbalance:false],
             

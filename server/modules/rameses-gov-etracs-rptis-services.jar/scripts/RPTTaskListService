@@ -25,6 +25,7 @@ class RPTTaskListService extends ActiveListService
     @ProxyMethod
     public def getColumns(params) {
         return [
+            [name:"filetype", caption:"Doc Type", width:200],
             [name:"action", caption:"Action", width:200],
             [name:"refno", caption:"Ref. No.", width:150],
             [name:"msg", caption:"Message", width:250],
