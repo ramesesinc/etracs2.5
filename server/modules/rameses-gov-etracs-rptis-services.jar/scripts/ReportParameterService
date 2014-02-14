@@ -12,16 +12,28 @@ class ReportParameterService{
 	@Service('DateService')
 	def dateService;
 
+	@Service("OrgService")
+	def orgSvc
+
+	@Service("CityLookupService")
+	def citySvc
+
+	@Service("ProvinceLookupService")
+	def provSvc 
+
+	@Service("MunicipalityLookupService")
+	def munSvc
+
 	@Env
 	def env 
 	
 	@ProxyMethod
 	public def getStandardParameter(){
-		def org = em.sqlContext.createQuery('SELECT * FROM sys_org WHERE parentid IS NULL').singleResult
+		def org = orgSvc.root;
 		org = (org ? org : [:])
 		def lgu = null 
 		if ('city'.equalsIgnoreCase(org.orgclass)){
-			lgu = em.sqlContext.createQuery('SELECT * FROM city WHERE objid=$P{objid}').setParameters(org).singleResult
+			lgu = citySvc.getById( org.objid )
 			if (lgu ){
 				org.lgu_name = lgu.name
 				org.lgu_fullname = lgu.fullname 
@@ -29,17 +41,17 @@ class ReportParameterService{
 			}
 		}
 		else if ('province'.equalsIgnoreCase(org.orgclass)){
-			lgu = em.sqlContext.createQuery('SELECT * FROM province WHERE objid=$P{objid}').setParameters(org).singleResult
+			lgu = provSvc.getById( org.objid );
 			if (lgu){
 				org.lgu_name = lgu.name
 				org.lgu_fullname = lgu.fullname 
 				org.province_name = lgu.name 
-				org.provincetreasurer = lgu.treasurer 
+				org.provincetreasurer = lgu.treasurer
 				org.provinceassessor = lgu.assessor 
 			}
 		}
 		else if ('municipality'.equalsIgnoreCase(org.orgclass)){
-			lgu = em.sqlContext.createQuery('SELECT * FROM municipality WHERE objid=$P{objid}').setParameters(org).singleResult
+			lgu = munSvc.getById( org.objid ) 
 			if (lgu){
 				org.lgu_name = lgu.name
 				org.lgu_fullname = lgu.fullname 
