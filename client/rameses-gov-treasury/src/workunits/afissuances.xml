@@ -23,8 +23,6 @@
             
             def collector
             def collectorlist;
-            def subcollector
-            def subcollectorlist
             
             @Service("UsergroupMemberLookupService")
             def ugmSvc;
@@ -38,19 +36,11 @@
                 "collector" : {
                     search();
                 }, 
-                "subcollector" : {
-                    search();
-                }
             ]   
             
             List getCollectorlist( ) {
                 if(! collectorlist) collectorlist =  ugmSvc.getList(['_tag':'COLLECTOR']);
                 return collectorlist;
-            }
-            
-            List getSubcollectorlist() {
-                if(! subcollectorlist) subcollectorlist = ugmSvc.getList(['_tag':'SUBCOLLECTOR'])
-                return subcollectorlist;
             }
             
             protected void onbeforeFetchList(Map m) {
@@ -62,14 +52,6 @@
                 return InvokerUtil.lookupOpener("afserial:changemode", 
                     [entity:selectedItem.item, saveHandler: { search() }] 
                 );
-            }
-            
-            def forwardAFSerial() {
-                return InvokerUtil.lookupOpener("afserial:forwardseries" );
-            }
-            
-            def forwardCashticket() {
-                return InvokerUtil.lookupOpener("cashticket:forwardseries" );
             }
             
             

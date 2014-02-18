@@ -68,9 +68,8 @@ class RemittanceCaptureService  {
 		if( o.amount == 0 ) 
 			throw new Exception("There is no amount to remit");
 
-		def z = collector.findUserTxnCode( [userid: o.collector.objid] );
 		def txncode = "REM";	
-		if(z?.usertxncode) txncode = z.usertxncode; 	
+		if(env.TXNCODE) txncode = env.TXNCODE; 	
 		o.txnno = txncode + seqSvc.getNextFormattedSeries(txncode);	
 		remittanceEm.create( o );
 

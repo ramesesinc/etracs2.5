@@ -26,6 +26,8 @@ class CRAAFReportService
 		data.items = getSerialCraafData(params)
 		data.items += adb.getCashTicketCraafData([year:params.year, month:params.month.index])
 
+		if(! data.items) throw new Exception("No record(s) found.        ");
+
 		data.info = [
 			PREPAREDBY 		: env.FULLNAME,
 			PREPAREDBYTITLE : env.JOBTITLE,
