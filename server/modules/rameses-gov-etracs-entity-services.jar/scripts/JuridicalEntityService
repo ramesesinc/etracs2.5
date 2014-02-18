@@ -1,0 +1,70 @@
+import com.rameses.annotations.*
+import com.rameses.common.*
+import java.rmi.server.UID;
+import com.rameses.util.*;
+import com.rameses.io.*;
+import com.rameses.services.extended.*;
+
+class JuridicalEntityService extends ActiveCrudListService {
+
+	@ActiveDB("entityjuridical")
+	def	em; 
+
+	@ActiveDB("entity")
+	def	entity; 
+
+	@Env
+	def env;
+
+	@Service('DateService')
+	def dtSvc;
+
+	@Service("LOVService")
+	def LOV;
+
+	@Service('SequenceService')
+	def seqSvc;
+
+	def INDEX_CHAR_COUNT = 300;
+
+	String pagingKeys = 'e.objid'
+
+	@ProxyMethod
+	public def getColumns( params ) {
+		return [
+			[name:'name', caption:'Company Name'], 
+			[name:'address', caption:'Company Address'], 
+			[name:'dtregistered', caption:'Date Registered', width:100, resizable:false, alignment:'center'], 
+			[name:'orgtype', caption:'Org.Type'], 
+			[name:'nature', caption:'Business Nature']
+		]; 
+	}
+
+	void updateName( o ) {
+		def len = o.name.length()
+		if (len > INDEX_CHAR_COUNT) len = INDEX_CHAR_COUNT
+		o.entityname = o.name.substring(0, len);		
+	}
+
+	public void beforeCreate(o) {
+		o.entityno = seqSvc.getNextFormattedSeries( "ENTITY" ); 
+		updateName(o);
+		entity.create( o );
+	}
+
+	public void beforeUpdate(o) {
+		updateName(o);
+		entity.update( o );
+	}
+
+	public void afterRemoveEntity(o) {
+		entity.delete( o );
+	}
+
+	public void afterOpen( o ) {
+		def z = entity.read( o );
+		o.putAll( z );
+	}
+
+
+}
