@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workunit extends="rpt_wtemplates/RPUController.xml">
+    <invokers>
+        <invoker type="landrpu:create" action="init" caption="Land RPU" target="popup" />
+        <invoker type="landrpu:open" action="open" caption="Land RPU" target="popup" />
+    </invokers>
+    
+    <code class="com.rameses.gov.etracs.rpt.rpu.land.ui.LandRPUController">
+    </code>
+    
+    <pages>
+        <page template="com.rameses.gov.etracs.rpt.rpu.land.ui.LandRPUPage"/>
+    </pages>
+</workunit>

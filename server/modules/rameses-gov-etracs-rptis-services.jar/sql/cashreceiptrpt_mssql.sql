@@ -324,6 +324,61 @@ FROM (
 	  AND bi.provintshare > 0.0 
 	  
 	  
+	UNION ALL
+	
+	SELECT
+		rb.objid AS item_objid,
+		rb.code AS item_code, 
+		rb.title AS item_title,
+		rb.fund_objid AS item_fund_objid, rb.fund_code AS item_fund_code, rb.fund_title AS item_fund_title,
+		bi.brgyshare AS amount
+	FROM rptledger rl
+		INNER JOIN rptledgerbillitem bi ON rl.objid = bi.rptledgerid
+		INNER JOIN revenueitem rb ON bi.brgyshareacctid = rb.objid 
+	WHERE ${filter}
+	  
+	UNION ALL
+
+	SELECT
+		rb.objid AS item_objid,
+		rb.code AS item_code,
+		rb.title AS item_title,
+		rb.fund_objid AS item_fund_objid, rb.fund_code AS item_fund_code, rb.fund_title AS item_fund_title,
+		bi.brgyintshare  AS amount
+	FROM rptledger rl
+		INNER JOIN rptledgerbillitem bi ON rl.objid = bi.rptledgerid
+		INNER JOIN revenueitem rb ON bi.brgyintshareacctid = rb.objid 
+	WHERE ${filter}
+	  AND bi.brgyintshare > 0.0 
+	  
+	UNION ALL
+	
+	SELECT
+		rb.objid AS item_objid,
+		rb.code AS item_code, 
+		rb.title AS item_title,
+		rb.fund_objid AS item_fund_objid, rb.fund_code AS item_fund_code, rb.fund_title AS item_fund_title,
+		bi.provshare AS amount
+	FROM rptledger rl
+		INNER JOIN rptledgerbillitem bi ON rl.objid = bi.rptledgerid
+		INNER JOIN revenueitem rb ON bi.provshareacctid = rb.objid 
+	WHERE ${filter}
+	  
+	UNION ALL
+
+	SELECT
+		rb.objid AS item_objid,
+		rb.code AS item_code,
+		rb.title AS item_title,
+		rb.fund_objid AS item_fund_objid, rb.fund_code AS item_fund_code, rb.fund_title AS item_fund_title,
+		bi.provintshare  AS amount
+	FROM rptledger rl
+		INNER JOIN rptledgerbillitem bi ON rl.objid = bi.rptledgerid
+		INNER JOIN revenueitem rb ON bi.provintshareacctid = rb.objid 
+	WHERE ${filter}
+	  AND bi.provintshare > 0.0 
+	  
+	  
 	  
 	UNION ALL
 	

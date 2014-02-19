@@ -22,6 +22,12 @@ class MiscRpuInterceptor
 		svc.generateNewIds(evt.result)
 	}
 
+
+	@After(pattern="RPUService.calculateAssessment", eval="#{result.rputype == 'misc'}") 
+	public void calculateAssessment( evt ) {
+		svc.calculateAssessment(evt.result)
+	}
+
 	
 	@After(pattern="RPUService.openRpu", eval="#{result.rputype == 'misc'}") 
 	public void openMiscRpu( evt ) {
@@ -30,7 +36,7 @@ class MiscRpuInterceptor
 	}
 	
 
-	@After(pattern="RPUService.createRpu", eval="#{result.rputype == 'misc' && result.txntype.newrpu == true}") 
+	@After(pattern="RPUService.createRpu", eval="#{result.rputype == 'misc'") 
 	public void createMiscRpu( evt ) {
 		svc.createMiscRpu(evt.result)
 	}
@@ -48,7 +54,13 @@ class MiscRpuInterceptor
 
 	@After(pattern="RPUService.reviseRpu", eval="#{result.rputype == 'misc'}") 
 	public void reviseRpu( evt ) {
-		grSvc.reviseMiscRpu(evt.result)
+		try {
+			grSvc.reviseMiscRpu(evt.result)
+		}
+		catch(Exception e) {
+			throw e			
+		}
+		
 	}
 
 }

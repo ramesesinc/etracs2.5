@@ -135,7 +135,7 @@ class FAASUpdateService
     public def initPrevInfo(entity){
         def faas = null
         try {
-            faas = faasSvc.openFaas(entity.faasid)
+            faas = faasSvc.loadFaas([objid:entity.faasid])
         }
         catch(e){
             //ignore
@@ -157,15 +157,15 @@ class FAASUpdateService
         entity.prevbeneficiaryaddress = faas?.beneficiary?.address
         entity.prevrestrictionid = faas?.restrictionid
         entity.prevmemoranda = faas?.memoranda
-        entity.prevsurveyno = faas?.rpu?.rp?.surveyno
-        entity.prevcadastrallotno = faas?.rpu?.rp?.cadastrallotno
-        entity.prevblockno = faas?.rpu?.rp?.blockno
-        entity.prevstreet = faas?.rpu?.rp?.street
-        entity.prevpurok = faas?.rpu?.rp?.purok
-        entity.prevnorth = faas?.rpu?.rp?.north
-        entity.preveast = faas?.rpu?.rp?.east
-        entity.prevsouth = faas?.rpu?.rp?.south
-        entity.prevwest = faas?.rpu?.rp?.west
+        entity.prevsurveyno = faas?.rp?.surveyno
+        entity.prevcadastrallotno = faas?.rp?.cadastrallotno
+        entity.prevblockno = faas?.rp?.blockno
+        entity.prevstreet = faas?.rp?.street
+        entity.prevpurok = faas?.rp?.purok
+        entity.prevnorth = faas?.rp?.north
+        entity.preveast = faas?.rp?.east
+        entity.prevsouth = faas?.rp?.south
+        entity.prevwest = faas?.rp?.west
 
         initEntityInfoFromFaas(entity, faas)
 
@@ -185,26 +185,26 @@ class FAASUpdateService
         entity.faas.memoranda = faas.memoranda
 
 
-        entity.rp.surveyno = faas.rpu.rp.surveyno
-        entity.rp.cadastrallotno = faas.rpu.rp.cadastrallotno
-        entity.rp.blockno = faas.rpu.rp.blockno
-        entity.rp.purok = faas.rpu.rp.purok
-        entity.rp.street = faas.rpu.rp.street
-        entity.rp.north = faas.rpu.rp.north
-        entity.rp.east = faas.rpu.rp.east
-        entity.rp.south = faas.rpu.rp.south
-        entity.rp.west = faas.rpu.rp.west
+        entity.rp.surveyno = faas.rp.surveyno
+        entity.rp.cadastrallotno = faas.rp.cadastrallotno
+        entity.rp.blockno = faas.rp.blockno
+        entity.rp.purok = faas.rp.purok
+        entity.rp.street = faas.rp.street
+        entity.rp.north = faas.rp.north
+        entity.rp.east = faas.rp.east
+        entity.rp.south = faas.rp.south
+        entity.rp.west = faas.rp.west
     }
 
 
     void updateInfo(entity){
-        def faas = faasSvc.openFaas(entity.faasid)
+        def faas = faasSvc.loadFaas([objid:entity.faasid])
         faas.putAll(entity.faas)
-        faasSvc.updateFaasOnly(faas)
+        faasSvc.updateFaas(faas)
 
-        def rp = faas.rpu.rp 
+        def rp = faas.rp 
         rp.putAll(entity.rp)
-        rpSvc.updateRealProperty(rp)
+        rpSvc.update(rp)
     }
 
     void validateFaas(entity){

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workunit extends="rpt_wtemplates/FaasController.xml">
+    <invokers>
+        <invoker type="faas_CC:create" action="init" caption="FAAS: Change Classification" role="APPRAISER" permission="faas.read" />
+        <invoker type="faas_CC:open" action="open" caption="FAAS: Change Classification" role="APPRAISER" permission="faas.read" />
+    </invokers>
+        
+    <code>
+        
+    import com.rameses.rcp.annotations.* 
+    import com.rameses.rcp.common.* 
+    import com.rameses.osiris2.client.*
+    import com.rameses.osiris2.common.*
+
+    class ChangeClassificationFaasController extends com.rameses.gov.etracs.rpt.faas.ui.AbstractFaasController
+    {
+    }        
+    
+    </code>
+
+    <pages>
+    </pages>
+</workunit>
+

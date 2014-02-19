@@ -36,29 +36,41 @@ class GeneralRevisionService
 
 
 	@ProxyMethod
+	public def initOnlineGeneralRevision( info ) {
+		def faas = initGeneralRevision(info)
+		if (faas.rpu.rputype == 'land'){
+			rpSvc.create(faas.rp)
+		}
+		rpuSvc.createRpu(faas.rpu)
+		faasSvc.createFaas(faas)
+		return faas 
+	}
+
+
+
+	@ProxyMethod
 	public def initGeneralRevision( info ) {
 		utilSvc.required('Property to process', info.faas)
 		utilSvc.required('New Revision Year', info.newrysetting)
 		info.txntype = faasSvc.getTxnType('GR');
-		def faas = faasSvc.initFaasTransaction(info)
+		def faas = faasSvc.initTransaction(info)
 		
 		if (faas.rpu.rputype == 'land'){
-			faas.rpu.rp.previd = faas.rpu.rp.objid 
-			faas.rpu.rp.objid 	= utilSvc.generateId('RP')
-			faas.rpu.realpropertyid = faas.rpu.rp.objid
+			faas.rpu.realpropertyid = faas.rp.objid
 		}
 		else {
 			def landrpu = grdb.findRevisedLandRpu([previd:faas.rpu.landrpuid, ry:info.newrysetting.ry])
 			if (!landrpu) landrpu = grdb.findRevisedLandByRealPropertyId([realpropertyid:faas.rpu.realpropertyid, ry:info.newrysetting.ry])
 			if (!landrpu) throw new Exception('Land RPU is not yet revised for Revision Year ' + info.newrysetting.ry + '.')
-			faas.rpu.rp = rpSvc.openRealProperty(landrpu.realpropertyid)
-			faas.rpu.realpropertyid = faas.rpu.rp.objid 
+			faas.rp = rpSvc.open([objid:landrpu.realpropertyid])
+			faas.rpu.realpropertyid = faas.rp.objid 
 			faas.rpu.landrpuid = landrpu.objid 
 		}
 		faas.rpu.rysettingid 	= info.newrysetting.objid 
 		faas.rpu.ry 			= info.newrysetting.ry
-		faas.rpu.rp.ry 			= info.newrysetting.ry 
+		faas.rp.ry 			= info.newrysetting.ry 
 
+		faas.rpu.rp = faas.rp
 		rpuSvc.reviseRpu(faas.rpu)
 		return faas 
 	}

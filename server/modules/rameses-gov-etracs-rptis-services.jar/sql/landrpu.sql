@@ -66,7 +66,7 @@ WHERE ptd.landrpuid	= $P{landrpuid}
 
 
 
-[getAssessLevelRange]
+[findAssessLevelRange]
 SELECT r.rate
 FROM landassesslevelrange r
   INNER JOIN landrysetting s ON r.landrysettingid = s.objid 
@@ -83,7 +83,7 @@ FROM landadjustmenttype_classification lc
 WHERE lc.landadjustmenttypeid = $P{objid}
 
 
-[getLandRpuByRealPropertyId]
+[findLandRpuByRealPropertyId]
 SELECT * FROM rpu WHERE realpropertyid = $P{realpropertyid} AND rputype = 'land' AND state <> 'CANCELLED'
 
 

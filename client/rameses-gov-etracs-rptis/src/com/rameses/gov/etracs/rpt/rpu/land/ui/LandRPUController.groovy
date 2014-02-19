@@ -16,11 +16,6 @@ public class LandRPUController extends com.rameses.gov.etracs.rpt.rpu.ui.Abstrac
     def varSvc;
     
     
-    public def getService(){
-        return svc 
-    }
-    
-    
     /*----------------------------------------------
      * 
      * Main Form Support 

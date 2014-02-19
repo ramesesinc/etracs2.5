@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workunit>
+    <invokers>
+        <invoker type="faasonline:info" action="init" caption="PIN Info" index="5"/>
+   </invokers>
+   <code>
+
+<![CDATA[
+        
+import com.rameses.rcp.annotations.* 
+import com.rameses.rcp.common.* 
+import com.rameses.osiris2.client.*
+import com.rameses.osiris2.common.*
+import com.rameses.gov.etracs.rpt.common.RPTUtil;
+
+class FaasInfoPinController
+{
+    @Binding
+    def binding;
+    
+    @Service('RealPropertyService')
+    def rpSvc;
+    
+    @Caller
+    def caller;
+    
+    def svc;
+    
+    def entity;
+    def faas;
+    def rpu;
+    def opener;
+    
+    
+    String title = 'PIN Information';
+    
+    void init(){
+        faas = entity;
+        
+        if (faas.realpropertyid)
+            opener = open();
+        else
+            opener = create();
+    }
+    
+    
+    void refresh(){
+    }
+    
+    
+    def onupdateRealProperty = {
+        faas.rp.putAll(it);
+        faas.realpropertyid = it.objid;
+        svc.updateFaas(faas);
+        caller.clearMessages('rp');
+    }
+    
+    def oneditRealProperty = {
+        caller.addMessage([type:'rp', msg:'PIN Info is still in editing mode.']);
+    }
+    
+    def create(){
+        entity = rpSvc.init();
+        caller.addMessage([type:'rp', msg:'PIN Info is still in editing mode.']);
+        return InvokerUtil.lookupOpener('realproperty:create', [
+            entity      : entity,
+            oncreate    : onupdateRealProperty,
+            onedit      : oneditRealProperty,
+            allowCreate : false,
+            showClose   : false,
+            viewOnly    : faas.taskaction.matches('assign.*')
+        ])
+    }
+    
+    
+    def open(){
+        entity = [objid:faas.realpropertyid];
+        return InvokerUtil.lookupOpener('realproperty:open', [
+            entity      : entity,
+            onupdate    : onupdateRealProperty,
+            onedit      : oneditRealProperty,
+            allowCreate : false,
+            showClose   : false,
+            viewOnly    : faas.taskaction.matches('assign.*')
+        ])
+    }
+}
+       
+]]>
+
+   </code>
+    
+    <pages> 
+        <page template="com.rameses.gov.etracs.rpt.faas.ui.FAASOnlineInfoOpenerPage"/>
+    </pages>
+</workunit>
+
+

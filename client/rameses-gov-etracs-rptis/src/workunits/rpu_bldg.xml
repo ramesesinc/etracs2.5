@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workunit extends="rpt_wtemplates/RPUController.xml">
+    <invokers>
+        <invoker type="bldgrpu:create" action="init" caption="Building RPU" target="popup" />
+        <invoker type="bldgrpu:open" action="open" caption="Building RPU" target="popup" />
+    </invokers>
+    
+    <code class="com.rameses.gov.etracs.rpt.rpu.bldg.ui.BldgRPUController">
+    </code>
+    
+    <pages>
+        <page template="com.rameses.gov.etracs.rpt.rpu.bldg.ui.BldgRPUPage"/>
+    </pages>
+</workunit>

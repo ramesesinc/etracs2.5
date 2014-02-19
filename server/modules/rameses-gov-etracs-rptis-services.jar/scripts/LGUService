@@ -36,13 +36,13 @@ class LGUService
 
     @ProxyMethod
     public def lookupBarangayById( objid ) {
-    	return em.findBarangayById([objid:objid])
+    	return brgySvc.getById(objid) 
     }
 
     @ProxyMethod
     public def lookupBarangaysByParentid(parentid) {
         if (!parentid) parentid = '%'
-        return em.getBarangaysByParentId([parentid:parentid])
+        return brgySvc.getListByParentid(parentid)
     }
 
     @ProxyMethod

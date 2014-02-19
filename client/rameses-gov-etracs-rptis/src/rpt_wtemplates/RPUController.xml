@@ -1,0 +1,8 @@
+<workunit>
+    <invokers>
+        <invoker type="formActions" action="close" caption="Close" mnemonic="c" immediate="true" icon="images/toolbars/cancel.png" visibleWhen="#{viewOnly == false &amp;&amp; mode=='read' &amp;&amp; showClose == true}"/>
+        <invoker type="formActions" action="edit" caption="Edit" shortcut="ctrl E" mnemonic="e" icon="images/toolbars/edit.png" visibleWhen="#{viewOnly == false &amp;&amp; showEdit}" role="APPRAISER"/> 
+        <invoker type="formActions" action="save" caption="Save" shortcut="ctrl S" mnemonic="s" icon="images/toolbars/save.png" visibleWhen="#{viewOnly == false &amp;&amp; mode != 'read'}" role="APPRAISER"/>                
+        <invoker type="formActions" action="changeSuffix" caption="Change Suffix"  mnemonic="s" visibleWhen="#{viewOnly == false &amp;&amp; showEdit &amp;&amp; rpu.rputype != 'land'}" role="TAXMAPPER"/>                
+    </invokers>
+</workunit>

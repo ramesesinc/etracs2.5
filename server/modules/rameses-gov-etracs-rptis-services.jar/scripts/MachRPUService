@@ -1,9 +1,10 @@
 import com.rameses.annotations.*
 import com.rameses.util.*
+import com.rameses.services.extended.*
 
 class MachRPUService
 {
-    @PersistenceContext('rpt')
+    @ActiveDB('machrpu')
     def em
 
     @Env
@@ -31,9 +32,8 @@ class MachRPUService
     def var
 
     
-    def SCHEMA_RPU          = 'machrpu'
-    def SCHEMA_MACHUSE      = 'machrpu:machuse'
-    def SCHEMA_MACHDETAIL   = 'machrpu:machdetail'
+    def SCHEMA_MACHUSE      = 'machuse'
+    def SCHEMA_MACHDETAIL   = 'machdetail'
     
 
     @ProxyMethod
@@ -48,7 +48,7 @@ class MachRPUService
 
     @ProxyMethod
     public def createMachRpu( rpu ) {
-        em.create(SCHEMA_RPU, rpu)
+        em.create(rpu)
         saveMachUses(rpu.machuses)
         return rpu
     }
@@ -56,7 +56,7 @@ class MachRPUService
 
     @ProxyMethod
     public def updateMachRpu(rpu) { 
-        em.updateImmediate(SCHEMA_RPU, rpu)
+        em.updateImmediate(rpu)
         saveMachUses(rpu.machuses)
         removeDeletedItems(rpu)
         return rpu
@@ -65,7 +65,7 @@ class MachRPUService
 
     @ProxyMethod
     public def openMachRpu( objid ) {
-        def rpu = em.read(SCHEMA_RPU, [objid:objid])
+        def rpu = em.read([objid:objid])
         if (!rpu) {
             throw new Exception('Machine RPU does not exists or has been deleted.')
         }
@@ -76,9 +76,9 @@ class MachRPUService
 
     @ProxyMethod
     public def deleteMachRpu(rpu){
-        em.sqlContext.createNamedExecutor('machrpu:deleteAllMachDetails').setParameters(rpu).execute()
-        em.sqlContext.createNamedExecutor('machrpu:deleteAllMachUses').setParameters(rpu).execute()
-        em.delete(SCHEMA_RPU, rpu)
+        em.deleteAllMachDetails(rpu)
+        em.deleteAllMachUses(rpu)
+        em.delete(rpu)
     }
 
 
@@ -200,9 +200,7 @@ class MachRPUService
     }
 
     def getResidualRate(){
-        def setting = em.sqlContext.createNamedQuery('machrpu:getMachRySetting')
-                            .setParameter('ry', var.current_ry)
-                            .singleResult
+        def setting = em.findMachRySetting([ry:var.current_yr])
         if (setting)
             return setting.residualrate
         return 20.0
@@ -315,43 +313,37 @@ class MachRPUService
     -------------------------------------------------------------------*/
     void saveMachUses(machuses){
         machuses.each{ mu ->
-            def xmu = EntityUtil.mapToField(mu)
-            em.validate(SCHEMA_MACHUSE, xmu)
-            em.save(SCHEMA_MACHUSE, xmu)
+            em.save(mu, SCHEMA_MACHUSE)
             saveMachines(mu.machines)
         }
     }
 
     void saveMachines(machines){
         machines.each{ m ->
-            def xm = EntityUtil.mapToField(m)
-            em.validate(SCHEMA_MACHDETAIL, xm)
-            em.save(SCHEMA_MACHDETAIL, xm)
+            em.save(m, SCHEMA_MACHDETAIL)
         }
     }
 
 
     void removeDeletedItems(rpu){
         rpu._machines?.each{m ->
-            em.delete(SCHEMA_MACHDETAIL, m)
+            em.delete(m, SCHEMA_MACHDETAIL)
         }
 
         rpu._machuses?.each{ mu ->
             mu.machines.each{ m -> 
-                em.delete(SCHEMA_MACHDETAIL, m)
+                em.delete(m, SCHEMA_MACHDETAIL)
             }
-            em.delete(SCHEMA_MACHUSE, mu)
+            em.delete(mu, SCHEMA_MACHUSE)
         }
     }
    
     def getMachUses(rpu){
-        rpu.machuses = em.sqlContext.createNamedQuery('machrpu:getMachUses')
-                            .setParameter('machrpuid', rpu.objid).resultList 
-        
+        rpu.machuses = em.getMachUses([machrpuid:rpu.objid])
+
         rpu.machuses.each{ mu ->
-            mu.machines = em.sqlContext.createNamedQuery('machrpu:getMachDetails')
-                            .setParameter('machuseid', mu.objid)
-                            .resultList.each{
+            mu.machines = em.getMachDetails([machuseid:mu.objid])
+                            .each{
                                 it.useswornamount = util.toBoolean(it.useswornamount, false)   
                                 it.imported = util.toBoolean(it.imported, false)   
                                 it.newlyinstalled = util.toBoolean(it.newlyinstalled, false)   

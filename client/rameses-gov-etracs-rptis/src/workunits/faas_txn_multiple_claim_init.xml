@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workunit extends="rpt_wtemplates/FAASTxnInitController.xml">
+    <invokers>
+        <!--
+        <invoker folderid="/explorer/txn/rpt/txn" action="init"  caption="Multiple Claim" index="12" txntype="MC" role="APPRAISER" multipleClaim="1" permission="faas.createMultipleClaim"/>
+        <invoker type="quick_launcher" code="MC01" action="init"  caption="Multiple Claim" index="12" txntype="MC" role="APPRAISER" multipleClaim="1" permission="faas.createMultipleClaim"/>                
+        -->
+    </invokers>
+    <code>
+        
+import com.rameses.rcp.annotations.* 
+import com.rameses.rcp.common.* 
+import com.rameses.osiris2.client.*
+import com.rameses.osiris2.common.*
+import com.rameses.gov.etracs.rpt.common.RPTUtil;
+
+class MultipleClaimInitController extends com.rameses.gov.etracs.rpt.faas.ui.FaasTxnInitController
+{
+    boolean multipleClaim = true;
+}
+        
+    </code>
+</workunit>
+
+

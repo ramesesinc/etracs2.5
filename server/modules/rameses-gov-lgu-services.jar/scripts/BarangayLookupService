@@ -1,12 +1,13 @@
 import com.rameses.annotations.*;
 import com.rameses.common.*;
-import java.rmi.server.UID
+import com.rameses.services.extended.*
 
 class BarangayLookupService{
 	
-	@PersistenceContext('main')	
+	@ActiveDB('barangay')
 	def em
 	
+
 	@ProxyMethod 
 	public def getColumns( params ) {
 		return [
@@ -16,31 +17,24 @@ class BarangayLookupService{
 		];
 	}
 
+
 	@ProxyMethod
 	public def getList( params ) {
-		params.searchtext = (params.searchtext? params.searchtext: '')
-		params.name = params.searchtext + '%'
-		def qry = em.sqlContext.createNamedQuery('barangay:lookup')
-
-		if (params._start != null)
-			qry.setFirstResult( params._start )
-		if (params._limit)
-			qry.setMaxResults(params._limit)
-			
-		return qry.setParameters(params).resultList 
+		params._pagingKeys = 'b.objid'
+		params.searchtext = (params.searchtext ? params.searchtext : '') + '%'
+		return em.getList(params)
 	}
 
 
 	@ProxyMethod
 	public def getById( objid ) {
-		return em.sqlContext.createNamedQuery('barangay:getById')
-				.setParameter('objid', objid).singleResult	
+		return em.findById([objid:objid])
 	}	
+
 
 	@ProxyMethod
 	public def getListByParentid( parentid ) {
 		if (!parentid) parentid = '%'
-		return em.sqlContext.createNamedQuery('barangay:getListByParentid')
-				.setParameter('parentid', parentid).resultList	
+		return em.getListByParentid([parentid:parentid])
 	}
 }

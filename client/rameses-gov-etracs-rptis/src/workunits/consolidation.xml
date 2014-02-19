@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workunit>
+    <invokers>
+        <invoker type="consolidation:open" action="open" caption="Consolidation" target="window"  />
+                   
+        <invoker folderid="/explorer/txn/rpt/online" action="init"  caption="Consolidation" index="21"
+            txntypeid="CS" txntype="Consolidation" newledger="true" newrpu="true" 
+            role="APPRAISER" permission="consolidation.create"/>
+
+         <invoker type="quick_launcher" code="CS01" action="init"  caption="Consolidation" index="21"
+            txntypeid="CS" txntype="Consolidation" newledger="true" newrpu="true" 
+            role="APPRAISER" permission="consolidation.create"/>
+            
+   </invokers>
+   <code class="com.rameses.gov.etracs.rpt.consolidation.ui.ConsolidationController">
+       
+   </code>
+
+    <pageflow>
+        <start>
+            <transition name="init" to="init"/>
+            <transition name="open" to="open"/>
+        </start>
+        
+        <page name="init" title="Consolidation: Initial Information">
+            <transition caption="Cancel" to="end"  mnemonic="c" icon="images/toolbars/cancel.png"/>
+            <transition caption="Next"  to="open" action="create" mnemonic="n"  />
+        </page>
+        
+        <process name="open">
+            <transition to="unassigned" cond="#{entity.taskaction &amp;&amp; entity.taskaction.matches('assign.*')}"/>
+            <transition to="default" cond="#{entity.state == 'DRAFT'}"/>
+            <transition to="taxmapping" cond="#{entity.state == 'FORTAXMAPPING'}"/>
+            <transition to="forappraisal" cond="#{entity.state == 'FORAPPRAISAL'}"/>
+            <transition to="forapproval" cond="#{entity.state == 'FORAPPROVAL'}"/>
+            <transition to="forprovsubmission" cond="#{entity.state == 'FORPROVSUBMISSION'}"/>
+            <transition to="forprovapproval" cond="#{entity.state == 'FORPROVAPPROVAL'}"/>
+            <transition to="approved" cond="#{entity.state == 'APPROVED'}"/>
+            <transition to="cancelled" cond="#{entity.state == 'CANCELLED'}"/>
+        </process>
+        
+        
+        <page name="unassigned" title="Consolidation (#{entity.state} - Unassigned)">
+            <transition caption="Close"  to="end"      mnemonic="c" icon="images/toolbars/cancel.png" />
+            <transition to="open" name="taxmapper" action="assignTaxmapper" caption="Assign To Me" role="TAXMAPPER"  visibleWhen="#{entity.taskaction == 'assign-taxmapper'}" confirm="Assign task to you?"/>
+            <transition to="open" name="appraiser" action="assignAppraiser" caption="Assign To Me" role="APPRAISER" visibleWhen="#{entity.taskaction == 'assign-appraiser'}" confirm="Assign task to you?"/>
+            <transition to="open" name="approver" action="assignApprover" caption="Assign To Me" role="APPROVER" visibleWhen="#{entity.taskaction == 'assign-approver'}" confirm="Assign task to you?"/>
+        </page>
+        
+        
+        <page name="default" title="Consolidation (Draft)">
+            <transition caption="Close"  to="end"      mnemonic="c" icon="images/toolbars/cancel.png" />
+            <transition caption="Submit to Taxmapping" to="open" action="submitForTaxmapping"  mnemonic="m"   confirm="Submit to taxmapping?" role="APPRAISER" />
+        </page>
+        
+        <process name="back-to-default">
+            <transition to="default" />
+        </process>
+        
+        <process name="delete">
+            <transition to="end"/>
+        </process>
+        
+                
+        <page name="taxmapping" title="Consolidation (For Taxmapping)">
+            <transition caption="Close"  to="end"      mnemonic="c" icon="images/toolbars/cancel.png" />
+            <transition caption="Submit for Appraisal" to="open" action="submitForAppraisal"  mnemonic="m"   confirm="Submit for appraisal?" role="TAXMAPPER"/>
+        </page>
+        
+        
+        <page name="forappraisal" title="Consolidation (For Appraisal)">
+            <transition caption="Close"  to="end"      mnemonic="c" icon="images/toolbars/cancel.png" />
+            <transition caption="Submit for Approval" to="open" action="submitForApproval"  mnemonic="m"   confirm="Submit for approval?" role="APPRAISER"/>
+        </page>
+        
+        
+        <process name="submit">
+            <transition to="forapproval" cond="#{entity.state == 'FORAPPROVAL'}"/>
+            <transition to="forprovapproval" cond="#{entity.state == 'FORPROVAPPROVAL'}"/>
+            <transition to="forprovsubmission" cond="#{entity.state == 'FORPROVSUBMISSION'}"/>
+        </process>
+        
+        
+        <!-- CITY-->
+        <page name="forapproval" title="Consolidation (For Approval)">
+            <transition caption="Close" to="end" mnemonic="c" icon="images/toolbars/cancel.png"  />
+            <transition caption="Disapprove" to="default" action="disapproveConsolidation" mnemonic="d"  confirm="Disapprove Consolidation?" role="APPROVER"/>
+            <transition caption="Approve" to="wait" action="approveConsolidation" mnemonic="v" icon="images/toolbars/approve.png"  confirm="Approve Consolidation?" role="APPROVER"/>
+        </page>
+        
+        
+                
+        <page name="wait" title="Approval of Consolidation">
+            <transition caption="Back" to="forapproval" action="checkErrors" mnemonic="f" icon="images/toolbars/arrow_left.png" />
+            <transition caption="Finish" to="approved" action="checkFinish" mnemonic="f" icon="images/toolbars/approve.png" />
+        </page>
+        
+        
+        <process name="back-to-forapproval">
+            <transition to="forapproval"/>
+        </process>
+        
+        
+        <!-- MUNICIPALIY -->
+        <page name="forprovsubmission" title="Consolidation (For Submission to Province)">
+            <transition caption="Close"  to="end" mnemonic="c" icon="images/toolbars/cancel.png"  />
+            <transition caption="Disapprove" to="default" action="disapproveSubmitToProvince"  mnemonic="d"  confirm="Disapprove Consolidation?" role="RECOMMENDER"/>
+            <transition caption="Submit to Province" to="open" action="submitToProvince" mnemonic="m"  confirm="Submit to province?" role="RECOMMENDER"/>
+        </page>
+        
+        <process name="back-to-prov-submission">
+            <transition to="forprovsubmission"/>
+        </process>
+        
+        <page name="provsubmissionapproval" title="Consolidation (For Province Approval)">
+            <transition caption="Close" to="end" mnemonic="c" icon="images/toolbars/cancel.png"/>
+            <transition caption="Disapprove" to="forprovsubmission" action="disapproveSubmittedToProvince"  mnemonic="d" confirm="Disapprove Consolidation?" role="RECOMMENDER"/>
+            <transition caption="Approve" to="approved" action="approveSubmittedToProvince"  mnemonic="v" confirm="Approve Consolidation?" role="RECOMMENDER"/>
+        </page>
+        
+        
+        <!-- PROVINCE -->
+        <page name="forprovapproval" title="Consolidation (Province Approval)">
+            <transition caption="Close" to="end" mnemonic="c" icon="images/toolbars/cancel.png"  />
+            <transition caption="Disapprove" to="forprovsubmission" action="disapproveByProvince"  mnemonic="d"   confirm="Disapprove Consolidation?" role="APPROVER"/>
+            <transition caption="Approve" to="approved" action="approveByProvince"  mnemonic="v"  confirm="Approve Consolidation?" role="APPROVER"/>
+        </page>
+        
+        <process name="back-to-forprovapproval">
+            <transition to="forprovapproval"/>
+        </process>
+        
+        <page name="approved" title="Consolidation (Approved)">
+            <transition caption="Close" to="end" mnemonic="c" icon="images/toolbars/cancel.png"/>
+        </page>
+        
+        <end />
+        
+    </pageflow>
+    
+    <pages> 
+        <page name="init" template="com.rameses.gov.etracs.rpt.consolidation.ui.ConsolidationInitPage"/>
+        <page name="unassigned" template="com.rameses.gov.etracs.rpt.common.InfoPage"/>
+        <page name="default" template="com.rameses.gov.etracs.rpt.common.InfoPage"/>
+        <page name="taxmapping" template="com.rameses.gov.etracs.rpt.common.InfoPage"/>
+        <page name="forappraisal" template="com.rameses.gov.etracs.rpt.common.InfoPage"/>
+        <page name="forapproval" template="com.rameses.gov.etracs.rpt.common.InfoPage"/>
+        <page name="forprovsubmission" template="com.rameses.gov.etracs.rpt.common.InfoPage"/>
+        <page name="provsubmissionapproval" template="com.rameses.gov.etracs.rpt.common.InfoPage"/>
+        <page name="forprovapproval" template="com.rameses.gov.etracs.rpt.common.InfoPage"/>
+        <page name="approved" template="com.rameses.gov.etracs.rpt.common.InfoPage"/>
+        <page name="wait" template="com.rameses.gov.etracs.rpt.rpu.ui.WaitInfoPage"/>
+    </pages>
+</workunit>
+
+

@@ -23,6 +23,10 @@ class PlantTreeRpuInterceptor
 		svc.generateNewIds(evt.result)
 	}
 
+	@After(pattern="RPUService.calculateAssessment", eval="#{result.rputype == 'planttree'}") 
+	public void calculateAssessment( evt ) {
+		svc.calculateAssessment(evt.result)
+	}	
 	
 	@After(pattern="RPUService.openRpu", eval="#{result.rputype == 'planttree'}") 
 	public void openPlantTreeRpu( evt ) {
@@ -31,7 +35,7 @@ class PlantTreeRpuInterceptor
 	}
 	
 
-	@After(pattern="RPUService.createRpu", eval="#{result.rputype == 'planttree' && result.txntype.newrpu == true}") 
+	@After(pattern="RPUService.createRpu", eval="#{result.rputype == 'planttree'") 
 	public void createPlantTreeRpu( evt ) {
 		svc.createPlantTreeRpu(evt.result)
 	}
@@ -49,7 +53,12 @@ class PlantTreeRpuInterceptor
 
 	@After(pattern="RPUService.reviseRpu", eval="#{result.rputype == 'planttree'}") 
 	public void reviseRpu( evt ) {
-		grSvc.revisePlantTreeRpu(evt.result)
+		try {
+			grSvc.revisePlantTreeRpu(evt.result)
+		}
+		catch( e) {
+			throw e			
+		}
 	}
 
 }

@@ -31,12 +31,13 @@ public class FAASTxnInitPage extends javax.swing.JPanel {
         xSeparator1 = new com.rameses.rcp.control.XSeparator();
         xLookupField1 = new com.rameses.rcp.control.XLookupField();
         xTextField2 = new com.rameses.rcp.control.XTextField();
+        xComboBox1 = new com.rameses.rcp.control.XComboBox();
 
         com.rameses.rcp.control.border.XTitledBorder xTitledBorder1 = new com.rameses.rcp.control.border.XTitledBorder();
         xTitledBorder1.setTitle(" Initial Information");
         formPanel1.setBorder(xTitledBorder1);
+        xLabel1.setExpression("#{txntitle}");
         xLabel1.setFont(new java.awt.Font("Arial", 1, 11));
-        xLabel1.setName("txntitle");
         xLabel1.setPreferredSize(new java.awt.Dimension(0, 16));
         xLabel1.setShowCaption(false);
         formPanel1.add(xLabel1);
@@ -56,18 +57,30 @@ public class FAASTxnInitPage extends javax.swing.JPanel {
 
         xLookupField1.setCaption("Property to process");
         xLookupField1.setCaptionWidth(120);
-        xLookupField1.setExpression("#{initinfo.faas.tdno}");
+        xLookupField1.setExpression("#{entity.faas.tdno}");
         xLookupField1.setHandler("lookupFaas");
         xLookupField1.setHint("Search Property");
+        xLookupField1.setName("entity.faas");
         xLookupField1.setPreferredSize(new java.awt.Dimension(0, 19));
         xLookupField1.setRequired(true);
         formPanel1.add(xLookupField1);
 
         xTextField2.setCaption("Claim No.");
         xTextField2.setCaptionWidth(120);
-        xTextField2.setName("initinfo.claimno");
+        xTextField2.setName("entity.claimno");
         xTextField2.setPreferredSize(new java.awt.Dimension(0, 19));
         formPanel1.add(xTextField2);
+
+        xComboBox1.setCaption("New Revision Year");
+        xComboBox1.setCaptionWidth(120);
+        xComboBox1.setDepends(new String[] {"entity.faas"});
+        xComboBox1.setDynamic(true);
+        xComboBox1.setExpression("#{item.ry}");
+        xComboBox1.setItems("revisionyears");
+        xComboBox1.setName("entity.newrysetting");
+        xComboBox1.setPreferredSize(new java.awt.Dimension(120, 22));
+        xComboBox1.setRequired(true);
+        formPanel1.add(xComboBox1);
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(this);
         this.setLayout(layout);
@@ -90,6 +103,7 @@ public class FAASTxnInitPage extends javax.swing.JPanel {
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private com.rameses.rcp.util.FormPanel formPanel1;
+    private com.rameses.rcp.control.XComboBox xComboBox1;
     private com.rameses.rcp.control.XLabel xLabel1;
     private com.rameses.rcp.control.XLookupField xLookupField1;
     private com.rameses.rcp.control.XSeparator xSeparator1;

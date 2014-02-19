@@ -1,0 +1,45 @@
+<workunit extends="wtemplates/ListController.xml">
+    <invokers>
+        <invoker folderid="/explorer/txn/rpt/list" caption="Subdivisions"  target="window" index="110" role="ASSESSOR_SHARED"/>
+        <invoker type="quick_launcher" code="SD00" caption="Subdivisions"  role="ASSESSOR_SHARED"/>
+    </invokers>
+    <code>
+        import com.rameses.rcp.common.*
+        import com.rameses.rcp.annotations.*
+        import com.rameses.osiris2.client.*
+        import com.rameses.osiris2.common.*
+        import com.rameses.gov.etracs.rpt.common.RPTUtil;
+        
+        class SubdivisionListController extends ListController
+        {
+            String serviceName = 'SubdivisionListService'
+            
+            String formTarget = 'window'
+            boolean allowCreate = false;
+            
+            public String getEntityName(){ 
+                return 'subdivision' 
+            }
+            
+            int getRows() { return 50 }
+            
+            Column[] getColumns(){
+                return [
+                    new Column(name:"state", caption:"State", width:100),
+                    new Column(name:"txnno", caption:"Txn No.", width:70),
+                    new Column(name:"txndate", caption:"Txn Date", width:80),
+                    new Column(name:"ry", caption:"RY", width:50, type:'integer', format:'0000'),
+                    new Column(name:"tdno", caption:"Mother TD No.", width:100),
+                    new Column(name:"fullpin", caption:"Mother PIN", width:180),
+                    new Column(name:"owner.name", caption:"Owner Name", width:250),
+                    new Column(name:"owner.address", caption:"Owner Address", width:250),
+                    new Column(name:"cadastrallotno", caption:"Lot No.", width:100),
+                    new Column(name:"totalareasqm", caption:"Mother Area (sqm)", width:120, type:'decimal', format:'#,##0.00'),
+                    new Column(name:"totalmv", caption:"Market Value", width:100, type:'decimal', format:'#,##0.00'),
+                    new Column(name:"totalav", caption:"Assessed Value", width:100, type:'decimal', format:'#,##0.00'),
+                    new Column(name:"trackingno", caption:"Tracking No.", width:100),
+                ]
+            }
+        }
+    </code>
+</workunit>

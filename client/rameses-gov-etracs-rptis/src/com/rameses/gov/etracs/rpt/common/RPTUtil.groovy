@@ -52,4 +52,94 @@ class RPTUtil
         def bd = new BigDecimal(value.toString())
         return bd.intValue();
     }
+    
+    
+    public static void buildPin(entity){       
+        def newpin = new StringBuilder();
+        
+        def provcity = entity.barangay?.provcity;
+        def munidistrict = entity.barangay?.munidistrict;
+                
+        if( provcity ) {
+            newpin = provcity.indexno + '-';
+        }
+        else {
+            newpin = '000-';
+        }
+            
+        if( munidistrict ) {
+            newpin += munidistrict.indexno + '-';
+        }
+        else {
+            newpin += '00-';
+        }
+        
+        
+        if( entity.barangay && entity.barangay.oldindexno == null) {
+            entity.barangay.oldindexno = entity.barangay.indexno ;
+        }
+        
+        if( entity.barangay) {
+            newpin += entity.barangay?.indexno + '-';
+        }
+        else {
+            newpin += ( entity.pintype == 'new' ? '0000' : '000') + '-';
+        }        
+        
+        
+        def ssection = '';
+        def sparcel = '';
+        
+        if( entity.isection > 0 ) {
+            ssection = entity.isection.toString();
+            ssection = ( entity.pintype == 'new' ? ssection.padLeft(3,'0') : ssection.padLeft(2,'0'));
+            entity.section = ssection;
+            newpin += ssection + '-';
+        }
+        else {
+            ssection = ( entity.pintype == 'new' ? '000' : '00') ;
+            newpin += ssection + '-';
+        }
+        
+        if( entity.iparcel > 0 ) {
+            sparcel = entity.iparcel.toString();
+            sparcel = ( entity.pintype == 'new' ? sparcel.padLeft(2,'0') : sparcel.padLeft(3,'0'));
+            entity.parcel = sparcel;
+            newpin += sparcel;
+        }
+        else {
+            sparcel = ( entity.pintype == 'new' ? '00' : '000');
+            newpin += sparcel ;
+        }
+        
+        entity.pin= newpin;
+        entity.fullpin = newpin;
+        
+        if (entity.rputype != 'land'){
+            if (validSuffix(entity))
+                entity.fullpin += '-' + entity.suffix;
+        }
+        
+        if (entity.claimno){
+            entity.fullpin += '-' + entity.claimno
+        }
+        
+        
+    }
+    
+    static boolean validSuffix(entity){
+        def valid = false;
+        if (entity.rputype == 'land')
+            valid = true;
+        else if (entity.rputype == 'bldg' && entity.suffix >= 1001 && entity.suffix <= 1999)
+            valid = true;
+        else if (entity.rputype == 'mach' && entity.suffix >= 2001 && entity.suffix <= 2999)
+            valid = true;
+        else if (entity.rputype == 'planttree' && entity.suffix >= 3001 && entity.suffix <= 6999)
+            valid = true;
+        else if (entity.rputype == 'misc' && entity.suffix >= 7001 && entity.suffix <= 7999)
+            valid = true;
+        
+        return valid;
+    }
 }

@@ -45,8 +45,8 @@ public class FAASAnnotationPage extends javax.swing.JPanel {
         xLabel8 = new com.rameses.rcp.control.XLabel();
         xLabel9 = new com.rameses.rcp.control.XLabel();
         formPanel8 = new com.rameses.rcp.util.FormPanel();
-        xLabel10 = new com.rameses.rcp.control.XLabel();
-        xLabel11 = new com.rameses.rcp.control.XLabel();
+        xDecimalField2 = new com.rameses.rcp.control.XDecimalField();
+        xDecimalField3 = new com.rameses.rcp.control.XDecimalField();
 
         com.rameses.rcp.control.border.XTitledBorder xTitledBorder1 = new com.rameses.rcp.control.border.XTitledBorder();
         xTitledBorder1.setTitle("Annotation Information");
@@ -126,7 +126,7 @@ public class FAASAnnotationPage extends javax.swing.JPanel {
         formPanel6.setBorder(xTitledBorder2);
         xLabel3.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(153, 153, 153)));
         xLabel3.setCaption("TD No.");
-        xLabel3.setFont(new java.awt.Font("Arial", 1, 11));
+        xLabel3.setFont(new java.awt.Font("Arial", 1, 14));
         xLabel3.setName("entity.faas.tdno");
         xLabel3.setPreferredSize(new java.awt.Dimension(0, 19));
         formPanel6.add(xLabel3);
@@ -152,7 +152,7 @@ public class FAASAnnotationPage extends javax.swing.JPanel {
         xLabel8.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(153, 153, 153)));
         xLabel8.setCaption("PIN");
         xLabel8.setCellPadding(new java.awt.Insets(0, 0, 0, 31));
-        xLabel8.setFont(new java.awt.Font("Arial", 1, 11));
+        xLabel8.setFont(new java.awt.Font("Arial", 1, 14));
         xLabel8.setName("entity.faas.fullpin");
         xLabel8.setPreferredSize(new java.awt.Dimension(190, 19));
         formPanel7.add(xLabel8);
@@ -171,23 +171,22 @@ public class FAASAnnotationPage extends javax.swing.JPanel {
         formPanel8.setPadding(new java.awt.Insets(0, 0, 0, 0));
         formPanel8.setPreferredSize(new java.awt.Dimension(0, 19));
         formPanel8.setShowCaption(false);
-        xLabel10.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        xLabel10.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(153, 153, 153)));
-        xLabel10.setCaption("Market Value");
-        xLabel10.setCellPadding(new java.awt.Insets(0, 0, 0, 31));
-        xLabel10.setFont(new java.awt.Font("Arial", 1, 11));
-        xLabel10.setName("entity.faas.totalmv");
-        xLabel10.setPreferredSize(new java.awt.Dimension(190, 19));
-        formPanel8.add(xLabel10);
+        xDecimalField2.setCaption("Market Value");
+        xDecimalField2.setCellPadding(new java.awt.Insets(0, 0, 0, 31));
+        xDecimalField2.setDisabledTextColor(new java.awt.Color(0, 0, 0));
+        xDecimalField2.setEnabled(false);
+        xDecimalField2.setName("entity.faas.totalmv");
+        xDecimalField2.setPreferredSize(new java.awt.Dimension(190, 19));
+        formPanel8.add(xDecimalField2);
 
-        xLabel11.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        xLabel11.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(153, 153, 153)));
-        xLabel11.setCaption("Assessed Value");
-        xLabel11.setCaptionWidth(105);
-        xLabel11.setFont(new java.awt.Font("Arial", 1, 11));
-        xLabel11.setName("entity.faas.totalav");
-        xLabel11.setPreferredSize(new java.awt.Dimension(180, 19));
-        formPanel8.add(xLabel11);
+        xDecimalField3.setCaption("Assessed Value");
+        xDecimalField3.setCaptionWidth(105);
+        xDecimalField3.setCellPadding(new java.awt.Insets(0, 0, 0, 31));
+        xDecimalField3.setDisabledTextColor(new java.awt.Color(0, 0, 0));
+        xDecimalField3.setEnabled(false);
+        xDecimalField3.setName("entity.faas.totalav");
+        xDecimalField3.setPreferredSize(new java.awt.Dimension(180, 19));
+        formPanel8.add(xDecimalField3);
 
         formPanel6.add(formPanel8);
 
@@ -230,9 +229,9 @@ public class FAASAnnotationPage extends javax.swing.JPanel {
     private com.rameses.rcp.control.XComboBox xComboBox1;
     private com.rameses.rcp.control.XDateField xDateField2;
     private com.rameses.rcp.control.XDecimalField xDecimalField1;
+    private com.rameses.rcp.control.XDecimalField xDecimalField2;
+    private com.rameses.rcp.control.XDecimalField xDecimalField3;
     private com.rameses.rcp.control.XLabel xLabel1;
-    private com.rameses.rcp.control.XLabel xLabel10;
-    private com.rameses.rcp.control.XLabel xLabel11;
     private com.rameses.rcp.control.XLabel xLabel2;
     private com.rameses.rcp.control.XLabel xLabel3;
     private com.rameses.rcp.control.XLabel xLabel5;

@@ -11,7 +11,7 @@ SELECT
 	b.name AS barangay_name
 FROM faas f 
 	INNER JOIN rpu rpu ON f.rpuid = rpu.objid
-	INNER JOIN realproperty rp ON rpu.realpropertyid = rp.objid
+	INNER JOIN realproperty rp ON f.realpropertyid = rp.objid
 	INNER JOIN barangay b ON rp.barangayid = b.objid 
 	INNER JOIN rptledger rl ON rl.faasid = f.objid 
 WHERE 1=1
@@ -32,7 +32,7 @@ SELECT
 FROM rptledger rl 
 	INNER JOIN faas f ON rl.faasid = f.objid
 	INNER JOIN rpu rpu ON f.rpuid = rpu.objid
-	INNER JOIN realproperty rp ON rpu.realpropertyid = rp.objid
+	INNER JOIN realproperty rp ON f.realpropertyid = rp.objid
 	INNER JOIN barangay b ON rp.barangayid = b.objid 
 WHERE rl.objid = $P{objid}
 ORDER BY rl.state, f.tdno 
@@ -61,7 +61,7 @@ FROM rptledgerfaas rlf
 	INNER JOIN propertyclassification pc ON rlf.classification_objid = pc.objid 
 	LEFT JOIN propertyclassification pc1 ON rlf.actualuse_objid = pc1.objid 
 WHERE rlf.rptledgerid = $P{rptledgerid} 
-ORDER BY rlf.fromyear  
+ORDER BY rlf.fromyear, rlf.tdno   DESC 
 
 [findLedgerFaasByFaasId]
 SELECT rlf.*,

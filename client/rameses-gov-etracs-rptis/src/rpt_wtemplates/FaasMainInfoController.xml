@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workunit>
+    <invokers>
+        <invoker type="formActions" action="refresh" caption="Refresh" mnemonic="r" />
+        <invoker type="formActions" action="edit" caption="Edit" mnemonic="e" visibleWhen="#{showActions == true}" role="APPRAISER"/>
+        <invoker type="formActions" action="save" caption="Save" mnemonic="s" shortcut="ctrl S" visibleWhen="#{mode != 'read'}" />
+   </invokers>
+   
+   <code class="com.rameses.gov.etracs.rpt.faas.ui.FaasMainInfoController">
+   </code>
+    
+    <pages> 
+        <page name="init" template="com.rameses.gov.etracs.rpt.faas.ui.FAASOnlineInfoMainPage"/>
+    </pages>
+</workunit>
+
+

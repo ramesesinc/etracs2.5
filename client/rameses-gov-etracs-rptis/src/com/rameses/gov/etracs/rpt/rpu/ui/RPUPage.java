@@ -6,14 +6,16 @@
 
 package com.rameses.gov.etracs.rpt.rpu.ui;
 
+import com.rameses.osiris2.themes.FormPage;
 import com.rameses.rcp.ui.annotations.StyleSheet;
-import java.math.BigDecimal;
+import com.rameses.rcp.ui.annotations.Template;
 
 /**
  *
  * @author  jzamora
  */
 @StyleSheet
+@Template(FormPage.class)
 public class RPUPage extends javax.swing.JPanel {
     
     /** Creates new form LandRPUPage */
@@ -33,8 +35,6 @@ public class RPUPage extends javax.swing.JPanel {
         xDecimalField8 = new com.rameses.rcp.control.XDecimalField();
         xDecimalField9 = new com.rameses.rcp.control.XDecimalField();
         xDecimalField10 = new com.rameses.rcp.control.XDecimalField();
-        jPanel1 = new javax.swing.JPanel();
-        xActionBar1 = new com.rameses.rcp.control.XActionBar();
         jPanel7 = new javax.swing.JPanel();
         formPanel8 = new com.rameses.rcp.util.FormPanel();
         xLabel4 = new com.rameses.rcp.control.XLabel();
@@ -83,17 +83,6 @@ public class RPUPage extends javax.swing.JPanel {
         formPanel10.add(xDecimalField10);
 
         jPanel2.add(formPanel10, java.awt.BorderLayout.NORTH);
-
-        jPanel1.setLayout(new java.awt.BorderLayout());
-
-        jPanel1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        xActionBar1.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
-        xActionBar1.setName("formActions");
-        xActionBar1.setPadding(new java.awt.Insets(2, 0, 2, 0));
-        xActionBar1.setUseToolBar(false);
-        jPanel1.add(xActionBar1, java.awt.BorderLayout.EAST);
-
-        jPanel2.add(jPanel1, java.awt.BorderLayout.CENTER);
 
         add(jPanel2, java.awt.BorderLayout.SOUTH);
 
@@ -167,10 +156,8 @@ public class RPUPage extends javax.swing.JPanel {
     private com.rameses.rcp.util.FormPanel formPanel10;
     private com.rameses.rcp.util.FormPanel formPanel8;
     private com.rameses.rcp.util.FormPanel formPanel9;
-    private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel7;
-    private com.rameses.rcp.control.XActionBar xActionBar1;
     private com.rameses.rcp.control.XCheckBox xCheckBox1;
     private com.rameses.rcp.control.XCheckBox xCheckBox2;
     private com.rameses.rcp.control.XComboBox xComboBox5;

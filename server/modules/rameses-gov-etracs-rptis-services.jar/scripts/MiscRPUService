@@ -1,9 +1,10 @@
 import com.rameses.annotations.*
 import com.rameses.util.*
+import com.rameses.services.extended.*
 
 class MiscRPUService
 {
-    @PersistenceContext('rpt')
+    @ActiveDB('miscrpu')
     def em
 
     @Env
@@ -29,9 +30,8 @@ class MiscRPUService
     def var
 
     
-    def SCHEMA_RPU     = 'miscrpu'
-    def SCHEMA_ITEM    = 'miscrpu:item'
-    def SCHEMA_PARAM   = 'miscrpu:param'
+    def SCHEMA_ITEM    = 'item'
+    def SCHEMA_PARAM   = 'param'
     
 
     @ProxyMethod
@@ -46,7 +46,7 @@ class MiscRPUService
 
     @ProxyMethod
     public def createMiscRpu( rpu ) {
-        em.create(SCHEMA_RPU, rpu)
+        em.create(rpu)
         saveItems(rpu.items)
         return rpu
     }
@@ -54,7 +54,7 @@ class MiscRPUService
 
     @ProxyMethod
     public def updateMiscRpu(rpu) { 
-        em.updateImmediate(SCHEMA_RPU, rpu)
+        em.updateImmediate(rpu)
         saveItems(rpu.items)
         removeDeletedItems(rpu)
         return rpu
@@ -63,7 +63,7 @@ class MiscRPUService
 
     @ProxyMethod
     public def openMiscRpu( objid ) {
-        def rpu = em.read(SCHEMA_RPU, [objid:objid])
+        def rpu = em.read([objid:objid])
         if (!rpu) {
             throw new Exception('Miscellaneous RPU does not exists or has been deleted.')
         }
@@ -76,9 +76,9 @@ class MiscRPUService
     @ProxyMethod
     public def deleteMiscRpu(rpu){
         removeDeletedItems(rpu)
-        em.sqlContext.createNamedExecutor('miscrpu:deleteAllParams').setParameters(rpu).execute()
-        em.sqlContext.createNamedExecutor('miscrpu:deleteAllMiscRpuItems').setParameters(rpu).execute()
-        em.delete(SCHEMA_RPU, rpu)
+        em.deleteAllParams(rpu)
+        em.deleteAllMiscRpuItems(rpu)
+        em.delete(rpu)
     }
 
     @ProxyMethod
@@ -202,26 +202,25 @@ class MiscRPUService
     
     void saveItems(items){
         items.each{ item -> 
-            def xitem = EntityUtil.mapToField(item)
-            em.validate(SCHEMA_ITEM, xitem)
-            em.save(SCHEMA_ITEM, xitem)
+            em.save(item, SCHEMA_ITEM)
 
             item.params.each{param ->
-                def xparam = EntityUtil.mapToField(param)
-                em.validate(SCHEMA_PARAM, xparam)
-                em.save(SCHEMA_PARAM, xparam)
+                try{
+                    em.create(param, SCHEMA_PARAM)
+                }
+                catch(e){
+                    em.updateImmediate(param, SCHEMA_PARAM)
+                }
             }
         }
     }
 
 
     def getMiscRpuItems(rpu){
-        def items = em.sqlContext.createNamedQuery('miscrpu:getMiscRpuItems').setParameters(rpu).resultList 
+        def items = em.getMiscRpuItems(rpu)
 
         items.each{ item ->
-            item.params = em.sqlContext.createNamedQuery('miscrpu:getMiscRpuItemParams')
-                                .setParameter('miscrpuitemid', item.objid)
-                                .resultList 
+            item.params = em.getMiscRpuItemParams([miscrpuitemid:item.objid])
         }
 
         return items 
@@ -230,16 +229,14 @@ class MiscRPUService
 
     void removeDeletedItems(rpu){
         rpu._params?.each{ 
-            it = EntityUtil.mapToField(it)
-            em.delete(SCHEMA_PARAM, it)
+            em.delete(it, SCHEMA_PARAM)
         }
 
         rpu._items?.each{ item -> 
             item.params.each{ param ->
-                param = EntityUtil.mapToField(param)
-                em.delete(SCHEMA_PARAM, param)
+                em.delete(param, SCHEMA_PARAM)
             }
-            em.delete(SCHEMA_ITEM, item)
+            em.delete(item)
         }
     }
 

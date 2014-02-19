@@ -18,18 +18,19 @@
         <field name="lguid" required="true" />
         <field name="lgutype" required="true" />
         
-        <field name="newrpid" required="true" />
-        <field name="newrpuid" required="true" />
+        <field name="newrpid" />
+        <field name="newrpuid"  />
         <field name="newfaasid" />
 
         <field name="administrator_objid" />
         <field name="administrator_name" />
         <field name="administrator_address" />
-        <field name="taxpayer_objid" required="true" />
-        <field name="taxpayer_name" required="true" />
-        <field name="taxpayer_address" required="true" />
-        <field name="owner_name" required="true" />
-        <field name="owner_address" required="true" />
+        <field name="taxpayer_objid" />
+        <field name="taxpayer_name" />
+        <field name="taxpayer_address" />
+        <field name="owner_name" />
+        <field name="owner_address" />
+        <complex name="signatories" type="list" serializer="default" />
     </element>
 
     <element name="consolidatedland" tablename="consolidatedland">

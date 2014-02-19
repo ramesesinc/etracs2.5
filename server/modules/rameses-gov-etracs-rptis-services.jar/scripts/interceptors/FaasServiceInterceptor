@@ -5,6 +5,9 @@ import com.rameses.common.*;
 class FaasServiceInterceptor
 {
 
+	@Service('RealPropertyService')
+	def rpSvc 
+
 	@Service('RPUService')
 	def rpuSvc 
 
@@ -82,40 +85,74 @@ class FaasServiceInterceptor
 	}
 
 
+	@Before(pattern="FAASService.submitFaasForApproval", eval="#{args[0].txntype.objid.matches('CT')}", index=10) 
+	public void validateChangeTaxabilityForApproval( evt ) {
+		def faas = evt.args[0]
+		def rpu = rpuSvc.findRpuInfoById(faas.rpu.objid)
+		def prevrpu = rpuSvc.findRpuInfoById(rpu.previd)
+
+		if (rpu.taxable == 0 && (rpu.exemptiontype == null || rpu.exemptiontype.objid == null))
+			throw new Exception('Exemption Type is required.')
+		
+		if (prevrpu){
+			def invalid = false 
+			if ( prevrpu.taxable == 1 && prevrpu.taxable == rpu.taxable ) 
+				invalid = true
+			else if (prevrpu.taxable != 1 && prevrpu.exemptiontype.objid == rpu.exemptiontype.objid)
+				invalid = true 
+
+			if (invalid)
+				throw new Exception('Current Taxability must not be equal to previous taxability.')
+		}
+	}
+
+
+	@Before(pattern="FAASService.submitForAppraisal", eval="#{args[0].txntype.objid.matches('ND')}", index=10) 
+	public void validateNewDiscoverySubmit( evt ) {
+		def faas = evt.args[0]
+		def rp = rpSvc.open(faas.rp)
+		if (!rp) throw new Exception('Real Property does not exist or has already been deleted.')
+
+		util.required('Section No.', rp.section)
+		util.required('Parcel No.', rp.parcel)
+	}
+
+
+	@Before(pattern="FAASService.submitForTaxmapping", eval="#{args[0].txntype.objid.matches('TR|TRC|TRE')}", index=10) 
+	public void validateTransferSubmit( evt ) {
+		def faas = evt.args[0]
+		util.required('Owner', faas.taxpayer.objid)
+		util.required('Declared Owner', faas.owner.name)
+		if(faas.owner.name.equalsIgnoreCase(faas.prevowner)){
+			throw new Exception('Current Owner must not be equal to previous owner.')
+		}
+		util.required('Memoranda', faas.memoranda)
+	}
 
 
 
-
-	@Before(pattern="FAASService.initFaasTransaction")  
+	@Before(pattern="FAASService.initTransaction")  
 	public void interceptInitFaasTransaction( evt ) {
 		def info = evt.args[0]
-		if (info.txntype.objid != 'GR') {
-			if ( util.toBoolean(var.allow_faas_transaction_with_balance, false) == false ){
-				ledgerSvc.checkLedgerBalance(info.faas.objid)
+		if (info.faas && info.faas.objid){
+			ledgerSvc.checkLedgerApprovedState(info.faas.objid)
+			if (info.txntype.checkbalance == null  || info.txntype.checkbalance == true) {
+				if ( util.toBoolean(var.allow_faas_transaction_with_balance, false) == false ){
+					ledgerSvc.checkLedgerBalance(info.faas.objid)
+				}
 			}
 		}
 	}
 
-	@After(pattern="FAASService.initFaasTransaction", eval="#{result.txntype.objid == 'TR'}", index=10) 
-	public void initSimpleTransfer( evt ) {
+	@After(pattern="FAASService.initTransaction", eval="#{result.txntype.objid.matches('TR|TRE|TRC')}", index=10) 
+	public void initTransfer( evt ) {
 		def faas = evt.result 
 		clearInfo(faas)
 		
 	}
 
-	@After(pattern="FAASService.initFaasTransaction", eval="#{result.txntype.objid == 'TRE'}", index=10) 
-	public void initTransferWithReassessment( evt ) {
-		def faas = evt.result 
-		clearInfo(faas)
-	}
 
-	@After(pattern="FAASService.initFaasTransaction", eval="#{result.txntype.objid == 'TRC'}", index=10) 
-	public void initTransferWithCorrection( evt ) {
-		def faas = evt.result 
-		clearInfo(faas)
-	}
-
-	@After(pattern="FAASService.initFaasTransaction", eval="#{result.txntype.objid == 'CD'}", index=10) 
+	@After(pattern="FAASService.initTransaction", eval="#{result.txntype.objid == 'CD'}", index=10) 
 	public void initChangeDepreciation( evt ) {
 		def faas = evt.result 
 		if (faas.rpu.rputype == 'land') {
@@ -124,43 +161,27 @@ class FaasServiceInterceptor
 	}
 
 
-
-
-	@Before(pattern="FAASService.createFaas", eval="#{args[0].datacapture==true}") 
-	public void interceptCreateDataCaptureFaas( evt ) {
-		def faas = evt.args[0]
-		faas.txntype.newrealproperty = true 
-		rpuSvc.createRpu( faas.rpu, faas.txntype )
-	}
-
-
-	@Before(pattern="FAASService.createFaas", eval="#{args[0].datacapture==false}") 
-	public void interceptCreateFaas( evt ) {
-		def faas = evt.args[0]
-		rpuSvc.createRpu( faas.rpu, faas.txntype)
-	}
-
-
-
-
-	@After(pattern="FAASService.openFaas") 
-	public void interceptOpenFaas( evt ) {
+	@After(pattern="FAASService.initCapture", eval="#{result.txntype.objid == 'ND'}", index=10) 
+	public void initNewDiscovery( evt ) {
 		def faas = evt.result 
-		faas.rpu = rpuSvc.openRpu( faas.rpuid )
+		faas.autonumber = util.toBoolean(var.td_autonumber, false)
 	}
 
-	@Before(pattern="FAASService.updateFaas") 
-	public void interceptUpdateFaas(evt) {
-		def faas = evt.args[0]
-		rpuSvc.updateRpu( faas.rpu )
-	}
-
-	@After(pattern="FAASService.deleteFaas") 
-	public void interceptDeleteFaas( evt ) {
+	@After(pattern="FAASService.initTransaction", eval="#{result.txntype.objid == 'MC'}", index=10) 
+	public void initMultipleClaim( evt ) {
+		def info = evt.args[0]
 		def faas = evt.result 
-		if (faas.txntype.newrpu){
-			rpuSvc.deleteRpu( faas.rpu )
-		}
+		faas.rp.claimno = info.claimno 
+		faas.rpu.fullpin += ' (' + info.claimno + ')'
+		faas.prevtdno = null
+		faas.prevpin = null
+		faas.prevowner = null
+		faas.prevav = 0.0
+		faas.prevmv = 0.0
+		faas.rpu.previd = null
+		faas.rp.previd = null
+		clearInfo(faas)
+		faas.previousfaases = []
 	}
 
 	/*---------------------------------------------------
