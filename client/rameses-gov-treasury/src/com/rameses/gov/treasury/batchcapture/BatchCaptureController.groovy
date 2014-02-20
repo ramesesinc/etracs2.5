@@ -121,13 +121,14 @@ public class BatchCaptureController  {
             m._filetype = "batchcapture:misc"
             m.totalcash = 0.0
             m.totalnoncash = 0.0
+            m.amount = 0.0 
             m.collector = entity.collector;
             m.paymentitems = []
             m.voided = 0
             m.newitem = true
             if( copyprevinfo ) {
                 if(prevEntity ) {
-                    if( prevEntity.items && prevEntity.items.size() > 0 ) {
+                    if( prevEntity.items && prevEntity.items.size() == 1  ) {
                         def item =  prevEntity.items[0].clone();
                         item.amount = 0.0 
                         m.items = [ item ]
