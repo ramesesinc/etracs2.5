@@ -569,3 +569,63 @@ go
 
 
 
+
+
+
+/*===============================================================
+*
+* SMS SUPPORT
+*
+===============================================================*/
+
+
+
+CREATE TABLE sms_rpt_registration
+(
+  mobileno varchar(25) NOT NULL,
+  rptledgerid varchar(50) NOT NULL,
+  dtregistered datetime not null,
+  primary key(mobileno, rptledgerid)
+) 
+
+go
+
+create index ix_smsrptreg_rptledgerid on sms_rpt_registration(rptledgerid)
+go
+
+
+
+
+
+CREATE TABLE rpt_sms_registration
+(
+  phoneno varchar(25) NOT NULL,
+  rptledgerid varchar(50) NOT NULL,
+  dtregistered datetime not null,
+  primary key(phoneno, rptledgerid)
+) 
+
+go
+
+create index ix_rptsmsreg_rptledgerid on rpt_sms_registration(rptledgerid)
+go
+
+
+
+create table rpt_sms
+(
+	objid varchar(50) primary key,
+	traceid varchar(50) not null,
+	phoneno varchar(50) not null,
+	logdate datetime not null,
+	message varchar(500), 
+	amount numeric(10,2) not null,
+	amtpaid numeric(10,2) not null,
+	action varchar(100),
+)
+go
+
+create index ix_rptsms_traceid on rpt_sms(traceid)
+go
+create index ix_rptsms_phoneno on rpt_sms(phoneno)
+go
