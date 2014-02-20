@@ -8,7 +8,7 @@ class IndividualCtcReceiptInterceptor
 	@ActiveDB('ctc_individual')
 	def em
 
-	@Service('EntityService')
+	@Service('IndividualEntityService')
 	def entitySvc
 
 	@Service('DateService')
