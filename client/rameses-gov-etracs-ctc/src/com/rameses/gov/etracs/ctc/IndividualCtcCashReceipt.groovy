@@ -11,7 +11,7 @@ class  IndividualCtcCashReceipt extends AbstractCashReceipt
     @Service('IndividualCTCService')
     def ctcSvc;
     
-    @Service('EntityService')
+    @Service('IndividualEntityService')
     def entitySvc;
     
     @Service('ProfessionService')

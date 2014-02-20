@@ -11,7 +11,7 @@ class  CorporateCtcCashReceipt extends AbstractCashReceipt
     @Service('CorporateCTCService')
     def ctcSvc;
     
-    @Service('EntityService')
+    @Service('JuridicalEntityService')
     def entitySvc 
 
     def payerdata  = [:];
@@ -111,7 +111,7 @@ class  CorporateCtcCashReceipt extends AbstractCashReceipt
     }
     
     List getOrgtypes(){
-        return LOV.BUSINESS_APP_TYPES*.key
+        return LOV.ORG_TYPES*.key
     }
 
     
