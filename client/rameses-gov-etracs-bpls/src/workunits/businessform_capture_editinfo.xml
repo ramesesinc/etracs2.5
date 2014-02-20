@@ -43,7 +43,8 @@
                     return null;
                 }    
                 hasLookup = true;
-                return InvokerUtil.lookupOpener( "entity:lookup", [
+                String lookupName = (entity.orgtype == 'SING') ?'individualentity:lookup':'juridicalentity:lookup';
+                return InvokerUtil.lookupOpener( lookupName, [
                     "query.orgtype": entity.orgtype,
                     onselect: { o->
                         entity.owner = o;

@@ -28,6 +28,19 @@ public class QtrDeadline {
     public QtrDeadline() {
     }
     
+    public QtrDeadline(int yr, int qtr, int day ) {
+        this.year = yr;
+        this.qtr = qtr;
+        this.month = DateFunc.getQtrMonth(qtr);
+        this.day = day;
+    }
+    
+    public QtrDeadline(int yr, int qtr ) {
+        this.year = yr;
+        this.qtr = qtr;
+        this.month = DateFunc.getQtrMonth(qtr);
+    }
+
     public Date getDeadline() {
         return deadline;
     }

@@ -8,8 +8,7 @@
         <invoker type="business:barcode:51005" caption="Business" action="startOpenByBIN" target="window" />
         <invoker type="global:barcode:51005" caption="Business" action="startOpenByBIN" target="window" />
         
-        
-        <invoker type="extActions" caption="Request for Change" visibleWhen="#{state == 'assessment'}"
+        <invoker type="extActions" caption="Request for Change" visibleWhen="#{state == 'assessment' &amp;&amp; forMe==true}"
             action="changeRequestInfo" role="ASSESSOR"/>
         <invoker type="extActions" caption="Refresh" visibleWhen="#{state == 'assessment'}"
             action="refresh" role="ASSESSOR"/>
@@ -57,9 +56,9 @@
             def startstep;
             boolean dirty;
             String message;
-            boolean assignedAssessor = false;
-            boolean assignedApprover = false;
             boolean allowChangeRequest = true;
+            
+            boolean forMe = false;
             
             private def loadInfo() {
                 formId = entity.bin;
@@ -67,6 +66,7 @@
                 title = entity.businessname + ((entity.bin)? ' ['+entity.bin+']' : '');
                  if( entity.application?.objid && entity.application?.task?.objid  ) {
                     startstep = entity.application.task.state;
+                    checkForMe();
                     showMessage();
                 }
                 else {
@@ -84,16 +84,21 @@
                 return buff.toString();
             }
             
+            void checkForMe() {
+                if(entity.application?.task?.assignee?.objid == OsirisContext.env.USERID) {
+                    forMe = true;
+                }
+            }
+            
+            boolean isApprovedByMe() {
+                return (entity.application?.approvedby.objid == OsirisContext.env.USERID);
+            }
+            
             void showMessage() {
-                message = '';
-                if( entity.application.assessedby?.objid == OsirisContext.env.USERID ) {
-                    assignedAssessor = true;
-                    message = formatMsg( entity.application.task?.message );
+                if( entity.application?.task?.message ) {
+                    message = formatMsg( entity.application.task.message );
                 }
-                if( entity.application.approvedby?.objid == OsirisContext.env.USERID ) {
-                    assignedApprover = true;
-                    message = formatMsg( entity.application.task?.message );
-                }
+                
                 //display message if there are subtasks.
                 if(entity.application.subtasks) {
                     def buff = new StringBuffer();
@@ -146,13 +151,12 @@
 
             def refresh() {
                 entity = service.open(entity);
+                checkForMe();
                 loadSections();
             }
             
             void reloadSection() {
-                MsgBox.alert("reload section " + binding);
-                MsgBox.alert("reload section " + currentSection);
-                binding.refresh("subform");
+               binding.refresh("subform");
             }
             
             void loadSections() {
@@ -189,7 +193,7 @@
                 def result = service.assignAssessorToSelf( p );
                 updateTaskInfo(result);
                 entity.application.assessedby = result.assessedby;
-                assignedAssessor = true;
+                forMe = true;
                 loadSections();
             }
             
@@ -314,21 +318,21 @@
 
         <page name="assessment" title="Business Application (For Assessment)">
             <transition to="end" caption="Close" action="validateClose"/>
-            <transition to="approval" caption="Submit for Approval" visibleWhen="#{assignedAssessor == true}"
+            <transition to="approval" caption="Submit for Approval" visibleWhen="#{ forMe == true}"
                 name="next" mnemonic="S" action="submitForApproval" role="ASSESSOR"/>
         </page>    
         
         <page name="approval" title="Business Application (For Approval)">
             <transition to="end" caption="Close" action="validateClose"/>
-            <transition to="assessment" caption="Return for Assessment" visibleWhen="#{assignedApprover == true}" 
+            <transition to="assessment" caption="Return for Assessment" visibleWhen="#{forMe == true}" 
                 action="returnForAssessment"  role="APPROVER"/>
-            <transition to="payment" caption="Approve" mnemonic="A" visibleWhen="#{assignedApprover == true}" 
+            <transition to="payment" caption="Approve" mnemonic="A" visibleWhen="#{ forMe == true}" 
                 action="approve" confirm="You are about to approve this for payment. Proceed?" role="APPROVER"/>
         </page>
         
         <page name="payment" title="Business Application (For Payment)">
             <transition to="end" caption="Close" />
-            <transition to="approval" caption="Reverse Approval" mnemonic="A" visibleWhen="#{assignedApprover == true}" 
+            <transition to="approval" caption="Reverse Approval" mnemonic="A" visibleWhen="#{ approvedByMe }" 
                 action="revertApproval" confirm="You are about to reverse approval. Proceed?" role="APPROVER"/>
         </page>
         

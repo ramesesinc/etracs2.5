@@ -6,20 +6,18 @@
 
 package com.rameses.gov.etracs.bpls.business;
 
-import com.rameses.osiris2.themes.FormPage;
+import com.rameses.osiris2.themes.CloseOnlyPage;
 import com.rameses.rcp.ui.annotations.Template;
-import com.rameses.rcp.ui.annotations.StyleSheet;
 
 /**
  *
  * @author  Elmo
  */
-@Template(FormPage.class)
-@StyleSheet
-public class ApplicationHistory extends javax.swing.JPanel {
+@Template(CloseOnlyPage.class)
+public class ApplicationTaskHistory extends javax.swing.JPanel {
     
     /** Creates new form BusinessLedger */
-    public ApplicationHistory() {
+    public ApplicationTaskHistory() {
         initComponents();
     }
     
@@ -34,21 +32,8 @@ public class ApplicationHistory extends javax.swing.JPanel {
 
         xDataTable1.setColumns(new com.rameses.rcp.common.Column[]{
             new com.rameses.rcp.common.Column(new Object[]{
-                new Object[]{"name", "appno"}
-                , new Object[]{"caption", "App No"}
-                , new Object[]{"width", 120}
-                , new Object[]{"minWidth", 120}
-                , new Object[]{"maxWidth", 120}
-                , new Object[]{"required", false}
-                , new Object[]{"resizable", false}
-                , new Object[]{"nullWhenEmpty", true}
-                , new Object[]{"editable", false}
-                , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
-                , new Object[]{"typeHandler", new com.rameses.rcp.common.TextColumnHandler()}
-            }),
-            new com.rameses.rcp.common.Column(new Object[]{
-                new Object[]{"name", "dtfiled"}
-                , new Object[]{"caption", "Date Filed"}
+                new Object[]{"name", "state"}
+                , new Object[]{"caption", "State"}
                 , new Object[]{"width", 100}
                 , new Object[]{"minWidth", 100}
                 , new Object[]{"maxWidth", 100}
@@ -60,8 +45,34 @@ public class ApplicationHistory extends javax.swing.JPanel {
                 , new Object[]{"typeHandler", new com.rameses.rcp.common.DateColumnHandler(null, null, null)}
             }),
             new com.rameses.rcp.common.Column(new Object[]{
-                new Object[]{"name", "apptype"}
-                , new Object[]{"caption", "App Type"}
+                new Object[]{"name", "startdate"}
+                , new Object[]{"caption", "Date Started"}
+                , new Object[]{"width", 150}
+                , new Object[]{"minWidth", 150}
+                , new Object[]{"maxWidth", 150}
+                , new Object[]{"required", false}
+                , new Object[]{"resizable", false}
+                , new Object[]{"nullWhenEmpty", true}
+                , new Object[]{"editable", false}
+                , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
+                , new Object[]{"typeHandler", new com.rameses.rcp.common.DateColumnHandler(null, null, null)}
+            }),
+            new com.rameses.rcp.common.Column(new Object[]{
+                new Object[]{"name", "enddate"}
+                , new Object[]{"caption", "Date End"}
+                , new Object[]{"width", 150}
+                , new Object[]{"minWidth", 150}
+                , new Object[]{"maxWidth", 150}
+                , new Object[]{"required", false}
+                , new Object[]{"resizable", false}
+                , new Object[]{"nullWhenEmpty", true}
+                , new Object[]{"editable", false}
+                , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
+                , new Object[]{"typeHandler", new com.rameses.rcp.common.DateColumnHandler(null, null, null)}
+            }),
+            new com.rameses.rcp.common.Column(new Object[]{
+                new Object[]{"name", "assignee.name"}
+                , new Object[]{"caption", "Assignee"}
                 , new Object[]{"width", 120}
                 , new Object[]{"minWidth", 120}
                 , new Object[]{"maxWidth", 120}
@@ -73,21 +84,21 @@ public class ApplicationHistory extends javax.swing.JPanel {
                 , new Object[]{"typeHandler", new com.rameses.rcp.common.TextColumnHandler()}
             }),
             new com.rameses.rcp.common.Column(new Object[]{
-                new Object[]{"name", "appyear"}
-                , new Object[]{"caption", "Year"}
+                new Object[]{"name", "sender.name"}
+                , new Object[]{"caption", "Sender"}
                 , new Object[]{"width", 100}
-                , new Object[]{"minWidth", 100}
-                , new Object[]{"maxWidth", 100}
+                , new Object[]{"minWidth", 0}
+                , new Object[]{"maxWidth", 0}
                 , new Object[]{"required", false}
-                , new Object[]{"resizable", false}
+                , new Object[]{"resizable", true}
                 , new Object[]{"nullWhenEmpty", true}
                 , new Object[]{"editable", false}
                 , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
-                , new Object[]{"typeHandler", new com.rameses.rcp.common.IntegerColumnHandler(null, -1, -1)}
+                , new Object[]{"typeHandler", new com.rameses.rcp.common.TextColumnHandler()}
             }),
             new com.rameses.rcp.common.Column(new Object[]{
-                new Object[]{"name", " "}
-                , new Object[]{"caption", " "}
+                new Object[]{"name", "message"}
+                , new Object[]{"caption", "Message"}
                 , new Object[]{"width", 100}
                 , new Object[]{"minWidth", 0}
                 , new Object[]{"maxWidth", 0}

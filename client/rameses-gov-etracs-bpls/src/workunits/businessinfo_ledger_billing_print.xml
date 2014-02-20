@@ -20,7 +20,7 @@
             @Service("ReportParameterService") 
             def paramsvc
             
-            @Service("BPBillingReportService") 
+            @Service("BPBillingService") 
             def reportSvc;
             
             def entity;
@@ -35,13 +35,13 @@
             def formTitle;
             
             void specifyDate() {
-              
+                
             }
             
             void viewReport() {
                 formId = "BILL-" + entity.objid;
                 formTitle = "BILL-" + entity.bin;
-                data = reportSvc.getReport(entity.application);    
+                data = reportSvc.getReport(entity);    
                 report.viewReport();
             } 
             
