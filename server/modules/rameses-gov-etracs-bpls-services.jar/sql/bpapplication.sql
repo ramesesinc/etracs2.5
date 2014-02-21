@@ -2,10 +2,9 @@
 # used for retrieving the application
 #######################################
 [getTaxfees]
-SELECT br.*, r.code AS account_code, ba.taxfeetype, ba.taxfeetype AS account_taxfeetype 
+SELECT br.*, r.code AS account_code, br.taxfeetype AS account_taxfeetype 
 FROM bpreceivable br 
-INNER JOIN businessaccount ba ON br.account_objid = ba.objid
-INNER JOIN revenueitem r ON  r.objid=ba.objid 
+INNER JOIN revenueitem r ON  r.objid=br.account_objid 
 WHERE br.applicationid=$P{objid} 
 
 [getRequirements]
@@ -53,7 +52,7 @@ WHERE objid=$P{objid}
 SELECT  u.objid, u.name, ug.role, ug.domain
 FROM sys_usergroup_member sgm
 INNER JOIN sys_user u ON u.objid=sgm.user_objid
-INNER JOIN sys_usergroup ug ON ug.objid=sgm.usergroupid
+INNER JOIN sys_usergroup ug ON ug.objid=sgm.usergroup_objid
 WHERE ug.domain='BPLS' AND ug.role='APPROVER' 
 ORDER BY u.name
 
@@ -67,6 +66,5 @@ WHERE objid=$P{objid}
 [changeState]
 UPDATE bpapplication SET state = $P{state} WHERE objid = $P{objid}
 
-
-
-
+[getTaskList]
+SELECT * FROM bpapplication_task WHERE applicationid=$P{objid} ORDER BY startdate ASC

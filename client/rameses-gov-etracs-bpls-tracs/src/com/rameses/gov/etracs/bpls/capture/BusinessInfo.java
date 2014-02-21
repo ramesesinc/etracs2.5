@@ -102,6 +102,7 @@ public class BusinessInfo extends javax.swing.JPanel {
         xFormPanel1.add(xLookupField1);
 
         xTextField9.setCaption("Address");
+        xTextField9.setDepends(new String[] {"entity.owner"});
         xTextField9.setEnabled(false);
         xTextField9.setName("entity.owner.address");
         xTextField9.setPreferredSize(new java.awt.Dimension(0, 20));

@@ -1,6 +1,7 @@
 <workunit>
     <invokers>
         <invoker type="business:info" caption="Business Ledger" index="40"/>
+        <invoker type="formActions" caption="Rebuild" action="rebuild" index="100"/>
     </invokers>
     
     <code>
@@ -16,6 +17,9 @@
         
             @Service("BPLedgerService")
             def service;
+            
+            @Service("BPApplicationService")
+            def appSvc;
 
             
             String entityName = "businessinfo:ledger"
@@ -46,6 +50,13 @@
             void reload() {
                 receivableModel.reload();
                 paymentsModel.reload();
+            }
+            
+            void rebuild() {
+                if( MsgBox.confirm("You are about to repost this application. Proceed?")) {
+                    appSvc.rebuildPost( [objid: entity.currentapplicationid] );
+                    MsgBox.alert( "Rebuild ledger ok");
+                }
             }
             
         }

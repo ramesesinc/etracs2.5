@@ -8,7 +8,7 @@ public class CityEngineerAccountLookupService  extends ActiveListService {
 	@ActiveDB("business_cityengineer_account")
 	def em;
 
-	String pagingKeys = "ba.objid";
+	String pagingKeys = "r.objid";
 
 	@ProxyMethod
 	public def getColumns( def p ) {

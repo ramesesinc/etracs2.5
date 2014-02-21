@@ -1,6 +1,6 @@
 <workunit>
     <invokers>
-        <invoker type="business:info" caption="Application History" index="5" role="BUSINESSINFO"/>
+        <invoker type="business:info" caption="Application History" index="5" />
     </invokers>
     
        <code>
@@ -14,7 +14,7 @@
         
         class  BPApplicationHistory  {
         
-            @Service("BPApplicationService")
+            @Service("BusinessInfoService")
             def service;
         
             String title = "Application History";
@@ -23,13 +23,12 @@
             
             def listModel = [
                 fetchList: { o->
-                    return [];
+                    return service.getApplicationList( [objid: entity.objid] );
                 }
             ]as BasicListModel;
         }
         ]]>
     </code>
-
     
     <pages>
         <page  template="com.rameses.gov.etracs.bpls.business.ApplicationHistory"/>

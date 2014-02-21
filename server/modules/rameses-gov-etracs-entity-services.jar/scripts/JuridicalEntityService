@@ -64,6 +64,10 @@ class JuridicalEntityService extends ActiveCrudListService {
 	public void afterOpen( o ) {
 		def z = entity.read( o );
 		o.putAll( z );
+
+		if( o.orgtype ) {
+			o.orgtypename = LOV.ORG_TYPES.get( o.orgtype );
+		}	
 	}
 
 

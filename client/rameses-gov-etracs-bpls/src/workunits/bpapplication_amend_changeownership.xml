@@ -22,8 +22,9 @@
             
             def getLookupOwners() {
                 hasLookup = true;
-                return InvokerUtil.lookupOpener( "entity:lookup", [
-                    "query.orgtype": entity.orgtype,
+                String lookupName = (entity.orgtype == 'SING') ?'individualentity:lookup':'juridicalentity:lookup';
+                return InvokerUtil.lookupOpener( lookupName, [
+                    "query.type": entity.orgtype,
                     onselect: { o->
                         newentity.owner = o;
                         binding.refresh("newentity.owner.address");

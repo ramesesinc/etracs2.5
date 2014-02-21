@@ -1,8 +1,8 @@
 <workunit>
     
    <invokers>
-         <invoker type="collectiongroup:create" caption="Collection Group" action="create" target="popup"/>
-         <invoker type="collectiongroup:open" caption="Collection Group" action="open"  target="popup"/>
+         <invoker type="collectiongroup:create" caption="Collection Group" action="create" target="popup" role="MASTER" permission="collectiongroup.create"/>
+         <invoker type="collectiongroup:open" caption="Collection Group" action="open"  target="popup" role="MASTER" permission="collectiongroup.open"/>
    </invokers>
    
    <code>

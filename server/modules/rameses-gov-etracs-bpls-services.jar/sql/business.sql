@@ -174,7 +174,7 @@ ORDER BY bv.category, bv.sortorder
 # BusinessInfoService.create and changeState
 ################################################
 [removeInfos]
-DELETE FROM business_info WHERE businessid=$P{objid}
+DELETE FROM business_info WHERE applicationid=$P{objid}
 
 [removeLOB]
 DELETE FROM business_lob WHERE applicationid=$P{objid}
@@ -235,3 +235,6 @@ DELETE FROM business_lob WHERE businessid=$P{objid} AND applicationid IS NULL
 
 [getBusinessLOB]
 SELECT * FROM business_lob WHERE businessid=$P{objid}
+
+[getApplicationList]
+SELECT * FROM bpapplication WHERE businessid=$P{objid}

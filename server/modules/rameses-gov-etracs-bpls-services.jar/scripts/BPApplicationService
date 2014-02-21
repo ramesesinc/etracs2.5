@@ -136,5 +136,45 @@ public class BPApplicationService extends ActiveCrudService {
 		bizInfoSvc.update(b);
 	}
 
+	@ProxyMethod
+	public def getTaskList(o) {
+		return em.getTaskList(o);
+	}
+
+
+	@ProxyMethod
+	public void rebuildPost( def o ) {
+		//we need to open the applicaton first
+		def app = em.read( [objid: o.objid] );
+		
+		/*******************************************************
+		* load lobs 
+		*******************************************************/
+		app.lobs.each {
+			it.businessid = app.businessid;
+			it.applicationid = app.objid;	
+			it.iyear = app.appyear;	
+		}
+
+		bizInfoSvc.createLobs( app.lobs );
+		/*******************************************************
+		* load infos 
+		*******************************************************/
+		app.appinfos.each {
+			it.businessid = app.businessid;	
+			it.applicationid = app.objid;
+			it.iyear = app.appyear;
+		}
+		bizInfoSvc.createInfos( app.appinfos );
+		/*******************************************************
+		* load assessment infos 
+		*******************************************************/
+		app.assessmentinfos.each {
+			it.businessid = app.businessid;
+			it.applicationid = app.objid;
+			it.iyear = app.appyear;
+		}
+		bizInfoSvc.createAssessmentInfos( app.assessmentinfos );
+	}
 
 }
