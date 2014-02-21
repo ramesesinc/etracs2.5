@@ -34,7 +34,6 @@ public class JuridicalEntityEditPage extends javax.swing.JPanel {
         xComboBox1 = new com.rameses.rcp.control.XComboBox();
         xDateField1 = new com.rameses.rcp.control.XDateField();
         xTextField7 = new com.rameses.rcp.control.XTextField();
-        xTextField6 = new com.rameses.rcp.control.XTextField();
 
         com.rameses.rcp.control.border.XTitledBorder xTitledBorder1 = new com.rameses.rcp.control.border.XTitledBorder();
         xTitledBorder1.setPadding(new java.awt.Insets(30, 15, 15, 15));
@@ -84,12 +83,6 @@ public class JuridicalEntityEditPage extends javax.swing.JPanel {
         xTextField7.setPreferredSize(new java.awt.Dimension(400, 20));
         xFormPanel1.add(xTextField7);
 
-        xTextField6.setCaption("TIN");
-        xTextField6.setCaptionWidth(120);
-        xTextField6.setName("entity.tin");
-        xTextField6.setPreferredSize(new java.awt.Dimension(400, 20));
-        xFormPanel1.add(xTextField6);
-
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -116,7 +109,6 @@ public class JuridicalEntityEditPage extends javax.swing.JPanel {
     private com.rameses.rcp.control.XLabel xLabel1;
     private com.rameses.rcp.control.XTextField xTextField2;
     private com.rameses.rcp.control.XTextField xTextField5;
-    private com.rameses.rcp.control.XTextField xTextField6;
     private com.rameses.rcp.control.XTextField xTextField7;
     // End of variables declaration//GEN-END:variables
     

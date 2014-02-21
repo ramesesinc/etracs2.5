@@ -230,12 +230,15 @@ public class BPBillingRuleService  {
 
 		//organize by account
 		def acctitems = request.items?.sort{ it.duedate };
+
+		/*
 		acctitems.each {
 			println "***********";
 			it.each{ k,v->
 				println k +"="+v;
 			}
 		}
+		*/
 		return result;
 	}
 

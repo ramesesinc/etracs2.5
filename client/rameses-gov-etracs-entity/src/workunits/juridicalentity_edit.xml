@@ -24,12 +24,17 @@
             def saveHandler;
             def mode;
             def entity;
+            def initial;
             
             def orgTypes = LOV.ORG_TYPES;
             
             void create() {
                 mode = "create";
-                entity = [objid: "JURI"+new UID(), type: 'JURIDICAL'];
+                entity = [objid: "JURI"+new UID()];
+                if( initial ) {
+                    entity.putAll( initial );
+                }
+                entity.type = 'JURIDICAL';
             }
             
             void edit() {
@@ -41,7 +46,10 @@
                 if(mode=='create'){
                     if( MsgBox.confirm("You are about to save this record. Proceed?")) {
                         service.create( entity );
-                         if(saveHandler) saveHandler(entity);
+                         if(saveHandler) {
+                            def r = saveHandler(entity);
+                            if( r == '_close' ) return r;
+                         }   
                         def opener = Inv.lookupOpener( "juridicalentity:open", [entity: entity, initiator:'create'] );
                         opener.target = 'self';
                         return opener;
@@ -49,7 +57,10 @@
                 }
                 else {
                     service.update( entity );
-                    if(saveHandler) saveHandler(entity);
+                    if(saveHandler) {
+                        def r = saveHandler(entity);
+                        if( r == '_close' ) return r;
+                    }    
                     return "_close";
                 }
             }

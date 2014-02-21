@@ -2,7 +2,7 @@
     
     <invokers>
         <invoker type="home.action" action="start" target="window" role="BUSINESSINFO" 
-            caption="Register Business (Verification - BIN Assignment)" index="51" permission="capture"/>
+            caption="Register Business (Verification - BIN Assignment)" index="51" permission="business.capture"/>
         <invoker type="extActions" action="printBIN" caption="Print BIN" visibleWhen="#{state=='success'}" />
     </invokers>
     
@@ -124,7 +124,9 @@
                     initial.nationality = entity.nationality;
                     def sh = { o->
                         entity.owner = [ objid:o.objid, name:o.name, address:o.address ];
+                        MsgBox.alert( entity.owner );
                         binding.refresh("entity.owner.*");
+                        return '_close';
                     }
                     return InvokerUtil.lookupOpener( "individualentity"+action, [entity: entity.owner, initial:initial, saveHandler:sh] );
                 }
@@ -136,6 +138,7 @@
                     def sh = { o->
                         entity.owner = [ objid:o.objid, name:o.name, address:o.address ];
                         binding.refresh("entity.owner.*");
+                        return '_close';
                     }
                     return InvokerUtil.lookupOpener( "juridicalentity"+action, [entity: entity.owner, initial: initial, saveHandler:sh] );
                 }
