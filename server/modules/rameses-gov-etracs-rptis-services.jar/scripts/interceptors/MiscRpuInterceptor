@@ -36,7 +36,7 @@ class MiscRpuInterceptor
 	}
 	
 
-	@After(pattern="RPUService.createRpu", eval="#{result.rputype == 'misc'") 
+	@After(pattern="RPUService.createRpu", eval="#{result.rputype == 'misc'}") 
 	public void createMiscRpu( evt ) {
 		svc.createMiscRpu(evt.result)
 	}

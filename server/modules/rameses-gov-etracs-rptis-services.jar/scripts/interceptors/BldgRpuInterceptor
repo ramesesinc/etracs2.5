@@ -39,7 +39,7 @@ class BldgRpuInterceptor
 	}
 	
 
-	@After(pattern="RPUService.createRpu", eval="#{result.rputype == 'bldg'") 
+	@After(pattern="RPUService.createRpu", eval="#{result.rputype == 'bldg'}") 
 	public void createBldgRpu( evt ) {
 		svc.createBldgRpu(evt.result)
 	}

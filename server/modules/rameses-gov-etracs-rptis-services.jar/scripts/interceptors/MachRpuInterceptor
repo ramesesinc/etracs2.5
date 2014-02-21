@@ -41,7 +41,7 @@ class MachRpuInterceptor
 	}
 	
 
-	@After(pattern="RPUService.createRpu", eval="#{result.rputype == 'mach'") 
+	@After(pattern="RPUService.createRpu", eval="#{result.rputype == 'mach'}") 
 	public void createMachRpu( evt ) {
 		svc.createMachRpu(evt.result)
 	}

@@ -35,7 +35,7 @@ class PlantTreeRpuInterceptor
 	}
 	
 
-	@After(pattern="RPUService.createRpu", eval="#{result.rputype == 'planttree'") 
+	@After(pattern="RPUService.createRpu", eval="#{result.rputype == 'planttree'}") 
 	public void createPlantTreeRpu( evt ) {
 		svc.createPlantTreeRpu(evt.result)
 	}
