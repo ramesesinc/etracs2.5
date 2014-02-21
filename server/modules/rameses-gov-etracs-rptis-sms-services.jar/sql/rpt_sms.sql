@@ -62,3 +62,9 @@ SELECT t.*
 FROM rpt_sms_registration s
 	INNER JOIN rpttracking t ON s.refid = t.objid 
 WHERE t.trackingno = $P{refno}
+
+
+[getPhones]
+SELECT *
+FROM rpt_sms_registration
+WHERE refid = $P{refid}

@@ -26,6 +26,8 @@ public class RPTSmsService extends ActiveCrudListService
 	@Service('RPTBillingReportService')
 	def billReportSvc
 
+	def SMS_COST = 2.0
+
 
 	@ProxyMethod
 	public def getColumns(o) {
@@ -40,16 +42,49 @@ public class RPTSmsService extends ActiveCrudListService
 
 	@ProxyMethod
 	public def send( msg ) {
-				/*
-			msg structure  =[
-				objid 	: '', 		messageid
-				phoneno : '',		
-				message : '',
-				refid 	: '',		optional, can be set to your transactionid
-			]
-		*/
-		msg.objid = 'SMS-' + new java.rmi.server.UID();
-		println 'reply -> ' + smsSvc.send(msg)	
+		def smsreply = smsSvc.send(msg)	
+
+		def sms = [objid:'SR' + new java.rmi.server.UID()];
+		sms.logdate = dtSvc.serverDate;
+		sms.traceid = (smsreply.traceid ? smsreply.traceid : smsreply.message);
+		sms.message = msg.message;
+		sms.phoneno = msg.phoneno;
+		sms.action = msg.keyword;
+		sms.amount = SMS_COST * (smsreply.creditcount == null ? 1 : smsreply.creditcount);
+		sms.amtpaid = 0.0;
+		sms.status = msg.retcode 
+		em.create(sms);
+		return smsreply;
+	}
+
+
+	@ProxyMethod
+	public void notifyClient(trackingno){
+		try{
+			println 'Notifying Client for Tracking No. ' + trackingno
+			def tracking = em.findTrackingInfo([refno:trackingno])
+			def phones = em.getPhones([refid:tracking.objid])		
+			phones.each{ phone ->
+				String msg = ''
+				msg += 'Tracking No.  : ' + tracking.trackingno
+				msg += '  Document Type : ' + tracking.filetype.toUpperCase()
+				msg += '  Status        : ' + tracking.msg
+
+				def smstext = [
+					objid 		: 'SMS' + new java.rmi.server.UID(),
+					phoneno		: phone.phoneno,
+					refid 		: tracking.objid,
+					message		: msg,
+					keyword 	: 'NOTIFY',
+					retcode 	: 'OK',
+				]
+				send(smstext)
+			}
+		}
+		catch(e){
+			e.printStackTrace();
+		}
+		
 	}
 
 	@ProxyMethod
@@ -91,7 +126,6 @@ public class RPTSmsService extends ActiveCrudListService
 		msg += '  Status        : ' + tracking.msg
 		return msg
 	}
-
 
 	@ProxyMethod
 	public def getInfo( info ) {

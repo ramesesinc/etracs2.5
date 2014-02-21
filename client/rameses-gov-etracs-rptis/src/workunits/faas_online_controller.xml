@@ -28,6 +28,9 @@ public class AbstractOnlineFaasController extends PageFlowController
     
     @Service('RPTTaskService')
     def taskSvc;
+    
+    @Service('RPTSmsService')
+    def smsSvc
             
     @Invoker
     def invoker 
@@ -209,6 +212,10 @@ public class AbstractOnlineFaasController extends PageFlowController
     }   
     
     
+    void notifyClient(){
+        smsSvc.notifyClient(entity.trackingno);
+    }
+    
     
     
     def nextaction;
@@ -349,6 +356,7 @@ public class AbstractOnlineFaasController extends PageFlowController
         
         <page name="current" title="FAAS #{entity.txntype.name} (Current)">
             <transition caption="Close" to="end" mnemonic="c" icon="images/toolbars/cancel.png"/>
+            <transition caption="Notify Client" to="current" action="notifyClient" confirm="Notify Client through text message?" />
         </page>
         
         <page name="cancelled" title="FAAS #{entity.txntype.name} (Cancelled)">
