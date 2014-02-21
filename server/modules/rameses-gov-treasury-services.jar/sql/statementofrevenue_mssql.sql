@@ -335,7 +335,6 @@ FROM (
 					INNER JOIN remittance_cashreceipt rc ON r.objid = rc.remittanceid
 					INNER JOIN cashreceipt cr ON rc.objid = cr.objid 
 					INNER JOIN cashreceiptitem_rpt crip ON crip.rptreceiptid = cr.objid 
-
 					LEFT JOIN cashreceipt_void v ON cr.objid = v.receiptid
 				  where v.objid is null 
 
@@ -355,8 +354,8 @@ FROM (
 		INNER JOIN cashreceipt cr ON rc.objid = cr.objid 
 		INNER JOIN cashreceiptitem cri ON cr.objid = cri.receiptid 
 		INNER JOIN revenueitem ri ON cri.item_objid = ri.objid 
-		LEFT JOIN revenueitem_sreaccount rngas ON ri.objid = rngas.objid 
-		LEFT JOIN sreaccount acct ON rngas.acctid = acct.objid 
+		LEFT JOIN revenueitem_attribute attr ON ri.objid = attr.revitemid  and attr.attribute_objid='srestandard'
+		LEFT JOIN sreaccount acct on acct.objid = attr.account_objid 
 		LEFT JOIN cashreceipt_void vr ON cr.objid = vr.receiptid  
 	WHERE vr.objid IS NULL 
 	GROUP BY 
@@ -379,8 +378,8 @@ FROM (
 	FROM directcash_collection dc
 		INNER JOIN directcash_collection_item dci ON dc.objid = dci.parentid
 		INNER JOIN revenueitem ri ON dci.item_objid = ri.objid 
-		LEFT JOIN revenueitem_sreaccount rngas ON ri.objid = rngas.objid 
-		LEFT JOIN sreaccount acct ON rngas.acctid = acct.objid 
+		LEFT JOIN revenueitem_attribute attr ON ri.objid = attr.revitemid  and attr.attribute_objid='srestandard'
+		LEFT JOIN sreaccount acct on acct.objid = attr.account_objid 
 	WHERE dc.refdate BETWEEN $P{fromdate} AND $P{todate}
 	GROUP BY 
 		acct.objid,
@@ -404,8 +403,8 @@ FROM (
 		INNER JOIN tracs_cashreceipt tc ON tc.remittanceid = tr.objid
 		INNER JOIN tracs_cashreceiptitem tci ON tci.receiptid = tc.objid 
 		INNER JOIN revenueitem ri ON tci.item_objid = ri.objid 
-		LEFT JOIN revenueitem_sreaccount rngas ON ri.objid = rngas.objid 
-		LEFT JOIN sreaccount acct ON rngas.acctid = acct.objid 
+		LEFT JOIN revenueitem_attribute attr ON ri.objid = attr.revitemid  and attr.attribute_objid='srestandard'
+		LEFT JOIN sreaccount acct on acct.objid = attr.account_objid 
 	WHERE tr.dtposted BETWEEN $P{fromdate} AND $P{todate}
 		and tc.amount > 0.0 
 	GROUP BY 
@@ -572,10 +571,10 @@ FROM (
 		INNER JOIN cashreceipt cr ON rc.objid = cr.objid 
 		INNER JOIN cashreceiptitem cri ON cr.objid = cri.receiptid 
 		INNER JOIN revenueitem ri ON cri.item_objid = ri.objid 
-		LEFT JOIN revenueitem_sreaccount rngas ON ri.objid = rngas.objid 
-		LEFT JOIN sreaccount acct ON rngas.acctid = acct.objid 
-		LEFT JOIN revenueitem_sresubacct rsubacct ON ri.objid = rsubacct.objid
-		LEFT JOIN sreaccount subacct ON rsubacct.acctid = subacct.objid 
+		LEFT JOIN revenueitem_attribute attr ON ri.objid = attr.revitemid and attr.attribute_objid = 'srestandard'
+		LEFT JOIN sreaccount acct ON attr.account_objid = acct.objid 
+		LEFT JOIN revenueitem_attribute subattr ON ri.objid = subattr.revitemid and subattr.attribute_objid='sresubaccount'
+		LEFT JOIN sreaccount subacct ON subattr.account_objid = subacct.objid 
 		LEFT JOIN cashreceipt_void vr ON cr.objid = vr.receiptid  
 	WHERE vr.objid IS NULL 
 	GROUP BY 
@@ -626,10 +625,10 @@ FROM (
 	FROM directcash_collection dc
 		INNER JOIN directcash_collection_item dci ON dc.objid = dci.parentid
 		INNER JOIN revenueitem ri ON dci.item_objid = ri.objid 
-		LEFT JOIN revenueitem_sreaccount rngas ON ri.objid = rngas.objid 
-		LEFT JOIN sreaccount acct ON rngas.acctid = acct.objid 
-		LEFT JOIN revenueitem_sresubacct rsubacct ON ri.objid = rsubacct.objid
-		LEFT JOIN sreaccount subacct ON rsubacct.acctid = subacct.objid 
+		LEFT JOIN revenueitem_attribute attr ON ri.objid = attr.revitemid and attr.attribute_objid = 'srestandard'
+		LEFT JOIN sreaccount acct ON attr.account_objid = acct.objid 
+		LEFT JOIN revenueitem_attribute subattr ON ri.objid = subattr.revitemid and subattr.attribute_objid='sresubaccount'
+		LEFT JOIN sreaccount subacct ON subattr.account_objid = subacct.objid 
 	WHERE dc.refdate BETWEEN $P{fromdate} AND $P{todate}
 	GROUP BY 
 		acct.objid,
@@ -682,10 +681,10 @@ FROM (
 		INNER JOIN tracs_cashreceipt tc ON tc.remittanceid = tr.objid
 		INNER JOIN tracs_cashreceiptitem tci ON tci.receiptid = tc.objid 
 		INNER JOIN revenueitem ri ON tci.item_objid = ri.objid 
-		LEFT JOIN revenueitem_sreaccount rngas ON ri.objid = rngas.objid 
-		LEFT JOIN sreaccount acct ON rngas.acctid = acct.objid 
-		LEFT JOIN revenueitem_sresubacct rsubacct ON ri.objid = rsubacct.objid
-		LEFT JOIN sreaccount subacct ON rsubacct.acctid = subacct.objid 
+		LEFT JOIN revenueitem_attribute attr ON ri.objid = attr.revitemid and attr.attribute_objid = 'srestandard'
+		LEFT JOIN sreaccount acct ON attr.account_objid = acct.objid 
+		LEFT JOIN revenueitem_attribute subattr ON ri.objid = subattr.revitemid and subattr.attribute_objid='sresubaccount'
+		LEFT JOIN sreaccount subacct ON subattr.account_objid = subacct.objid 
 	WHERE tr.dtposted BETWEEN $P{fromdate} AND $P{todate}
 		 and tc.amount > 0.0 
 	GROUP BY 
@@ -702,7 +701,6 @@ FROM (
 
 ) t
 ORDER BY t.parentcode, t.code
-  
 
 
 [getSREDetailedRevenueItemSummaries]
@@ -750,10 +748,10 @@ FROM (
 		INNER JOIN cashreceipt cr ON rc.objid = cr.objid 
 		INNER JOIN cashreceiptitem cri ON cr.objid = cri.receiptid 
 		INNER JOIN revenueitem ri ON cri.item_objid = ri.objid 
-		LEFT JOIN revenueitem_sreaccount rngas ON ri.objid = rngas.objid 
-		LEFT JOIN sreaccount acct ON rngas.acctid = acct.objid 
-		LEFT JOIN revenueitem_sresubacct rsubacct ON ri.objid = rsubacct.objid
-		LEFT JOIN sreaccount subacct ON rsubacct.acctid = subacct.objid 
+		LEFT JOIN revenueitem_attribute attr ON ri.objid = attr.revitemid and attr.attribute_objid = 'srestandard'
+		LEFT JOIN sreaccount acct ON attr.account_objid = acct.objid 
+		LEFT JOIN revenueitem_attribute subattr ON ri.objid = subattr.revitemid and subattr.attribute_objid='sresubaccount'
+		LEFT JOIN sreaccount subacct ON subattr.account_objid = subacct.objid 
 		LEFT JOIN cashreceipt_void vr ON cr.objid = vr.receiptid  
 	WHERE vr.objid IS NULL 
 	GROUP BY 
@@ -797,10 +795,10 @@ FROM (
 	FROM directcash_collection dc
 		INNER JOIN directcash_collection_item dci ON dc.objid = dci.parentid
 		INNER JOIN revenueitem ri ON dci.item_objid = ri.objid 
-		LEFT JOIN revenueitem_sreaccount rngas ON ri.objid = rngas.objid 
-		LEFT JOIN sreaccount acct ON rngas.acctid = acct.objid 
-		LEFT JOIN revenueitem_sresubacct rsubacct ON ri.objid = rsubacct.objid
-		LEFT JOIN sreaccount subacct ON rsubacct.acctid = subacct.objid 
+		LEFT JOIN revenueitem_attribute attr ON ri.objid = attr.revitemid and attr.attribute_objid = 'srestandard'
+		LEFT JOIN sreaccount acct ON attr.account_objid = acct.objid 
+		LEFT JOIN revenueitem_attribute subattr ON ri.objid = subattr.revitemid and subattr.attribute_objid='sresubaccount'
+		LEFT JOIN sreaccount subacct ON subattr.account_objid = subacct.objid 
 	WHERE dc.refdate BETWEEN $P{fromdate} AND $P{todate}
 	GROUP BY 
 		acct.objid,
@@ -845,10 +843,10 @@ FROM (
 		INNER JOIN tracs_cashreceipt tc ON tc.remittanceid = tr.objid
 		INNER JOIN tracs_cashreceiptitem tci ON tci.receiptid = tc.objid 
 		INNER JOIN revenueitem ri ON tci.item_objid = ri.objid 
-		LEFT JOIN revenueitem_sreaccount rngas ON ri.objid = rngas.objid 
-		LEFT JOIN sreaccount acct ON rngas.acctid = acct.objid 
-		LEFT JOIN revenueitem_sresubacct rsubacct ON ri.objid = rsubacct.objid
-		LEFT JOIN sreaccount subacct ON rsubacct.acctid = subacct.objid 
+		LEFT JOIN revenueitem_attribute attr ON ri.objid = attr.revitemid and attr.attribute_objid = 'srestandard'
+		LEFT JOIN sreaccount acct ON attr.account_objid = acct.objid 
+		LEFT JOIN revenueitem_attribute subattr ON ri.objid = subattr.revitemid and subattr.attribute_objid='sresubaccount'
+		LEFT JOIN sreaccount subacct ON subattr.account_objid = subacct.objid 
 	WHERE tr.dtposted BETWEEN $P{fromdate} AND $P{todate}
 		 and tc.amount > 0.0 
 	GROUP BY 
