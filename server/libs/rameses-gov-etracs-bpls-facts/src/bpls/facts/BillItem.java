@@ -17,7 +17,7 @@ import java.util.Date;
  */
 public class BillItem {
     
-    
+    private BPApplication application;
     private String objid;
     private String acctid;
     private BPLedger ledger;
@@ -39,6 +39,9 @@ public class BillItem {
     private int paypriority;
     private double balance;
     private String receivableid;
+    
+    private Object surchargeaccount;
+    private Object interestaccount;
     
     /** Creates a new instance of BillItem */
     public BillItem() {
@@ -211,6 +214,30 @@ public class BillItem {
 
     public void setAmtdue(double amtdue) {
         this.amtdue = amtdue;
+    }
+
+    public BPApplication getApplication() {
+        return application;
+    }
+
+    public void setApplication(BPApplication application) {
+        this.application = application;
+    }
+
+    public Object getSurchargeaccount() {
+        return surchargeaccount;
+    }
+
+    public void setSurchargeaccount(Object surchargeaccount) {
+        this.surchargeaccount = surchargeaccount;
+    }
+
+    public Object getInterestaccount() {
+        return interestaccount;
+    }
+
+    public void setInterestaccount(Object interestaccount) {
+        this.interestaccount = interestaccount;
     }
     
 }

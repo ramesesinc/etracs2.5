@@ -11,6 +11,9 @@ public class BPBillingRuleService  {
 	@ActiveDB("bpbilling")
 	def em;
 
+	@ActiveDB("revenueitem")
+	def ba;
+
 	@Resource("RuleService")
 	def ruleSvc;
 
@@ -35,61 +38,6 @@ public class BPBillingRuleService  {
 
 	String RULESET = "bpbilling";
 
-	
-	//check if there is expiry date specified, if not use the default date of 21
-	private def createQtrDeadline( y, q ) { 
-		def bd = dateSvc.getBeginningQtrDate( q, y, 1 );
-		def qtrDate = dateSvc.parseDate( bd, null );
-		def ed = expiryDate.findExpiryDate([year:y, qtr: q]);
-		if(ed) {
-			qtrDate.deadline = ed.expirydate;
-		}	
-		else {
-			int mon = qtrDate.month;
-			def smon = "-"+mon+"-";
-			if( mon < 10) smon = "-0"+mon+"-"; 
-			qtrDate.deadline = dateSvc.parseDate(y+smon+"20", null).date;
-		}
-		def qd = new QtrDeadline();
-		BeanUtils.copyProperties( qd, qtrDate );
-		return qd;
-	}
-
-
-
-	private def createBillItem( def x, def yr, def facts ) {
-		if(x.amtpaid==null) x.amtpaid = 0;
-		def tf = new BillItem();
-		tf.acctid = x.account.objid;
-		tf.type = x.account.taxfeetype;
-		tf.amount = numberSvc.round(x.amount);
-		tf.amtpaid = numberSvc.round(x.amtpaid);
-		tf.amtdue = numberSvc.round(x.amount - x.amtpaid);
-		tf.total = tf.amtdue;
-		tf.account = x.account;
-
-		if(x.lob) {
-			//find the lob in the facts
-			tf.lob = facts.find{ z-> (z instanceof bpls.facts.LOB) && z.lobid==x.lob.objid };
-		}
-
-		//x.objid is the receivable id.
-		tf.receivableid = x.objid;
-		tf.qtr = 0;
-		if(yr) tf.year = yr;
-		
-		if(tf.type == "TAX") {
-			tf.paypriority = 3;
-		}
-		else if(tf.type == "REGFEE") {
-			tf.paypriority = 2;
-		}
-		else {
-			tf.paypriority = 1;
-		}		
-		return tf;
-	}
-
 	def buildActions(def req) {
 		def addItems = { tf, request ->
 			request.items << [
@@ -110,13 +58,16 @@ public class BPBillingRuleService  {
 
 				//this is the full amt.
 				amount: tf.amount,
-				amtpaid: tf.amtpaid
+				amtpaid: tf.amtpaid,
+				interestaccount: tf.interestaccount,
+				surchargeaccount: tf.surchargeaccount
 			];	
 		}	
 		def actions = new RuleAction();
+		actions.addCommand( "set_qtr_deadline", new SetQtrDeadline( request:req, dateSvc:dateSvc, expiryDate:expiryDate ));
 		actions.addCommand( "split_by_qtr", new SplitByQtr( request:req, NS:numberSvc ));
-		actions.addCommand( "calc_surcharge", new CalcSurcharge( request:req, NS:numberSvc ));
-		actions.addCommand( "calc_interest",  new CalcInterest( request:req, NS:numberSvc ));
+		actions.addCommand( "calc_surcharge", new CalcSurcharge( request:req, NS:numberSvc, BA:ba ));
+		actions.addCommand( "calc_interest",  new CalcInterest( request:req, NS:numberSvc, BA:ba ));
 		actions.addCommand( "calc_discount",  new CalcDiscount( request:req, NS:numberSvc ));
 		actions.addCommand( "collect_full",  new CollectFullPayment( request:req, addItems: addItems ));
 		actions.addCommand( "collect_partial",  new CollectPartialPayment( request:req, addItems: addItems, NS:numberSvc ));
@@ -127,47 +78,109 @@ public class BPBillingRuleService  {
 
 	/**********************************************
 	* The parameter here is the application
+	* billdate is the billing date
+	* payoption (has type:full or qtr, qtr: if qtr )
+	* 
 	**********************************************/
-	@ProxyMethod
-	public def getBillItems(def o) throws Exception {
-		if(!o.billdate)
-			throw new Exception("Please specify billdate");
-		if(!o.application)
-			throw new Exception("Please specify application");
-		if(!o.application.appyear)
-			throw new Exception("Please provide an app year in application");
-		if(!o.payoption)
-			throw new Exception("Please specify payoption");
-		if(!o.application.taxfees || !o.application.taxfees.findAll{ (it.amount-it.amtpaid) > 0 }  )
-			throw new Exception("No receivables found for this application");
-
-		//this will be used in excess payment. do not remove.
-		def billdt = dateSvc.parse("yyyy-MM-dd", o.billdate );
-
-		def facts = [];
-		def app = o.application;
-		
-		appFactBuilder.buildApplication( app, facts );
-		//build the billitems
-		app.taxfees.each {
-			def tf = createBillItem( it, app.appyear, facts );
-			if( tf.amtdue > 0 ) {
-				facts << tf;
+	private def buildFacts(def list) {
+		def factMap = [:];
+		list.each {
+			def app = it.application;
+			def fapp = factMap[app.objid];
+			if( !fapp ) {
+				fapp = new BPApplication();
+				fapp.objid = app.objid;
+				fapp.appyear = app.appyear;
+				fapp.apptype = app.apptype;
+				factMap.put( app.objid, fapp );
 			}
-		}		
+			def lob = it.lob;
+			def flob = null;
+			if( lob?.objid ) {
+				flob = factMap[lob.objid];
+				if(!flob) {
+					flob = new LOB();
+					flob.application = fapp;
+					flob.objid = lob.objid;
+					flob.lobid = lob.lobid;
+					flob.assessmenttype = lob.assessmenttype;
+					flob.name = lob.name;
+					flob.classification = lob.classification?.objid;
+					factMap.put( lob.objid, flob);
+				}
+			}
+			def tf = new BillItem();
+			if(it.amtpaid==null) it.amtpaid = 0;
+			tf.acctid = it.account.objid;
+			tf.amount = numberSvc.round(it.amount);
+			tf.amtpaid = numberSvc.round(it.amtpaid);
+			tf.amtdue = numberSvc.round(it.amount - it.amtpaid);
+			tf.total = tf.amtdue;
+			tf.account = it.account;
+			tf.lob = flob;
+			tf.application = fapp;
+			tf.objid = it.objid;
+			//x.objid is the receivable id.
+			tf.receivableid = it.objid;
+			tf.qtr = 0;
+			tf.year = app.appyear;
+			tf.type = it.account.taxfeetype;
+
+			if(tf.type == "TAX") {
+				tf.paypriority = 3;
+			}
+			else if(tf.type == "REGFEE") {
+				tf.paypriority = 2;
+			}
+			else {
+				tf.paypriority = 1;
+			}	
+			if( tf.amtdue > 0 ) {
+				factMap.put(it.objid, tf);
+			}
+		}	
+		return factMap.values();
+	}
+
+
+	/********************************************************
+	* parameter format:
+	* list: objid, account : [title, taxfeetype, objid, department, code, interest:[objid,title,code],
+           surcharge:[objid,title,code]],
+		   lob : [objid, lobid, name, classification: [objid,name], assessmenttype]
+		   application: [objid, appyear]
+		   taxfeetype,paymentmode,assessedvalue,amount,amtpaid  
+	* 	   
+	*********************************************************/
+	@ProxyMethod
+	public def getBillItems(def list, def _billdate, def payoption) throws Exception {
+		if(!_billdate)
+			throw new Exception("Please specify billdate");
+		if(!payoption)
+			throw new Exception("Please specify payoption");
+		if( !payoption.type )	
+			throw new Exception("Please provide a payoption type")
+		if( payoption.type == 'FULLQTR' && !payoption.qtr ) {
+			throw new Exception("Please provide a qtr in payoption qtr")
+		}	
 		
+		//this will be used in excess payment. do not remove.
+		def billdt = dateSvc.parse("yyyy-MM-dd", _billdate );
+
+		def factList = buildFacts( list );
+		def facts = [];
+		facts.addAll( factList );
+
 		def billdate = new BillDate( billdt );
-		if( o.partialpmt > 0 ) {
-			facts << new Payment( o.partialpmt );	
-		}
 		facts << new EffectiveDate( billdt );
 		facts << new CurrentDate( dateSvc.serverDate );
 		facts << billdate;
-		facts << createQtrDeadline( app.appyear, 1 );
-		facts << createQtrDeadline( app.appyear, 2 );
-		facts << createQtrDeadline( app.appyear, 3 );
-		facts << createQtrDeadline( app.appyear, 4 );
-		facts << new PayOption( o.payoption, ((o.qtr==null)?0:o.qtr) );
+		
+		//payoption....
+		if( payoption.partialpmt > 0 ) {
+			facts << new Payment( payoption.partialpmt );	
+		}
+		facts << new PayOption(payoption.type, ((payoption.qtr==null)?0:payoption.qtr) );
 		
 		def request = [items: [], facts: facts ];
 		def actions = buildActions( request );
@@ -214,6 +227,15 @@ public class BPBillingRuleService  {
 
 		result.validUntil = billdate.validUntil;
 		result.taxcredit = request.taxcredit;
+
+		//organize by account
+		def acctitems = request.items?.sort{ it.duedate };
+		acctitems.each {
+			println "***********";
+			it.each{ k,v->
+				println k +"="+v;
+			}
+		}
 		return result;
 	}
 
@@ -222,6 +244,33 @@ public class BPBillingRuleService  {
 /********************************************************
 * specify which taxfees will be penalized in qtr basis
 *********************************************************/
+public class SetQtrDeadline implements RuleActionHandler {
+	def request;
+	def dateSvc;
+	def expiryDate;
+
+	public void execute(def params, def drools) {
+		def entry = params.entry;
+		def q = entry.qtr;
+		def y = entry.year;
+		def bd = dateSvc.getBeginningQtrDate( q, y, 1 );
+		def qtrDate = dateSvc.parseDate( bd, null );
+		def ed = expiryDate.findExpiryDate([year:y, qtr: q]);
+		if(ed) {
+			entry.deadline = ed.expirydate;
+		}	
+		else {
+			int mon = qtrDate.month;
+			def smon = "-"+mon+"-";
+			if( mon < 10) smon = "-0"+mon+"-"; 
+			entry.deadline = dateSvc.parseDate(y+smon+"20", null).date;
+		}
+		//add to request facts. very impt. otherwise this cannot be seen in other rule groups.
+		request.facts << entry;
+	}
+}
+
+
 public class SplitByQtr implements RuleActionHandler {
 	def request;
 	def NS;
@@ -242,6 +291,8 @@ public class SplitByQtr implements RuleActionHandler {
 				continue;
 			}	
 			def _tf = new BillItem();
+			_tf.objid = tf.objid + "_" + i;
+			_tf.application = tf.application;
 			_tf.acctid = tf.acctid;
 			_tf.type = tf.type;
 			_tf.amount = amt;
@@ -267,22 +318,39 @@ public class SplitByQtr implements RuleActionHandler {
 public class CalcSurcharge implements RuleActionHandler {
 	def request;
 	def NS;
+	def BA;
 	public void execute(def params, def drools) {
 		def tf = params.billitem;
 		def amt = params.amount.doubleValue;
+		def sa = params.account;
+		if(!sa) {
+			throw new Exception("CalcSurcharge rule error. Please provide surcharge account");
+		}
 		tf.surcharge = NS.round(amt);
 		tf.total += NS.round( tf.surcharge );
+		tf.surchargeaccount = BA.findSingleEntry( [objid: sa.key] );
+		if(!tf.surchargeaccount) {
+			throw new Exception("CalcSurcharge rule error. surcharge account not found " + sa.title);
+		}
 	}
 }
 
 public class CalcInterest implements RuleActionHandler {
 	def request;
 	def NS;
+	def BA;
 	public void execute(def params, def drools) {
 		def tf = params.billitem;
 		def amt = params.amount.doubleValue;
+		def sa = params.account;
+		if(!sa) 
+			throw new Exception("CalcInterest rule error. Please provide interest account");
 		tf.interest = NS.round(amt);
 		tf.total += NS.round( tf.interest );
+		tf.interestaccount = BA.findSingleEntry( [objid: sa.key] );
+		if(!tf.interestaccount) {
+			throw new Exception("CalcSurcharge rule error. interest account not found " + sa.title);
+		}
 	}
 }
 
@@ -340,6 +408,7 @@ public class CollectExcess implements RuleActionHandler {
 
 public class PrintTest implements RuleActionHandler {
 	public void execute(def params, def drools) {
+		println "enter print ";
 		def msg = params.message;
 		println "-------------- Print Message ------------------";
 		println msg.stringValue; 

@@ -77,6 +77,38 @@ public class BusinessInfoService extends ActiveCrudService {
 	}	
 
 
+	/**********************************************************
+	* updates lob, assessment infos and business infos
+	***********************************************************/ 
+	@ProxyMethod
+	public void createLobs( def lobs ) {
+		lobs.each {
+			it.objid = "BUSLOB"+new UID();
+			em.create(it, "lob");
+		}
+	}
+
+	@ProxyMethod
+	public void createInfos( def infos ) {
+		println infos.size();
+		infos.each {
+			it.objid = "BUSINFO"+new UID();
+			convertInfo(it);
+			em.create(it, "info");
+		}	
+	}
+
+	@ProxyMethod
+	public void createAssessmentInfos( def ainfos ) {
+		ainfos.each {
+			it.objid = "BUSASSMT"+new UID();
+			convertInfo(it);
+			em.create(it, "assessment_info");
+			println it.objid;
+		}	
+	}
+
+	
 	/********************************************************
 	* activate - this method is called when an application is 
 	* released. It will break the application into the app infos
@@ -85,32 +117,12 @@ public class BusinessInfoService extends ActiveCrudService {
 	*********************************************************/
 	@ProxyMethod
 	public def activate(o) {
-		if(o.state!='RETIRED') {
-			em.removeInfos(o);
-			o.infos.each {
-				it.businessid = o.objid;
-				it.applicationid = o.currentapplicationid;
-				convertInfo(it);
-				em.create(it, "info");
+		if(o.state=='CAPTURED') {
+			o.state = 'ACTIVE';
+			o.lobs.each {
+				em.create(it, "lob");
 			}
-			//update the state of the business
-			if(!o.state=='CAPTURED') o.state = 'ACTIVE';
 		}
-		o.lobs.each {
-			it.objid = "BUSLOB"+new UID();
-			it.businessid = o.objid;	
-			it.applicationid = o.currentapplicationid;
-			it.iyear = o.activeyear;
-			em.create(it, "lob");
-		}
-		o.assessmentinfos.each {
-			it.objid = "BUSASSMT"+new UID();
-			it.businessid = o.objid;
-			it.applicationid = o.currentapplicationid;
-			it.iyear = o.activeyear;
-			convertInfo(it);
-			em.create(it, "assessment_info");
-		}	
 		em.update(o);
 	}
 
@@ -194,6 +206,11 @@ public class BusinessInfoService extends ActiveCrudService {
 	@ProxyMethod
 	public def getRedflags(o) {
 		return em.getRedflags(o);
+	}
+	
+	@ProxyMethod
+	public def getApplicationList(o) {
+		return em.getApplicationList(o);
 	}
 	
 

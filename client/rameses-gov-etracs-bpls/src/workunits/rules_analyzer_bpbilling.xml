@@ -25,7 +25,7 @@
                 String title = "BP Billing Simulator";
                 
                 def entity;    
-                def query = [:];
+                def query = [partialpmt:0];
                 
                 def qtrs = (1..4);
                 def payOptions = LOV.BP_PAYOPTIONS*.key ;
@@ -49,7 +49,26 @@
                 
                 void runBilling() {
                     query.application = entity;
-                    result = billSvc.getBillItems( query );
+                    
+                    def poption = [:];
+                    poption.type = query.payoption;
+                    poption.qtr = query.qtr;
+                    poption.partialpayment = query.partialpmt;
+                    
+                    def list = [];
+                    entity.taxfees.each { z->
+                        def m = [:];
+                        m.putAll( z );
+                        if(z.lob?.objid) {
+                            m.lob = entity.lobs.find{ z.lob.objid == it.lobid }
+			}
+                        m.application = [objid:'APP', appyear:entity.appyear, apptype: entity.apptype];
+                        list << m;
+                    }
+                    query.list = list;
+                    
+                    result = billSvc.getBillItems( query.list, query.billdate, poption );
+                    
                     result.items.each {
                         it.balancedue = it.total;
                     }

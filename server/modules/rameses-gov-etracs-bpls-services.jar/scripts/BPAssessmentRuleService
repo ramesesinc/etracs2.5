@@ -144,6 +144,7 @@ public class BPAssessmentRuleService  {
 		actions.addCommand( "add_sysvar", new AddSysVar(request:request, comparator: comparator));
 		actions.addCommand( "assert_sysvars", new AssertSysVars(request:request));
 		actions.addCommand( "add_requirement", new AddRequirement(request:request, BR: br));
+		actions.addCommand( "change_business_account", new ChangeAccount(request:request, BA:ba));
 		actions.addCommand( "print_test", new PrintTest());
 		return actions;
 	}
@@ -453,7 +454,29 @@ public class AddRequirement implements RuleActionHandler {
 
 }
 
+public class ChangeAccount implements RuleActionHandler {
+	def request;
+	def BA;
+	public void execute(def params, def drools) {
+		def acct = params.account;
+		def tf = params.taxfee;
+		def acctid = tf.acctid;
+		def lob = tf.lob;
+		def taxfees = request.taxfees;
+		def test;
 
+		if( !lob ) {
+			test = taxfees.findAll{it.lob?.objid==null}.find{it.account.objid == acctid};
+		}
+		else {
+			test = taxfees.findAll{it.lob?.objid!=null}.find{ it.lob.objid == lob.objid && it.account.objid == acctid };
+		}
+		if(test) {
+			test.account = BA.findAccount( [objid: acct.key] );
+		}				
+	}
+
+}
 
 public class PrintTest implements RuleActionHandler {
 

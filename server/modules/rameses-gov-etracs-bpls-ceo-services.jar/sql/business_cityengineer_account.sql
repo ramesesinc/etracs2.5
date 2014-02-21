@@ -1,5 +1,4 @@
 [getList]
-SELECT ba.*, r.code, r.title
-FROM businessaccount ba 
-INNER JOIN revenueitem r ON ba.objid=r.objid 
-WHERE ba.department='CEO'
+SELECT r.objid, r.code, r.title, 'OTHERCHARGE' 
+FROM revenueitem r 
+WHERE r.org_objid='CEO'
