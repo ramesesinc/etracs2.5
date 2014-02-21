@@ -146,8 +146,8 @@ from remittance_cashreceipt rem
    inner join cashreceipt cr on cr.objid = rem.objid 
    inner join cashreceiptitem cri on cri.receiptid = cr.objid 
    inner join revenueitem ri on ri.objid = cri.item_objid 
-   left join revenueitem_sreaccount rs on rs.objid = ri.objid 
-   left join sreaccount sre on sre.objid = rs.acctid 
+   LEFT JOIN revenueitem_attribute attr ON ri.objid = attr.revitemid  and attr.attribute_objid='srestandard'
+   LEFT JOIN sreaccount sre on sre.objid = attr.account_objid 
 where rem.remittanceid=$P{remittanceid} 
 ORDER BY acctcode
 
@@ -163,8 +163,8 @@ from remittance_cashreceipt rem
    left join cashreceipt_void crv on crv.receiptid = cr.objid 
    inner join cashreceiptitem cri on cri.receiptid = cr.objid 
    inner join revenueitem ri on ri.objid = cri.item_objid 
-   left join revenueitem_sreaccount rs on rs.objid = ri.objid 
-   left join sreaccount a on a.objid = rs.acctid 
+   LEFT JOIN revenueitem_attribute attr ON ri.objid = attr.revitemid  and attr.attribute_objid='srestandard'
+   LEFT JOIN sreaccount a on a.objid = attr.account_objid 
 where rem.remittanceid=$P{remittanceid} 
 GROUP BY cr.formno, cr.receiptno, cr.paidby, crv.objid
 ORDER BY afid, serialno 
@@ -177,8 +177,8 @@ from remittance_cashreceipt rem
    inner join cashreceipt cr on cr.objid = rem.objid 
    inner join cashreceiptitem cri on cri.receiptid = cr.objid 
    inner join revenueitem ri on ri.objid = cri.item_objid 
-   left join revenueitem_account rs on rs.objid = ri.objid 
-   left join account n on n.objid = rs.acctid 
+   LEFT JOIN revenueitem_attribute attr ON ri.objid = attr.revitemid  and attr.attribute_objid='ngasstandard'
+   LEFT JOIN account n on n.objid = attr.account_objid 
 where rem.remittanceid=$P{remittanceid}
 ORDER BY acctcode
 
@@ -194,8 +194,8 @@ from remittance_cashreceipt rem
    left join cashreceipt_void crv on crv.receiptid = cr.objid 
    inner join cashreceiptitem cri on cri.receiptid = cr.objid 
    inner join revenueitem ri on ri.objid = cri.item_objid 
-   left join revenueitem_account rs on rs.objid = ri.objid 
-   left join account a on a.objid = rs.acctid 
+   LEFT JOIN revenueitem_attribute attr ON ri.objid = attr.revitemid  and attr.attribute_objid='ngasstandard'
+   LEFT JOIN account a on a.objid = attr.account_objid 
 where rem.remittanceid=$P{remittanceid}
 GROUP BY cr.formno, cr.receiptno, cr.paidby, crv.objid
 ORDER BY afid, serialno 
