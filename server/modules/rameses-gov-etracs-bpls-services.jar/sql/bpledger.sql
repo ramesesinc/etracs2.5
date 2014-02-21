@@ -5,13 +5,11 @@
 SELECT 
 	br.*, 
 	r.code AS account_code, 
-	ba.taxfeetype, 
-	ba.taxfeetype AS account_taxfeetype, 
+	br.taxfeetype AS account_taxfeetype, 
 	br.amount - br.amtpaid - br.discount AS balance,
 	app.appno
 FROM bpreceivable br 
-INNER JOIN businessaccount ba ON br.account_objid = ba.objid
-INNER JOIN revenueitem r ON  r.objid=ba.objid 
+INNER JOIN revenueitem r ON  r.objid=br.account_objid 
 LEFT JOIN bpapplication app ON app.objid=br.applicationid
 WHERE br.businessid=$P{objid} AND ((br.amount-br.amtpaid- br.discount) > 0) 
 ORDER BY br.iyear DESC, br.lob_name DESC, r.code ASC
@@ -48,10 +46,7 @@ SELECT
 	br.account_objid AS account_objid,
 	br.account_title AS account_title,
 	r.code AS account_code, 
-	ba.taxfeetype AS account_taxfeetype,
-	ba.surcharge_objid AS account_surcharge_objid,
-	ba.interest_objid AS account_interest_objid,
-
+	br.taxfeetype AS account_taxfeetype,
 	br.amount, 
 	br.amtpaid, 
 	br.discount,
@@ -60,12 +55,11 @@ SELECT
 	br.department,
 	br.iyear, 
 	br.iqtr, 
-	ba.taxfeetype, 
+	br.taxfeetype, 
 	br.amount - br.amtpaid - br.discount AS balance
 	
 FROM bpreceivable br 
-INNER JOIN businessaccount ba ON br.account_objid = ba.objid
-INNER JOIN revenueitem r ON  r.objid=ba.objid 
+INNER JOIN revenueitem r ON  r.objid=br.account_objid
 LEFT JOIN bpapplication app ON app.objid=br.applicationid
 LEFT JOIN lob l ON br.lob_objid=l.objid 
 LEFT JOIN business_lob bl ON bl.applicationid=br.applicationid AND bl.lobid=br.lob_objid
@@ -78,11 +72,10 @@ ORDER BY br.iyear DESC, br.lob_name DESC, r.code ASC
 ###########################################
 [getUnpaidReceivables]
 SELECT br.objid, br.businessid, br.objid AS receivableid, 
-r.code as account_code, br.account_title, br.account_objid, ba.taxfeetype AS account_taxfeetype,
+r.code as account_code, br.account_title, br.account_objid, br.taxfeetype AS account_taxfeetype,
 br.lob_objid,br.lob_name,br.amount, br.amtpaid
 FROM bpreceivable br
 INNER JOIN revenueitem r ON br.account_objid=r.objid 
-LEFT JOIN businessaccount ba ON ba.objid=r.objid 
 WHERE br.businessid=$P{businessid}  AND ((br.amount-br.amtpaid- br.discount) > 0) 
 
 
@@ -143,9 +136,9 @@ r.code,
 r.title,
 r.fund_objid, 
 r.fund_title 
-FROM businessaccount ba
-INNER JOIN revenueitem r ON r.objid=ba.objid
-WHERE ba.taxfeetype = 'TAXCREDIT'
+FROM revenueitem r 
+INNER JOIN revenueitem_attribute ra ON ra.revitemid=r.objid
+WHERE ra.account_objid = 'TAXCREDIT' AND ra.attribute_objid='businessaccounttype'
 
 [getPaymentItems]
 SELECT * FROM bppayment_item WHERE paymentid=$P{objid} ORDER BY lob_name DESC, account_code ASC

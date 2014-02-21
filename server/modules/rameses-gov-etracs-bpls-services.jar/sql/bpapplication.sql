@@ -2,10 +2,9 @@
 # used for retrieving the application
 #######################################
 [getTaxfees]
-SELECT br.*, r.code AS account_code, ba.taxfeetype, ba.taxfeetype AS account_taxfeetype 
+SELECT br.*, r.code AS account_code, br.taxfeetype AS account_taxfeetype 
 FROM bpreceivable br 
-INNER JOIN businessaccount ba ON br.account_objid = ba.objid
-INNER JOIN revenueitem r ON  r.objid=ba.objid 
+INNER JOIN revenueitem r ON  r.objid=br.account_objid 
 WHERE br.applicationid=$P{objid} 
 
 [getRequirements]
