@@ -10,6 +10,10 @@ class FaasTaskInterceptor
 	@Service('RPTTaskService')
 	def taskSvc
 
+	@Service('RPTTrackingService')
+    def trackingSvc
+
+
 	@Env
 	def env 
 
@@ -47,7 +51,7 @@ class FaasTaskInterceptor
 
 	@After(pattern="FAASService.submitForTaxmapping") 
 	public void submitForTaxmapping( evt ) {
-		def task = createTask(evt.result, 'FAAS requires taxmapper.')
+		def task = createTask(evt.result, 'FAAS is already submitted to taxmapping.')
 		task.action = 'assign-taxmapper'
 		taskSvc.createTask(task)
 		evt.result.taskaction = task.action
@@ -56,7 +60,7 @@ class FaasTaskInterceptor
 
 	@After(pattern="FAASService.submitForAppraisal") 
 	public void submitForAppraisal( evt ) {
-		def task = createTask(evt.result, 'FAAS requires appraisal.')
+		def task = createTask(evt.result, 'FAAS is already submitted for appraisal.')
 		task.action = 'assign-appraiser'
 		taskSvc.createTask(task)
 		evt.result.taskaction = task.action
@@ -64,7 +68,7 @@ class FaasTaskInterceptor
 
 	@After(pattern="FAASService.submitFaasForApproval") 
 	public void submitFaasForApproval( evt ) {
-		def task = createTask(evt.result, 'FAAS requires approval.')
+		def task = createTask(evt.result, 'FAAS is already submitted for approval.')
 		task.action = 'assign-approver'
 		taskSvc.createTask(task)
 		evt.result.taskaction = task.action
@@ -75,6 +79,7 @@ class FaasTaskInterceptor
 	@After(pattern="FAASService.approveFaas") 
 	public void approveFaas( evt ) {
 		taskSvc.closeTask([objid:evt.result.objid])
+		trackingSvc.updateMessage([objid:evt.result.objid, msg:'FAAS is already approved.'])
 	}
 
 	@After(pattern="FAASService.disapproveFaas") 

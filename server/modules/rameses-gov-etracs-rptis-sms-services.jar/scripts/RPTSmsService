@@ -53,17 +53,43 @@ public class RPTSmsService extends ActiveCrudListService
 	}
 
 	@ProxyMethod
-	public def enroll( info ) {
+	public def enrollFaas( info ) {
 		def faas = em.findFaasByTdNo(info)		
 		if (!faas)
-			throw new Exception('TD No. ' + info.tdno + ' is invalid or not enrolled.')
+			throw new Exception('TD No. ' + info.refno + ' is invalid or not enrolled.')
 		if (faas.state == 'CANCELLED')
-			throw new Exception('TD No. ' + info.tdno + ' has already been cancelled.')
+			throw new Exception('TD No. ' + info.refno + ' has already been cancelled.')
 		if (faas.state != 'CURRENT')
-			throw new Exception('TD No. ' + info.tdno + ' is not yet approved.')
+			throw new Exception('TD No. ' + info.refno + ' is not yet approved.')
 		
-		em.enroll([phoneno:info.phoneno, rptledgerid:faas.rptledgerid])
-		return 'TD No. ' + info.tdno + ' has been successfully enrolled.'
+		em.enroll([phoneno:info.phoneno, refid:faas.rptledgerid])
+		return 'TD No. ' + info.refno + ' has been successfully enrolled.'
+	}
+
+
+	@ProxyMethod
+	public def enrollTrackingNo( info ) {
+		def tracking = em.findTrackingInfo(info)		
+		if (!tracking)
+			throw new Exception('Tracking No. ' + info.refno + ' is invalid.')
+		
+		em.enroll([phoneno:info.phoneno, refid:tracking.objid])
+		return 'Tracking No. ' + info.refno + ' has been successfully enrolled. Text RPTSTATUS <trackingno> to receive status information. '
+	}
+
+
+	@ProxyMethod
+	public def getTrackingStatus( info ) {
+		def tracking = em.findRegisteredTracking(info)
+
+		if (!tracking)
+			throw new Exception('Tracking No. ' + info.refno + ' is invalid.')
+		
+		String msg = ''
+		msg += 'Tracking No.  : ' + tracking.trackingno
+		msg += '  Document Type : ' + tracking.filetype.toUpperCase()
+		msg += '  Status        : ' + tracking.msg
+		return msg
 	}
 
 
@@ -71,7 +97,7 @@ public class RPTSmsService extends ActiveCrudListService
 	public def getInfo( info ) {
 		def list = []
 
-		if (info.tdno ) {
+		if (info.refno ) {
 			def faas = em.findRegisteredFaasByTdNo(info)
 			if (faas) 
 				list << faas 
@@ -104,13 +130,13 @@ public class RPTSmsService extends ActiveCrudListService
 	public def generateBillByTdNo(info) {
 		def faas = em.findRegisteredFaasByTdNo(info)		
 		if (!faas)
-			throw new Exception('TD No. ' + info.tdno + ' is invalid or not enrolled.')
+			throw new Exception('TD No. ' + info.refno + ' is invalid or not enrolled.')
 		if (faas.state == 'CANCELLED')
-			throw new Exception('TD No. ' + info.tdno + ' has already been cancelled.')
+			throw new Exception('TD No. ' + info.refno + ' has already been cancelled.')
 
 		billSvc.generateBillByLedgerId(faas.rptledgerid)
 		def bill = billReportSvc.generateReportByLedgerId( faas.rptledgerid )
-		def msg = 'Current Balance for TD No. ' + info.tdno + ' is ' + bill.total + '. '
+		def msg = 'Current Balance for TD No. ' + info.refno + ' is ' + bill.total + '. '
 		msg += 'Amount is valid until ' + dtSvc.format('MMMM dd, yyyy', bill.validuntil) + '.'
 		return msg 
 	}
@@ -119,7 +145,7 @@ public class RPTSmsService extends ActiveCrudListService
 	@ProxyMethod
 	public def deleteRegisteredTdNo( info ) {
 		em.deleteRegisteredTdNo(info)
-		return 'TD No. ' + info.tdno + ' has been successfully unregistered.'
+		return 'TD No. ' + info.refno + ' has been successfully unregistered.'
 	}
 
 

@@ -8,5 +8,6 @@
 		<field name="amount" required="true"/>
 		<field name="amtpaid" required="true"/>
 		<field name="action"/>
+		<field name="status"/>
 	</element>
 </schema>

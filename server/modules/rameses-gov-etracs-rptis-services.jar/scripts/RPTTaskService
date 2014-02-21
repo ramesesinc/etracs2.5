@@ -10,6 +10,9 @@ class RPTTaskService
     @Service('DateService')
     def dtSvc
 
+    @Service('RPTTrackingService')
+    def trackingSvc
+
     @Env
     def env 
 
@@ -49,7 +52,9 @@ class RPTTaskService
         task.createdby = getUserInfo()
         task.assignedto = getUserInfo()
         task.enddate = null
+        task.msg = 'Document is currently processed by ' + task.assignedto.name + '.'
         em.create(task)
+        trackingSvc.updateMessage(task)
         return task
     }
 

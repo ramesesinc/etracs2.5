@@ -10,6 +10,9 @@ class ConsolidationTaskInterceptor
 	@Service('RPTTaskService')
 	def taskSvc
 
+	@Service('RPTTrackingService')
+    def trackingSvc
+
 	@Env
 	def env 
 
@@ -42,7 +45,7 @@ class ConsolidationTaskInterceptor
 
 	@After(pattern="ConsolidationService.submitForTaxmapping") 
 	public void submitForTaxmapping( evt ) {
-		def task = createTask(evt.result, 'Consolidation requires taxmapper.')
+		def task = createTask(evt.result, 'Consolidation is already submitted to taxmapping.')
 		task.action = 'assign-taxmapper'
 		taskSvc.createTask(task)
 		evt.result.taskaction = task.action
@@ -51,7 +54,7 @@ class ConsolidationTaskInterceptor
 
 	@After(pattern="ConsolidationService.submitForAppraisal") 
 	public void submitForAppraisal( evt ) {
-		def task = createTask(evt.result, 'Consolidation requires appraisal.')
+		def task = createTask(evt.result, 'Consolidation is already submitted for appraisal.')
 		task.action = 'assign-appraiser'
 		taskSvc.createTask(task)
 		evt.result.taskaction = task.action
@@ -59,7 +62,7 @@ class ConsolidationTaskInterceptor
 
 	@After(pattern="ConsolidationService.submitForApproval") 
 	public void submitForApproval( evt ) {
-		def task = createTask(evt.result, 'Consolidation requires approval.')
+		def task = createTask(evt.result, 'Consolidation is already submitted for approval.')
 		task.action = 'assign-approver'
 		taskSvc.createTask(task)
 		evt.result.taskaction = task.action
@@ -70,6 +73,7 @@ class ConsolidationTaskInterceptor
 	@After(pattern="ConsolidationService.approveConsolidationAsync") 
 	public void approveConsolidationAsync( evt ) {
 		taskSvc.closeTask([objid:evt.result.objid])
+		trackingSvc.updateMessage([objid:evt.result.objid, msg:'Consolidation is already approved.'])
 	}
 
 	@After(pattern="ConsolidationService.approveConsolidation") 

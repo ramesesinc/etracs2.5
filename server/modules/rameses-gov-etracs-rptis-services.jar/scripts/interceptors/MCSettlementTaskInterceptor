@@ -10,6 +10,9 @@ class MCSettlementTaskInterceptor
 	@Service('RPTTaskService')
 	def taskSvc
 
+	@Service('RPTTrackingService')
+    def trackingSvc
+    
 	@Env
 	def env 
 
@@ -33,7 +36,7 @@ class MCSettlementTaskInterceptor
 
 	@After(pattern="MCSettlementService.create") 
 	public void create( evt ) {
-		def task = createTask(evt.result, 'Receive Resection for processing.')
+		def task = createTask(evt.result, 'Receive Multiple Claim Settlement for processing.')
 		task.action = 'receive'
 		task = taskSvc.createTask(task)
 		taskSvc.assignTask(task)
@@ -57,7 +60,7 @@ class MCSettlementTaskInterceptor
 
 	@After(pattern="MCSettlementService.submitForTaxmapping") 
 	public void submitForTaxmapping( evt ) {
-		def task = createTask(evt.result, 'Document requires taxmapper.')
+		def task = createTask(evt.result, 'Multiple Claim Settlement is already submitted to taxmapping.')
 		task.action = 'assign-taxmapper'
 		taskSvc.createTask(task)
 		evt.result.taskaction = task.action
@@ -66,7 +69,7 @@ class MCSettlementTaskInterceptor
 
 	@After(pattern="MCSettlementService.submitForAppraisal") 
 	public void submitForAppraisal( evt ) {
-		def task = createTask(evt.result, 'Document requires appraisal.')
+		def task = createTask(evt.result, 'Multiple Claim Settlement is already submitted for appraisal.')
 		task.action = 'assign-appraiser'
 		taskSvc.createTask(task)
 		evt.result.taskaction = task.action
@@ -74,7 +77,7 @@ class MCSettlementTaskInterceptor
 
 	@After(pattern="MCSettlementService.submitForApproval") 
 	public void submitForApproval( evt ) {
-		def task = createTask(evt.result, 'Document requires approval.')
+		def task = createTask(evt.result, 'Multiple Claim Settlement is already submitted for approval.')
 		task.action = 'assign-approver'
 		taskSvc.createTask(task)
 		evt.result.taskaction = task.action
@@ -85,6 +88,7 @@ class MCSettlementTaskInterceptor
 	@After(pattern="MCSettlementService.approve") 
 	public void approve( evt ) {
 		taskSvc.closeTask([objid:evt.result.objid])
+		trackingSvc.updateMessage([objid:evt.result.objid, msg:'Multiple Claim Settlement is already approved.'])
 	}
 
 	@After(pattern="MCSettlementService.disapprove") 

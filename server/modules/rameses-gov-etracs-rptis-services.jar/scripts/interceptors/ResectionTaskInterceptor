@@ -10,6 +10,9 @@ class ResectionTaskInterceptor
 	@Service('RPTTaskService')
 	def taskSvc
 
+	@Service('RPTTrackingService')
+    def trackingSvc
+
 	@Env
 	def env 
 
@@ -57,7 +60,7 @@ class ResectionTaskInterceptor
 
 	@After(pattern="ResectionService.submitForTaxmapping") 
 	public void submitForTaxmapping( evt ) {
-		def task = createTask(evt.result, 'Resection requires taxmapper.')
+		def task = createTask(evt.result, 'Resection is already submitted to taxmapping.')
 		task.action = 'assign-taxmapper'
 		taskSvc.createTask(task)
 		evt.result.taskaction = task.action
@@ -66,7 +69,7 @@ class ResectionTaskInterceptor
 
 	@After(pattern="ResectionService.submitForAppraisal") 
 	public void submitForAppraisal( evt ) {
-		def task = createTask(evt.result, 'Resection requires appraisal.')
+		def task = createTask(evt.result, 'Resection is already submitted for appraisal.')
 		task.action = 'assign-appraiser'
 		taskSvc.createTask(task)
 		evt.result.taskaction = task.action
@@ -74,7 +77,7 @@ class ResectionTaskInterceptor
 
 	@After(pattern="ResectionService.submitForApproval") 
 	public void submitForApproval( evt ) {
-		def task = createTask(evt.result, 'Resection requires approval.')
+		def task = createTask(evt.result, 'Resection is already submitted for approval.')
 		task.action = 'assign-approver'
 		taskSvc.createTask(task)
 		evt.result.taskaction = task.action
@@ -85,6 +88,7 @@ class ResectionTaskInterceptor
 	@After(pattern="ResectionService.approveResectionAsync") 
 	public void approveSubdivisionAsync( evt ) {
 		taskSvc.closeTask([objid:evt.result.objid])
+		trackingSvc.updateMessage([objid:evt.result.objid, msg:'Resection is already approved.'])
 	}
 
 	@After(pattern="ResectionService.approveResection") 

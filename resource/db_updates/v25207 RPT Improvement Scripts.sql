@@ -600,14 +600,14 @@ go
 CREATE TABLE rpt_sms_registration
 (
   phoneno varchar(25) NOT NULL,
-  rptledgerid varchar(50) NOT NULL,
+  refid varchar(50) NOT NULL,
   dtregistered datetime not null,
-  primary key(phoneno, rptledgerid)
+  primary key(phoneno, refid)
 ) 
 
 go
 
-create index ix_rptsmsreg_rptledgerid on rpt_sms_registration(rptledgerid)
+create index ix_rptsmsreg_refid on rpt_sms_registration(refid)
 go
 
 
@@ -622,6 +622,7 @@ create table rpt_sms
 	amount numeric(10,2) not null,
 	amtpaid numeric(10,2) not null,
 	action varchar(100),
+	status varchar(25)
 )
 go
 

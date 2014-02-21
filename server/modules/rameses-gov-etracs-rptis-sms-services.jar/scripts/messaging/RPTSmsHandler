@@ -58,12 +58,12 @@ class RPTSmsHandler {
 		def reply = createReply(params)
 		def info = parseInfo(params)
 
-		if (!info.tdno) {
+		if (!info.refno) {
 			setError(reply, 'TD No. must be specified. Please text RPTENROLL <tdno>.')
 		}
 		else {
 			try{
-				reply.message = rptSmsSvc.enroll(info)
+				reply.message = rptSmsSvc.enrollFaas(info)
 			}
 			catch(e){
 				setError(reply, getErrorCause(e))
@@ -94,7 +94,7 @@ class RPTSmsHandler {
 		def reply = createReply(params)
 		def info = parseInfo(params)
 
-		if (!info.tdno) {
+		if (!info.refno) {
 			setError(reply, 'TD No. must be specified. Please text RPTBAL <tdno>.')
 		}
 		else {
@@ -115,7 +115,7 @@ class RPTSmsHandler {
 		def reply = createReply(params)
 		def info = parseInfo(params)
 		try{
-			if (info.tdno)
+			if (info.refno)
 				reply.message = rptSmsSvc.deleteRegisteredTdNo(info)
 			else 
 				reply.message = rptSmsSvc.deleteAllRegistration(info)
@@ -125,6 +125,49 @@ class RPTSmsHandler {
 		}
 		sendReply(reply)
 	} 
+
+
+
+	@OnMessage(value="sms_listener", eval="#{data.keyword.equalsIgnoreCase('RPTTRACK')}")
+	public void handleRPTTracking(def params) 
+	{
+		def reply = createReply(params)
+		def info = parseInfo(params)
+
+		if (!info.refno) {
+			setError(reply, 'Tracking No. must be specified. Please text RPTTRACK <trackingno>.')
+		}
+		else {
+			try{
+				reply.message = rptSmsSvc.enrollTrackingNo(info)
+			}
+			catch(e){
+				setError(reply, getErrorCause(e))
+			}
+		}
+		sendReply(reply)
+	} 
+
+	@OnMessage(value="sms_listener", eval="#{data.keyword.equalsIgnoreCase('RPTSTATUS')}")
+	public void handleTrackingStatusRequest(def params) 
+	{
+		def reply = createReply(params)
+		def info = parseInfo(params)
+
+		if (!info.refno) {
+			setError(reply, 'Tracking No. must be specified.')
+		}
+		else {
+			try{
+				reply.message = rptSmsSvc.getTrackingStatus(info)
+			}
+			catch(e){
+				setError(reply, getErrorCause(e))
+			}
+		}
+		sendReply(reply)
+	} 
+
 
 
 	def createReply(params){
@@ -145,7 +188,7 @@ class RPTSmsHandler {
 		return [
 			keyword		: params.keyword.toUpperCase(),
 			phoneno 	: params.phoneno,
-			tdno		: (tokens.size() != 0 ? tokens[0] : null ),
+			refno		: (tokens.size() != 0 ? tokens[0] : null ),
 		]
 	}
 
@@ -175,10 +218,11 @@ class RPTSmsHandler {
 		help += '(a) RPTENROLL <tdno> - enrolls tdno to avail SMS services\n'
 		help += '(b) RPTINFO - receive info for each enrolled properties\n'
 		help += '(c) RPTINFO <tdno> - receive tdno info\n'
-		help += '(d) RPTBAL - inquire current balance for each enrolled properties\n'
-		help += '(e) RPTBAL <tdno> - inquire current balance of tdno.\n'
-		help += '(f) RPTSTOP - unregister all properties\n'
-		help += '(g) RPTSTOP <tdno> - unregister tdno.\n'
+		help += '(d) RPTBAL <tdno> - inquire current balance of tdno.\n'
+		help += '(e) RPTTRACK <trackingno> - enroll a tracking no.\n'
+		help += '(f) RPTSTATUS <trackingno> - inquire document status.\n'
+		help += '(g) RPTSTOP - unregister all properties\n'
+		help += '(h) RPTSTOP <tdno> - unregister tdno.\n'
 		return help 
 	}
 	
@@ -194,6 +238,7 @@ class RPTSmsHandler {
 		sms.action = reply.keyword;
 		sms.amount = SMS_COST * (reply.creditcount == null ? 1 : reply.creditcount);
 		sms.amtpaid = 0.0;
+		sms.status = reply.retcode 
 		em.create(sms);
 	}
 
