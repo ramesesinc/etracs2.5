@@ -349,7 +349,7 @@ public class RPTBillingService
 			def av = qtrlyav
 			if (qtr == 4) av = fourthqtrav
 			def ledger = createRPTLedgerData(bill, ledgerfaas, yr, qtr, qtr, qtr, av)
-			def ledgerfact = createLedgerFact(ledger)
+			def ledgerfact = createLedgerFact(bill, ledger)
 			data.ledgers << ledger 
 			data.facts << ledgerfact 
 		}
@@ -375,7 +375,7 @@ public class RPTBillingService
 			av = qtrlyav * (toqtr - fromqtr + 1)
 
 		def ledger = createRPTLedgerData(bill, ledgerfaas, yr, 0, fromqtr, toqtr, av)
-		def ledgerfact = createLedgerFact(ledger)
+		def ledgerfact = createLedgerFact(bill, ledger)
 		data.ledgers << ledger 
 		data.facts << ledgerfact 
 	}
@@ -411,12 +411,18 @@ public class RPTBillingService
         ledger.advancepayment         = bill.advancepayment 
 		ledger.backtax				  = ledgerfaas.backtax 
 		ledger.reclassed			  = (ledgerfaas.reclassed != null ? ledgerfaas.reclassed : false)
+		ledger.basicpaid 		= (bill.ledger.partialbasic == null ? 0.0 : bill.ledger.partialbasic)
+		ledger.basicintpaid 	= (bill.ledger.partialbasicint == null ? 0.0 : bill.ledger.partialbasicint)
+		ledger.basicdisctaken 	= (bill.ledger.partialbasicdisc == null ? 0.0 : bill.ledger.partialbasicdisc)
 		return ledger 
 	}
 
-	def createLedgerFact(ledger){
+	def createLedgerFact(bill, ledger){
 		def ledgerfact = ruleSvc.createFact(RULESET, FACT_PACKAGE+'RPTLedgerFact')
 		populateFactData(ledgerfact, ledger)
+		bill.ledger.partialbasic = 0.0
+		bill.ledger.partialbasicint = 0.0
+		bill.ledger.partialbasicdisc = 0.0
 		return ledgerfact 
 	}
 
