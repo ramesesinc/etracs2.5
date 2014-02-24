@@ -13,6 +13,9 @@ class FaasReportService
 	@Service('TxnSignatoryService')
 	def signatorySvc 
 
+	@Service('EntityContactService')
+	def contactSvc 
+
 
 	@Service('RPTUtil')
 	def util
@@ -115,7 +118,7 @@ class FaasReportService
 	}
 	
 	private void getOwnerContactNo( faas ) {
-		def list = em.sqlContext.createNamedQuery('entity:getContacts').setParameter('objid', faas.taxpayer.objid).resultList
+		def list = contactSvc.getList([entityid:faas.taxpayer.objid])
 			
 		if( list ) {
 			def contacts = []
