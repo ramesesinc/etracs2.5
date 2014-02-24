@@ -736,7 +736,7 @@ public class CalcBasicDiscount implements RuleActionHandler {
 		def ledger = ledgers.find{ it.objid == params.rptledger.objid }
 		if (ledger){
 			ledger.basicdisc = numSvc.round(params.expr.getDecimalValue());
-			params.rptledger.basicdisc = params.expr.getDecimalValue();
+			params.rptledger.basicdisc = ledger.basicdisc
 		}
 	}
 }	
@@ -886,6 +886,7 @@ public class CalcLguShare implements RuleActionHandler {
 		def ledger = ledgers.find{ it.objid == params.rptledger.objid }
 		if (ledger){
 			ledger.lgushare = numSvc.round(params.expr.getDecimalValue())
+			params.rptledger.lgushare = ledger.lgushare
 		}
 	}
 }	
@@ -898,6 +899,7 @@ public class CalcLguIntShare implements RuleActionHandler {
 		def ledger = ledgers.find{ it.objid == params.rptledger.objid }
 		if (ledger){
 			ledger.lguintshare = numSvc.round(params.expr.getDecimalValue())
+			params.rptledger.lguintshare = ledger.lguintshare
 		}
 	}
 }	
