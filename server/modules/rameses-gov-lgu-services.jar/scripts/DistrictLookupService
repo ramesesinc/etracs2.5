@@ -24,14 +24,12 @@ class DistrictLookupService extends ActiveListService
 
 	@ProxyMethod
 	public def getById( objid ) {
-		return em.sqlContext.createNamedQuery('district:getById')
-				.setParameter('objid', objid).singleResult	
+		return em.findById([objid:objid])
 	}
 
 	@ProxyMethod
 	public def getListByParentid( parentid ) {
-		return em.sqlContext.createNamedQuery('district:getListByParentid')
-				.setParameter('parentid', parentid).resultList	
+		return em.getListByParentid([parentid:parentid])
 	}
 
 }
