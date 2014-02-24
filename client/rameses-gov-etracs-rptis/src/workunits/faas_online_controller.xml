@@ -96,6 +96,7 @@ public class AbstractOnlineFaasController extends PageFlowController
         }
         
         if (sections){
+            sections.sort{a,b -> a.properties.index <=> b.properties.index }
             selectedSection = sections[0];
         }
     }
@@ -282,8 +283,8 @@ public class AbstractOnlineFaasController extends PageFlowController
         
         <page name="default" title="FAAS #{entity.txntype.name} (Interim)">
             <transition caption="Close"  to="end"      mnemonic="c" icon="images/toolbars/cancel.png" />
-            <transition caption="Delete" to="delete"  action="delete" confirm="Delete record?"    mnemonic="d" icon="images/toolbars/trash.png"  role="APPRAISER" permission="faas.delete"/>
-            <transition caption="Submit to Taxmapping" to="open" action="submitForTaxmapping"  mnemonic="m"  confirm="Submit FAAS for approval?" role="APPRAISER" permission="faas.submit"/>
+            <transition caption="Delete" to="delete"  action="delete" confirm="Delete record?"    mnemonic="d" icon="images/toolbars/trash.png"  role="APPRAISER,EXAMINER" permission="faas.delete"/>
+            <transition caption="Submit to Taxmapping" to="open" action="submitForTaxmapping"  mnemonic="m"  confirm="Submit FAAS for approval?" role="APPRAISER,EXAMINER" permission="faas.submit"/>
         </page>
         
         <process name="back-to-default">

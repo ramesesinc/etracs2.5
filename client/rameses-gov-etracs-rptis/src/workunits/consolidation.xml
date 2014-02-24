@@ -5,11 +5,11 @@
                    
         <invoker folderid="/explorer/txn/rpt/online" action="init"  caption="Consolidation" index="21"
             txntypeid="CS" txntype="Consolidation" newledger="true" newrpu="true" 
-            role="APPRAISER" permission="consolidation.create"/>
+            role="APPRAISER,EXAMINER" permission="consolidation.create"/>
 
          <invoker type="quick_launcher" code="CS01" action="init"  caption="Consolidation" index="21"
             txntypeid="CS" txntype="Consolidation" newledger="true" newrpu="true" 
-            role="APPRAISER" permission="consolidation.create"/>
+            role="APPRAISER,EXAMINER" permission="consolidation.create"/>
             
    </invokers>
    <code class="com.rameses.gov.etracs.rpt.consolidation.ui.ConsolidationController">

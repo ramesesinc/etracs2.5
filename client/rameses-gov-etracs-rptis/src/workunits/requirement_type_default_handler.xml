@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workunit>
+    
+    <invokers>
+        <invoker type="rptrequirementtype:handler" action="init" name="default" caption="Default Handler" />
+        <invoker type="formActions" action="edit" caption="Edit" mnemonic="e" role="EXAMINER" visibleWhen="#{mode == 'read'}"/>
+        <invoker type="formActions" action="update" caption="Update" mnemonic="u"  role="EXAMINER" visibleWhen="#{mode != 'read'}"/>
+    </invokers>
+        
+    <code lang="groovy">
+        import com.rameses.rcp.common.*;
+        import com.rameses.rcp.annotations.*;
+        import com.rameses.osiris2.client.*;
+        import com.rameses.osiris2.common.*
+        
+        public class RPTRequirementTypeDefaultHandler 
+        {
+            def svc;   // RPTRequirementService
+            
+            def entity;
+            
+            def MODE_READ = 'read';
+            def MODE_EDIT = 'edit';
+            
+            def mode; 
+            
+            @PropertyChangeListener 
+            def listener = [
+                'entity.value.txnno' : { o ->
+                    entity.complied = 0;
+                    if (o) entity.complied = 1;
+                }
+            ]
+            
+            void init(){
+                if ( ! entity.value )
+                    entity.value = [:];
+                    
+                mode = MODE_READ;
+            }
+            
+            void edit(){
+                mode = MODE_EDIT;
+            }
+            
+            void update(){
+                svc.update(entity);
+                mode = MODE_READ;
+            }
+            
+            public String getCaption(){
+                return entity.requirementtype.name + ' Detail'
+            }
+        }
+        
+    </code>
+    
+    <pages>
+        <page template="com.rameses.gov.etracs.rpt.master.requirementtype.ui.RequirementTypeDefaultHandlerPage" />
+    </pages>
+</workunit>
+
