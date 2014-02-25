@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,6 +39,42 @@ public class DBImageUtil {
         return util;
     }
     
+    
+    public File getImage(Object objid) throws Exception{
+        
+        String cacheDir = System.getProperty("user.dir") + File.separatorChar + "cache";
+        clearCacheDir(cacheDir);
+        
+        String safeid = objid.toString().replaceAll(":", "-");
+        String filename = cacheDir + File.separatorChar + safeid;
+        
+        System.out.println("Loading " + filename + " ");
+        File file = new File(filename);
+        if (!file.exists()){
+            System.out.println("Saving " + filename + " ");
+            saveToFile(objid, filename);
+            file = new File(filename);
+        }
+        return file;
+    }
+    
+    void clearCacheDir(String cacheDir){
+        File file = new File(cacheDir);
+        if (!file.exists()){
+            file.mkdir();
+        }
+        else {
+            String key = "cached_image_file";
+            if (System.getProperty(key) == null){
+                System.out.println("Clearing image cache -> " + cacheDir);
+                File[] files = file.listFiles();
+                for (File f : files){
+                    f.delete();
+                }
+            }
+            System.getProperties().put(key, "initialized");
+        }
+    }
     
     
     public void saveToFile(Object objid, String fileName) throws Exception{
@@ -64,10 +101,9 @@ public class DBImageUtil {
             if (fos != null)
                 try{ fos.close(); } catch(Exception e){}
         }
-        System.out.println("Filesize -> " + fileSize);
     }
     
-    
+   
     public long upload(Map header, String filename) throws Exception {
         InputStream is = null;
         BufferedInputStream bis = null;
