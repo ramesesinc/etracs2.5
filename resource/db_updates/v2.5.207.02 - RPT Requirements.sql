@@ -78,4 +78,10 @@ values
 	('RPT.EXAMINER', 'EXAMINER', 'RPT', 'usergroup', null, 'EXAMINER')
 go
 
+insert into sys_usergroup 
+	(objid, title, domain, userclass, orgclass, role)
+values
+	('RPT.RECORD', 'RECORD', 'RPT', 'usergroup', null, 'RECORD')
+go
+
 
