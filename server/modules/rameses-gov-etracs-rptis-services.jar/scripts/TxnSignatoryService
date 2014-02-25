@@ -110,6 +110,7 @@ class TxnSignatoryService
 			signatories = entity.signatories
 		}
 		signatories.each{
+			if (!it) it = [:]
 			if (it.dtsigned) 
 				it.dtsigned = dtSvc.parse('yyyy-MM-dd', it.dtsigned)
 			entity[it.type] = it 
