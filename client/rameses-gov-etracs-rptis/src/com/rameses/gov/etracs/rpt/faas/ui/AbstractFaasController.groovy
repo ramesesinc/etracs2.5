@@ -91,7 +91,7 @@ public abstract class AbstractFaasController extends PageFlowController
     
     
     void cancelEdit(){
-        entity = service.openFaas(entity.objid);
+        entity = service.openFaas(entity);
         rp = entity.rp;
         rpu = entity.rpu;
         mode = MODE_READ;

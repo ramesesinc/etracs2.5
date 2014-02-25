@@ -57,6 +57,14 @@
             
         <invoker folderid="/explorer/txn/rpt/online" action="init" caption="Re-Assessment" 
             txntype="RE" role="APPRAISER,EXAMINER" permission="faas.createReassessment" index="10"  />
+            
+            
+            
+        <invoker type="quick_launcher" code="RV01" action="init" caption="Revision" 
+            txntype="RV" role="APPRAISER,EXAMINER" index="10"  />
+            
+        <invoker folderid="/explorer/txn/rpt/online" action="init" caption="Revision" 
+            txntype="RV" role="APPRAISER,EXAMINER" index="10"  />            
                  
             
     </invokers>

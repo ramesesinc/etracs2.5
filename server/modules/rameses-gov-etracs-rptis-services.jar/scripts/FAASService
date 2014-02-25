@@ -472,6 +472,7 @@ class FAASService
             [objid:'CTD', 	name:'Cancellation', 				newledger:false, 	newrpu:false],
             [objid:'MC', 	name:'Multiple Claim', 				newledger:true, 	newrpu:true, newrealproperty:true, checkbalance:false],
             [objid:'MS', 	name:'Multiple Claim Settlement',	newledger:false, 	newrpu:true, newrealproperty:true, checkbalance:false],
+            [objid:'RV', 	name:'Revision', 					newledger:false, 	newrpu:true, newrealproperty:true, checkbalance:false],
             
             [objid:'RS', 	name:'Resection', 					newledger:false, 	newrpu:true, newrealproperty:true, checkbalance:false],
             
