@@ -46,20 +46,22 @@ class RPTTaskListService extends ActiveListService
         switch(params.name) {
             case 'search':
                 if ( ! params.searchtext ) params.searchtext = '%'
+                params.filters  += ' AND t.refno LIKE $P{searchtext} '
                 break
 
             case 'mytask':
                 params.userid   = env.USERID 
-                params.filters  += ' AND t.assignedto_objid = $P{userid} AND t.enddate IS NULL'
+                params.filters  += ' AND t.refno LIKE $P{searchtext}  AND t.assignedto_objid = $P{userid} AND t.enddate IS NULL'
                 break
 
             case 'open':
-                params.filters  += ' AND t.assignedto_objid IS NULL  AND t.enddate IS NULL '
+                params.filters  += ' AND t.refno LIKE $P{searchtext} AND t.assignedto_objid IS NULL  AND t.enddate IS NULL '
                 break            
 
             default :
                 break
         }
+        println 'params -> ' + params 
 	}
 	
     

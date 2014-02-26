@@ -85,3 +85,28 @@ values
 go
 
 
+/* MYSQL
+
+CREATE TABLE `image_file` (
+  `objid` VARCHAR(50) CHARACTER SET latin1 NOT NULL,
+  `refid` VARCHAR(50) NOT NULL,
+  `title` VARCHAR(100) CHARACTER SET latin1 NOT NULL,
+  `filesize` INT(11) DEFAULT NULL,
+  `extension` VARCHAR(25) CHARACTER SET latin1 DEFAULT '',
+  PRIMARY KEY  (`objid`)
+) ENGINE=INNODB DEFAULT CHARSET=utf8;
+
+
+CREATE TABLE `image_file_item` (
+  `objid` VARCHAR(50) NOT NULL,
+  `parentid` VARCHAR(50) NOT NULL DEFAULT '',
+  `fileno` INT(11) NOT NULL,
+  `byte` BLOB NOT NULL,
+  PRIMARY KEY  (`objid`)
+) ENGINE=INNODB DEFAULT CHARSET=utf8;
+
+
+*/
+
+
+

@@ -4,16 +4,16 @@
  * Created on June 25, 2011, 10:56 AM
  */
 
-package com.rameses.gov.etracs.rpt.faas.ui;
+package com.rameses.gov.etracs.rpt.common;
 
 import com.rameses.osiris2.themes.FormPage;
 import com.rameses.rcp.ui.annotations.Template;
 
 @Template(FormPage.class)
-public class FAASOnlineInfoRequirementPage extends javax.swing.JPanel {
+public class RequirementInfoPage extends javax.swing.JPanel {
     
     /** Creates new form FAASPage */
-    public FAASOnlineInfoRequirementPage() {
+    public RequirementInfoPage() {
         initComponents();
     }
     

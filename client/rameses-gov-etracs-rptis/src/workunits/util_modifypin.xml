@@ -3,8 +3,10 @@
     <invokers>
         <invoker folderid="/explorer/txn/rpt/util" action="init" caption="Modify PIN" target="popup" index="500"
             role="APPRAISER" permission="util.modifypin" />
+            <!--
         <invoker type="faas:formActions" action="initFromFaas" caption="Modify PIN" target="popup" index="500" mnemonic="m" 
             role="APPRAISER" permission="util.modifypin" visibleWhen="#{mode=='edit' &amp;&amp; rpu.rputype=='land'}"/>
+           -->
     </invokers>
     
     <code lang="groovy">

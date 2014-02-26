@@ -68,13 +68,10 @@ public class AbstractOnlineFaasController extends PageFlowController
     void initData(){
         entity = svc.openFaas(entity);
         loadSections();
+        
         formId = entity.tdno;
         
         formTitle = 'FAAS: ' + entity.utdno
-        if (entity.tdno)
-            formTitle = 'FAAS: ' + entity.tdno
-        else if (entity.trackingno)
-            formTitle = 'FAAS: ' + entity.trackingno
     }
     
     

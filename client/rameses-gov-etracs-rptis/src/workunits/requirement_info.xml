@@ -2,6 +2,10 @@
 <workunit>
     <invokers>
         <invoker type="faasonline:info" action="init" caption="Requirements" index="500" />
+        <invoker type="subdivision:info" action="init" caption="Logs" index="500" />
+        <invoker type="consolidation:info" action="init" caption="Logs" index="500" />
+        <invoker type="resection:info" action="init" caption="Logs" index="500" />
+        <invoker type="mcsettlement:info" action="init" caption="Logs" index="500" />
         <invoker type="formActions" action="refresh" caption="Refresh" mnemonic="r" />
    </invokers>
    <code>
@@ -12,7 +16,7 @@ import com.rameses.rcp.common.*
 import com.rameses.osiris2.client.*
 import com.rameses.osiris2.common.*
 
-class FAASRequirementsInfoController
+class RequirementsInfoController
 {
     @Binding
     def binding;
@@ -55,7 +59,7 @@ class FAASRequirementsInfoController
    </code>
     
     <pages> 
-        <page template="com.rameses.gov.etracs.rpt.faas.ui.FAASOnlineInfoRequirementPage"/>
+        <page template="com.rameses.gov.etracs.rpt.common.RequirementInfoPage"/>
     </pages>
 </workunit>
 
