@@ -201,8 +201,6 @@ public class RPTBillingService
 	        bill.validuntil = dtSvc.add(bill.expirydate, '-1d')
 	        em.updateLedgerNextBillDate(buildParams(bill))
         }
-        println 'bill.billdate -> ' + bill.billdate 
-
 		return bill
 	}
 
