@@ -534,6 +534,7 @@ public class RPTBillingService
 
     boolean determineQtrlyPaymentAvailed( bill, item ) {
         if( bill.billtoqtr != 4 ) return true 
+        if (bill.ledger?.lastyearpaid < bill.billtoyear) return false;
         if( bill.billtoqtr == 4 && item.lastqtrpaid != 4 && bill.ledger?.partialled == 0 ) return true 
         return false 
     }
