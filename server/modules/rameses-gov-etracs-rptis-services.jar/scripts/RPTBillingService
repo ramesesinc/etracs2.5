@@ -164,10 +164,14 @@ public class RPTBillingService
 			throw new Exception('Bill To Year must not exceed year ' +  maxbilltoyear + '.')
 		}
 
-		if (bill.billdate == null) 
+		if (bill.billdate == null) {
 			bill.billdate = dtSvc.serverDate
-		else
+		}
+		else{
 			bill.billdate = dtSvc.parse('yyyy-MM-dd', bill.billdate)
+			bill.forceRecalcBill = true
+		}
+			
 
 		if (bill.advancepayment){
 			if (bill.billtoyear < dtSvc.serverYear )
@@ -197,6 +201,8 @@ public class RPTBillingService
 	        bill.validuntil = dtSvc.add(bill.expirydate, '-1d')
 	        em.updateLedgerNextBillDate(buildParams(bill))
         }
+        println 'bill.billdate -> ' + bill.billdate 
+
 		return bill
 	}
 
@@ -305,8 +311,8 @@ public class RPTBillingService
 
 	def createFacts(bill){
 		def data = [facts:[], ledgers:[]]
-		data.facts << new CurrentDate(dtSvc.serverDate)
-		data.facts << new EffectiveDate(dtSvc.serverDate)
+		data.facts << new CurrentDate(bill.billdate)
+		data.facts << new EffectiveDate(bill.billdate)
 
 		//create RPTLedgerFacts
 		bill.items = []
