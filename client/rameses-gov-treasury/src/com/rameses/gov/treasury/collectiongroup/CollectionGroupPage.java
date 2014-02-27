@@ -84,6 +84,20 @@ public class CollectionGroupPage extends javax.swing.JPanel {
                 , new Object[]{"editable", false}
                 , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
                 , new Object[]{"typeHandler", new com.rameses.rcp.common.TextColumnHandler()}
+            }),
+            new com.rameses.rcp.common.Column(new Object[]{
+                new Object[]{"name", "orderno"}
+                , new Object[]{"caption", "Order No"}
+                , new Object[]{"width", 60}
+                , new Object[]{"minWidth", 60}
+                , new Object[]{"maxWidth", 60}
+                , new Object[]{"required", true}
+                , new Object[]{"resizable", true}
+                , new Object[]{"nullWhenEmpty", true}
+                , new Object[]{"editable", true}
+                , new Object[]{"editableWhen", "#{mode=='create' || mode=='edit'}"}
+                , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
+                , new Object[]{"typeHandler", new com.rameses.rcp.common.IntegerColumnHandler("#,##0", -1, -1)}
             })
         });
         xDataTable1.setHandler("listModel");
