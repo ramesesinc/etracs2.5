@@ -2,7 +2,6 @@
 <workunit>
     
     <invokers>
-        <invoker type="xxtest" action="init" name="default" caption="Default Handler" />
         <invoker type="rptrequirementtype:handler" action="init" name="default" caption="Default Handler" />
         <invoker type="formActions" action="edit" caption="Edit" mnemonic="e" role="EXAMINER" visibleWhen="#{mode == 'read'}"/>
         <invoker type="formActions" action="update" caption="Update" mnemonic="u"  role="EXAMINER" visibleWhen="#{mode != 'read'}"/>
