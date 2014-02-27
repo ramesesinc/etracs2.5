@@ -12,7 +12,12 @@
                 <folder id="report" caption="Report" index="5" />
                 <folder id="util" caption="Utilities" index="6" />
             </folder>
-            <folder id="landtax" caption="Land Tax" index="2">
+            <folder id="taxmapping" caption="Taxmapping" index="2">
+                <folder id="list" caption="Listing" index="1" />
+                <folder id="txn" caption="Transaction" index="2" />
+                <folder id="report" caption="Report" index="3" />
+            </folder>
+            <folder id="landtax" caption="Land Tax" index="3">
                 <folder id="list" caption="Listing" index="1"/>
                 <folder id="txn" caption="Transaction" index="2"/>
                 <folder id="report" caption="Report" index="3"/> 
