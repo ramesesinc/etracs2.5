@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workunit>
+    <invokers>
+        <invoker type="rpu:changesuffix" action="init" caption="Change Suffix" target="popup" />
+    </invokers>
+    
+    <code>
+import com.rameses.rcp.annotations.*;
+import com.rameses.rcp.common.*;
+import com.rameses.osiris2.client.*;
+import com.rameses.osiris2.common.*;
+
+class ChangeSuffixController
+{
+    @Binding
+    def binding;
+    
+    
+    @Service('RPUService')
+    def svc;
+    
+    
+    def rpu;
+    def newsuffix;
+    
+    def onupdate;  //handler 
+    
+    void init(){
+    
+    }
+    
+    def updateSuffix(){
+        if (newsuffix == null )
+            throw new Exception('New Suffix is required.');
+            
+        svc.validateSuffix(rpu.rputype, newsuffix);
+        
+        if (onupdate) onupdate(newsuffix);
+        return close();
+    }   
+    
+    def close(){
+        return '_close';
+    }
+}
+        
+    </code>
+    
+    <pages>
+        <page template="com.rameses.gov.etracs.rpt.rpu.ui.ChangeSuffixPage"/>
+    </pages>
+</workunit>

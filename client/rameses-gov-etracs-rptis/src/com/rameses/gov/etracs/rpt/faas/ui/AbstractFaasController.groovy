@@ -13,7 +13,10 @@ public abstract class AbstractFaasController extends PageFlowController
     def binding;
     
     @Invoker
-    def invoker 
+    def invoker;
+    
+    @Service('FAASService')
+    def service;
     
     def MODE_CREATE = 'create';
     def MODE_EDIT   = 'edit';
@@ -29,30 +32,15 @@ public abstract class AbstractFaasController extends PageFlowController
     def entityName = 'faas'
             
     def entity;
-    def initinfo;
-    def faas;
-    def barangays;
+    def rp;
+    def rpu;
     def mode;
-    def annotations;
     
-    
-    def appraiser = [:];
-    def recommender = [:];
-    def taxmapper = [:];
-    def approver = [:];
-    
+        
     @FormId
     public String getFormId(){
-        return 'FAAS : ' + faas?.tdno
+        return 'FAAS : ' + entity?.tdno
     }
-    
-    
-    /*=================================
-     *
-     * ABSTRACT 
-     *
-     ==================================*/
-    abstract def getService();
     
 
     /*=================================
@@ -65,78 +53,30 @@ public abstract class AbstractFaasController extends PageFlowController
     }
     
     
-    def getLookupFaas() {
-        return InvokerUtil.lookupOpener('faas:lookup', [
-            onselect : {
-                initinfo.faas = it;
-            },
-                
-            onempty  : {
-                initinfo.faas = null;
-            }
-        ])
-    }
-            
-    def initTxn(){
-        initinfo = [:]
-        return super.signal('txninit')
-    }
+    void beforeInit(){}
     
-    def initTxnType(){
-        def prop = invoker.properties;
-        
-        RPTUtil.required('Invoker txntypeid attribute', prop.txntypeid);
-        RPTUtil.required('Invoker txntype attribute', prop.txntype);
-        
-        def newledger = RPTUtil.toBoolean( prop.newledger, false)
-        def newrpu = RPTUtil.toBoolean( prop.newrpu, true)
-        def newrp = RPTUtil.toBoolean( prop.newrealproperty, false)
-        
-        return [
-            objid           : prop.txntypeid, 
-            name            : prop.txntype, 
-            newledger       : newledger, 
-            newrpu          : newrpu,
-            newrealproperty : newrp,
-        ]
-    }
-        
-    void initFaasTransaction() {
-        RPTUtil.required('Property to process', initinfo.faas);
-        initinfo.txntype = initTxnType()
-        faas = service.initFaasTransaction( initinfo )
-        initSignatoryVars();
+    
+    final def init(){
+        beforeInit();
+        rp = entity.rp;
+        rpu = entity.rpu;
         mode = MODE_CREATE;
+        return super.signal('new');
     }
     
+
+    void afterOpen(){}
     
-    void initOpen(){
-    }
     
-    def open(){
-        faas = service.openFaas( entity.objid );
-        entity = faas;
-        annotations = svc.getAnnotations(faas.objid)
-        initOpen();
-        initSignatoryVars()
+    final def open(){
+        entity.rpu = null;
+        entity.rp = null;
+        entity = service.openFaas( entity );
+        rp = entity.rp;
+        rpu = entity.rpu;
+        afterOpen();
         mode = MODE_READ;
         return super.signal('open');
-    }
-    
-    void initSignatoryVars(){
-        appraiser = faas.signatories.find{it.type == 'appraiser'};
-        recommender = faas.signatories.find{it.type == 'recommender'};
-        taxmapper = faas.signatories.find{it.type == 'taxmapper'};
-        approver = faas.signatories.find{it.type == 'approver'};
-        appraiser = (appraiser ? appraiser : [:])
-        recommender = (recommender ? recommender : [:])
-        taxmapper = (taxmapper ? taxmapper : [:])
-        approver = (approver ? approver : [:])
-        
-    }
-
-    def getShowAnnotation(){
-        return annotations.size() > 0
     }
     
     
@@ -151,53 +91,29 @@ public abstract class AbstractFaasController extends PageFlowController
     
     
     void cancelEdit(){
-        faas = service.openFaas(faas.objid);
+        entity = service.openFaas(entity);
+        rp = entity.rp;
+        rpu = entity.rpu;
         mode = MODE_READ;
     }
+    
     
     void save(){
-        saveSignatoryInfo()
-        if ( RPTUtil.isTrue(faas.datacapture) )
-            saveCapture()
-        else
-            saveOnline()
-    }    
-   
-    
-    void saveCapture(){
-        saveSignatoryInfo()
+        if (rp.isnew) throw new Exception('PIN requires verification.')
+        if (rpu.isnew) throw new Exception('RPU requires verification.')
         if (mode == MODE_CREATE)
-            faas = service.createFaas(faas);
+            entity = service.createFaas(entity);
         else 
-            faas = service.updateFaas(faas);
+            entity = service.updateFaas(entity);
         mode = MODE_READ;
     }
     
-    
-    void saveOnline(){
-        saveSignatoryInfo()
-        if (mode == MODE_CREATE)
-            faas = service.createFaas(faas);
-        else 
-            faas = service.updateFaas(faas);
-        mode = MODE_READ;
-    }
-    
-    void saveSignatoryInfo(){
-        faas.signatories.find{it.type == 'appraiser'}?.putAll(appraiser);
-        faas.signatories.find{it.type == 'recommender'}?.putAll(recommender);
-        faas.signatories.find{it.type == 'taxmapper'}?.putAll(taxmapper);
-        faas.signatories.find{it.type == 'approver'}?.putAll(approver);
-    }
-    
+
     
     void delete(){
-        service.deleteFaas(faas);
+        service.deleteFaas(entity);
     }
 
-    def viewAnnotations(){
-        return InvokerUtil.lookupOpener('faasannotionlisting:open', [annotations:annotations])
-    }
     
 
     /*-----------------------------------------------------
@@ -207,43 +123,42 @@ public abstract class AbstractFaasController extends PageFlowController
      *----------------------------------------------------*/
     
     void submitFaasForApproval(){
-        faas = service.submitFaasForApproval( faas );
+        entity = service.submitFaasForApproval( entity );
     }
     
     
     void approveFaas() {
-        faas = service.approveFaas( faas );
+        entity = service.approveFaas( entity );
     }
 
 
     void disapproveFaas() {
-        faas = service.disapproveFaas( faas );
+        entity = service.disapproveFaas( entity );
     }
 
 
     void submitFaasToProvince() {
-        faas = service.submitFaasToProvince( faas );
+        entity = service.submitFaasToProvince( entity );
     }
 
 
     void approveFaasSubmissionToProvince() {
-        faas = service.approveFaasSubmissionToProvince( faas );
+        entity = service.approveFaasSubmissionToProvince( entity );
     }
     
     
     void disapproveFaasSubmissionToProvince() {
-        faas = service.disapproveFaasSubmissionToProvince( faas );
+        entity = service.disapproveFaasSubmissionToProvince( entity );
     }
-
 
     
     void approveFaasByProvince() {
-        faas = service.approveFaasByProvince(faas);
+        entity = service.approveFaasByProvince(entity);
     }
 
 
     void disapproveFaasByProvince() {
-        faas = service.disapproveFaasByProvince( faas );
+        entity = service.disapproveFaasByProvince( entity );
     }
     
     
@@ -251,17 +166,12 @@ public abstract class AbstractFaasController extends PageFlowController
     /*===============================================
      * Signatory Lookup Support
      *===============================================*/
-    def selectedSignatory 
-            
-    def signatoryListHandler = [
-        fetchList : { return faas.signatories }
-    ] as EditorListModel
             
     def getLookupAppraiser(){
         return InvokerUtil.lookupOpener('txnsignatory:lookup',[
             doctype : 'RPTAPPRAISER',
-            onselect : { updateSignatoryInfo(appraiser, it) },
-            onempty  : { clearSignatoryInfo(appraiser) },
+            onselect : { entity.appraiser.putAll(it)},
+            onempty  : {clearSignatory(entity.appraiser)},
         ])
         
     }
@@ -269,8 +179,8 @@ public abstract class AbstractFaasController extends PageFlowController
     def getLookupRecommender(){
         return InvokerUtil.lookupOpener('txnsignatory:lookup',[
             doctype : 'RPTRECOMMENDER',
-            onselect : { updateSignatoryInfo(recommender, it) },
-            onempty  : { clearSignatoryInfo(recommender) },
+            onselect : { entity.recommender.putAll(it) },
+            onempty  : { clearSignatory(entity.recommender)},
         ])
         
     }
@@ -278,8 +188,8 @@ public abstract class AbstractFaasController extends PageFlowController
     def getLookupTaxmapper(){
         return InvokerUtil.lookupOpener('txnsignatory:lookup',[
             doctype : 'RPTTAXMAPPER',
-            onselect : { updateSignatoryInfo(taxmapper, it) },
-            onempty  : { clearSignatoryInfo(taxmapper) },
+            onselect : { entity.taxmapper.putAll(it) },
+            onempty  : { clearSignatory(entity.taxmapper) },
         ])
         
     }
@@ -287,16 +197,10 @@ public abstract class AbstractFaasController extends PageFlowController
     def getLookupApprover(){
         return InvokerUtil.lookupOpener('txnsignatory:lookup',[
             doctype : 'RPTAPPROVER',
-            onselect : { updateSignatoryInfo(approver, it) },
-            onempty  : { clearSignatoryInfo(approver) },
+            onselect : { entity.approver.putAll(it)},
+            onempty  : { clearSignatory(entity.approver)},
         ])
         
-    }
-    
-    void updateSignatoryInfo(signatory, data){
-        signatory.personnelid = data.objid;
-        signatory.name = data.name;
-        signatory.title = data.title;
     }
     
     void clearSignatoryInfo(signatory){
@@ -305,33 +209,15 @@ public abstract class AbstractFaasController extends PageFlowController
         signatory.title = null;
     }
             
-    def getLookupSignatory(){
-         def doctype = 'RPT' + selectedSignatory.type.toUpperCase();
-         return InvokerUtil.lookupOpener('txnsignatory:lookup',[
-            doctype : doctype,
-                 
-            onselect : { 
-                selectedSignatory.personnelid = it.objid;
-                selectedSignatory.name = it.name;
-                selectedSignatory.title = it.title;
-            },
-            onempty  : { 
-                selectedSignatory.name = null;
-                selectedSignatory.dtsigned = null;
-                selectedSignatory.title = null;
-            },
-        ])
-    }
-    
     def getLookupTaxpayer(){
         return InvokerUtil.lookupOpener('entity:lookup',[
             onselect : { 
-                faas.taxpayer = it;
-                faas.owner    = it;
+                entity.taxpayer = it;
+                entity.owner    = it;
             },
             onempty  : { 
-                faas.taxpayer = null;
-                faas.owner    = null;
+                entity.taxpayer = null;
+                entity.owner    = null;
             } 
         ])
     }
@@ -356,37 +242,80 @@ public abstract class AbstractFaasController extends PageFlowController
     }
     
     boolean getEnableTdno() {
-        if( faas.datacapture == 1 || faas.datacapture == true ) return true 
-        if( faas.autonumber == false || faas.autonumber == 0) return true
+        if( entity.datacapture == 1 || entity.datacapture == true ) return true 
+        if( entity.autonumber == false || entity.autonumber == 0) return true
         return false
     }
         
     boolean getAllowEdit() {
         if ( mode == MODE_READ) return false;
-        if ( faas.state == 'FORREVIEW' ) return false;
-        if ( faas.state == 'FORPROVAPPROVAL' ) return false;
-        if ( faas.state == 'CURRENT' ) return false;
-        if ( faas.state == 'CANCELLED' ) return false;
+        if ( entity.state == 'FORREVIEW' ) return false;
+        if ( entity.state == 'FORPROVAPPROVAL' ) return false;
+        if ( entity.state == 'CURRENT' ) return false;
+        if ( entity.state == 'CANCELLED' ) return false;
         return true;
     }
     
     boolean getAllowEditPinInfo() {
         if ( mode == MODE_READ) return false;
-        if( faas.rpu.rputype != 'land' ) return false;
-        if( RPTUtil.isTrue(faas.datacapture)) return true;
+        if( rpu.rputype != 'land' ) return false;
+        if( RPTUtil.isTrue(entity.datacapture)) return true;
         return getAllowEditPin()
     }
     
     boolean getAllowEditPrevInfo() {
         if ( mode == MODE_READ) return false;
-        if( faas.docstate == 'FORPROVAPPROVAL' ) return false
-        if( faas.docstate == 'CURRENT' ) return false
-        if( faas.docstate == 'CANCELLED' ) return false
-        if( faas.datacapture == false || faas.datacapture == 0) return false 
+        if( entity.state == 'FORPROVAPPROVAL' ) return false
+        if( entity.state == 'CURRENT' ) return false
+        if( entity.state == 'CANCELLED' ) return false
+        if( entity.datacapture == false || entity.datacapture == 0) return false 
         return true 
     }
     
     
+    
+    
+    /*===============================================
+     *
+     * RealProperty Support
+     *
+     *===============================================*/
+    def onupdateRealProperty = {
+        if (! rp ) rp = [:]
+        entity.realpropertyid = it.objid;
+        rp.putAll(it);
+        buildFullPin();
+        binding.refresh('rp.*|rpu.fullpin');
+    }
+    
+    
+    def viewRealProperty() {
+        def allowModify = (rpu == null || rpu.rputype == 'land' ? true : false);
+        def action = (mode == MODE_CREATE && (rp == null || rp.isnew == true) ? 'create' : 'open');
+        def opener = InvokerUtil.lookupOpener('realproperty:' + action, [
+            entity      : rp,
+            allowCreate : false,
+            autoCreate  : (mode == MODE_CREATE ? allowModify : false),
+            allowDelete : false,
+            allowEdit   : (mode == MODE_EDIT || mode == MODE_CREATE ? allowModify : false),
+            autoEdit    : (mode == MODE_EDIT || mode == MODE_CREATE ? allowModify : false),
+            allowEditPinInfo : allowEditPinInfo,
+            oncreate : onupdateRealProperty,    
+            onupdate : onupdateRealProperty,
+        ])
+        
+        opener.target = 'popup';
+        return opener;
+    }
+    
+    void buildFullPin(){
+        if (rpu){
+            rpu.fullpin = rp.pin;
+            if (rpu.rputype != 'land')
+                rpu.fullpin += '-' + rpu.suffix;
+        }
+        
+    }
     
     /*===============================================
      *
@@ -394,26 +323,33 @@ public abstract class AbstractFaasController extends PageFlowController
      *
      *===============================================*/
      def onupdateRpu = {
-        binding.refresh('faas.rpu.rp.*|faas.rpu.*')
+        if (! rpu) rpu = [:];
+        rpu.putAll(it);
+        entity.rpuid = it.objid;
+        binding.refresh('rpu.*');
+     }
+     
+      def ondeleteRpu = {
+         rpu = null;
+         binding.refresh('rpu.*');
      }
      
      
      def viewAssessment(){
          def allowEdit = getAllowEdit();
-         if (allowEdit && !faas.txntype.newrpu) {
-             allowEdit = false;
-         }
-         if (mode != MODE_CREATE){
-             // faas.rpu = service.openRpu(faas.rpu.objid);
-         }
-         faas.rpu.dtappraised = appraiser?.dtsigned
-         def opener = faas.rpu.rputype + 'rpu:open'
+         rpu.dtappraised = entity.appraiser?.dtsigned;
+         rpu.realpropertyid = rp?.objid;
+         rpu.ry = rp?.ry;
+         def opener = rpu.rputype + 'rpu:' + (rpu.isnew ? 'create' : 'open')
+         def autoClose = (rpu.isnew || allowEdit ? true : false);
          return InvokerUtil.lookupOpener(opener, [
-                    rpu         : faas.rpu, 
-                    datacapture : faas.datacapture, 
-                    lguid       : faas.lguid,
+                    rpu         : rpu, 
+                    lguid       : entity.lguid,
                     onupdate    : onupdateRpu,
+                    ondelete    : ondeleteRpu,
                     allowEdit   : allowEdit,
+                    datacapture : entity.datacapture,
+                    autoClose   : autoClose,
                  ])
      }
     
@@ -423,31 +359,6 @@ public abstract class AbstractFaasController extends PageFlowController
      * Support Methods
      *
      *===============================================*/
-     
-     
-     List getPinTypes(){
-         return ['new', 'old'];
-     }
-     
-     List getTxnTypes(){
-         return service.getTxnTypes();
-     }
-     
-     List getRpuTypes(){
-        return svc.getRpuTypes();
-     }
-    
-     List getLgus(){
-        return svc.getLgus();
-     }
-
-     
-     List getBarangays(){
-         if (!barangays)
-             barangays = service.getBarangays([parentid:initinfo.lgu?.objid]);
-         return  barangays;
-     }
-     
      
      List getTitleTypes(){ 
          return LOV.RPT_TITLE_TYPES*.key
@@ -467,5 +378,18 @@ public abstract class AbstractFaasController extends PageFlowController
      def closeForm(){
          return '_close'
      }
+     
+     
+     
+    
+    def getShowAnnotation(){
+        return entity.annotated
+    }
+     
+     /*
+    def viewAnnotations(){
+        return InvokerUtil.lookupOpener('faasannotionlisting:open', [annotations:annotations])
+    }
+      */
      
 }

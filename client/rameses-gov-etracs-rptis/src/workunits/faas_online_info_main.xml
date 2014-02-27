@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workunit extends="rpt_wtemplates/FaasMainInfoController.xml">
+    <invokers>
+        <invoker type="faasonline_CC:info" action="init" caption="General Info" index="-10"/>
+        <invoker type="faasonline_CT:info" action="init" caption="General Info" index="-10"/>
+        <invoker type="faasonline_CD:info" action="init" caption="General Info" index="-10"/>
+        <invoker type="faasonline_RE:info" action="init" caption="General Info" index="-10"/>
+        <invoker type="faasonline_CS:info" action="init" caption="General Info" index="-10"/>
+        <invoker type="faasonline_SD:info" action="init" caption="General Info" index="-10"/>
+        <invoker type="faasonline_MS:info" action="init" caption="General Info" index="-10"/>
+   </invokers>
+</workunit>
+
+

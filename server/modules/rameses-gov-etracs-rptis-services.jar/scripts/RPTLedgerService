@@ -149,6 +149,16 @@ class RPTLedgerService
     }
 
     @ProxyMethod
+    public def checkLedgerApprovedState(faasid){
+        def ledger = getLedgerByFaasId(faasid)
+        if (ledger.state == STATE_CANCELLED)
+            throw new Exception('Ledger has already been cancelled.')
+        if (ledger.state == STATE_PENDING)
+            throw new Exception('Ledger is still pending.')
+
+    }
+
+    @ProxyMethod
     public void clearNextBillDateByLedger( ledgerid ) {
         em.clearNextBillDateByLedger([objid:ledgerid])
     }
@@ -209,7 +219,13 @@ class RPTLedgerService
         def ledgerfaases = getLedgerFaases(ledgerfaas.rptledgerid)
         def latestledgerfaas = ledgerfaases.find{it.toyear == 0}
         if (latestledgerfaas) {
-            latestledgerfaas.toyear = (ledgerfaas.fromqtr == 1 ? ledgerfaas.fromyear - 1 : ledgerfaas.fromyear)
+            if (latestledgerfaas.fromyear == ledgerfaas.fromyear){
+                latestledgerfaas.state = STATE_CANCELLED 
+                latestledgerfaas.toyear = latestledgerfaas.fromyear 
+            }
+            else {
+                latestledgerfaas.toyear = (ledgerfaas.fromqtr == 1 ? ledgerfaas.fromyear - 1 : ledgerfaas.fromyear)
+            }
             latestledgerfaas.toqtr = (ledgerfaas.fromqtr == 1 ? 4 : ledgerfaas.fromqtr - 1)
             saveLedgerFaas(latestledgerfaas)
         }

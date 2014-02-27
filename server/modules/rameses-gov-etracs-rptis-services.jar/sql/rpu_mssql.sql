@@ -1,44 +1,47 @@
 [createRpuMaster]
-INSERT INTO rpumaster(objid) VALUES($P{objid})
+INSERT INTO rpumaster(objid, currentfaasid, currentrpuid) 
+VALUES($P{objid}, $P{currentfaasid}, $P{currentrpuid})
+
 
 [deleteRpuMaster]
 DELETE FROM rpumaster WHERE objid = $P{objid}
 
 
-[checkDuplicateFullPin]
+[findDuplicateFullPin]
 SELECT objid 
 FROM rpu
 WHERE objid <> $P{objid} AND ry = $P{ry} AND fullpin = $P{fullpin} 
 
 
-[getState]   
-SELECT state FROM rpu WHERE objid = $P{objid}
+[deleteRpu]
+DELETE FROM rpu WHERE objid = $P{objid} AND state NOT IN ('CURRENT', 'CANCELLED')
 
 
-[getLandRpuById]
+[findRpuInfoById]
+SELECT * FROM rpu WHERE objid = $P{objid}
+
+
+[findLandRpuById]
 SELECT *
 FROM rpu 
 WHERE objid = $P{objid}
 
 
-[getLandRpuByRealPropertyId]
+[findLandRpuByRealPropertyId]
 SELECT rpu.*
 FROM rpu rpu
-	INNER JOIN realproperty rp ON rpu.realpropertyid = rp.objid 
+  INNER JOIN realproperty rp ON rpu.realpropertyid = rp.objid 
 WHERE rpu.realpropertyid = $P{realpropertyid} 
   AND rpu.rputype = 'land' 
-  
-[getLandImprovementsRpuByRealPropertyId]
-SELECT rpu.*
-FROM rpu rpu
-	INNER JOIN realproperty rp ON rpu.realpropertyid = rp.objid 
-WHERE rpu.realpropertyid = $P{realpropertyid} 
-  AND rpu.rputype != 'land'   
+
+
+[updateRpuState]
+UPDATE rpu SET state = $P{state} WHERE objid = $P{objid}
 
 
 [updateBldgRpuLandRpuId]  
 UPDATE b SET 
-	b.landrpuid = $P{landrpuid}
+  b.landrpuid = $P{landrpuid}
 FROM bldgrpu b, rpu r   
 WHERE b.objid = r.objid 
   AND r.realpropertyid = $P{realpropertyid}
@@ -47,7 +50,7 @@ WHERE b.objid = r.objid
 
 [updateMachRpuLandRpuId]  
 UPDATE m SET 
-	m.landrpuid = $P{landrpuid}
+  m.landrpuid = $P{landrpuid}
 FROM machrpu m, rpu r   
 WHERE m.objid = r.objid 
   AND r.realpropertyid = $P{realpropertyid}
@@ -56,7 +59,7 @@ WHERE m.objid = r.objid
 
 [updatePlantTreeRpuLandRpuId]  
 UPDATE p SET 
-	p.landrpuid = $P{landrpuid}
+  p.landrpuid = $P{landrpuid}
 FROM  planttreerpu p, rpu r  
 WHERE p.objid = r.objid 
   AND r.realpropertyid = $P{realpropertyid}
@@ -65,21 +68,39 @@ WHERE p.objid = r.objid
 
 [updateMiscRpuLandRpuId]  
 UPDATE m SET 
-	m.landrpuid = $P{landrpuid}
+  m.landrpuid = $P{landrpuid}
 FROM miscrpu m, rpu r  
 WHERE m.objid = r.objid 
   AND r.realpropertyid = $P{realpropertyid}
   AND r.state <> 'CANCELLED'     
   
+
+
+[getNextSuffixes]
+SELECT 
+  rputype,
+  MAX(suffix +1) AS nextsuffix 
+FROM rpu 
+WHERE realpropertyid = $P{realpropertyid}
+AND state <> 'CANCELLED'
+AND rputype <> 'land'
+GROUP BY rputype 
+
+
+[updateSuffix]
+UPDATE rpu SET suffix = $P{suffix}, fullpin = $P{fullpin} WHERE objid = $P{objid}
+
+
   
 [modifyPin]
 update rpu set 
-	fullpin=$P{newpin}, suffix=$P{suffix}
+  fullpin=$P{newpin}, suffix=$P{suffix}
 where objid=$P{rpuid}
 
 
-
-
-[updateRpuState]
-UPDATE rpu SET state = $P{state} WHERE objid = $P{objid}
-
+[getLandImprovementsRpuByRealPropertyId]
+SELECT rpu.*
+FROM rpu rpu
+  INNER JOIN realproperty rp ON rpu.realpropertyid = rp.objid 
+WHERE rpu.realpropertyid = $P{realpropertyid} 
+  AND rpu.rputype != 'land'   

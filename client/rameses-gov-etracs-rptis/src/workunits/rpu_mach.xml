@@ -1,0 +1,13 @@
+<workunit extends="rpt_wtemplates/RPUController.xml">
+    <invokers>
+        <invoker type="machrpu:create" action="init" caption="Machine RPU" target="popup" />
+        <invoker type="machrpu:open" action="open" caption="Machine RPU" target="popup" />
+    </invokers>
+
+    <code class="com.rameses.gov.etracs.rpt.rpu.mach.ui.MachRPUController">
+    </code>
+    
+    <pages>
+        <page template="com.rameses.gov.etracs.rpt.rpu.mach.ui.MachRPUPage"/>
+    </pages>
+</workunit>

@@ -1,17 +1,28 @@
 package test;
 
-import com.rameses.osiris2.common.LookupController;
 import com.rameses.osiris2.test.OsirisTestPlatform;
-import com.rameses.rcp.common.DecimalColumnHandler;
-import com.rameses.rcp.control.XDecimalField;
+import java.io.File;
 
 
 import java.util.HashMap;
 import java.util.Map;
+import javax.swing.JFileChooser;
 import javax.swing.UIManager;
 
 public class Main 
 {
+    
+    public static void mainx(String[] args) throws Exception{
+        File currentDir;
+        
+        JFileChooser jfc = new JFileChooser();
+        jfc.showOpenDialog(null);
+        File f = jfc.getSelectedFile();
+        if (f != null){
+            System.out.println(f.getAbsolutePath());
+        }
+    }
+    
     public static void main(String[] args) throws Exception 
     {
         try {

@@ -9,6 +9,14 @@ class FaasReportService
 	@Service('NumberService')
 	def numberSvc
 
+
+	@Service('TxnSignatoryService')
+	def signatorySvc 
+
+	@Service('EntityContactService')
+	def contactSvc 
+
+
 	@Service('RPTUtil')
 	def util
 	
@@ -32,20 +40,21 @@ class FaasReportService
 	
 	@ProxyMethod
 	public def getReportData( faasid ) {
-		def faas = faasSvc.openFaas(faasid)
+		def faas = faasSvc.loadFaas([objid:faasid])
 		if( !faas ) throw new Exception('Cannot open FAAS with ID No. ' + faasid + '.')
+		println 'faas.trackingno -> '+ faas.trackingno
 		
 		faas.taxeffectivity = faas.effectivityqtr + "Q - " + faas.effectivityyear
 		faas.taxability = ( faas.rpu.taxable ? "TAXABLE" : "EXEMPT" )
 		
-		def muni = lguSvc.lookupMunicipalityById(faas.rpu.rp.barangay.parentid)
-		def district = lguSvc.lookupDistrictById(faas.rpu.rp.barangay.parentid)
+		def muni = lguSvc.lookupMunicipalityById(faas.rp.barangay.parentid)
+		def district = lguSvc.lookupDistrictById(faas.rp.barangay.parentid)
 		def prov = lguSvc.lookupProvinceById(muni?.parentid)
 		def city = lguSvc.lookupCityById(district?.parentid)
 		faas.propertylocation = ( muni ? muni.name + ', ' : '') + ( prov ? prov.name : city.name )
 
 		getOwnerContactNo( faas )
-		loadSignatories(faas)
+		signatorySvc.loadSignatories('faas', faas)
 		
 		if( faas.rpu.rputype == 'land' ) { 
 			LISTLIMITSIZE1 = 10
@@ -109,7 +118,7 @@ class FaasReportService
 	}
 	
 	private void getOwnerContactNo( faas ) {
-		def list = em.sqlContext.createNamedQuery('entity:getContacts').setParameter('objid', faas.taxpayer.objid).resultList
+		def list = contactSvc.getList([entityid:faas.taxpayer.objid])
 			
 		if( list ) {
 			def contacts = []
@@ -617,13 +626,5 @@ class FaasReportService
 		return listlimitsize
 	}
 
-	private void loadSignatories(faas) {
-	    def appraiser = faas.signatories.find{it.type == 'appraiser'};
-        def recommender = faas.signatories.find{it.type == 'recommender'};
-        def approver = faas.signatories.find{it.type == 'approver'};
-        faas.appraiser = (appraiser ? appraiser : [:])
-        faas.recommender = (recommender ? recommender : [:])
-        faas.approver = (approver ? approver : [:])
 
-	}
 }

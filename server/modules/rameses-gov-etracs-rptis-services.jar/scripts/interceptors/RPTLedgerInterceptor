@@ -69,7 +69,7 @@ class RPTLedgerInterceptor
             qtrlypaymentpaidontime  : false,
             lastitemyear          : 0,
             faases : [],
-            barangayid      : faas.rpu.rp.barangayid
+            barangayid      : faas.rp.barangay.objid
         ]
 		ledger.faases << createLedgerFaas( ledger, faas )
 		def lastfaas = ledger.faases.last() 
@@ -109,7 +109,7 @@ class RPTLedgerInterceptor
             toqtr                   : 0,
             assessedvalue           : faas.rpu.totalav,
             systemcreated           : true,
-            reclassed               : faas.rpu.reclassed,
+            reclassed               : util.toBoolean(faas.rpu.reclassed, false),
         ]
 	}
 	

@@ -324,7 +324,6 @@ FROM (
 	  AND bi.provintshare > 0.0 
 	  
 	  
-	  
 	UNION ALL
 	
 	SELECT

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <workunit>
     <invokers>
-        <invoker folderid="/menu/txn/rpt/util" caption="Test" target="popup" index="500"
+        <invoker folderid="/menu/test" caption="Test" target="popup" index="500"
             role="APPRAISER" />
     </invokers>
     
@@ -12,18 +12,54 @@
 import com.rameses.rcp.common.*
 import com.rameses.rcp.annotations.*
 import com.rameses.osiris2.client.*
+import com.rameses.gov.etracs.rpt.common.*;
 
 public class TestController {
     
     @Binding
     def binding;
     
-    def amount = 0.0;
+    @Service('DBImageService')
+    def svc 
     
-    void fire(){
-        MsgBox.alert('Amount -> ' + amount );
+    def filename = 'd:\\Chrysanthemum.jpg';
+    def targetfile = 'd:\\Chrysanthemum3.jpg';
+    
+    def header = [objid:'A', refid:'TEST', title:'TEST', filesize:0, ]
+    
+   
+    
+    void upload(){
+        DBImageUtil.getInstance(svc).upload(header, filename);
+        MsgBox.alert('Success.');
     }
-        
+    
+    void delete(){
+        DBImageUtil.getInstance(svc).deleteImage(header.objid);
+        MsgBox.alert('Success.');
+    }
+    
+    void deleteAll(){
+        DBImageUtil.getInstance(svc).deleteAllImages(header.refid);
+        MsgBox.alert('Success.');
+    }
+
+    void saveToFile(){
+        DBImageUtil.getInstance(svc).saveToFile(header.objid, targetfile);
+        MsgBox.alert('Success.');
+    }
+    
+    def runTest(){
+        def entity = [
+            objid: 'R-84ec4b3:14467dbaf0d:-7ffb',
+            requirementtypeid:'RT-7f3d74d9:1445dc4a199:-7fee',
+            handler:'default',
+            refid:'F-84ec4b3:14467dbaf0d:-7fff',
+            requirementtype: [name:'TITLE'],
+        ]
+        return InvokerUtil.lookupOpener('xxtest', [entity:entity]);
+    }
+            
 }
 
 ]]>

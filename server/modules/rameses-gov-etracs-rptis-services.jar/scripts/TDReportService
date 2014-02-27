@@ -39,11 +39,7 @@ class TDReportService
 
 		td.taxable = util.toBoolean(td.taxable, true)
 		td.propertytype = td.rputype
-		def signatories = signatorySvc.getSignatories(td)
-		signatories.each{
-			td[it.type] = it
-		}
-
+		signatorySvc.loadSignatories('faas', td)
 		td.location = td.lguname
 		if (td.parentlguname) {
 			td.location +=  (td.location ? ', ' : '') + td.parentlguname

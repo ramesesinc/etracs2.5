@@ -17,6 +17,8 @@ class WorkflowStateService
 
 
 	def STATE_INTERIM 			= 'INTERIM'
+	def STATE_FORTAXMAPPING		= 'FORTAXMAPPING'
+	def STATE_FORAPPRAISAL		= 'FORAPPRAISAL'
 	def STATE_FORAPPROVAL 		= 'FORAPPROVAL'
 	def STATE_FORPROVSUBMISSION = 'FORPROVSUBMISSION'
 	def STATE_FORPROVAPPROVAL 	= 'FORPROVAPPROVAL'
@@ -36,7 +38,11 @@ class WorkflowStateService
 		}
 		catch(e) {
 			def msg = 'Document has already been '
-			if (params.state == STATE_FORAPPROVAL)
+			if (params.state == STATE_FORTAXMAPPING)
+				msg += ' submitted for taxmapping.'
+			else if (params.state == STATE_FORAPPRAISAL)
+				msg += ' submitted for appraisal.'
+			else if (params.state == STATE_FORAPPROVAL)
 				msg += ' submitted for approval.'
 			else if (params.state == STATE_FORPROVSUBMISSION)
 				msg += ' submitted for province submission.'

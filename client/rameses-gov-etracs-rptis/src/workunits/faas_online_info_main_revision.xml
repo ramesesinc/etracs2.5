@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workunit extends="rpt_wtemplates/FaasMainInfoController.xml">
+    <invokers>
+        <invoker type="faasonline_RV:info" action="init" caption="Revision" index="-10"/>
+   </invokers>
+    <code>
+        
+import com.rameses.rcp.annotations.* 
+import com.rameses.rcp.common.* 
+import com.rameses.osiris2.client.*
+import com.rameses.osiris2.common.*
+import com.rameses.gov.etracs.rpt.common.RPTUtil;
+
+class FaasRVMainInfoController extends com.rameses.gov.etracs.rpt.faas.ui.FaasMainInfoController
+{
+    boolean allowEditPin = true;
+}
+
+    </code>
+</workunit>
+
+

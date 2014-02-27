@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workunit>
+    <invokers>
+        <invoker type="subdivision:open" action="open" caption="Subdivision" target="window"  />
+           
+        <invoker folderid="/explorer/txn/rpt/online" action="init"  caption="Subdivision" index="20"
+            txntypeid="SD" txntype="Subdivision" newledger="true" newrpu="true"
+            role="APPRAISER,EXAMINER" permission="subdivision.create"/>
+
+         <invoker type="quick_launcher" code="SD01" action="init"  caption="Subdivision" index="20"
+            txntypeid="SD" txntype="Subdivision" newledger="true" newrpu="true"
+            role="APPRAISER,EXAMINER" permission="subdivision.create"/>
+            
+            
+        <invoker type="subdividedlandActions" action="addSubdividedLand" caption="Add" mnemonic="a" visibleWhen="#{allowEdit == true}" />
+        <invoker type="subdividedlandActions" action="editSubdividedLand" caption="Edit" mnemonic="e" visibleWhen="#{allowEdit == true &amp;&amp; selectedLand != null}" />
+        
+   </invokers>
+   <code class="com.rameses.gov.etracs.rpt.subdivision.ui.SubdivisionController">
+       
+   </code>
+
+    <pageflow>
+        <start>
+            <transition name="init" to="init"/>
+            <transition name="open" to="open"/>
+        </start>
+        
+        <page name="init" title="Subdivision: Initial Information">
+            <transition caption="Cancel" to="end"  mnemonic="c" icon="images/toolbars/cancel.png"/>
+            <transition caption="Next"  to="open" action="createSubdivision" mnemonic="n"  />
+        </page>
+        
+        <process name="open">
+            <transition to="unassigned" cond="#{entity.taskaction &amp;&amp; entity.taskaction.matches('assign.*')}"/>
+            <transition to="default" cond="#{entity.state == 'DRAFT'}"/>
+            <transition to="taxmapping" cond="#{entity.state == 'FORTAXMAPPING'}"/>
+            <transition to="forappraisal" cond="#{entity.state == 'FORAPPRAISAL'}"/>
+            <transition to="forapproval" cond="#{entity.state == 'FORAPPROVAL'}"/>
+            <transition to="forprovsubmission" cond="#{entity.state == 'FORPROVSUBMISSION'}"/>
+            <transition to="forprovapproval" cond="#{entity.state == 'FORPROVAPPROVAL'}"/>
+            <transition to="approved" cond="#{entity.state == 'APPROVED'}"/>
+            <transition to="cancelled" cond="#{entity.state == 'CANCELLED'}"/>
+        </process>
+        
+                
+        <page name="unassigned" title="Subdivision (#{entity.state} - Unassigned)">
+            <transition caption="Close"  to="end"      mnemonic="c" icon="images/toolbars/cancel.png" />
+            <transition to="open" name="taxmapper" action="assignTaxmapper" caption="Assign To Me" role="TAXMAPPER"  visibleWhen="#{entity.taskaction == 'assign-taxmapper'}" confirm="Assign task to you?"/>
+            <transition to="open" name="appraiser" action="assignAppraiser" caption="Assign To Me" role="APPRAISER" visibleWhen="#{entity.taskaction == 'assign-appraiser'}" confirm="Assign task to you?"/>
+            <transition to="open" name="approver" action="assignApprover" caption="Assign To Me" role="APPROVER" visibleWhen="#{entity.taskaction == 'assign-approver'}" confirm="Assign task to you?"/>
+        </page>
+        
+        <page name="default" title="Subdivision (Draft)">
+            <transition caption="Close"  to="end"      mnemonic="c" icon="images/toolbars/cancel.png" />
+            <transition caption="Delete" to="delete"  action="delete" confirm="Delete record?"    mnemonic="d" icon="images/toolbars/trash.png"  role="APPRAISER" permission="subdivision.delete"/>
+            <transition caption="Submit to Taxmapping" to="open" action="submitForTaxmapping"  mnemonic="m"  confirm="Submit Subdivision to Tax Mapping?" role="APPRAISER" permission="subdivision.submit"/>
+        </page>
+        
+        <process name="back-to-default">
+            <transition to="default" />
+        </process>
+        
+        <process name="delete">
+            <transition to="end"/>
+        </process>
+        
+        
+        <page name="taxmapping" title="Subdivision (For Taxmapping)">
+            <transition caption="Close"  to="end"      mnemonic="c" icon="images/toolbars/cancel.png" />
+            <transition caption="Submit for Appraisal" to="open" action="submitForAppraisal"  mnemonic="m"   confirm="Submit Subdivision for appraisal?" role="TAXMAPPER"/>
+        </page>
+        
+        
+        <page name="forappraisal" title="Subdivision (For Appraisal)">
+            <transition caption="Close"  to="end"      mnemonic="c" icon="images/toolbars/cancel.png" />
+            <transition caption="Submit for Approval" to="open" action="submitForApproval"  mnemonic="m"   confirm="Submit Subdivision for approval?" role="APPRAISER"/>
+        </page>
+        
+        
+        <process name="submit">
+            <transition to="forapproval" cond="#{entity.state == 'FORAPPROVAL'}"/>
+            <transition to="forprovapproval" cond="#{entity.state == 'FORPROVAPPROVAL'}"/>
+            <transition to="forprovsubmission" cond="#{entity.state == 'FORPROVSUBMISSION'}"/>
+        </process>
+        
+        <!-- CITY-->
+        <page name="forapproval" title="Subdivision (For Approval)">
+            <transition caption="Close" to="end" mnemonic="c" icon="images/toolbars/cancel.png"  />
+            <transition caption="Disapprove" to="default" action="disapproveSubdivision" mnemonic="d"  confirm="Disapprove Subdivision?" role="APPROVER"/>
+            <transition caption="Approve" to="wait" action="approveSubdivision" mnemonic="v" icon="images/toolbars/approve.png"  confirm="Approve Subdivision?" role="APPROVER"/>
+        </page>
+        
+        <page name="wait" title="Approval of Subdivision">
+            <transition caption="Back" to="forapproval" action="checkErrors" mnemonic="f" icon="images/toolbars/arrow_left.png" />
+            <transition caption="Finish" to="approved" action="checkFinish" mnemonic="f" icon="images/toolbars/approve.png" />
+        </page>
+        
+        <process name="back-to-forapproval">
+            <transition to="forapproval"/>
+        </process>
+        
+        
+        <!-- MUNICIPALIY -->
+        <page name="forprovsubmission" title="Subdivision (For Submission to Province)">
+            <transition caption="Close"  to="end" mnemonic="c" icon="images/toolbars/cancel.png"  />
+            <transition caption="Disapprove" to="default" action="disapproveSubmitToProvice"  mnemonic="d"  confirm="Disapprove Subdivision?"  role="RECOMMENDER"/>
+            <transition caption="Submit to Province" to="open" action="submitToProvince" mnemonic="m"  confirm="Submit Subdivision to province?"  role="RECOMMENDER"/>
+        </page>
+        
+        <process name="back-to-prov-submission">
+            <transition to="forprovsubmission"/>
+        </process>
+        
+        <page name="provsubmissionapproval" title="Subdivision (For Province Approval)">
+            <transition caption="Close" to="end" mnemonic="c" icon="images/toolbars/cancel.png"/>
+            <transition caption="Disapprove" to="forprovsubmission" action="disapproveSubmittedToProvince"  mnemonic="d" confirm="Disapprove Subdivision?"  role="RECOMMENDER"/>
+            <transition caption="Approve" to="approved" action="approveSubmittedToProvince"  mnemonic="v" confirm="Approve Subdivision?"  role="RECOMMENDER"/>
+        </page>
+        
+        
+        <!-- PROVINCE -->
+        <page name="forprovapproval" title="Subdivision (Province Approval)">
+            <transition caption="Close" to="end" mnemonic="c" icon="images/toolbars/cancel.png"  />
+            <transition caption="Disapprove" to="forprovsubmission" action="disapproveByProvince"  mnemonic="d"   confirm="Disapprove Subdivision?" role="APPROVER"/>
+            <transition caption="Approve" to="approved" action="approveByProvince"  mnemonic="v"  confirm="Approve Subdivision?" role="APPROVER"/>
+        </page>
+        
+        <process name="back-to-forprovapproval">
+            <transition to="forprovapproval"/>
+        </process>
+        
+        <page name="approved" title="Subdivision (Approved)">
+            <transition caption="Close" to="end" mnemonic="c" icon="images/toolbars/cancel.png"/>
+        </page>
+        
+        <end />
+        
+    </pageflow>
+    
+    <pages> 
+        <page name="init" template="com.rameses.gov.etracs.rpt.subdivision.ui.SubdivisionInitPage"/>
+        <page name="unassigned" template="com.rameses.gov.etracs.rpt.subdivision.ui.SubdivisionInfoPage"/>
+        <page name="default" template="com.rameses.gov.etracs.rpt.subdivision.ui.SubdivisionInfoPage"/>
+        <page name="taxmapping" template="com.rameses.gov.etracs.rpt.subdivision.ui.SubdivisionInfoPage"/>
+        <page name="forappraisal" template="com.rameses.gov.etracs.rpt.subdivision.ui.SubdivisionInfoPage"/>
+        <page name="forapproval" template="com.rameses.gov.etracs.rpt.subdivision.ui.SubdivisionInfoPage"/>
+        <page name="forprovsubmission" template="com.rameses.gov.etracs.rpt.subdivision.ui.SubdivisionInfoPage"/>
+        <page name="provsubmissionapproval" template="com.rameses.gov.etracs.rpt.subdivision.ui.SubdivisionInfoPage"/>
+        <page name="forprovapproval" template="com.rameses.gov.etracs.rpt.subdivision.ui.SubdivisionInfoPage"/>
+        <page name="approved" template="com.rameses.gov.etracs.rpt.subdivision.ui.SubdivisionInfoPage"/>
+        <page name="wait" template="com.rameses.gov.etracs.rpt.rpu.ui.WaitInfoPage"/>
+    </pages>
+</workunit>
+
+

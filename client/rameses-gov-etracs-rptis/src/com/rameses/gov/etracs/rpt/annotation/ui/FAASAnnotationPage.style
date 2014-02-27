@@ -6,3 +6,11 @@
 "entity.*" [allowEdit == false] {
     enabled:false;
 }
+
+"entity.faas.*" [ true == true ] {
+    enabled:true;
+}
+
+"entity.faas.totalmv|entity.faas.totalav" [ true == true ] {
+    enabled:false;
+}

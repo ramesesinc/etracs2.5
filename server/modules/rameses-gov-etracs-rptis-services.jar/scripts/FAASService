@@ -6,12 +6,11 @@ import com.rameses.services.extended.*
 
 class FAASService
 {
+	@PersistenceContext('main')
+	def pem
 
-	@PersistenceContext('rpt')	
+	@ActiveDB('faas')	
 	def em 
-
-	@ActiveDB('faas')
-	def db 
 
 	@Service('Var')
 	def var 
@@ -22,17 +21,14 @@ class FAASService
 	@Service('RPUService')
 	def rpuSvc
 
+	@Service('RealPropertyService')
+	def rpSvc 
+
 	@Service('SequenceService')
 	def seqSvc
 
-	@Service('RPTTaxpayerLookupService')
-	def tpaySvc
-
 	@Service('RPTUtil')
 	def utilSvc
-
-	@Service('BarangayLookupService')
-	def brgySvc
 
 	@Service('TxnRefService')
 	def txnRef
@@ -46,6 +42,9 @@ class FAASService
     @Service('TxnSignatoryService')
     def signatorySvc 
 
+    @Service('RPTTrackingService')
+    def trackingSvc
+
     @Service('FAASService')
     def faasSvc
 
@@ -53,11 +52,12 @@ class FAASService
 
 	
 
-	def SCHEMA_FAAS				= 'faas'
-	def SCHEMA_PREVIOUSFAAS		= 'faas:previousfaas'
-	def SCHEMA_BACKTAX			= 'faas:backtax'
+	def SCHEMA_PREVIOUSFAAS		= 'previousfaas'
+	def SCHEMA_BACKTAX			= 'backtax'
 	
 	def STATE_INTERIM 			= 'INTERIM'
+	def STATE_FORTAXMAPPING 	= 'FORTAXMAPPING'
+	def STATE_FORAPPRAISAL 		= 'FORAPPRAISAL'
 	def STATE_FORAPPROVAL 		= 'FORAPPROVAL'
 	def STATE_FORPROVSUBMISSION = 'FORPROVSUBMISSION'
 	def STATE_FORPROVAPPROVAL 	= 'FORPROVAPPROVAL'
@@ -66,158 +66,231 @@ class FAASService
 
 	def UTDNO_KEY 				= 'UNIQUE_TDNO'
 
-
 	@ProxyMethod
-	public def getSignatories(  ) {
-		return signatories;	
+	public def initNewDiscovery( info ) {
+		if (info.rputype != 'land'){
+			info.suffix = rpuSvc.getNextSuffix([rputype:info.rputype, realpropertyid:info.rp.objid])
+			info.fullpin = info.rp.pin + '-' + info.suffix 
+		}
+		def faas = initCapture(info)
+		faas.datacapture = false
+		faas.autonumber  = utilSvc.toBoolean(var.td_autonumber, false)
+        faas.rp.barangayid = info.barangay.objid
+        if (info.rputype == 'land'){
+        	rpSvc.create(faas.rp)
+        }
+        rpuSvc.createRpu(faas.rpu)
+        createFaas(faas)
+        return faas
 	}
 
 	@ProxyMethod
-	public def initDataCaptureFaas( info ) {
+	public def initCapture( info ) {
 		def faas 			= initFaas(info)
 		faas.datacapture 	= true
-		faas.rpu    		= rpuSvc.initRpu(info)
+		faas.autonumber     = false
 		faas.previousfaases = []
 		faas.backtaxes 		= []
+
+		if (info.rputype == 'land'){
+			def rp = em.findRealProperty([ry:info.ry, pin:info.pin])
+			if (rp && rp.faasid) 
+				throw new Exception('PIN is already referenced by TD No. ' + rp.tdno + '.')
+
+			if (rp){
+				faas.rp = rp;
+			}
+			else {
+				faas.rp = rpSvc.init()
+				faas.rp.putAll(info)
+			}
+		}
+		else{
+			faas.rp = info.rp 
+			info.realpropertyid = info.rp.objid
+		}
+
+		def rpu = em.findRpu([ry:info.ry, fullpin:info.fullpin, rputype:info.rputype])
+		if (rpu && rpu.faasid)
+			throw new Exception('RPU is already referenced by TD No. ' + rpu.tdno + '.')
+
+		if(rpu){
+			faas.rpu = rpu
+		}
+		else {
+			faas.rpu = rpuSvc.initRpu(info);
+		}
+		
+		faas.realpropertyid = faas.rp.objid 
+		faas.lguid = faas.rp.lguid 
+		faas.lgutype = faas.rp.lgutype 
+		faas.rpuid = faas.rpu.objid
 		return faas
 	}
 
 
 	@ProxyMethod
-	public def initNewDiscoveryFaas(info) {
-		def faas = initDataCaptureFaas(info)
-		faas.datacapture = false
-		faas.autonumber = utilSvc.toBoolean(var.td_autonumber, false)
-		return faas
+	public def initOnlineTransaction( info ) {
+		info.txntype = getTxnType(info.txntype.objid)
+		def faas = faasSvc.initTransaction(info)
+		signatorySvc.init(faas, signatories)
+		faas.memoranda = ' '
+
+		if (faas.rpu.rputype == 'land' && faas.txntype.newrealproperty){
+			rpSvc.create(faas.rp)
+		}
+		if (faas.txntype.newrpu){
+			rpuSvc.createRpu(faas.rpu)
+		}
+
+		createFaas(faas)
+		return faas;
 	}
 
 	@ProxyMethod
-	public def initMultipleClaimFaas(info) {
-		def newfaas = initFaasTransaction(info)
-		clearOwnerInfo(newfaas)
-		newfaas.rpu.rp.claimno  = info.claimno
-		newfaas.autonumber = utilSvc.toBoolean(var.td_autonumber, false)
-		return newfaas
-	}
-
-	@ProxyMethod
-	public def initFaasTransaction( info ) {
-		def faas = faasSvc.openFaas( info.faas.objid )
+	public def initTransaction( info ) {
+		def faas = faasSvc.loadFaas( info.faas )
 		validateFaasForTransaction(faas)
 		initNewFaasInfo(info, faas)
+		signatorySvc.init(faas, signatories)
+
+		if (faas.rpu.rputype == 'land' && faas.txntype.newrealproperty){
+			def rp = em.findOpenRealProperty([pin:faas.rp.pin, claimno:info.claimno])
+			if (rp){
+				faas.rp = rpSvc.open(rp)
+			}
+			else {
+				def oldrpid 	= faas.rp.objid 
+				def newrpid 	= utilSvc.generateId('RP')
+				faas.rp.previd 	= oldrpid
+				faas.rp.objid 	= newrpid 
+				faas.rp.state 	= STATE_INTERIM
+				faas.rp.isnew   = true
+			}
+		}
+
+		if (faas.txntype.newrpu ){
+			def rpu = em.findOpenRpu([realproperytid:faas.rp.objid, rputype:faas.rpu.rputype])
+			if (rpu){
+				faas.rpu = rpuSvc.openRpu(rpu)
+			}
+			else{
+				faas.rpu.previd = faas.rpu.objid 
+				rpuSvc.generateNewIds(faas.rpu)
+				faas.rpu.state 	= STATE_INTERIM
+				faas.rpu.isnew  = true;
+			}
+		}
+
+		
+		faas.realpropertyid 	= faas.rp.objid
+		faas.rpu.realpropertyid = faas.rp.objid
+		faas.rpuid  			= faas.rpu.objid 
 		return faas
 	}
 
-
-	/*------------------------------------------------
-	*
-	* DOCUMENT ACTIONS
-	*
-	-------------------------------------------------*/
-
-	@ProxyMethod
-	public def openFaas( faasid ) {
-		def faas = openFaasInfo(faasid)
-		if (!faas) 
-			throw new Exception('FAAS does not exist or has already been deleted. Please verify.')
-		return faas 
-	}
-
-
-	@ProxyMethod
-	public def openFaasInfo(faasid){
-		def faas = em.read(SCHEMA_FAAS, [objid:faasid])
-		if ( faas ){
-			faas.txntype = getTxnType( faas.txntype.objid )
-			faas.previousfaases = getPreviousFaases(faasid)
-			faas.backtaxes      = getBackTaxes(faasid)
-			faas.annotated      = getAnnotatedStatus(faasid)
-			faas.signatories = signatorySvc.getSignatories(faas)
-
-		}
-		return faas 
-	}
 
 	@ProxyMethod
 	public def createFaas( faas ) {
 		checkTxnReference(faas)
-		createFaasOnly(faas)
+		faas.utdno = generateUniqueTdNo(faas)
+		updateTxnTimeStamp(faas)
+		updateNameInfo(faas)
+		signatorySvc.buildSignatories(faas, signatories)
+		em.create(faas)
+		faas.previousfaases.each{
+			em.create(it, SCHEMA_PREVIOUSFAAS)
+		}
+		saveBackTaxes(faas)
 		insertTxnReference(faas)
+		updateRpuMasterInfo(faas)
+		trackingSvc.assignTrackingNo(faas, 'faasonline', 'Document is currently reviewed.')
 		return faas
 	}
 
+
 	@ProxyMethod
-	public def createFaasOnly( faas ) {
-		//validateSignatories(faas)
-		faas.utdno = generateUniqueTdNo(faas)
-		faas.rpuid = faas.rpu.objid 
-		def approver = getSignatory(faas, 'approver')
-		if (approver.dtsigned) {
-			faas.txntimestamp = dtSvc.buildCustomTimeStamp(approver.dtsigned)
-		}
-		updateNameInfo(faas)
-		em.create(SCHEMA_FAAS, faas)
-		signatorySvc.saveSignatories(faas.signatories)
-		faas.previousfaases.each{
-			em.create(SCHEMA_PREVIOUSFAAS, it)
-		}
-		saveBackTaxes(faas)
-		return faas;	
+	public def openFaas(faas){
+		faas = em.findById(faas)
+		if (!faas) throw new Exception('FAAS does not exist or has already been deleted.')
+		faas.txntype = getTxnType( faas.txntype.objid )
+		faas.previousfaases = em.getPreviousFaases([faasid:faas.objid])
+		faas.backtaxes      = em.getBackTaxes([faasid: faas.objid]).each{ it.taxable = utilSvc.toBoolean(it.taxable, true) }
+		faas.annotated      = getAnnotatedStatus(faas.objid)
+		signatorySvc.loadSignatories('faas', faas)
+		return faas 
 	}
 
+
+	@ProxyMethod
+	public def loadFaas(faas){
+		faas = em.findById(faas)
+		if (!faas) throw new Exception('FAAS does not exist or has already been deleted.')
+		faas.txntype = getTxnType( faas.txntype.objid )
+		faas.previousfaases = em.getPreviousFaases([faasid:faas.objid])
+		faas.backtaxes      = em.getBackTaxes([faasid: faas.objid]).each{ it.taxable = utilSvc.toBoolean(it.taxable, true) }
+		faas.annotated      = getAnnotatedStatus(faas.objid)
+		signatorySvc.loadSignatories('faas', faas)
+		faas.rp = rpSvc.open(faas.rp)
+		faas.rpu = rpuSvc.openRpu(faas.rpu)
+		return faas 
+	}
 
 	@ProxyMethod
 	public def updateFaas( faas ) {
-		updateFaasOnly(faas)
-		return faas;	
-	}
-
-
-	@ProxyMethod
-	public def updateFaasOnly( faas ) {
-		def approver = getSignatory(faas, 'approver')
-		if (approver.dtsigned) {
-			faas.txntimestamp = dtSvc.buildCustomTimeStamp(approver.dtsigned)
-		}
-		updateNameInfo(faas)
-		em.updateImmediate(SCHEMA_FAAS, faas)
-		signatorySvc.saveSignatories(faas.signatories)
+		updateTxnTimeStamp(faas)
+		signatorySvc.buildSignatories(faas, signatories)
+		em.update(faas)
 		saveBackTaxes(faas)
+		updateRpuMasterInfo(faas)
 		return faas;	
 	}
 
 
 	@ProxyMethod
 	public def deleteFaas( faas ) {
-		return deleteFaasOnly(faas)
-	}
-
-	@ProxyMethod
-	public def deleteFaasOnly( faas ) {
 		def currentstate = getState(faas.objid)
 		if (currentstate == STATE_FORPROVAPPROVAL)  throw new Exception('FAAS has already been submitted to province.')
 		if (currentstate == STATE_CURRENT)  throw new Exception('FAAS is already current.')
 		if (currentstate == STATE_CANCELLED)  throw new Exception('FAAS has already been cancelled.')
 
+		trackingSvc.delete([objid:faas.objid])
 		txnRef.delete(faas.objid)
-		getPreviousFaases(faas.objid).each{
-			em.delete(SCHEMA_PREVIOUSFAAS, it)
+		em.getPreviousFaases([faasid:faas.objid]).each{
+			em.delete(it, SCHEMA_PREVIOUSFAAS)
 		}
-		em.delete(SCHEMA_FAAS, faas)
+
+		faas.backtaxes.each{
+			em.delete(it, SCHEMA_BACKTAX)
+		}
+
+		em.delete(faas)
 		signatorySvc.deleteSignatories(faas)
 		wsSvc.deleteAll(faas.objid)
+
+		if (faas.txntype.newrpu){
+			rpuSvc.deleteRpu(rpuSvc.openRpu(faas.rpu))
+		}
+		if (faas.rpu.rputype == 'land' && faas.txntype.newrealproperty){
+			rpSvc.removeEntity(rpSvc.open(faas.rp) )
+		}
 		return faas 
 	}
 
-	
+
 	@ProxyMethod
 	public void deleteFaasById( faasid ) {
 		if (faasid) {
-			deleteFaas(faasSvc.openFaas(faasid))
+			deleteFaas(faasSvc.openFaas([objid:faasid]))
 		}
 	}
 
 
+
+	@ProxyMethod
+	public def getHistory( faasid ) {
+		return em.getHistory([faasid:faasid])
+	}
 
 	/*------------------------------------------------
 	*
@@ -226,131 +299,192 @@ class FAASService
 	-------------------------------------------------*/
 
 	@ProxyMethod
-	public def submitFaasForApproval( faas ) {
-		validateSignatories(faas)
-		if (faas.txntype.newrpu) {
-			faas.rpu.state = faas.state 
-			faas.rpu.rp.state  = faas.state 
-			rpuSvc.submitRpuForApproval( faas.rpu )
-		}
+	public def submitForTaxmapping( faas ) {
+		def retval = updateFaasState(faas, STATE_INTERIM, STATE_FORTAXMAPPING)
+		if (retval == 0) 
+			throw new Exception('Unable to submit FAAS. Only INTERIM record is allowed.')
+
 		wsSvc.insert(faas)
-		db.updateFaasState(faas)
+		trackingSvc.updateMessage([objid:faas.objid, msg:'Document is now in taxmapping.'])
+		return faas
+	}
+
+
+	@ProxyMethod
+	public def submitForAppraisal( faas ) {
+		def retval = updateFaasState(faas, STATE_FORTAXMAPPING, STATE_FORAPPRAISAL)
+		if (retval == 0) 
+			throw new Exception('Unable to submit FAAS. Only FOR TAXMAPPING record is allowed.')
+
+		wsSvc.insert(faas)
+		trackingSvc.updateMessage([objid:faas.objid, msg:'Document is now in appraisal.'])
+		return faas
+	}
+
+
+	@ProxyMethod
+	public def submitFaasForApproval( faas ) {
+		def retval = em.submitForApproval(faas)
+		if (retval == 0) 
+			throw new Exception('Unable to submit FAAS for approval. Only INTERIM record is allowed.')
+
+		wsSvc.insert(faas)
+		trackingSvc.updateMessage([objid:faas.objid, msg:'Document is now for approval.'])
 		return faas
 	}
 
 
 	@ProxyMethod
 	public def approveFaas( faas ) {
+		validateSignatories(faas)
+		faas.dtapproved = faas.approver.dtsigned
 		faas.state = STATE_CURRENT
-		wsSvc.insert(faas)
-		if (faas.txntype.newrpu){
-			rpuSvc.approveRpu( faas.rpu )
+		faas.prevstate = STATE_FORAPPROVAL
+		updateTDNo(faas)
+		def retval = em.approveFaas(faas)
+		if (retval == 0) 
+			throw new Exception('Unable to approve FAAS. Only FOR APPROVAL record is allowed.')
+
+		if (faas.txntype.newrealproperty){
+			rpSvc.approve(faas.rp)
 		}
+		rpuSvc.approveRpu(faas.rpu)
+		wsSvc.insert(faas)
 		cancelPreviousFaases(faas)
 		txnRef.delete(faas.objid)
-		updateTDNo(faas)
-		db.approveFaas(faas)
+		trackingSvc.updateMessage([objid:faas.objid, msg:'Document has already been approved.'])
 		return faas 
 	}
 
 
 	@ProxyMethod
 	public def disapproveFaas( faas ) {
-		validateState( faas.state, faas.objid )
 		wsSvc.delete(faas)
-		faas.state = STATE_INTERIM
-		if (faas.txntype.newrpu) {
-			rpuSvc.disapproveRpu( faas.rpu )
-		}
-		return updateFaas(faas)
+
+		def retval = updateFaasState(faas, STATE_FORAPPROVAL, STATE_INTERIM)
+		if (retval == 0) 
+			throw new Exception('Unable to disapprove FAAS. Only FOR APPROVAL record is allowed.')
+		trackingSvc.updateMessage([objid:faas.objid, msg:'Document is currently reviewed.'])
+		return faas 
 	}
 
 
 	@ProxyMethod
 	public def submitFaasToProvince( faas ) {
-		faas.state = STATE_FORPROVAPPROVAL
+		def retval = updateFaasState(faas, STATE_FORPROVSUBMISSION, STATE_FORPROVAPPROVAL)
+		if (retval == 0) 
+			throw new Exception('Unable to submit FAAS. Only INTERIM record is allowed.')
+
 		wsSvc.insert(faas)
-		if (faas.txntype.newrpu) {
-			rpuSvc.submitRpuToProvince( faas.rpu )
-		}
-		return updateFaas(faas)
+		trackingSvc.updateMessage([objid:faas.objid, msg:'Document is ready for submission to province.'])
+		return faas;
 	}
 
 
 	@ProxyMethod
 	public def approveFaasSubmissionToProvince( faas ) {
-		faas.state = STATE_CURRENT
+		def retval = updateFaasState(faas, STATE_FORPROVSUBMISSION, STATE_FORPROVAPPROVAL)
+		if (retval == 0) 
+			throw new Exception('Unable to submit FAAS for province approval. Only FOR PROVINCE SUBMISSION record is allowed.')
+
 		wsSvc.insert(faas)
-		if (faas.txntype.newrpu) {
-			rpuSvc.approveRpuSubmissionToProvince( faas.rpu )
-		}
 		cancelPreviousFaases(faas)
 		txnRef.delete(faas.objid)
 		updateTDNo(faas)
-		return updateFaas(faas)
+		trackingSvc.updateMessage([objid:faas.objid, msg:'Document has already been submitted to the province for approval.'])
+		return faas
 	}
 
 
 	@ProxyMethod
 	public def disapproveFaasSubmissionToProvince( faas ) {
-		validateState( faas.state, faas.objid )
 		wsSvc.delete(faas)
-		faas.state = STATE_INTERIM
-		if (faas.txntype.newrpu) {
-			rpuSvc.disapproveRpuSubmissionToProvince( faas.rpu )
-		}
-		return updateFaas(faas)
+		
+		def retval = updateFaasState(faas, STATE_FORPROVAPPROVAL, STATE_FORPROVSUBMISSION)
+		if (retval == 0) 
+			throw new Exception('Unable to disapprove FAAS. Only FOR PROVINCE APPROVAL record is allowed.')
+
+		trackingSvc.updateMessage([objid:faas.objid, msg:'Document is ready for submission to province.'])
+		
+		return faas
 	}
 
 
 	@ProxyMethod
 	public def approveFaasByProvince( faas ) {
-		faas.state = STATE_CURRENT
+		def retval = updateFaasState(faas, STATE_FORPROVAPPROVAL, STATE_CURRENT)
+		if (retval == 0) 
+			throw new Exception('Unable to approve FAAS. Only FOR PROVINCE APPROVAL record is allowed.')
+
+		rpSvc.approve(faas.rp)
+		rpuSvc.approveRpu(faas.rpu)
 		wsSvc.insert(faas)
-		validateState( faas.state, faas.objid )
-		if (faas.txntype.newrpu) {
-			rpuSvc.approveRpuByProvince( faas.rpu )
-		}
 		cancelPreviousFaases(faas)
 		txnRef.delete(faas.objid)
 		updateTDNo(faas)
-		return updateFaas(faas)
+		trackingSvc.updateMessage([objid:faas.objid, msg:'Document has already been approved by the province.'])
+		return faas
 	}
 
 
 	@ProxyMethod
 	public def disapproveFaasByProvince( faas ) {
-		validateState( faas.state, faas.objid )
 		wsSvc.delete(faas)
-		faas.state = STATE_FORPROVSUBMISSION
-		if (faas.txntype.newrpu) {
-			rpuSvc.disapproveRpuByProvince( faas.rpu )
-		}
-		return updateFaas(faas)
+
+		def retval = updateFaasState(faas, STATE_FORPROVAPPROVAL, STATE_INTERIM)
+		if (retval == 0) 
+			throw new Exception('Unable to disapprove FAAS. Only FOR PROVINCE APPROVAL record is allowed.')
+
+		rpSvc.disapprove(faas.rp)
+		rpuSvc.disapproveRpu(faas.rpu)
+		trackingSvc.updateMessage([objid:faas.objid, msg:'Document is currently reviewed.'])
+		return faas
 	}
 
 
 
-
-	/*------------------------------------------------------------------------
-	**
-	** SUPPORT METHODS
-	**
-	------------------------------------------------------------------------*/
-	@ProxyMethod
-	public def openRpu( rpuid ) {
-		return rpuSvc.openRpu(rpuid)	
-	}
 
 	@ProxyMethod
-	public def getRpuTypes(  ) {
-		return rpuSvc.getRpuTypes()
+	public def getTxnType( objid ){
+		def txntype = getTxnTypes().find{it.objid == objid}
+		if (!txntype)
+			throw new Exception('Invalid Txn Type ' + objid + '.')
+		return txntype
 	}
+	
 
 	@ProxyMethod
-	public def getLgus(){
-		return rpuSvc.getLgus( var.lgu_type )
-	}
+    public List getTxnTypes() {
+		return [
+            [objid:'TR', 	name:'Transfer of Ownership', 		newledger:false, 	newrpu:false],
+            [objid:'TRE', 	name:'Transfer with Reassessment', 	newledger:false, 	newrpu:true],
+            [objid:'TRC', 	name:'Transfer with Correction', 	newledger:false, 	newrpu:true, newrealproperty:true],
+            [objid:'CE', 	name:'Correction', 					newledger:false, 	newrpu:true, newrealproperty:true],
+            [objid:'CC', 	name:'Change Classification', 		newledger:false, 	newrpu:true],
+            [objid:'CT', 	name:'Change Taxability', 			newledger:false, 	newrpu:true],
+            [objid:'CD', 	name:'Change Depreciation', 		newledger:false, 	newrpu:true],
+            [objid:'RE', 	name:'Reassessment', 				newledger:false, 	newrpu:true],
+
+            [objid:'GR', 	name:'General Revision', 			newledger:false, 	newrpu:true, newrealproperty:true, checkbalance:false],
+            [objid:'ND', 	name:'New Discovery', 				newledger:true, 	newrpu:true, newrealproperty:true, checkbalance:false],
+            [objid:'SD', 	name:'Subdivision', 				newledger:true, 	newrpu:true, newrealproperty:true],
+            [objid:'CS', 	name:'Consolidation', 				newledger:true, 	newrpu:true, newrealproperty:true],
+            [objid:'CTD', 	name:'Cancellation', 				newledger:false, 	newrpu:false],
+            [objid:'MC', 	name:'Multiple Claim', 				newledger:true, 	newrpu:true, newrealproperty:true, checkbalance:false],
+            [objid:'MS', 	name:'Multiple Claim Settlement',	newledger:false, 	newrpu:true, newrealproperty:true, checkbalance:false],
+            [objid:'RV', 	name:'Revision', 					newledger:false, 	newrpu:true, newrealproperty:true, checkbalance:false],
+            
+            [objid:'RS', 	name:'Resection', 					newledger:false, 	newrpu:true, newrealproperty:true, checkbalance:false],
+            
+            [objid:'DC', 	name:'Data Capture', 				newledger:true, 	newrpu:true],
+        ]
+    }
+
+
+    @ProxyMethod
+    public def getRpuTypes(  ) {
+    	return rpuSvc.getRpuTypes();	
+    }
 
 
 	@ProxyMethod
@@ -360,46 +494,172 @@ class FAASService
 
 
 	@ProxyMethod
-	public def getBarangays(params) {
-		return brgySvc.getList(params)
-	}
-
-
-	@ProxyMethod 
-	public def getMaximumBackTaxYearsPolicy(){
-		return 10 
-	}
-
-
-	@ProxyMethod
-	public void checkDuplicateTdNo( faasid, tdno ) {
-		if (tdno == null || tdno == '-') return 
-		def faas = getFaasByTdNo(tdno)	
-		if (faas && faas.objid != faasid)
-			throw new Exception('TD No. ' + tdno + ' already exist.')
-	}
-
-	@ProxyMethod
-	public boolean isDuplicateTdNo( faasid, tdno ) {
-		try{
-			checkDuplicateTdNo(faasid, tdno )
-			return false
+	public def generateUniqueTdNo(faas){
+		if (faas.tdno && faas.tdno != '-') {
+			return faas.tdno
 		}
-		catch(e){
-			return true 
+		else {
+			return seqSvc.getNextFormattedSeries(UTDNO_KEY)
 		}
 	}
 
 
 	@ProxyMethod
-	public def getFaasByTdNo(tdno){
-		return em.sqlContext.createNamedQuery('faas:getFaasByTdNo')
-				.setParameter('tdno', tdno).singleResult
+    public def generateNextTdNo( faas ) {
+        //TD Formatting Options:
+        // Y - revision year
+        // P - province index 
+        // C - city index 
+        // M - municipality index 
+        // D - district index 
+        // B - barangay index 
+        def lguindex = em.findLguIndexInfo([barangayid:faas.rp.barangay.objid])
+		def seqcount = utilSvc.toInteger2( var.td_autonumber_sequence_count, 5 )
+        def ry       = (faas.rpu.ry +'')[-2..-1]
+        
+        def values = [Y:ry, P:lguindex.provcityindex, C:lguindex.provcityindex, M:lguindex.munidistrictindex, D:lguindex.munidistrictindex, B:lguindex.barangayindex]
+        def tdno   = var.td_format 
+        if (!tdno) tdno = 'Y-M-B'
+        values.keySet().each {
+            tdno = tdno.replace( it, values[it] )
+        }
+        def ntdno = tdno + '-' + seqSvc.getNextFormattedSeriesA( tdno, seqcount )
+        return ntdno 
+    }
+
+
+	@ProxyMethod
+	public def getAnnotatedStatus(faasid){
+		def annotations = annotationSvc.getAnnotationsByFaasId(faasid)
+		return annotations.size() > 0
 	}
 
 
 	@ProxyMethod
-	public void initNewFaasInfo(info, newfaas){
+	public def getState(faasid){
+		def faas = em.findState([objid:faasid])
+		if (!faas) throw new Exception('FAAS does not exist or has already been deleted.')
+		return faas.state 
+	}
+    
+	/*------------------------------------------------------------------------
+	**
+	** HELPER METHODS
+	**
+	------------------------------------------------------------------------*/
+	def initFaas(info){
+		def faas = [
+			objid 		  	: utilSvc.generateId('F'),
+			state 		  	: STATE_INTERIM,
+			autonumber   	: utilSvc.toBoolean(var.td_autonumber, false),
+			prevav		  	: 0.0,
+			prevmv		  	: 0.0,
+			effectivityyear : dtSvc.serverYear + 1,
+			effectivityqtr  : 1,
+			backtaxyrs		: 0,
+			iscondo 		: info.iscondo,
+			barangay		: info.barangay,
+			datacapture     : false,
+			txntype 		: info.txntype,
+			lguid			: var.lgu_objid,
+			taxpayer		: [:],
+			owner 			: [:],
+			administrator   : [:],
+		]
+		signatorySvc.init(faas, signatories)
+		return faas 
+	}
+
+
+    void checkTxnReference(faas){
+		if (faas.previousfaases && ! faas.txntype.objid.matches('SD|CS')){
+			def prevfaasid = faas.previousfaases[0].prevfaasid
+			txnRef.checkReference(prevfaasid)
+		}
+	}
+
+
+	void updateNameInfo(faas){
+		def len = faas.owner?.name?.length()
+		if (len > 100) len = 100
+		faas.name = faas.owner?.name?.substring(0,len)
+	}
+
+
+	void insertTxnReference(faas){
+		if (faas.previousfaases &&  ! faas.txntype.objid.matches('SD|CS')){
+			def prevfaasid = faas.previousfaases[0].prevfaasid
+			txnRef.insert([objid:prevfaasid, refid:faas.objid, msg:'FAAS is currently referenced by TD No. ' + faas.tdno])
+		}
+	}
+
+
+	void saveBackTaxes(faas){
+		faas._backtaxes?.each{
+			em.delete(it, SCHEMA_BACKTAX)
+		}
+		faas.backtaxes?.each{
+			it.faasid = faas.objid 
+			em.save(it, SCHEMA_BACKTAX)
+		}
+	}
+
+
+	void updateRpuMasterInfo(faas){
+		em.updateRpuMasterInfo(faas)
+	}
+
+
+	void validateSignatories(faas){
+		utilSvc.required('Appraiser', faas.appraiser)
+		utilSvc.required('Appraiser', faas.appraiser.name)
+		utilSvc.required('Appraiser Date Signed', faas.appraiser.dtsigned)
+
+		utilSvc.required('Approver', faas.approver)
+		utilSvc.required('Approver', faas.approver.name)
+		utilSvc.required('Approver Date Signed', faas.approver.dtsigned)
+	}
+
+	void cancelPreviousFaases(faas){
+		em.getPreviousFaases([faasid:faas.objid]).each{
+			def params = [
+				objid  			: it.prevfaasid,
+				cancelreason	: faas.txntype.objid,
+				canceldate		: faas.approver.dtsigned,
+				cancelledbytdnos: faas.tdno,
+				cancelledtimestamp : dtSvc.buildCustomTimeStamp(faas.approver.dtsigned),
+			]
+			em.cancelFaas(params)
+			if (faas.txntype.newrpu){
+				em.cancelRpu([objid:it.prevrpuid])
+			}
+		}
+	}
+	
+
+    def updateFaasState( faas, fromstate, tostate){
+		faas.state = tostate
+		return em.updateFaasState([objid:faas.objid, state:tostate, prevstate:fromstate])
+	}
+
+
+	void updateTDNo(faas){
+    	if ( (faas.tdno == null || faas.tdno == '-') && utilSvc.isTrue(faas.autonumber) ){
+			faas.tdno = generateNextTdNo(faas)
+		}
+		faas.utdno = faas.tdno 
+    }
+
+
+	void validateFaasForTransaction(faas){
+		if (faas.state != STATE_CURRENT)
+			throw new Exception('FAAS ' + faas.tdno + ' is not current.')
+
+		txnRef.checkReference(faas.objid)
+	}
+
+
+	void initNewFaasInfo(info, newfaas){
 		def pdate 	= dtSvc.parseCurrentDate()
 
 		def oldid  			 	= newfaas.objid 
@@ -428,303 +688,58 @@ class FAASService
 		newfaas.titleno			= null
 		newfaas.titledate		= null
 		newfaas.memoranda		= null
-
-		/*
-		if (newfaas.autonumber){
-			newfaas.tdno = generateNextTdNo(newfaas)
-			newfaas.utdno = newfaas.tdno 
-		}
-		*/
-
-		if (newfaas.txntype.newrpu){
-			newfaas.rpu.previd = newfaas.rpu.objid 
-			rpuSvc.generateNewIds(newfaas.rpu)
-			newfaas.rpuid 		= newfaas.rpu.objid 
-			newfaas.rpu.state 	= STATE_INTERIM
-		}
-
-		signatorySvc.initSignatories(newfaas, signatories)
+		newfaas.lgutype 		= (newfaas.lgutype ? newfaas.lgutype : var.lgu_type)
+		signatorySvc.init(newfaas, signatories)
 	}
 
 	@ProxyMethod
-    public def generateNextTdNo( faas ) {
-        //TD Formatting Options:
-        // Y - revision year
-        // P - province index 
-        // C - city index 
-        // M - municipality index 
-        // D - district index 
-        // B - barangay index 
-        def lguindex      = em.sqlContext.createNamedQuery('faas:getLguIndex').setParameter('barangayid', faas.rpu.rp.barangayid).singleResult
-		def seqcount		= utilSvc.toInteger2( var.td_autonumber_sequence_count, 5 )
-        def ry              = (faas.rpu.ry +'')[-2..-1]
-        
-        def values = [Y:ry, P:lguindex.provcityindex, C:lguindex.provcityindex, M:lguindex.munidistrictindex, D:lguindex.munidistrictindex, B:lguindex.barangayindex]
-        def tdno   = var.td_format 
-        if (!tdno) tdno = 'Y-M-B'
-        values.keySet().each {
-            tdno = tdno.replace( it, values[it] )
-        }
-        def ntdno = tdno + '-' + seqSvc.getNextFormattedSeriesA( tdno, seqcount )
-        println 'New TD No -> ' + ntdno 
-        return ntdno 
-    }
+	public void checkDuplicateTdNo( faasid, tdno ) {
+		if (tdno == null || tdno == '-') return 
+		def faas = getFaasByTdNo(tdno)	
+		if (faas && faas.objid != faasid)
+			throw new Exception('TD No. ' + tdno + ' already exist.')
+	}	
 
 
-    void updateTDNo(faas){
-    	if ( (faas.tdno == null || faas.tdno == '-') && utilSvc.isTrue(faas.autonumber) ){
-			faas.tdno = generateNextTdNo(faas)
-		}
-		faas.utdno = faas.tdno 
-    }
-
-	void clearOwnerInfo(faas){
-		faas.taxpayer  = null
-		faas.owner  = null
-		faas.administrator  = null
-		faas.beneficiary  = null
-	}
-
-
-	def getPreviousFaases(faasid) {
-		return em.sqlContext.createNamedQuery('faas:getPreviousFaases')
-						.setParameter('faasid', faasid)
-						.resultList
-	}
-
-	def getBackTaxes(faasid){
-		return em.sqlContext.createNamedQuery('faas:getBackTaxes')
-				.setParameter('faasid', faasid).resultList
-				.each{
-					it.taxable = utilSvc.toBoolean(it.taxable, true)
-				}
-	}
-
-
-	void saveBackTaxes(faas){
-		faas._backtaxes?.each{
-			em.delete(SCHEMA_BACKTAX, it)
-		}
-		faas.backtaxes?.each{
-			it.faasid = faas.objid 
-			em.save(SCHEMA_BACKTAX, it)
-		}
-	}
-
-	void cancelPreviousFaases(faas){
-		getPreviousFaases(faas.objid).each{
-			def approver = getSignatory(faas, 'approver')
-			def params = [
-				objid  			: it.prevfaasid,
-				cancelreason	: faas.txntype.objid,
-				canceldate		: approver.dtsigned,
-				cancelledbytdnos: faas.tdno,
-				cancelledtimestamp : dtSvc.buildCustomTimeStamp(approver.dtsigned),
-			]
-			em.sqlContext.createNamedExecutor('faas:cancelFaas').setParameters(params).execute()
-			if (faas.txntype.newrpu){
-				em.sqlContext.createNamedExecutor('faas:cancelRpu').setParameter('objid', it.prevrpuid).execute()
-			}
-		}
+	@ProxyMethod
+	public def getFaasByTdNo(tdno){
+		return em.findByTdNo([tdno:tdno])
 	}
 
 
 	@ProxyMethod
-	public def getTxnType( objid ){
-		def txntype = getTxnTypes().find{it.objid == objid}
-		if (!txntype)
-			throw new Exception('Invalid Txn Type ' + objid + '.')
-		return txntype
+	public def getMaximumBackTaxYearsPolicy(  ) {
+		return 10;
 	}
-	
+
 
 	@ProxyMethod
-    public List getTxnTypes() {
-    	//TODO: register types from invokers
-		return [
-            [objid:'TR', 	name:'Transfer of Ownership', 		newledger:false, 	newrpu:false],
-            [objid:'TRE', 	name:'Transfer with Reassessment', 	newledger:false, 	newrpu:true],
-            [objid:'TRC', 	name:'Transfer with Correction', 	newledger:false, 	newrpu:true],
-            [objid:'CE', 	name:'Correction', 					newledger:false, 	newrpu:true],
-            [objid:'CC', 	name:'Change Classification', 		newledger:false, 	newrpu:true],
-            [objid:'CT', 	name:'Change Taxability', 			newledger:false, 	newrpu:true],
-            [objid:'CD', 	name:'Change Depreciation', 		newledger:false, 	newrpu:true],
-            [objid:'RE', 	name:'Reassessment', 				newledger:false, 	newrpu:true],
-
-            [objid:'GR', 	name:'General Revision', 			newledger:false, 	newrpu:true, newrealproperty:true],
-            [objid:'ND', 	name:'New Discovery', 				newledger:true, 	newrpu:true, newrealproperty:true],
-            [objid:'SD', 	name:'Subdivision', 				newledger:true, 	newrpu:true, newrealproperty:true],
-            [objid:'CS', 	name:'Consolidation', 				newledger:true, 	newrpu:true, newrealproperty:true],
-            [objid:'CTD', 	name:'Cancellation', 				newledger:false, 	newrpu:false],
-            [objid:'MC', 	name:'Multiple Claim', 				newledger:true, 	newrpu:true, newrealproperty:true],
+	public def getHistoryColumns(  ) {
+        return [
+            [name:"ry", caption:"RY", width:50, type:'integer', format:'0000'],
+            [name:"tdno", caption:"TD No.", width:140],
+            [name:"prevtdno", caption:"Previous TD No.", width:140],
+            [name:"txntype.objid", caption:"Txn", width:50],
+            [name:"classification.code", caption:"Class", width:50], 
+            [name:"fullpin", caption:"PIN", width:200],
+            [name:"owner.name", caption:"Owner Name", width:250],
+            [name:"cadastrallotno", caption:"Lot No.", width:100],
+            [name:"totalareasqm", caption:"Area (sqm)", width:120, type:'decimal', format:'#,##0.00'],
+            [name:"totalmv", caption:"Market Value", width:100, type:'decimal', format:'#,##0.00'],
+            [name:"totalav", caption:"Assessed Value", width:100, type:'decimal', format:'#,##0.00'],
+            [name:"cancelreason", caption:"Cancel Reason", width:100],
+            [name:"canceldate", caption:"Cancel Date", width:100],
             
-            [objid:'RS', 	name:'Resection', 					newledger:false, 	newrpu:true, newrealproperty:true],
-            
-            [objid:'DC', 	name:'Data Capture', 				newledger:true, 	newrpu:true],
         ]
-    }
-
-
-    
-	/*------------------------------------------------------------------------
-	**
-	** HELPER METHODS
-	**
-	------------------------------------------------------------------------*/
-	def initFaas(info){
-		def faas = [
-			objid 		  	: utilSvc.generateId('F'),
-			state 		  	: STATE_INTERIM,
-			autonumber   	: 0,
-			prevav		  	: 0.0,
-			prevmv		  	: 0.0,
-			effectivityqtr  : 1,
-			backtaxyrs		: 0,
-			iscondo 		: info.iscondo,
-			barangay		: info.barangay,
-			datacapture     : 0,
-			txntype 		: info.txntype,
-			lguid			: var.lgu_objid,
-			taxpayer		: [:],
-			owner 			: [:],
-			administrator   : [:],
-		]
-		signatorySvc.initSignatories(faas, signatories)
-		return faas 
-	}
-
-	@ProxyMethod
-	public def generateUniqueTdNo(faas){
-		if (faas.tdno && faas.tdno != '-') {
-			return faas.tdno
-		}
-		else {
-			return seqSvc.getNextFormattedSeries(UTDNO_KEY)
-		}
 	}
 
 
-    @ProxyMethod
-    public List getLandImprovements( landfaasid) {
-        return em.sqlContext.createNamedQuery('faas:getLandImprovementIds')
-        		.setParameter('landfaasid', landfaasid )
-        		.resultList 
-    }
-
-	void validateFaasForTransaction(faas){
-		if (faas.state != STATE_CURRENT)
-			throw new Exception('FAAS ' + faas.tdno + ' is not current.')
-
-		txnRef.checkReference(faas.objid)
+	void updateTxnTimeStamp(faas){
+		def dt =  dtSvc.serverDate
+		if (faas.approver.dtsigned) 
+			dt = faas.approver.dtsigned
+		faas.txntimestamp = dtSvc.buildCustomTimeStamp(dt)
 	}
 
-	
-	@ProxyMethod
-	public def getState(faasid){
-		def faas = em.sqlContext.createNamedQuery('faas:getState').setParameter('objid', faasid).singleResult
-		if (!faas) throw new Exception('FAAS does not exist or has already been deleted.')
-		return faas.state 
-	}
-
-	@ProxyMethod
-	public def getAnnotatedStatus(faasid){
-		def annotations = annotationSvc.getAnnotationsByFaasId(faasid)
-		return annotations.size() > 0
-	}
-
-	@ProxyMethod
-	public def getAnnotations( faasid ) {
-		return annotationSvc.getAnnotationsByFaasId(faasid)
-	}
-
-
-	void checkTxnReference(faas){
-		if (faas.previousfaases){
-			def prevfaasid = faas.previousfaases[0].prevfaasid
-			txnRef.checkReference(prevfaasid)
-		}
-	}
-
-
-	void insertTxnReference(faas){
-		if (faas.previousfaases){
-			def prevfaasid = faas.previousfaases[0].prevfaasid
-			txnRef.insert([objid:prevfaasid, refid:faas.objid, msg:'FAAS is currently referenced by TD No. ' + faas.tdno])
-		}
-	}
-
-	void validateState( newstate, faasid ){
-		def currentstate = getState( faasid )
-
-		def errmsg_still_interim = 'FAAS is still interim.'
-		def errmsg_still_forprovsubmission = 'FAAS is not yet submitted to province.'
-		def errmsg_still_forapproval = 'FAAS is not yet submitted for approval.'
-
-		def errmsg_forapproval = 'FAAS has already been submitted for approval.'
-		def errmsg_forprovsubmission = 'FAAS has already been submitted for approval.'
-		def errmsg_forprovapproval = 'FAAS has already been submitted for province approval.'
-		def errmsg_current = 'FAAS is already current.'
-		def errmsg_cancelled = 'FAAS has already been cancelled.'
-
-		if (newstate == STATE_INTERIM) {
-			if (currentstate == STATE_FORAPPROVAL) throw new Exception( errmsg_forapproval )
-			if (currentstate == STATE_FORPROVSUBMISSION) throw new Exception(errmsg_forprovsubmission)	
-			if (currentstate == STATE_FORPROVAPPROVAL) throw new Exception(errmsg_forprovapproval)	
-			if (currentstate == STATE_CURRENT) throw new Exception(errmsg_current)	
-			if (currentstate == STATE_CANCELLED) throw new Exception(errmsg_cancelled)	
-		}
-		else if (newstate == STATE_FORAPPROVAL) {
-			if (currentstate == STATE_INTERIM) throw new Exception(errmsg_still_interim)	
-
-			if (currentstate == STATE_CURRENT) throw new Exception(errmsg_current)	
-			if (currentstate == STATE_CANCELLED) throw new Exception(errmsg_cancelled)	
-		}
-		else if (newstate == STATE_FORPROVSUBMISSION) {
-			if (currentstate == STATE_INTERIM) throw new Exception(errmsg_still_interim)	
-
-			if (currentstate == STATE_FORPROVAPPROVAL) throw new Exception(errmsg_forprovapproval)	
-			if (currentstate == STATE_CURRENT) throw new Exception(errmsg_current)	
-			if (currentstate == STATE_CANCELLED) throw new Exception(errmsg_cancelled)	
-		}
-		else if (newstate == STATE_FORPROVAPPROVAL) {
-			if (currentstate == STATE_INTERIM) throw new Exception(errmsg_still_interim)	
-			
-			if (currentstate == STATE_CURRENT) throw new Exception(errmsg_current)	
-			if (currentstate == STATE_CANCELLED) throw new Exception(errmsg_cancelled)	
-		}
-		else if (newstate == STATE_CURRENT) {
-			if (currentstate == STATE_INTERIM) throw new Exception(errmsg_still_interim)	
-			if (currentstate == STATE_FORPROVSUBMISSION) throw new Exception(errmsg_still_forprovsubmission)	
-
-			if (currentstate == STATE_CANCELLED) throw new Exception(errmsg_cancelled)	
-		}
-		else {
-			throw new Exception('State ' + state + ' is invalid.')
-		}
-	}
-
-
-	def getSignatory(faas, type){
-		return faas.signatories.find{it.type == type }
-	}
-
-	void validateSignatories(faas){
-		def appraiser = getSignatory(faas, 'appraiser')
-		utilSvc.required('Appraiser', appraiser)
-		utilSvc.required('Appraiser', appraiser.name)
-		utilSvc.required('Appraiser Date Signed', appraiser.dtsigned)
-
-		def approver = getSignatory(faas, 'approver')
-		utilSvc.required('Approver', approver)
-		utilSvc.required('Approver', approver.name)
-		utilSvc.required('Approver Date Signed', approver.dtsigned)
-	}
-
-
-	void updateNameInfo(faas){
-		def len = faas.owner.name.length()
-		if (len > 100) len = 100
-		faas.name = faas.owner.name.substring(0,len)
-	}
 }
 

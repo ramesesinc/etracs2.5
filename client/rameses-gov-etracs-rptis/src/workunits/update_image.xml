@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workunit>
+    <invokers>
+        <invoker type="upload:image" caption="Upload Image" target="popup" />
+    </invokers>
+    
+    <code lang="groovy">
+
+<![CDATA[        
+
+import com.rameses.rcp.common.*
+import com.rameses.rcp.annotations.*
+import com.rameses.osiris2.client.*
+import com.rameses.gov.etracs.rpt.common.*;
+
+public class UploadImageController 
+{
+    
+    @Binding
+    def binding;
+    
+    @Service('DBImageService')
+    def imageSvc;
+            
+
+    def afterupload;  
+    def entity;
+    
+    def file;
+    def title;
+    
+    def upload(){
+        def header = [ 
+            objid   : 'I'+ new java.rmi.server.UID(), 
+            refid   : entity.objid, 
+            title   : title, 
+        ]
+        DBImageUtil.getInstance(imageSvc).upload(header, file.getAbsolutePath());
+        if (afterupload ) afterupload();
+        return '_close';
+    }
+}
+
+]]>
+</code>
+    
+    <pages>
+        <page template="com.rameses.gov.etracs.rpt.common.UploadPage" />
+    </pages>
+</workunit>
+

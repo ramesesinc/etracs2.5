@@ -2,9 +2,10 @@ import com.rameses.annotations.*;
 import com.rameses.common.*;
 import com.rameses.services.extended.*;
 
-class DistrictLookupService extends ActiveListService {
+class DistrictLookupService extends ActiveListService 
+{
 	
-	@PersistenceContext('main')	
+	@ActiveDB('district')	
 	def em
 	
 	@ProxyMethod 
@@ -16,29 +17,19 @@ class DistrictLookupService extends ActiveListService {
 		];
 	}
 
-	@ProxyMethod
-	public def getList( params ) {
+	void beforeList( params ) {
 		params.searchtext = (params.searchtext? params.searchtext: '')
 		params.name = params.searchtext + '%'
-		def qry = em.sqlContext.createNamedQuery('district:lookup')
-		if (params._start != null)
-			qry.setFirstResult( params._start )
-		if (params._limit != null)
-			qry.setMaxResults(params._limit)
-
-		return qry.setParameters(params).resultList 
 	}
 
 	@ProxyMethod
 	public def getById( objid ) {
-		return em.sqlContext.createNamedQuery('district:getById')
-				.setParameter('objid', objid).singleResult	
+		return em.findById([objid:objid])
 	}
 
 	@ProxyMethod
 	public def getListByParentid( parentid ) {
-		return em.sqlContext.createNamedQuery('district:getListByParentid')
-				.setParameter('parentid', parentid).resultList	
+		return em.getListByParentid([parentid:parentid])
 	}
 
 }

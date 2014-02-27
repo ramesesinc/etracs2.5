@@ -34,7 +34,7 @@ FROM rptcertificationitem rci
 	INNER JOIN faas f ON rl.faasid = f.objid 
 	INNER JOIN rpu rpu ON f.rpuid = rpu.objid
 	INNER JOIN propertyclassification pc ON rpu.classification_objid = pc.objid 
-	LEFT JOIN realproperty rp ON rpu.realpropertyid = rp.objid
+	LEFT JOIN realproperty rp ON f.realpropertyid = rp.objid
 	LEFT JOIN barangay b ON rp.barangayid = b.objid 
 WHERE rci.rptcertificationid = $P{rptcertificationid}
 
@@ -67,7 +67,7 @@ FROM rptledger rl
 	INNER JOIN faas f ON rl.faasid = f.objid
 	INNER JOIN rpu rpu ON f.rpuid = rpu.objid
 	INNER JOIN propertyclassification pc ON rpu.classification_objid = pc.objid 
-	INNER JOIN realproperty rp ON rpu.realpropertyid = rp.objid
+	INNER JOIN realproperty rp ON f.realpropertyid = rp.objid
 	LEFT JOIN barangay b ON rp.barangayid = b.objid 
 WHERE rl.state = 'APPROVED'
   AND f.taxpayer_objid = $P{taxpayerid}

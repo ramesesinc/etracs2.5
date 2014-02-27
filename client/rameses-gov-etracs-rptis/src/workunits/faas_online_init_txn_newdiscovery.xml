@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workunit extends="rpt_wtemplates/FaasTxnOnlineInitController.xml">
+    <invokers>       
+        <invoker type="quick_launcher" code="ND11" action="init" caption="New Discovery" 
+            txntype="ND" role="APPRAISER,EXAMINER" permission="faas.createNewDiscovery" index="11"  />
+            
+        <invoker folderid="/explorer/txn/rpt/online" action="init" caption="New Discovery" 
+            txntype="ND" role="APPRAISER,EXAMINER" permission="faas.createNewDiscovery" index="11"  />
+            
+    </invokers>
+    <code>
+        
+
+import com.rameses.rcp.annotations.* 
+import com.rameses.rcp.common.* 
+import com.rameses.osiris2.client.*
+import com.rameses.osiris2.common.*
+import com.rameses.gov.etracs.rpt.common.RPTUtil;
+
+
+class FaasOnlineNDInitController extends com.rameses.gov.etracs.rpt.faas.ui.FaasTxnOnlineInitController
+{
+    @Service('BarangayLookupService')
+    def brgySvc;
+    
+    @Service('RealPropertyService')
+    def rpSvc;
+    
+    @Service('RPUService')
+    def rpuSvc;
+    
+    
+    def pinTypes = ['new', 'old']
+    def rpuTypes;
+    
+    @PropertyChangeListener
+    def listener = [
+        'entity.rputype' : {
+            entity.barangay = null;
+            entity.suffix = null;
+            if (entity.rputype == 'land')
+                entity.suffix = 0
+            entity.isection = null;
+            entity.iparcel = null;
+        },
+        
+        'entity.pintype' :{
+            entity.isection = null;
+            entity.iparcel = null;
+        },
+        
+        'entity.*' : { buildPin(); }
+    ]
+    
+                
+    void afterInit(){
+        entity.ry = svc.getCurrentRy()
+        entity.rputype = 'land';
+        entity.suffix = 0;
+        rpuTypes = svc.getRpuTypes();
+    }
+    
+    def getLookupBarangay(){
+        return InvokerUtil.lookupOpener('barangay:lookup', [
+            onselect: { 
+                entity.barangay = it;
+                entity.rp = null;
+                buildPin();
+            },
+            onempty : { entity.barangay = null },
+        ])
+    }
+    
+    
+    def getLookupRealProperty(){
+        return InvokerUtil.lookupOpener('realproperty:lookup', [
+            onselect: { 
+                entity.rp = it; 
+                entity.barangay = brgySvc.getById(entity.rp.barangayid);
+                entity.barangayid = entity.barangay.objid;
+                entity.isection = RPTUtil.toInteger(entity.rp.section);
+                entity.iparcel = RPTUtil.toInteger(entity.rp.parcel);
+                buildPin();
+            },
+            onempty : { entity.rp = null; },
+        ])
+    }
+    
+    void buildPin(){
+        RPTUtil.buildPin(entity);
+        binding?.refresh('entity.pin');
+    }
+    
+    def process(){
+        def faas = svc.initNewDiscovery(entity);
+        return InvokerUtil.lookupOpener('faasonline:open', [entity:faas]);
+    }
+    
+}
+
+    </code>
+    
+    <pages>
+        <page template="com.rameses.gov.etracs.rpt.faas.ui.FAASOnlineNDInitPage"/>
+    </pages>    
+</workunit>
+
+

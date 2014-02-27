@@ -27,6 +27,9 @@ declare RPTLedgerFact
     basiccredit             : Double
     basicamnesty            : Double
     basicintamnesty         : Double
+    basicpaid               : Double
+    basicintpaid            : Double
+    basicdisctaken         : Double
     sef                     : Double
     sefint                  : Double
     sefdisc                 : Double

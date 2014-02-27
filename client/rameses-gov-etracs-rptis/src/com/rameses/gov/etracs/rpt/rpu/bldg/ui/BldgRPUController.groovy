@@ -15,7 +15,6 @@ public class BldgRPUController extends com.rameses.gov.etracs.rpt.rpu.ui.Abstrac
     def loading;
     def setting;
     
-    
     @PropertyChangeListener
     def listener = [
         'rpu.hasswornamount':{
@@ -26,11 +25,11 @@ public class BldgRPUController extends com.rameses.gov.etracs.rpt.rpu.ui.Abstrac
         },
     ]
     
-    public def getService(){
-        return svc 
+    void beforeInit(){
+        initInfo();
     }
     
-    void initOpen(){
+    void afterOpen(){
         initInfo();
     }
     
@@ -266,4 +265,5 @@ public class BldgRPUController extends com.rameses.gov.etracs.rpt.rpu.ui.Abstrac
     void loadSetting(){
         setting = svc.getBldgRySetting(bldgtype?.bldgrysettingid)
     }
+    
 }

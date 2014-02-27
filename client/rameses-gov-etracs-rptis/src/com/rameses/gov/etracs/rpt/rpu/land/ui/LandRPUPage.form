@@ -233,6 +233,7 @@
                               <Dimension value="[0, 20]"/>
                             </Property>
                             <Property name="readonly" type="boolean" value="true"/>
+                            <Property name="scale" type="int" value="6"/>
                           </Properties>
                         </Component>
                         <Component class="com.rameses.rcp.control.XDecimalField" name="xDecimalField7">

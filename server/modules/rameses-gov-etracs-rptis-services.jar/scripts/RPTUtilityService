@@ -25,20 +25,23 @@ class RPTUtilityService
 		validatePin( info )
 		rpuSvc.checkDuplicateFullPin([objid:info.rpuid, ry: info.ry, fullpin:info.newpin])
 		if( info.rputype == 'land') {
-			def rpu = rpuSvc.openRpu( info.rpuid )
-			if( rpu.rp ) {
-				rpu.rp.pintype = info.pintype 
-				rpu.rp.pin = info.newpin 
-				rpu.rp.section = info.ssection
-				rpu.rp.barangayid = info.barangay.objid 
-				rpu.rp.parcel = info.sparcel 
-				rpSvc.updateRealProperty( rpu.rp )
+			def rp = null
+			def rpu = rpuSvc.openRpu( [objid:info.rpuid] )
+			if( rpu ) {
+				rp = rpSvc.open([objid:rpu.realpropertyid])
+				rp.pintype = info.pintype 
+				rp.pin = info.newpin 
+				rp.section = info.ssection
+				rp.barangayid = info.barangay.objid 
+				rp.parcel = info.sparcel 
+				rpSvc.update( rp )
 
-				pindb.updateBarangayid(rpu.rp)
+				pindb.updateBarangayid(rp)
+
 				rpudb.modifyPin(info)
 
 				//update improvements pin 
-				rpudb.getLandImprovementsRpuByRealPropertyId([realpropertyid: rpu.rp.objid]).each { 
+				rpudb.getLandImprovementsRpuByRealPropertyId([realpropertyid: rp.objid]).each { 
 					def param = [
 						newpin:info.newpin + '-' + it.suffix,
 						suffix:it.suffix, 
@@ -47,9 +50,7 @@ class RPTUtilityService
 					rpudb.modifyPin(param)
 				}
 			}
-			println '='*50 
-			println 'rp -> ' + rpu.rp 
-			return rpu.rp 
+			return rp
 			
 		} else {
 			rpudb.modifyPin(info)

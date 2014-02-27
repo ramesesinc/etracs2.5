@@ -1,7 +1,18 @@
-"parcel" [ true == true ] {
+"entity.*" [allowEdit == true]{
     enabled:true;
 }
 
-"parcel" [ rp.autonumber == 1 || rp.autonumber == true ] {
+
+"entity.*" [allowEdit == false]{
     enabled:false;
 }
+
+
+"entity.pintype|entity.barangay|entity.isection|entity.iparcel|entity.claimno" [entity.datacapture == true || allowEditPinInfo == false]{
+    enabled:false;
+}
+
+"entity.isection|entity.iparcel" [allowEdit == true && allowEditSectionParcel == true]{
+    enabled:true;
+}
+

@@ -50,6 +50,21 @@ class FAASAnnotationService
         return util.getListFromQuery( 'faasannotation:getList' , filters, params, 'fa.objid' )
     }
 
+    @ProxyMethod
+    public def getColumns(params) {
+        return [
+            [name:"annotationtype.objid", caption:"Annotation Type", width:100],
+            [name:"memoranda", caption:"Memoranda", width:250],
+            [name:"fileno", caption:"File No.", width:100],
+            [name:"txnno", caption:"Txn No.", width:120],
+            [name:"txndate", caption:"Txn Date", width:150],
+            [name:"orno", caption:"O.R. No.", width:100],
+            [name:"ordate", caption:"O.R. Date", width:120],
+            [name:"oramount", caption:"O.R. Amount", type:'decimal', width:120],
+            [name:"state", caption:"State", width:100],
+        ]
+    }
+
 
 	@ProxyMethod
 	public List getAnnotationTypes() {

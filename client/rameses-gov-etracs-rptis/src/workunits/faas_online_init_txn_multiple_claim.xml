@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workunit extends="rpt_wtemplates/FaasTxnOnlineInitController.xml">
+    <invokers>       
+        <invoker type="quick_launcher" code="MC11" action="init" caption="Multiple Claim" 
+            txntype="MC" role="APPRAISER,EXAMINER" permission="faas.createTransfer" index="12"  />
+            
+        <invoker folderid="/explorer/txn/rpt/online" action="init" caption="Multiple Claim" 
+            txntype="MC" role="APPRAISER,EXAMINER" permission="faas.createMultipleClaim" index="12"  />
+            
+    </invokers>
+    <code>
+        
+
+import com.rameses.rcp.annotations.* 
+import com.rameses.rcp.common.* 
+import com.rameses.osiris2.client.*
+import com.rameses.osiris2.common.*
+
+
+class FaasOnlineMCInitController extends com.rameses.gov.etracs.rpt.faas.ui.FaasTxnOnlineInitController
+{
+    boolean multipleClaim = true;
+}
+
+    </code>
+    
+</workunit>
+
+

@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workunit>
+    <invokers>
+        <invoker type="mcsettlement:info" action="init" caption="Appraisal Info" index="5"/>
+        
+        <invoker type="formActions" action="init" caption="Refresh" mnemonic="r" />
+        <invoker type="formActions" action="edit" caption="Edit" mnemonic="e" visibleWhen="#{showActions == true}" role="APPRAISER"/>
+        <invoker type="formActions" action="save" caption="Save" mnemonic="s" shortcut="ctrl S" visibleWhen="#{mode != 'read'}" />
+   </invokers>
+   <code>
+
+<![CDATA[
+        
+import com.rameses.rcp.annotations.* 
+import com.rameses.rcp.common.* 
+import com.rameses.osiris2.client.*
+import com.rameses.osiris2.common.*
+import com.rameses.gov.etracs.rpt.common.RPTUtil;
+
+class MCAppraisalSettlementController
+{
+    @Binding
+    def binding;
+    
+    def svc;
+    
+    def entity;
+    def selectedItem;
+    
+    String title = 'Appraisal Information';
+    
+
+    def otherClaims;
+    def affectedRpus;
+    
+    def selectedClaim;
+    def selectedRpu;
+    
+    def mode;
+    def MODE_READ = 'read';
+    def MODE_EDIT = 'edit';
+    
+    
+    
+    void init(){
+        otherClaims = svc.getOtherClaims(entity.objid);
+        affectedRpus = svc.getAffectedRpus(entity.objid);
+        mode = MODE_READ;
+        otherclaimListHandler?.load();
+        affectedrpuListHandler?.load();
+    }
+    
+    
+    void edit(){
+        mode = MODE_EDIT;
+    }
+    
+    void save(){
+        mode = MODE_READ;
+    }
+    
+    
+    
+    def otherclaimListHandler = [
+        fetchList : { return otherClaims; }
+    ] as BasicListModel
+    
+    
+    def affectedrpuListHandler = [
+        fetchList : { return affectedRpus; },
+        validate  : { li ->
+            svc.saveAffectedRpu(li.item);
+        }
+    ] as EditorListModel
+    
+    
+    boolean getShowActions(){
+        if (entity.taskaction && entity.taskaction.matches('assign.*')) return false;
+        if (entity.state.matches('FORAPPROVAL|FORPROVAPPROVAL|APPROVED')) return false;
+        if (mode != MODE_READ) return false;
+        return true;
+    }
+}
+       
+]]>
+
+   </code>
+    
+    <pages> 
+        <page template="com.rameses.gov.etracs.rpt.mcsettlement.MCSettlementInfoPage"/>
+    </pages>
+</workunit>
+
+

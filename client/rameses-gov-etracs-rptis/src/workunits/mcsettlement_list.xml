@@ -1,0 +1,6 @@
+<workunit extends="wtemplates/ListController.xml" serviceName="MCSettlementListService" entityName="mcsettlement" formTarget="window" >
+    <invokers>
+        <invoker folderid="/explorer/txn/rpt/list" caption="Multiple Claim Settlement"  target="window" index="220"  role="ASSESSOR_SHARED"/>
+        <invoker type="quick_launcher" code="MS00" caption="Multiple Claim Settlement" role="ASSESSOR_SHARED" />
+    </invokers>
+</workunit>

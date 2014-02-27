@@ -83,7 +83,7 @@
                         <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
                           <Insets value="[1, 1, 1, 1]"/>
                         </Property>
-                        <Property name="name" type="java.lang.String" value="faas.tdno"/>
+                        <Property name="name" type="java.lang.String" value="entity.tdno"/>
                         <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                           <Dimension value="[0, 22]"/>
                         </Property>
@@ -98,7 +98,7 @@
                         </Property>
                         <Property name="immediate" type="boolean" value="true"/>
                         <Property name="items" type="java.lang.String" value="titleTypes"/>
-                        <Property name="name" type="java.lang.String" value="faas.titletype"/>
+                        <Property name="name" type="java.lang.String" value="entity.titletype"/>
                         <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                           <Dimension value="[0, 19]"/>
                         </Property>
@@ -125,13 +125,13 @@
                             </Property>
                             <Property name="depends" type="[Ljava.lang.String;" editor="org.netbeans.beaninfo.editors.StringArrayEditor">
                               <StringArray count="1">
-                                <StringItem index="0" value="faas.titletype"/>
+                                <StringItem index="0" value="entity.titletype"/>
                               </StringArray>
                             </Property>
                             <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
                               <Insets value="[1, 1, 1, 1]"/>
                             </Property>
-                            <Property name="name" type="java.lang.String" value="faas.titleno"/>
+                            <Property name="name" type="java.lang.String" value="entity.titleno"/>
                             <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                               <Dimension value="[90, 19]"/>
                             </Property>
@@ -143,13 +143,13 @@
                             <Property name="captionWidth" type="int" value="65"/>
                             <Property name="depends" type="[Ljava.lang.String;" editor="org.netbeans.beaninfo.editors.StringArrayEditor">
                               <StringArray count="1">
-                                <StringItem index="0" value="faas.titletype"/>
+                                <StringItem index="0" value="entity.titletype"/>
                               </StringArray>
                             </Property>
                             <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
                               <Insets value="[1, 1, 1, 1]"/>
                             </Property>
-                            <Property name="name" type="java.lang.String" value="faas.titledate"/>
+                            <Property name="name" type="java.lang.String" value="entity.titledate"/>
                             <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                               <Dimension value="[76, 19]"/>
                             </Property>
@@ -182,7 +182,7 @@
                             <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
                               <Insets value="[1, 1, 1, 1]"/>
                             </Property>
-                            <Property name="name" type="java.lang.String" value="faas.effectivityyear"/>
+                            <Property name="name" type="java.lang.String" value="entity.effectivityyear"/>
                             <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                               <Dimension value="[90, 19]"/>
                             </Property>
@@ -194,7 +194,7 @@
                             <Property name="caption" type="java.lang.String" value="Qtr"/>
                             <Property name="captionWidth" type="int" value="65"/>
                             <Property name="items" type="java.lang.String" value="quarters"/>
-                            <Property name="name" type="java.lang.String" value="faas.effectivityqtr"/>
+                            <Property name="name" type="java.lang.String" value="entity.effectivityqtr"/>
                             <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                               <Dimension value="[76, 20]"/>
                             </Property>
@@ -224,7 +224,7 @@
                             </Property>
                             <Property name="depends" type="[Ljava.lang.String;" editor="org.netbeans.beaninfo.editors.StringArrayEditor">
                               <StringArray count="1">
-                                <StringItem index="0" value="faas.txntype"/>
+                                <StringItem index="0" value="entity.txntype"/>
                               </StringArray>
                             </Property>
                             <Property name="enabled" type="boolean" value="false"/>
@@ -234,7 +234,7 @@
                             <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
                               <Insets value="[1, 1, 1, 1]"/>
                             </Property>
-                            <Property name="name" type="java.lang.String" value="faas.backtaxyrs"/>
+                            <Property name="name" type="java.lang.String" value="entity.backtaxyrs"/>
                             <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                               <Dimension value="[90, 19]"/>
                             </Property>
@@ -246,13 +246,13 @@
                             <Property name="captionWidth" type="int" value="65"/>
                             <Property name="depends" type="[Ljava.lang.String;" editor="org.netbeans.beaninfo.editors.StringArrayEditor">
                               <StringArray count="1">
-                                <StringItem index="0" value="faas.titletype"/>
+                                <StringItem index="0" value="entity.titletype"/>
                               </StringArray>
                             </Property>
                             <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
                               <Insets value="[1, 1, 1, 1]"/>
                             </Property>
-                            <Property name="name" type="java.lang.String" value="faas.rpu.rp.claimno"/>
+                            <Property name="name" type="java.lang.String" value="rp.claimno"/>
                             <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                               <Dimension value="[76, 19]"/>
                             </Property>
@@ -295,7 +295,7 @@
                         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                           <Font name="Arial" size="11" style="1"/>
                         </Property>
-                        <Property name="name" type="java.lang.String" value="faas.txntype.objid"/>
+                        <Property name="name" type="java.lang.String" value="entity.txntype.objid"/>
                         <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                           <Dimension value="[40, 19]"/>
                         </Property>
@@ -318,7 +318,7 @@
                         <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                           <Color blue="0" green="0" red="cc" type="rgb"/>
                         </Property>
-                        <Property name="name" type="java.lang.String" value="faas.cancelreason"/>
+                        <Property name="name" type="java.lang.String" value="entity.cancelreason"/>
                         <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                           <Dimension value="[40, 19]"/>
                         </Property>
@@ -341,7 +341,7 @@
                         <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                           <Color blue="0" green="0" red="cc" type="rgb"/>
                         </Property>
-                        <Property name="name" type="java.lang.String" value="faas.canceldate"/>
+                        <Property name="name" type="java.lang.String" value="entity.canceldate"/>
                         <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                           <Dimension value="[73, 19]"/>
                         </Property>
@@ -367,7 +367,7 @@
                         <Property name="caption" type="java.lang.String" value="Restriction"/>
                         <Property name="captionWidth" type="int" value="90"/>
                         <Property name="items" type="java.lang.String" value="restrictions"/>
-                        <Property name="name" type="java.lang.String" value="faas.restrictionid"/>
+                        <Property name="name" type="java.lang.String" value="entity.restrictionid"/>
                         <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                           <Dimension value="[0, 20]"/>
                         </Property>
@@ -389,9 +389,9 @@
                           <Properties>
                             <Property name="caption" type="java.lang.String" value="Appraiser"/>
                             <Property name="captionWidth" type="int" value="90"/>
-                            <Property name="expression" type="java.lang.String" value="#{appraiser.name}"/>
+                            <Property name="expression" type="java.lang.String" value="#{entity.appraiser.name}"/>
                             <Property name="handler" type="java.lang.String" value="lookupAppraiser"/>
-                            <Property name="name" type="java.lang.String" value="appraiser"/>
+                            <Property name="name" type="java.lang.String" value="entity.appraiser"/>
                             <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                               <Dimension value="[250, 20]"/>
                             </Property>
@@ -401,9 +401,9 @@
                         <Component class="com.rameses.rcp.control.XDateField" name="xDateField3">
                           <Properties>
                             <Property name="hint" type="java.lang.String" value="Date Appraised"/>
-                            <Property name="name" type="java.lang.String" value="appraiser.dtsigned"/>
+                            <Property name="name" type="java.lang.String" value="entity.appraiser.dtsigned"/>
                             <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                              <Dimension value="[90, 20]"/>
+                              <Dimension value="[91, 20]"/>
                             </Property>
                             <Property name="showCaption" type="boolean" value="false"/>
                           </Properties>
@@ -426,9 +426,9 @@
                           <Properties>
                             <Property name="caption" type="java.lang.String" value="Recommender"/>
                             <Property name="captionWidth" type="int" value="90"/>
-                            <Property name="expression" type="java.lang.String" value="#{recommender.name}"/>
+                            <Property name="expression" type="java.lang.String" value="#{entity.recommender.name}"/>
                             <Property name="handler" type="java.lang.String" value="lookupRecommender"/>
-                            <Property name="name" type="java.lang.String" value="recommender"/>
+                            <Property name="name" type="java.lang.String" value="entity.recommender"/>
                             <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                               <Dimension value="[250, 20]"/>
                             </Property>
@@ -436,9 +436,9 @@
                         </Component>
                         <Component class="com.rameses.rcp.control.XDateField" name="xDateField4">
                           <Properties>
-                            <Property name="name" type="java.lang.String" value="recommender.dtsigned"/>
+                            <Property name="name" type="java.lang.String" value="entity.recommender.dtsigned"/>
                             <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                              <Dimension value="[90, 20]"/>
+                              <Dimension value="[91, 20]"/>
                             </Property>
                             <Property name="showCaption" type="boolean" value="false"/>
                           </Properties>
@@ -461,9 +461,9 @@
                           <Properties>
                             <Property name="caption" type="java.lang.String" value="Taxmapper"/>
                             <Property name="captionWidth" type="int" value="90"/>
-                            <Property name="expression" type="java.lang.String" value="#{taxmapper.name}"/>
+                            <Property name="expression" type="java.lang.String" value="#{entity.taxmapper.name}"/>
                             <Property name="handler" type="java.lang.String" value="lookupTaxmapper"/>
-                            <Property name="name" type="java.lang.String" value="taxmapper"/>
+                            <Property name="name" type="java.lang.String" value="entity.taxmapper"/>
                             <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                               <Dimension value="[250, 20]"/>
                             </Property>
@@ -471,9 +471,9 @@
                         </Component>
                         <Component class="com.rameses.rcp.control.XDateField" name="xDateField5">
                           <Properties>
-                            <Property name="name" type="java.lang.String" value="taxmapper.dtsigned"/>
+                            <Property name="name" type="java.lang.String" value="entity.taxmapper.dtsigned"/>
                             <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                              <Dimension value="[90, 20]"/>
+                              <Dimension value="[91, 20]"/>
                             </Property>
                             <Property name="showCaption" type="boolean" value="false"/>
                           </Properties>
@@ -496,9 +496,9 @@
                           <Properties>
                             <Property name="caption" type="java.lang.String" value="Approver"/>
                             <Property name="captionWidth" type="int" value="90"/>
-                            <Property name="expression" type="java.lang.String" value="#{approver.name}"/>
+                            <Property name="expression" type="java.lang.String" value="#{entity.approver.name}"/>
                             <Property name="handler" type="java.lang.String" value="lookupApprover"/>
-                            <Property name="name" type="java.lang.String" value="approver"/>
+                            <Property name="name" type="java.lang.String" value="entity.approver"/>
                             <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                               <Dimension value="[250, 20]"/>
                             </Property>
@@ -508,9 +508,9 @@
                         <Component class="com.rameses.rcp.control.XDateField" name="xDateField6">
                           <Properties>
                             <Property name="hint" type="java.lang.String" value="Date Approved"/>
-                            <Property name="name" type="java.lang.String" value="approver.dtsigned"/>
+                            <Property name="name" type="java.lang.String" value="entity.approver.dtsigned"/>
                             <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                              <Dimension value="[90, 20]"/>
+                              <Dimension value="[91, 20]"/>
                             </Property>
                             <Property name="showCaption" type="boolean" value="false"/>
                           </Properties>
@@ -574,7 +574,7 @@
                         <Property name="caption" type="java.lang.String" value="Owner"/>
                         <Property name="captionMnemonic" type="char" value="O"/>
                         <Property name="captionWidth" type="int" value="105"/>
-                        <Property name="expression" type="java.lang.String" value="#{faas.taxpayer.name}"/>
+                        <Property name="expression" type="java.lang.String" value="#{entity.taxpayer.name}"/>
                         <Property name="handler" type="java.lang.String" value="lookupTaxpayer"/>
                         <Property name="name" type="java.lang.String" value="taxpayer"/>
                         <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
@@ -596,7 +596,7 @@
                         <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
                           <Insets value="[1, 1, 1, 1]"/>
                         </Property>
-                        <Property name="name" type="java.lang.String" value="faas.owner.name"/>
+                        <Property name="name" type="java.lang.String" value="entity.owner.name"/>
                         <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                           <Dimension value="[0, 19]"/>
                         </Property>
@@ -610,7 +610,7 @@
                         <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
                           <Insets value="[1, 1, 1, 1]"/>
                         </Property>
-                        <Property name="name" type="java.lang.String" value="faas.administrator.name"/>
+                        <Property name="name" type="java.lang.String" value="entity.administrator.name"/>
                         <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                           <Dimension value="[0, 19]"/>
                         </Property>
@@ -644,8 +644,8 @@
                             <StringItem index="0" value="taxpayer"/>
                           </StringArray>
                         </Property>
-                        <Property name="expression" type="java.lang.String" value="#{faas.taxpayer.address}"/>
-                        <Property name="name" type="java.lang.String" value="faas.taxpayer.address"/>
+                        <Property name="expression" type="java.lang.String" value="#{entity.taxpayer.address}"/>
+                        <Property name="name" type="java.lang.String" value="entity.taxpayer.address"/>
                         <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                           <Dimension value="[0, 19]"/>
                         </Property>
@@ -663,7 +663,7 @@
                         <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
                           <Insets value="[1, 1, 1, 1]"/>
                         </Property>
-                        <Property name="name" type="java.lang.String" value="faas.owner.address"/>
+                        <Property name="name" type="java.lang.String" value="entity.owner.address"/>
                         <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                           <Dimension value="[0, 19]"/>
                         </Property>
@@ -677,7 +677,7 @@
                         <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
                           <Insets value="[1, 1, 1, 1]"/>
                         </Property>
-                        <Property name="name" type="java.lang.String" value="faas.administrator.address"/>
+                        <Property name="name" type="java.lang.String" value="entity.administrator.address"/>
                         <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                           <Dimension value="[0, 19]"/>
                         </Property>
@@ -721,10 +721,11 @@
                       <Properties>
                         <Property name="caption" type="java.lang.String" value="Survey No."/>
                         <Property name="captionWidth" type="int" value="70"/>
+                        <Property name="enabled" type="boolean" value="false"/>
                         <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
                           <Insets value="[1, 1, 1, 1]"/>
                         </Property>
-                        <Property name="name" type="java.lang.String" value="faas.rpu.rp.surveyno"/>
+                        <Property name="name" type="java.lang.String" value="rp.surveyno"/>
                         <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                           <Dimension value="[0, 19]"/>
                         </Property>
@@ -734,10 +735,11 @@
                       <Properties>
                         <Property name="caption" type="java.lang.String" value="Street"/>
                         <Property name="captionWidth" type="int" value="70"/>
+                        <Property name="enabled" type="boolean" value="false"/>
                         <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
                           <Insets value="[1, 1, 1, 1]"/>
                         </Property>
-                        <Property name="name" type="java.lang.String" value="faas.rpu.rp.street"/>
+                        <Property name="name" type="java.lang.String" value="rp.street"/>
                         <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                           <Dimension value="[0, 19]"/>
                         </Property>
@@ -747,10 +749,11 @@
                       <Properties>
                         <Property name="caption" type="java.lang.String" value="Purok/Zone"/>
                         <Property name="captionWidth" type="int" value="70"/>
+                        <Property name="enabled" type="boolean" value="false"/>
                         <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
                           <Insets value="[1, 1, 1, 1]"/>
                         </Property>
-                        <Property name="name" type="java.lang.String" value="faas.rpu.rp.purok"/>
+                        <Property name="name" type="java.lang.String" value="rp.purok"/>
                         <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                           <Dimension value="[0, 19]"/>
                         </Property>
@@ -770,49 +773,77 @@
                     </Constraint>
                   </Constraints>
                   <SubComponents>
-                    <Component class="com.rameses.rcp.control.XLabel" name="xLabel13">
+                    <Container class="com.rameses.rcp.control.XFormPanel" name="xFormPanel12">
                       <Properties>
-                        <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
-                          <Border info="org.netbeans.modules.form.compat2.border.LineBorderInfo">
-                            <LineBorder>
-                              <Color PropertyName="color" blue="99" green="99" red="99" type="rgb"/>
-                            </LineBorder>
-                          </Border>
+                        <Property name="orientation" type="java.lang.String" value="HORIZONTAL"/>
+                        <Property name="padding" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
+                          <Insets value="[0, 0, 0, 0]"/>
                         </Property>
-                        <Property name="caption" type="java.lang.String" value="PIN No."/>
-                        <Property name="captionWidth" type="int" value="75"/>
-                        <Property name="expression" type="java.lang.String" value="#{faas.rpu.fullpin}"/>
-                        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                          <Font name="Arial" size="14" style="1"/>
-                        </Property>
-                        <Property name="name" type="java.lang.String" value="faas.rpu.fullpin"/>
-                        <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                          <Dimension value="[0, 21]"/>
-                        </Property>
+                        <Property name="showCaption" type="boolean" value="false"/>
                       </Properties>
-                    </Component>
+                      <SubComponents>
+                        <Component class="com.rameses.rcp.control.XButton" name="xButton2">
+                          <Properties>
+                            <Property name="mnemonic" type="int" value="112"/>
+                            <Property name="cellPadding" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
+                              <Insets value="[0, 0, 0, 1]"/>
+                            </Property>
+                            <Property name="immediate" type="boolean" value="true"/>
+                            <Property name="name" type="java.lang.String" value="viewRealProperty"/>
+                            <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                              <Dimension value="[72, 23]"/>
+                            </Property>
+                            <Property name="showCaption" type="boolean" value="false"/>
+                            <Property name="text" type="java.lang.String" value="PIN"/>
+                          </Properties>
+                        </Component>
+                        <Component class="com.rameses.rcp.control.XLabel" name="xLabel13">
+                          <Properties>
+                            <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+                              <Border info="org.netbeans.modules.form.compat2.border.LineBorderInfo">
+                                <LineBorder>
+                                  <Color PropertyName="color" blue="99" green="99" red="99" type="rgb"/>
+                                </LineBorder>
+                              </Border>
+                            </Property>
+                            <Property name="caption" type="java.lang.String" value="PIN No."/>
+                            <Property name="captionWidth" type="int" value="75"/>
+                            <Property name="expression" type="java.lang.String" value="#{rpu.fullpin}"/>
+                            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                              <Font name="Arial" size="14" style="1"/>
+                            </Property>
+                            <Property name="name" type="java.lang.String" value="rpu.fullpin"/>
+                            <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                              <Dimension value="[239, 21]"/>
+                            </Property>
+                            <Property name="showCaption" type="boolean" value="false"/>
+                          </Properties>
+                        </Component>
+                      </SubComponents>
+                    </Container>
                     <Component class="com.rameses.rcp.control.XTextField" name="xTextField31">
                       <Properties>
                         <Property name="caption" type="java.lang.String" value="Cadastral "/>
                         <Property name="captionWidth" type="int" value="75"/>
+                        <Property name="enabled" type="boolean" value="false"/>
                         <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
                           <Insets value="[1, 1, 1, 1]"/>
                         </Property>
-                        <Property name="name" type="java.lang.String" value="faas.rpu.rp.cadastrallotno"/>
+                        <Property name="name" type="java.lang.String" value="rp.cadastrallotno"/>
                         <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                           <Dimension value="[0, 19]"/>
                         </Property>
-                        <Property name="required" type="boolean" value="true"/>
                       </Properties>
                     </Component>
                     <Component class="com.rameses.rcp.control.XTextField" name="xTextField32">
                       <Properties>
                         <Property name="caption" type="java.lang.String" value="Block No."/>
                         <Property name="captionWidth" type="int" value="75"/>
+                        <Property name="enabled" type="boolean" value="false"/>
                         <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
                           <Insets value="[1, 1, 1, 1]"/>
                         </Property>
-                        <Property name="name" type="java.lang.String" value="faas.rpu.rp.blockno"/>
+                        <Property name="name" type="java.lang.String" value="rp.blockno"/>
                         <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                           <Dimension value="[0, 19]"/>
                         </Property>
@@ -837,56 +868,56 @@
                       <Properties>
                         <Property name="caption" type="java.lang.String" value="North"/>
                         <Property name="captionWidth" type="int" value="75"/>
+                        <Property name="enabled" type="boolean" value="false"/>
                         <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
                           <Insets value="[1, 1, 1, 1]"/>
                         </Property>
-                        <Property name="name" type="java.lang.String" value="faas.rpu.rp.north"/>
+                        <Property name="name" type="java.lang.String" value="rp.north"/>
                         <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                           <Dimension value="[0, 19]"/>
                         </Property>
-                        <Property name="required" type="boolean" value="true"/>
                       </Properties>
                     </Component>
                     <Component class="com.rameses.rcp.control.XTextField" name="xTextField35">
                       <Properties>
                         <Property name="caption" type="java.lang.String" value="East"/>
                         <Property name="captionWidth" type="int" value="75"/>
+                        <Property name="enabled" type="boolean" value="false"/>
                         <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
                           <Insets value="[1, 1, 1, 1]"/>
                         </Property>
-                        <Property name="name" type="java.lang.String" value="faas.rpu.rp.east"/>
+                        <Property name="name" type="java.lang.String" value="rp.east"/>
                         <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                           <Dimension value="[0, 19]"/>
                         </Property>
-                        <Property name="required" type="boolean" value="true"/>
                       </Properties>
                     </Component>
                     <Component class="com.rameses.rcp.control.XTextField" name="xTextField36">
                       <Properties>
                         <Property name="caption" type="java.lang.String" value="South"/>
                         <Property name="captionWidth" type="int" value="75"/>
+                        <Property name="enabled" type="boolean" value="false"/>
                         <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
                           <Insets value="[1, 1, 1, 1]"/>
                         </Property>
-                        <Property name="name" type="java.lang.String" value="faas.rpu.rp.south"/>
+                        <Property name="name" type="java.lang.String" value="rp.south"/>
                         <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                           <Dimension value="[0, 19]"/>
                         </Property>
-                        <Property name="required" type="boolean" value="true"/>
                       </Properties>
                     </Component>
                     <Component class="com.rameses.rcp.control.XTextField" name="xTextField37">
                       <Properties>
                         <Property name="caption" type="java.lang.String" value="West"/>
                         <Property name="captionWidth" type="int" value="75"/>
+                        <Property name="enabled" type="boolean" value="false"/>
                         <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
                           <Insets value="[1, 1, 1, 1]"/>
                         </Property>
-                        <Property name="name" type="java.lang.String" value="faas.rpu.rp.west"/>
+                        <Property name="name" type="java.lang.String" value="rp.west"/>
                         <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                           <Dimension value="[0, 19]"/>
                         </Property>
-                        <Property name="required" type="boolean" value="true"/>
                       </Properties>
                     </Component>
                   </SubComponents>
@@ -949,10 +980,10 @@
                         </Property>
                         <Property name="caption" type="java.lang.String" value="Revision Year"/>
                         <Property name="captionWidth" type="int" value="100"/>
+                        <Property name="expression" type="java.lang.String" value="#{rpu.ry}"/>
                         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                           <Font name="Arial" size="11" style="1"/>
                         </Property>
-                        <Property name="name" type="java.lang.String" value="faas.rpu.rp.ry"/>
                         <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                           <Dimension value="[0, 19]"/>
                         </Property>
@@ -969,10 +1000,10 @@
                         </Property>
                         <Property name="caption" type="java.lang.String" value="Classification"/>
                         <Property name="captionWidth" type="int" value="100"/>
+                        <Property name="expression" type="java.lang.String" value="#{rpu.classification.code}"/>
                         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                           <Font name="Arial" size="11" style="1"/>
                         </Property>
-                        <Property name="name" type="java.lang.String" value="faas.rpu.classification.code"/>
                         <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                           <Dimension value="[0, 19]"/>
                         </Property>
@@ -985,7 +1016,7 @@
                         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                           <Font name="Tahoma" size="11" style="1"/>
                         </Property>
-                        <Property name="name" type="java.lang.String" value="faas.rpu.totalmv"/>
+                        <Property name="name" type="java.lang.String" value="rpu.totalmv"/>
                         <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                           <Dimension value="[0, 20]"/>
                         </Property>
@@ -999,7 +1030,7 @@
                         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                           <Font name="Tahoma" size="11" style="1"/>
                         </Property>
-                        <Property name="name" type="java.lang.String" value="faas.rpu.totalav"/>
+                        <Property name="name" type="java.lang.String" value="rpu.totalav"/>
                         <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                           <Dimension value="[0, 20]"/>
                         </Property>
@@ -1019,7 +1050,7 @@
                         <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
                           <Insets value="[0, 0, 0, 0]"/>
                         </Property>
-                        <Property name="name" type="java.lang.String" value="faas.rpu.taxable"/>
+                        <Property name="name" type="java.lang.String" value="rpu.taxable"/>
                         <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                           <Dimension value="[13, 19]"/>
                         </Property>
@@ -1064,7 +1095,7 @@
                         <Property name="lineWrap" type="boolean" value="true"/>
                         <Property name="caption" type="java.lang.String" value="Memoranda"/>
                         <Property name="hint" type="java.lang.String" value="Memoranda"/>
-                        <Property name="name" type="java.lang.String" value="faas.memoranda"/>
+                        <Property name="name" type="java.lang.String" value="entity.memoranda"/>
                         <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                           <Dimension value="[100, 65]"/>
                         </Property>
@@ -1086,7 +1117,7 @@
                     <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                       <Color blue="0" green="0" red="cc" type="rgb"/>
                     </Property>
-                    <Property name="name" type="java.lang.String" value="faas.cancelnote"/>
+                    <Property name="name" type="java.lang.String" value="entity.cancelnote"/>
                     <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                       <Dimension value="[0, 19]"/>
                     </Property>
@@ -1117,7 +1148,7 @@
                     <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
                       <Insets value="[1, 1, 1, 1]"/>
                     </Property>
-                    <Property name="name" type="java.lang.String" value="faas.prevtdno"/>
+                    <Property name="name" type="java.lang.String" value="entity.prevtdno"/>
                     <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                       <Dimension value="[0, 18]"/>
                     </Property>
@@ -1133,7 +1164,7 @@
                     <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
                       <Insets value="[1, 1, 1, 1]"/>
                     </Property>
-                    <Property name="name" type="java.lang.String" value="faas.prevpin"/>
+                    <Property name="name" type="java.lang.String" value="entity.prevpin"/>
                     <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                       <Dimension value="[0, 18]"/>
                     </Property>
@@ -1152,7 +1183,7 @@
                     <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
                       <Insets value="[1, 1, 1, 1]"/>
                     </Property>
-                    <Property name="name" type="java.lang.String" value="faas.prevmv"/>
+                    <Property name="name" type="java.lang.String" value="entity.prevmv"/>
                     <Property name="pattern" type="java.lang.String" value="#,##0.00"/>
                     <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                       <Dimension value="[0, 18]"/>
@@ -1172,7 +1203,7 @@
                     <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
                       <Insets value="[1, 1, 1, 1]"/>
                     </Property>
-                    <Property name="name" type="java.lang.String" value="faas.prevav"/>
+                    <Property name="name" type="java.lang.String" value="entity.prevav"/>
                     <Property name="pattern" type="java.lang.String" value="#,##0.00"/>
                     <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                       <Dimension value="[0, 18]"/>
@@ -1189,7 +1220,7 @@
                     <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
                       <Insets value="[1, 1, 1, 1]"/>
                     </Property>
-                    <Property name="name" type="java.lang.String" value="faas.prevowner"/>
+                    <Property name="name" type="java.lang.String" value="entity.prevowner"/>
                     <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                       <Dimension value="[0, 18]"/>
                     </Property>

@@ -8,22 +8,27 @@ import com.rameses.gov.etracs.rpt.common.RPTUtil
 
 public class MiscRPUController extends com.rameses.gov.etracs.rpt.rpu.ui.AbstractRPUController
 {
-    
     @Service('MiscRPUService')
     def svc;
-    
-    public def getService(){
-        return svc 
+
+    def actualuses;
+            
+    void beforeInit(){
+        initActualUses();
     }
     
-    void initOpen(){
-        actualuse = rpu.actualuse
+    void afterOpen(){
+        initActualUses();
     }
     
     void refreshAssessment(){
         listHandler.refresh(true)
     }
     
+    void initActualUses(){
+        actualuses = svc.getMiscAssessLevels([lguid:lguid, ry:rpu.ry]);
+        actualuse = rpu.actualuse
+    }
     
     /*-------------------------------------------------------------
      *
@@ -114,12 +119,6 @@ public class MiscRPUController extends com.rameses.gov.etracs.rpt.rpu.ui.Abstrac
         def data = rpu.items.find{ (it.objid != item.objid || item.objid == null) && it.miv.objid == item.miv.objid }
         if( data ) throw new Exception( 'Duplicate item is not allowed.' )
      }
-     
-     
-     def getActualuseList(){
-         return svc.getMiscAssessLevels([lguid:lguid, ry:rpu.ry]);
-     }
-     
      
          
 }

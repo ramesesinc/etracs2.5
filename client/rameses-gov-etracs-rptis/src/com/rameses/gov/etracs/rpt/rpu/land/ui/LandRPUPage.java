@@ -113,6 +113,7 @@ public class LandRPUPage extends javax.swing.JPanel {
         xDecimalField6.setPattern("#,##0.0000");
         xDecimalField6.setPreferredSize(new java.awt.Dimension(0, 20));
         xDecimalField6.setReadonly(true);
+        xDecimalField6.setScale(6);
         formPanel11.add(xDecimalField6);
 
         xDecimalField7.setCaption("Land Base Market Value");
