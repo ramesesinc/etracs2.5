@@ -89,3 +89,18 @@ GROUP BY rputype
 
 [updateSuffix]
 UPDATE rpu SET suffix = $P{suffix}, fullpin = $P{fullpin} WHERE objid = $P{objid}
+
+
+  
+[modifyPin]
+update rpu set 
+  fullpin=$P{newpin}, suffix=$P{suffix}
+where objid=$P{rpuid}
+
+
+[getLandImprovementsRpuByRealPropertyId]
+SELECT rpu.*
+FROM rpu rpu
+  INNER JOIN realproperty rp ON rpu.realpropertyid = rp.objid 
+WHERE rpu.realpropertyid = $P{realpropertyid} 
+  AND rpu.rputype != 'land'   

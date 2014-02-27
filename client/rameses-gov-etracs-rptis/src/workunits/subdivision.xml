@@ -5,11 +5,11 @@
            
         <invoker folderid="/explorer/txn/rpt/online" action="init"  caption="Subdivision" index="20"
             txntypeid="SD" txntype="Subdivision" newledger="true" newrpu="true"
-            role="APPRAISER" permission="subdivision.create"/>
+            role="APPRAISER,EXAMINER" permission="subdivision.create"/>
 
          <invoker type="quick_launcher" code="SD01" action="init"  caption="Subdivision" index="20"
             txntypeid="SD" txntype="Subdivision" newledger="true" newrpu="true"
-            role="APPRAISER" permission="subdivision.create"/>
+            role="APPRAISER,EXAMINER" permission="subdivision.create"/>
             
             
         <invoker type="subdividedlandActions" action="addSubdividedLand" caption="Add" mnemonic="a" visibleWhen="#{allowEdit == true}" />

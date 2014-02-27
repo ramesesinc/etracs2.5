@@ -34,7 +34,7 @@ public class IssuePermit extends javax.swing.JPanel {
 
         xComboBox1.setCaption("Permit Type");
         xComboBox1.setItems("permitTypes");
-        xComboBox1.setName("permit.permittype");
+        xComboBox1.setName("entity.permittype");
         xComboBox1.setPreferredSize(new java.awt.Dimension(0, 22));
         xFormPanel1.add(xComboBox1);
 
@@ -52,7 +52,7 @@ public class IssuePermit extends javax.swing.JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(xFormPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(28, Short.MAX_VALUE))
+                .addContainerGap(29, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
     

@@ -18,6 +18,7 @@
 		<field name="department" />
 		<field name="remarks" />
 		<field name="taxfeetype" required="true"/>
+		<field name="lob_assessmenttype" />
 	</element>	
 
 	<element name="payment" tablename="bppayment">

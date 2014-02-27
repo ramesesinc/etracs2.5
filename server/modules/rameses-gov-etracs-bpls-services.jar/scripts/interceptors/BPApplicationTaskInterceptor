@@ -3,7 +3,7 @@ import com.rameses.util.*;
 import java.rmi.server.*;
 import com.rameses.services.extended.*;
 
-public class BusinessWorkflowTaskInterceptor {
+public class BPApplicationTaskInterceptor {
 
 	@ActiveDB("bpapplication")
 	def em;
@@ -31,26 +31,11 @@ public class BusinessWorkflowTaskInterceptor {
 		taskSvc.startTask( tsk );
 	}
 
-	@After(pattern="BusinessWorkflowService.(open|findByBIN)")
-	public void onOpen(def evt) { 
-		def o = evt.result;
-		def taskid = o.application?.task?.objid;
-		if(taskid) {
-			def tsk = em.read( [objid:taskid], "task" );
-			o.application.task = tsk;
-			def subtasks = em.getOpenSubTasks( [taskid: taskid] );
-			if(subtasks) {
-				subtasks = subtasks.findAll{ it.assignee?.objid == env.USERID };
-			}
-			o.application.subtasks = subtasks;
-		}
-	}
-
-	@After(pattern="BusinessWorkflowService.(assign.*|return.*|submitFor.*|approve|revert.*)")
+	@After(pattern="BPApplicationService.(assign.*|return.*|submitFor.*|postApprove|revert.*)")
 	public void fireWorkflow(def evt) { 
 		def param = evt.args[0];
 		def result = evt.result;
-		if(!param.appid) throw new Exception("Please pass an appid in param args");
+		if(!param.objid) throw new Exception("Please pass an appid in param args");
 		if(!param.taskid) throw new Exception("Please pass taskid in param args");
 		
 		if(!result.state) throw new Exception("Please pass a result state");
@@ -58,7 +43,7 @@ public class BusinessWorkflowTaskInterceptor {
 		taskSvc.endTask( [taskid:param.taskid] );
 
 		def tsk = [:];
-		tsk.appid = param.appid;
+		tsk.appid = param.objid;
 		tsk.state = result.state;
 		tsk.assignee = param.assignee;
 		tsk.message = param.message;
@@ -66,7 +51,7 @@ public class BusinessWorkflowTaskInterceptor {
 		result.task = taskSvc.startTask( tsk );
 	}
 
-	@After(pattern="BusinessWorkflowService.release")
+	@After(pattern="BPApplicationService.release")
 	public void endWorkflow(def evt) {
 		def param = evt.args[0];
 		if(!param.taskid) throw new Exception("Please pass taskid in param args");

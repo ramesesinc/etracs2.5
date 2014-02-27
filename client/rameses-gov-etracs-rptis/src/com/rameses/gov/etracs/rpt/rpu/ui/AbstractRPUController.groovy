@@ -74,9 +74,11 @@ public abstract class AbstractRPUController
     
     
     final void open(){
+        def dtappraised = rpu.dtappraised
         if (! rpu._loaded) {
             rpu = service.openRpu(rpu);
         }
+        rpu.dtappraised = dtappraised;
         rpu._loaded = true;
         loadComboItems();
         afterOpen();

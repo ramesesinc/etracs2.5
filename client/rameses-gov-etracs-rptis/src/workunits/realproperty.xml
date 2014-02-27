@@ -3,7 +3,7 @@
     <invokers>
         <invoker type="quick_launcher" code="RP01" caption="Real Property" role="APPRAISER,TAXMAPPER" target="popup" />
         <invoker type="realproperty:create" action="init" caption="Real Property" role="APPRAISER,TAXMAPPER" target="popup" />
-        <invoker type="realproperty:open" action="open" caption="Real Property" role="APPRAISER,TAXMAPPER"  target="popup" />
+        <invoker type="realproperty:open" action="open" caption="Real Property" role="APPRAISER,TAXMAPPER,EXAMINER"  target="popup" />
         
         <invoker type="extActions" action="close" caption="Close" mnemonic="c" visibleWhen="#{viewOnly == false &amp;&amp; mode == 'read' &amp;&amp; showClose == true}" />
         <invoker type="extActions" action="cancelCreate" caption="Cancel" mnemonic="c" visibleWhen="#{viewOnly == false &amp;&amp; mode == 'create'}" immediate="true" />

@@ -1,10 +1,6 @@
 <workunit>
     <invokers>
-        <invoker type="businessform:formActions" caption="Amend" action="openFromBusiness" role="BUSINESSINFO"
-            visibleWhen="#{entity.state.toUpperCase()=='ACTIVE'}"  target="window"/>
-            
         <invoker type="home.action" caption="Business Amendment" target="window"  role="BUSINESSINFO" index="55"/>
-        
         <invoker type="formActions" caption="Next" action="next"  />
     </invokers>
     

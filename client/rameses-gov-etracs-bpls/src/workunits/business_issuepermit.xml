@@ -14,13 +14,20 @@
         
         class IssuePermitController  {
         
-            def permit = [:];
-            def permitTypes = ["STANDARD", "TEMPORARY"];
+            @Service("BusinessPermitService")
+            def permitSvc;
+            
+            @Binding
+            def binding;
+            
+            def entity;
             def handler;
+            def permitTypes = ["STANDARD", "TEMPORARY"];
             
             def doOk() {
-                handler( permit );
-                return "_close";
+               entity.permit = permitSvc.create(entity);
+               handler( entity.permit );
+               return "_close";
             }
             
             def doCancel() {

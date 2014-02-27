@@ -117,8 +117,7 @@ class FaasServiceInterceptor
 		util.required('Parcel No.', rp.parcel)
 	}
 
-
-	@Before(pattern="FAASService.submitForTaxmapping", eval="#{args[0].txntype.objid.matches('TR|TRC|TRE')}", index=10) 
+	@Before(pattern="FAASService.submitFaasForApproval", eval="#{args[0].txntype.objid.matches('TR|TRC|TRE')}", index=10) 
 	public void validateTransferSubmit( evt ) {
 		def faas = evt.args[0]
 		util.required('Owner', faas.taxpayer.objid)

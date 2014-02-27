@@ -45,7 +45,7 @@ public class BPBillingRuleService  {
 				qtr: tf.qtr,
 				lob: (tf.lob) ? [objid: tf.lob.objid, name:tf.lob.name ] : null,
 				account: tf.account,
-				taxfeetype: tf.account.taxfeetype,
+				taxfeetype: tf.type,
 				amtdue: tf.amtdue,
 				surcharge: tf.surcharge,
 				interest: tf.interest,
@@ -60,7 +60,8 @@ public class BPBillingRuleService  {
 				amount: tf.amount,
 				amtpaid: tf.amtpaid,
 				interestaccount: tf.interestaccount,
-				surchargeaccount: tf.surchargeaccount
+				surchargeaccount: tf.surchargeaccount,
+				application: [objid:tf.application.objid, appno:tf.application.appno]
 			];	
 		}	
 		def actions = new RuleAction();
@@ -90,9 +91,12 @@ public class BPBillingRuleService  {
 			if( !fapp ) {
 				fapp = new BPApplication();
 				fapp.objid = app.objid;
+				fapp.appno = app.appno;
 				fapp.appyear = app.appyear;
 				fapp.apptype = app.apptype;
 				factMap.put( app.objid, fapp );
+				if(!fapp.apptype)
+					throw new Exception("App type must be provided");
 			}
 			def lob = it.lob;
 			def flob = null;
@@ -107,6 +111,8 @@ public class BPBillingRuleService  {
 					flob.name = lob.name;
 					flob.classification = lob.classification?.objid;
 					factMap.put( lob.objid, flob);
+					if( !flob.assessmenttype )
+						throw new Exception("LOB assessment type must be provided");
 				}
 			}
 			def tf = new BillItem();
@@ -124,7 +130,7 @@ public class BPBillingRuleService  {
 			tf.receivableid = it.objid;
 			tf.qtr = 0;
 			tf.year = app.appyear;
-			tf.type = it.account.taxfeetype;
+			tf.type = it.taxfeetype;
 
 			if(tf.type == "TAX") {
 				tf.paypriority = 3;
@@ -331,7 +337,7 @@ public class CalcSurcharge implements RuleActionHandler {
 		}
 		tf.surcharge = NS.round(amt);
 		tf.total += NS.round( tf.surcharge );
-		tf.surchargeaccount = BA.findSingleEntry( [objid: sa.key] );
+		tf.surchargeaccount = BA.findAccount( [objid: sa.key] );
 		if(!tf.surchargeaccount) {
 			throw new Exception("CalcSurcharge rule error. surcharge account not found " + sa.title);
 		}
@@ -350,7 +356,7 @@ public class CalcInterest implements RuleActionHandler {
 			throw new Exception("CalcInterest rule error. Please provide interest account");
 		tf.interest = NS.round(amt);
 		tf.total += NS.round( tf.interest );
-		tf.interestaccount = BA.findSingleEntry( [objid: sa.key] );
+		tf.interestaccount = BA.findAccount( [objid: sa.key] );
 		if(!tf.interestaccount) {
 			throw new Exception("CalcSurcharge rule error. interest account not found " + sa.title);
 		}

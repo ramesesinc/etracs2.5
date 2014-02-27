@@ -61,7 +61,7 @@ public class RealPropertyController
             return false;
         if (mode != MODE_READ)
             return false;
-        return allowEdit;
+        return allowEdit || allowEditPinInfo;
     }
     
     public boolean getShowDeleteAction(){

@@ -23,7 +23,8 @@
             <folder id="landtax" caption="Land Tax" index="1"/>
         </folder>
         <folder id="rulemgmt">
-            <folder id="landtax" caption="Land Tax" index="1" />
+            <folder id="assessor" caption="Assessor" index="1" />
+            <folder id="landtax" caption="Land Tax" index="2" />
         </folder>
     </folder>
 </folders>

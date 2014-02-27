@@ -1,7 +1,7 @@
 <workunit>
     <invokers>
             
-        <invoker type="bpapplication:amendment" caption="Add, Retire Line of Business"  action="start" target="window"  role="BUSINESSINFO"/>
+        <invoker type="home.action" caption="Amend Line of Business"  action="start" target="window"  role="BUSINESSINFO"/>
         
     </invokers>
     
@@ -14,7 +14,7 @@
         import java.rmi.server.*;
         import com.rameses.gov.etracs.bpls.application.*;
         
-        public class AddRetireLineBPApplication extends AbstractSearchBusiness {
+        public class AmendLineBPApplication extends AbstractSearchBusiness {
         
             boolean hasLookup;
             boolean lobUpdated;
@@ -27,6 +27,11 @@
             String appType = "AMEND";
             def entityName = "bpapplicationform";
 
+            def openApplication() {
+                if( selectedApplication?.state == 'CAPTURED' )
+                    throw new Exception("App state CAPTURED not allowed");
+                return super.openApplication();
+            }
             
             def getAddLob() {
                 return InvokerUtil.lookupOpener( "lob:lookup", [
@@ -83,39 +88,11 @@
                 },
             ] as BasicListModel;
             
-            def assessmentInfoModel = [
-                fetchList: { o-> 
-                    return entity.assessmentinfos; 
-                }
-            ] as BasicListModel;
-
             def verifyLOB() {
                 if(!entity.lobs) 
                     throw new Exception("Please specify at least one line of business");
             }
 
-            def verifyAssessmentInfo() {
-                if(!entity.assessmentinfos) 
-                    throw new Exception("Please specify at least one assessment information");
-                if(lobUpdated)
-                    throw new Exception("Please run update assessment info again. Line of Business was updated.");
-            }
-            
-            def updateAssessmentInfo() {
-                def e = [:];
-                e.putAll( entity );
-                e.lobs = entity.lobs.findAll{ it.assessmenttype != 'ACTIVE' };
-                return InvokerUtil.lookupOpener( "bpinfoedit:assessment", [
-                    entity: e, 
-                    initialInfos: entity.appinfos.collect{it},
-                    existingInfos: entity.assessmentinfos,
-                    handler:{ result ->
-                        entity.assessmentinfos = result.infos.findAll{ it.infotype == 'assessment' };
-                        assessmentInfoModel.reload();
-                        lobUpdated = false;
-                    }
-                ]);
-            }
             
         }
         ]]>
@@ -133,16 +110,11 @@
         
         <page name="update-lob" title="Add/Retire Line of Business (For Amendment)">
             <transition to="search" caption="Back" mnemonic="B" name="back" visibleWhen="#{OPENED_FROM_APP==false}"/>
-            <transition to="update-assessment-info" caption="Next" name="next" mnemonic="N"  action="verifyLOB"/>
+            <transition to="confirm" caption="Next" name="next" mnemonic="N"  action="verifyLOB"/>
         </page>
 
-        <page name="update-assessment-info" title="Specify Assessment Information (For Amendment)" >
-            <transition to="update-lob" caption="Back" mnemonic="B" name="back"/>
-            <transition to="confirm" caption="Next" name="next" mnemonic="N" action="verifyAssessmentInfo"/>
-        </page>
-        
         <page name="confirm" title="Confirm (For Amendment)">
-            <transition to="update-assessment-info" caption="Back" mnemonic="B" name="back"/>
+            <transition to="update-lob" caption="Back" mnemonic="B" name="back"/>
             <transition to="save-success" caption="Submit" mnemonic="S" name="save" action="saveCreate"
             confirm="You are about to save this transaction. Continue?"/>
         </page>
@@ -157,7 +129,6 @@
     <pages>
         <page name="search" template="com.rameses.gov.etracs.bpls.application.SearchLookupBusinessPage"/>
         <page name="update-lob" template="com.rameses.gov.etracs.bpls.application.SpecifyLOBPage"/>
-        <page name="update-assessment-info" template="com.rameses.gov.etracs.bpls.application.UpdateAssessmentInfoPage"/>
         <page name="confirm" template="com.rameses.gov.etracs.bpls.application.ConfirmApplicationPage"/>
         <page name="save-success" template="com.rameses.gov.etracs.bpls.application.SuccessPage"/>
     </pages>

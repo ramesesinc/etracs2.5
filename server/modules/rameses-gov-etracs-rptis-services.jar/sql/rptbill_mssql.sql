@@ -27,6 +27,9 @@ SELECT
 	rp.cadastrallotno,
 	rp.barangayid,
 	pc.code AS classcode,
+	rl.partialbasic, 
+	rl.partialbasicint,
+	rl.partialbasicdisc, 
 	CASE WHEN rl.partialbasic > 0 THEN 1 ELSE 0 END AS partialled,
 	CASE
 		WHEN rl.partialbasic > 0 THEN rl.partialledyear  

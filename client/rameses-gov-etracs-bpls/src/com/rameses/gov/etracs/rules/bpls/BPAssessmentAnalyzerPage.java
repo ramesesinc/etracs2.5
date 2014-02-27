@@ -144,7 +144,7 @@ public class BPAssessmentAnalyzerPage extends javax.swing.JPanel {
                 , new Object[]{"typeHandler", new com.rameses.rcp.common.TextColumnHandler()}
             }),
             new com.rameses.rcp.common.Column(new Object[]{
-                new Object[]{"name", "account.taxfeetype"}
+                new Object[]{"name", "taxfeetype"}
                 , new Object[]{"caption", "Type"}
                 , new Object[]{"width", 100}
                 , new Object[]{"minWidth", 0}
@@ -256,7 +256,6 @@ public class BPAssessmentAnalyzerPage extends javax.swing.JPanel {
             })
         });
         xDataTable2.setHandler("assessmentInfoModel");
-        xDataTable2.setId("assessmentInfoModel");
         xDataTable2.setPreferredSize(new java.awt.Dimension(0, 80));
 
         javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
@@ -324,7 +323,6 @@ public class BPAssessmentAnalyzerPage extends javax.swing.JPanel {
             })
         });
         xDataTable5.setHandler("appInfoModel");
-        xDataTable5.setId("appInfoModel");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
