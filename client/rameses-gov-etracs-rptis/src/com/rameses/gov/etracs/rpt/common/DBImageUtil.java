@@ -139,18 +139,23 @@ public class DBImageUtil {
         InputStream is = null;
         BufferedInputStream bis = null;
         long filesize = 0;
+        File file = new File(filename);
         try{
-            is = new FileInputStream(new File(filename));
+            header.put("filesize",file.length());
+            is = new FileInputStream(file);
             bis = new BufferedInputStream(is);
             filesize = upload(header, bis);
         } catch(Exception e){
             e.printStackTrace();
+            throw e;
         } finally{
             if (bis != null) try{ bis.close(); } catch(Exception e){};
             if (is != null) try{ is.close(); } catch(Exception e){};
         }
-        
-        return filesize;
+        if (filesize != file.length()) {
+            throw new Exception("Unload unsuccessful. Try again.");
+        }
+        return file.length();
     }
     
     
@@ -165,6 +170,8 @@ public class DBImageUtil {
         }
         
         try {
+            deleteImage(header.get("objid"));
+            saveHeader(header);
             while ((len = source.read(buf)) != -1) {
                 fileno += 1;
                 filesize += len;
@@ -176,13 +183,11 @@ public class DBImageUtil {
                 data.put("byte", buf);
                 saveItem(data);
             }
-            
-            header.put("filesize", filesize);
-            saveHeader(header);
         } catch (Exception ex) {
             ex.printStackTrace();
+            throw ex;
         }
-        System.out.println("File Size -> " + filesize);
+        
         return filesize;
     }
     
