@@ -19,10 +19,7 @@ public class UploadImageController
     @Binding
     def binding;
     
-    @Service('DBImageService')
-    def imageSvc;
-            
-
+    
     def afterupload;  
     def entity;
     
@@ -35,7 +32,7 @@ public class UploadImageController
             refid   : entity.objid, 
             title   : title, 
         ]
-        DBImageUtil.getInstance(imageSvc).upload(header, file.getAbsolutePath());
+        DBImageUtil.getInstance().upload(header, file.getAbsolutePath());
         if (afterupload ) afterupload();
         return '_close';
     }

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <workunit>
     <invokers>
-        <invoker type="image:view" action="init" caption="Image Viewer" target="popup" />
+        <invoker type="image:view" action="init" caption="Image Viewer" target="popup" width="800" height="600" />
         <invoker type="formActions" action="_close" caption="Close" mnemonic="c" />
     </invokers>
     
@@ -20,9 +20,6 @@ public class ImageViewerController
     @Binding
     def binding;
     
-    @Service('DBImageService')
-    def imageSvc;
-            
     def entity;
     
     public String getTitle(){
@@ -33,7 +30,7 @@ public class ImageViewerController
     }
     
     def getImage(){
-        return DBImageUtil.getInstance(imageSvc).getImage(entity.objid);
+        return DBImageUtil.getInstance().getImage(entity.objid);
     }
     
     

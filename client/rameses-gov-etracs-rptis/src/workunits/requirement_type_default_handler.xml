@@ -28,9 +28,6 @@
         {
             def svc;   // RPTRequirementService
             
-            @Service('DBImageService')
-            def imageSvc;
-            
             def entity;
             
             def MODE_READ = 'read';
@@ -71,9 +68,7 @@
             
             void loadImages(){
                 images = [];
-                if (imageSvc){
-                    images = imageSvc.getImages([refid:entity.objid]);
-                }
+                images = DBImageUtil.getInstance().getImages(entity?.objid);    
                 listHandler?.load();
             }
             
@@ -98,7 +93,7 @@
             void deleteImage(){
                 if (!selectedItem) return;
                 if (MsgBox.confirm('Delete selected image?')){
-                    DBImageUtil.getInstance(imageSvc).deleteImage(selectedItem.objid);
+                    DBImageUtil.getInstance().deleteImage(selectedItem.objid);
                     loadImages();
                 }
             }

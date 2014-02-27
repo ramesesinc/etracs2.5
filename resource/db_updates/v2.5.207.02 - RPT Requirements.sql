@@ -87,7 +87,7 @@ go
 
 /* MYSQL
 
-CREATE TABLE `image_file` (
+CREATE TABLE `image_header` (
   `objid` VARCHAR(50) CHARACTER SET latin1 NOT NULL,
   `refid` VARCHAR(50) NOT NULL,
   `title` VARCHAR(100) CHARACTER SET latin1 NOT NULL,
@@ -97,7 +97,7 @@ CREATE TABLE `image_file` (
 ) ENGINE=INNODB DEFAULT CHARSET=utf8;
 
 
-CREATE TABLE `image_file_item` (
+CREATE TABLE `image_chunk` (
   `objid` VARCHAR(50) NOT NULL,
   `parentid` VARCHAR(50) NOT NULL DEFAULT '',
   `fileno` INT(11) NOT NULL,

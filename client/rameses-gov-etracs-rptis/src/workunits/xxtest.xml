@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <workunit>
     <invokers>
-        <invoker folderid="/menu/test" caption="Test" target="popup" index="500"
+        <invoker folderid="/menu/test" action="init" caption="Test" target="popup" index="500"
             role="APPRAISER" />
     </invokers>
     
@@ -19,33 +19,46 @@ public class TestController {
     @Binding
     def binding;
     
-    @Service('DBImageService')
-    def svc 
-    
     def filename = 'd:\\Chrysanthemum.jpg';
     def targetfile = 'd:\\Chrysanthemum3.jpg';
     
     def header = [objid:'A', refid:'TEST', title:'TEST', filesize:0, ]
     
-   
+   void init(){
+        println 'appenv-----------------'
+        println OsirisContext.getClientContext().appEnv
+        
+        println 'env-----------------'
+        println OsirisContext.env
+        
+        println 'ctx properties-----------------'
+        OsirisContext.getClientContext().getProperties();
+        
+        println 'session env-----------------'
+        OsirisContext.getSessionEnv()
+        
+        println 'seson properties-----------------'
+        OsirisContext.getSession().getProperties()
+        
+   }
     
     void upload(){
-        DBImageUtil.getInstance(svc).upload(header, filename);
+        DBImageUtil.getInstance().upload(header, filename);
         MsgBox.alert('Success.');
     }
     
     void delete(){
-        DBImageUtil.getInstance(svc).deleteImage(header.objid);
+        DBImageUtil.getInstance().deleteImage(header.objid);
         MsgBox.alert('Success.');
     }
     
     void deleteAll(){
-        DBImageUtil.getInstance(svc).deleteAllImages(header.refid);
+        DBImageUtil.getInstance().deleteAllImages(header.refid);
         MsgBox.alert('Success.');
     }
 
     void saveToFile(){
-        DBImageUtil.getInstance(svc).saveToFile(header.objid, targetfile);
+        DBImageUtil.getInstance().saveToFile(header.objid, targetfile);
         MsgBox.alert('Success.');
     }
     
