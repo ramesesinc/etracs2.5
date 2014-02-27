@@ -3,9 +3,9 @@ import com.rameses.util.*;
 import java.rmi.server.*;
 import com.rameses.services.extended.*;
 
-public class BusinessInfoService extends ActiveCrudListService {
+public class BPApplicationListService extends ActiveCrudListService {
 
-	@ActiveDB("business")
+	@ActiveDB("bpapplication")
 	def em;
 
 	@Service("DateService")
@@ -28,8 +28,6 @@ public class BusinessInfoService extends ActiveCrudListService {
 		   [name:'release', caption:'For Release', leaf:true, folder:true, allowSearch:true],
 		   [name:'wopermit', caption:'Active w/o Permit', leaf:true, folder:true, allowSearch:true],
 		   [name:'wpermit', caption:'Active with Permit', leaf:true, folder:true, allowSearch:true],
-		   [name:'expired', caption:'Expired (For Renewal)', leaf:true, folder:true, allowSearch:true],
-		   [name:'captured', caption:'Captured', leaf:true, folder:true, allowSearch:true],
 		   [name:'retired', caption:'Retired', leaf:true, folder:true, allowSearch:true],
 		];
 	}	
@@ -37,16 +35,22 @@ public class BusinessInfoService extends ActiveCrudListService {
 	@ProxyMethod
 	public def getColumns(o) {
 		def cols = [];
+		cols <<	[name:'appno', caption:'App No', width:120, resizable:false];
+		cols <<	[name:'apptype', caption:'App Type', width:80, resizable:false];
+		cols <<	[name:'appdate', caption:'App Date', width:80, resizable:false, type:'date'];
+		cols <<	[name:'appstate', caption:'App Status', width:80, resizable:false];
 		cols << [name:'bin', caption:'BIN', width:120, resizable:false];
 		cols <<	[name:'businessname', caption:'Business Name'];
 		cols <<	[name:'businessaddress', caption:'Business Address'];
 		cols <<	[name:'owner.name', caption:'Owner'];
-		cols <<	[name:'apptype', caption:'App Type', width:80, resizable:false];
-		cols <<	[name:'appdate', caption:'App Date', width:80, resizable:false, type:'date'];
-		cols <<	[name:'appstate', caption:'App Status', width:80, resizable:false];
 		cols <<	[name:'assignee.name', caption:'Assigned To', width:80, resizable:false];
-		cols <<	[name:'permitno', caption:'Permit No', resizable:false];
-		cols <<	[name:'expirydate', caption:'Expiry date', resizable:false];
+		if(o.name == 'mytask') {
+			cols <<	[name:'message', caption:'Message'];
+		}
+		else if(o.name == 'wpermit') {
+			cols <<	[name:'permitno', caption:'Permit No', resizable:false];
+			cols <<	[name:'expirydate', caption:'Expiry date', resizable:false];
+		}
 		return cols;
 	}
 
@@ -73,33 +77,22 @@ public class BusinessInfoService extends ActiveCrudListService {
 			case 'release':
 			case 'info':
 				o.appstate = o.name.toUpperCase();
-				o.state = 'PROCESSING';
-				o.filter = ''' AND b.appstate = $P{appstate} AND b.state=$P{state} ''';
+				o.filter = ''' AND b.appstate = $P{appstate} ''';
 				if(o.apptype) o.filter += ''' AND b.apptype=$P{apptype} ''';
 				break;		
 
 			//--------------- active--------------------	
 			case 'wopermit':
-				o.state = 'ACTIVE';
-				o.filter = ''' AND b.state=$P{state} AND b.permitno IS NULL ''';
+				o.filter = ''' AND b.appstate IS NULL AND b.permitno IS NULL ''';
 				break;	
 			case 'wpermit':
-				o.state = 'ACTIVE';
-				o.filter = ''' AND b.state=$P{state} AND NOT(b.permitno IS NULL) ''';
-				break;	
-			case 'expired':
-				o.state = 'ACTIVE';
-				o.currentdate = dateSvc.serverDate;
-				o.filter = ''' AND b.state=$P{state} AND NOT(b.permitno IS NULL) AND b.expirydate < $P{currentdate}''';
+				o.filter = ''' AND NOT(b.permitno IS NULL) ''';
 				break;	
 
-			case 'captured':
 			case 'retired':
 				o.state = o.name.toUpperCase();
 				o.filter = ''' AND b.state=$P{state} ''';			
 				break;
-
-			case 'inactive':	
 
 			default:
 				break;

@@ -1,7 +1,10 @@
 <workunit>
     <invokers>
-        <invoker type="business:info" caption="General Info" index="-100" 
-            visibleWhen="#{entity.application?.objid==null || entity.application.task?.objid==null}"/>
+        <invoker type="business:info" caption="General Info" index="-100" />
+
+        <invoker type="extActions" action="issuePermit" caption="Issue Permit" mnemonic="S" index="10"
+            role="LICENSING" visibleWhen="#{entity.state=='ACTIVE' &amp;&amp; entity.permit?.objid == null}"/>
+
     </invokers>
     
     <code>
@@ -26,20 +29,28 @@
             
             def entity;
             
-            def showChangeTypes(def inv) {
-                def list = InvokerUtil.lookupOpeners("business:generalinfo:changetype", [entity:entity]);
-                def popupMenu = new PopupMenuOpener();
-                list.each {
-                    popupMenu.add(it); 
-                }
-                return popupMenu;
-            }
-            
             def lobModel = [
                 fetchList: { o->
-                    return entity.lobs;
+                    return svc.getLobs( [objid:entity.objid] );
                 }
             ] as BasicListModel;
+            
+            
+            def issuePermit() {
+                if( entity.permit ) {
+                    throw new Exception("Permit already exists!");
+                }
+                else {
+                    def h = { o->
+                        entity.permit = o;
+                        def op = InvokerUtil.lookupOpener( "businesspermit:print" , [entity:o] );
+                        op.target = 'self';
+                        binding.fireNavigation( op );
+                    }
+                    def p = [businessid: entity.objid];
+                    return Inv.lookupOpener("business:issuepermit", [handler:h, entity: p  ]);
+                }
+            }
             
         }
         ]]>

@@ -29,11 +29,19 @@ public class BPCashReceiptService  {
 	@ProxyMethod
 	public def findByBarcode(o) {
 		def prefix = o.prefix;
-		def bin = o.barcode;
-		def m = biz.findByBINForReceipt( [bin: bin] );
-		if(!m)
-			throw new Exception("BIN " + bin + " does not exist!");
+		def barcode = o.barcode;
 
+		def m = null;
+		if( barcode.indexOf("-") < 0) {
+			m = biz.findByBINForReceipt( [bin: barcode] );
+			if(!m)
+				throw new Exception("BIN " + barcode + " does not exist!");
+		}
+		else {
+			m = biz.findByAppnoForReceipt( [appno: barcode ]);
+			if(!m)
+				throw new Exception("App No " + barcode + " does not exist!");
+		}
 		m.collectiontype = collectionType.findCollectionTypeByBarcode([barcode: prefix]);
 		if(!m.collectiontype)	
 			throw new Exception("Collection type not found with barcode prefix " + prefix + ". Please check collection type and register barcode prefix");
@@ -42,23 +50,22 @@ public class BPCashReceiptService  {
 
 	@ProxyMethod
 	public def getBilling(def o) throws Exception {
-		
-		/*
-		if(!o.applicationid)
-			throw new Exception("Application is required");
+		/*	
 		//throw new Exception("Must get taxfees from ledger not from the application");
 		m.application = appSvc.open( [objid: o.applicationid ]); 
 		m.application.taxfees = bpLedger.getUnpaidReceivables([businessid:m.application.businessid]);
 		*/
 
-		def payoption = [type: o.payoption, qtr:o.qtr, partialpmt: o.partialpmt ];
-		def billdate = o.billdate;
-		def list = bpLedger.getUnpaidForBilling([businessid: o.businessid]);
+		def p = [businessid: o.businessid];
+		p.filter = ''' br.businessid=$P{businessid} ''';
+		def list = bpLedger.getUnpaidForBilling(p);
 		list.each {
 			if(it.lob?.objid && !it.lob?.assessmenttype)
-				throw new Exception("Please rebuild the ledger. There is no line of business type");
+				throw new Exception("Please rebuild the ledger. There is no line of business type for " + it.lob.name);
 		}
-		
+
+		def payoption = [type: o.payoption, qtr:o.qtr, partialpmt: o.partialpmt ];
+		def billdate = o.billdate;
 		def z = billingSvc.getBillItems(list, billdate, payoption);	
 		//check if there is a line w/o assessment type
 
@@ -76,9 +83,6 @@ public class BPCashReceiptService  {
 		def surcharges = z.items.findAll{ it.surcharge > 0 };
 		def interests = z.items.findAll{ it.interest > 0 };
 
-		println "surcahregs " + surcharges.size();
-		println "interest " + interests.size();
-
 		//check if each item, principal, surcharge, interest has an account. if not, throw error
 		def itemList = [];
 		def acctCollector = { itm, acct, amt, qtr ->
@@ -90,19 +94,18 @@ public class BPCashReceiptService  {
 			itemList << mx;
 		}
 		for( a in amts ) {
-			def acct = revitem.findSingleEntry( [objid: a.account.objid ] );
+			def acct = revitem.findAccount( [objid: a.account.objid ] );
 			if( !acct ) throw new Exception("Account not found for " + a.account.title);
 			if(a.discount==null) a.discount = 0;
 			acctCollector( a, acct, numberSvc.round(a.amtdue - a.discount), a.qtr );
 		}
 		for(a in surcharges ) {
-			println " surcharge " + a;
-			def acct = revitem.findSingleEntry( [objid: a.surchargeaccount.objid ] );
+			def acct = revitem.findAccount( [objid: a.surchargeaccount.objid ] );
 			if( !acct ) throw new Exception("Surcharge account not found for " );	
 			acctCollector( a, acct, a.surcharge, a.qtr );
 		}
 		for(a in interests) {
-			def acct = revitem.findSingleEntry( [objid: a.interestaccount.objid ] );
+			def acct = revitem.findAccount( [objid: a.interestaccount.objid ] );
 			if( !acct ) throw new Exception("Interest account not found ");
 			acctCollector( a, acct, a.interest, a.qtr );
 		}

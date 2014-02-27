@@ -63,7 +63,6 @@
         ]]>
     </code>
 
-    
     <pages>
         <page  template="com.rameses.gov.etracs.bpls.business.BusinessLedger"/>
     </pages>

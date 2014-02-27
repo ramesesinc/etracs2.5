@@ -37,16 +37,17 @@ SELECT
 	app.appno AS application_appno,
 	app.appno,
 
-    bl.objid AS lob_objid,
+    br.lob_objid AS lob_objid,
     br.lob_objid AS lob_lobid,
     br.lob_name AS lob_name,
+    br.lob_assessmenttype,
     l.classification_objid AS lob_classification_objid,
-    bl.assessmenttype AS lob_assessmenttype,
-
+    
 	br.account_objid AS account_objid,
 	br.account_title AS account_title,
 	r.code AS account_code, 
 	br.taxfeetype AS account_taxfeetype,
+	br.taxfeetype,
 	br.amount, 
 	br.amtpaid, 
 	br.discount,
@@ -62,8 +63,7 @@ FROM bpreceivable br
 INNER JOIN revenueitem r ON  r.objid=br.account_objid
 LEFT JOIN bpapplication app ON app.objid=br.applicationid
 LEFT JOIN lob l ON br.lob_objid=l.objid 
-LEFT JOIN business_lob bl ON bl.applicationid=br.applicationid AND bl.lobid=br.lob_objid
-WHERE br.businessid=$P{businessid} AND ((br.amount-br.amtpaid- br.discount) > 0) 
+WHERE ${filter} AND ((br.amount-br.amtpaid- br.discount) > 0) 
 ORDER BY br.iyear DESC, br.lob_name DESC, r.code ASC
 
 

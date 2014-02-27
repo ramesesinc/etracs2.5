@@ -45,6 +45,7 @@
             
             def barcodeid;
             boolean barcode = false;
+            def appList;
             
             void initBarcode() {
                 def param = [prefix: "51005", barcode: barcodeid ]; 
@@ -63,6 +64,8 @@
                 query.payoption = payOptions[0];
                 barcode = true;
                 super.init();
+                appList = null;
+                query.appno = null;
                 runBilling();
             }
             
@@ -103,6 +106,8 @@
                 clearBilling();
                 super.clearAllPayments();
                 super.updateBalances();
+                appList = null;
+                query.appno = null;
                 def opener = InvokerUtil.lookupOpener( "business:lookup", [
                     "query.ownerid":owner.objid,
                     "query.zstate": "payment",
@@ -178,7 +183,13 @@
                     binding.refresh("total.*|query.*|entity.paidby.*|entity.paidby|entity.qtr");
                 }
                 super.updateBalances();
+                if(!appList) {
+                    appList = entity.billitems*.application?.appno.unique();
+                    if(binding) binding.refresh( "query.appno" );
+                }
             }
+            
+            
             
             def billingListModel = [
                 fetchList: { o->

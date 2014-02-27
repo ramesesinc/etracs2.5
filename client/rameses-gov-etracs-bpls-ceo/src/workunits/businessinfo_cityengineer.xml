@@ -1,7 +1,7 @@
 <workunit>
     
     <invokers>
-        <invoker type="business:info" caption="City Engineer" action="open" index="100" visibleWhen="#{entity.cityengineer!=null}" />
+        <invoker type="business:info" caption="City Engineer" action="open" index="100" />
         
         <invoker type="formActions" caption="Activate" action="activate" index="100" visibleWhen="#{info.state!='active'}" role="ASSESSOR"/>
         <invoker type="formActions" caption="Deactivate" action="deactivate" index="100" visibleWhen="#{info.state=='active'}" role="ASSESSOR"/>

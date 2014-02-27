@@ -1,19 +1,26 @@
 <workunit>
     <invokers>
         
-        <invoker type="bpapplicationform:formActions" 
-            caption="Continue" name="open" action="openFromApplication"  visibleWhen="#{state == 'save-success'}"/>
-        
-        <invoker type="business:open" caption="Business Info" action="open" target="window" />
+        <invoker type="bpapplication:open" caption="Business Info" action="open" target="window" />
         <invoker type="business:barcode:51005" caption="Business" action="startOpenByBIN" target="window" />
         <invoker type="global:barcode:51005" caption="Business" action="startOpenByBIN" target="window" />
         
+        <invoker type="extActions" caption="Save"  action="save"  visibleWhen="#{dirty==true}" index="0"/>
+
+        <!-- for business info role -->
+        <invoker type="extActions" caption="Edit App Info" action="updateAppInfo" role="BUSINESSINFO" visibleWhen="#{modify_appinfo==true}" index="1"/>
+        <invoker type="extActions" caption="Edit Line of Business" action="updateLOB" role="BUSINESSINFO" visibleWhen="#{modify_appinfo==true}" index="2"/>
+
+        <!-- for assessors -->
         <invoker type="extActions" caption="Request for Change" visibleWhen="#{state == 'assessment' &amp;&amp; forMe==true}"
-            action="changeRequestInfo" role="ASSESSOR"/>
-        <invoker type="extActions" caption="Refresh" visibleWhen="#{state == 'assessment'}"
-            action="refresh" role="ASSESSOR"/>
+            action="changeRequestInfo" role="ASSESSOR" index="1"/>
+        <invoker type="extActions" caption="Calculate" action="calculateTaxfee" role="ASSESSOR" visibleWhen="#{state=='assess'}" index="3"/>
+        
+        <!--
+        <invoker type="extActions" caption="Refresh"  action="reload" index="4"/>
+        -->
+        
     </invokers>
-    
     
     <code>
         <![CDATA[    
@@ -26,16 +33,13 @@
         import com.rameses.util.*;
         import com.rameses.gov.etracs.bpls.business.*;
         
-        class  BusinessInfoController extends PageFlowController {
+        class  BPApplicationInfoController extends PageFlowController {
         
-            @Service("BusinessWorkflowService")
+            @Service("BPApplicationService")
             def service;
             
             @Service("BusinessTaskService")
             def taskSvc;
-            
-            @Service("BusinessPermitService")
-            def permitSvc;
             
             @FormId
             def formId
@@ -47,32 +51,48 @@
             def binding;
             
             String title;
-            def entityName = "businessform";
             def entity;
            
-            def sections;
-            def currentSection;
             def barcodeid;
             def startstep;
             boolean dirty;
+            boolean lobUpdated;
             String message;
             boolean allowChangeRequest = true;
-            
+            boolean modify_appinfo;
+            String entityName = "bpapplication";
             boolean forMe = false;
+            String appstate;
             
-            private def loadInfo() {
+            //used by barcode
+            def startOpenByBIN() {
+                entity = service.findByBIN([bin:barcodeid]);
+                return loadInfo();
+            }
+            
+            def open() {
+                entity = service.open(entity);
+                return loadInfo();
+            }
+
+            private void init() {
                 formId = entity.bin;
                 formTitle = entity.bin;
-                title = entity.businessname + ((entity.bin)? ' ['+entity.bin+']' : '');
-                 if( entity.application?.objid && entity.application?.task?.objid  ) {
-                    startstep = entity.application.task.state;
+                title = entity.businessname + ' ['+entity.bin+']';
+                if( entity.task?.objid  ) {
+                    startstep = entity.task.state;
+                    appstate = entity.task.state;
                     checkForMe();
                     showMessage();
                 }
                 else {
-                    startstep = entity.state?.toLowerCase();
+                    startstep = 'active';
+                    appstate = 'active'
                 }
-                loadSections();
+            }
+            
+            private def loadInfo() {
+                init();
                 return super.start();
             }
                       
@@ -85,25 +105,29 @@
             }
             
             void checkForMe() {
-                if(entity.application?.task?.assignee?.objid == OsirisContext.env.USERID) {
+                if(entity.task?.assignee?.objid == OsirisContext.env.USERID) {
                     forMe = true;
                 }
             }
             
             boolean isApprovedByMe() {
-                return (entity.application?.approvedby.objid == OsirisContext.env.USERID);
+                return (entity.approvedby.objid == OsirisContext.env.USERID);
             }
             
             void showMessage() {
-                if( entity.application?.task?.message ) {
-                    message = formatMsg( entity.application.task.message );
+                if( entity.task?.message ) {
+                    message = formatMsg( entity.task.message );
                 }
                 
                 //display message if there are subtasks.
-                if(entity.application.subtasks) {
+                if(entity.subtasks) {
+                    if( entity.subtasks.find{it.action=='modify_appinfo'} ) {
+                        modify_appinfo = true;
+                    }
+                    
                     def buff = new StringBuffer();
                     buff.append( '<i>Perform the ff. change requests and click on resolve per each task when done:</i><br>');
-                    entity.application.subtasks.findAll{it.message!=null}.each {
+                    entity.subtasks.findAll{it.message!=null}.each {
                         def req = 'me';
                         if(it.sender?.objid!=null && it.sender.objid != OsirisContext.env.USERID ) req = it.sender.name;
                         buff.append( "&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"endSubTask\" taskid=\"" + it.objid + "\"  color=blue><b><u>Resolve</u></b></a>" );
@@ -119,7 +143,7 @@
                    return;
                 }
                 taskSvc.endTask( v );
-                def subtasks = entity.application.subtasks;
+                def subtasks = entity.subtasks;
                 def x = subtasks.find{ it.objid == v.taskid };
                 subtasks.remove(x);
                 if(subtasks.size()==0) {
@@ -129,62 +153,32 @@
                     showMessage();
                 }
                 binding.refresh();
-                loadSections();
             }
 
-            //used by barcode
-            def openFromApplication() {
-                entity = service.open([objid: entity.businessid]);
-                return loadInfo();
-            }
-            
-            //used by barcode
-            def startOpenByBIN() {
-                entity = service.findByBIN([bin:barcodeid]);
-                return loadInfo();
-            }
-            
-            def open() {
+            def reload() {
                 entity = service.open(entity);
-                return loadInfo();
+                checkForMe();
+                return loadInfo(); 
             }
-
+            
             def refresh() {
                 entity = service.open(entity);
                 checkForMe();
-                loadSections();
+                appstate = entity.task.state;
             }
             
-            void reloadSection() {
-               binding.refresh("subform");
-            }
-            
-            void loadSections() {
-                sections = InvokerUtil.lookupOpeners( "business:info", [entity: entity ] ).findAll {
-                    def vw = it.properties.visibleWhen;
-                    return  ((!vw)  ||  ExpressionResolver.getInstance().evalBoolean( vw, [entity:entity] ));
-                }
-                if( sections.size()>0 ) {
-                    currentSection = sections[0];
-                }    
-            }
-            
-            void reloadCurrentSection() {
-                MsgBox.alert( currentSection.name );
-            }
-
             void checkSaved() {
                 if(dirty) throw new Exception("Please save the changes first");
             }
             
             def buildParams( def assignee ) {
-                def app = entity.application;
-                return [appid: app.objid, taskid: app.task.objid, assignee: assignee, businessid:entity.objid ];
+                def app = entity;
+                return [objid: app.objid, taskid: app.task.objid, assignee: assignee, businessid:entity.objid ];
             }
             
             void updateTaskInfo(def result) {
-                entity.application.task = result.task;
-                message = entity.application.task.message;
+                entity.task = result.task;
+                message = entity.task.message;
             }
             
             //called before
@@ -192,14 +186,13 @@
                 def p = buildParams(null);
                 def result = service.assignAssessorToSelf( p );
                 updateTaskInfo(result);
-                entity.application.assessedby = result.assessedby;
+                entity.assessedby = result.assessedby;
                 forMe = true;
-                loadSections();
             }
             
             void submitForApproval() {
                checkSaved();
-               if(!entity.application.taxfees) {
+               if(!entity.taxfees) {
                     throw new Exception("Please specify at least one tax fee" );
                }  
                boolean pass = false;
@@ -223,7 +216,7 @@
             void returnForAssessment() {
                boolean pass = false;
                Modal.show("business:subtask", [
-                  assigneeList: [ entity.application.assessedby ], 
+                  assigneeList: [ entity.assessedby ], 
                   handler: { o->
                      def p = buildParams(null); 
                      p.message = o.message;
@@ -239,13 +232,13 @@
             }
             
             void approve() {
-                service.approve(entity.application);
+                service.postApprove(entity);
                 MsgBox.alert("Document approved");
                 refresh();
             }
             
             void revertApproval() {
-                service.revertApproval(entity.application);
+                service.revertApproval(entity);
                 MsgBox.alert("Approval reversed");
                 refresh();
             }
@@ -257,37 +250,15 @@
                 refresh();
             }
             
-            void issuePermit() {
-                boolean pass = false;
-                def h = { o->
-                    entity.permittype = o.permittype;
-                    def permit = permitSvc.create(entity);
-                    entity.permit = permit;
-                    pass = true;
-                }
-                Modal.show("business:issuepermit", [handler:h]);
-                if( !pass) throw new BreakException();
-                loadSections();
-                binding.fireNavigation( InvokerUtil.lookupOpener( "businesspermit:print" , [entity:entity] ));
-            }
-
-            def validateClose() {
-                if(dirty) {
-                    if( !MsgBox.confirm("Record is not saved. Proceed?") ) {
-                        throw new BreakException();
-                    }
-                }    
-            }
-            
             void changeRequestInfo() {
                 boolean pass = false;
                 Modal.show( "business:subtask", [ 
-                    assigneeList: [ entity.application.createdby ], 
+                    assigneeList: [ entity.createdby ], 
                     actionList: ['modify_appinfo'],
                     handler: { o->
                         def m = [:];
-                        def tsk = entity.application.task;
-                        m.appid = entity.application.objid;
+                        def tsk = entity.task;
+                        m.appid = entity.objid;
                         m.parentid = tsk.objid;
                         m.state = tsk.state;
                         m.action = o.action;
@@ -302,6 +273,108 @@
                 if(pass) MsgBox.alert("request successfully sent");
             }
            
+            def appInfoModel = [
+                fetchList: { o->    
+                    return  entity.appinfos;
+                }
+            ] as BasicListModel;
+            
+            def lobModel = [
+                fetchList: { o->    
+                    return  entity.lobs;
+                }
+            ] as BasicListModel;
+
+            def assessmentInfoModel = [
+                fetchList: { o->    
+                    return  entity.assessmentinfos;
+                }
+            ] as BasicListModel;
+            
+
+            def taxfeeModel = [
+                fetchList: { o->    
+                    return  entity.taxfees;
+                }
+            ] as BasicListModel;
+
+            
+            def updateAppInfo() {
+                return InvokerUtil.lookupOpener( "bpinfoedit:app", [
+                    entity: entity,
+                    existingInfos: entity.appinfos,
+                    handler:{ result ->
+                        entity.appinfos = result.infos;
+                        appInfoModel.reload();
+                        dirty = true;
+                        binding.refresh();
+                    }
+                ]);
+            }
+            
+            def updateLOB() {
+                return InvokerUtil.lookupOpener("bpapplicationinfo:updatelob", [entity:entity,
+                    handler:{ lobs->
+                        entity.lobs = lobs;
+                        lobUpdated = true;
+                        entity.taxfees.clear();
+                        lobModel.reload();
+                        taxfeeModel.reload();
+                        dirty = true;
+                        binding.refresh();                        
+                    }
+                ]);
+            }
+            
+            def calculateTaxfee() {
+                return InvokerUtil.lookupOpener( "bpinfoedit:calculatetaxfee", [
+                    entity: entity, 
+                    initialInfos: entity.appinfos.collect{it},
+                    existingInfos: entity.assessmentinfos,
+                    handler:{ result ->
+                        entity.assessmentinfos = result.infos.findAll{ it.infotype == 'assessment' };
+                        assessmentInfoModel.reload();
+                        lobUpdated = false;
+                        entity.taxfees = result.taxfees;
+                        entity.totals = [
+                            tax:result.totals.total_tax,
+                            regfee: result.totals.total_regfee,
+                            othercharge: result.totals.total_othercharge,
+                            total: result.totals.total
+                        ];
+                        taxfeeModel.reload();
+                        dirty = true;
+                        binding.refresh();
+                    }
+                ]);
+            }
+
+            void save() {
+                if(!dirty) return;
+                if( state == 'assess' ) {
+                    if(entity.assessedby?.objid==null) {
+                        throw new Exception("Assessed by must not be null");
+                    }    
+                    if(lobUpdated) 
+                        throw new Exception("Line of business was updated. Please run 'Edit Assessment Info' again" );
+                }
+                if(entity.requirements==null) entity.requirements = [];
+                def m = service.update( entity );
+                entity.putAll(m);
+                dirty = false;
+                binding.refresh();
+                MsgBox.alert("Record successfully updated!");
+            }
+            
+
+            def validateClose() {
+                if(dirty) {
+                    if( !MsgBox.confirm("Record is not saved. Proceed without saving?") ) {
+                        throw new BreakException();
+                    }
+                }    
+            }
+            
         }
         ]]>
     </code>
@@ -318,9 +391,15 @@
 
         <page name="assessment" title="Business Application (For Assessment)">
             <transition to="end" caption="Close" action="validateClose"/>
+            <transition to="assess" caption="Assess" visibleWhen="#{ forMe == true}"
+                mnemonic="A" role="ASSESSOR"/>
             <transition to="approval" caption="Submit for Approval" visibleWhen="#{ forMe == true}"
                 name="next" mnemonic="S" action="submitForApproval" role="ASSESSOR"/>
         </page>    
+        
+        <page name="assess" title="Business Application (Assessment)">
+            <transition to="assessment" caption="Back" action="validateClose"/>
+        </page>
         
         <page name="approval" title="Business Application (For Approval)">
             <transition to="end" caption="Close" action="validateClose"/>
@@ -338,16 +417,14 @@
         
         <page name="release" title="Business Application (For Release)">
             <transition to="end" caption="Close" />
-            <transition to="active" caption="Release" mnemonic="S"  visibleWhen="#{entity.application.apptype!='RETIRE'}"
+            <transition to="active" caption="Release" mnemonic="S"  visibleWhen="#{entity.apptype!='RETIRE'}"
                 action="release" confirm="You are about to release this application. Proceed?" role="BUSINESSINFO"/>
-            <transition to="retired" caption="Release for Retirement" mnemonic="S"  visibleWhen="#{entity.application.apptype=='RETIRE'}"
+            <transition to="retired" caption="Release for Retirement" mnemonic="S"  visibleWhen="#{entity.apptype=='RETIRE'}"
                 action="release" confirm="You are about to release this application. Proceed?" role="BUSINESSINFO"/>
         </page>
         
         <page name="active" title="Active">
             <transition to="end" caption="Close" />
-             <transition to="issuePermit" caption="Issue Permit" mnemonic="S" 
-                action="issuePermit"  role="LICENSING" visibleWhen="#{entity.permit?.objid == null}"/>
         </page>
         
         <page name="captured" title="Captured">
@@ -363,15 +440,18 @@
     </pageflow>
     
     <pages>
-        <page name="assign-assessor" template="com.rameses.gov.etracs.bpls.business.BusinessInfoPage"/>
-        <page name="assessment" template="com.rameses.gov.etracs.bpls.business.BusinessInfoPage"/>
-        <page name="assign-approver" template="com.rameses.gov.etracs.bpls.business.BusinessInfoPage"/>
-        <page name="approval" template="com.rameses.gov.etracs.bpls.business.BusinessInfoPage"/>
-        <page name="payment" template="com.rameses.gov.etracs.bpls.business.BusinessInfoPage"/>
-        <page name="release" template="com.rameses.gov.etracs.bpls.business.BusinessInfoPage"/>
-        <page name="active" template="com.rameses.gov.etracs.bpls.business.BusinessInfoPage"/>
-        <page name="captured" template="com.rameses.gov.etracs.bpls.business.BusinessInfoPage"/>
-        <page name="retired" template="com.rameses.gov.etracs.bpls.business.BusinessInfoPage"/>
+        <page name="assign-assessor" template="com.rameses.gov.etracs.bpls.application.ApplicationInfoPage"/>
+        <page name="assessment" template="com.rameses.gov.etracs.bpls.application.ApplicationInfoPage"/>
+        <page name="assign-approver" template="com.rameses.gov.etracs.bpls.application.ApplicationInfoPage"/>
+        <page name="approval" template="com.rameses.gov.etracs.bpls.application.ApplicationInfoPage"/>
+        <page name="payment" template="com.rameses.gov.etracs.bpls.application.ApplicationInfoPage"/>
+        <page name="release" template="com.rameses.gov.etracs.bpls.application.ApplicationInfoPage"/>
+        <page name="active" template="com.rameses.gov.etracs.bpls.application.ApplicationInfoPage"/>
+        <page name="captured" template="com.rameses.gov.etracs.bpls.application.ApplicationInfoPage"/>
+        <page name="retired" template="com.rameses.gov.etracs.bpls.application.ApplicationInfoPage"/>
+        
+        <page name="assess" template="com.rameses.gov.etracs.bpls.application.AssessmentPage"/>
+
     </pages>
     
 </workunit>

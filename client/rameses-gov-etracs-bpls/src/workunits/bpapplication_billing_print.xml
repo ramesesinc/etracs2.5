@@ -1,9 +1,9 @@
 <workunit>
     <invokers>
-       <invoker type="businessinfo:generalinfo:formActions" caption="Print Permit" 
-            action="viewPermitFromBusiness" visibleWhen="#{entity.state=='ACTIVE' &amp;&amp; entity.permit?.objid!=null}" />
-            
-       <invoker type="businesspermit:print" index="50" action="viewReport"/>    
+        <invoker type="bpapplication:formActions" caption="Print Billing" index="20" icon="images/toolbars/printer.png" 
+            role="ASSESSOR,APPROVER" 
+            action="viewReport" visibleWhen="#{entity!=null &amp;&amp; !appstate.matches('assign-assessor|assessment|approval')}"/>
+        
        <invoker type="formActions" caption="Back" action="_close" mnemonic="b" shortcut="ctrl B" /> 
     </invokers>
     
@@ -14,21 +14,20 @@
         import com.rameses.osiris2.client.*
         import com.rameses.osiris2.common.*
         import java.rmi.server.*;
-        import java.text.SimpleDateFormat;
         import com.rameses.osiris2.reports.*;
         
-        class  BPPermitReportController  {
+        class  BPBillingReportController  {
         
             @Service("ReportParameterService") 
             def paramsvc
             
-            @Service("BusinessPermitService")
-            def permitSvc;
+            @Service("BPBillingService") 
+            def reportSvc;
             
             def entity;
-            def data = [:];
-            def title = "Business Permit"
-            def reportPath = "com/rameses/gov/etracs/bpls/reports/permit/"
+            def data;
+            def title = "BP Billing"
+            def reportPath = "com/rameses/gov/etracs/bpls/reports/billing/"
             
             @FormId
             def formId;
@@ -36,25 +35,24 @@
             @FormTitle
             def formTitle;
             
-            void viewPermitFromBusiness() {
-                data = permitSvc.open( entity.permit );
-                data.permitno = data.permitno + "-" + data.version;
-                report.viewReport();
-            } 
+            void specifyDate() {
+                
+            }
             
             void viewReport() {
-                data = permitSvc.open( entity );
-                data.permitno = data.permitno + "-" + data.version;
+                formId = "BILL-" + entity.objid;
+                formTitle = "BILL-" + entity.bin;
+                data = reportSvc.getBillByApp(entity);
                 report.viewReport();
             } 
             
             def report = [
-                getReportName : { return reportPath + "BusinessPermit.jasper" },
+                getReportName : { return reportPath + "BPBilling.jasper" },
                 getReportData : { return  data },
                 getParameters : { return paramsvc.getStandardParameter() },
                 getSubReports : { return [
-                        new SubReport("BusinessPermitLOB", reportPath + "BusinessPermitLOB.jasper"),
-                        new SubReport("BusinessPermitOR", reportPath + "BusinessPermitOR.jasper")
+                        new SubReport("BPBillingBusiness", reportPath + "BPBillingBusiness.jasper"),
+                        new SubReport("BPBillingBusinessItem", reportPath + "BPBillingBusinessItem2.jasper")
                     ] as SubReport[];
                 }
             ] as ReportModel
