@@ -42,7 +42,7 @@
 	<field name="basicdp" class="java.math.BigDecimal"/>
 	<field name="sefdp" class="java.math.BigDecimal"/>
 	<field name="firecode" class="java.math.BigDecimal"/>
-	<field name="totalareasqm" class="java.math.BigDecimal"/>
+	<field name="totalareaha" class="java.math.BigDecimal"/>
 
 	<variable name="T_FIRECODE" class="java.math.BigDecimal" resetType="Report" calculation="Sum">
 		<variableExpression><![CDATA[$F{firecode}]]></variableExpression>
@@ -516,9 +516,9 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 </box>
 					<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
-						<font fontName="SansSerif" pdfFontName="Helvetica" size="7" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
+						<font fontName="SansSerif" pdfFontName="Helvetica" size="8" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{rputype}.substring(0,1).toUpperCase() + " - " + $F{classcode} + ($F{totalareasqm}.doubleValue() > 0 ? "\n" + (new java.text.DecimalFormat("##0.00").format($F{totalareasqm})) : "")]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{rputype}.substring(0,1).toUpperCase() + " - " + $F{classcode} + ($F{totalareaha}.doubleValue() > 0 ? "\n" + $F{totalareaha} : "")]]></textFieldExpression>
 				</textField>
 			</band>
 		</detail>

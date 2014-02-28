@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <workunit>
     <invokers>
-        <invoker folderid="/menu/test" action="init" caption="Test" target="popup" index="500"
-            role="APPRAISER" />
+        <!-- 
+        <invoker folderid="/menu/test" action="init" caption="Test" target="popup" index="500" role="APPRAISER" />
+        -->
     </invokers>
     
     <code lang="groovy">
@@ -36,6 +37,9 @@ public class TestController {
         
         println 'session env-----------------'
         OsirisContext.getSessionEnv()
+        
+        println 'session.env-----------------'
+        OsirisContext.getSession().getEnv();
         
         println 'seson properties-----------------'
         OsirisContext.getSession().getProperties()
