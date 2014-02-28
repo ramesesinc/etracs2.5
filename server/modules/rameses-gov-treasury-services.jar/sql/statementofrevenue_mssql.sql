@@ -307,6 +307,12 @@ ORDER BY t.acctcode, t.subacctcode, t.code
 # Note: tempory add union to migrated tracs data 
 #*****************************************
 
+[getSREAcctGroups]
+select distinct acctgroup from sreaccount where parentid is null 
+
+[getSreRootAccountsByAccountGroup]
+SELECT objid, code, title, type FROM sreaccount WHERE acctgroup=$P{acctgroup} ORDER BY code
+
 [getSREStandardRevenueItemSummaries]
 SELECT t.*,
 	(SELECT TOP 1 target FROM sreaccount_incometarget WHERE objid=t.objid AND year=$P{year}) AS target
@@ -380,7 +386,7 @@ FROM (
 		INNER JOIN revenueitem ri ON dci.item_objid = ri.objid 
 		LEFT JOIN revenueitem_attribute attr ON ri.objid = attr.revitemid  and attr.attribute_objid='srestandard'
 		LEFT JOIN sreaccount acct on acct.objid = attr.account_objid 
-	WHERE dc.refdate BETWEEN $P{fromdate} AND $P{todate}
+	WHERE dc.refdate BETWEEN $P{fromdate} AND $P{todate} 
 	GROUP BY 
 		acct.objid,
 		acct.parentid,
@@ -406,7 +412,7 @@ FROM (
 		LEFT JOIN revenueitem_attribute attr ON ri.objid = attr.revitemid  and attr.attribute_objid='srestandard'
 		LEFT JOIN sreaccount acct on acct.objid = attr.account_objid 
 	WHERE tr.dtposted BETWEEN $P{fromdate} AND $P{todate}
-		and tc.amount > 0.0 
+		and tc.amount > 0.0  
 	GROUP BY 
 		acct.objid,
 		acct.parentid,
@@ -576,7 +582,7 @@ FROM (
 		LEFT JOIN revenueitem_attribute subattr ON ri.objid = subattr.revitemid and subattr.attribute_objid='sresubaccount'
 		LEFT JOIN sreaccount subacct ON subattr.account_objid = subacct.objid 
 		LEFT JOIN cashreceipt_void vr ON cr.objid = vr.receiptid  
-	WHERE vr.objid IS NULL 
+	WHERE vr.objid IS NULL  
 	GROUP BY 
 		acct.objid,
 		acct.parentid,
@@ -629,7 +635,7 @@ FROM (
 		LEFT JOIN sreaccount acct ON attr.account_objid = acct.objid 
 		LEFT JOIN revenueitem_attribute subattr ON ri.objid = subattr.revitemid and subattr.attribute_objid='sresubaccount'
 		LEFT JOIN sreaccount subacct ON subattr.account_objid = subacct.objid 
-	WHERE dc.refdate BETWEEN $P{fromdate} AND $P{todate}
+	WHERE dc.refdate BETWEEN $P{fromdate} AND $P{todate}  
 	GROUP BY 
 		acct.objid,
 		acct.parentid,
@@ -686,7 +692,7 @@ FROM (
 		LEFT JOIN revenueitem_attribute subattr ON ri.objid = subattr.revitemid and subattr.attribute_objid='sresubaccount'
 		LEFT JOIN sreaccount subacct ON subattr.account_objid = subacct.objid 
 	WHERE tr.dtposted BETWEEN $P{fromdate} AND $P{todate}
-		 and tc.amount > 0.0 
+		 and tc.amount > 0.0  
 	GROUP BY 
 		acct.objid,
 		acct.parentid,

@@ -40,13 +40,25 @@ UNION
 ORDER BY b.bin
 
 [findInfo]
-SELECT * FROM business_cityengineer WHERE businessid = $P{businessid}
+SELECT bc.*, bp.apptype  
+FROM business_cityengineer bc
+INNER JOIN business b ON b.objid=bc.businessid 
+INNER JOIN bpapplication bp ON bp.businessid=b.objid
+WHERE bp.objid = $P{applicationid} AND bp.apptype IN ( 'NEW', 'RENEW')
+
+[findAllFees]
+SELECT cf.*, r.code AS account_code
+FROM business_cityengineer_fee cf
+INNER JOIN revenueitem r ON cf.account_objid=r.objid 
+INNER JOIN business b ON b.objid=cf.businessid 
+INNER JOIN bpapplication bp ON bp.businessid=b.objid
+WHERE bp.objid = $P{applicationid} AND bp.apptype IN ( 'NEW', 'RENEW')
 
 [getFees]
 SELECT cf.*, r.code AS account_code
 FROM business_cityengineer_fee cf
 INNER JOIN revenueitem r ON cf.account_objid=r.objid 
-WHERE cf.businessid=$P{businessid}
+WHERE cf.businessid=$P{businessid}  
 
 [activateFees]
 UPDATE business_cityengineer_fee 

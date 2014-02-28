@@ -22,6 +22,7 @@ public class BPApplication {
     private String txnmode;
     private String barangayid;
     private int appyear;
+    private String appno;
     
     /** Creates a new instance of BPApplication */
     public BPApplication() {
@@ -81,6 +82,14 @@ public class BPApplication {
 
     public void setObjid(String objid) {
         this.objid = objid;
+    }
+
+    public String getAppno() {
+        return appno;
+    }
+
+    public void setAppno(String appno) {
+        this.appno = appno;
     }
     
     

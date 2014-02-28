@@ -122,7 +122,7 @@ from remittance_cashreceipt rem
 where rem.remittanceid=$P{remittanceid} 
   and ri.fund_objid like $P{fundid} and cv.objid is null 
 group by ri.fund_title, cri.item_objid , cri.item_title 
-order by ri.fund_title, cri.item_title 
+order by fundname, acctcode  
 
 [getBrgyShares]
 select 

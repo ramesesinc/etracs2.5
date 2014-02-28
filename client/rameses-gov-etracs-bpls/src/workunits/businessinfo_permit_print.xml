@@ -1,7 +1,7 @@
 <workunit>
     <invokers>
        <invoker type="businessinfo:generalinfo:formActions" caption="Print Permit" 
-            action="viewReport" visibleWhen="#{entity.permit?.objid!=null}" />
+            action="viewPermitFromBusiness" visibleWhen="#{entity.state=='ACTIVE' &amp;&amp; entity.permit?.objid!=null}" />
             
        <invoker type="businesspermit:print" index="50" action="viewReport"/>    
        <invoker type="formActions" caption="Back" action="_close" mnemonic="b" shortcut="ctrl B" /> 
@@ -36,15 +36,15 @@
             @FormTitle
             def formTitle;
             
-            void viewReport() {
-                data = permitSvc.getPermitInfo( entity.permit );
-                formId = "BPRMT-" + entity.objid;
-                formTitle = "BPRMT-" + entity.bin;
+            void viewPermitFromBusiness() {
+                data = permitSvc.open( entity.permit );
                 data.permitno = data.permitno + "-" + data.version;
-                data.ownername = data.owner.name;
-                data.barcode = entity.barcode;
-                data.pin = entity.pin;
-                data.bin = entity.bin;
+                report.viewReport();
+            } 
+            
+            void viewReport() {
+                data = permitSvc.open( entity );
+                data.permitno = data.permitno + "-" + data.version;
                 report.viewReport();
             } 
             

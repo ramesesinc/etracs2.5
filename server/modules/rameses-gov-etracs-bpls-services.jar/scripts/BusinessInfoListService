@@ -16,8 +16,9 @@ public class BusinessInfoService extends ActiveCrudListService {
 
 	@ProxyMethod
 	public def getNodes(o) {
-		def icount =  em.findMyTaskListCount([assigneeid: env.USERID])?.icount;
-		String taskTitle = "<html>My Tasks <font bgcolor=red color=white>&nbsp;"+icount+"&nbsp;</font></html>";
+		//def icount =  em.findMyTaskListCount([assigneeid: env.USERID])?.icount;
+		//String taskTitle="<html>My Tasks <font bgcolor=red color=white>&nbsp;"+icount+"&nbsp;</font></html>";
+		String taskTitle = "My Tasks";
 		return [
 		   [name:'mytask', caption: taskTitle, leaf:true, allowSearch:true],
 		   [name:'assign-assessor', caption:'For Assessment(Unassigned)', leaf:true, folder:true, allowSearch:true],

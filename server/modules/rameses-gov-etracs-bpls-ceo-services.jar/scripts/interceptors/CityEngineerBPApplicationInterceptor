@@ -29,15 +29,16 @@ public class CityEngineerBPApplicationInterceptor {
 		}
 	}	
 
-	@Before( pattern="BusinessWorkflowService.submitForApproval" )
+	@Before( pattern="BPApplicationService.submitForApproval" )
 	public void onSubmitApproval(evt) {
 		def app = evt.args[0];
-		def z = em.findInfo([businessid:app.businessid]);
+		def res = evt.result;
+		def z = em.findInfo([applicationid:app.objid]);
 		if(z) {
 			if( z.state == 'PENDING') {
 				throw new Exception("There is still a pending assessment in City Engineers Office");
 			}
-			def tf = appDB.read( [objid:app.appid] );
+			def tf = appDB.read( [objid:app.objid] );
 			if( !tf.taxfees.find{it.department=='CEO'}) {
 				throw new Exception("There must be at least one fee from the city engineers office. Please run calculate charges again");
 			}
@@ -49,8 +50,9 @@ public class CityEngineerBPApplicationInterceptor {
 	***/
 	@Before( pattern="BPAssessmentService.(assess|calculateTaxFees)" )
 	public void fireAssess(evt) {
-		def app = evt.args[0];	
-		def taxfees = em.getFees([businessid:app.businessid]);
+		def app = evt.args[0];
+		if( !app.apptype.matches( 'NEW|RENEW' )) return;
+		def taxfees = em.findAllFees([applicationid:app.objid]);
 		if( app.taxfees == null ) app.taxfees = [];
 		taxfees.each {
 			if(it.state.toLowerCase()=='active') {
@@ -66,7 +68,7 @@ public class CityEngineerBPApplicationInterceptor {
 	/***
 	* add additional fees from city engineer. Add @Before so it can be totalled.
 	***/
-	@After( pattern="BusinessWorkflowService.(open|findByBIN)" )
+	@After( pattern="BPApplicationService.(open|findByBIN)" )
 	public void onOpen(evt) {
 		def result = evt.result;
 		def z = em.findInfo( [businessid: result.objid ] );

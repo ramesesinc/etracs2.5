@@ -2,7 +2,7 @@
 <!-- Created with iReport - A designer for JasperReports -->
 <!DOCTYPE jasperReport PUBLIC "//JasperReports//DTD Report Design//EN" "http://jasperreports.sourceforge.net/dtds/jasperreport.dtd">
 <jasperReport
-		 name="statementofrevenue2"
+		 name="statementofreceipts"
 		 columnCount="1"
 		 printOrder="Vertical"
 		 orientation="Portrait"
@@ -61,7 +61,7 @@
 			</band>
 		</background>
 		<title>
-			<band height="112"  isSplitAllowed="true" >
+			<band height="102"  isSplitAllowed="true" >
 				<image  scaleImage="FillFrame" vAlign="Top" hAlign="Left" isUsingCache="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						mode="Opaque"
@@ -146,7 +146,7 @@
 					<reportElement
 						mode="Transparent"
 						x="0"
-						y="53"
+						y="49"
 						width="540"
 						height="15"
 						forecolor="#000000"
@@ -166,7 +166,7 @@
 					<reportElement
 						mode="Transparent"
 						x="0"
-						y="73"
+						y="68"
 						width="540"
 						height="16"
 						forecolor="#000000"
@@ -186,7 +186,7 @@
 					<reportElement
 						mode="Transparent"
 						x="0"
-						y="89"
+						y="84"
 						width="540"
 						height="15"
 						forecolor="#000000"
@@ -205,7 +205,7 @@
 				<staticText>
 					<reportElement
 						x="414"
-						y="89"
+						y="84"
 						width="41"
 						height="15"
 						key="staticText-27"/>
@@ -218,7 +218,7 @@
 				<textField isStretchWithOverflow="false" pattern="MMMMM dd, yyyy" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="455"
-						y="89"
+						y="84"
 						width="84"
 						height="15"
 						key="textField"/>
@@ -466,7 +466,7 @@ Approved Target]]></text>
 					<reportElement
 						mode="Transparent"
 						x="21"
-						y="110"
+						y="101"
 						width="192"
 						height="13"
 						forecolor="#000000"
@@ -486,7 +486,7 @@ Approved Target]]></text>
 					<reportElement
 						mode="Transparent"
 						x="21"
-						y="124"
+						y="115"
 						width="192"
 						height="13"
 						forecolor="#000000"
@@ -506,7 +506,7 @@ Approved Target]]></text>
 					<reportElement
 						mode="Transparent"
 						x="21"
-						y="81"
+						y="72"
 						width="192"
 						height="12"
 						forecolor="#000000"
@@ -526,7 +526,7 @@ Approved Target]]></text>
 					<reportElement
 						mode="Transparent"
 						x="329"
-						y="110"
+						y="101"
 						width="192"
 						height="13"
 						forecolor="#000000"
@@ -546,7 +546,7 @@ Approved Target]]></text>
 					<reportElement
 						mode="Transparent"
 						x="329"
-						y="124"
+						y="115"
 						width="192"
 						height="13"
 						forecolor="#000000"
@@ -566,7 +566,7 @@ Approved Target]]></text>
 					<reportElement
 						mode="Transparent"
 						x="329"
-						y="81"
+						y="72"
 						width="192"
 						height="12"
 						forecolor="#000000"

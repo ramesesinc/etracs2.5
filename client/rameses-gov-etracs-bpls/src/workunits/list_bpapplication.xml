@@ -1,0 +1,10 @@
+<workunit extends="wtemplates/ExplorerViewController.xml" serviceName="BPApplicationListService" 
+    defaultFileType="bpapplication" autoSelect="true">
+    <invokers>
+        <invoker folderid="/explorer/txn/bpls" caption="List of Business Applications" index="4" />
+        <invoker type="home.action" caption="List of Business Applications" index="50"/>
+    </invokers>
+    <pages>
+        <page name="1queryform" template="com.rameses.gov.etracs.bpls.business.BusinessListQueryForm"/>
+    </pages>
+</workunit>

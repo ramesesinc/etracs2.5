@@ -4,7 +4,7 @@ import java.rmi.server.*;
 import com.rameses.services.extended.*
 import java.math.*;
 
-public class BPBillingReportService  {
+public class BPBillingService  {
 
 	@Service("BPBillingRuleService")
 	def billingSvc;
@@ -25,8 +25,26 @@ public class BPBillingReportService  {
 	def bpLedger;
 
 	@ProxyMethod
+	public def getBillByApp(def o) throws Exception {
+		//by business id
+		def p = [appid: o.objid];
+		p.filter = ''' app.objid=$P{appid} ''';
+		def list = bpLedger.getUnpaidForBilling(p);
+		def b = execute(o, list);
+		b.barcode = "51005:"+o.appno;
+		return b;
+	}
+
+	@ProxyMethod
 	public def getReport(def o) throws Exception {
-		
+		//by business id
+		def p = [businessid: o.objid];
+		p.filter = ''' br.businessid=$P{businessid} ''';
+		def list = bpLedger.getUnpaidForBilling(p);
+		return execute(o, list);
+	}
+
+	public def execute(def o, def list) throws Exception {
 		/**
 		* To calculate next due date do the following:
 		* For new business, next due date would mean January 1 of next year. 
@@ -36,12 +54,15 @@ public class BPBillingReportService  {
 		*    If date is Mar 25 next due date would be April 1
 		*    If date is April 2 next due date would be April 20. 
 		*/
+
 		def payoption = [type: 'FULLYEAR'];
 		def billdate = dateSvc.serverDate;
-		def list = bpLedger.getUnpaidForBilling([businessid: o.objid]);
+
 		list.each {
 			if(it.lob?.objid && !it.lob?.assessmenttype)
 				throw new Exception("Please rebuild the ledger. There is no line of business type");
+			if(!it.taxfeetype)
+				throw new Exception("All items must have a taxfee type");	
 		}
 		
 		def z = billingSvc.getBillItems(list, billdate, payoption);	

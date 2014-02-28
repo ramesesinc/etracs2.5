@@ -41,6 +41,7 @@
 	<parameter name="rptcollectiondisposition" isForPrompting="false" class="java.lang.Object"/>
 	<parameter name="TREASURERNAME" isForPrompting="false" class="java.lang.String"/>
 	<parameter name="TREASURERTITLE" isForPrompting="false" class="java.lang.String"/>
+	<parameter name="LGUTYPE" isForPrompting="false" class="java.lang.String"/>
 
 	<field name="items" class="java.lang.Object"/>
 	<field name="dispositions" class="java.lang.Object"/>
@@ -71,14 +72,17 @@
 						width="900"
 						height="23"
 						key="subreport-1"/>
-					<subreportParameter  name="PROVCITY">
-						<subreportParameterExpression><![CDATA[$F{provcity}]]></subreportParameterExpression>
+					<subreportParameter  name="LGUNAME">
+						<subreportParameterExpression><![CDATA[$P{LGUNAME}]]></subreportParameterExpression>
 					</subreportParameter>
-					<subreportParameter  name="MUNICIPALITY">
-						<subreportParameterExpression><![CDATA[$F{municipality}]]></subreportParameterExpression>
+					<subreportParameter  name="PARENTLGUNAME">
+						<subreportParameterExpression><![CDATA[$P{PARENTLGUNAME}]]></subreportParameterExpression>
 					</subreportParameter>
 					<subreportParameter  name="BRGYCOUNT">
 						<subreportParameterExpression><![CDATA[$F{brgycount}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="LGUTYPE">
+						<subreportParameterExpression><![CDATA[$P{LGUTYPE}]]></subreportParameterExpression>
 					</subreportParameter>
 					<dataSourceExpression><![CDATA[$F{items}]]></dataSourceExpression>
 					<subreportExpression  class="net.sf.jasperreports.engine.JasperReport"><![CDATA[$P{rptcollectionitem}]]></subreportExpression>

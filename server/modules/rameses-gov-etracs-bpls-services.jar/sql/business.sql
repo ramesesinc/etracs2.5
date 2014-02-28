@@ -11,7 +11,7 @@ FROM
 	FROM business xb
 	LEFT JOIN bpapplication ba ON ba.objid=xb.currentapplicationid
     LEFT JOIN bpapplication_task bt ON bt.objid=ba.task_objid
-    LEFT JOIN business_permit bp ON bp.objid=xb.currentpermitid
+    LEFT JOIN businesspermit bp ON bp.objid=xb.currentpermitid
 	WHERE xb.owner_name LIKE $P{searchtext}
 UNION 
 	SELECT xb.objid,xb.state,xb.owner_name,xb.businessname,xb.businessaddress,xb.activeyear,xb.bin,
@@ -20,7 +20,7 @@ UNION
 	FROM business xb
     LEFT JOIN bpapplication ba ON ba.objid=xb.currentapplicationid
     LEFT JOIN bpapplication_task bt ON bt.objid=ba.task_objid
-    LEFT JOIN business_permit bp ON bp.objid=xb.currentpermitid
+    LEFT JOIN businesspermit bp ON bp.objid=xb.currentpermitid
 	WHERE xb.businessname LIKE $P{searchtext}
 UNION
 	SELECT xb.objid,xb.state,xb.owner_name,xb.businessname,xb.businessaddress,xb.activeyear,xb.bin,
@@ -29,7 +29,7 @@ UNION
 	FROM business xb 
     LEFT JOIN bpapplication ba ON ba.objid=xb.currentapplicationid
     LEFT JOIN bpapplication_task bt ON bt.objid=ba.task_objid
-    LEFT JOIN business_permit bp ON bp.objid=xb.currentpermitid
+    LEFT JOIN businesspermit bp ON bp.objid=xb.currentpermitid
 	WHERE xb.bin LIKE $P{searchtext}
 ) b
 WHERE NOT(b.objid IS NULL)
@@ -42,7 +42,7 @@ FROM
 (
     SELECT xb.objid,xb.state,xb.owner_name,xb.businessname,xb.businessaddress,xb.activeyear,xb.bin,
     ba.appno, ba.apptype, bt.state AS appstate, ba.dtfiled AS appdate,
-    bt.assignee_objid, bt.assignee_name, bt.startdate
+    bt.assignee_objid, bt.assignee_name, bt.startdate, bt.message
     FROM business xb
     INNER JOIN bpapplication ba ON ba.objid=xb.currentapplicationid
     INNER JOIN bpapplication_task bt ON bt.applicationid=ba.objid
@@ -50,7 +50,7 @@ FROM
 UNION 
     SELECT xb.objid,xb.state,xb.owner_name,xb.businessname,xb.businessaddress,xb.activeyear,xb.bin,
     ba.appno, ba.apptype, bt.state AS appstate, ba.dtfiled AS appdate,
-    bt.assignee_objid, bt.assignee_name, bt.startdate
+    bt.assignee_objid, bt.assignee_name, bt.startdate, bt.message
     FROM business xb
     INNER JOIN bpapplication ba ON ba.objid=xb.currentapplicationid
     INNER JOIN bpapplication_task bt ON bt.applicationid=ba.objid
@@ -58,7 +58,7 @@ UNION
 UNION
     SELECT xb.objid,xb.state,xb.owner_name,xb.businessname,xb.businessaddress,xb.activeyear,xb.bin,
     ba.appno, ba.apptype, bt.state AS appstate, ba.dtfiled AS appdate,
-    bt.assignee_objid, bt.assignee_name, bt.startdate    
+    bt.assignee_objid, bt.assignee_name, bt.startdate, bt.message    
     FROM business xb 
     INNER JOIN bpapplication ba ON ba.objid=xb.currentapplicationid
     INNER JOIN bpapplication_task bt ON bt.applicationid=ba.objid
@@ -109,6 +109,12 @@ SELECT objid, owner_name, owner_objid, businessname, businessaddress,
 currentapplicationid AS applicationid, objid AS businessid  
 FROM business WHERE bin=$P{bin}
 
+[findByAppnoForReceipt]
+SELECT b.objid, b.owner_name, b.owner_objid, b.businessname, b.businessaddress, 
+bp.objid as applicationid, b.objid AS businessid  
+FROM business b
+INNER JOIN bpapplication bp ON b.objid=bp.businessid  
+WHERE bp.appno = $P{appno}
 
 [getBusinessesByOwner]
 SELECT b.objid, b.owner_name, b.businessname, 
@@ -133,7 +139,7 @@ ORDER BY businessname
 ########################################################
 # BusinessInfoService
 #########################################################
-[getActiveLobs]
+[getLobs]
 SELECT 
     bl.*, 
     lc.name AS classification_name, 
@@ -142,8 +148,7 @@ FROM business_lob bl
 INNER JOIN business b ON b.objid=bl.businessid
 INNER JOIN lob ON bl.lobid=lob.objid
 INNER JOIN lobclassification lc ON lob.classification_objid=lc.objid 
-WHERE bl.businessid = $P{objid} AND bl.iyear=b.activeyear 
-AND NOT( bl.assessmenttype = 'RETIRE' )
+WHERE bl.businessid = $P{objid} 
 
 [getAppInfos]
 SELECT bi.*, 
@@ -167,21 +172,20 @@ bv.handler AS attribute_handler
 FROM business_assessment_info bi 
 INNER JOIN business b ON bi.businessid=b.objid
 INNER JOIN businessvariable bv ON bv.objid=bi.attribute_objid
-WHERE bi.businessid=$P{objid} AND bi.iyear=b.activeyear
+WHERE bi.businessid=$P{objid} 
 ORDER BY bv.category, bv.sortorder 
 
 ################################################
 # BusinessInfoService.create and changeState
 ################################################
 [removeInfos]
-DELETE FROM business_info WHERE applicationid=$P{objid}
+DELETE FROM business_info WHERE businessid=$P{objid}
 
 [removeLOB]
-DELETE FROM business_lob WHERE applicationid=$P{objid}
+DELETE FROM business_lob WHERE businessid=$P{objid}
 
 [removeAssessmentInfos]
-DELETE FROM business_assessment_info WHERE applicationid=$P{objid}
-
+DELETE FROM business_assessment_info WHERE businessid=$P{objid}
 
 [updateActiveStatus]
 UPDATE business 
@@ -202,7 +206,7 @@ AND amount-amtpaid-discount > 0
 
 
 [findPermitByYear]
-SELECT permitno, version FROM business_permit WHERE businessid=$P{businessid} AND activeyear=$P{activeyear}
+SELECT permitno, version FROM businesspermit WHERE businessid=$P{businessid} AND activeyear=$P{activeyear}
 
 [updatePermit]
 UPDATE business SET currentpermitid = $P{permitid} WHERE objid=$P{objid}
@@ -210,22 +214,6 @@ UPDATE business SET currentpermitid = $P{permitid} WHERE objid=$P{objid}
 [updatePIN]
 UPDATE business SET pin=$P{pin} WHERE objid=$P{objid}
 
-[getPermitPayments]
-SELECT 
-    bp.refno AS orno, 
-    bp.refdate AS ordate, 
-    bp.amount,
-    bp.payoption,
-    bp.qtr
-FROM bppayment bp
-INNER JOIN business_permit p ON p.applicationid=bp.applicationid
-WHERE p.objid = $P{objid} AND bp.voided = 0
-
-[getPermitLobs]
-SELECT *
-FROM business_lob bl
-INNER JOIN business_permit p ON p.applicationid=bl.applicationid
-WHERE p.objid = $P{objid} AND NOT( bl.assessmenttype = 'RETIRE' )
 
 [getRedflags]
 SELECT * FROM business_redflag WHERE businessid=$P{businessid} ORDER BY dtposted DESC

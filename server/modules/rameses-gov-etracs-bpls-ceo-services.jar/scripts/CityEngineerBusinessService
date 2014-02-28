@@ -17,7 +17,7 @@ public class CityEngineerBusinessService {
 	@ProxyMethod
 	public def getInfo(def o) {
 		o.businessid = o.objid;
-		def m = em.findInfo(o);
+		def m = em.read(o);
 		m.fees = em.getFees([businessid: o.objid]);
 		return m;
 	}

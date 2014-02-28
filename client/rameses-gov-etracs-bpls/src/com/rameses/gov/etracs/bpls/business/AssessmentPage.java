@@ -194,7 +194,7 @@ public class AssessmentPage extends javax.swing.JPanel {
         xDataTable2.setHandler("assessmentInfoModel");
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 1, 11));
-        jLabel1.setText("Taxes and Fees Assessment");
+        jLabel1.setText("Taxes and Fees Assessment1");
 
         xDataTable1.setColumns(new com.rameses.rcp.common.Column[]{
             new com.rameses.rcp.common.Column(new Object[]{

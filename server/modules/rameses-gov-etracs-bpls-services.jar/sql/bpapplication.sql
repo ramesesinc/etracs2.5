@@ -1,3 +1,82 @@
+[getList]
+SELECT DISTINCT b.*  
+FROM 
+(
+	SELECT ba.objid,ba.owner_name,ba.businessname,ba.businessaddress,ba.appyear,b.bin,
+	ba.appno, ba.apptype, bt.state AS appstate, ba.dtfiled AS appdate,
+    bp.permitno, bp.expirydate, bt.assignee_objid, bt.assignee_name, bt.startdate 
+	FROM bpapplication ba 
+	INNER JOIN business b ON b.objid=ba.businessid
+    LEFT JOIN bpapplication_task bt ON bt.objid=ba.task_objid
+    LEFT JOIN businesspermit bp ON bp.businessid=b.objid
+	WHERE ba.owner_name LIKE $P{searchtext} 
+UNION 
+	SELECT ba.objid,ba.owner_name,ba.businessname,ba.businessaddress,ba.appyear,b.bin,
+	ba.appno, ba.apptype, bt.state AS appstate, ba.dtfiled AS appdate,
+    bp.permitno, bp.expirydate, bt.assignee_objid, bt.assignee_name, bt.startdate 
+	FROM bpapplication ba 
+	INNER JOIN business b ON b.objid=ba.businessid
+    LEFT JOIN bpapplication_task bt ON bt.objid=ba.task_objid
+    LEFT JOIN businesspermit bp ON bp.businessid=b.objid
+    WHERE ba.businessname LIKE $P{searchtext}
+UNION
+	SELECT ba.objid,ba.owner_name,ba.businessname,ba.businessaddress,ba.appyear,b.bin,
+	ba.appno, ba.apptype, bt.state AS appstate, ba.dtfiled AS appdate,
+    bp.permitno, bp.expirydate, bt.assignee_objid, bt.assignee_name, bt.startdate 
+	FROM bpapplication ba 
+	INNER JOIN business b ON b.objid=ba.businessid
+    LEFT JOIN bpapplication_task bt ON bt.objid=ba.task_objid
+    LEFT JOIN businesspermit bp ON bp.businessid=b.objid
+	WHERE b.bin LIKE $P{searchtext}
+) b
+WHERE NOT(b.objid IS NULL)
+${filter}
+ORDER BY b.startdate
+
+[getOpenTaskList]
+SELECT DISTINCT b.*  
+FROM 
+(
+	SELECT ba.objid,ba.owner_name,ba.businessname,ba.businessaddress,ba.appyear,xb.bin,
+	ba.appno, ba.apptype, bt.state AS appstate, ba.dtfiled AS appdate,
+    bt.assignee_objid, bt.assignee_name, bt.startdate, bt.message 
+    FROM bpapplication ba
+    INNER JOIN business xb ON ba.objid=xb.currentapplicationid
+    INNER JOIN bpapplication_task bt ON bt.applicationid=ba.objid
+    WHERE ba.owner_name LIKE $P{searchtext} AND bt.enddate IS NULL 
+UNION 
+	SELECT ba.objid,ba.owner_name,ba.businessname,ba.businessaddress,ba.appyear,xb.bin,
+	ba.appno, ba.apptype, bt.state AS appstate, ba.dtfiled AS appdate,
+    bt.assignee_objid, bt.assignee_name, bt.startdate, bt.message 
+    FROM bpapplication ba
+    INNER JOIN business xb ON ba.objid=xb.currentapplicationid
+    INNER JOIN bpapplication_task bt ON bt.applicationid=ba.objid
+    WHERE ba.businessname LIKE $P{searchtext}  AND bt.enddate IS NULL 
+UNION
+	SELECT ba.objid,ba.owner_name,ba.businessname,ba.businessaddress,ba.appyear,xb.bin,
+	ba.appno, ba.apptype, bt.state AS appstate, ba.dtfiled AS appdate,
+    bt.assignee_objid, bt.assignee_name, bt.startdate, bt.message 
+    FROM bpapplication ba
+    INNER JOIN business xb ON ba.objid=xb.currentapplicationid
+    INNER JOIN bpapplication_task bt ON bt.applicationid=ba.objid
+    WHERE xb.bin LIKE $P{searchtext}  AND bt.enddate IS NULL
+) b
+WHERE NOT(b.objid IS NULL)
+${filter}
+ORDER BY b.startdate
+
+#######################################
+# find By BIN
+#######################################
+[findByBIN]
+SELECT currentapplicationid AS objid FROM business WHERE bin=$P{bin}
+
+[findByApp]
+SELECT objid FROM bpapplication WHERE appno=$P{appno}
+
+[findBIN]
+SELECT bin FROM business WHERE objid=$P{businessid}
+
 #######################################
 # used for retrieving the application
 #######################################
@@ -68,3 +147,6 @@ UPDATE bpapplication SET state = $P{state} WHERE objid = $P{objid}
 
 [getTaskList]
 SELECT * FROM bpapplication_task WHERE applicationid=$P{objid} ORDER BY startdate ASC
+
+[findApplicationPermit]
+SELECT * FROM businesspermit WHERE applicationid=$P{objid} AND state='ACTIVE'

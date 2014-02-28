@@ -8,6 +8,9 @@ public class BusinessInfoService extends ActiveCrudService {
 	@ActiveDB("business")
 	def em;
 
+	@ActiveDB("businesspermit")
+	def bperm;
+
 	@Service("DateService")
 	def dateSvc;
 
@@ -50,16 +53,24 @@ public class BusinessInfoService extends ActiveCrudService {
 	public void afterOpen(o) {
 		if(o.orgtype) o.orgtypename = LOV.ORG_TYPES[o.orgtype];
 		o.barcode = '51005:'+o.bin;
+
+		//check if there is permit
+		def perm = bperm.findActivePermit( [businessid: o.objid, activeyear: o.activeyear]);
+		if(perm) {
+			o.permit = perm;
+		}
 	}
 
 	/**********************************************************
 	* loads only the most active lines of business based on the
 	* active year of the business
 	***********************************************************/ 
+	@ProxyMethod
 	public def getLobs(o) {
-		return em.getActiveLobs( o );
+		return em.getLobs( o );
 	}	
 
+	@ProxyMethod
 	public def getAppInfos(o) {
 		def infos = em.getAppInfos( o );
 		infos.each {
@@ -68,6 +79,7 @@ public class BusinessInfoService extends ActiveCrudService {
 		return infos;
 	}	
 
+	@ProxyMethod
 	public def getAssessmentInfos(o) {
 		def infos = em.getActiveAssessmentInfos( o );
 		infos.each {
@@ -77,38 +89,6 @@ public class BusinessInfoService extends ActiveCrudService {
 	}	
 
 
-	/**********************************************************
-	* updates lob, assessment infos and business infos
-	***********************************************************/ 
-	@ProxyMethod
-	public void createLobs( def lobs ) {
-		lobs.each {
-			it.objid = "BUSLOB"+new UID();
-			em.create(it, "lob");
-		}
-	}
-
-	@ProxyMethod
-	public void createInfos( def infos ) {
-		println infos.size();
-		infos.each {
-			it.objid = "BUSINFO"+new UID();
-			convertInfo(it);
-			em.create(it, "info");
-		}	
-	}
-
-	@ProxyMethod
-	public void createAssessmentInfos( def ainfos ) {
-		ainfos.each {
-			it.objid = "BUSASSMT"+new UID();
-			convertInfo(it);
-			em.create(it, "assessment_info");
-			println it.objid;
-		}	
-	}
-
-	
 	/********************************************************
 	* activate - this method is called when an application is 
 	* released. It will break the application into the app infos
@@ -213,5 +193,53 @@ public class BusinessInfoService extends ActiveCrudService {
 		return em.getApplicationList(o);
 	}
 	
+	//called during release
+	@ProxyMethod
+	public def updateInfos( o ) {
+		if(o.apptype.matches('NEW|RENEW')) {
+			o.state = 'ACTIVE';
+			em.removeInfos([objid:o.objid]);
+			em.removeLOB([objid:o.objid]);
+			em.removeAssessmentInfos([objid:o.objid]);
+			def lobs = o.lobs.findAll{it.assessmenttype.matches('NEW|RENEW')};
+			lobs.each {
+				it.businessid = o.objid;
+				em.create(it, "lob");				
+			}
+			o.appinfos.each {
+				it.objid = "BUSINFO"+new UID();
+				it.businessid = o.objid
+				convertInfo(it);
+				em.create(it, "info");
+			}
+			o.assessmentinfos.each {
+				it.businessid = o.objid;
+				it.objid = "BUSASSMT"+new UID();
+				convertInfo(it);
+				em.create(it, "assessment_info");
+			}
+			em.update(o);			
+		}
+		else if( o.apptype == 'RETIRE') {
+			o.state = 'RETIRED';
+			em.removeInfos([objid:o.objid]);
+			em.removeLOB([objid:o.objid]);
+			em.removeAssessmentInfos([objid:o.objid]);
+			em.update(o);
+		}
+		else if(o.apptype == 'AMEND') {
+			lobs.each {
+				if(it.assessmenttype == 'NEW') {
+					it.businessid = o.objid;
+					em.create(it, "lob");				
+				}
+				else if(it.assessmenttype == '') {
+					em.delete( it, "lob" );
+				}
+			}
+		}
+
+	}
+
 
 }

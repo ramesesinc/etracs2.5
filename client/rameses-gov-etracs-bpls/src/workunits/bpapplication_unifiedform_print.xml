@@ -1,0 +1,110 @@
+<workunit>
+    <invokers>
+        <invoker type="bpapplication:formActions" icon="images/toolbars/printer.png"
+            caption="Print Unified Form" action="viewReport" role="LICENSING,BUSINESSINFO"
+            index="0" visibleWhen="#{appstate == 'active'}"/>
+
+        <invoker type="formActions" caption="Close" action="_close"/>
+    </invokers>
+    
+    <code>
+        <![CDATA[    
+        import com.rameses.rcp.annotations.*
+        import com.rameses.rcp.common.*
+        import com.rameses.osiris2.client.*
+        import com.rameses.osiris2.common.*
+        import java.rmi.server.*;
+         import com.rameses.osiris2.reports.*;
+        
+        class  BPUnifiedFormReportController  {
+        
+            def data;
+            def entity;
+            def title = "BP Application"
+            
+            def reportPath = "com/rameses/gov/etracs/bpls/reports/unifiedform/"
+            
+            @Service("ReportParameterService") 
+            def paramsvc
+         
+            @FormId
+            String formId;
+            
+            @FormTitle
+            String formTitle;
+            
+            void viewReport() {
+                formTitle = "App "+ entity.appno; 
+                formId = "APPRPT:"+entity.objid;
+            
+                def format = { x->
+                    def dtype = x.attribute.datatype;
+                    if( dtype == 'decimal') {
+                        if(!x.value) return null;
+                        return new Double( x.value + "" );
+                    }
+                    else if( dtype == "integer") {
+                        if(!x.value) return null;
+                        return new Integer( x.value + "" );
+                    }
+                    else if( dtype == "boolean" ) {
+                        return x.value;
+                    }
+                    else {
+                        if(!x.value) return null;
+                        return x.value;
+                    }
+                }
+                
+                def infos = [];
+                entity.lobs.each { lb->
+                    def m = [:];
+                    m.lob = lb.name;
+                    for( x in entity.assessmentinfos.findAll{it.lob?.objid == lb.lobid } ) { 
+                        try {
+                            m[x.attribute.name.toLowerCase()] = format(x);
+                        }catch(ign){;}  
+                    };
+                    infos << m;
+                }
+                 
+                //ctcno: "CCI2012-191919191", 
+                //ctcdate: java.sql.Date.valueOf("2013-02-01"),
+                data = [:];
+                data.putAll( entity );
+                data.barangay =  entity.barangay.name;
+                data.ownername = entity.owner.name; 
+                data.ownerno = entity.owner.entityno;
+                data.owneraddress = entity.owner.address;
+                data.bin = entity.bin;
+                data.infos = infos;
+                data.requirements = [];
+                data.signatories = [];
+                data.barcode =  "51005:"+entity.bin
+                entity.appinfos.each {
+                    data[ it.attribute.name.toLowerCase() ] = format(it); 
+                }
+                entity.assessmentinfos.findAll{it.lob?.objid==null}.each {
+                    data[ it.attribute.name.toLowerCase() ] = format(it); 
+                }
+                report.viewReport();
+            } 
+            
+            def report = [
+                getReportName : { return reportPath + "main.jasper" },
+                getReportData : { return  data },
+                getParameters : { return paramsvc.getStandardParameter() },
+                getSubReports : { return [
+                    new SubReport("ITEM", reportPath + "item.jasper")
+                ] as SubReport[]; }
+            ] as ReportModel
+           
+        }
+        ]]>
+    </code>
+    
+    <pages>
+        <page template="com.rameses.osiris2.common.ui.ReportPreviewPage"/>
+    </pages>
+    
+</workunit>

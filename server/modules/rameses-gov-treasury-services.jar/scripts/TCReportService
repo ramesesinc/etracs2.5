@@ -51,18 +51,5 @@ class TCReportService
 	}
 
 
-	/************************************
-		Form Controls 
-	*************************************/	
-	@ProxyMethod
-	public def getFormControlList(  ) {
-		return [
-			[type:"integer", caption:'Year', name:'entity.year', required:true, preferredSize:'100,19', captionWidth:100 ],
-            [type:"combo", caption:'Month', name:'entity.month', items:'months', expression:'#{item.caption}', preferredSize:'100,19', captionWidth:100, required:true],
-            [type:"combo", caption:'Fund', name:'entity.fund', items:'funds', expression:'#{item.title}', preferredSize:'200,19', captionWidth:100 ],
-        ]
-	}
-
-
 	
 }

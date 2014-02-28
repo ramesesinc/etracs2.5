@@ -5,11 +5,8 @@ import java.rmi.server.*;
 
 class BusinessPermitService  {
 
-	@ActiveDB("business")
+	@ActiveDB("businesspermit")
 	def em;
-
-	@ActiveDB("bpapplication")
-	def app;
 
 	@Service("Var")
 	def sysvar;
@@ -20,21 +17,26 @@ class BusinessPermitService  {
 	@Service("SequenceService")
 	def seqSvc;
 
+	@Service("BusinessInfoService")
+	def bizInfo;
+
 	@Env
 	def env;
 
 	@ProxyMethod
 	public def create(o) {
+		if(!o.businessid)
+			throw new Exception("Please specify businessid");
+
+		def b = bizInfo.open( [objid: o.businessid] );
+		
 		def lgucode = sysvar.lgu_objid;
 
-		if(!o.application)
-			throw new Exception("There must be an associated application for permit");
-
 		//check if there is already an issued permit for the year, update the version	
-		def yr = o.activeyear;
+		def yr = b.activeyear;
 
-		def z = em.findPermitByYear( [businessid: o.objid, activeyear: yr ] );
-
+		def z = em.findPermitByYear( [businessid: o.businessid, activeyear: yr ] );
+		
 		def permitno = null;
 		int ver = 0;
 
@@ -47,38 +49,32 @@ class BusinessPermitService  {
 			ver = 0;
 			permitno = prefix+"-"+seqSvc.getNextFormattedSeriesA(prefix,5);
 		}
+
 		//calculate expiry date
 		def expirydate = dateSvc.getMonthEndDate( java.sql.Date.valueOf(yr+"-12-01") );		
 
+		b.lobs = bizInfo.getLobs( [objid:o.businessid] );
+
 		def p = [:];
  		p.objid = "PERM" + new UID();
- 		p.businessid = o.objid;
- 		p.applicationid = o.currentapplicationid;
- 		p.activeyear = o.activeyear;
+ 		p.state = 'ACTIVE';
+ 		p.businessid = b.objid;
+ 		p.activeyear = b.activeyear;
+ 		p.ownername = b.owner.name;
+ 		p.tradename = b.tradename;
+ 		p.businessaddress = b.businessaddress;
+ 		p.bin = b.bin;
+ 		p.pin = b.pin;
+ 		p.apptype = b.apptype;
  		p.permitno = permitno;
  		p.version = ver;
  		p.dtissued = dateSvc.serverDate;
  		p.permittype = o.permittype;
  		p.issuedby = [objid: env.USERID, name:env.USER];
  		p.expirydate = expirydate;
- 		em.create( p, "permit");
-		em.updatePermit( [objid: o.objid, permitid: p.objid ] );
- 		return p;
-	}
-
-	@ProxyMethod
-	public def getPermitInfo(o) {
-		def permit = em.read( [objid:o.objid], "permit");
-		def a = app.read( [objid: permit.applicationid ] );
-		//do not include retirement
-		permit.lobs = em.getPermitLobs( [objid: permit.objid] );
-		permit.apptype = a.apptype;
-		permit.owner = a.owner;
-		permit.businessname = a.businessname;
-		permit.businessaddress = a.businessaddress;
-		permit.tradename = a.tradename;
-		permit.payments = em.getPermitPayments( [objid:permit.objid] );
-		permit.payments.each {
+ 		p.lobs = b.lobs;
+ 		p.payments = em.getPayments( [businessid: p.businessid, activeyear: p.activeyear]);
+ 		p.payments.each {
 			if(it.payoption == 'FULLYEAR') {
 				it.particulars = 'full';
 			}
@@ -88,10 +84,23 @@ class BusinessPermitService  {
 			else if( it.qtr > 0 ) {
 				it.particulars = 'paid until qtr ' + it.qtr;
 			}
-		}
-		return permit;
+			it.ordate = dateSvc.format( 'yyyy-MM-dd', it.ordate );
+ 		}
+ 		em.create( p );
+ 		return p;
 	}
 
 
+	@ProxyMethod
+	public def open( o ) {
+		def r = em.read( o );
+		r.payments.each {
+			it.ordate = dateSvc.parse( 'yyyy-MM-dd', it.ordate);
+			it.amount = new BigDecimal(it.amount);
+		}
+		r.barcode = '51005:'+r.bin;
+		return r;
+	}
 
-}
+
+} 

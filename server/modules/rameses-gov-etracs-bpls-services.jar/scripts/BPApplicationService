@@ -14,8 +14,18 @@ public class BPApplicationService extends ActiveCrudService {
 	@Service("DateService")
 	def dateSvc;
 
+	@Service("BPLedgerService")
+	def ledgerSvc;
+
+	@ActiveDB("business")
+	def bizDB;
+
 	@Env
 	def env;
+
+	@Service("LOVService")
+	def LOV;
+
 
 	/**********************************************************
 	* called when creating new,renew,amend,retire applications
@@ -54,7 +64,8 @@ public class BPApplicationService extends ActiveCrudService {
 		entity.txnmode = 'ONLINE';
 		entity.objid = "BP"+ new UID();
         entity.apptype = o.apptype;
-		switch(  o.apptype ) {
+        entity.state = 'OPEN';
+        switch(  o.apptype ) {
     		case "NEW":
     			entity.state = "ASSESSMENT";
     			break;	
@@ -71,7 +82,6 @@ public class BPApplicationService extends ActiveCrudService {
     			entity.lobs = lobs;
     			break;
     		case "RETIRE":
-    			println "retire";
     			entity.lobs.each {
     				it.assessmenttype = 'RETIRE';
     			}
@@ -117,6 +127,7 @@ public class BPApplicationService extends ActiveCrudService {
 			throw new Exception("BIN for Application is null. Pls. check data again");	
 
 		o.businessid = bizInfo.objid;
+		o.state = 'OPEN';
 		o.bin = bizInfo.bin;
 		o.appcount = bizInfo.appcount;	//we store this so it can be retrieved in afterCreate
 		o.appno = bizInfo.bin + "-" + bizInfo.appcount;
@@ -138,43 +149,182 @@ public class BPApplicationService extends ActiveCrudService {
 
 	@ProxyMethod
 	public def getTaskList(o) {
-		return em.getTaskList(o);
+		def list = em.getTaskList(o);
+		list.each {
+			it.state = 'for ' + it.state;
+		}
+		return list;
 	}
 
 
 	@ProxyMethod
 	public void rebuildPost( def o ) {
-		//we need to open the applicaton first
-		def app = em.read( [objid: o.objid] );
-		
-		/*******************************************************
-		* load lobs 
-		*******************************************************/
-		app.lobs.each {
-			it.businessid = app.businessid;
-			it.applicationid = app.objid;	
-			it.iyear = app.appyear;	
-		}
-
-		bizInfoSvc.createLobs( app.lobs );
-		/*******************************************************
-		* load infos 
-		*******************************************************/
-		app.appinfos.each {
-			it.businessid = app.businessid;	
-			it.applicationid = app.objid;
-			it.iyear = app.appyear;
-		}
-		bizInfoSvc.createInfos( app.appinfos );
-		/*******************************************************
-		* load assessment infos 
-		*******************************************************/
-		app.assessmentinfos.each {
-			it.businessid = app.businessid;
-			it.applicationid = app.objid;
-			it.iyear = app.appyear;
-		}
-		bizInfoSvc.createAssessmentInfos( app.assessmentinfos );
+		throw new Exception("Rebuild post not supported");
 	}
+
+	@ProxyMethod
+	public def findByBIN(o) {
+		def id = null;
+		if( o.bin.indexOf("_") <= 0 ) {
+			id = em.findByBIN( [bin: o.bin] )?.objid;
+		}
+		else {
+			id = em.findByApp( [appno: o.bin ])?.objid;
+		}
+		if(!id)
+			throw new Exception("Application not found");
+		def app = em.read( [objid: id]);	
+		afterOpen(app);
+		return app;
+	}
+
+	public void afterOpen(o) {
+		o.bin = em.findBIN( [businessid: o.businessid] ).bin;
+		o.barcode = '51005:'+o.appno;
+
+		def taskid = o.task?.objid;
+		if(taskid) {
+			def tsk = em.read( [objid:taskid], "task" );
+			o.task = tsk;
+			def subtasks = em.getOpenSubTasks( [taskid: taskid] );
+			if(subtasks) {
+				subtasks = subtasks.findAll{ it.assignee?.objid == env.USERID };
+			}
+			o.subtasks = subtasks;
+		}	
+		if(o.assessedby?.objid) {
+    		def u = em.findAssessedBy( o );
+    		if(u) o.assessedby.putAll( u );
+     	}	
+     	if(o.orgtype) o.orgtypename = LOV.ORG_TYPES[o.orgtype];
+
+		def permit = em.findApplicationPermit([objid: o.objid]);
+		if(permit) {
+			o.permit = permit;
+		}
+	}
+
+	/*********************************************************************
+	* workflow actions
+	*********************************************************************/
+	@ProxyMethod
+	public def assignAssessorToSelf( o ) {
+		def app = o;
+		app.userid = env.USERID;
+		app.username = env.USER;
+		def result = [:];
+		
+		def m = em.findAssessedBy( [objid:app.objid] );
+		if(m.objid) {
+			throw new Exception("This document is already assigned to " + m.lastname+ ", " + m.firstname);
+		}
+		em.updateAssessedBy(app);
+		o.assignee = [objid:env.USERID, name:env.USER];
+		
+		//this is for use by client
+		result.state = 'assessment';
+		result.assessedby = o.assignee;
+		return result;
+	}
+
+	@ProxyMethod
+	public def getApproverList() {
+		return em.getApproverList();
+	}
+
+	@ProxyMethod
+	public def submitForApproval(o) {
+		if(!o.assignee) throw new Exception("Please specify an approver");
+		def app = [objid: o.objid];
+		app.userid = o.assignee.objid;
+		app.username = o.assignee.name;
+		em.updateApprovedBy( app );
+		return [state:'approval'];
+	}
+
+	@ProxyMethod
+	public def returnForAssessment(o) {
+		if(!o.assignee) throw new Exception("Please specify an assignee");
+		def app = [objid: o.objid];
+		return [state:'assessment'];
+	}
+
+	@ProxyMethod 
+	public void postToLedger(app) {
+		def ledger = [:];
+		ledger.items = app.taxfees;
+		ledger.items.each { r->
+			r.applicationid = app.objid;
+			r.businessid = app.businessid;
+			r.iyear = app.appyear;
+			r.amtpaid = 0;
+			r.discount = 0;
+			if(r.lob?.objid) {
+				r.lob.assessmenttype = app.lobs.find{ l-> l.lobid == r.lob.objid }?.assessmenttype;
+				if(!r.lob.assessmenttype) throw new Exception("LOB assessment type should not be null");
+			}
+		}
+		ledgerSvc.postReceivables(ledger);
+	}
+
+	@ProxyMethod
+	public void revertPostApplication(app) {
+		ledgerSvc.revertReceivables( [applicationid: app.objid ] );
+	}
+
+	@ProxyMethod
+	public def postApprove(app) {
+		if(!app.taxfees)
+			throw new Exception("Please indicate at least one taxfee item");
+		postToLedger(app);
+		app.appid = app.objid;
+		app.taskid = app.task.objid;
+		return [state:'payment'];
+	}
+
+	@ProxyMethod
+	public def revertApproval(app) {
+		if(!app.approvedby?.objid)
+			throw new Exception("approver is required");
+		app.assignee = app.approvedby;
+		revertPostApplication(app);
+		app.appid = app.objid;
+		app.taskid = app.task.objid;
+		return [state:'approval'];
+	}
+
+
+	/***
+	* release will explode the application infos and activate the business.
+	* at the same time it will also close the remaining tasks.
+	***/
+	@ProxyMethod
+	public void release(o) {
+		def app = o;
+		o.taskid = app.task?.objid;
+		o.appid = app.objid;
+		app.state = 'CLOSED';
+		em.changeState( [state:app.state, objid: o.appid] );
+
+		def m = [:];
+		m.objid = app.businessid;
+		m.activeyear = app.appyear;
+		m.apptype = app.apptype;
+		m.lobs = app.lobs;
+		m.infos = app.appinfos;
+		m.assessmentinfos = app.assessmentinfos;
+		m.businessname = app.businessname;
+		m.tradename = app.tradename;
+		m.owner = app.owner;
+		m.barangay = app.barangay;
+		m.businessaddress = app.businessaddress;
+		m.orgtype = app.orgtype;
+		m.currentapplicationid = null;
+		m.lobs = app.lobs;
+		m.appinfos = app.appinfos;
+		m.assessmentinfos = app.assessmentinfos;
+		bizInfoSvc.updateInfos( m );
+	}
+
 
 }

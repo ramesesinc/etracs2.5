@@ -16,7 +16,7 @@ public class BPAssessmentRuleService  {
 	@ActiveDB("lob")
 	def lob;
 
-	@ActiveDB("businessaccount")
+	@ActiveDB("revenueitem")
 	def ba;
 
 	@ActiveDB("businessvariable")
@@ -136,7 +136,10 @@ public class BPAssessmentRuleService  {
 		def actions = new RuleAction();
 		actions.addCommand( "ask_business_info", new AskBusinessInfo( infoBuilder: infoBuilder, request:request ));
 		actions.addCommand( "assert_business_info", new AssertBusinessInfo(request:request, infoBuilder: infoBuilder,  comparator: comparator));
-		actions.addCommand( "compute_taxfee", new ComputeTaxFee( request:request, BA:ba, NA: numberSvc) );
+		actions.addCommand( "compute_businesstax", new ComputeTaxFee( request:request, BA:ba, NA: numberSvc, type:'TAX') );
+		actions.addCommand( "compute_regfee", new ComputeTaxFee( request:request, BA:ba, NA: numberSvc, type:'REGFEE') );	
+		actions.addCommand( "compute_othercharge", new ComputeTaxFee( request:request, BA:ba, NA: numberSvc, type:'OTHERCHARGE') );
+
 		actions.addCommand( "assert_taxfee", new AssertTaxFee( request:request, ruleSvc: ruleSvc));
 		actions.addCommand( "update_taxfee", new UpdateTaxFee(request:request));
 		actions.addCommand( "remove_taxfee", new RemoveTaxFee(request:request));
@@ -183,11 +186,11 @@ public class BPAssessmentRuleService  {
 				request.taxfees.addAll(o.taxfees);
 			}
 			request.taxfees = request.taxfees.findAll{ it.lob?.objid!=null }.sort{ it.lob } + request.taxfees.findAll{it.lob?.objid==null};
-			totals.total_tax = request.taxfees.findAll{ it.account.taxfeetype == 'TAX'}.sum{it.amount};
+			totals.total_tax = request.taxfees.findAll{ it.taxfeetype == 'TAX'}.sum{it.amount};
 			if(!totals.total_tax) totals.total_tax = 0;
-			totals.total_regfee = request.taxfees.findAll{ it.account.taxfeetype == 'REGFEE'}.sum{it.amount};
+			totals.total_regfee = request.taxfees.findAll{ it.taxfeetype == 'REGFEE'}.sum{it.amount};
 			if(!totals.total_regfee) totals.total_regfee = 0;
-			totals.total_othercharge = request.taxfees.findAll{ it.account.taxfeetype == 'OTHERCHARGE'}.sum{it.amount};
+			totals.total_othercharge = request.taxfees.findAll{ it.taxfeetype == 'OTHERCHARGE'}.sum{it.amount};
 
 			if(!totals.total_othercharge) totals.total_othercharge = 0;
 			totals.total = totals.total_tax + totals.total_regfee + totals.total_othercharge;
@@ -244,7 +247,7 @@ public class ComputeTaxFee implements RuleActionHandler {
 	def request;
 	def BA;
 	def NA;
-
+	def type;
 	public void execute(def params, def drools) {
 		def entity = request.entity;
 		def taxfees = request.taxfees;
@@ -268,7 +271,7 @@ public class ComputeTaxFee implements RuleActionHandler {
 			if(lob) {
 				info.lob = [objid:lob.objid, name:lob.name];
 			}
-			info.taxfeetype = info.account.taxfeetype;
+			info.taxfeetype = type;
 			info.paymentmode = info.account.paymentmode;
 			info.assessedvalue = NA.round(amt);
 			info.amount = NA.round(amt);
@@ -304,7 +307,7 @@ public class AssertTaxFee implements RuleActionHandler {
 			} 
 			bt.name = it.account.title;
 			bt.amount = it.amount;
-			bt.type = it.account.taxfeetype;
+			bt.type = it.taxfeetype;
 			bt.assessedvalue = it.assessedvalue;
 			bt.data = it;
 			facts << bt;
