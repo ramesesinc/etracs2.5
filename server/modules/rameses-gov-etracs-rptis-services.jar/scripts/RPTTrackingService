@@ -21,7 +21,7 @@ class RPTTrackingService
 	@ProxyMethod
 	public def assignTrackingNo( entity, filetype, msg ) {
 		def cy = dtSvc.serverYear 
-		def key = '300:R' + var.lgu_objid + cy
+		def key = 'RT' + var.lgu_objid + cy.toString()[2..3]
 		def trackingno = key + seqSvc.getNextFormattedSeries(key)
 		create([
 			objid 		: entity.objid,
