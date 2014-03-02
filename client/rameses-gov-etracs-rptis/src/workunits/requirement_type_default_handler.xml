@@ -2,17 +2,20 @@
 <workunit>
     
     <invokers>
-        <invoker type="xxtest" action="init" name="default" caption="Default Handler" />
         <invoker type="rptrequirementtype:handler" action="init" name="default" caption="Default Handler" />
         <invoker type="formActions" action="edit" caption="Edit" mnemonic="e" role="EXAMINER" visibleWhen="#{mode == 'read'}"/>
         <invoker type="formActions" action="update" caption="Update" mnemonic="u"  role="EXAMINER" visibleWhen="#{mode != 'read'}"/>
         
-        <invoker type="supportActions" action="uploadImage" caption="Upload" role="RECORD"/>
+        <invoker type="supportActions" action="addImage" caption="Add" role="RECORD"/>
         <invoker type="supportActions" action="deleteImage" caption="Delete" role="RECORD" visibleWhen="#{selectedItem != null}"/>
         <invoker type="supportActions" action="viewImage" caption="View" visibleWhen="#{selectedItem != null}"/>
     </invokers>
         
     <code lang="groovy">
+
+<![CDATA[
+
+
         import com.rameses.rcp.common.*;
         import com.rameses.rcp.annotations.*;
         import com.rameses.osiris2.client.*;
@@ -24,9 +27,6 @@
         public class RPTRequirementTypeDefaultHandler 
         {
             def svc;   // RPTRequirementService
-            
-            @Service('DBImageService')
-            def imageSvc;
             
             def entity;
             
@@ -68,9 +68,7 @@
             
             void loadImages(){
                 images = [];
-                if (imageSvc){
-                    images = imageSvc.getImages([refid:entity.objid]);
-                }
+                images = DBImageUtil.getInstance().getImages(entity?.objid);    
                 listHandler?.load();
             }
             
@@ -82,7 +80,7 @@
             ] as BasicListModel
             
             
-            def uploadImage(){
+            def addImage(){
                 return InvokerUtil.lookupOpener('upload:image', [
                     entity : entity,
                     
@@ -95,16 +93,21 @@
             void deleteImage(){
                 if (!selectedItem) return;
                 if (MsgBox.confirm('Delete selected image?')){
-                    DBImageUtil.getInstance(imageSvc).deleteImage(selectedItem.objid);
+                    DBImageUtil.getInstance().deleteImage(selectedItem.objid);
                     loadImages();
                 }
             }
             
             
             def viewImage(){
-            
+                if (!selectedItem) return null;
+                return InvokerUtil.lookupOpener('image:view', [
+                    entity : selectedItem,
+                ]);
             }
         }
+        
+]]>        
         
     </code>
     

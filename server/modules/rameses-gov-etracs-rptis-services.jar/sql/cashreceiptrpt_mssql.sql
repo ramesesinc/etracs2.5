@@ -379,7 +379,8 @@ SELECT
 	t.totalav, t.fullpin,
 	t.cadastrallotno,
 	t.classcode,
-	t.barangay,
+	t.totalareasqm,
+	t.barangay, 
 	CASE
 		WHEN t.fromyear = t.toyear AND t.fromqtr = 1 AND t.toqtr = 4 
 			THEN 'FULL ' + CONVERT(VARCHAR(4),t.toyear)
@@ -416,6 +417,7 @@ FROM (
 		f.tdno,
 		r.rputype,
 		r.totalav, r.fullpin,
+		r.totalareasqm,
 		rp.cadastrallotno,
 		pc.code AS classcode,
 		b.name AS barangay,
@@ -449,7 +451,7 @@ FROM (
 		cri.rptledgerid, 
 		f.objid,
 		f.tdno, 
-		r.rputype, r.totalav, r.fullpin,
+		r.rputype, r.totalav, r.fullpin, r.totalareasqm,
 		rp.cadastrallotno,
 		pc.code, b.name
 	) t
@@ -462,6 +464,7 @@ GROUP BY
 		t.cadastrallotno,
 		t.classcode,
 		t.barangay,
+		t.totalareasqm,
 		t.partialled,
 		t.fromyear,
 		t.fromqtr,

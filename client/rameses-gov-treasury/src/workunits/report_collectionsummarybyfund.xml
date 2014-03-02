@@ -40,8 +40,15 @@ class CollectionSummary extends com.rameses.gov.treasury.report.ReportController
         ] as SubReport[]; 
     }
     
+    
     def formControl = [
-        getControlList: { svc.getFormControlList() }
+         getFormControls: {
+            return [
+                new FormControl( "integer", [caption:'Year', name:'entity.year', required:true, preferredSize:'100,19', captionWidth:100]), 
+                new FormControl( "combo", [caption:'Month', name:'entity.month', items:'months', expression:'#{item.name}', preferredSize:'100,19', captionWidth:100]),
+                new FormControl( "combo", [caption:'Fund', name:'entity.fund', items:'funds', expression:'#{item.title}', preferredSize:'200,19', captionWidth:100 ]),
+            ]    
+        }
    ] as FormPanelModel;
    
    

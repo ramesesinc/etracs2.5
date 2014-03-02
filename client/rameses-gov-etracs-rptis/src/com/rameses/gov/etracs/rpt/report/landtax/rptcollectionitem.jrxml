@@ -26,6 +26,9 @@
 	<parameter name="PROVCITY" isForPrompting="false" class="java.lang.String"/>
 	<parameter name="MUNICIPALITY" isForPrompting="false" class="java.lang.String"/>
 	<parameter name="BRGYCOUNT" isForPrompting="false" class="java.lang.Integer"/>
+	<parameter name="LGUTYPE" isForPrompting="false" class="java.lang.String"/>
+	<parameter name="LGUNAME" isForPrompting="false" class="java.lang.String"/>
+	<parameter name="PARENTLGUNAME" isForPrompting="false" class="java.lang.String"/>
 
 	<field name="taxability" class="java.lang.String"/>
 	<field name="classname" class="java.lang.String"/>
@@ -347,7 +350,7 @@ Year
 					<textElement verticalAlignment="Middle">
 						<font fontName="Arial Narrow" pdfFontName="Helvetica-Bold" size="7" isBold="true"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA["PROVINCE/CITY : " + $P{PROVCITY} + "                                MUNICIPALITY : " + ($P{MUNICIPALITY} == null ? "" : $P{MUNICIPALITY})]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA["PROVINCE/CITY : " + ( $P{LGUTYPE}.equals("municipality") ? $P{PARENTLGUNAME} : $P{LGUNAME}) + "                                MUNICIPALITY : " + ( $P{LGUTYPE}.equals("municipality") ? $P{LGUNAME} : "")]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement

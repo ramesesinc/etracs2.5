@@ -35,7 +35,12 @@ class CraafController extends com.rameses.gov.treasury.report.ReportController
     }
     
     def formControl = [
-        getControlList: { svc.getFormControlList() }
+        getFormControls: {
+            return [
+                new FormControl( "integer", [caption:'Year', name:'entity.year', required:true, preferredSize:'100,19', captionWidth:100]), 
+                new FormControl( "combo", [caption:'Month', name:'entity.month', items:'months', expression:'#{item.name}', preferredSize:'100,19', captionWidth:100]),
+            ]    
+        }
    ] as FormPanelModel;
    
    

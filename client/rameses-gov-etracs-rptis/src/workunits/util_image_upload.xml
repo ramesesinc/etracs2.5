@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <workunit>
     <invokers>
-        <invoker type="upload:image" caption="Upload Image" target="popup" />
+        <invoker type="upload:image" action="init" caption="Upload Image" target="popup" />
     </invokers>
     
     <code lang="groovy">
@@ -19,25 +19,35 @@ public class UploadImageController
     @Binding
     def binding;
     
-    @Service('DBImageService')
-    def imageSvc;
-            
-
+    
     def afterupload;  
     def entity;
     
     def file;
-    def title;
+    def header;
     
-    def upload(){
-        def header = [ 
+    @PropertyChangeListener
+    def listener = [
+        'file' : { binding.refresh('image') },
+    ]
+    
+    void init(){
+        header = [ 
             objid   : 'I'+ new java.rmi.server.UID(), 
             refid   : entity.objid, 
-            title   : title, 
         ]
-        DBImageUtil.getInstance(imageSvc).upload(header, file.getAbsolutePath());
+        file = null;
+    }
+    
+    def upload(){
+        DBImageUtil.getInstance().upload(header, file.getAbsolutePath());
         if (afterupload ) afterupload();
-        return '_close';
+        init();
+        binding.focus('header.title');
+    }
+    
+    def getImage(){
+        return file;
     }
 }
 

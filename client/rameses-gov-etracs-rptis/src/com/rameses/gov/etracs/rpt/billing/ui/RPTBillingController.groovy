@@ -66,12 +66,12 @@ public class RPTBillingController
             if (!selectedItems) selectedItems = items;
             selectedItems.each{
                 bill.rptledgerid = it.objid 
-                svc.generateBill(bill);
+                bill.putAll(svc.generateBill(bill));
             }
         }
         else {
             // if no items, this is invoke from outside 
-            svc.generateBill(bill);
+            bill.putAll(svc.generateBill(bill));
         }
         
     }

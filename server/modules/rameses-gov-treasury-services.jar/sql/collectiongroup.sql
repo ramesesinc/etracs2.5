@@ -9,6 +9,7 @@ delete from collectiongroup_revenueitem where collectiongroupid=$P{objid}
 select c.*, r.* from collectiongroup_revenueitem c 
 	inner join revenueitem r on r.objid = c.revenueitemid 
 where c.collectiongroupid = $P{objid} 
+order by c.orderno 
 
 [approve]
 update collectiongroup set state='APPROVED' where objid=$P{objid} 
