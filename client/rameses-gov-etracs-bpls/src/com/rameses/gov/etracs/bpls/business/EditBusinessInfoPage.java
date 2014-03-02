@@ -4,9 +4,9 @@
  * Created on October 3, 2013, 7:41 PM
  */
 
-package com.rameses.gov.etracs.bpls.application;
+package com.rameses.gov.etracs.bpls.business;
 
-import com.rameses.osiris2.themes.FormPage;
+import com.rameses.osiris2.themes.OKCancelPage;
 import com.rameses.rcp.ui.annotations.StyleSheet;
 import com.rameses.rcp.ui.annotations.Template;
 
@@ -14,12 +14,12 @@ import com.rameses.rcp.ui.annotations.Template;
  *
  * @author  Elmo
  */
-@Template(FormPage.class)
+@Template(OKCancelPage.class)
 @StyleSheet
-public class EditBusinessInfo extends javax.swing.JPanel {
+public class EditBusinessInfoPage extends javax.swing.JPanel {
     
     /** Creates new form NewBPApplicationInitPage */
-    public EditBusinessInfo() {
+    public EditBusinessInfoPage() {
         initComponents();
     }
     
@@ -32,29 +32,32 @@ public class EditBusinessInfo extends javax.swing.JPanel {
     private void initComponents() {
         jPanel1 = new javax.swing.JPanel();
         xFormPanel1 = new com.rameses.rcp.control.XFormPanel();
-        xLabel1 = new com.rameses.rcp.control.XLabel();
+        xComboBox1 = new com.rameses.rcp.control.XComboBox();
         xLookupField1 = new com.rameses.rcp.control.XLookupField();
         xTextField4 = new com.rameses.rcp.control.XTextField();
         xTextField3 = new com.rameses.rcp.control.XTextField();
         xTextField2 = new com.rameses.rcp.control.XTextField();
         xTextField1 = new com.rameses.rcp.control.XTextField();
         xLookupField3 = new com.rameses.rcp.control.XLookupField();
-        jLabel1 = new javax.swing.JLabel();
+        xButton1 = new com.rameses.rcp.control.XButton();
+        xButton2 = new com.rameses.rcp.control.XButton();
 
-        setPreferredSize(new java.awt.Dimension(603, 331));
         com.rameses.rcp.control.border.XTitledBorder xTitledBorder1 = new com.rameses.rcp.control.border.XTitledBorder();
         xTitledBorder1.setTitle("General Information");
         jPanel1.setBorder(xTitledBorder1);
 
         xFormPanel1.setCaptionWidth(150);
-        xLabel1.setCaption("Org Type");
-        xLabel1.setExpression("#{entity.orgtypename}");
-        xLabel1.setPreferredSize(new java.awt.Dimension(0, 16));
-        xFormPanel1.add(xLabel1);
+        xComboBox1.setCaption("Org Type");
+        xComboBox1.setExpression("#{item.value}");
+        xComboBox1.setItemKey("key");
+        xComboBox1.setItems("orgTypes");
+        xComboBox1.setName("entity.orgtype");
+        xComboBox1.setPreferredSize(new java.awt.Dimension(250, 22));
+        xComboBox1.setRequired(true);
+        xFormPanel1.add(xComboBox1);
 
         xLookupField1.setCaption("Owner");
         xLookupField1.setDepends(new String[] {"entity.orgtype"});
-        xLookupField1.setEnabled(false);
         xLookupField1.setExpression("#{item.name}");
         xLookupField1.setHandler("lookupOwners");
         xLookupField1.setIndex(1);
@@ -71,7 +74,6 @@ public class EditBusinessInfo extends javax.swing.JPanel {
 
         xTextField3.setCaption("Business Name");
         xTextField3.setDepends(new String[] {"entity.businessname"});
-        xTextField3.setEnabled(false);
         xTextField3.setIndex(2);
         xTextField3.setName("entity.businessname");
         xTextField3.setPreferredSize(new java.awt.Dimension(0, 20));
@@ -79,7 +81,6 @@ public class EditBusinessInfo extends javax.swing.JPanel {
         xFormPanel1.add(xTextField3);
 
         xTextField2.setCaption("Trade Name");
-        xTextField2.setEnabled(false);
         xTextField2.setIndex(4);
         xTextField2.setName("entity.tradename");
         xTextField2.setPreferredSize(new java.awt.Dimension(0, 20));
@@ -101,28 +102,42 @@ public class EditBusinessInfo extends javax.swing.JPanel {
         xLookupField3.setPreferredSize(new java.awt.Dimension(0, 20));
         xFormPanel1.add(xLookupField3);
 
-        jLabel1.setFont(new java.awt.Font("Tahoma", 1, 11));
-        jLabel1.setText("Verify information. Update business address");
+        xButton1.setImmediate(true);
+        xButton1.setName("showOwner");
+        xButton1.setText("...");
+
+        xButton2.setMnemonic('c');
+        xButton2.setImmediate(true);
+        xButton2.setIndex(3);
+        xButton2.setName("copyBusinessName");
+        xButton2.setText("Copy");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(20, 20, 20)
+                .addContainerGap()
+                .addComponent(xFormPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 549, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(xFormPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 549, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 446, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(xButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(xButton2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel1)
-                .addGap(21, 21, 21)
-                .addComponent(xFormPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(54, Short.MAX_VALUE))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(xFormPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 167, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(34, 34, 34)
+                        .addComponent(xButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(19, 19, 19)
+                        .addComponent(xButton2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(18, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -139,16 +154,17 @@ public class EditBusinessInfo extends javax.swing.JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(41, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
     
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
+    private com.rameses.rcp.control.XButton xButton1;
+    private com.rameses.rcp.control.XButton xButton2;
+    private com.rameses.rcp.control.XComboBox xComboBox1;
     private com.rameses.rcp.control.XFormPanel xFormPanel1;
-    private com.rameses.rcp.control.XLabel xLabel1;
     private com.rameses.rcp.control.XLookupField xLookupField1;
     private com.rameses.rcp.control.XLookupField xLookupField3;
     private com.rameses.rcp.control.XTextField xTextField1;

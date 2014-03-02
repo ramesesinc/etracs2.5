@@ -53,7 +53,7 @@ class BusinessPermitService  {
 		//calculate expiry date
 		def expirydate = dateSvc.getMonthEndDate( java.sql.Date.valueOf(yr+"-12-01") );		
 
-		b.lobs = bizInfo.getLobs( [objid:o.businessid] );
+		b.lobs = bizInfo.getLobs( [objid:o.businessid] ).findAll{ it.assessmenttype!='RETIRE' };
 
 		def p = [:];
  		p.objid = "PERM" + new UID();
@@ -102,5 +102,42 @@ class BusinessPermitService  {
 		return r;
 	}
 
+
+	@ProxyMethod
+	public def rebuildPermit( o ) {
+		def p = em.read( [objid: o.objid] );
+
+		def b = bizInfo.open( [objid: p.businessid] );
+		b.lobs = bizInfo.getLobs( [objid:p.businessid] );
+
+		p.ownername = b.owner.name;
+ 		p.tradename = b.tradename;
+ 		p.businessaddress = b.businessaddress;
+ 		p.bin = b.bin;
+ 		p.pin = b.pin;
+		p.apptype = b.apptype;
+		p.lobs = b.lobs;
+ 		p.payments = em.getPayments( [businessid: b.objid, activeyear: b.activeyear]);
+ 		p.payments.each {
+			if(it.payoption == 'FULLYEAR') {
+				it.particulars = 'full';
+			}
+			else if(it.payoption == 'FULLQTR') {
+				it.particulars = 'paid until qtr ' + it.qtr;
+			}
+			else if( it.qtr > 0 ) {
+				it.particulars = 'paid until qtr ' + it.qtr;
+			}
+			it.ordate = dateSvc.format( 'yyyy-MM-dd', it.ordate );
+ 		} 
+ 		em.update( p );	
+ 		return open(p);
+	}
+
+	@ProxyMethod
+	public def reissuePermit( o ) {
+		em.deactivatePermit(o);
+		return create(o);
+	}
 
 } 

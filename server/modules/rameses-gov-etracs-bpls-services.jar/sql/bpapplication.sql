@@ -4,7 +4,7 @@ FROM
 (
 	SELECT ba.objid,ba.owner_name,ba.businessname,ba.businessaddress,ba.appyear,b.bin,
 	ba.appno, ba.apptype, bt.state AS appstate, ba.dtfiled AS appdate,
-    bp.permitno, bp.expirydate, bt.assignee_objid, bt.assignee_name, bt.startdate 
+    bp.permitno, bp.expirydate, bt.assignee_objid, bt.assignee_name, bt.startdate, ba.state 
 	FROM bpapplication ba 
 	INNER JOIN business b ON b.objid=ba.businessid
     LEFT JOIN bpapplication_task bt ON bt.objid=ba.task_objid
@@ -13,7 +13,7 @@ FROM
 UNION 
 	SELECT ba.objid,ba.owner_name,ba.businessname,ba.businessaddress,ba.appyear,b.bin,
 	ba.appno, ba.apptype, bt.state AS appstate, ba.dtfiled AS appdate,
-    bp.permitno, bp.expirydate, bt.assignee_objid, bt.assignee_name, bt.startdate 
+    bp.permitno, bp.expirydate, bt.assignee_objid, bt.assignee_name, bt.startdate, ba.state 
 	FROM bpapplication ba 
 	INNER JOIN business b ON b.objid=ba.businessid
     LEFT JOIN bpapplication_task bt ON bt.objid=ba.task_objid
@@ -22,7 +22,7 @@ UNION
 UNION
 	SELECT ba.objid,ba.owner_name,ba.businessname,ba.businessaddress,ba.appyear,b.bin,
 	ba.appno, ba.apptype, bt.state AS appstate, ba.dtfiled AS appdate,
-    bp.permitno, bp.expirydate, bt.assignee_objid, bt.assignee_name, bt.startdate 
+    bp.permitno, bp.expirydate, bt.assignee_objid, bt.assignee_name, bt.startdate, ba.state 
 	FROM bpapplication ba 
 	INNER JOIN business b ON b.objid=ba.businessid
     LEFT JOIN bpapplication_task bt ON bt.objid=ba.task_objid
@@ -43,7 +43,7 @@ FROM
     FROM bpapplication ba
     INNER JOIN business xb ON ba.objid=xb.currentapplicationid
     INNER JOIN bpapplication_task bt ON bt.applicationid=ba.objid
-    WHERE ba.owner_name LIKE $P{searchtext} AND bt.enddate IS NULL 
+    WHERE ba.owner_name LIKE $P{searchtext} AND bt.enddate IS NULL AND NOT(ba.state = 'CANCELLED')
 UNION 
 	SELECT ba.objid,ba.owner_name,ba.businessname,ba.businessaddress,ba.appyear,xb.bin,
 	ba.appno, ba.apptype, bt.state AS appstate, ba.dtfiled AS appdate,
@@ -51,7 +51,7 @@ UNION
     FROM bpapplication ba
     INNER JOIN business xb ON ba.objid=xb.currentapplicationid
     INNER JOIN bpapplication_task bt ON bt.applicationid=ba.objid
-    WHERE ba.businessname LIKE $P{searchtext}  AND bt.enddate IS NULL 
+    WHERE ba.businessname LIKE $P{searchtext}  AND bt.enddate IS NULL AND NOT(ba.state = 'CANCELLED')
 UNION
 	SELECT ba.objid,ba.owner_name,ba.businessname,ba.businessaddress,ba.appyear,xb.bin,
 	ba.appno, ba.apptype, bt.state AS appstate, ba.dtfiled AS appdate,
@@ -59,7 +59,7 @@ UNION
     FROM bpapplication ba
     INNER JOIN business xb ON ba.objid=xb.currentapplicationid
     INNER JOIN bpapplication_task bt ON bt.applicationid=ba.objid
-    WHERE xb.bin LIKE $P{searchtext}  AND bt.enddate IS NULL
+    WHERE xb.bin LIKE $P{searchtext}  AND bt.enddate IS NULL AND NOT(ba.state = 'CANCELLED')
 ) b
 WHERE NOT(b.objid IS NULL)
 ${filter}
@@ -107,6 +107,9 @@ WHERE parentid=$P{taskid} AND enddate IS NULL
 
 [updateTask]
 UPDATE bpapplication SET task_objid=$P{taskid} WHERE objid=$P{objid}
+
+[findCurrentStatus]
+SELECT state FROM bpapplication WHERE objid=$P{objid}
 
 [findAssessedBy]
 SELECT u.lastname, u.firstname, u.jobtitle, u.objid   

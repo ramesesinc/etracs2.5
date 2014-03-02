@@ -2,9 +2,25 @@
     <invokers>
         <invoker type="business:info" caption="General Info" index="-100" />
 
-        <invoker type="extActions" action="issuePermit" caption="Issue Permit" mnemonic="S" index="10"
-            role="LICENSING" visibleWhen="#{entity.state=='ACTIVE' &amp;&amp; entity.permit?.objid == null}"/>
+        <invoker type="extActions" action="editInfo" caption="Edit Info" mnemonic="S" index="10"
+            role="LICENSING"  permission="business.edit"
+            visibleWhen="#{entity.state=='ACTIVE'}"/>
 
+        <invoker type="extActions" action="issuePermit" caption="Issue Permit" mnemonic="S" index="10"
+            role="LICENSING"  permission="permit.issue"
+            visibleWhen="#{entity.state=='ACTIVE' &amp;&amp; entity.permit?.objid == null}"/>
+
+        <invoker type="extActions" action="printPermit" caption="Print Permit" index="9"
+            role="LICENSING"  permission="permit.print" 
+            visibleWhen="#{entity.state=='ACTIVE' &amp;&amp; entity.permit?.objid!=null}" />
+            
+        <invoker type="extActions" action="reissuePermit" caption="Reissue Permit" mnemonic="S" index="10"
+            role="LICENSING" permission="permit.reissue"
+            visibleWhen="#{entity.state=='ACTIVE' &amp;&amp; entity.permit?.objid != null}"/>
+            
+        <invoker type="extActions" action="rebuildPermit" caption="Rebuild Permit" mnemonic="S" index="10"
+            role="LICENSING" permission="permit.rebuild"
+            visibleWhen="#{entity.permit?.objid != null}" />
     </invokers>
     
     <code>
@@ -20,6 +36,9 @@
         
             @Service("BusinessInfoService")
             def svc;
+            
+            @Service("BusinessPermitService")
+            def permitSvc;
         
             @Binding
             def binding;
@@ -50,6 +69,33 @@
                     def p = [businessid: entity.objid];
                     return Inv.lookupOpener("business:issuepermit", [handler:h, entity: p  ]);
                 }
+            }
+            
+            def printPermit() {
+                return InvokerUtil.lookupOpener( "businesspermit:print" , [entity:entity.permit] );
+            }
+            
+            def rebuildPermit() {
+                def p = permitSvc.rebuildPermit( entity.permit );
+                return InvokerUtil.lookupOpener( "businesspermit:print" , [entity:p] );
+            }
+            
+            def reissuePermit() {
+                if( MsgBox.confirm("You are about to supersede existing permit. Proceed?")) {
+                    def m = [businessid: entity.objid];
+                    m.permittype = entity.permit.permittype;
+                    def p = permitSvc.reissuePermit( m );
+                    binding.refresh();
+                    return InvokerUtil.lookupOpener( "businesspermit:print" , [entity:p] );
+                }
+            }
+            
+            def editInfo() {
+                def h = { o->
+                    svc.updateBusinessInfo( o );
+                    binding.refresh();
+                }
+                return InvokerUtil.lookupOpener( "business:editinfo", [entity: entity, handler: h ] );
             }
             
         }

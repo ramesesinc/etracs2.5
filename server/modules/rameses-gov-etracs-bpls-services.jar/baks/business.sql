@@ -6,26 +6,67 @@ SELECT DISTINCT b.*
 FROM 
 (
 	SELECT xb.objid,xb.state,xb.owner_name,xb.businessname,xb.businessaddress,xb.activeyear,xb.bin,
-    bp.permitno, bp.expirydate, bp.state AS permitstate, bp.version 
+	ba.appno, ba.apptype, bt.state AS appstate, ba.dtfiled AS appdate,
+    bp.permitno, bp.expirydate, bt.assignee_objid, bt.assignee_name, bt.startdate 
 	FROM business xb
-    LEFT JOIN businesspermit bp ON bp.businessid=xb.objid
-	WHERE xb.owner_name LIKE $P{searchtext} AND (bp.objid IS NULL OR bp.state='ACTIVE')
+	LEFT JOIN bpapplication ba ON ba.objid=xb.currentapplicationid
+    LEFT JOIN bpapplication_task bt ON bt.objid=ba.task_objid
+    LEFT JOIN businesspermit bp ON bp.objid=xb.currentpermitid
+	WHERE xb.owner_name LIKE $P{searchtext}
 UNION 
-    SELECT xb.objid,xb.state,xb.owner_name,xb.businessname,xb.businessaddress,xb.activeyear,xb.bin,
-    bp.permitno, bp.expirydate, bp.state AS permitstate, bp.version
-    FROM business xb
-    LEFT JOIN businesspermit bp ON bp.businessid=xb.objid
-	WHERE xb.businessname LIKE $P{searchtext} AND (bp.objid IS NULL OR bp.state='ACTIVE')
+	SELECT xb.objid,xb.state,xb.owner_name,xb.businessname,xb.businessaddress,xb.activeyear,xb.bin,
+	ba.appno, ba.apptype, bt.state AS appstate, ba.dtfiled AS appdate,
+    bp.permitno, bp.expirydate, bt.assignee_objid, bt.assignee_name, bt.startdate 
+	FROM business xb
+    LEFT JOIN bpapplication ba ON ba.objid=xb.currentapplicationid
+    LEFT JOIN bpapplication_task bt ON bt.objid=ba.task_objid
+    LEFT JOIN businesspermit bp ON bp.objid=xb.currentpermitid
+	WHERE xb.businessname LIKE $P{searchtext}
 UNION
-    SELECT xb.objid,xb.state,xb.owner_name,xb.businessname,xb.businessaddress,xb.activeyear,xb.bin,
-    bp.permitno, bp.expirydate, bp.state AS permitstate, bp.version
-    FROM business xb
-    LEFT JOIN businesspermit bp ON bp.businessid=xb.objid
-	WHERE xb.bin LIKE $P{searchtext} AND (bp.objid IS NULL OR bp.state='ACTIVE')
+	SELECT xb.objid,xb.state,xb.owner_name,xb.businessname,xb.businessaddress,xb.activeyear,xb.bin,
+	ba.appno, ba.apptype, bt.state AS appstate, ba.dtfiled AS appdate,
+    bp.permitno, bp.expirydate, bt.assignee_objid, bt.assignee_name, bt.startdate     
+	FROM business xb 
+    LEFT JOIN bpapplication ba ON ba.objid=xb.currentapplicationid
+    LEFT JOIN bpapplication_task bt ON bt.objid=ba.task_objid
+    LEFT JOIN businesspermit bp ON bp.objid=xb.currentpermitid
+	WHERE xb.bin LIKE $P{searchtext}
 ) b
 WHERE NOT(b.objid IS NULL)
 ${filter}
-ORDER BY b.bin
+ORDER BY b.startdate
+
+[getOpenTaskList]
+SELECT DISTINCT b.*  
+FROM 
+(
+    SELECT xb.objid,xb.state,xb.owner_name,xb.businessname,xb.businessaddress,xb.activeyear,xb.bin,
+    ba.appno, ba.apptype, bt.state AS appstate, ba.dtfiled AS appdate,
+    bt.assignee_objid, bt.assignee_name, bt.startdate, bt.message
+    FROM business xb
+    INNER JOIN bpapplication ba ON ba.objid=xb.currentapplicationid
+    INNER JOIN bpapplication_task bt ON bt.applicationid=ba.objid
+    WHERE xb.owner_name LIKE $P{searchtext} AND bt.enddate IS NULL 
+UNION 
+    SELECT xb.objid,xb.state,xb.owner_name,xb.businessname,xb.businessaddress,xb.activeyear,xb.bin,
+    ba.appno, ba.apptype, bt.state AS appstate, ba.dtfiled AS appdate,
+    bt.assignee_objid, bt.assignee_name, bt.startdate, bt.message
+    FROM business xb
+    INNER JOIN bpapplication ba ON ba.objid=xb.currentapplicationid
+    INNER JOIN bpapplication_task bt ON bt.applicationid=ba.objid
+    WHERE xb.businessname LIKE $P{searchtext}  AND bt.enddate IS NULL 
+UNION
+    SELECT xb.objid,xb.state,xb.owner_name,xb.businessname,xb.businessaddress,xb.activeyear,xb.bin,
+    ba.appno, ba.apptype, bt.state AS appstate, ba.dtfiled AS appdate,
+    bt.assignee_objid, bt.assignee_name, bt.startdate, bt.message    
+    FROM business xb 
+    INNER JOIN bpapplication ba ON ba.objid=xb.currentapplicationid
+    INNER JOIN bpapplication_task bt ON bt.applicationid=ba.objid
+    WHERE xb.bin LIKE $P{searchtext}  AND bt.enddate IS NULL
+) b
+WHERE NOT(b.objid IS NULL)
+${filter}
+ORDER BY b.startdate
 
 [findMyTaskListCount]
 SELECT COUNT(*) AS icount 

@@ -4,7 +4,7 @@
 		<field name="objid" primary="true"/>
 		<field name="businessid" required="true"/>
 		<field name="appno" required="true"/>
-		<field name="state" required="true"/>
+		<field name="state" />
 		<field name="apptype" required="true"/>
 		<field name="task_objid" />
 		<field name="amendtype" />

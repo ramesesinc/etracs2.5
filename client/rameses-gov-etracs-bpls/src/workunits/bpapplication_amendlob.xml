@@ -12,6 +12,7 @@
         import com.rameses.osiris2.client.*
         import com.rameses.osiris2.common.*
         import java.rmi.server.*;
+        import com.rameses.util.*;
         import com.rameses.gov.etracs.bpls.application.*;
         
         public class AmendLineBPApplication extends AbstractSearchBusiness {
@@ -24,7 +25,7 @@
             boolean REMOVE_LOB = true;
             boolean RETIRE_LOB = true;
             
-            String appType = "AMEND";
+            String appType = "AMENDLOB";
             def entityName = "bpapplicationform";
 
             def openApplication() {
@@ -88,11 +89,21 @@
                 },
             ] as BasicListModel;
             
-            def verifyLOB() {
-                if(!entity.lobs) 
+            void saveCreate() {
+                if(!entity.appinfos)    
+                    throw new Exception("There must be at least one business info");
+                def lobs = entity.lobs.findAll{ it.assessmenttype != 'ACTIVE' } 
+                if(!lobs) 
                     throw new Exception("Please specify at least one line of business");
+                entity.lobs = lobs;    
+                appSvc.verifyLedger( entity );
+                if( MsgBox.confirm("You are about to save this application. Proceed?")) {
+                    entity = appSvc.create( entity );
+                }
+                else {
+                    throw new BreakException();
+                }
             }
-
             
         }
         ]]>
@@ -104,22 +115,16 @@
             <transition to="update-lob" name="open"/>
         </start>
         
-        <page name="search" title="Search Business Name (For Amendment)">
+        <page name="search" title="Search Business Name (For Amendment Line of Business)">
             <transition to="update-lob" caption="Next" name="next" mnemonic="N" immediate="false" action="openApplication"/>
         </page>
         
-        <page name="update-lob" title="Add/Retire Line of Business (For Amendment)">
+        <page name="update-lob" title="Amend Line of Business">
             <transition to="search" caption="Back" mnemonic="B" name="back" visibleWhen="#{OPENED_FROM_APP==false}"/>
-            <transition to="confirm" caption="Next" name="next" mnemonic="N"  action="verifyLOB"/>
+            <transition to="save-success" caption="Submit" name="next" mnemonic="N"  action="saveCreate"/>
         </page>
 
-        <page name="confirm" title="Confirm (For Amendment)">
-            <transition to="update-lob" caption="Back" mnemonic="B" name="back"/>
-            <transition to="save-success" caption="Submit" mnemonic="S" name="save" action="saveCreate"
-            confirm="You are about to save this transaction. Continue?"/>
-        </page>
-        
-        <page name="save-success" title="Save Success (For Amendment)">
+        <page name="save-success" title="Save Success">
             <transition to="search" caption="Add Another" mnemonic="A" action="init"/>
         </page>
 

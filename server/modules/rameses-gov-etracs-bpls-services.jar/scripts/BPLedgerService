@@ -49,4 +49,16 @@ class BPLedgerService {
 		return em.getReceivables(o);	
 	}
 
+	@ProxyMethod
+	public def getUnpaidBalance( o ) {
+		//check if there is balance per ledger or per line of business
+		if(!o.businessid) throw new Exception("businessid is required");
+		o.filter = '';
+		if( o.lobid  ) {
+			o.filter = '''  AND br.lob_objid=$P{lobid} ''';
+		}
+		return em.findHasBalance( o )?.balance;	
+	}
+
+
 }

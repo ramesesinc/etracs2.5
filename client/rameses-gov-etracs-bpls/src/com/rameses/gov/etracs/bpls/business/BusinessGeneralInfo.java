@@ -41,9 +41,11 @@ public class BusinessGeneralInfo extends javax.swing.JPanel {
         xLabel8 = new com.rameses.rcp.control.XLabel();
         xLabel9 = new com.rameses.rcp.control.XLabel();
         xLabel11 = new com.rameses.rcp.control.XLabel();
+        xLabel15 = new com.rameses.rcp.control.XLabel();
         jPanel2 = new javax.swing.JPanel();
         xFormPanel2 = new com.rameses.rcp.control.XFormPanel();
         xLabel12 = new com.rameses.rcp.control.XLabel();
+        xLabel16 = new com.rameses.rcp.control.XLabel();
         xLabel13 = new com.rameses.rcp.control.XLabel();
         xLabel14 = new com.rameses.rcp.control.XLabel();
         xDataTable1 = new com.rameses.rcp.control.XDataTable();
@@ -109,6 +111,11 @@ public class BusinessGeneralInfo extends javax.swing.JPanel {
         xLabel11.setPreferredSize(new java.awt.Dimension(0, 16));
         xFormPanel1.add(xLabel11);
 
+        xLabel15.setCaption("App Type");
+        xLabel15.setExpression("#{entity.apptype}");
+        xLabel15.setPreferredSize(new java.awt.Dimension(0, 16));
+        xFormPanel1.add(xLabel15);
+
         com.rameses.rcp.control.border.XTitledBorder xTitledBorder2 = new com.rameses.rcp.control.border.XTitledBorder();
         xTitledBorder2.setTitle("Business Permit");
         jPanel2.setBorder(xTitledBorder2);
@@ -119,6 +126,12 @@ public class BusinessGeneralInfo extends javax.swing.JPanel {
         xLabel12.setPreferredSize(new java.awt.Dimension(0, 16));
         xLabel12.setVisibleWhen("#{entity.permit?.objid!=null}");
         xFormPanel2.add(xLabel12);
+
+        xLabel16.setCaption("Version");
+        xLabel16.setExpression("#{entity.permit.version}");
+        xLabel16.setPreferredSize(new java.awt.Dimension(0, 16));
+        xLabel16.setVisibleWhen("#{entity.permit?.objid!=null}");
+        xFormPanel2.add(xLabel16);
 
         xLabel13.setCaption("Expiry Date");
         xLabel13.setExpression("#{entity.permit.expirydate}");
@@ -145,8 +158,8 @@ public class BusinessGeneralInfo extends javax.swing.JPanel {
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(xFormPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(19, Short.MAX_VALUE))
+                .addComponent(xFormPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(23, Short.MAX_VALUE))
         );
 
         xDataTable1.setColumns(new com.rameses.rcp.common.Column[]{
@@ -203,14 +216,14 @@ public class BusinessGeneralInfo extends javax.swing.JPanel {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(11, 11, 11)
-                        .addComponent(xFormPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 212, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(xDataTable1, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(xFormPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 212, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(xDataTable1, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -246,6 +259,8 @@ public class BusinessGeneralInfo extends javax.swing.JPanel {
     private com.rameses.rcp.control.XLabel xLabel12;
     private com.rameses.rcp.control.XLabel xLabel13;
     private com.rameses.rcp.control.XLabel xLabel14;
+    private com.rameses.rcp.control.XLabel xLabel15;
+    private com.rameses.rcp.control.XLabel xLabel16;
     private com.rameses.rcp.control.XLabel xLabel2;
     private com.rameses.rcp.control.XLabel xLabel3;
     private com.rameses.rcp.control.XLabel xLabel4;

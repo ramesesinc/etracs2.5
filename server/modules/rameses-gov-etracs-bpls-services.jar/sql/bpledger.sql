@@ -142,3 +142,10 @@ WHERE ra.account_objid = 'TAXCREDIT' AND ra.attribute_objid='businessaccounttype
 
 [getPaymentItems]
 SELECT * FROM bppayment_item WHERE paymentid=$P{objid} ORDER BY lob_name DESC, account_code ASC
+
+
+[findHasBalance]
+SELECT SUM(br.amount - br.amtpaid - br.discount) AS balance
+FROM bpreceivable br 
+WHERE br.businessid=$P{businessid} ${filter}
+

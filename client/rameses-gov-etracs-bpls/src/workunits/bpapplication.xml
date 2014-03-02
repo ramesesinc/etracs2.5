@@ -8,9 +8,15 @@
         <invoker type="extActions" caption="Save"  action="save"  visibleWhen="#{dirty==true}" index="0"/>
 
         <!-- for business info role -->
-        <invoker type="extActions" caption="Edit App Info" action="updateAppInfo" role="BUSINESSINFO" visibleWhen="#{modify_appinfo==true}" index="1"/>
-        <invoker type="extActions" caption="Edit Line of Business" action="updateLOB" role="BUSINESSINFO" visibleWhen="#{modify_appinfo==true}" index="2"/>
-
+        <invoker type="extActions" caption="Edit Business Info" action="updateBizInfo" role="BUSINESSINFO" 
+            visibleWhen="#{!entity.state?.matches( 'CLOSED|CANCELLED') || appstate=='assign-assessor' }" index="1"/>
+        <invoker type="extActions" caption="Edit App Info" action="updateAppInfo" role="BUSINESSINFO" 
+            visibleWhen="#{modify_appinfo==true}" index="1"/>
+        <invoker type="extActions" caption="Edit Line of Business" action="updateLOB" role="BUSINESSINFO" 
+            visibleWhen="#{modify_appinfo==true}" index="2"/>
+        <invoker type="extActions" caption="Cancel Application" action="cancelApplication" role="BUSINESSINFO" 
+            visibleWhen="#{ (modify_appinfo==true || appstate=='assign-assessor') &amp;&amp;  appstate!='CANCELLED'}" index="1"/>
+        
         <!-- for assessors -->
         <invoker type="extActions" caption="Request for Change" visibleWhen="#{state == 'assessment' &amp;&amp; forMe==true}"
             action="changeRequestInfo" role="ASSESSOR" index="1"/>
@@ -79,7 +85,12 @@
                 formId = entity.bin;
                 formTitle = entity.bin;
                 title = entity.businessname + ' ['+entity.bin+']';
-                if( entity.task?.objid  ) {
+                
+                if( entity.state == 'CANCELLED' ) {
+                    startstep = 'cancelled';
+                    appstate = 'cancelled';
+                }
+                else if( entity.task?.objid  ) {
                     startstep = entity.task.state;
                     appstate = entity.task.state;
                     checkForMe();
@@ -87,7 +98,7 @@
                 }
                 else {
                     startstep = 'active';
-                    appstate = 'active'
+                    appstate = 'active';
                 }
             }
             
@@ -299,6 +310,14 @@
             ] as BasicListModel;
 
             
+            def updateBizInfo() {
+                def h = { o->
+                    service.updateBusinessInfo( o );
+                    binding.refresh();
+                }
+                return InvokerUtil.lookupOpener( "business:editinfo", [entity: entity, handler: h ] );
+            }
+            
             def updateAppInfo() {
                 return InvokerUtil.lookupOpener( "bpinfoedit:app", [
                     entity: entity,
@@ -326,6 +345,14 @@
                 ]);
             }
             
+            def cancelApplication() {
+                if( MsgBox.confirm("You are about to cancel this application. Proceed?")) {
+                    service.cancelApplication( entity );
+                    MsgBox.alert( "Application is cancelled" );
+                    return "_close";
+                }
+            }
+            
             def calculateTaxfee() {
                 return InvokerUtil.lookupOpener( "bpinfoedit:calculatetaxfee", [
                     entity: entity, 
@@ -349,7 +376,7 @@
                 ]);
             }
 
-            void save() {
+            def save() {
                 if(!dirty) return;
                 if( state == 'assess' ) {
                     if(entity.assessedby?.objid==null) {
@@ -364,6 +391,7 @@
                 dirty = false;
                 binding.refresh();
                 MsgBox.alert("Record successfully updated!");
+                return signal("close");
             }
             
 
@@ -398,7 +426,7 @@
         </page>    
         
         <page name="assess" title="Business Application (Assessment)">
-            <transition to="assessment" caption="Back" action="validateClose"/>
+            <transition to="assessment" name="close" caption="Back" />
         </page>
         
         <page name="approval" title="Business Application (For Approval)">
@@ -435,6 +463,9 @@
             <transition to="end" caption="Close" />
         </page>
 
+        <page name="cancelled" title="Cancelled">
+            <transition to="end" caption="Close" />
+        </page>
         
         <end/>
     </pageflow>
@@ -449,6 +480,7 @@
         <page name="active" template="com.rameses.gov.etracs.bpls.application.ApplicationInfoPage"/>
         <page name="captured" template="com.rameses.gov.etracs.bpls.application.ApplicationInfoPage"/>
         <page name="retired" template="com.rameses.gov.etracs.bpls.application.ApplicationInfoPage"/>
+        <page name="cancelled" template="com.rameses.gov.etracs.bpls.application.ApplicationInfoPage"/>
         
         <page name="assess" template="com.rameses.gov.etracs.bpls.application.AssessmentPage"/>
 

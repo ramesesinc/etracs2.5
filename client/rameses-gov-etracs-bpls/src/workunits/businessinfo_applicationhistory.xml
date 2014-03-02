@@ -1,6 +1,7 @@
 <workunit>
     <invokers>
-        <invoker type="business:info" caption="Application History" index="5" />
+        <invoker type="business:info" caption="Application History" index="5"  />
+        <invoker type="formActions"  caption="Open" action="openItem" />
     </invokers>
     
        <code>
@@ -17,6 +18,9 @@
             @Service("BusinessInfoService")
             def service;
         
+            @Binding
+            def binding;
+            
             String title = "Application History";
             def entity;
             def selectedItem;
@@ -24,8 +28,15 @@
             def listModel = [
                 fetchList: { o->
                     return service.getApplicationList( [objid: entity.objid] );
-                }
+                },
             ]as BasicListModel;
+            
+            def openItem() {
+                if(!selectedItem) return;
+                def op = Inv.lookupOpener( "bpapplication:open", [entity: selectedItem] );
+                op.target = 'popup';
+                binding.fireNavigation(op);
+            }
         }
         ]]>
     </code>

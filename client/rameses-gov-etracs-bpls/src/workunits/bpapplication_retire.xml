@@ -23,12 +23,14 @@
             boolean RETIRE_LOB = false;
             
             String appType = "RETIRE";
+            boolean hasExistingInfos;
             
-            def openApplication() {
+            void openInfo() {
+                appSvc.verifyLedger( [businessid: selectedApplication.objid] );
                 def entity = super.openApplication();
+                hasExistingInfos = (entity.appinfos);
                 appInfoModel.reload();
                 lobModel.reload();
-                return entity;
             }
             
             def appInfoModel = [
@@ -83,16 +85,22 @@
         </start>
         
         <page name="search" title="Search Business Name (For Retirement)">
-            <transition to="update-app-info" caption="Next" name="next" mnemonic="N" immediate="false" action="openApplication"/>
+            <transition to="check-infos" caption="Next" name="next" mnemonic="N" immediate="false" action="openInfo"/>
         </page>
        
+        <process name="check-infos">
+            <transition to="update-app-info" cond="#{!hasExistingInfos}"/>
+            <transition to="confirm" cond="#{hasExistingInfos}"/>
+        </process>
+        
         <page name="update-app-info" title="Specify Business Information (For Retirement)">
             <transition to="search" caption="Back" mnemonic="B" name="back" visibleWhen="#{OPENED_FROM_APP==false}"/>
             <transition to="confirm" caption="Next" name="next" mnemonic="N" action="verifyAppInfo"/>
         </page>
         
         <page name="confirm" title="Confirm (For Retirement)">
-            <transition to="update-app-info" caption="Back" mnemonic="B" name="back"/>
+            <transition to="update-app-info" caption="Back" mnemonic="B" name="back_update" visibleWhen="#{!hasExistingInfos}"/>
+            <transition to="search" caption="Back" mnemonic="B" name="back_search" visibleWhen="#{hasExistingInfos}"/>
             <transition to="save-success" caption="Submit" mnemonic="S" name="save" action="saveCreate"
             confirm="You are about to submit this transaction for retirement. Continue?"/>
         </page>

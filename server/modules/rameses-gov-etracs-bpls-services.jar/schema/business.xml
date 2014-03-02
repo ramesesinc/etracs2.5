@@ -3,7 +3,7 @@
 	<element tablename="business">
 		<field name="objid" primary="true"/>
 		<field name="state" required="true"/>
-		<field name="apptype" required="true"/>
+		<field name="apptype" />
 		<field name="owner_name" required="true"/>
 		<field name="owner_objid" required="true"/>
 		<field name="owner_address" required="true"/>
@@ -24,12 +24,22 @@
 		<field name="appcount" required="true"/>
 	</element>	
 
-	<element name="bin" tablename="business_bin">
+	<element name="changeinfo" tablename="business_changeinfo">
 		<field name="objid" primary="true"/>
-		<field name="bin" required="true"/>
-		<field name="state" required="true"/>
-		<field name="txndate" required="true"/>
-		<field name="applicationid" />
+		<field name="businessid" required="true"/>
+		<field name="dtfiled" required="true"/>
+		<field name="filedby_objid" required="true"/>
+		<field name="filedby_name" required="true"/>
+		<field name="owner_name" required="true"/>
+		<field name="owner_objid" required="true"/>
+		<field name="owner_address" required="true"/>
+		<field name="barangay_objid" />
+		<field name="barangay_name" />
+		<field name="tradename" required="true"/>
+		<field name="businessaddress" required="true"/>
+		<field name="orgtype" required="true"/>
+		<field name="businessname" required="true"/>
+		<field name="pin" />
 	</element>	
 
 	<element name="lob" tablename="business_lob">
