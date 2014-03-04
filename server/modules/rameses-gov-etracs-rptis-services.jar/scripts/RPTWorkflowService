@@ -1,0 +1,59 @@
+import com.rameses.annotations.*
+import com.rameses.common.*
+import com.rameses.services.extended.*
+
+class RPTWorkflowService 
+{
+    @ActiveDB('rptworkflow')
+    def workflowDb
+
+    @Env 
+    def env 
+
+    @Service('RPTUtil')
+    def util 
+
+
+    @ProxyMethod
+    public def findStart( params ) {
+        util.required('appliedto', params.appliedto)
+
+        initParams(params)
+        println 'params -> ' + params 
+        def startwf = workflowDb.findStart(params)
+        if (!startwf) throw new Exception('Start workflow is not defined.')
+        startwf.message = ExpressionResolver.instance.evalString(startwf.message, params)
+        println 'wf message -> ' + startwf.message
+        return startwf
+    }
+
+    @ProxyMethod
+    public def findNext( params ) {
+        util.required('appliedto', params.appliedto)
+        util.required('fromstate', params.fromstate)
+
+        initParams(params)
+        def wf = workflowDb.findNext(params)
+        if (!wf) throw new Exception('Next workflow process is not defined.')
+        wf.message = ExpressionResolver.instance.evalString(wf.message, params)
+        return wf
+    }
+
+    @ProxyMethod
+    public def findNextByWorkflowId( params ) {
+        util.required('workflowid', params.workflowid)
+        util.required('fromstate', params.fromstate)
+
+        initParams(params)
+        println 'params -> ' + params 
+        def wf = workflowDb.findNextByWorkflowId(params)
+        if (!wf) throw new Exception('Next workflow process is not defined.')
+        wf.message = ExpressionResolver.instance.evalString(wf.message, params)
+        return wf
+    }
+
+    void initParams(params){
+        params.appliedto = '%' + params.appliedto + '%'
+        params.name = env.FULLNAME
+    }
+}

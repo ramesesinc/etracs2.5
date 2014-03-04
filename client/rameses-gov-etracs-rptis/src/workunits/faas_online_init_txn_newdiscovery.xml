@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <workunit extends="rpt_wtemplates/FaasTxnOnlineInitController.xml">
     <invokers>       
-        <invoker type="quick_launcher" code="ND11" action="init" caption="New Discovery" 
+        <invoker type="quick_launcher" code="ND01" action="init" caption="New Discovery" 
             txntype="ND" role="APPRAISER,EXAMINER" permission="faas.createNewDiscovery" index="11"  />
             
         <invoker folderid="/explorer/txn/rpt/online" action="init" caption="New Discovery" 

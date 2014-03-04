@@ -202,16 +202,16 @@ where b.objid = $P{barangayid}
 
 
 [updateFaasState]
-UPDATE faas SET state = $P{state} WHERE objid = $P{objid} AND state = $P{prevstate}
+UPDATE faas SET state = $P{state} WHERE objid = $P{objid} 
 
 [submitForApproval]
-UPDATE faas SET state = $P{state} WHERE objid = $P{objid} AND state IN ('INTERIM', 'FORAPPRAISAL')
+UPDATE faas SET state = $P{state} WHERE objid = $P{objid}
 
 [approveFaas]
 UPDATE faas SET 
 	state = $P{state}, utdno = $P{utdno}, tdno = $P{tdno}, dtapproved = $P{dtapproved} 
 WHERE objid = $P{objid}  
-  AND state IN ('FORAPPROVAL', 'FORPROVAPPROVAL', 'PENDING')
+  AND state IN ('FORAPPROVAL', 'PENDING')
 
 
 [updateRpuMasterInfo]

@@ -132,23 +132,50 @@ public class AbstractOnlineFaasController extends PageFlowController
         initData();
     }
      
+    
     void submitForTaxmapping(){
         checkMessages();
         entity = svc.submitForTaxmapping(entity);
     }
+    
+    void submitForTaxmappingApproval(){
+        checkMessages();
+        entity = svc.submitForTaxmappingApproval(entity);
+    }
+    
+    
+    
+    void submitForExamination(){
+        checkMessages();
+        entity = svc.submitForExamination(entity);
+    }
 
 
+    
     void submitForAppraisal(){
         checkMessages();
         entity = svc.submitForAppraisal(entity);
     }
 
 
+    void submitForAppraisalApproval(){
+        checkMessages();
+        entity = svc.submitForAppraisalApproval( entity );
+    }
+    
+    
+    void submitForAssistantApproval(){
+        checkMessages();
+        entity = svc.submitForAssistantApproval( entity );
+    }
+    
+    
     void submitForApproval(){
         checkMessages();
-        entity = svc.submitFaasForApproval( entity );
+        entity = svc.submitForApproval( entity );
     }
-
+    
+    
 
     void approveFaas() {
         checkMessages();
@@ -162,37 +189,6 @@ public class AbstractOnlineFaasController extends PageFlowController
         entity = svc.disapproveFaas( entity );
     }
 
-
-    void submitFaasToProvince() {
-        checkMessages();
-        entity = svc.submitFaasToProvince( entity );
-    }
-
-
-    void approveFaasSubmissionToProvince() {
-        checkMessages();
-        entity = svc.approveFaasSubmissionToProvince( entity );
-    }
-
-
-    void disapproveFaasSubmissionToProvince() {
-        checkMessages();
-        entity = svc.disapproveFaasSubmissionToProvince( entity );
-    }
-
-
-    void approveFaasByProvince() {
-        checkMessages();
-        entity = svc.approveFaasByProvince(entity);
-    }
-
-
-    void disapproveFaasByProvince() {
-        checkMessages();
-        entity = svc.disapproveFaasByProvince( entity );
-    }
-
-    
     
     void addMessage(msg){
         messages << msg;
@@ -214,30 +210,9 @@ public class AbstractOnlineFaasController extends PageFlowController
         smsSvc.notifyClient(entity.trackingno);
     }
     
-    
-    
-    def nextaction;
-    
-    void assignTaxmapper(){
-        nextaction = 'fortaxmapping'
-        doAssignTask()
-    }
-    
-    void assignAppraiser(){
-        nextaction = 'forappraisal'
-        doAssignTask()
-    }
-    
-    void assignApprover(){
-        nextaction = 'forapproval'
-        doAssignTask()
-    }
-    
-    void doAssignTask(){
-        def task = taskSvc.findCurrentTask(entity.objid);
-        task.action = nextaction;
-        task.msg = '';
-        taskSvc.createNextUserTask(task);
+        
+    void assignTaskToMe(){
+        taskSvc.assignTaskToMe(entity.objid)
         initData();
     }
     
@@ -259,29 +234,35 @@ public class AbstractOnlineFaasController extends PageFlowController
         </page>
         
         <process name="open">
-            <transition to="unassigned" cond="#{entity.taskaction &amp;&amp; entity.taskaction.matches('assign.*')}"/>
-            <transition to="default" cond="#{entity.state == 'INTERIM'}"/>
-            <transition to="fortaxmapping" cond="#{entity.state == 'FORTAXMAPPING'}"/>
-            <transition to="forappraisal" cond="#{entity.state == 'FORAPPRAISAL'}"/>
-            <transition to="forapproval" cond="#{entity.state == 'FORAPPROVAL'}"/>
-            <transition to="forprovsubmission" cond="#{entity.state == 'FORPROVSUBMISSION'}"/>
-            <transition to="forprovapproval" cond="#{entity.state == 'FORPROVAPPROVAL'}"/>
+            <transition to="unassigned" cond="#{entity.taskaction.matches('assign.*')}"/>
+            <transition to="receive" cond="#{entity.taskaction.matches('receive')}"/>
+            <transition to="fortaxmapping" cond="#{entity.taskaction.matches('fortaxmapping')}"/>
+            <transition to="fortaxmapping-approval" cond="#{entity.taskaction.matches('fortaxmapping-approval')}"/>
+            <transition to="forexamination" cond="#{entity.taskaction.matches('forexamination')}"/>
+            <transition to="forappraisal" cond="#{entity.taskaction.matches('forappraisal')}"/>
+            <transition to="forappraisal-approval" cond="#{entity.taskaction.matches('forappraisal-approval')}"/>
+            <transition to="forassistant-approval" cond="#{entity.taskaction.matches('forassistant-approval')}"/>
+            <transition to="forapproval" cond="#{entity.taskaction.matches('forapproval')}"/>
             <transition to="current" cond="#{entity.state == 'CURRENT'}"/>
             <transition to="cancelled" cond="#{entity.state == 'CANCELLED'}"/>
             <transition to="readonly" cond="#{entity.state == 'PENDING'}"/>
         </process>
         
-        <page name="unassigned" title="FAAS #{entity.txntype.name} (#{entity.state} - Unassigned)">
+        <page name="unassigned" title="FAAS #{entity.txntype.name} (#{entity.taskaction.toUpperCase()})">
             <transition caption="Close"  to="end"      mnemonic="c" icon="images/toolbars/cancel.png" />
-            <transition to="open" name="taxmapper" action="assignTaxmapper" caption="Assign To Me" role="TAXMAPPER"  visibleWhen="#{entity.taskaction == 'assign-taxmapper'}" confirm="Assign task to you?"/>
-            <transition to="open" name="appraiser" action="assignAppraiser" caption="Assign To Me" role="APPRAISER" visibleWhen="#{entity.taskaction == 'assign-appraiser'}" confirm="Assign task to you?"/>
-            <transition to="open" name="approver" action="assignApprover" caption="Assign To Me" role="APPROVER" visibleWhen="#{entity.taskaction == 'assign-approver'}" confirm="Assign task to you?"/>
+            <transition to="open" name="assign-taxmapper" action="assignTaskToMe" caption="Assign To Me" role="TAXMAPPER"  visibleWhen="#{entity.taskaction == 'assign-taxmapper'}" confirm="Assign task to you?"/>
+            <transition to="open" name="assign-taxmapper-chief" action="assignTaskToMe" caption="Assign To Me" role="TAXMAPPER_CHIEF"  visibleWhen="#{entity.taskaction == 'assign-taxmapping-approval'}" confirm="Assign task to you?"/>
+            <transition to="open" name="assign-examiner" action="assignTaskToMe" caption="Assign To Me" role="EXAMINER"  visibleWhen="#{entity.taskaction == 'assign-examiner'}" confirm="Assign task to you?"/>
+            <transition to="open" name="assign-appraiser" action="assignTaskToMe" caption="Assign To Me" role="APPRAISER" visibleWhen="#{entity.taskaction == 'assign-appraiser'}" confirm="Assign task to you?"/>
+            <transition to="open" name="assign-appraiser-chief" action="assignTaskToMe" caption="Assign To Me" role="APPRAISAL_CHIEF" visibleWhen="#{entity.taskaction == 'assign-appraisal-chief'}" confirm="Assign task to you?"/>
+            <transition to="open" name="assign-asst-approval" action="assignTaskToMe" caption="Assign To Me" role="ASSISTANT_ASSESSOR" visibleWhen="#{entity.taskaction == 'assign-assistant-approval'}" confirm="Assign task to you?"/>
+            <transition to="open" name="assign-approver" action="assignTaskToMe" caption="Assign To Me" role="ASSESSOR,APPROVER" visibleWhen="#{entity.taskaction == 'assign-approver'}" confirm="Assign task to you?"/>
         </page>
         
-        <page name="default" title="FAAS #{entity.txntype.name} (Interim)">
+        <page name="receive" title="FAAS #{entity.txntype.name} (Interim)">
             <transition caption="Close"  to="end"      mnemonic="c" icon="images/toolbars/cancel.png" />
-            <transition caption="Delete" to="delete"  action="delete" confirm="Delete record?"    mnemonic="d" icon="images/toolbars/trash.png"  role="APPRAISER,EXAMINER" permission="faas.delete"/>
-            <transition caption="Submit to Taxmapping" to="open" action="submitForTaxmapping"  mnemonic="m"  confirm="Submit FAAS for approval?" role="APPRAISER,EXAMINER" permission="faas.submit"/>
+            <transition caption="Delete" to="delete"  action="delete" confirm="Delete record?"    mnemonic="d" icon="images/toolbars/trash.png"  role="APPRAISER,EXAMINER" />
+            <transition caption="Submit to Taxmapping" to="open" action="submitForTaxmapping"  mnemonic="m"  confirm="Submit FAAS for taxmapping?" role="APPRAISER,EXAMINER" />
         </page>
         
         <process name="back-to-default">
@@ -293,64 +274,57 @@ public class AbstractOnlineFaasController extends PageFlowController
         </process>
         
         
+        <!-- TAXMAPPING -->
         <page name="fortaxmapping" title="FAAS #{entity.txntype.name} (For Taxmapping)">
             <transition caption="Close"  to="end"      mnemonic="c" icon="images/toolbars/cancel.png" />
-            <transition caption="Submit for Appraisal" to="open" action="submitForAppraisal"  mnemonic="m"   confirm="Submit FAAS for appraisal?" role="TAXMAPPER"/>
+            <transition caption="Submit for Taxmapping Head Approval" to="open" action="submitForTaxmappingApproval"  mnemonic="m"   confirm="Submit FAAS for taxmapping approval?" role="TAXMAPPER"/>
         </page>
         
         
+        <page name="fortaxmapping-approval" title="FAAS #{entity.txntype.name} (Taxmapping Approval)">
+            <transition caption="Close"  to="end"      mnemonic="c" icon="images/toolbars/cancel.png" />
+            <transition caption="Submit for Examination" to="open" action="submitForExamination"  mnemonic="m"   confirm="Submit FAAS for examination?" role="TAXMAPPER_CHIEF"/>
+        </page>        
+        
+        
+        
+        <!-- EXAMINIATION -->
+        <page name="forexamination" title="FAAS #{entity.txntype.name} (For Examination)">
+            <transition caption="Close"  to="end"      mnemonic="c" icon="images/toolbars/cancel.png" />
+            <transition caption="Submit for Appraisal" to="open" action="submitForAppraisal"  mnemonic="m"   confirm="Submit FAAS for appraisal?" role="EXAMINER"/>
+        </page>
+        
+        
+        
+        <!-- APPRAISAL -->
         <page name="forappraisal" title="FAAS #{entity.txntype.name} (For Appraisal)">
             <transition caption="Close"  to="end"      mnemonic="c" icon="images/toolbars/cancel.png" />
-            <transition caption="Submit for Approval" to="open" action="submitForApproval"  mnemonic="m"   confirm="Submit FAAS for approval?" role="APPRAISER"/>
+            <transition caption="Submit for Appraisal Head Approval" to="open" action="submitForAppraisalApproval"  mnemonic="m"   confirm="Submit FAAS for appraisal approval?" role="APPRAISER"/>
         </page>
         
-        <process name="submit">
-            <transition to="forapproval" cond="#{entity.state == 'FORAPPROVAL'}"/>
-            <transition to="forprovapproval" cond="#{entity.state == 'FORPROVAPPROVAL'}"/>
-            <transition to="forprovsubmission" cond="#{entity.state == 'FORPROVSUBMISSION'}"/>
-        </process>
+        
+        <page name="forappraisal-approval" title="FAAS #{entity.txntype.name} (Appraisal Approval)">
+            <transition caption="Close"  to="end"      mnemonic="c" icon="images/toolbars/cancel.png" />
+            <transition caption="Submit for Assistant Approval" to="open" action="submitForAssistantApproval"  mnemonic="m"   confirm="Submit FAAS for assistant assessor approval?" role="APPRAISAL_CHIEF"/>
+        </page>  
+        
+        
+                
+        <!-- ASSISTANT APPROVER -->
+        <page name="forassistant-approval" title="FAAS #{entity.txntype.name} (Assistant Approval)">
+            <transition caption="Close"  to="end"      mnemonic="c" icon="images/toolbars/cancel.png" />
+            <transition caption="Submit for Approval" to="open" action="submitForApproval"  mnemonic="m"   confirm="Submit FAAS for approval?" role="ASSISTANT_ASSESSOR"/>
+        </page>
         
         
         <!-- CITY-->
         <page name="forapproval" title="FAAS #{entity.txntype.name} (For Approval)">
             <transition caption="Close" to="end" mnemonic="c" icon="images/toolbars/cancel.png"  />
             <transition caption="Disapprove" to="default" action="disapproveFaas" mnemonic="d"  confirm="Disapprove FAAS?" role="APPROVER"/>
-            <transition caption="Approve" to="current" action="approveFaas" mnemonic="v" icon="images/toolbars/approve.png" confirm="Approve FAAS?" role="APPROVER" />
-        </page>
-        
-        <process name="back-to-forapproval">
-            <transition to="forapproval"/>
-        </process>
-        
-        
-        <!-- MUNICIPALIY -->
-        <page name="forprovsubmission" title="FAAS #{entity.txntype.name} (For Submission to Province)">
-            <transition caption="Close"  to="end" mnemonic="c" icon="images/toolbars/cancel.png"  />
-            <transition caption="Disapprove" to="default" action="disapproveFaasSubmissionToProvince"  mnemonic="d"  confirm="Disapprove FAAS?" role="RECOMMENDER" permission="faas.disapprove"/>
-            <transition caption="Submit to Province" to="provsubmissionapproval" action="submitFaasToProvince" mnemonic="m"  confirm="Submit FAAS to province?" role="RECOMMENDER" permission="faas.submitToProvince"/>
-        </page>
-        
-        <process name="back-to-prov-submission">
-            <transition to="forprovsubmission"/>
-        </process>
-        
-        <page name="provsubmissionapproval" title="FAAS #{entity.txntype.name} (For Province Approval)">
-            <transition caption="Close" to="end" mnemonic="c" icon="images/toolbars/cancel.png"/>
-            <transition caption="Disapprove" to="forprovsubmission" action="disapproveFaasByProvince"  mnemonic="d" confirm="Disapprove FAAS?" role="RECOMMENDER" permission="faas.disapprove"/>
-            <transition caption="Approve" to="current" action="approveFaasByProvince"  mnemonic="v" confirm="Approve FAAS?" role="RECOMMENDER" permission="faas.approve"/>
+            <transition caption="Approve" to="current" action="approveFaas" mnemonic="v" icon="images/toolbars/approve.png" confirm="Approve FAAS?" role="APPROVER,ASSESSOR" />
         </page>
         
         
-        <!-- PROVINCE -->
-        <page name="forprovapproval" title="FAAS #{entity.txntype.name} (Province Approval)">
-            <transition caption="Close" to="end" mnemonic="c" icon="images/toolbars/cancel.png"  />
-            <transition caption="Disapprove" to="default" action="disapproveFaasByProvince"  mnemonic="d"   confirm="Disapprove FAAS?" role="APPROVER" permission="faas.disapprove"/>
-            <transition caption="Approve" to="current" action="approveFaasByProvince"  mnemonic="v"  confirm="Approve FAAS?" role="APPROVER" permission="faas.approve"/>
-        </page>
-        
-        <process name="back-to-forprovapproval">
-            <transition to="forprovapproval"/>
-        </process>
         
         <page name="current" title="FAAS #{entity.txntype.name} (Current)">
             <transition caption="Close" to="end" mnemonic="c" icon="images/toolbars/cancel.png"/>
@@ -376,13 +350,14 @@ public class AbstractOnlineFaasController extends PageFlowController
     
     <pages> 
         <page name="unassigned" template="com.rameses.gov.etracs.rpt.common.InfoPage"/>
-        <page name="default" template="com.rameses.gov.etracs.rpt.common.InfoPage"/>
+        <page name="receive" template="com.rameses.gov.etracs.rpt.common.InfoPage"/>
         <page name="fortaxmapping" template="com.rameses.gov.etracs.rpt.common.InfoPage"/>
+        <page name="fortaxmapping-approval" template="com.rameses.gov.etracs.rpt.common.InfoPage"/>
+        <page name="forexamination" template="com.rameses.gov.etracs.rpt.common.InfoPage"/>
         <page name="forappraisal" template="com.rameses.gov.etracs.rpt.common.InfoPage"/>
+        <page name="forappraisal-approval" template="com.rameses.gov.etracs.rpt.common.InfoPage"/>
+        <page name="forassistant-approval" template="com.rameses.gov.etracs.rpt.common.InfoPage"/>
         <page name="forapproval" template="com.rameses.gov.etracs.rpt.common.InfoPage"/>
-        <page name="forprovsubmission" template="com.rameses.gov.etracs.rpt.common.InfoPage"/>
-        <page name="provsubmissionapproval" template="com.rameses.gov.etracs.rpt.common.InfoPage"/>
-        <page name="forprovapproval" template="com.rameses.gov.etracs.rpt.common.InfoPage"/>
         <page name="current" template="com.rameses.gov.etracs.rpt.common.InfoPage"/>
         <page name="cancelled" template="com.rameses.gov.etracs.rpt.common.InfoPage"/>
         <page name="previous" template="com.rameses.gov.etracs.rpt.common.InfoPage"/>

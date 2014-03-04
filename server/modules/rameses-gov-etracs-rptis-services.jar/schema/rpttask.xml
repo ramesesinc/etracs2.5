@@ -3,6 +3,7 @@
 		<field name="taskid" primary="true"/>
 		<field name="objid" required="true" />
 		<field name="action"  required="true" />
+		<field name="docname" required="true" />
 		<field name="refno" required="true" />
 		<field name="filetype" required="true" />
 		<field name="msg"  />
@@ -14,6 +15,8 @@
 		<field name="assignedto_objid" />
 		<field name="assignedto_name" />
 		<field name="assignedto_title" />
+		<field name="workflowid" />
+		<field name="signatory" />
 	</element>
 </schema>
 

@@ -13,6 +13,13 @@ class RPTTaskService
     @Service('RPTTrackingService')
     def trackingSvc
 
+    @Service('RPTWorkflowService')
+    def workflowSvc
+
+
+    @Service('RPTTaskService')
+    def taskSvc
+
     @Env
     def env 
 
@@ -38,6 +45,12 @@ class RPTTaskService
     }
 
     @ProxyMethod
+    public def assignTaskToMe( objid ) {
+        def task = findCurrentTask(objid);
+        taskSvc.createNextUserTask(task);
+    }
+
+    @ProxyMethod
     public void closeTask( task ) {
         task.enddate = dtSvc.serverDate 
         em.closeTask(task)
@@ -47,12 +60,18 @@ class RPTTaskService
     @ProxyMethod
     public def createNextUserTask( task ) {
         closeTask(task)
+
+        def nextwf = workflowSvc.findNextByWorkflowId([docname:task.docname, workflowid:task.workflowid, fromstate:task.action])
+
         task.taskid = 'T' + new java.rmi.server.UID()
         task.startdate = dtSvc.serverDate 
         task.createdby = getUserInfo()
         task.assignedto = getUserInfo()
         task.enddate = null
-        task.msg = 'Document is currently processed by ' + task.assignedto.name + '.'
+        task.workflowid = nextwf.workflowid
+        task.msg = nextwf.message 
+        task.action = nextwf.tostate 
+        task.signatory = nextwf.signatory
         em.create(task)
         trackingSvc.updateMessage(task)
         return task

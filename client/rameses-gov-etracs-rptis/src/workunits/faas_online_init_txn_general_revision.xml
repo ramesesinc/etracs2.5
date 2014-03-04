@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <workunit extends="rpt_wtemplates/FaasTxnOnlineInitController.xml">
     <invokers>       
-        <invoker type="quick_launcher" code="GR11" action="init" caption="General Revision" 
+        <invoker type="quick_launcher" code="GR01" action="init" caption="General Revision" 
             txntype="GR" role="APPRAISER,EXAMINER" permission="faas.createGeneralRevision" index="13"  />
             
         <invoker folderid="/explorer/txn/rpt/online" action="init" caption="General Revision" 
