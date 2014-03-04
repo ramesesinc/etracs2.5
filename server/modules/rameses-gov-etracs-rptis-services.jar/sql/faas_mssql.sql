@@ -60,7 +60,8 @@ SELECT
 	b.objid AS rp_barangay_objid,
 	b.parentid AS rp_barangay_parentid,
 	t.trackingno,
-	CASE WHEN task.taskid IS NULL THEN '' ELSE task.action END AS taskaction
+	CASE WHEN task.taskid IS NULL THEN '' ELSE task.action END AS taskaction,
+	CASE WHEN task.taskid IS NULL THEN '' ELSE task.findings END AS findings
 FROM faas f
 	LEFT JOIN rpu rpu ON f.rpuid = rpu.objid
 	LEFT JOIN propertyclassification pc ON rpu.classification_objid = pc.objid 

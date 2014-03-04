@@ -115,7 +115,7 @@ class TxnSignatoryService
 				it.dtsigned = dtSvc.parse('yyyy-MM-dd', it.dtsigned)
 			entity[it.type] = it 
 		}
-		entity.remove('signatories')
+		entity.signatories = signatories
 	}
 
 }

@@ -1,0 +1,42 @@
+<workunit>
+    <invokers>
+        <invoker type="rpttask:disapprove" caption="Disapprove Information" target="popup"/>
+    </invokers>
+    
+    <code>
+        <![CDATA[    
+        import com.rameses.rcp.annotations.*
+        import com.rameses.rcp.common.*
+        import com.rameses.osiris2.client.*
+        import com.rameses.osiris2.common.*
+        import com.rameses.common.*;
+        import java.rmi.server.*
+        import com.rameses.util.*;
+        
+        class  DisapproveTaskController  
+        {
+        
+            def handler;
+            def msg;
+            
+            public def doOk() {
+                if (!msg || msg.trim().length() == 0)
+                    throw new Exception('Reason for disapproval is required.');
+                    
+                if (handler) handler(msg);
+                return "_close";
+            }
+            
+            public def doCancel() {
+                return "_close";
+            }
+        }
+        ]]>
+    </code>
+    
+    
+    <pages>
+        <page  template="com.rameses.gov.etracs.rpt.common.DisapprovePage"/>
+    </pages>
+    
+</workunit>

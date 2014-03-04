@@ -54,6 +54,7 @@ class FaasTaskInterceptor
 		def task = createTask(faas, startwf)
 		task = taskSvc.createTask(task)
 		taskSvc.assignTask(task)
+		updateFaasSignatoryFromTask(faas, task)
 	}
 
 
@@ -78,22 +79,28 @@ class FaasTaskInterceptor
 		taskSvc.closeTask([objid:evt.result.objid])
 	}
 
+	@After(pattern="FAASService.disapproveFor.*") 
+	public void handleDisapprove( evt ) {
+		def faas = evt.result
+		taskSvc.disapproveTaskByObjid(faas.objid, faas._disapprovemsg)
+	}
 
 	@After(pattern="RPTTaskService.(createNextUserTask|assignTaskToMe)", eval="#{result.filetype == 'faasonline'}") 
 	public void updateSignatoryInfo( evt ) {
 		def task = evt.result 
 		def faas = faasSvc.openFaas([objid:task.objid])
+		updateFaasSignatoryFromTask(faas, task)
+	}
 
+	void updateFaasSignatoryFromTask(faas, task){
 		if (! faas[task.signatory]) 
 			faas[task.signatory] = [:]
-
-		println 'updateSignatoryInfo -> ' + task.signatory 
 
 		faas[task.signatory].dtsigned = task.startdate 
 		faas[task.signatory].name = task.assignedto.name 
 		faas[task.signatory].title = task.assignedto.title
 		faasSvc.updateFaas(faas) 
 	}
-
 }
+
 

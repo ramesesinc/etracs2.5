@@ -45,8 +45,7 @@ class RPTTaskListService extends ActiveListService
 
         switch(params.name) {
             case 'search':
-                if ( ! params.searchtext ) params.searchtext = '%'
-                params.filters  += ' AND t.refno LIKE $P{searchtext} '
+                params.filters  += ' AND t.refno LIKE $P{searchtext} AND t.assignedto_objid IS NULL  AND t.enddate IS NULL '
                 break
 
             case 'mytask':
@@ -61,7 +60,6 @@ class RPTTaskListService extends ActiveListService
             default :
                 break
         }
-        println 'params -> ' + params 
 	}
 	
     

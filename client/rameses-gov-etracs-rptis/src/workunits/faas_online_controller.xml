@@ -133,14 +133,45 @@ public class AbstractOnlineFaasController extends PageFlowController
     }
      
     
+    boolean pass = false;
+    
+    void doDisapprove( handler){
+        pass = false;
+        checkMessages();
+        Modal.show('rpttask:disapprove', [handler:handler, title:'Disapproval Information']);
+        if (!pass) throw new BreakException();
+        initData();
+    }    
+    
     void submitForTaxmapping(){
         checkMessages();
         entity = svc.submitForTaxmapping(entity);
     }
     
+    
+    void disapproveForTaxmapping(){
+        def handler = { msg ->
+            entity._disapprovemsg = msg 
+            entity = svc.disapproveForTaxmapping(entity);
+            pass = true;
+        };
+        doDisapprove(handler);
+    }    
+    
+    
     void submitForTaxmappingApproval(){
         checkMessages();
         entity = svc.submitForTaxmappingApproval(entity);
+    }
+    
+    
+    void disapproveForTaxmappingApproval(){
+        def handler = { msg ->
+            entity._disapprovemsg = msg 
+            entity = svc.disapproveForTaxmappingApproval(entity);
+            pass = true;
+        };
+        doDisapprove(handler);
     }
     
     
@@ -150,11 +181,31 @@ public class AbstractOnlineFaasController extends PageFlowController
         entity = svc.submitForExamination(entity);
     }
 
+        
+    void disapproveForExamination(){
+        def handler = { msg ->
+            entity._disapprovemsg = msg 
+            entity = svc.disapproveForExamination(entity);
+            pass = true;
+        };
+        doDisapprove(handler);
+    }
+    
 
     
     void submitForAppraisal(){
         checkMessages();
         entity = svc.submitForAppraisal(entity);
+    }
+    
+    
+    void disapproveForAppraisal(){
+        def handler = { msg ->
+            entity._disapprovemsg = msg 
+            entity = svc.disapproveForAppraisal(entity);
+            pass = true;
+        };
+        doDisapprove(handler);
     }
 
 
@@ -163,10 +214,29 @@ public class AbstractOnlineFaasController extends PageFlowController
         entity = svc.submitForAppraisalApproval( entity );
     }
     
+        
+    void disapproveForAppraisalApproval(){
+        def handler = { msg ->
+            entity._disapprovemsg = msg 
+            entity = svc.disapproveForAppraisalApproval(entity);
+            pass = true;
+        };
+        doDisapprove(handler);
+    }
     
     void submitForAssistantApproval(){
         checkMessages();
         entity = svc.submitForAssistantApproval( entity );
+    }
+    
+    
+    void disapproveForAssistantApproval(){
+        def handler = { msg ->
+            entity._disapprovemsg = msg 
+            entity = svc.disapproveForAssistantApproval(entity);
+            pass = true;
+        };
+        doDisapprove(handler);
     }
     
     
@@ -277,13 +347,15 @@ public class AbstractOnlineFaasController extends PageFlowController
         <!-- TAXMAPPING -->
         <page name="fortaxmapping" title="FAAS #{entity.txntype.name} (For Taxmapping)">
             <transition caption="Close"  to="end"      mnemonic="c" icon="images/toolbars/cancel.png" />
-            <transition caption="Submit for Taxmapping Head Approval" to="open" action="submitForTaxmappingApproval"  mnemonic="m"   confirm="Submit FAAS for taxmapping approval?" role="TAXMAPPER"/>
+            <transition name="disapprove" caption="Disapprove" to="open" action="disapproveForTaxmapping"  mnemonic="d"   confirm="Disapprove?" role="TAXMAPPER"/>
+            <transition name="submit" caption="Submit for Approval" to="open" action="submitForTaxmappingApproval"  mnemonic="m"   confirm="Submit FAAS for taxmapping approval?" role="TAXMAPPER"/>
         </page>
         
         
         <page name="fortaxmapping-approval" title="FAAS #{entity.txntype.name} (Taxmapping Approval)">
             <transition caption="Close"  to="end"      mnemonic="c" icon="images/toolbars/cancel.png" />
-            <transition caption="Submit for Examination" to="open" action="submitForExamination"  mnemonic="m"   confirm="Submit FAAS for examination?" role="TAXMAPPER_CHIEF"/>
+            <transition name="disapprove" caption="Disapprove" to="open" action="disapproveForTaxmappingApproval"  mnemonic="d"   confirm="Disapprove?" role="TAXMAPPER_CHIEF"/>
+            <transition name="submit" caption="Approve and Submit to Examiner" to="open" action="submitForExamination"  mnemonic="m"   confirm="Submit FAAS for examination?" role="TAXMAPPER_CHIEF"/>
         </page>        
         
         
@@ -291,7 +363,8 @@ public class AbstractOnlineFaasController extends PageFlowController
         <!-- EXAMINIATION -->
         <page name="forexamination" title="FAAS #{entity.txntype.name} (For Examination)">
             <transition caption="Close"  to="end"      mnemonic="c" icon="images/toolbars/cancel.png" />
-            <transition caption="Submit for Appraisal" to="open" action="submitForAppraisal"  mnemonic="m"   confirm="Submit FAAS for appraisal?" role="EXAMINER"/>
+            <transition name="disapprove" caption="Disapprove" to="open" action="disapproveForExamination"  mnemonic="d"   confirm="Disapprove?" role="EXAMINER"/>
+            <transition name="submit" caption="Submit for Appraisal" to="open" action="submitForAppraisal"  mnemonic="m"   confirm="Submit FAAS for appraisal?" role="EXAMINER"/>
         </page>
         
         
@@ -299,13 +372,15 @@ public class AbstractOnlineFaasController extends PageFlowController
         <!-- APPRAISAL -->
         <page name="forappraisal" title="FAAS #{entity.txntype.name} (For Appraisal)">
             <transition caption="Close"  to="end"      mnemonic="c" icon="images/toolbars/cancel.png" />
-            <transition caption="Submit for Appraisal Head Approval" to="open" action="submitForAppraisalApproval"  mnemonic="m"   confirm="Submit FAAS for appraisal approval?" role="APPRAISER"/>
+            <transition name="disapprove" caption="Disapprove" to="open" action="disapproveForAppraisal"  mnemonic="d"   confirm="Disapprove?" role="APPRAISER"/>
+            <transition name="submit" caption="Submit for Approval" to="open" action="submitForAppraisalApproval"  mnemonic="m"   confirm="Submit FAAS for appraisal approval?" role="APPRAISER"/>
         </page>
         
         
         <page name="forappraisal-approval" title="FAAS #{entity.txntype.name} (Appraisal Approval)">
             <transition caption="Close"  to="end"      mnemonic="c" icon="images/toolbars/cancel.png" />
-            <transition caption="Submit for Assistant Approval" to="open" action="submitForAssistantApproval"  mnemonic="m"   confirm="Submit FAAS for assistant assessor approval?" role="APPRAISAL_CHIEF"/>
+            <transition name="disapprove" caption="Disapprove" to="open" action="disapproveForAppraisalApproval"  mnemonic="d"   confirm="Disapprove?" role="APPRAISAL_CHIEF"/>
+            <transition name="submit" caption="Approve and Submit to Assistant Assessor" to="open" action="submitForAssistantApproval"  mnemonic="m"   confirm="Submit FAAS for assistant assessor approval?" role="APPRAISAL_CHIEF"/>
         </page>  
         
         
@@ -313,7 +388,8 @@ public class AbstractOnlineFaasController extends PageFlowController
         <!-- ASSISTANT APPROVER -->
         <page name="forassistant-approval" title="FAAS #{entity.txntype.name} (Assistant Approval)">
             <transition caption="Close"  to="end"      mnemonic="c" icon="images/toolbars/cancel.png" />
-            <transition caption="Submit for Approval" to="open" action="submitForApproval"  mnemonic="m"   confirm="Submit FAAS for approval?" role="ASSISTANT_ASSESSOR"/>
+            <transition name="disapprove" caption="Disapprove" to="open" action="disapproveForAssistantApproval"  mnemonic="d"   confirm="Disapprove?" role="ASSISTANT_ASSESSOR"/>
+            <transition name="submit" caption="Approve and Submit to Assessor" to="open" action="submitForApproval"  mnemonic="m"   confirm="Submit FAAS for approval?" role="ASSISTANT_ASSESSOR"/>
         </page>
         
         
@@ -323,7 +399,6 @@ public class AbstractOnlineFaasController extends PageFlowController
             <transition caption="Disapprove" to="default" action="disapproveFaas" mnemonic="d"  confirm="Disapprove FAAS?" role="APPROVER"/>
             <transition caption="Approve" to="current" action="approveFaas" mnemonic="v" icon="images/toolbars/approve.png" confirm="Approve FAAS?" role="APPROVER,ASSESSOR" />
         </page>
-        
         
         
         <page name="current" title="FAAS #{entity.txntype.name} (Current)">

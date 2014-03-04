@@ -25,61 +25,64 @@ class FaasServiceInterceptor
 
 
 	@After(pattern="FAASService.createFaas.*") 
-	public void logCreate( evt ) {
+	public void createFaas( evt ) {
 		def faas = evt.result 
 		logSvc.log( 'create', 'FAAS', faas.objid)
 	}
 
 	@After(pattern="FAASService.updateFaas.*") 
-	public void logUpdate( evt ) {
+	public void updateFaas( evt ) {
 		def faas = evt.result 
 		logSvc.log( 'update', 'FAAS', faas.objid)
 	}
 
 	@After(pattern="FAASService.submitFaasForApproval") 
-	public void logSubmitFaasForApproval( evt ) {
+	public void submitFaasForApproval( evt ) {
 		def faas = evt.result 
 		logSvc.log( 'submitFaasForApproval', 'FAAS', faas.objid)
 	}
 
 	@After(pattern="FAASService.approveFaas") 
-	public void logApproveFaas( evt ) {
+	public void approveFaas( evt ) {
 		def faas = evt.result 
+
+		util.required('Memoranda', faas.memoranda)
+
 		logSvc.log( 'approveFaas', 'FAAS', faas.objid)
 	}
 
 	@After(pattern="FAASService.disapproveFaas") 
-	public void logDisapproveFaas( evt ) {
+	public void disapproveFaas( evt ) {
 		def faas = evt.result 
 		logSvc.log( 'disapproveFaas', 'FAAS', faas.objid)
 	}
 
 	@After(pattern="FAASService.submitFaasToProvince") 
-	public void logSubmitFaasToProvince( evt ) {
+	public void submitFaasToProvince( evt ) {
 		def faas = evt.result 
 		logSvc.log( 'submitFaasToProvince', 'FAAS', faas.objid)
 	}
 
 	@After(pattern="FAASService.approveFaasSubmissionToProvince") 
-	public void logApproveFaasSubmissionToProvince( evt ) {
+	public void approveFaasSubmissionToProvince( evt ) {
 		def faas = evt.result 
 		logSvc.log( 'approveFaasSubmissionToProvince', 'FAAS', faas.objid)
 	}
 
 	@After(pattern="FAASService.disapproveFaasSubmissionToProvince") 
-	public void logDisapproveFaasSubmissionToProvince( evt ) {
+	public void disapproveFaasSubmissionToProvince( evt ) {
 		def faas = evt.result 
 		logSvc.log( 'disapproveFaasSubmissionToProvince', 'FAAS', faas.objid)
 	}
 
 	@After(pattern="FAASService.approveFaasByProvince") 
-	public void logApproveFaasByProvince( evt ) {
+	public void approveFaasByProvince( evt ) {
 		def faas = evt.result 
 		logSvc.log( 'approveFaasByProvince', 'FAAS', faas.objid)
 	}
 
 	@After(pattern="FAASService.disapproveFaasByProvince") 
-	public void logDisapproveFaasByProvince( evt ) {
+	public void disapproveFaasByProvince( evt ) {
 		def faas = evt.result 
 		logSvc.log( 'disapproveFaasByProvince', 'FAAS', faas.objid)
 	}

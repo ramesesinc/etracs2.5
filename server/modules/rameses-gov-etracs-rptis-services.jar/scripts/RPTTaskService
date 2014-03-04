@@ -58,6 +58,34 @@ class RPTTaskService
 
 
     @ProxyMethod
+    public void disapproveTaskByObjid( objid, disapprovemsg) {
+        def sendertask = em.findSenderTask([objid:objid])
+
+        def currtask = findCurrentTask(objid)
+        closeTask(currtask)
+
+        //recreate task for creator 
+        def task = [
+            taskid      : 'T' + new java.rmi.server.UID(),
+            objid       : currtask.objid,
+            docname     : currtask.docname,
+            refno       : currtask.refno,
+            filetype    : currtask.filetype,
+            startdate   : dtSvc.serverDate ,
+            createdby   : getUserInfo(),
+            assignedto  : sendertask.assignedto,
+            enddate     : null,
+            workflowid  : currtask.workflowid,
+            msg         : 'Document has been returned to ' + currtask.signatory + '.',
+            action      : sendertask.action,
+            signatory   : sendertask.signatory,
+            findings    : disapprovemsg,
+        ]
+        em.create(task)
+    }
+
+
+    @ProxyMethod
     public def createNextUserTask( task ) {
         closeTask(task)
 

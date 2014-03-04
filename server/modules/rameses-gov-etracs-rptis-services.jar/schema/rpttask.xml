@@ -17,6 +17,7 @@
 		<field name="assignedto_title" />
 		<field name="workflowid" />
 		<field name="signatory" />
+		<field name="findings" />
 	</element>
 </schema>
 

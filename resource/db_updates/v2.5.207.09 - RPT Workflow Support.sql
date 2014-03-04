@@ -74,7 +74,7 @@ go
 delete from rptworkflow_state 
 go 
 
-insert into rptworkflow_state values('TR-W1', 'TR', null, 'receive', 'start', 1, null, '#{docname} documents are received and undergoing verification.')
+insert into rptworkflow_state values('TR-W1', 'TR', null, 'receive', 'start', 1, 'receiver', '#{docname} documents are received and undergoing verification.')
 insert into rptworkflow_state values('TR-W2', 'TR', 'receive', 'assign-taxmapper', 'process', 1, 'taxmapper',  '#{docname} is already forwarded to taxmapping.')
 insert into rptworkflow_state values('TR-W3', 'TR', 'assign-taxmapper', 'fortaxmapping', 'process', 1, 'taxmapper', '#{docname} is currently taxmapped by #{name}.')
 insert into rptworkflow_state values('TR-W4', 'TR', 'fortaxmapping', 'assign-taxmapping-approval', 'process', 1, 'taxmapping_chief', '#{docname} is submitted for taxmapping approval.')

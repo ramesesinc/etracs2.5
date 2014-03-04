@@ -2,10 +2,10 @@
 <workunit extends="rpt_wtemplates/FaasTxnOnlineInitController.xml">
     <invokers>       
         <invoker type="quick_launcher" code="GR01" action="init" caption="General Revision" 
-            txntype="GR" role="APPRAISER,EXAMINER" permission="faas.createGeneralRevision" index="13"  />
+            txntype="GR" role="APPRAISER,EXAMINER,RECEIVER" permission="faas.createGeneralRevision" index="13"  />
             
         <invoker folderid="/explorer/txn/rpt/online" action="init" caption="General Revision" 
-            txntype="GR" role="APPRAISER,EXAMINER" permission="faas.createGeneralRevision" index="13"  />
+            txntype="GR" role="APPRAISER,EXAMINER,RECEIVER" permission="faas.createGeneralRevision" index="13"  />
             
     </invokers>
     <code>

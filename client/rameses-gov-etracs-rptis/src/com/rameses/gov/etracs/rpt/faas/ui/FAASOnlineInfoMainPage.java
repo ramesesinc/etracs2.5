@@ -40,24 +40,12 @@ public class FAASOnlineInfoMainPage extends javax.swing.JPanel {
         xFormPanel4 = new com.rameses.rcp.control.XFormPanel();
         xNumberField2 = new com.rameses.rcp.control.XNumberField();
         xComboBox5 = new com.rameses.rcp.control.XComboBox();
-        xNumberField5 = new com.rameses.rcp.control.XNumberField();
         formPanel1 = new com.rameses.rcp.util.FormPanel();
         xLabel1 = new com.rameses.rcp.control.XLabel();
         xLabel16 = new com.rameses.rcp.control.XLabel();
         xFormPanel11 = new com.rameses.rcp.control.XFormPanel();
         xComboBox6 = new com.rameses.rcp.control.XComboBox();
-        formPanel4 = new com.rameses.rcp.util.FormPanel();
-        xLookupField1 = new com.rameses.rcp.control.XLookupField();
-        xDateField3 = new com.rameses.rcp.control.XDateField();
-        formPanel5 = new com.rameses.rcp.util.FormPanel();
-        xLookupField2 = new com.rameses.rcp.control.XLookupField();
-        xDateField4 = new com.rameses.rcp.control.XDateField();
-        formPanel6 = new com.rameses.rcp.util.FormPanel();
-        xLookupField3 = new com.rameses.rcp.control.XLookupField();
-        xDateField5 = new com.rameses.rcp.control.XDateField();
-        formPanel7 = new com.rameses.rcp.util.FormPanel();
-        xLookupField4 = new com.rameses.rcp.control.XLookupField();
-        xDateField6 = new com.rameses.rcp.control.XDateField();
+        xNumberField6 = new com.rameses.rcp.control.XNumberField();
         xLabel2 = new com.rameses.rcp.control.XLabel();
         jPanel7 = new javax.swing.JPanel();
         xFormPanel6 = new com.rameses.rcp.control.XFormPanel();
@@ -162,19 +150,8 @@ public class FAASOnlineInfoMainPage extends javax.swing.JPanel {
 
         xFormPanel2.add(xFormPanel4);
 
-        xNumberField5.setCaption("Back Tax Yrs");
-        xNumberField5.setCaptionWidth(90);
-        xNumberField5.setCellPadding(new java.awt.Insets(0, 0, 0, 5));
-        xNumberField5.setDepends(new String[] {"entity.txntype"});
-        xNumberField5.setEnabled(false);
-        xNumberField5.setFieldType(Integer.class);
-        xNumberField5.setMargin(new java.awt.Insets(1, 1, 1, 1));
-        xNumberField5.setName("entity.backtaxyrs");
-        xNumberField5.setPreferredSize(new java.awt.Dimension(0, 19));
-        xFormPanel2.add(xNumberField5);
-
         jPanel4.add(xFormPanel2);
-        xFormPanel2.setBounds(12, 38, 338, 122);
+        xFormPanel2.setBounds(12, 38, 338, 94);
 
         formPanel1.setCaptionBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
         formPanel1.setCellpadding(new java.awt.Insets(0, 0, 0, 10));
@@ -201,7 +178,7 @@ public class FAASOnlineInfoMainPage extends javax.swing.JPanel {
         formPanel1.add(xLabel16);
 
         jPanel4.add(formPanel1);
-        formPanel1.setBounds(350, 6, 446, 28);
+        formPanel1.setBounds(350, 28, 446, 32);
 
         xFormPanel11.setCellspacing(1);
         xFormPanel11.setPadding(new java.awt.Insets(0, 0, 0, 0));
@@ -212,96 +189,29 @@ public class FAASOnlineInfoMainPage extends javax.swing.JPanel {
         xComboBox6.setPreferredSize(new java.awt.Dimension(0, 20));
         xFormPanel11.add(xComboBox6);
 
-        formPanel4.setOrientation(com.rameses.rcp.constant.UIConstants.HORIZONTAL);
-        formPanel4.setPadding(new java.awt.Insets(0, 0, 0, 0));
-        formPanel4.setPreferredSize(new java.awt.Dimension(0, 22));
-        formPanel4.setShowCaption(false);
-        xLookupField1.setCaption("Appraiser");
-        xLookupField1.setCaptionWidth(90);
-        xLookupField1.setExpression("#{entity.appraiser.name}");
-        xLookupField1.setHandler("lookupAppraiser");
-        xLookupField1.setName("entity.appraiser");
-        xLookupField1.setPreferredSize(new java.awt.Dimension(250, 20));
-        formPanel4.add(xLookupField1);
-
-        xDateField3.setHint("Date Appraised");
-        xDateField3.setName("entity.appraiser.dtsigned");
-        xDateField3.setPreferredSize(new java.awt.Dimension(91, 20));
-        xDateField3.setShowCaption(false);
-        formPanel4.add(xDateField3);
-
-        xFormPanel11.add(formPanel4);
-
-        formPanel5.setOrientation(com.rameses.rcp.constant.UIConstants.HORIZONTAL);
-        formPanel5.setPadding(new java.awt.Insets(0, 0, 0, 0));
-        formPanel5.setPreferredSize(new java.awt.Dimension(0, 22));
-        formPanel5.setShowCaption(false);
-        xLookupField2.setCaption("Recommender");
-        xLookupField2.setCaptionWidth(90);
-        xLookupField2.setExpression("#{entity.recommender.name}");
-        xLookupField2.setHandler("lookupRecommender");
-        xLookupField2.setName("entity.recommender");
-        xLookupField2.setPreferredSize(new java.awt.Dimension(250, 20));
-        formPanel5.add(xLookupField2);
-
-        xDateField4.setName("entity.recommender.dtsigned");
-        xDateField4.setPreferredSize(new java.awt.Dimension(91, 20));
-        xDateField4.setShowCaption(false);
-        formPanel5.add(xDateField4);
-
-        xFormPanel11.add(formPanel5);
-
-        formPanel6.setOrientation(com.rameses.rcp.constant.UIConstants.HORIZONTAL);
-        formPanel6.setPadding(new java.awt.Insets(0, 0, 0, 0));
-        formPanel6.setPreferredSize(new java.awt.Dimension(0, 22));
-        formPanel6.setShowCaption(false);
-        xLookupField3.setCaption("Taxmapper");
-        xLookupField3.setCaptionWidth(90);
-        xLookupField3.setExpression("#{entity.taxmapper.name}");
-        xLookupField3.setHandler("lookupTaxmapper");
-        xLookupField3.setName("entity.taxmapper");
-        xLookupField3.setPreferredSize(new java.awt.Dimension(250, 20));
-        formPanel6.add(xLookupField3);
-
-        xDateField5.setName("entity.taxmapper.dtsigned");
-        xDateField5.setPreferredSize(new java.awt.Dimension(91, 20));
-        xDateField5.setShowCaption(false);
-        formPanel6.add(xDateField5);
-
-        xFormPanel11.add(formPanel6);
-
-        formPanel7.setOrientation(com.rameses.rcp.constant.UIConstants.HORIZONTAL);
-        formPanel7.setPadding(new java.awt.Insets(0, 0, 0, 0));
-        formPanel7.setPreferredSize(new java.awt.Dimension(0, 22));
-        formPanel7.setShowCaption(false);
-        xLookupField4.setCaption("Approver");
-        xLookupField4.setCaptionWidth(90);
-        xLookupField4.setExpression("#{entity.approver.name}");
-        xLookupField4.setHandler("lookupApprover");
-        xLookupField4.setName("entity.approver");
-        xLookupField4.setPreferredSize(new java.awt.Dimension(250, 20));
-        formPanel7.add(xLookupField4);
-
-        xDateField6.setHint("Date Approved");
-        xDateField6.setName("entity.approver.dtsigned");
-        xDateField6.setPreferredSize(new java.awt.Dimension(91, 20));
-        xDateField6.setShowCaption(false);
-        formPanel7.add(xDateField6);
-
-        xFormPanel11.add(formPanel7);
+        xNumberField6.setCaption("Back Tax Yrs");
+        xNumberField6.setCaptionWidth(90);
+        xNumberField6.setCellPadding(new java.awt.Insets(0, 0, 0, 5));
+        xNumberField6.setDepends(new String[] {"entity.txntype"});
+        xNumberField6.setEnabled(false);
+        xNumberField6.setFieldType(Integer.class);
+        xNumberField6.setMargin(new java.awt.Insets(1, 1, 1, 1));
+        xNumberField6.setName("entity.backtaxyrs");
+        xNumberField6.setPreferredSize(new java.awt.Dimension(0, 19));
+        xFormPanel11.add(xNumberField6);
 
         jPanel4.add(xFormPanel11);
-        xFormPanel11.setBounds(358, 42, 434, 118);
+        xFormPanel11.setBounds(358, 62, 434, 62);
 
         xLabel2.setExpression("#{annotated}");
         xLabel2.setFont(new java.awt.Font("Tahoma", 1, 14));
         xLabel2.setForeground(new java.awt.Color(204, 0, 0));
         xLabel2.setName("annotated");
         jPanel4.add(xLabel2);
-        xLabel2.setBounds(136, 2, 204, 22);
+        xLabel2.setBounds(136, 2, 228, 30);
 
         jPanel3.add(jPanel4);
-        jPanel4.setBounds(8, 2, 802, 166);
+        jPanel4.setBounds(8, 2, 802, 132);
 
         jPanel7.setLayout(null);
 
@@ -362,7 +272,7 @@ public class FAASOnlineInfoMainPage extends javax.swing.JPanel {
         xFormPanel6.setBounds(14, 22, 776, 122);
 
         jPanel3.add(jPanel7);
-        jPanel7.setBounds(8, 172, 802, 154);
+        jPanel7.setBounds(8, 138, 802, 152);
 
         formPanel3.setCellpadding(new java.awt.Insets(0, 0, 0, 10));
         formPanel3.setPadding(new java.awt.Insets(0, 0, 0, 0));
@@ -413,7 +323,7 @@ public class FAASOnlineInfoMainPage extends javax.swing.JPanel {
         formPanel3.add(formPanel2);
 
         jPanel3.add(formPanel3);
-        formPanel3.setBounds(386, 332, 422, 160);
+        formPanel3.setBounds(386, 294, 422, 142);
 
         xFormPanel1.setCellspacing(1);
         xFormPanel1.setPadding(new java.awt.Insets(0, 5, 6, 5));
@@ -462,7 +372,7 @@ public class FAASOnlineInfoMainPage extends javax.swing.JPanel {
         xFormPanel1.add(xTextField23);
 
         jPanel3.add(xFormPanel1);
-        xFormPanel1.setBounds(8, 332, 374, 150);
+        xFormPanel1.setBounds(8, 294, 374, 132);
 
         jPanel2.add(jPanel3, java.awt.BorderLayout.CENTER);
 
@@ -475,10 +385,6 @@ public class FAASOnlineInfoMainPage extends javax.swing.JPanel {
     private com.rameses.rcp.util.FormPanel formPanel1;
     private com.rameses.rcp.util.FormPanel formPanel2;
     private com.rameses.rcp.util.FormPanel formPanel3;
-    private com.rameses.rcp.util.FormPanel formPanel4;
-    private com.rameses.rcp.util.FormPanel formPanel5;
-    private com.rameses.rcp.util.FormPanel formPanel6;
-    private com.rameses.rcp.util.FormPanel formPanel7;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
@@ -489,10 +395,6 @@ public class FAASOnlineInfoMainPage extends javax.swing.JPanel {
     private com.rameses.rcp.control.XComboBox xComboBox6;
     private com.rameses.rcp.control.XDateField xDateField1;
     private com.rameses.rcp.control.XDateField xDateField2;
-    private com.rameses.rcp.control.XDateField xDateField3;
-    private com.rameses.rcp.control.XDateField xDateField4;
-    private com.rameses.rcp.control.XDateField xDateField5;
-    private com.rameses.rcp.control.XDateField xDateField6;
     private com.rameses.rcp.control.XFormPanel xFormPanel1;
     private com.rameses.rcp.control.XFormPanel xFormPanel11;
     private com.rameses.rcp.control.XFormPanel xFormPanel2;
@@ -505,13 +407,9 @@ public class FAASOnlineInfoMainPage extends javax.swing.JPanel {
     private com.rameses.rcp.control.XLabel xLabel19;
     private com.rameses.rcp.control.XLabel xLabel2;
     private com.rameses.rcp.control.XLabel xLabel4;
-    private com.rameses.rcp.control.XLookupField xLookupField1;
-    private com.rameses.rcp.control.XLookupField xLookupField2;
-    private com.rameses.rcp.control.XLookupField xLookupField3;
-    private com.rameses.rcp.control.XLookupField xLookupField4;
     private com.rameses.rcp.control.XLookupField xLookupField5;
     private com.rameses.rcp.control.XNumberField xNumberField2;
-    private com.rameses.rcp.control.XNumberField xNumberField5;
+    private com.rameses.rcp.control.XNumberField xNumberField6;
     private com.rameses.rcp.control.XNumberField xNumberField7;
     private com.rameses.rcp.control.XNumberField xNumberField8;
     private com.rameses.rcp.control.XTextArea xTextArea1;

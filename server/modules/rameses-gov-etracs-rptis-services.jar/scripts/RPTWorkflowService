@@ -19,11 +19,9 @@ class RPTWorkflowService
         util.required('appliedto', params.appliedto)
 
         initParams(params)
-        println 'params -> ' + params 
         def startwf = workflowDb.findStart(params)
         if (!startwf) throw new Exception('Start workflow is not defined.')
         startwf.message = ExpressionResolver.instance.evalString(startwf.message, params)
-        println 'wf message -> ' + startwf.message
         return startwf
     }
 
@@ -45,7 +43,6 @@ class RPTWorkflowService
         util.required('fromstate', params.fromstate)
 
         initParams(params)
-        println 'params -> ' + params 
         def wf = workflowDb.findNextByWorkflowId(params)
         if (!wf) throw new Exception('Next workflow process is not defined.')
         wf.message = ExpressionResolver.instance.evalString(wf.message, params)

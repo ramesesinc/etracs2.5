@@ -25,3 +25,12 @@ SELECT
 FROM rpttask t 
 WHERE objid = $P{objid}
 ORDER BY startdate 
+
+
+[findSenderTask]
+SELECT * 
+FROM rpttask 
+WHERE objid = $P{objid}
+  AND enddate IS NOT NULL
+  AND action NOT LIKE 'assign%'
+ORDER BY startdate DESC   

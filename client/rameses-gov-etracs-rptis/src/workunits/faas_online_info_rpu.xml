@@ -73,12 +73,13 @@ class FaasInfoRpuController
             suffix          : 0, 
             fullpin         : entity.rp.pin,
             realpropertyid  : entity.rp.objid,
+            dtappraised     : entity.appraiser?.dtsigned,
         ])
     }
     
     
     def open(){
-        rpu = [objid:entity.rpuid];
+        rpu = [objid:entity.rpuid, dtappraised:entity.appraiser?.dtsigned];
         return InvokerUtil.lookupOpener(entity.rpu.rputype + 'rpu:open', [
             rpu         : rpu,
             lguid       : entity.lguid,
