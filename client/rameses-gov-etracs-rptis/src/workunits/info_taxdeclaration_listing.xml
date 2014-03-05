@@ -9,6 +9,7 @@
         import com.rameses.rcp.annotations.*;
         import com.rameses.osiris2.client.*;
         import com.rameses.osiris2.common.*
+        import com.rameses.osiris2.reports.*;
         
         public class TDInfoListingController
         {
@@ -32,8 +33,26 @@
             
             def getOpener(){
                 if (selectedItem)
-                    return InvokerUtil.lookupOpener('report:td', [entity:selectedItem]);
+                    return InvokerUtil.lookupOpener('td:report', [entity:selectedItem]);
                 return null;
+            }
+            
+            void printAll(){
+                if (!MsgBox.confirm('Print all tax declarations?'))
+                    return;
+                    
+                if (!faases) 
+                    return;
+                
+                faases.each{
+                    def o = InvokerUtil.lookupOpener('td:report:print', [entity:it]);
+                    if (o){
+                        o.handle.report.viewReport();
+                        ReportUtil.print(o.handle.report.report, false);
+                    }
+                }
+                
+                MsgBox.alert('All tax declarations are successfully sent to the printer.')
             }
         
         }
