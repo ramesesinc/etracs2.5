@@ -66,6 +66,17 @@ go
 
 
 
+
+
+/* RPT WORKFLOW */
+
+delete from rptworkflow_state 
+go 
+
+delete from rptworkflow 
+go
+
+
 /* TRANSFER WORKFLOW */
 insert into rptworkflow 
 	values('TR', 'TR WORKFLOW', 'TR|TRC|TRE')
@@ -73,8 +84,6 @@ go
 
 
 
-delete from rptworkflow_state 
-go 
 
 insert into rptworkflow_state values('TR-W1', 'TR', null, 'receive', 'start', 1, 'receiver', '#{docname} documents are received and undergoing verification.')
 insert into rptworkflow_state values('TR-W2', 'TR', 'receive', 'assign-taxmapper', 'process', 1, 'taxmapper',  '#{docname} is already forwarded to taxmapping.')
@@ -102,4 +111,56 @@ insert into rptworkflow_state values('TR-W16', 'TR', 'forapproval', 'approved', 
 go	
 
 
+
+
+/* SUBDIVISION TRANSFER WORKFLOW */
+
+insert into rptworkflow 
+	values('SD', 'SD WORKFLOW', 'SD')
+go
+
+
+
+delete from rptworkflow_state 
+go 
+
+insert into rptworkflow_state values('SD-W1', 'SD', null, 'receive', 'start', 1, 'receiver', '#{docname} documents are received and undergoing verification.')
+insert into rptworkflow_state values('SD-W2', 'SD', 'receive', 'assign-taxmapper', 'process', 1, 'taxmapper',  '#{docname} is already forwarded to taxmapping.')
+insert into rptworkflow_state values('SD-W3', 'SD', 'assign-taxmapper', 'fortaxmapping', 'process', 1, 'taxmapper', '#{docname} is currently taxmapped by #{name}.')
+insert into rptworkflow_state values('SD-W4', 'SD', 'fortaxmapping', 'assign-taxmapping-approval', 'process', 1, 'taxmapping_chief', '#{docname} is submitted for taxmapping approval.')
+
+insert into rptworkflow_state values('SD-W5', 'SD', 'assign-taxmapping-approval', 'fortaxmapping-approval', 'process', 1, 'taxmapping_chief', '#{docname} taxmapping approval is currently verified by #{name}.')
+insert into rptworkflow_state values('SD-W6', 'SD', 'fortaxmapping-approval', 'assign-examiner', 'process', 1, 'examiner', '#{docname} is already submitted for examination.')
+
+insert into rptworkflow_state values('SD-W7', 'SD', 'assign-examiner', 'forexamination', 'process', 1, 'examiner', '#{docname} is currently examined by the group of #{name}.')
+insert into rptworkflow_state values('SD-W8', 'SD', 'forexamination', 'assign-appraiser', 'process', 1, 'appraiser', '#{docname} is already submitted for appraisal.')
+
+insert into rptworkflow_state values('SD-W9', 'SD', 'assign-appraiser', 'forappraisal', 'process', 1, 'appraiser', '#{docname} is currenty appraised by #{name}.')
+insert into rptworkflow_state values('SD-W10', 'SD', 'forappraisal', 'assign-appraisal-chief', 'process', 1, 'appraisal_chief', '#{docname} appraisal is already submitted for approval.')
+
+
+insert into rptworkflow_state values('SD-W11', 'SD', 'assign-appraisal-chief', 'forappraisal-approval', 'process', 1, 'appraisal_chief', '#{docname} appraisal is currently verified by #{name}.')
+insert into rptworkflow_state values('SD-W12', 'SD', 'forappraisal-approval', 'assign-assistant-approval', 'process', 1, 'assistant_assessor', '#{docname} is already submitted to assistant assessor for approval.')
+
+insert into rptworkflow_state values('SD-W13', 'SD', 'assign-assistant-approval', 'forassistant-approval', 'process', 1, 'assistant_assessor', '#{docname} is currently reviewed by assistant assessor #{name}.')
+insert into rptworkflow_state values('SD-W14', 'SD', 'forassistant-approval', 'assign-approver', 'process', 1, 'approver', '#{docname} is already submitted to assistant assessor for approval.')
+
+insert into rptworkflow_state values('SD-W15', 'SD', 'assign-approver', 'forapproval', 'process', 1, 'approver', '#{docname} is currently approved by #{name}.')
+insert into rptworkflow_state values('SD-W16', 'SD', 'forapproval', 'approved', 'end', 1, 'approver', '#{docname} is already approved and current.')
+go	
+
+
+
+
+
+
+
+
+
+alter table subdividedland alter column newrpuid varchar(50) null
+go
+
+
+alter table subdivision alter column state varchar(50) not null
+go
 

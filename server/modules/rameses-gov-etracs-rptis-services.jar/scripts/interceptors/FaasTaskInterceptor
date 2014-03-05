@@ -58,7 +58,7 @@ class FaasTaskInterceptor
 	}
 
 
-	@After(pattern="FAASService.(submitFor.*)") 
+	@After(pattern="FAASService.(submitFor.*)", eval="result.taskaction != null") 
 	public void handleNextWorkflow( evt ) {
 		def faas = evt.result 
 		def wf = workflowSvc.findNext([docname:'FAAS', appliedto:faas.txntype.objid, fromstate:faas.taskaction])

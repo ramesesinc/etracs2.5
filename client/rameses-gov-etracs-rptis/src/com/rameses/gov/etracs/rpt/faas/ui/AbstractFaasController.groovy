@@ -123,7 +123,7 @@ public abstract class AbstractFaasController extends PageFlowController
      *----------------------------------------------------*/
     
     void submitFaasForApproval(){
-        entity = service.submitFaasForApproval( entity );
+        entity = service.submitForApproval( entity );
     }
     
     

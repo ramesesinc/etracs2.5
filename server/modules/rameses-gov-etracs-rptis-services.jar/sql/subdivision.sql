@@ -57,7 +57,8 @@ SELECT s.*,
 	pc.code AS classfication_code,
 	pc.name AS classification_name,
 	t.trackingno,
-	CASE WHEN task.taskid IS NULL THEN '' ELSE task.action END AS taskaction
+	CASE WHEN task.taskid IS NULL THEN null ELSE task.action END AS taskaction,
+	CASE WHEN task.taskid IS NULL THEN null ELSE task.findings END AS findings
 FROM subdivision s
 	INNER JOIN faas f ON s.motherfaasid = f.objid 
 	INNER JOIN rpu r ON f.rpuid = r.objid 

@@ -37,10 +37,14 @@ class RequirementsInfoController
         listHandler?.load();
     }
     
+    def onupdateRequirement = {
+        listHandler.refresh();
+    }
+    
     def getOpener(){
         if (!selectedItem)
             return null;
-        def openers = InvokerUtil.lookupOpeners('rptrequirementtype:handler', [entity:selectedItem, svc:reqSvc]);
+        def openers = InvokerUtil.lookupOpeners('rptrequirementtype:handler', [entity:selectedItem, svc:reqSvc, onupdate:onupdateRequirement]);
         return openers.find{it.properties.name == selectedItem.handler}
     }
     
