@@ -28,6 +28,8 @@ go
 
 alter table rpttask add docname varchar(50) 
 go
+alter table rpttask add findings varchar(1000) 
+go
 
 
 

@@ -192,6 +192,55 @@ public class DBImageUtil {
     }
     
     
+    public long upload(Map header, byte[] bytes) throws Exception {
+        final byte[] buf = new byte[BUFFER_SIZE];
+        int fileno = 0;
+        
+        if (header.get("objid") == null){
+            header.put("objid", "H" + new java.rmi.server.UID());
+        }
+        
+        try {
+            deleteImage(header.get("objid"));
+            saveHeader(header);
+            
+            
+            int startidx = fileno * BUFFER_SIZE;
+            int endidx = startidx + BUFFER_SIZE;
+            long filesize = 0;
+            
+            while( endidx <= bytes.length){
+                System.arraycopy(bytes, startidx, buf, 0, BUFFER_SIZE);
+                fileno += 1;
+                startidx = fileno * BUFFER_SIZE;
+                endidx = startidx + BUFFER_SIZE;
+                filesize += BUFFER_SIZE;
+                
+                Map data = new HashMap();
+                data.put("objid", "F" + new java.rmi.server.UID());
+                data.put("parentid", header.get("objid"));
+                data.put("fileno", fileno);
+                data.put("byte", buf);
+                saveItem(data);
+            }
+            if (filesize < bytes.length){
+                System.arraycopy(bytes, startidx, buf, 0, (int)(bytes.length - filesize));
+                
+                Map data = new HashMap();
+                data.put("objid", "F" + new java.rmi.server.UID());
+                data.put("parentid", header.get("objid"));
+                data.put("fileno", fileno);
+                data.put("byte", buf);
+                saveItem(data);
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            throw ex;
+        }
+        
+        return bytes.length;
+    }
+    
     public void deleteImage(Object objid){
         Map data = new HashMap();
         data.put("objid", objid);
