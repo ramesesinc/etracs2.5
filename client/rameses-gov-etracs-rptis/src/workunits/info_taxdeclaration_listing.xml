@@ -1,0 +1,47 @@
+<workunit>
+    <invokers>
+        <invoker type="subdivision:info" action="init" caption="Tax Declarations" visibleWhen="#{entity.state == 'APPROVED'}" index="-1"/>
+        <invoker type="consolidation:info" action="init" caption="Tax Declarations" visibleWhen="#{entity.state == 'APPROVED'}" index="-1"/>
+    </invokers>
+    <code >
+    <![CDATA[
+        import com.rameses.rcp.common.*;
+        import com.rameses.rcp.annotations.*;
+        import com.rameses.osiris2.client.*;
+        import com.rameses.osiris2.common.*
+        
+        public class TDInfoListingController
+        {
+            @Binding
+            def binding;
+            
+            def svc;
+            
+            def entity;
+            def selectedItem;
+            def faases;
+            
+            void init(){
+                faases = svc.getFaasListing(entity.objid);
+            }
+            
+            def listHandler = [
+                fetchList : { return faases; }
+            ] as BasicListModel;
+            
+            
+            def getOpener(){
+                if (selectedItem)
+                    return InvokerUtil.lookupOpener('report:td', [entity:selectedItem]);
+                return null;
+            }
+        
+        }
+        
+    ]]>    
+    </code>
+    
+<page>
+    <page template="com.rameses.gov.etracs.rpt.common.TDInfoListPage" />
+</page>    
+</workunit>

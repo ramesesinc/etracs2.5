@@ -79,6 +79,10 @@ abstract class RPTWorkflowController extends PageFlowController
         
     final void loadSections(){
         sections = getSections();
+        sections = sections.findAll{
+            def vw = it.properties.visibleWhen;
+            return  ((!vw)  ||  ExpressionResolver.getInstance().evalBoolean( vw, [entity:entity] ));
+        }
         if (sections){
             selectedSection = sections[0];
         }

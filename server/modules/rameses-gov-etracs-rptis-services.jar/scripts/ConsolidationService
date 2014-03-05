@@ -56,18 +56,20 @@ class ConsolidationService
     def SCHEMA_CONSOLIDATED_LAND 	= 'consolidatedland'
     def SCHEMA_AFFECTED_RPU 		= 'affectedrpu'
 
-    def STATE_DRAFT 			= 'DRAFT'
-    def STATE_FORTAXMAPPING     = 'FORTAXMAPPING'
-    def STATE_FORAPPRAISAL      = 'FORAPPRAISAL'
-	def STATE_FORAPPROVAL 		= 'FORAPPROVAL'
-	def STATE_FORPROVSUBMISSION = 'FORPROVSUBMISSION'
-	def STATE_FORPROVAPPROVAL 	= 'FORPROVAPPROVAL'
-    def STATE_APPROVED          = 'APPROVED'
-	def STATE_PENDING 			= 'PENDING'
+    def STATE_DRAFT                 = 'DRAFT'
+    def STATE_FORTAXMAPPING         = 'FORTAXMAPPING'
+    def STATE_FORTAXMAPPING_APPROVAL = 'FORTAXMAPPING_APPROVAL'
+    def STATE_FOREXAMINATION        = 'FOREXAMINATION'
+    def STATE_FORAPPRAISAL          = 'FORAPPRAISAL'
+    def STATE_FORAPPRAISAL_APPROVAL = 'FORAPPRAISAL_APPROVAL'
+    def STATE_FORASSISTANT_APPROVAL = 'FORASSISTANT_APPROVAL'
+    def STATE_FORAPPROVAL           = 'FORAPPROVAL'
+    def STATE_APPROVED              = 'APPROVED'
+    def STATE_PENDING               = 'PENDING'
     
     def TXNTYPE_CS = 'CS'
 
-    def signatories = ['appraiser', 'recommender', 'taxmapper', 'approver']
+    def signatories = ['receiver','taxmapper', 'taxmapping_chief', 'examiner', 'appraiser', 'appraisal_chief', 'recommender', 'assistant_assessor', 'approver']
 
 
 	@ProxyMethod
@@ -128,14 +130,11 @@ class ConsolidationService
         trackingSvc.assignTrackingNo(consolidation, 'consolidation', 'Document is currently reviewed.')
     	return consolidation   			
    	}
+    
 
    	@ProxyMethod
    	public def updateConsolidation( consolidation ) {
-   		def old = em.read(consolidation )
-        if( !old ) throw new Exception('Consolidation does not exist or has already been deleted.')
-        if( old.state == STATE_APPROVED ) throw new Exception('Consolidation has already been approved.')
-        if( old.state == STATE_FORPROVAPPROVAL ) throw new Exception('Consolidation has already been submitted to province.')
-        signatorySvc.buildSignatories(consolidation, signatories)
+   		signatorySvc.buildSignatories(consolidation, signatories)
         em.update(consolidation)
 		return consolidation   			
    	}
@@ -258,25 +257,107 @@ class ConsolidationService
     public def submitForTaxmapping(consolidation) {
         consolidation.state = STATE_FORTAXMAPPING
         workflowRef.insert(consolidation)
-        em.update(consolidation)
+        updateConsolidation(consolidation)
         return consolidation 
     }
 
+    @ProxyMethod
+    public def disapproveForTaxmapping( consolidation ) {
+        workflowRef.delete(consolidation)
+        consolidation.state = STATE_DRAFT
+        updateConsolidation(consolidation)
+        return consolidation
+    }
+
+    @ProxyMethod
+    public def submitForTaxmappingApproval(consolidation) {
+        consolidation.state = STATE_FORTAXMAPPING_APPROVAL
+        workflowRef.insert(consolidation)
+        updateConsolidation(consolidation)
+        return consolidation 
+    }
+
+    @ProxyMethod
+    public def disapproveForTaxmappingApproval( consolidation ) {
+        workflowRef.delete(consolidation)
+        consolidation.state = STATE_FORTAXMAPPING
+        updateConsolidation(consolidation)
+        return consolidation
+    }
+
+
+    @ProxyMethod
+    public def submitForExamination(consolidation) {
+        consolidation.state = STATE_FOREXAMINATION
+        workflowRef.insert(consolidation)
+        updateConsolidation(consolidation)
+        return consolidation 
+    }
+
+    @ProxyMethod
+    public def disapproveForExamination( consolidation ) {
+        workflowRef.delete(consolidation)
+        consolidation.state = STATE_FORTAXMAPPING_APPROVAL
+        updateConsolidation(consolidation)
+        return consolidation
+    }
 
     @ProxyMethod
     public def submitForAppraisal(consolidation) {
         consolidation.state = STATE_FORAPPRAISAL
         workflowRef.insert(consolidation)
-        em.update(consolidation)
+        updateConsolidation(consolidation)
         return consolidation 
+    }
+
+    @ProxyMethod
+    public def disapproveForAppraisal( consolidation ) {
+        workflowRef.delete(consolidation)
+        consolidation.state = STATE_FOREXAMINATION
+        updateConsolidation(consolidation)
+        return consolidation
+    }
+
+
+    @ProxyMethod
+    public def submitForAppraisalApproval(consolidation) {
+        consolidation.state = STATE_FORAPPRAISAL_APPROVAL
+        workflowRef.insert(consolidation)
+        updateConsolidation(consolidation)
+        return consolidation 
+    }
+
+    @ProxyMethod
+    public def disapproveForAppraisalApproval( consolidation ) {
+        workflowRef.delete(consolidation)
+        consolidation.state = STATE_FORAPPRAISAL
+        updateConsolidation(consolidation)
+        return consolidation
+    }
+
+    @ProxyMethod
+    public def submitForAssistantApproval(consolidation) {
+        consolidation.state = STATE_FORASSISTANT_APPROVAL
+        workflowRef.insert(consolidation)
+        updateConsolidation(consolidation)
+        return consolidation 
+    }
+
+    @ProxyMethod
+    public def disapproveForAssistantApproval( consolidation ) {
+        workflowRef.delete(consolidation)
+        consolidation.state = STATE_FORAPPRAISAL_APPROVAL
+        updateConsolidation(consolidation)
+        return consolidation
     }
 
 
    	@ProxyMethod
    	public def submitForApproval( consolidation ) {
+        consolidation.state = STATE_FORAPPROVAL
    		validate(consolidation)
         workflowRef.insert(consolidation)
-    	em.update(consolidation)
+    	updateConsolidation(consolidation)
    		return consolidation	
    	}
 
@@ -287,7 +368,7 @@ class ConsolidationService
     	workflowRef.insert(consolidation)
         createFaasRecords(consolidation)
         validate(consolidation)
-        em.update(consolidation)
+        updateConsolidation(consolidation)
     	doApproveConsolidation(consolidation)
     	return consolidation 
    	}
@@ -298,69 +379,9 @@ class ConsolidationService
    		workflowRef.delete(consolidation)
     	deleteFaasRecords(consolidation)
         consolidation.state = STATE_DRAFT
-        em.update(consolidation)
+        updateConsolidation(consolidation)
    		return consolidation	
    	}
-
-
-   	@ProxyMethod
-   	public def submitToProvince( consolidation ) {
-   		consolidation.state = STATE_FORPROVAPPROVAL
-    	workflowRef.insert(consolidation)
-        validate(consolidation)
-        createFaasRecords(consolidation)
-        em.update(consolidation)
-   		return consolidation	
-   	}
-
-   	@ProxyMethod
-   	public def disapproveSubmitToProvince( consolidation ) {
-		workflowRef.delete(consolidation)
-        deleteFaasRecords(consolidation)
-        consolidation.state = STATE_DRAFT
-        em.update(consolidation)
-    	return consolidation
-   	}
-
-
-   	@ProxyMethod
-   	public def approveSubmittedToProvince( consolidation ) {
-   		consolidation.state = STATE_APPROVED
-    	workflowRef.insert(consolidation)
-    	em.update(consolidation)
-        doApproveConsolidation(consolidation)
-   		return consolidation	
-   	}
-
-   	@ProxyMethod
-   	public def disapproveSubmittedToProvince( consolidation ) {
-   		workflowRef.delete(consolidation)
-        deleteFaasRecords(consolidation)
-        consolidation.state = STATE_FORPROVSUBMISSION
-        em.update(consolidation)
-   		return consolidation	
-   	}
-
-
-   	@ProxyMethod
-   	public def approveByProvince( consolidation ) {
-   		consolidation.state = STATE_APPROVED
-    	workflowRef.insert(consolidation)
-    	em.update(consolidation)
-    	doApproveConsolidation(consolidation)
-   		return consolidation	
-   	}
-
-
-   	@ProxyMethod
-   	public def disapproveByProvince( consolidation ) {
-   		workflowRef.delete(consolidation)
-    	deleteFaasRecords(consolidation)
-        consolidation.state = STATE_FORPROVSUBMISSION
-        em.update(consolidation)
-   		return consolidation	
-   	}
-
 
 
 	/*-----------------------------------------------------------------
@@ -647,5 +668,10 @@ class ConsolidationService
     }
 
 
+
+    @ProxyMethod
+    public def getFaasListing( objid ) {
+        return em.getFaasListing([objid:objid])
+    }
 }
 

@@ -139,16 +139,16 @@
     
     <pages> 
         <page name="init" template="com.rameses.gov.etracs.rpt.subdivision.ui.SubdivisionInitPage"/>
-        <page name="unassigned" template="com.rameses.gov.etracs.rpt.subdivision.ui.SubdivisionInfoPage"/>
-        <page name="receive" template="com.rameses.gov.etracs.rpt.subdivision.ui.SubdivisionInfoPage"/>
-        <page name="fortaxmapping" template="com.rameses.gov.etracs.rpt.subdivision.ui.SubdivisionInfoPage"/>
-        <page name="fortaxmapping-approval" template="com.rameses.gov.etracs.rpt.subdivision.ui.SubdivisionInfoPage"/>
-        <page name="forexamination" template="com.rameses.gov.etracs.rpt.subdivision.ui.SubdivisionInfoPage"/>
-        <page name="forappraisal" template="com.rameses.gov.etracs.rpt.subdivision.ui.SubdivisionInfoPage"/>
-        <page name="forappraisal-approval" template="com.rameses.gov.etracs.rpt.subdivision.ui.SubdivisionInfoPage"/>
-        <page name="forassistant-approval" template="com.rameses.gov.etracs.rpt.subdivision.ui.SubdivisionInfoPage"/>
-        <page name="forapproval" template="com.rameses.gov.etracs.rpt.subdivision.ui.SubdivisionInfoPage"/>
-        <page name="approved" template="com.rameses.gov.etracs.rpt.subdivision.ui.SubdivisionInfoPage"/>
+        <page name="unassigned" template="com.rameses.gov.etracs.rpt.common.InfoPage"/>
+        <page name="receive" template="com.rameses.gov.etracs.rpt.common.InfoPage"/>
+        <page name="fortaxmapping" template="com.rameses.gov.etracs.rpt.common.InfoPage"/>
+        <page name="fortaxmapping-approval" template="com.rameses.gov.etracs.rpt.common.InfoPage"/>
+        <page name="forexamination" template="com.rameses.gov.etracs.rpt.common.InfoPage"/>
+        <page name="forappraisal" template="com.rameses.gov.etracs.rpt.common.InfoPage"/>
+        <page name="forappraisal-approval" template="com.rameses.gov.etracs.rpt.common.InfoPage"/>
+        <page name="forassistant-approval" template="com.rameses.gov.etracs.rpt.common.InfoPage"/>
+        <page name="forapproval" template="com.rameses.gov.etracs.rpt.common.InfoPage"/>
+        <page name="approved" template="com.rameses.gov.etracs.rpt.common.InfoPage"/>
         <page name="wait" template="com.rameses.gov.etracs.rpt.rpu.ui.WaitInfoPage"/>
     </pages>
 </workunit>

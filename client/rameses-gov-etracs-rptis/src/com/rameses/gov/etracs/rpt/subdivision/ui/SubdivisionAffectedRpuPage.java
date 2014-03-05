@@ -83,20 +83,6 @@ public class SubdivisionAffectedRpuPage extends javax.swing.JPanel {
                 , new Object[]{"typeHandler", new com.rameses.rcp.common.TextColumnHandler()}
             }),
             new com.rameses.rcp.common.Column(new Object[]{
-                new Object[]{"name", "newtdno"}
-                , new Object[]{"caption", "New TD No."}
-                , new Object[]{"width", 150}
-                , new Object[]{"minWidth", 0}
-                , new Object[]{"maxWidth", 0}
-                , new Object[]{"required", false}
-                , new Object[]{"resizable", true}
-                , new Object[]{"nullWhenEmpty", true}
-                , new Object[]{"editable", true}
-                , new Object[]{"editableWhen", null}
-                , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
-                , new Object[]{"typeHandler", new com.rameses.rcp.common.TextColumnHandler()}
-            }),
-            new com.rameses.rcp.common.Column(new Object[]{
                 new Object[]{"name", "newsuffix"}
                 , new Object[]{"caption", "New Suffix*"}
                 , new Object[]{"width", 100}
@@ -109,6 +95,20 @@ public class SubdivisionAffectedRpuPage extends javax.swing.JPanel {
                 , new Object[]{"editableWhen", null}
                 , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
                 , new Object[]{"typeHandler", new com.rameses.rcp.common.IntegerColumnHandler("0000", -1, -1)}
+            }),
+            new com.rameses.rcp.common.Column(new Object[]{
+                new Object[]{"name", "newtdno"}
+                , new Object[]{"caption", "New TD No."}
+                , new Object[]{"width", 150}
+                , new Object[]{"minWidth", 0}
+                , new Object[]{"maxWidth", 0}
+                , new Object[]{"required", false}
+                , new Object[]{"resizable", true}
+                , new Object[]{"nullWhenEmpty", true}
+                , new Object[]{"editable", true}
+                , new Object[]{"editableWhen", null}
+                , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
+                , new Object[]{"typeHandler", new com.rameses.rcp.common.TextColumnHandler()}
             }),
             new com.rameses.rcp.common.Column(new Object[]{
                 new Object[]{"name", "memoranda"}

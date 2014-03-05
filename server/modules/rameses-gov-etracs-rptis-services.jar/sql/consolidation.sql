@@ -37,7 +37,8 @@ SELECT c.*,
 	rp.barangayid AS rp_barangayid, 
 	rp.claimno AS rp_claimno,
 	t.trackingno,
-	CASE WHEN task.taskid IS NULL THEN '' ELSE task.action END AS taskaction
+	CASE WHEN task.taskid IS NULL THEN null ELSE task.action END AS taskaction,
+	CASE WHEN task.taskid IS NULL THEN null ELSE task.findings END AS findings
 FROM consolidation c
 	LEFT JOIN faas f ON c.newfaasid = f.objid 
 	LEFT JOIN realproperty rp ON c.newrpid = rp.objid 
@@ -230,3 +231,28 @@ SELECT rp.barangayid
 FROM consolidation c
 	LEFT JOIN realproperty rp ON c.newrpid = rp.objid 
 WHERE c.objid = $P{objid}	
+
+
+
+
+[getFaasListing]
+SELECT 
+	f.objid, 
+	f.tdno, 
+	r.rputype,
+	r.fullpin 
+FROM faas f 
+	INNER JOIN rpu r ON f.rpuid = r.objid 
+WHERE f.objid in (	
+	SELECT c.newfaasid
+	FROM consolidation c
+	WHERE c.objid = $P{objid}
+
+	UNION ALL
+
+	SELECT arpu.newfaasid
+	FROM consolidation c
+		INNER JOIN consolidationaffectedrpu arpu ON c.objid = arpu.consolidationid
+	WHERE c.objid = $P{objid}
+)
+ORDER BY f.tdno 

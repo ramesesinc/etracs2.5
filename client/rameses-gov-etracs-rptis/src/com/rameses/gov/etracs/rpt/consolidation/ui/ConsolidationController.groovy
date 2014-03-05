@@ -4,70 +4,47 @@ import com.rameses.rcp.annotations.*
 import com.rameses.rcp.common.* 
 import com.rameses.osiris2.client.*
 import com.rameses.osiris2.common.*
-import com.rameses.gov.etracs.rpt.common.RPTUtil;
+import com.rameses.util.*;
+import com.rameses.common.*;
+import com.rameses.gov.etracs.rpt.common.*;
 import com.rameses.util.MapBeanUtils;
 
-public class ConsolidationController extends PageFlowController
+public class ConsolidationController extends com.rameses.gov.etracs.rpt.common.RPTWorkflowController
 {
 
-    @Binding
-    def binding;
     
     @Service('ConsolidationService')
     def svc;
     
-    @Service('RPTTaskService')
-    def taskSvc;
+    String formTitlePrefix = 'CS';
         
-            
-    @Invoker
-    def invoker 
     
-    @FormId
-    def formId;
     
-    @FormTitle
-    def formTitle;
     
-    def appraiser = [:];
-    def recommender = [:];
-    def taxmapper = [:];
-    def approver = [:];
-    
-    def entity;
-    
-    def sections;
-    def selectedSection;
-    
-    def messages = [];
-    
-    def init(){
-        formTitle = 'Consolidation (New)';
-        entity = svc.initConsolidation();
-        return super.signal('init')
+    public def getService(){ 
+        return svc; 
     }
     
-    
-    def open(){
-        initOpen();
-        return super.signal('open');
+    public def getSections(){
+        return InvokerUtil.lookupOpeners('consolidation:info', [entity:entity, svc:svc])
     }
     
-    
-    void initOpen(){
-        entity = svc.openConsolidation(entity.objid);
-        loadSections();
-        formId = 'CS: ' + entity.txnno;
-        formTitle = formId;
+    public def openEntity(){
+        return svc.openConsolidation(entity.objid)
     }
     
-    
-    void loadSections(){
-        sections = InvokerUtil.lookupOpeners('consolidation:info', [entity:entity, svc:svc])
-        if (sections){
-            selectedSection = sections[0];
-        }
+    public void deleteEntity(){
+        svc.deleteConsolidation(entity);
     }
+    
+    public void approveEntity(){
+        entity = svc.approveConsolidation(entity);
+    }
+    
+    public void disapproveEntity(){
+        entity = svc.disapproveConsolidation(entity);
+    }
+    
     
     
     void create(){
@@ -75,35 +52,18 @@ public class ConsolidationController extends PageFlowController
         initOpen();
     }
     
-    void delete(){
-        svc.deleteConsolidation(entity);
+            
+    void afterInit(){
+        formTitle = 'Consolidation (New)';
+        entity.objid = RPTUtil.generateId('CS');
+        entity.putAll(svc.initConsolidation());
     }
     
     
-    /*-----------------------------------------------------
-     * 
-     * WORKFLOW ACTIONS
-     *
-     *----------------------------------------------------*/
-    
-    void submitForTaxmapping(){
-        entity = svc.submitForTaxmapping(entity);
-        loadSections();
+    void afterOpen(){
+        formId = entity.txnno;
+        formTitle = 'CS: ' + entity.txnno;
     }
-    
-    
-    void submitForAppraisal(){
-        entity = svc.submitForAppraisal(entity);
-        loadSections();
-    }
-    
-    
-    void submitForApproval(){
-        entity = svc.submitForApproval(entity);
-        loadSections();
-    }
-    
-    
     
     
     
@@ -133,7 +93,7 @@ public class ConsolidationController extends PageFlowController
     }
     
     
-    void approveConsolidation() {
+    void approve() {
         
         svc.validate(entity);
         
@@ -165,152 +125,4 @@ public class ConsolidationController extends PageFlowController
         initOpen();
     }
     
-    
-
-    void disapproveConsolidation() {
-        entity = svc.disapproveConsolidation(entity);
-        loadSections();
-    }
-
-    
-
-    void submitToProvince() {
-        entity = svc.submitToProvince(entity);
-        loadSections();
-    }
-
-   
-    void disapproveSubmitToProvince() {
-        entity = svc.disapproveSubmitToProvince(entity);
-        loadSections();
-    }
-
-
-    void approveSubmittedToProvince(){
-        entity = svc.approveSubmittedToProvince(entity);
-        loadSections();
-    }
-    
-    
-    void disapproveSubmittedToProvince(){
-        entity = svc.disapproveSubmittedToProvince(entity);
-        loadSections();
-    }
-    
-    
-    void approveByProvince() {
-        entity = svc.approveByProvince(entity);
-        loadSections();
-    }
-
-
-    void disapproveByProvince() {
-        entity = svc.disapproveByProvince(entity);
-        loadSections();
-    }
-    
-    
-            
-    
-    
-    void addMessage(msg){
-        messages << msg;
-    }
-    
-    
-    void clearMessages(type){
-        messages.removeAll( messages.findAll{it.type == type} )
-    }
-    
-
-    void checkMessages(){
-        if (messages)
-            throw new Exception(messages[0].msg);
-    }   
-    
-    
-    
-    
-    
-    
-    void assignTaxmapper(){
-        doAssignTask('fortaxmapping')
-    }
-    
-    void assignAppraiser(){
-        doAssignTask('forappraisal')
-    }
-    
-    void assignApprover(){
-        doAssignTask('forapproval')
-    }
-    
-    void doAssignTask(newaction){
-        def task = taskSvc.findCurrentTask(entity.objid);
-        task.action = newaction;
-        task.msg = '';
-        taskSvc.createNextUserTask(task);
-        initOpen();
-    }    
-    
-    
-    
-    
-}
-
-
-public class ApproveConsolidationTask implements Runnable{
-    def svc;
-    def entity;
-    def oncomplete;
-    def onerror;
-    def showinfo;
-
-    public void run(){
-        try{
-            showinfo('Initializing');
-            svc.initApproveConsolidationAsync(entity);
-            showinfo(' .... Done\n');
-        
-            showinfo('Assigning new TD No. to Consolidated Land and Affected RPUs');
-            entity.putAll( svc.assignNewTdNosAsync(entity) );
-            showinfo(' .... Done\n');
-            
-            
-            showinfo('Processing Consolidated Land ');
-            if ( ! entity.newfaasid){
-                showinfo('Creating new Consolidated Land FAAS for TD No. ' + entity.newtdno );
-                entity.putAll( svc.createConsolidatedLandFaasAsync(entity))
-            }
-            showinfo(' .... Done\n\n');
-                
-            showinfo('Processing Affected RPUs\n');
-            svc.getAffectedRpus(entity.objid).each{ arpu ->
-                if ( ! arpu.newfaasid) {
-                    showinfo('Creating new Affected RPU FAAS for TD No. ' + arpu.newtdno );
-                    svc.createAffectedRpuFaasRecordAsync(entity, arpu);
-                    showinfo(' .... Done\n');
-                }
-            }
-            
-            showinfo('Consolidation Approval')
-            svc.approveConsolidationAsync(entity);
-            entity.state = 'APPROVED';
-            showinfo(' .... Done\n');
-            
-            oncomplete()
-        }
-        catch(e){
-            onerror('\n\n' + e.message )
-        }
-    }
-    
-    void doSleep(){
-        try{
-            Thread.sleep(2000);
-        }
-        catch(e){
-            ;
-        }
-    }
 }

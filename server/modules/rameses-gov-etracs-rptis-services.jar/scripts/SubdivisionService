@@ -707,6 +707,12 @@ class SubdivisionService
         return subdivision
     }
 
+
+    @ProxyMethod
+    public def getFaasListing( objid ) {
+        return em.getFaasListing([objid:objid])
+    }
+
 }
 
 

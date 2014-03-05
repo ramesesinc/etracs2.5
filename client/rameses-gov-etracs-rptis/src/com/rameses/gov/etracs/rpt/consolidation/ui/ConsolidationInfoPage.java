@@ -56,19 +56,6 @@ public class ConsolidationInfoPage extends javax.swing.JPanel {
         xTextField6 = new com.rameses.rcp.control.XTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
         xTextArea1 = new com.rameses.rcp.control.XTextArea();
-        xFormPanel13 = new com.rameses.rcp.control.XFormPanel();
-        formPanel7 = new com.rameses.rcp.util.FormPanel();
-        xLookupField10 = new com.rameses.rcp.control.XLookupField();
-        xDateField12 = new com.rameses.rcp.control.XDateField();
-        formPanel10 = new com.rameses.rcp.util.FormPanel();
-        xLookupField11 = new com.rameses.rcp.control.XLookupField();
-        xDateField13 = new com.rameses.rcp.control.XDateField();
-        formPanel11 = new com.rameses.rcp.util.FormPanel();
-        xLookupField12 = new com.rameses.rcp.control.XLookupField();
-        xDateField14 = new com.rameses.rcp.control.XDateField();
-        formPanel12 = new com.rameses.rcp.util.FormPanel();
-        xLookupField13 = new com.rameses.rcp.control.XLookupField();
-        xDateField15 = new com.rameses.rcp.control.XDateField();
 
         com.rameses.rcp.control.border.XTitledBorder xTitledBorder1 = new com.rameses.rcp.control.border.XTitledBorder();
         xTitledBorder1.setTitle("Signatories");
@@ -246,91 +233,6 @@ public class ConsolidationInfoPage extends javax.swing.JPanel {
 
         formPanel4.add(jScrollPane1);
 
-        com.rameses.rcp.control.border.XTitledBorder xTitledBorder4 = new com.rameses.rcp.control.border.XTitledBorder();
-        xTitledBorder4.setTitle("Signatories");
-        xFormPanel13.setBorder(xTitledBorder4);
-        xFormPanel13.setCellspacing(1);
-
-        formPanel7.setOrientation(com.rameses.rcp.constant.UIConstants.HORIZONTAL);
-        formPanel7.setPadding(new java.awt.Insets(0, 0, 0, 0));
-        formPanel7.setPreferredSize(new java.awt.Dimension(0, 22));
-        formPanel7.setShowCaption(false);
-        xLookupField10.setCaption("Appraiser");
-        xLookupField10.setCaptionWidth(90);
-        xLookupField10.setExpression("#{entity.appraiser.name}");
-        xLookupField10.setHandler("lookupAppraiser");
-        xLookupField10.setName("entity.appraiser");
-        xLookupField10.setPreferredSize(new java.awt.Dimension(235, 20));
-        formPanel7.add(xLookupField10);
-
-        xDateField12.setDisabledTextColor(new java.awt.Color(0, 0, 0));
-        xDateField12.setName("entity.appraiser.dtsigned");
-        xDateField12.setPreferredSize(new java.awt.Dimension(90, 20));
-        xDateField12.setShowCaption(false);
-        formPanel7.add(xDateField12);
-
-        xFormPanel13.add(formPanel7);
-
-        formPanel10.setOrientation(com.rameses.rcp.constant.UIConstants.HORIZONTAL);
-        formPanel10.setPadding(new java.awt.Insets(0, 0, 0, 0));
-        formPanel10.setPreferredSize(new java.awt.Dimension(0, 22));
-        formPanel10.setShowCaption(false);
-        xLookupField11.setCaption("Recommender");
-        xLookupField11.setCaptionWidth(90);
-        xLookupField11.setExpression("#{entity.recommender.name}");
-        xLookupField11.setHandler("lookupRecommender");
-        xLookupField11.setName("entity.recommender");
-        xLookupField11.setPreferredSize(new java.awt.Dimension(235, 20));
-        formPanel10.add(xLookupField11);
-
-        xDateField13.setDisabledTextColor(new java.awt.Color(0, 0, 0));
-        xDateField13.setName("entity.recommender.dtsigned");
-        xDateField13.setPreferredSize(new java.awt.Dimension(90, 20));
-        xDateField13.setShowCaption(false);
-        formPanel10.add(xDateField13);
-
-        xFormPanel13.add(formPanel10);
-
-        formPanel11.setOrientation(com.rameses.rcp.constant.UIConstants.HORIZONTAL);
-        formPanel11.setPadding(new java.awt.Insets(0, 0, 0, 0));
-        formPanel11.setPreferredSize(new java.awt.Dimension(0, 22));
-        formPanel11.setShowCaption(false);
-        xLookupField12.setCaption("Taxmapper");
-        xLookupField12.setCaptionWidth(90);
-        xLookupField12.setExpression("#{entity.taxmapper.name}");
-        xLookupField12.setHandler("lookupTaxmapper");
-        xLookupField12.setName("entity.taxmapper");
-        xLookupField12.setPreferredSize(new java.awt.Dimension(235, 20));
-        formPanel11.add(xLookupField12);
-
-        xDateField14.setDisabledTextColor(new java.awt.Color(0, 0, 0));
-        xDateField14.setName("entity.taxmapper.dtsigned");
-        xDateField14.setPreferredSize(new java.awt.Dimension(90, 20));
-        xDateField14.setShowCaption(false);
-        formPanel11.add(xDateField14);
-
-        xFormPanel13.add(formPanel11);
-
-        formPanel12.setOrientation(com.rameses.rcp.constant.UIConstants.HORIZONTAL);
-        formPanel12.setPadding(new java.awt.Insets(0, 0, 0, 0));
-        formPanel12.setPreferredSize(new java.awt.Dimension(0, 22));
-        formPanel12.setShowCaption(false);
-        xLookupField13.setCaption("Approver");
-        xLookupField13.setCaptionWidth(90);
-        xLookupField13.setExpression("#{entity.approver.name}");
-        xLookupField13.setHandler("lookupApprover");
-        xLookupField13.setName("entity.approver");
-        xLookupField13.setPreferredSize(new java.awt.Dimension(235, 20));
-        formPanel12.add(xLookupField13);
-
-        xDateField15.setDisabledTextColor(new java.awt.Color(0, 0, 0));
-        xDateField15.setName("entity.approver.dtsigned");
-        xDateField15.setPreferredSize(new java.awt.Dimension(90, 20));
-        xDateField15.setShowCaption(false);
-        formPanel12.add(xDateField15);
-
-        xFormPanel13.add(formPanel12);
-
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -338,7 +240,6 @@ public class ConsolidationInfoPage extends javax.swing.JPanel {
             .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
-                    .add(org.jdesktop.layout.GroupLayout.LEADING, xFormPanel13, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 433, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(org.jdesktop.layout.GroupLayout.LEADING, formPanel4, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 433, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(org.jdesktop.layout.GroupLayout.LEADING, formPanel3, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 433, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .add(79, 79, 79))
@@ -350,42 +251,27 @@ public class ConsolidationInfoPage extends javax.swing.JPanel {
                 .add(formPanel3, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(formPanel4, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(xFormPanel13, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .add(179, 179, 179))
+                .add(71, 71, 71))
         );
     }// </editor-fold>//GEN-END:initComponents
     
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private com.rameses.rcp.util.FormPanel formPanel10;
-    private com.rameses.rcp.util.FormPanel formPanel11;
-    private com.rameses.rcp.util.FormPanel formPanel12;
     private com.rameses.rcp.util.FormPanel formPanel3;
     private com.rameses.rcp.util.FormPanel formPanel4;
-    private com.rameses.rcp.util.FormPanel formPanel7;
     private com.rameses.rcp.util.FormPanel formPanel8;
     private com.rameses.rcp.util.FormPanel formPanel9;
     private javax.swing.JScrollPane jScrollPane1;
     private com.rameses.rcp.control.XComboBox xComboBox2;
-    private com.rameses.rcp.control.XDateField xDateField12;
-    private com.rameses.rcp.control.XDateField xDateField13;
-    private com.rameses.rcp.control.XDateField xDateField14;
-    private com.rameses.rcp.control.XDateField xDateField15;
     private com.rameses.rcp.control.XDateField xDateField3;
     private com.rameses.rcp.control.XDateField xDateField4;
     private com.rameses.rcp.control.XDateField xDateField5;
     private com.rameses.rcp.control.XDateField xDateField6;
     private com.rameses.rcp.control.XDateField xDateField9;
     private com.rameses.rcp.control.XFormPanel xFormPanel11;
-    private com.rameses.rcp.control.XFormPanel xFormPanel13;
     private com.rameses.rcp.control.XIntegerField xIntegerField2;
     private com.rameses.rcp.control.XLabel xLabel1;
     private com.rameses.rcp.control.XLookupField xLookupField1;
-    private com.rameses.rcp.control.XLookupField xLookupField10;
-    private com.rameses.rcp.control.XLookupField xLookupField11;
-    private com.rameses.rcp.control.XLookupField xLookupField12;
-    private com.rameses.rcp.control.XLookupField xLookupField13;
     private com.rameses.rcp.control.XLookupField xLookupField2;
     private com.rameses.rcp.control.XLookupField xLookupField3;
     private com.rameses.rcp.control.XLookupField xLookupField4;

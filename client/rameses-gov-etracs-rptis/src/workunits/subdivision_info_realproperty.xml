@@ -71,11 +71,16 @@ class SubdividedLandPinController
     def open(){
         if (!selectedItem ) throw new Exception('Select an item to open.');
         
+        def viewonly = true;
+        if ( entity.taskaction == null || ! entity.taskaction.matches('assign.*')){
+            viewonly = false;
+        }
+        
         return InvokerUtil.lookupOpener('realproperty:open', [
             entity : [objid:selectedItem.newrpid],
             autoClose : true,
             allowCreate : false,
-            viewOnly    : entity.taskaction.matches('assign.*'),
+            viewOnly    : viewonly,
             
             onupdate : {
                 selectedItem.newpin = it.pin;
