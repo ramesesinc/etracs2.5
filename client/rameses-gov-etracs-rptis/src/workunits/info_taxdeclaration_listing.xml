@@ -21,6 +21,10 @@
             def entity;
             def selectedItem;
             def faases;
+            boolean printing = false;
+            def printTask;
+            def msg;
+            
             
             void init(){
                 faases = svc.getFaasListing(entity.objid);
@@ -31,10 +35,33 @@
             ] as BasicListModel;
             
             
+            def reportopener;
+            
             def getOpener(){
+                if (printing) 
+                    return reportopener;
+               
+                reportopener = null;
                 if (selectedItem)
-                    return InvokerUtil.lookupOpener('td:report', [entity:selectedItem]);
-                return null;
+                    reportopener = InvokerUtil.lookupOpener('td:report', [entity:selectedItem]);
+                return reportopener;
+            }
+            
+            void cancelPrinting(){
+                printTask.cancelled = true;
+                printing = false;
+            }
+            
+            
+            
+            def oncomplete = {
+                printing = false;
+                binding.refresh('printAll|cancelPrinting');
+            }
+            
+            def onprogress = {
+                msg = it;
+                binding.refresh('msg');
             }
             
             void printAll(){
@@ -43,19 +70,53 @@
                     
                 if (!faases) 
                     return;
+                    
+                printTask = new PrintTask(faases:faases, oncomplete:oncomplete, onprogress:onprogress);
+                Thread t = new Thread(printTask);
+                t.start();
+                printing = true;
+            }
+            
+        }
+        
+        
+        public class PrintTask implements Runnable
+        {
+            def faases;
+            boolean cancelled;
+            def oncomplete;
+            def onprogress;
+            
+            public void run(){
+                int count = 0;
+                cancelled = false;
                 
-                faases.each{
-                    def o = InvokerUtil.lookupOpener('td:report:print', [entity:it]);
+                for(int i=0; i < faases.size(); i++){
+                    if (cancelled) 
+                        break;
+                        
+                    def faas = faases[i];
+                    def o = InvokerUtil.lookupOpener('td:report:print', [entity:faas]);
                     if (o){
                         o.handle.report.viewReport();
                         ReportUtil.print(o.handle.report.report, false);
                     }
+                    count += 1;
+                    onprogress('Printing ' + faas.tdno);
+                    
+                    try{
+                        Thread.sleep(2000);
+                    }
+                    catch(e){
+                        //ignore
+                    }
                 }
                 
-                MsgBox.alert('All tax declarations are successfully sent to the printer.')
-            }
-        
+                onprogress('');
+                oncomplete();
+            }   
         }
+    
         
     ]]>    
     </code>

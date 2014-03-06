@@ -51,6 +51,7 @@
             </Property>
             <Property name="dynamic" type="boolean" value="true"/>
             <Property name="handler" type="java.lang.String" value="opener"/>
+            <Property name="name" type="java.lang.String" value="opener"/>
           </Properties>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout$JSplitPaneConstraintsDescription">
@@ -83,7 +84,10 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
                       <Component id="xButton1" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" max="-2" attributes="0"/>
+                      <Component id="xButton2" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
+                      <Component id="xLabel1" pref="55" max="32767" attributes="0"/>
                   </Group>
                   <Component id="xDataTable1" alignment="1" pref="199" max="32767" attributes="0"/>
               </Group>
@@ -93,7 +97,11 @@
                   <Group type="102" alignment="1" attributes="0">
                       <Component id="xDataTable1" pref="381" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="xButton1" min="-2" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="xButton1" alignment="3" min="-2" max="-2" attributes="1"/>
+                          <Component id="xButton2" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="xLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
+                      </Group>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -117,6 +125,24 @@
                 <Property name="mnemonic" type="int" value="97"/>
                 <Property name="name" type="java.lang.String" value="printAll"/>
                 <Property name="text" type="java.lang.String" value="Print All"/>
+              </Properties>
+            </Component>
+            <Component class="com.rameses.rcp.control.XButton" name="xButton2">
+              <Properties>
+                <Property name="mnemonic" type="int" value="99"/>
+                <Property name="name" type="java.lang.String" value="cancelPrinting"/>
+                <Property name="text" type="java.lang.String" value="Cancel"/>
+              </Properties>
+            </Component>
+            <Component class="com.rameses.rcp.control.XLabel" name="xLabel1">
+              <Properties>
+                <Property name="expression" type="java.lang.String" value="#{msg}"/>
+                <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                  <Font name="Tahoma" size="12" style="1"/>
+                </Property>
+                <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                  <Color blue="0" green="0" red="cc" type="rgb"/>
+                </Property>
               </Properties>
             </Component>
           </SubComponents>
