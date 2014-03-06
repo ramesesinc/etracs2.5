@@ -154,7 +154,6 @@ public class BatchCaptureController  {
         onAddItem: { o->
             validateItem(o) 
             prevEntity = o.clone();
-            calculate(); 
         },
         
         isColumnEditable:{item, colname-> 
@@ -175,13 +174,13 @@ public class BatchCaptureController  {
             }
         },
         onCommitItem: { o-> 
+            calculate();
+            svc.addUpdateItem(entity, o)
             if( o.newitem ) {
                  o.newitem = false 
                  entity.batchitems << o 
                  moveNext()
             }
-            calculate();
-            svc.addUpdateItem(entity, o)
         },
         
         onRemoveItem: { o ->
