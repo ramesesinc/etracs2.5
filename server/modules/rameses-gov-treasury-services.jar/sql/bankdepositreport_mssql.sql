@@ -96,6 +96,7 @@ from(
   inner join cashreceiptitem cri on cri.receiptid = c.objid
   inner join revenueitem ri on ri.objid = cri.item_objid
   left join cashreceipt_void cv on cv.receiptid = c.objid 
+where cv.objid is null 
 group by ri.fund_title, cri.item_objid, cri.item_code, cri.item_title 
 order by fundname, acctcode, acctname  
 
@@ -119,7 +120,7 @@ from(
   inner join brgyshare_account_mapping bam on cri.barangayid = bam.barangayid 
   left join revenueitem ri on ri.objid = bam.acct_objid
   left join cashreceipt_void cv on cv.receiptid = c.objid 
-  where c.formno = '56'
+  where cv.objid is null and c.formno = '56'
 group by ri.fund_title, ri.objid, ri.code, ri.title 
 order by fundname, acctcode, acctname  
 
