@@ -42,6 +42,7 @@
 	<field name="basicdp" class="java.math.BigDecimal"/>
 	<field name="sefdp" class="java.math.BigDecimal"/>
 	<field name="firecode" class="java.math.BigDecimal"/>
+	<field name="totalareasqm" class="java.math.BigDecimal"/>
 
 	<variable name="T_FIRECODE" class="java.math.BigDecimal" resetType="Report" calculation="Sum">
 		<variableExpression><![CDATA[$F{firecode}]]></variableExpression>
@@ -215,9 +216,9 @@
 				<staticText>
 					<reportElement
 						mode="Transparent"
-						x="187"
+						x="193"
 						y="0"
-						width="70"
+						width="64"
 						height="13"
 						forecolor="#000000"
 						backcolor="#FFFFFF"
@@ -235,7 +236,7 @@
 				<staticText>
 					<reportElement
 						mode="Transparent"
-						x="101"
+						x="96"
 						y="0"
 						width="59"
 						height="13"
@@ -257,7 +258,7 @@
 						mode="Transparent"
 						x="0"
 						y="0"
-						width="101"
+						width="96"
 						height="13"
 						forecolor="#000000"
 						backcolor="#FFFFFF"
@@ -275,9 +276,9 @@
 				<staticText>
 					<reportElement
 						mode="Transparent"
-						x="160"
+						x="155"
 						y="0"
-						width="27"
+						width="38"
 						height="13"
 						forecolor="#000000"
 						backcolor="#FFFFFF"
@@ -290,7 +291,7 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
 						<font fontName="SansSerif" pdfFontName="Helvetica" size="9" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 					</textElement>
-				<text><![CDATA[Class]]></text>
+				<text><![CDATA[Kind]]></text>
 				</staticText>
 			</band>
 		</columnHeader>
@@ -300,7 +301,7 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						mode="Transparent"
-						x="101"
+						x="96"
 						y="0"
 						width="59"
 						height="18"
@@ -380,9 +381,9 @@
 				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						mode="Transparent"
-						x="187"
+						x="193"
 						y="0"
-						width="70"
+						width="64"
 						height="18"
 						forecolor="#000000"
 						backcolor="#FFFFFF"
@@ -483,7 +484,7 @@
 						mode="Transparent"
 						x="0"
 						y="0"
-						width="101"
+						width="96"
 						height="18"
 						forecolor="#000000"
 						backcolor="#FFFFFF"
@@ -502,9 +503,9 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						mode="Transparent"
-						x="160"
+						x="155"
 						y="0"
-						width="27"
+						width="38"
 						height="18"
 						forecolor="#000000"
 						backcolor="#FFFFFF"
@@ -515,9 +516,9 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 </box>
 					<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
-						<font fontName="SansSerif" pdfFontName="Helvetica" size="9" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
+						<font fontName="SansSerif" pdfFontName="Helvetica" size="7" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{classcode}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{rputype}.substring(0,1).toUpperCase() + " - " + $F{classcode} + ($F{totalareasqm}.doubleValue() > 0 ? "\n" + (new java.text.DecimalFormat("##0.00").format($F{totalareasqm})) : "")]]></textFieldExpression>
 				</textField>
 			</band>
 		</detail>

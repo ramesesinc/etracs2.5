@@ -19,7 +19,7 @@ class RPTSmsHandler {
 
 	def SMS_COST = 2.0
 
-	def keywords = ['RPTHELP', 'RPTENROLL', 'RPTINFO', 'RPTBAL', 'RPTSTOP',]
+	def keywords = ['RPTHELP', 'RPTENROLL', 'RPTINFO', 'RPTBAL', 'RPTSTOP', 'RH', 'RE', 'RI', 'RB', 'RT', 'RTS', 'RS']
 
 	@OnMessage(value="sms_listener", eval="#{data.keyword.toUpperCase().startsWith('xRPT')}")
 	public void checkKeyword(def params) {
@@ -43,8 +43,9 @@ class RPTSmsHandler {
 			smsSvc.send(reply)
 		}
 	}
+
 	
-	@OnMessage(value="sms_listener", eval="#{data.keyword.equalsIgnoreCase('RPTHELP')}")
+	@OnMessage(value="sms_listener", eval="#{data.keyword.toUpperCase().matches('RH|RPTHELP')}")
 	public void handleHelp(def params) 
 	{
 		def reply = createReply(params)
@@ -52,7 +53,7 @@ class RPTSmsHandler {
 		sendReply(reply)
 	} 
 
-	@OnMessage(value="sms_listener", eval="#{data.keyword.equalsIgnoreCase('RPTENROLL')}")
+	@OnMessage(value="sms_listener", eval="#{data.keyword.toUpperCase().matches('RE|RPTENROLL')}")
 	public void handleEnroll(def params) 
 	{
 		def reply = createReply(params)
@@ -73,7 +74,7 @@ class RPTSmsHandler {
 	} 
 
 	
-	@OnMessage(value="sms_listener", eval="#{data.keyword.equalsIgnoreCase('RPTINFO')}")
+	@OnMessage(value="sms_listener", eval="#{data.keyword.toUpperCase().matches('RI|RPTINFO')}")
 	public void handleInfo(def params) 
 	{
 		def reply = createReply(params)
@@ -88,7 +89,7 @@ class RPTSmsHandler {
 	} 
 
 
-	@OnMessage(value="sms_listener", eval="#{data.keyword.equalsIgnoreCase('RPTBAL')}")
+	@OnMessage(value="sms_listener", eval="#{data.keyword.toUpperCase().matches('RB|RPTBAL')}")
 	public void handleBalanceInquiry(def params) 
 	{
 		def reply = createReply(params)
@@ -109,7 +110,7 @@ class RPTSmsHandler {
 	} 
 
 
-	@OnMessage(value="sms_listener", eval="#{data.keyword.equalsIgnoreCase('RPTSTOP')}")
+	@OnMessage(value="sms_listener", eval="#{data.keyword.toUpperCase().matches('RS|RPTSTOP')}")
 	public void handleStop(def params) 
 	{
 		def reply = createReply(params)
@@ -128,7 +129,7 @@ class RPTSmsHandler {
 
 
 
-	@OnMessage(value="sms_listener", eval="#{data.keyword.equalsIgnoreCase('RPTTRACK')}")
+	@OnMessage(value="sms_listener", eval="#{data.keyword.toUpperCase().matches('RT|RPTTRACK')}")
 	public void handleRPTTracking(def params) 
 	{
 		def reply = createReply(params)
@@ -148,7 +149,7 @@ class RPTSmsHandler {
 		sendReply(reply)
 	} 
 
-	@OnMessage(value="sms_listener", eval="#{data.keyword.equalsIgnoreCase('RPTSTATUS')}")
+	@OnMessage(value="sms_listener", eval="#{data.keyword.toUpperCase().matches('RTS|RPTSTATUS')}")
 	public void handleTrackingStatusRequest(def params) 
 	{
 		def reply = createReply(params)
@@ -215,31 +216,37 @@ class RPTSmsHandler {
 
 	def getHelpInfo(){
 		def help = 'RPT SMS Services: \n'
-		help += '(a) RPTENROLL <tdno> - enrolls tdno to avail SMS services\n'
-		help += '(b) RPTINFO - receive info for each enrolled properties\n'
-		help += '(c) RPTINFO <tdno> - receive tdno info\n'
-		help += '(d) RPTBAL <tdno> - inquire current balance of tdno.\n'
-		help += '(e) RPTTRACK <trackingno> - enroll a tracking no.\n'
-		help += '(f) RPTSTATUS <trackingno> - inquire document status.\n'
-		help += '(g) RPTSTOP - unregister all properties\n'
-		help += '(h) RPTSTOP <tdno> - unregister tdno.\n'
+		help += '(a) RE <tdno> - enrolls tdno to avail SMS services\n'
+		help += '(b) RI - receive info for each enrolled properties\n'
+		help += '(c) RI <tdno> - receive tdno info\n'
+		help += '(d) RB <tdno> - inquire current balance of tdno.\n'
+		help += '(e) RT <trackingno> - enroll a tracking no.\n'
+		help += '(f) RTS <trackingno> - inquire document status.\n'
+		help += '(g) RS - unregister all properties\n'
+		help += '(h) RS <tdno> - unregister tdno.\n'
 		return help 
 	}
 	
 	void sendReply(reply){
-		def smsreply = smsSvc.send(reply)
+		try{
+			def smsreply = smsSvc.send(reply)
 
-		//save sms reply
-		def sms = [objid:'SR' + new java.rmi.server.UID()];
-		sms.logdate = dateService.serverDate;
-		sms.traceid = (smsreply.traceid ? smsreply.traceid : smsreply.message);
-		sms.message = reply.message;
-		sms.phoneno = reply.phoneno;
-		sms.action = reply.keyword;
-		sms.amount = SMS_COST * (reply.creditcount == null ? 1 : reply.creditcount);
-		sms.amtpaid = 0.0;
-		sms.status = reply.retcode 
-		em.create(sms);
+			//save sms reply
+			def sms = [objid:'SR' + new java.rmi.server.UID()];
+			sms.logdate = dateService.serverDate;
+			sms.traceid = (smsreply.traceid ? smsreply.traceid : smsreply.message);
+			sms.message = reply.message;
+			sms.phoneno = reply.phoneno;
+			sms.action = reply.keyword;
+			sms.amount = SMS_COST * (reply.creditcount == null ? 1 : reply.creditcount);
+			sms.amtpaid = 0.0;
+			sms.status = reply.retcode 
+			em.create(sms);
+		}
+		catch(e){
+			println '='*50
+			e.printStackTrace()
+		}
 	}
 
 }

@@ -1,8 +1,5 @@
 <workunit>
     <invokers>
-       <invoker type="businessinfo:generalinfo:formActions" caption="Print Permit" 
-            action="viewPermitFromBusiness" visibleWhen="#{entity.state=='ACTIVE' &amp;&amp; entity.permit?.objid!=null}" />
-            
        <invoker type="businesspermit:print" index="50" action="viewReport"/>    
        <invoker type="formActions" caption="Back" action="_close" mnemonic="b" shortcut="ctrl B" /> 
     </invokers>
@@ -43,7 +40,7 @@
             } 
             
             void viewReport() {
-                data = permitSvc.open( entity );
+                data = permitSvc.openForPermit( entity );
                 data.permitno = data.permitno + "-" + data.version;
                 report.viewReport();
             } 

@@ -15,6 +15,7 @@ FROM rpt_sms_registration s
 	INNER JOIN rpu r ON f.rpuid = r.objid 
 	INNER JOIN realproperty rp ON f.realpropertyid = rp.objid 
 WHERE f.tdno = $P{refno}
+  AND s.phoneno = $P{phoneno}
   
 
  [getRegisteredFaasesByPhoneNo]

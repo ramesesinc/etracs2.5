@@ -37,7 +37,7 @@
                 loadData();
                 if(!entity) {
                     entity = [businessid:businessid];
-                    msg = "There is not tax credit ledger yet for this business. Click on 'Build Ledger' to create a ledger";
+                    msg = "There is no tax credit ledger yet for this business. Click on 'Build Ledger' to create a ledger";
                 }   
             }
             

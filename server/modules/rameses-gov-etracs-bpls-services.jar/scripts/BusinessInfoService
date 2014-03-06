@@ -14,6 +14,9 @@ public class BusinessInfoService extends ActiveCrudService {
 	@Service("DateService")
 	def dateSvc;
 
+	@Env
+	def env;
+
 	@Service("SequenceService")
 	def seqSvc;
 
@@ -98,7 +101,6 @@ public class BusinessInfoService extends ActiveCrudService {
 	@ProxyMethod
 	public def activate(o) {
 		if(o.state=='CAPTURED') {
-			o.state = 'ACTIVE';
 			o.lobs.each {
 				em.create(it, "lob");
 			}
@@ -201,8 +203,7 @@ public class BusinessInfoService extends ActiveCrudService {
 			em.removeInfos([objid:o.objid]);
 			em.removeLOB([objid:o.objid]);
 			em.removeAssessmentInfos([objid:o.objid]);
-			def lobs = o.lobs.findAll{it.assessmenttype.matches('NEW|RENEW')};
-			lobs.each {
+			o.lobs.each {
 				it.businessid = o.objid;
 				em.create(it, "lob");				
 			}
@@ -225,21 +226,55 @@ public class BusinessInfoService extends ActiveCrudService {
 			em.removeInfos([objid:o.objid]);
 			em.removeLOB([objid:o.objid]);
 			em.removeAssessmentInfos([objid:o.objid]);
+			o.lobs.each {
+				it.businessid = o.objid;
+				it.assessmenttype = 'RETIRE';
+				em.create(it, "lob");				
+			}
 			em.update(o);
 		}
-		else if(o.apptype == 'AMEND') {
-			lobs.each {
+		else if(o.apptype == 'AMENDLOB') {
+			o.lobs.each {
 				if(it.assessmenttype == 'NEW') {
 					it.businessid = o.objid;
 					em.create(it, "lob");				
 				}
-				else if(it.assessmenttype == '') {
+				else if(it.assessmenttype == 'RETIRE') {
 					em.delete( it, "lob" );
 				}
+				else if(it.assessmenttype == 'REMOVE') {
+					em.delete( it, "lob" );
+				}
+				else if(it.assessmenttype == 'RECLASSIFY') {
+					em.update( it, "lob" );
+				}
 			}
+			def b = em.read( o );
+			b.state = 'ACTIVE';
+			em.update(b);
 		}
 
 	}
 
+	@ProxyMethod
+	public def updateBusinessInfo( def o ) {
+		def x = [:];
+		x.putAll( em.read(o) );
+		x.businessid = o.objid;
+		x.objid = 'BUSINFO'+new UID();
+		x.dtfiled = dateSvc.serverDate;
+		x.filedby = [objid:env.USERID , name:env.USER];
+		em.create( x, "changeinfo");
+		em.update( o );
+	}
+
+	@ProxyMethod
+	public void updateLobs( def o ) {
+		em.removeLOB([objid:o.objid]);	
+		o.lobs.each {
+			it.businessid = o.objid;
+			em.create(it, "lob");				
+		}	
+	}
 
 }

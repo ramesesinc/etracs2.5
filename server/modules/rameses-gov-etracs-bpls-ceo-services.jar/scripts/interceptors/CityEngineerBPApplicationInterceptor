@@ -18,7 +18,7 @@ public class CityEngineerBPApplicationInterceptor {
 
 		//if this info does not exist or is not supplied, we assume there is a city engineer component
 		//find if there is  already a link, if not, we need to create one
-		if( m?.value == true ) {
+		if( app.apptype.matches('NEW|RENEW') && m?.value == true ) {
 			def z = em.findInfo([businessid:app.businessid]);
 			if(!z) {
 				z = [objid: app.businessid];

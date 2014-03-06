@@ -25,7 +25,7 @@
 
 
 	<field name="orno" class="java.lang.String"/>
-	<field name="ordate" class="java.lang.String"/>
+	<field name="ordate" class="java.util.Date"/>
 	<field name="amount" class="java.math.BigDecimal"/>
 	<field name="particulars" class="java.lang.String"/>
 
@@ -165,7 +165,7 @@
 					<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
 						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="7" isBold="true" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{ordate}]]></textFieldExpression>
+				<textFieldExpression   class="java.util.Date"><![CDATA[$F{ordate}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement

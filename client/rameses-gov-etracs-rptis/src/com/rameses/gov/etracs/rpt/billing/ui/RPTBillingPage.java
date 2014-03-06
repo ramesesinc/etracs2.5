@@ -114,7 +114,7 @@ public class RPTBillingPage extends javax.swing.JPanel {
         xDateField1.setCaption("Advance Billing Date");
         xDateField1.setCaptionWidth(120);
         xDateField1.setCellPadding(new java.awt.Insets(0, 90, 0, 0));
-        xDateField1.setDepends(new String[] {"bill.advancepayment"});
+        xDateField1.setDepends(new String[] {"bill.advancebill"});
         xDateField1.setName("bill.billdate");
         xDateField1.setPreferredSize(new java.awt.Dimension(100, 19));
         formPanel1.add(xDateField1);
