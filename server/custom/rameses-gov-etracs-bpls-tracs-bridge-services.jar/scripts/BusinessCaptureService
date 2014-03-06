@@ -78,7 +78,7 @@ public class BusinessCaptureService {
 	@ProxyMethod
 	public def register(o) {
 		o.state = 'CAPTURED';
-		o.apptype = 'CAPTURED';
+		o.apptype = 'CAPTURE';
 		def biz = infoSvc.create(o);
 		biz.lobs = o.lobs;
 		biz.lobs.each {

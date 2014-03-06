@@ -52,27 +52,35 @@ class BusinessPermitService  {
 
 		//calculate expiry date
 		def expirydate = dateSvc.getMonthEndDate( java.sql.Date.valueOf(yr+"-12-01") );		
-
-		b.lobs = bizInfo.getLobs( [objid:o.businessid] ).findAll{ it.assessmenttype!='RETIRE' };
-
 		def p = [:];
  		p.objid = "PERM" + new UID();
  		p.state = 'ACTIVE';
+ 		p.dtissued = dateSvc.serverDate;
+ 		p.issuedby = [objid: env.USERID, name:env.USER];
+ 		p.expirydate = expirydate;
+ 		p.version = ver;
+ 		p.permitno = permitno;
+ 		p.permittype = o.permittype;
+ 		copy(p, b);
+ 		em.create( p );
+ 		return p;
+	}
+
+	private void copy( def p, def b ) {
  		p.businessid = b.objid;
  		p.activeyear = b.activeyear;
  		p.ownername = b.owner.name;
+ 		p.owneraddress = b.owner.address;
  		p.tradename = b.tradename;
  		p.businessaddress = b.businessaddress;
+ 		p.businessname = b.businessname;
+ 		p.orgtype = b.orgtype;
  		p.bin = b.bin;
  		p.pin = b.pin;
  		p.apptype = b.apptype;
- 		p.permitno = permitno;
- 		p.version = ver;
- 		p.dtissued = dateSvc.serverDate;
- 		p.permittype = o.permittype;
- 		p.issuedby = [objid: env.USERID, name:env.USER];
- 		p.expirydate = expirydate;
- 		p.lobs = b.lobs;
+ 		p.lobs = bizInfo.getLobs( [objid:p.businessid] );
+ 		p.appinfos = bizInfo.getAppInfos( [objid:p.businessid] );
+ 		p.assessmentinfos = bizInfo.getAssessmentInfos( [objid:p.businessid] );
  		p.payments = em.getPayments( [businessid: p.businessid, activeyear: p.activeyear]);
  		p.payments.each {
 			if(it.payoption == 'FULLYEAR') {
@@ -86,52 +94,27 @@ class BusinessPermitService  {
 			}
 			it.ordate = dateSvc.format( 'yyyy-MM-dd', it.ordate );
  		}
- 		em.create( p );
- 		return p;
 	}
 
 
 	@ProxyMethod
-	public def open( o ) {
+	public def openForPermit( o ) {
 		def r = em.read( o );
 		r.payments.each {
 			it.ordate = dateSvc.parse( 'yyyy-MM-dd', it.ordate);
 			it.amount = new BigDecimal(it.amount);
 		}
+		r.lobs = r.lobs.findAll{ it.assessmenttype != 'RETIRE' }
 		r.barcode = '51005:'+r.bin;
 		return r;
 	}
 
-
 	@ProxyMethod
-	public def rebuildPermit( o ) {
+	public void rebuildPermit( o ) {
 		def p = em.read( [objid: o.objid] );
-
 		def b = bizInfo.open( [objid: p.businessid] );
-		b.lobs = bizInfo.getLobs( [objid:p.businessid] );
-
-		p.ownername = b.owner.name;
- 		p.tradename = b.tradename;
- 		p.businessaddress = b.businessaddress;
- 		p.bin = b.bin;
- 		p.pin = b.pin;
-		p.apptype = b.apptype;
-		p.lobs = b.lobs;
- 		p.payments = em.getPayments( [businessid: b.objid, activeyear: b.activeyear]);
- 		p.payments.each {
-			if(it.payoption == 'FULLYEAR') {
-				it.particulars = 'full';
-			}
-			else if(it.payoption == 'FULLQTR') {
-				it.particulars = 'paid until qtr ' + it.qtr;
-			}
-			else if( it.qtr > 0 ) {
-				it.particulars = 'paid until qtr ' + it.qtr;
-			}
-			it.ordate = dateSvc.format( 'yyyy-MM-dd', it.ordate );
- 		} 
- 		em.update( p );	
- 		return open(p);
+		copy(p,b);
+		em.update( p );	
 	}
 
 	@ProxyMethod

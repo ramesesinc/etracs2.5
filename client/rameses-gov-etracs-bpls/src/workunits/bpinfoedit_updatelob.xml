@@ -25,6 +25,7 @@
             boolean lobUpdated = false;
             
             void init() {
+                lobs = [];
                 lobs.addAll( entity.lobs );
             }
             

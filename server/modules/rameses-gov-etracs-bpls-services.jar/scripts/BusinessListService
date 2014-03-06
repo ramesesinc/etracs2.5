@@ -73,10 +73,12 @@ public class BusinessListService extends ActiveCrudListService {
 			case 'captured':
 				o.state = 'CAPTURED';
 				o.filter = ''' AND b.state = $P{state}  ''';
+				break;
 
 			case 'cancelled':
 				o.state = 'CANCELLED';
 				o.filter = ''' AND b.state = $P{state}  ''';	
+				break;
 
 			default:
 				break;

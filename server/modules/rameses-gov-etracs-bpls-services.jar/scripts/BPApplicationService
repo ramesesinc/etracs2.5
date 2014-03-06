@@ -68,7 +68,7 @@ public class BPApplicationService extends ActiveCrudService {
 		entity.txnmode = 'ONLINE';
 		entity.objid = "BP"+ new UID();
         entity.apptype = o.apptype;
-        entity.state = 'OPEN';
+        entity.state = 'PROCESSING';
         switch(  o.apptype ) {
     		case "NEW":
     			break;	
@@ -110,11 +110,13 @@ public class BPApplicationService extends ActiveCrudService {
 		}
 		else if( app.apptype == 'AMENDLOB' ) {
 			app.lobs.each {
-				if( it.assessmenttype == 'RETIRE' || it.assessmenttype == 'REMOVE') {
-					throw new Exception("Retire or remove line not yet supported.")
-					def bal = ledgerSvc.getUnpaidBalance( [businessid:app.businessid, lobid: app.lobid] );		
+				if( it.assessmenttype == 'RETIRE') {
+					def bal = ledgerSvc.getUnpaidBalance( [businessid:app.businessid, lobid: it.lobid] );		
 					if( bal > 0 )
 						throw new Exception("Retire for line " + it.name + " not allowed becuase there is still unpaid dues");
+				}
+				else if( it.assessmenttype == 'REMOVE') {
+					throw new Exception("Retire or remove line not yet supported.")
 				}
 				else if( it.assessmenttype == 'RECLASSIFY') {
 					throw new Exception("Reclassify line not yet supported.")
@@ -152,7 +154,7 @@ public class BPApplicationService extends ActiveCrudService {
 			throw new Exception("BIN for Application is null. Pls. check data again");	
 
 		o.businessid = bizInfo.objid;
-		o.state = 'OPEN';
+		o.state = 'PROCESSING';
 		o.bin = bizInfo.bin;
 		o.appcount = bizInfo.appcount;	//we store this so it can be retrieved in afterCreate
 		o.appno = bizInfo.bin + "-" + bizInfo.appcount;
@@ -330,7 +332,7 @@ public class BPApplicationService extends ActiveCrudService {
 		def app = o;
 		o.taskid = app.task?.objid;
 		o.appid = app.objid;
-		app.state = 'CLOSED';
+		app.state = 'COMPLETED';
 		em.changeState( [state:app.state, objid: o.appid] );
 
 		def m = [:];

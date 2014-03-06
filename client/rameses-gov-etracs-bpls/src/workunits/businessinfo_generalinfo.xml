@@ -2,23 +2,27 @@
     <invokers>
         <invoker type="business:info" caption="General Info" index="-100" />
 
-        <invoker type="extActions" action="editInfo" caption="Edit Info" mnemonic="S" index="10"
+        <invoker type="extActions" action="editInfo" caption="Edit Info" mnemonic="S" index="-2"
             role="LICENSING"  permission="business.edit"
-            visibleWhen="#{entity.state=='ACTIVE'}"/>
+            visibleWhen="#{entity.state.matches('ACTIVE|CAPTURED')}"/>
+
+        <invoker type="extActions" action="editLOB" caption="Edit LOB" mnemonic="S" index="-2"
+            role="LICENSING"  permission="business.editlob"
+            visibleWhen="#{entity.state.matches('ACTIVE|CAPTURED')}"/>
 
         <invoker type="extActions" action="issuePermit" caption="Issue Permit" mnemonic="S" index="10"
             role="LICENSING"  permission="permit.issue"
             visibleWhen="#{entity.state=='ACTIVE' &amp;&amp; entity.permit?.objid == null}"/>
 
-        <invoker type="extActions" action="printPermit" caption="Print Permit" index="9"
+        <invoker type="extActions" action="printPermit" caption="Print Permit" index="10"
             role="LICENSING"  permission="permit.print" 
             visibleWhen="#{entity.state=='ACTIVE' &amp;&amp; entity.permit?.objid!=null}" />
-            
+
         <invoker type="extActions" action="reissuePermit" caption="Reissue Permit" mnemonic="S" index="10"
             role="LICENSING" permission="permit.reissue"
             visibleWhen="#{entity.state=='ACTIVE' &amp;&amp; entity.permit?.objid != null}"/>
             
-        <invoker type="extActions" action="rebuildPermit" caption="Rebuild Permit" mnemonic="S" index="10"
+        <invoker type="extActions" action="rebuildPermit" caption="Rebuild Permit" mnemonic="S" index="9"
             role="LICENSING" permission="permit.rebuild"
             visibleWhen="#{entity.permit?.objid != null}" />
     </invokers>
@@ -50,7 +54,10 @@
             
             def lobModel = [
                 fetchList: { o->
-                    return svc.getLobs( [objid:entity.objid] );
+                    if( !entity.lobs) {
+                        entity.lobs = svc.getLobs( [objid:entity.objid] );
+                        return entity.lobs;
+                    }    
                 }
             ] as BasicListModel;
             
@@ -76,8 +83,10 @@
             }
             
             def rebuildPermit() {
-                def p = permitSvc.rebuildPermit( entity.permit );
-                return InvokerUtil.lookupOpener( "businesspermit:print" , [entity:p] );
+                if( MsgBox.confirm("This will replace existing data with the latest business information. Proceed?")) {
+                    permitSvc.rebuildPermit( entity.permit );
+                    MsgBox.alert("Rebuild successful");
+                }
             }
             
             def reissuePermit() {
@@ -97,6 +106,18 @@
                 }
                 return InvokerUtil.lookupOpener( "business:editinfo", [entity: entity, handler: h ] );
             }
+            
+            def editLOB() {
+                return InvokerUtil.lookupOpener("businessinfo:editlob", [lobs:entity.lobs, 
+                    handler:{ lobs->
+                        entity.lobs = lobs;
+                        svc.updateLobs(entity);
+                        entity.lobs = null;
+                        lobModel.reload();
+                    }
+                ]);
+            }
+            
             
         }
         ]]>

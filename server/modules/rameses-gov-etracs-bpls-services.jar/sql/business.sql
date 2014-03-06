@@ -27,14 +27,6 @@ WHERE NOT(b.objid IS NULL)
 ${filter}
 ORDER BY b.bin
 
-[findMyTaskListCount]
-SELECT COUNT(*) AS icount 
-FROM business xb 
-INNER JOIN bpapplication ba ON ba.objid=xb.currentapplicationid
-INNER JOIN bpapplication_task bt ON bt.applicationid=ba.objid
-WHERE bt.assignee_objid=$P{assigneeid} AND bt.enddate IS NULL
-
-
 [getLookup]
 SELECT 
 	b.objid,
@@ -163,10 +155,6 @@ FROM bpreceivable
 WHERE businessid=$P{objid}
 AND amount-amtpaid-discount > 0
 
-
-[findPermitByYear]
-SELECT permitno, version FROM businesspermit WHERE businessid=$P{businessid} AND activeyear=$P{activeyear}
-
 [updatePermit]
 UPDATE business SET currentpermitid = $P{permitid} WHERE objid=$P{objid}
 
@@ -184,4 +172,4 @@ DELETE FROM business_lob WHERE businessid=$P{objid} AND applicationid IS NULL
 SELECT * FROM business_lob WHERE businessid=$P{objid}
 
 [getApplicationList]
-SELECT * FROM bpapplication WHERE businessid=$P{objid}
+SELECT * FROM bpapplication WHERE businessid=$P{objid} ORDER BY appno 

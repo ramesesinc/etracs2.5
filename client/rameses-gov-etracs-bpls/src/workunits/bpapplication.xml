@@ -9,11 +9,14 @@
 
         <!-- for business info role -->
         <invoker type="extActions" caption="Edit Business Info" action="updateBizInfo" role="BUSINESSINFO" 
-            visibleWhen="#{!entity.state?.matches( 'CLOSED|CANCELLED') || appstate=='assign-assessor' }" index="1"/>
+            visibleWhen="#{ !entity.state?.matches('COMPLETED|CANCELLED') || appstate=='assign-assessor' }" index="1"/>
+            
         <invoker type="extActions" caption="Edit App Info" action="updateAppInfo" role="BUSINESSINFO" 
             visibleWhen="#{modify_appinfo==true}" index="1"/>
+            
         <invoker type="extActions" caption="Edit Line of Business" action="updateLOB" role="BUSINESSINFO" 
             visibleWhen="#{modify_appinfo==true}" index="2"/>
+            
         <invoker type="extActions" caption="Cancel Application" action="cancelApplication" role="BUSINESSINFO" 
             visibleWhen="#{ (modify_appinfo==true || appstate=='assign-assessor') &amp;&amp;  appstate!='CANCELLED'}" index="1"/>
         

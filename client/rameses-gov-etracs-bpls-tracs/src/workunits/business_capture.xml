@@ -124,7 +124,6 @@
                     initial.nationality = entity.nationality;
                     def sh = { o->
                         entity.owner = [ objid:o.objid, name:o.name, address:o.address ];
-                        MsgBox.alert( entity.owner );
                         binding.refresh("entity.owner.*");
                         return '_close';
                     }

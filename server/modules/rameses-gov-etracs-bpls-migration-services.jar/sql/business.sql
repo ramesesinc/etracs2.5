@@ -6,75 +6,26 @@ SELECT DISTINCT b.*
 FROM 
 (
 	SELECT xb.objid,xb.state,xb.owner_name,xb.businessname,xb.businessaddress,xb.activeyear,xb.bin,
-	ba.appno, ba.apptype, bt.state AS appstate, ba.dtfiled AS appdate,
-    bp.permitno, bp.expirydate, bt.assignee_objid, bt.assignee_name, bt.startdate 
+    bp.permitno, bp.expirydate, bp.state AS permitstate, bp.version 
 	FROM business xb
-	LEFT JOIN bpapplication ba ON ba.objid=xb.currentapplicationid
-    LEFT JOIN bpapplication_task bt ON bt.objid=ba.task_objid
-    LEFT JOIN businesspermit bp ON bp.objid=xb.currentpermitid
-	WHERE xb.owner_name LIKE $P{searchtext}
+    LEFT JOIN businesspermit bp ON bp.businessid=xb.objid
+	WHERE xb.owner_name LIKE $P{searchtext} AND (bp.objid IS NULL OR bp.state='ACTIVE')
 UNION 
-	SELECT xb.objid,xb.state,xb.owner_name,xb.businessname,xb.businessaddress,xb.activeyear,xb.bin,
-	ba.appno, ba.apptype, bt.state AS appstate, ba.dtfiled AS appdate,
-    bp.permitno, bp.expirydate, bt.assignee_objid, bt.assignee_name, bt.startdate 
-	FROM business xb
-    LEFT JOIN bpapplication ba ON ba.objid=xb.currentapplicationid
-    LEFT JOIN bpapplication_task bt ON bt.objid=ba.task_objid
-    LEFT JOIN businesspermit bp ON bp.objid=xb.currentpermitid
-	WHERE xb.businessname LIKE $P{searchtext}
+    SELECT xb.objid,xb.state,xb.owner_name,xb.businessname,xb.businessaddress,xb.activeyear,xb.bin,
+    bp.permitno, bp.expirydate, bp.state AS permitstate, bp.version
+    FROM business xb
+    LEFT JOIN businesspermit bp ON bp.businessid=xb.objid
+	WHERE xb.businessname LIKE $P{searchtext} AND (bp.objid IS NULL OR bp.state='ACTIVE')
 UNION
-	SELECT xb.objid,xb.state,xb.owner_name,xb.businessname,xb.businessaddress,xb.activeyear,xb.bin,
-	ba.appno, ba.apptype, bt.state AS appstate, ba.dtfiled AS appdate,
-    bp.permitno, bp.expirydate, bt.assignee_objid, bt.assignee_name, bt.startdate     
-	FROM business xb 
-    LEFT JOIN bpapplication ba ON ba.objid=xb.currentapplicationid
-    LEFT JOIN bpapplication_task bt ON bt.objid=ba.task_objid
-    LEFT JOIN businesspermit bp ON bp.objid=xb.currentpermitid
-	WHERE xb.bin LIKE $P{searchtext}
+    SELECT xb.objid,xb.state,xb.owner_name,xb.businessname,xb.businessaddress,xb.activeyear,xb.bin,
+    bp.permitno, bp.expirydate, bp.state AS permitstate, bp.version
+    FROM business xb
+    LEFT JOIN businesspermit bp ON bp.businessid=xb.objid
+	WHERE xb.bin LIKE $P{searchtext} AND (bp.objid IS NULL OR bp.state='ACTIVE')
 ) b
 WHERE NOT(b.objid IS NULL)
 ${filter}
-ORDER BY b.startdate
-
-[getOpenTaskList]
-SELECT DISTINCT b.*  
-FROM 
-(
-    SELECT xb.objid,xb.state,xb.owner_name,xb.businessname,xb.businessaddress,xb.activeyear,xb.bin,
-    ba.appno, ba.apptype, bt.state AS appstate, ba.dtfiled AS appdate,
-    bt.assignee_objid, bt.assignee_name, bt.startdate, bt.message
-    FROM business xb
-    INNER JOIN bpapplication ba ON ba.objid=xb.currentapplicationid
-    INNER JOIN bpapplication_task bt ON bt.applicationid=ba.objid
-    WHERE xb.owner_name LIKE $P{searchtext} AND bt.enddate IS NULL 
-UNION 
-    SELECT xb.objid,xb.state,xb.owner_name,xb.businessname,xb.businessaddress,xb.activeyear,xb.bin,
-    ba.appno, ba.apptype, bt.state AS appstate, ba.dtfiled AS appdate,
-    bt.assignee_objid, bt.assignee_name, bt.startdate, bt.message
-    FROM business xb
-    INNER JOIN bpapplication ba ON ba.objid=xb.currentapplicationid
-    INNER JOIN bpapplication_task bt ON bt.applicationid=ba.objid
-    WHERE xb.businessname LIKE $P{searchtext}  AND bt.enddate IS NULL 
-UNION
-    SELECT xb.objid,xb.state,xb.owner_name,xb.businessname,xb.businessaddress,xb.activeyear,xb.bin,
-    ba.appno, ba.apptype, bt.state AS appstate, ba.dtfiled AS appdate,
-    bt.assignee_objid, bt.assignee_name, bt.startdate, bt.message    
-    FROM business xb 
-    INNER JOIN bpapplication ba ON ba.objid=xb.currentapplicationid
-    INNER JOIN bpapplication_task bt ON bt.applicationid=ba.objid
-    WHERE xb.bin LIKE $P{searchtext}  AND bt.enddate IS NULL
-) b
-WHERE NOT(b.objid IS NULL)
-${filter}
-ORDER BY b.startdate
-
-[findMyTaskListCount]
-SELECT COUNT(*) AS icount 
-FROM business xb 
-INNER JOIN bpapplication ba ON ba.objid=xb.currentapplicationid
-INNER JOIN bpapplication_task bt ON bt.applicationid=ba.objid
-WHERE bt.assignee_objid=$P{assigneeid} AND bt.enddate IS NULL
-
+ORDER BY b.bin
 
 [getLookup]
 SELECT 
@@ -204,10 +155,6 @@ FROM bpreceivable
 WHERE businessid=$P{objid}
 AND amount-amtpaid-discount > 0
 
-
-[findPermitByYear]
-SELECT permitno, version FROM businesspermit WHERE businessid=$P{businessid} AND activeyear=$P{activeyear}
-
 [updatePermit]
 UPDATE business SET currentpermitid = $P{permitid} WHERE objid=$P{objid}
 
@@ -225,4 +172,4 @@ DELETE FROM business_lob WHERE businessid=$P{objid} AND applicationid IS NULL
 SELECT * FROM business_lob WHERE businessid=$P{objid}
 
 [getApplicationList]
-SELECT * FROM bpapplication WHERE businessid=$P{objid}
+SELECT * FROM bpapplication WHERE businessid=$P{objid} ORDER BY appno 

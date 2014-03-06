@@ -82,18 +82,16 @@ public class BPApplicationListService extends ActiveCrudListService {
 				o.appstate = o.name.toUpperCase();
 				o.filter = ''' AND b.appstate = $P{appstate} ''';
 				if(o.apptype) o.filter += ''' AND b.apptype=$P{apptype} ''';
-				o.filter += ''' AND NOT(b.state = 'CANCELLED') ''';
+				o.filter += ''' AND b.state = 'PROCESSING' ''';
 				break;		
 
 			//--------------- active--------------------	
 			case 'completed':
-				o.filter = ''' AND b.appstate IS NULL ''';
-				o.filter += ''' AND NOT(b.state = 'CANCELLED') ''';
+				o.filter = ''' AND b.state ='COMPLETED' ''';
 				break;	
 
 			case 'cancelled':
-				o.state = 'CANCELLED';
-				o.filter = ''' AND b.state=$P{state} ''';
+				o.filter = ''' AND b.state='CANCELLED' ''';
 				break;
 
 			default:

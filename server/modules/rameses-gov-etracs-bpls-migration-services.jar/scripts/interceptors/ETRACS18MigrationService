@@ -1,0 +1,45 @@
+import com.rameses.annotations.*;
+import com.rameses.util.*;
+import java.rmi.server.*;
+import com.rameses.services.extended.*;
+
+/**
+* migration service for etracs 1.8
+**/
+public class ETRACS18MigrationService {
+
+	@PersistenceContext("etracs18")
+	def em;
+
+	@After(pattern="BusinessCaptureService.getSources")
+	public void doGetSource(def evt) { 
+		def result = evt.result;
+		result.add( [name:'etracs18', title: 'ETRACS 1.8'] );
+	}
+
+	@After(pattern="BusinessCaptureService.search", eval="#{args[0].source?.name=='etracs18'}")
+	public void doSearch(def evt) { 
+		println "enter 1.8"
+		def param = evt.args[0];
+		def result = evt.result;
+		def s = '''
+			select objid,
+			tradename as businessname,
+			businessAddress as businessaddress, 
+			taxpayerName AS ownername,
+			taxpayerAddress as owneraddress,
+			year as activeyear
+			from business
+		''';
+
+		def list = em.sqlContext.createQuery(s).setMaxResults(50).resultList;	
+		result.addAll(list);
+	}
+
+	@After(pattern="BusinessCaptureService.getInfo", eval="#{args[0].version=='etracs18'}")
+	public void doGetInfo(def evt) { 
+		def param = evt.args[0];
+		def result = evt.result;
+	}
+
+}

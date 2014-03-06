@@ -94,7 +94,7 @@
                     throw new Exception("There must be at least one business info");
                 def lobs = entity.lobs.findAll{ it.assessmenttype != 'ACTIVE' } 
                 if(!lobs) 
-                    throw new Exception("Please specify at least one line of business");
+                    throw new Exception("Please specify at least one line of business to amend");
                 entity.lobs = lobs;    
                 appSvc.verifyLedger( entity );
                 if( MsgBox.confirm("You are about to save this application. Proceed?")) {

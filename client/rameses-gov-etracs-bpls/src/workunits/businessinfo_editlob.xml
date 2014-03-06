@@ -1,7 +1,7 @@
 <workunit>
     
     <invokers>
-        <invoker type="businessform:formActions" caption="Edit LOB" index="1" target="popup" role="LOB_ADMIN"/>
+        <invoker type="businessinfo:editlob" caption="Edit LOB" index="1" target="popup" action="init"/>
         <invoker type="formActions" caption="Save" action="save"/>    
     </invokers>
     
@@ -16,21 +16,26 @@
         
         class BusinessCaptureEditLOBController {
         
-            @Service("BusinessInfoEditService")
-            def service;
-        
+            
             @Binding
             def binding;
             
             def lobAssessmentTypes = ['NEW','RENEW','RETIRE']
             
-            def entity;
+            def lobs;
             def selectedLob;
+            def handler;
+            
+            void init() {
+                def h = [];
+                if(lobs) h.addAll( lobs );
+                lobs = h;
+            }
             
             def addLob() {
                 return InvokerUtil.lookupOpener( "lob:lookup", [
                     onselect: { o->
-                        if(entity.lobs.find{ it.lobid == o.objid }!=null) 
+                        if(lobs.find{ it.lobid == o.objid }!=null) 
                             throw new Exception("Item already added");
                         def m = [:];
                         m.objid = "BPLOB"+new UID();
@@ -38,7 +43,7 @@
                         m.name = o.name;
                         m.classification = o.classification;
                         m.assessmenttype = "NEW";
-                        entity.lobs << m; 
+                        lobs << m; 
                         lobModel.reload();
                     }
                 ]);
@@ -48,7 +53,7 @@
                 if(!selectedLob) return;
                 if(selectedLob.assessmenttype != "NEW" ) 
                     throw new Exception("Only new lines of business can be removed");
-                entity.lobs.remove(selectedLob);
+                lobs.remove(selectedLob);
             }
              
             def reclassifyLob() {
@@ -67,14 +72,14 @@
             
             def lobModel = [
                 fetchList: { o->
-                    return entity.lobs;
+                    return lobs;
                 },
             ] as EditorListModel;
 
             def save() {
                 if( MsgBox.confirm("You are about to update changes for line of business. Proceed?")) {
-                    service.updateLobs(entity);
-                    MsgBox.alert("successfully saved");
+                    handler(lobs);
+                    return "_close";
                 }
             }
         }

@@ -101,7 +101,6 @@ public class BusinessInfoService extends ActiveCrudService {
 	@ProxyMethod
 	public def activate(o) {
 		if(o.state=='CAPTURED') {
-			o.state = 'ACTIVE';
 			o.lobs.each {
 				em.create(it, "lob");
 			}
@@ -267,6 +266,15 @@ public class BusinessInfoService extends ActiveCrudService {
 		x.filedby = [objid:env.USERID , name:env.USER];
 		em.create( x, "changeinfo");
 		em.update( o );
+	}
+
+	@ProxyMethod
+	public void updateLobs( def o ) {
+		em.removeLOB([objid:o.objid]);	
+		o.lobs.each {
+			it.businessid = o.objid;
+			em.create(it, "lob");				
+		}	
 	}
 
 }
