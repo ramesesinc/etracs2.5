@@ -46,7 +46,7 @@ class ConsolidationRequirementInterceptor
 	}
 
 
-	@Before(pattern="ConsolidationService.submitForTaxmapping") 
+	@Before(pattern="ConsolidationService.submitForExamination") 
 	public void validateRequirements( evt ) {
 		def entity = evt.args[0]
 		def requirements = em.getRequirements([refid:entity.objid])

@@ -253,6 +253,24 @@ class ConsolidationService
    	* WORKFLOW SUPPORT
    	*
    	-----------------------------------------------------------------*/
+
+    @ProxyMethod
+    public def submitForExamination(consolidation) {
+        consolidation.state = STATE_FOREXAMINATION
+        workflowRef.insert(consolidation)
+        updateConsolidation(consolidation)
+        return consolidation 
+    }
+
+    @ProxyMethod
+    public def disapproveForExamination( consolidation ) {
+        workflowRef.delete(consolidation)
+        consolidation.state = STATE_DRAFT
+        updateConsolidation(consolidation)
+        return consolidation
+    }
+
+
    	@ProxyMethod
     public def submitForTaxmapping(consolidation) {
         consolidation.state = STATE_FORTAXMAPPING
@@ -268,6 +286,7 @@ class ConsolidationService
         updateConsolidation(consolidation)
         return consolidation
     }
+
 
     @ProxyMethod
     public def submitForTaxmappingApproval(consolidation) {
@@ -286,21 +305,6 @@ class ConsolidationService
     }
 
 
-    @ProxyMethod
-    public def submitForExamination(consolidation) {
-        consolidation.state = STATE_FOREXAMINATION
-        workflowRef.insert(consolidation)
-        updateConsolidation(consolidation)
-        return consolidation 
-    }
-
-    @ProxyMethod
-    public def disapproveForExamination( consolidation ) {
-        workflowRef.delete(consolidation)
-        consolidation.state = STATE_FORTAXMAPPING_APPROVAL
-        updateConsolidation(consolidation)
-        return consolidation
-    }
 
     @ProxyMethod
     public def submitForAppraisal(consolidation) {
@@ -313,7 +317,7 @@ class ConsolidationService
     @ProxyMethod
     public def disapproveForAppraisal( consolidation ) {
         workflowRef.delete(consolidation)
-        consolidation.state = STATE_FOREXAMINATION
+        consolidation.state = STATE_FORTAXMAPPING_APPROVAL
         updateConsolidation(consolidation)
         return consolidation
     }

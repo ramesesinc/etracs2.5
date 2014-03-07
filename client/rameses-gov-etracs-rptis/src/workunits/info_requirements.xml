@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <workunit>
     <invokers>
-        <invoker type="faasonline:info" action="init" caption="Requirements" index="500" />
-        <invoker type="subdivision:info" action="init" caption="Requirements" index="500" />
-        <invoker type="consolidation:info" action="init" caption="Requirements" index="500" />
-        <invoker type="resection:info" action="init" caption="Requirements" index="500" />
-        <invoker type="mcsettlement:info" action="init" caption="Requirements" index="500" />
+        <invoker type="faasonline:info" action="init" caption="Requirements" index="-10" />
+        <invoker type="subdivision:info" action="init" caption="Requirements" index="-10" />
+        <invoker type="consolidation:info" action="init" caption="Requirements" index="-10" />
+        <invoker type="resection:info" action="init" caption="Requirements" index="-10" />
+        <invoker type="mcsettlement:info" action="init" caption="Requirements" index="-10" />
         <invoker type="formActions" action="refresh" caption="Refresh" mnemonic="r" />
    </invokers>
    <code>

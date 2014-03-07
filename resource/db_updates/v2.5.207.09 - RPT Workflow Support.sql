@@ -78,24 +78,22 @@ go
 
 /* TRANSFER WORKFLOW */
 insert into rptworkflow 
-    values('ALL', 'TR WORKFLOW', 'TR,TRE,TRC,CE,CC,CT,CD,RE,GR,ND,MC,RV')
+    values('ALL', 'FAAS WORKFLOW', 'TR,TRE,TRC,CE,CC,CT,CD,RE,GR,ND,MC,RV')
 go
 
+insert into rptworkflow_state values('ALL-W01', 'ALL', null, 'receive', 'start', 1, 'receiver', '#{docname} documents are received and verified.')
+insert into rptworkflow_state values('ALL-W02', 'ALL', 'receive', 'assign-examiner', 'process', 1, 'examiner',  '#{docname} is already forwarded for examination.')
 
+insert into rptworkflow_state values('ALL-W03', 'ALL', 'assign-examiner', 'forexamination', 'process', 1, 'examiner', '#{docname} is currently examined by the group of #{name}.')
+insert into rptworkflow_state values('ALL-W04', 'ALL', 'forexamination', 'assign-taxmapper', 'process', 1, 'taxmapper', '#{docname} is already submitted for taxmapping.')
 
+insert into rptworkflow_state values('ALL-W05', 'ALL', 'assign-taxmapper', 'fortaxmapping', 'process', 1, 'taxmapper', '#{docname} is currently taxmapped by #{name}.')
+insert into rptworkflow_state values('ALL-W06', 'ALL', 'fortaxmapping', 'assign-taxmapping-approval', 'process', 1, 'taxmapping_chief', '#{docname} is submitted for taxmapping approval.')
 
-insert into rptworkflow_state values('ALL-W1', 'ALL', null, 'receive', 'start', 1, 'receiver', '#{docname} documents are received and undergoing verification.')
-insert into rptworkflow_state values('ALL-W2', 'ALL', 'receive', 'assign-taxmapper', 'process', 1, 'taxmapper',  '#{docname} is already forwarded to taxmapping.')
-insert into rptworkflow_state values('ALL-W3', 'ALL', 'assign-taxmapper', 'fortaxmapping', 'process', 1, 'taxmapper', '#{docname} is currently taxmapped by #{name}.')
-insert into rptworkflow_state values('ALL-W4', 'ALL', 'fortaxmapping', 'assign-taxmapping-approval', 'process', 1, 'taxmapping_chief', '#{docname} is submitted for taxmapping approval.')
+insert into rptworkflow_state values('ALL-W07', 'ALL', 'assign-taxmapping-approval', 'fortaxmapping-approval', 'process', 1, 'taxmapping_chief', '#{docname} taxmapping is currently verified by #{name}.')
+insert into rptworkflow_state values('ALL-W08', 'ALL', 'fortaxmapping-approval', 'assign-appraiser', 'process', 1, 'appraiser', '#{docname} is already submitted for appraisal.')
 
-insert into rptworkflow_state values('ALL-W5', 'ALL', 'assign-taxmapping-approval', 'fortaxmapping-approval', 'process', 1, 'taxmapping_chief', '#{docname} taxmapping approval is currently verified by #{name}.')
-insert into rptworkflow_state values('ALL-W6', 'ALL', 'fortaxmapping-approval', 'assign-examiner', 'process', 1, 'examiner', '#{docname} is already submitted for examination.')
-
-insert into rptworkflow_state values('ALL-W7', 'ALL', 'assign-examiner', 'forexamination', 'process', 1, 'examiner', '#{docname} is currently examined by the group of #{name}.')
-insert into rptworkflow_state values('ALL-W8', 'ALL', 'forexamination', 'assign-appraiser', 'process', 1, 'appraiser', '#{docname} is already submitted for appraisal.')
-
-insert into rptworkflow_state values('ALL-W9', 'ALL', 'assign-appraiser', 'forappraisal', 'process', 1, 'appraiser', '#{docname} is currenty appraised by #{name}.')
+insert into rptworkflow_state values('ALL-W09', 'ALL', 'assign-appraiser', 'forappraisal', 'process', 1, 'appraiser', '#{docname} is currenty appraised by #{name}.')
 insert into rptworkflow_state values('ALL-W10', 'ALL', 'forappraisal', 'assign-appraisal-chief', 'process', 1, 'appraisal_chief', '#{docname} appraisal is already submitted for approval.')
 
 
@@ -107,7 +105,7 @@ insert into rptworkflow_state values('ALL-W14', 'ALL', 'forassistant-approval', 
 
 insert into rptworkflow_state values('ALL-W15', 'ALL', 'assign-approver', 'forapproval', 'process', 1, 'approver', '#{docname} is currently approved by #{name}.')
 insert into rptworkflow_state values('ALL-W16', 'ALL', 'forapproval', 'approved', 'end', 1, 'approver', '#{docname} is already approved and current.')
-go  
+go	
 
 
 
@@ -118,39 +116,31 @@ insert into rptworkflow
 	values('SD', 'SD WORKFLOW', 'SD')
 go
 
+insert into rptworkflow_state values('SD-W01', 'SD', null, 'receive', 'start', 1, 'receiver', '#{docname} documents are received and undergoing verification.')
+insert into rptworkflow_state values('SD-W02', 'SD', 'receive', 'assign-examiner', 'process', 1, 'examiner',  '#{docname} is already forwarded for examination.')
 
-insert into rptworkflow_state values('SD-W1', 'SD', null, 'receive', 'start', 1, 'receiver', '#{docname} documents are received and undergoing verification.')
-insert into rptworkflow_state values('SD-W2', 'SD', 'receive', 'assign-taxmapper', 'process', 1, 'taxmapper',  '#{docname} is already forwarded to taxmapping.')
-insert into rptworkflow_state values('SD-W3', 'SD', 'assign-taxmapper', 'fortaxmapping', 'process', 1, 'taxmapper', '#{docname} is currently taxmapped by #{name}.')
-insert into rptworkflow_state values('SD-W4', 'SD', 'fortaxmapping', 'assign-taxmapping-approval', 'process', 1, 'taxmapping_chief', '#{docname} is submitted for taxmapping approval.')
+insert into rptworkflow_state values('SD-W03', 'SD', 'assign-examiner', 'forexamination', 'process', 1, 'examiner', '#{docname} is currently examined by the group of #{name}.')
+insert into rptworkflow_state values('SD-W04', 'SD', 'forexamination', 'assign-taxmapper', 'process', 1, 'taxmapper', '#{docname} is already submitted for taxmapping.')
 
-insert into rptworkflow_state values('SD-W5', 'SD', 'assign-taxmapping-approval', 'fortaxmapping-approval', 'process', 1, 'taxmapping_chief', '#{docname} taxmapping approval is currently verified by #{name}.')
-insert into rptworkflow_state values('SD-W6', 'SD', 'fortaxmapping-approval', 'assign-examiner', 'process', 1, 'examiner', '#{docname} is already submitted for examination.')
+insert into rptworkflow_state values('SD-W05', 'SD', 'assign-taxmapper', 'fortaxmapping', 'process', 1, 'taxmapper', '#{docname} is currently taxmapped by #{name}.')
+insert into rptworkflow_state values('SD-W06', 'SD', 'fortaxmapping', 'assign-taxmapping-approval', 'process', 1, 'taxmapping_chief', '#{docname} is submitted for taxmapping approval.')
 
-insert into rptworkflow_state values('SD-W7', 'SD', 'assign-examiner', 'forexamination', 'process', 1, 'examiner', '#{docname} is currently examined by the group of #{name}.')
-insert into rptworkflow_state values('SD-W8', 'SD', 'forexamination', 'assign-retaxmapper', 'process', 1, 'appraiser', '#{docname} is already submitted for appraisal.')
+insert into rptworkflow_state values('SD-W07', 'SD', 'assign-taxmapping-approval', 'fortaxmapping-approval', 'process', 1, 'taxmapping_chief', '#{docname} taxmapping approval is currently verified by #{name}.')
+insert into rptworkflow_state values('SD-W08', 'SD', 'fortaxmapping-approval', 'assign-appraiser', 'process', 1, 'appraiser', '#{docname} is already submitted for appraisal.')
 
-
-insert into rptworkflow_state values('SD-W9', 'SD', 'assign-retaxmapper', 'forretaxmapping', 'process', 1, 'taxmapper', '#{docname} is currently taxmapped by #{name}.')
-insert into rptworkflow_state values('SD-W10', 'SD', 'forretaxmapping', 'assign-retaxmapping-approval', 'process', 1, 'taxmapping_chief', '#{docname} is submitted for taxmapping approval.')
-
-insert into rptworkflow_state values('SD-W11', 'SD', 'assign-retaxmapping-approval', 'forretaxmapping-approval', 'process', 1, 'taxmapping_chief', '#{docname} taxmapping approval is currently verified by #{name}.')
-insert into rptworkflow_state values('SD-W12', 'SD', 'forretaxmapping-approval', 'assign-appraiser', 'process', 1, 'examiner', '#{docname} is already submitted for examination.')
-
-insert into rptworkflow_state values('SD-W13', 'SD', 'assign-appraiser', 'forappraisal', 'process', 1, 'appraiser', '#{docname} is currenty appraised by #{name}.')
-insert into rptworkflow_state values('SD-W14', 'SD', 'forappraisal', 'assign-appraisal-chief', 'process', 1, 'appraisal_chief', '#{docname} appraisal is already submitted for approval.')
+insert into rptworkflow_state values('SD-W09', 'SD', 'assign-appraiser', 'forappraisal', 'process', 1, 'appraiser', '#{docname} is currenty appraised by #{name}.')
+insert into rptworkflow_state values('SD-W10', 'SD', 'forappraisal', 'assign-appraisal-chief', 'process', 1, 'appraisal_chief', '#{docname} appraisal is already submitted for approval.')
 
 
-insert into rptworkflow_state values('SD-W15', 'SD', 'assign-appraisal-chief', 'forappraisal-approval', 'process', 1, 'appraisal_chief', '#{docname} appraisal is currently verified by #{name}.')
-insert into rptworkflow_state values('SD-W16', 'SD', 'forappraisal-approval', 'assign-assistant-approval', 'process', 1, 'assistant_assessor', '#{docname} is already submitted to assistant assessor for approval.')
+insert into rptworkflow_state values('SD-W11', 'SD', 'assign-appraisal-chief', 'forappraisal-approval', 'process', 1, 'appraisal_chief', '#{docname} appraisal is currently verified by #{name}.')
+insert into rptworkflow_state values('SD-W12', 'SD', 'forappraisal-approval', 'assign-assistant-approval', 'process', 1, 'assistant_assessor', '#{docname} is already submitted to assistant assessor for approval.')
 
-insert into rptworkflow_state values('SD-W17', 'SD', 'assign-assistant-approval', 'forassistant-approval', 'process', 1, 'assistant_assessor', '#{docname} is currently reviewed by assistant assessor #{name}.')
-insert into rptworkflow_state values('SD-W18', 'SD', 'forassistant-approval', 'assign-approver', 'process', 1, 'approver', '#{docname} is already submitted to assistant assessor for approval.')
+insert into rptworkflow_state values('SD-W13', 'SD', 'assign-assistant-approval', 'forassistant-approval', 'process', 1, 'assistant_assessor', '#{docname} is currently reviewed by assistant assessor #{name}.')
+insert into rptworkflow_state values('SD-W14', 'SD', 'forassistant-approval', 'assign-approver', 'process', 1, 'approver', '#{docname} is already submitted to assistant assessor for approval.')
 
-insert into rptworkflow_state values('SD-W19', 'SD', 'assign-approver', 'forapproval', 'process', 1, 'approver', '#{docname} is currently approved by #{name}.')
-insert into rptworkflow_state values('SD-W20', 'SD', 'forapproval', 'approved', 'end', 1, 'approver', '#{docname} is already approved and current.')
+insert into rptworkflow_state values('SD-W15', 'SD', 'assign-approver', 'forapproval', 'process', 1, 'approver', '#{docname} is currently approved by #{name}.')
+insert into rptworkflow_state values('SD-W16', 'SD', 'forapproval', 'approved', 'end', 1, 'approver', '#{docname} is already approved and current.')
 go	
-
 
 
 
@@ -162,37 +152,31 @@ insert into rptworkflow
 go
 
 
-insert into rptworkflow_state values('CS-W1', 'CS', null, 'receive', 'start', 1, 'receiver', '#{docname} documents are received and undergoing verification.')
-insert into rptworkflow_state values('CS-W2', 'CS', 'receive', 'assign-taxmapper', 'process', 1, 'taxmapper',  '#{docname} is already forwarded to taxmapping.')
-insert into rptworkflow_state values('CS-W3', 'CS', 'assign-taxmapper', 'fortaxmapping', 'process', 1, 'taxmapper', '#{docname} is currently taxmapped by #{name}.')
-insert into rptworkflow_state values('CS-W4', 'CS', 'fortaxmapping', 'assign-taxmapping-approval', 'process', 1, 'taxmapping_chief', '#{docname} is submitted for taxmapping approval.')
 
-insert into rptworkflow_state values('CS-W5', 'CS', 'assign-taxmapping-approval', 'fortaxmapping-approval', 'process', 1, 'taxmapping_chief', '#{docname} taxmapping approval is currently verified by #{name}.')
-insert into rptworkflow_state values('CS-W6', 'CS', 'fortaxmapping-approval', 'assign-examiner', 'process', 1, 'examiner', '#{docname} is already submitted for examination.')
+insert into rptworkflow_state values('CS-W01', 'CS', null, 'receive', 'start', 1, 'receiver', '#{docname} documents are received and undergoing verification.')
+insert into rptworkflow_state values('CS-W02', 'CS', 'receive', 'assign-examiner', 'process', 1, 'examiner',  '#{docname} is already forwarded for examination.')
 
-insert into rptworkflow_state values('CS-W7', 'CS', 'assign-examiner', 'forexamination', 'process', 1, 'examiner', '#{docname} is currently examined by the group of #{name}.')
-insert into rptworkflow_state values('CS-W8', 'CS', 'forexamination', 'assign-retaxmapper', 'process', 1, 'appraiser', '#{docname} is already submitted for appraisal.')
+insert into rptworkflow_state values('CS-W03', 'CS', 'assign-examiner', 'forexamination', 'process', 1, 'examiner', '#{docname} is currently examined by the group of #{name}.')
+insert into rptworkflow_state values('CS-W04', 'CS', 'forexamination', 'assign-taxmapper', 'process', 1, 'taxmapper', '#{docname} is already submitted for taxmapping.')
 
+insert into rptworkflow_state values('CS-W05', 'CS', 'assign-taxmapper', 'fortaxmapping', 'process', 1, 'taxmapper', '#{docname} is currently taxmapped by #{name}.')
+insert into rptworkflow_state values('CS-W06', 'CS', 'fortaxmapping', 'assign-taxmapping-approval', 'process', 1, 'taxmapping_chief', '#{docname} is submitted for taxmapping approval.')
 
-insert into rptworkflow_state values('CS-W9', 'CS', 'assign-retaxmapper', 'forretaxmapping', 'process', 1, 'taxmapper', '#{docname} is currently taxmapped by #{name}.')
-insert into rptworkflow_state values('CS-W10', 'CS', 'forretaxmapping', 'assign-retaxmapping-approval', 'process', 1, 'taxmapping_chief', '#{docname} is submitted for taxmapping approval.')
+insert into rptworkflow_state values('CS-W07', 'CS', 'assign-taxmapping-approval', 'fortaxmapping-approval', 'process', 1, 'taxmapping_chief', '#{docname} taxmapping approval is currently verified by #{name}.')
+insert into rptworkflow_state values('CS-W08', 'CS', 'fortaxmapping-approval', 'assign-appraiser', 'process', 1, 'appraiser', '#{docname} is already submitted for appraisal.')
 
-insert into rptworkflow_state values('CS-W11', 'CS', 'assign-retaxmapping-approval', 'forretaxmapping-approval', 'process', 1, 'taxmapping_chief', '#{docname} taxmapping approval is currently verified by #{name}.')
-insert into rptworkflow_state values('CS-W12', 'CS', 'forretaxmapping-approval', 'assign-appraiser', 'process', 1, 'examiner', '#{docname} is already submitted for examination.')
+insert into rptworkflow_state values('CS-W09', 'CS', 'assign-appraiser', 'forappraisal', 'process', 1, 'appraiser', '#{docname} is currenty appraised by #{name}.')
+insert into rptworkflow_state values('CS-W10', 'CS', 'forappraisal', 'assign-appraisal-chief', 'process', 1, 'appraisal_chief', '#{docname} appraisal is already submitted for approval.')
 
 
-insert into rptworkflow_state values('CS-W13', 'CS', 'assign-appraiser', 'forappraisal', 'process', 1, 'appraiser', '#{docname} is currenty appraised by #{name}.')
-insert into rptworkflow_state values('CS-W14', 'CS', 'forappraisal', 'assign-appraisal-chief', 'process', 1, 'appraisal_chief', '#{docname} appraisal is already submitted for approval.')
+insert into rptworkflow_state values('CS-W11', 'CS', 'assign-appraisal-chief', 'forappraisal-approval', 'process', 1, 'appraisal_chief', '#{docname} appraisal is currently verified by #{name}.')
+insert into rptworkflow_state values('CS-W12', 'CS', 'forappraisal-approval', 'assign-assistant-approval', 'process', 1, 'assistant_assessor', '#{docname} is already submitted to assistant assessor for approval.')
 
+insert into rptworkflow_state values('CS-W13', 'CS', 'assign-assistant-approval', 'forassistant-approval', 'process', 1, 'assistant_assessor', '#{docname} is currently reviewed by assistant assessor #{name}.')
+insert into rptworkflow_state values('CS-W14', 'CS', 'forassistant-approval', 'assign-approver', 'process', 1, 'approver', '#{docname} is already submitted to assistant assessor for approval.')
 
-insert into rptworkflow_state values('CS-W15', 'CS', 'assign-appraisal-chief', 'forappraisal-approval', 'process', 1, 'appraisal_chief', '#{docname} appraisal is currently verified by #{name}.')
-insert into rptworkflow_state values('CS-W16', 'CS', 'forappraisal-approval', 'assign-assistant-approval', 'process', 1, 'assistant_assessor', '#{docname} is already submitted to assistant assessor for approval.')
-
-insert into rptworkflow_state values('CS-W17', 'CS', 'assign-assistant-approval', 'forassistant-approval', 'process', 1, 'assistant_assessor', '#{docname} is currently reviewed by assistant assessor #{name}.')
-insert into rptworkflow_state values('CS-W18', 'CS', 'forassistant-approval', 'assign-approver', 'process', 1, 'approver', '#{docname} is already submitted to assistant assessor for approval.')
-
-insert into rptworkflow_state values('CS-W19', 'CS', 'assign-approver', 'forapproval', 'process', 1, 'approver', '#{docname} is currently approved by #{name}.')
-insert into rptworkflow_state values('CS-W20', 'CS', 'forapproval', 'approved', 'end', 1, 'approver', '#{docname} is already approved and current.')
+insert into rptworkflow_state values('CS-W15', 'CS', 'assign-approver', 'forapproval', 'process', 1, 'approver', '#{docname} is currently approved by #{name}.')
+insert into rptworkflow_state values('CS-W16', 'CS', 'forapproval', 'approved', 'end', 1, 'approver', '#{docname} is already approved and current.')
 go	
 
 
@@ -207,5 +191,13 @@ go
 
 
 alter table subdivision alter column state varchar(50) not null
+go
+
+
+create table examiner_finding
+(
+	objid varchar(50) not null primary key,
+	findings varchar(2500)
+)
 go
 

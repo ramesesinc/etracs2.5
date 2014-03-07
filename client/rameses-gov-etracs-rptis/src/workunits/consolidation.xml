@@ -28,15 +28,11 @@
         </page>
         
         <process name="open">
-            <transition to="unassigned" cond="#{entity.taskaction &amp;&amp; entity.taskaction.matches('assign.*')}"/>
+            <transition to="unassigned" cond="#{entity.taskaction.matches('assign.*')}"/>
             <transition to="receive" cond="#{entity.taskaction.matches('receive')}"/>
+            <transition to="forexamination" cond="#{entity.taskaction.matches('forexamination')}"/>
             <transition to="fortaxmapping" cond="#{entity.taskaction.matches('fortaxmapping')}"/>
             <transition to="fortaxmapping-approval" cond="#{entity.taskaction.matches('fortaxmapping-approval')}"/>
-            
-            <transition to="forexamination" cond="#{entity.taskaction.matches('forexamination')}"/>
-            <transition to="forretaxmapping" cond="#{entity.taskaction.matches('forretaxmapping')}"/>
-            <transition to="forretaxmapping-approval" cond="#{entity.taskaction.matches('forretaxmapping-approval')}"/>
-            
             <transition to="forappraisal" cond="#{entity.taskaction.matches('forappraisal')}"/>
             <transition to="forappraisal-approval" cond="#{entity.taskaction.matches('forappraisal-approval')}"/>
             <transition to="forassistant-approval" cond="#{entity.taskaction.matches('forassistant-approval')}"/>
@@ -47,13 +43,9 @@
         
         <page name="unassigned" title="Consolidation (#{entity.taskaction})">
             <transition caption="Close"  to="end"      mnemonic="c" icon="images/toolbars/cancel.png" />
+            <transition to="open" name="assign-examiner" action="assignTaskToMe" caption="Assign To Me" role="EXAMINER"  visibleWhen="#{entity.taskaction == 'assign-examiner'}" confirm="Assign task to you?"/>
             <transition to="open" name="assign-taxmapper" action="assignTaskToMe" caption="Assign To Me" role="TAXMAPPER"  visibleWhen="#{entity.taskaction == 'assign-taxmapper'}" confirm="Assign task to you?"/>
             <transition to="open" name="assign-taxmapper-chief" action="assignTaskToMe" caption="Assign To Me" role="TAXMAPPER_CHIEF"  visibleWhen="#{entity.taskaction == 'assign-taxmapping-approval'}" confirm="Assign task to you?"/>
-            <transition to="open" name="assign-examiner" action="assignTaskToMe" caption="Assign To Me" role="EXAMINER"  visibleWhen="#{entity.taskaction == 'assign-examiner'}" confirm="Assign task to you?"/>
-            
-            <transition to="open" name="assign-retaxmapper" action="assignTaskToMe" caption="Assign To Me" role="TAXMAPPER"  visibleWhen="#{entity.taskaction == 'assign-retaxmapper'}" confirm="Assign task to you?"/>
-            <transition to="open" name="assign-retaxmapper-chief" action="assignTaskToMe" caption="Assign To Me" role="TAXMAPPER_CHIEF"  visibleWhen="#{entity.taskaction == 'assign-retaxmapping-approval'}" confirm="Assign task to you?"/>
-            
             <transition to="open" name="assign-appraiser" action="assignTaskToMe" caption="Assign To Me" role="APPRAISER" visibleWhen="#{entity.taskaction == 'assign-appraiser'}" confirm="Assign task to you?"/>
             <transition to="open" name="assign-appraiser-chief" action="assignTaskToMe" caption="Assign To Me" role="APPRAISAL_CHIEF" visibleWhen="#{entity.taskaction == 'assign-appraisal-chief'}" confirm="Assign task to you?"/>
             <transition to="open" name="assign-asst-approval" action="assignTaskToMe" caption="Assign To Me" role="ASSISTANT_ASSESSOR" visibleWhen="#{entity.taskaction == 'assign-assistant-approval'}" confirm="Assign task to you?"/>
@@ -63,14 +55,21 @@
         
         <page name="receive" title="Consolidation (Draft)">
             <transition caption="Close"  to="end"      mnemonic="c" icon="images/toolbars/cancel.png" />
-            <transition caption="Delete" to="delete"  action="delete" confirm="Delete record?"    mnemonic="d" icon="images/toolbars/trash.png"  role="APPRAISER,EXAMINER" />
-            <transition caption="Submit to Taxmapping" to="open" action="submitForTaxmapping"  mnemonic="m"  confirm="Submit for taxmapping?" role="APPRAISER,EXAMINER" />
+            <transition caption="Delete" to="delete"  action="delete" confirm="Delete record?"    mnemonic="d" icon="images/toolbars/trash.png"  role="RECEIVER,EXAMINER" />
+            <transition caption="Submit for Examination" to="open" action="submitForExamination"  mnemonic="m"  confirm="Submit for examination?" role="RECEIVER,EXAMINER" />
         </page>
         
         <process name="delete">
             <transition to="end"/>
         </process>
         
+        
+        <!-- EXAMINATION -->
+        <page name="forexamination" title="Consolidation (For Examination)">
+            <transition caption="Close"  to="end"      mnemonic="c" icon="images/toolbars/cancel.png" />
+            <transition name="disapprove" caption="Disapprove" to="open" action="disapproveForExamination"  mnemonic="d"   confirm="Disapprove?" role="EXAMINER"/>
+            <transition name="submit" caption="Submit for Taxmapping" to="open" action="submitForTaxmapping"  mnemonic="m"   confirm="Submit for taxmapping?" role="EXAMINER"/>
+        </page>
         
         
         <!-- TAXMAPPING -->
@@ -83,35 +82,9 @@
         <page name="fortaxmapping-approval" title="Consolidation (Taxmapping Approval)">
             <transition caption="Close"  to="end"      mnemonic="c" icon="images/toolbars/cancel.png" />
             <transition name="disapprove" caption="Disapprove" to="open" action="disapproveForTaxmappingApproval"  mnemonic="d"   confirm="Disapprove?" role="TAXMAPPER_CHIEF"/>
-            <transition name="submit" caption="Approve and Submit to Examiner" to="open" action="submitForExamination"  mnemonic="m"   confirm="Submit for examination?" role="TAXMAPPER_CHIEF"/>
-        </page>    
-        
-        
-        
-        <!-- EXAMINIATION -->
-        <page name="forexamination" title="Consolidation (For Examination)">
-            <transition caption="Close"  to="end"      mnemonic="c" icon="images/toolbars/cancel.png" />
-            <transition name="disapprove" caption="Disapprove" to="open" action="disapproveForExamination"  mnemonic="d"   confirm="Disapprove?" role="EXAMINER"/>
-            <transition name="submit" caption="Submit for Taxmapping" to="open" action="submitForTaxmapping"  mnemonic="m"   confirm="Submit for taxmapping?" role="EXAMINER"/>
-        </page>
-        
-        
-        
-        
-        <!-- RE-TAXMAPPING -->
-        <page name="forretaxmapping" title="Subdivision (For Taxmapping)">
-            <transition caption="Close"  to="end"      mnemonic="c" icon="images/toolbars/cancel.png" />
-            <transition name="disapprove" caption="Disapprove" to="open" action="disapproveForExamination"  mnemonic="d"   confirm="Disapprove?" role="TAXMAPPER"/>
-            <transition name="submit" caption="Submit for Approval" to="open" action="submitForTaxmappingApproval"  mnemonic="m"   confirm="Submit for taxmapping approval?" role="TAXMAPPER"/>
-        </page>
-        
-        <page name="forretaxmapping-approval" title="Subdivision (Taxmapping Approval)">
-            <transition caption="Close"  to="end"      mnemonic="c" icon="images/toolbars/cancel.png" />
-            <transition name="disapprove" caption="Disapprove" to="open" action="disapproveForTaxmappingApproval"  mnemonic="d"   confirm="Disapprove?" role="TAXMAPPER_CHIEF"/>
-            <transition name="submit" caption="Approve and Submit to Appraiser" to="open" action="submitForAppraisal"  mnemonic="m"   confirm="Submit for examination?" role="TAXMAPPER_CHIEF"/>
+            <transition name="submit" caption="Approve and Submit for Appraisal" to="open" action="submitForAppraisal"  mnemonic="m"   confirm="Submit for appraisal?" role="TAXMAPPER_CHIEF"/>
         </page>             
-        
-        
+
         
         <!-- APPRAISAL -->
         <page name="forappraisal" title="Consolidation (For Appraisal)">
@@ -133,6 +106,7 @@
             <transition name="disapprove" caption="Disapprove" to="open" action="disapproveForAssistantApproval"  mnemonic="d"   confirm="Disapprove?" role="ASSISTANT_ASSESSOR"/>
             <transition name="submit" caption="Approve and Submit to Assessor" to="open" action="submitForApproval"  mnemonic="m"   confirm="Submit for approval?" role="ASSISTANT_ASSESSOR"/>
         </page>        
+        
         
         
         <!-- CITY-->
@@ -160,11 +134,9 @@
         <page name="init" template="com.rameses.gov.etracs.rpt.consolidation.ui.ConsolidationInitPage"/>
         <page name="unassigned" template="com.rameses.gov.etracs.rpt.common.InfoPage"/>
         <page name="receive" template="com.rameses.gov.etracs.rpt.common.InfoPage"/>
+        <page name="forexamination" template="com.rameses.gov.etracs.rpt.common.InfoPage"/>
         <page name="fortaxmapping" template="com.rameses.gov.etracs.rpt.common.InfoPage"/>
         <page name="fortaxmapping-approval" template="com.rameses.gov.etracs.rpt.common.InfoPage"/>
-        <page name="forexamination" template="com.rameses.gov.etracs.rpt.common.InfoPage"/>
-        <page name="forretaxmapping" template="com.rameses.gov.etracs.rpt.common.InfoPage"/>
-        <page name="forretaxmapping-approval" template="com.rameses.gov.etracs.rpt.common.InfoPage"/>
         <page name="forappraisal" template="com.rameses.gov.etracs.rpt.common.InfoPage"/>
         <page name="forappraisal-approval" template="com.rameses.gov.etracs.rpt.common.InfoPage"/>
         <page name="forassistant-approval" template="com.rameses.gov.etracs.rpt.common.InfoPage"/>

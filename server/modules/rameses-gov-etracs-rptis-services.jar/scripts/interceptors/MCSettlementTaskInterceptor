@@ -16,6 +16,8 @@ class MCSettlementTaskInterceptor
     @Service('RPTWorkflowService')
     def workflowSvc 
 
+    @Service(value="GroupNotificationService", connection="notification_proxy")
+    def notificationSvc
 
 	@Env
 	def env 
@@ -78,6 +80,19 @@ class MCSettlementTaskInterceptor
 		def task = createTask(entity, wf)
 		taskSvc.createTask(task)
 		entity.taskaction = task.action
+
+
+		//notify group
+		def msg = [
+			objid     : entity.objid,
+			senderid  : task.createdby.objid,
+			sender 	  : task.createdby.name,
+			groupid   : wf.tostate,
+			message   : 'Multiple Claim Settlement No. ' + entity.trackingno + '    (' + wf.tostate + ')',
+			filetype  : 'mcsettlement',
+		]
+		notificationSvc.addMessage(msg)
+
 	}
 
 
@@ -105,6 +120,7 @@ class MCSettlementTaskInterceptor
 		def task = evt.result 
 		def entity = svc.open(task.objid)
 		updateSignatoryFromTask(entity, task)
+		notificationSvc.removeMessage([objid:entity.objid])
 	}
 
 	void updateSignatoryFromTask(entity, task){

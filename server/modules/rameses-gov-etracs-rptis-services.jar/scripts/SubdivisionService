@@ -255,12 +255,26 @@ class SubdivisionService
  	------------------------------------------------------------------------*/
 
     @ProxyMethod
+    public def submitForExamination(subdivision) {
+        subdivision.state = STATE_FOREXAMINATION
+        workflowRef.insert(subdivision)
+        updateSubdivision(subdivision)
+        return subdivision 
+    }
+
+    @ProxyMethod
+    public def disapproveForExamination( subdivision ) {
+        workflowRef.delete(subdivision)
+        subdivision.state = STATE_DRAFT
+        updateSubdivision(subdivision)
+        return subdivision
+    }
+
+
+    @ProxyMethod
     public def submitForTaxmapping(subdivision) {
-        try{
-            subdivision.state = STATE_FORTAXMAPPING
-            workflowRef.insert(subdivision)
-        }
-        catch(e){}
+        subdivision.state = STATE_FORTAXMAPPING
+        workflowRef.insert(subdivision)
         updateSubdivision(subdivision)
         return subdivision 
     }
@@ -276,11 +290,8 @@ class SubdivisionService
 
     @ProxyMethod
     public def submitForTaxmappingApproval(subdivision) {
-        try{
-            subdivision.state = STATE_FORTAXMAPPING_APPROVAL
-            workflowRef.insert(subdivision)
-        }
-        catch(e){}
+        subdivision.state = STATE_FORTAXMAPPING_APPROVAL
+        workflowRef.insert(subdivision)
         updateSubdivision(subdivision)
         return subdivision 
     }
@@ -289,23 +300,6 @@ class SubdivisionService
     public def disapproveForTaxmappingApproval( subdivision ) {
         workflowRef.delete(subdivision)
         subdivision.state = STATE_FORTAXMAPPING
-        updateSubdivision(subdivision)
-        return subdivision
-    }
-
-
-    @ProxyMethod
-    public def submitForExamination(subdivision) {
-        subdivision.state = STATE_FOREXAMINATION
-        workflowRef.insert(subdivision)
-        updateSubdivision(subdivision)
-        return subdivision 
-    }
-
-    @ProxyMethod
-    public def disapproveForExamination( subdivision ) {
-        workflowRef.delete(subdivision)
-        subdivision.state = STATE_FORTAXMAPPING_APPROVAL
         updateSubdivision(subdivision)
         return subdivision
     }
@@ -322,7 +316,7 @@ class SubdivisionService
     @ProxyMethod
     public def disapproveForAppraisal( subdivision ) {
         workflowRef.delete(subdivision)
-        subdivision.state = STATE_FOREXAMINATION
+        subdivision.state = STATE_FORTAXMAPPING_APPROVAL
         updateSubdivision(subdivision)
         return subdivision
     }

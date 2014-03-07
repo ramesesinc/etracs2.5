@@ -1,0 +1,8 @@
+"finding.findings" [mode == 'read']{
+    readonly:true;
+}
+
+
+"finding.findings" [mode != 'read']{
+    readonly:false;
+}

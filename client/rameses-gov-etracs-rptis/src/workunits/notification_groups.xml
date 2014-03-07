@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <workunit>
     <invokers>
-        <invoker type="notification-group" caption="For Taxmapping" group="RPT-FORTAXMAPPING"  role="TAXMAPPER" index="1001"/>
-        <invoker type="notification-group" caption="For Taxmapping Approval" group="RPT-FORTAXMAPPING-APPROVAL"  role="TAXMAPPER_CHIEF" index="1005"/>
-        <invoker type="notification-group" caption="For Examination" group="RPT-FOREXAMINATION"  role="EXAMINER" index="1010"/>
-        <invoker type="notification-group" caption="For Appraisal" group="RPT-FORAPPRAISAL"  role="APPRAISER" index="1015"/>
-        <invoker type="notification-group" caption="For Appraisal Approval" group="RPT-FORAPPRAISAL-APPROVAL"  role="APPRAISAL_CHIEF" index="1020"/>
-        <invoker type="notification-group" caption="For Assistant Approval" group="RPT-FORASSISTANT-APPROVAL"  role="ASSISTANT_ASSESSOR" index="1025"/>
-        <invoker type="notification-group" caption="For Approval" group="RPT-FORAPPROVAL"  role="ASSESSOR,APPROVER" index="1030"/>
+        <invoker type="notification-group" caption="For Examination" group="assign-examiner"  role="EXAMINER" index="1010"/>
+        <invoker type="notification-group" caption="For Taxmapping" group="assign-taxmapper"  role="TAXMAPPER" index="1001"/>
+        <invoker type="notification-group" caption="For Taxmapping Approval" group="assign-taxmapping-approval"  role="TAXMAPPER_CHIEF" index="1005"/>
+        <invoker type="notification-group" caption="For Appraisal" group="assign-appraiser"  role="APPRAISER" index="1015"/>
+        <invoker type="notification-group" caption="For Appraisal Approval" group="assign-appraisal-chief"  role="APPRAISAL_CHIEF" index="1020"/>
+        <invoker type="notification-group" caption="For Assistant Approval" group="assign-assistant-approval"  role="ASSISTANT_ASSESSOR" index="1025"/>
+        <invoker type="notification-group" caption="For Approval" group="assign-approver"  role="ASSESSOR,APPROVER" index="1030"/>
     </invokers>
 </workunit>

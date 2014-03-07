@@ -16,6 +16,10 @@ class SubdivisionTaskInterceptor
     @Service('RPTWorkflowService')
     def workflowSvc 
 
+    @Service(value="GroupNotificationService", connection="notification_proxy")
+    def notificationSvc
+
+
 	@Env
 	def env 
 
@@ -59,6 +63,17 @@ class SubdivisionTaskInterceptor
 		def task = createTask(subdivision, wf)
 		taskSvc.createTask(task)
 		subdivision.taskaction = task.action
+
+		//notify group
+		def msg = [
+			objid     : subdivision.objid,
+			senderid  : task.createdby.objid,
+			sender 	  : task.createdby.name,
+			groupid   : wf.tostate,
+			message   : 'Subdivision No. ' + subdivision.txnno + '     (' + wf.tostate + ')',
+			filetype  : 'subdivision',
+		]
+		notificationSvc.addMessage(msg)
 	}
 
 
@@ -90,6 +105,7 @@ class SubdivisionTaskInterceptor
 		def task = evt.result 
 		def subdivision = svc.openSubdivision(task.objid)
 		updateSignatoryFromTask(subdivision, task)
+		notificationSvc.removeMessage([objid:subdivision.objid])
 	}
 
 	void updateSignatoryFromTask(subdivision, task){

@@ -16,6 +16,9 @@ class ConsolidationTaskInterceptor
     @Service('RPTWorkflowService')
     def workflowSvc 
 
+    @Service(value="GroupNotificationService", connection="notification_proxy")
+    def notificationSvc    
+
 
 	@Env
 	def env 
@@ -60,6 +63,17 @@ class ConsolidationTaskInterceptor
 		def task = createTask(consolidation, wf)
 		taskSvc.createTask(task)
 		consolidation.taskaction = task.action
+
+		//notify group
+		def msg = [
+			objid     : consolidation.objid,
+			senderid  : task.createdby.objid,
+			sender 	  : task.createdby.name,
+			groupid   : wf.tostate,
+			message   : 'Consolidation No. ' + consolidation.txnno  + '    (' + wf.tostate + ')',
+			filetype  : 'consolidation',
+		]
+		notificationSvc.addMessage(msg)
 	}
 
 
@@ -90,6 +104,7 @@ class ConsolidationTaskInterceptor
 		def task = evt.result 
 		def consolidation = svc.openConsolidation(task.objid)
 		updateSignatoryFromTask(consolidation, task)
+		notificationSvc.removeMessage([objid:consolidation.objid])
 	}
 
 	void updateSignatoryFromTask(consolidation, task){

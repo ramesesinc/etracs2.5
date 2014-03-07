@@ -83,6 +83,7 @@ abstract class RPTWorkflowController extends PageFlowController
             return  ((!vw)  ||  ExpressionResolver.getInstance().evalBoolean( vw, [entity:entity] ));
         }
         if (sections){
+            sections.sort{a,b -> a.properties.index <=> b.properties.index }
             selectedSection = sections[0];
         }
     }
@@ -106,7 +107,7 @@ abstract class RPTWorkflowController extends PageFlowController
     void submitForTaxmapping(){
         checkMessages();
         entity = service.submitForTaxmapping(entity);
-        loadSections();
+        initOpen();
     }
     
     void disapproveForTaxmapping(){
@@ -122,7 +123,7 @@ abstract class RPTWorkflowController extends PageFlowController
     void submitForTaxmappingApproval(){
         checkMessages();
         entity = service.submitForTaxmappingApproval(entity);
-        loadSections();
+        initOpen();
     }
     
     
@@ -139,7 +140,7 @@ abstract class RPTWorkflowController extends PageFlowController
     void submitForExamination(){
         checkMessages();
         entity = service.submitForExamination(entity);
-        loadSections();
+        initOpen();
     }
 
     
@@ -156,7 +157,7 @@ abstract class RPTWorkflowController extends PageFlowController
     void submitForAppraisal(){
         checkMessages();
         entity = service.submitForAppraisal(entity);
-        loadSections();
+        initOpen();
     }
     
     
@@ -173,7 +174,7 @@ abstract class RPTWorkflowController extends PageFlowController
     void submitForAppraisalApproval(){
         checkMessages();
         entity = service.submitForAppraisalApproval( entity );
-        loadSections();
+        initOpen();
     }
     
         
@@ -189,7 +190,7 @@ abstract class RPTWorkflowController extends PageFlowController
     void submitForAssistantApproval(){
         checkMessages();
         entity = service.submitForAssistantApproval( entity );
-        loadSections();
+        initOpen();
     }
     
     
@@ -206,20 +207,20 @@ abstract class RPTWorkflowController extends PageFlowController
     void submitForApproval(){
         checkMessages();
         entity =  service.submitForApproval(entity);
-        loadSections();
+        initOpen();
     }
     
     
     void approve(){
         checkMessages();
-        entity = approveEntity();
-        loadSections();
+        approveEntity();
+        initOpen();
     }
     
     void disapprove(){
         checkMessages();
-        entity = disapproveEntity();
-        loadSections();
+        disapproveEntity();
+        initOpen();
     }
     
     
@@ -245,7 +246,7 @@ abstract class RPTWorkflowController extends PageFlowController
     
     
     void assignTaskToMe(){
-        taskSvc.assignTaskToMe(entity.objid)
+        taskSvc.assignTaskToMe([objid:entity.objid, action:entity.taskaction])
         initOpen();
     }
 }

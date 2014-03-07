@@ -3,7 +3,7 @@ import com.rameses.util.*;
 
 class GroupNotificationService 
 {	
-    @Service(value='UserNotificationService', connection="notification_proxy")
+    @Service(value='GroupNotificationService', connection="notification_proxy")
     def svc; 
 
 	@Env

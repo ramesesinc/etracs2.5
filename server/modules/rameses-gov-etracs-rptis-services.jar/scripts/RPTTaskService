@@ -20,6 +20,9 @@ class RPTTaskService
     @Service('RPTTaskService')
     def taskSvc
 
+    @Service('RPTUtil')
+    def util
+
     @Env
     def env 
 
@@ -45,8 +48,14 @@ class RPTTaskService
     }
 
     @ProxyMethod
-    public def assignTaskToMe( objid ) {
-        def task = findCurrentTask(objid);
+    public def assignTaskToMe( params ) {
+        util.required('objid', params.objid)
+        util.required('action', params.action)
+
+        def task = em.findCurrentTaskByAction(params);
+        if (!task) 
+            throw new Exception('Current Task does not exist or it has already been assigned to other user.')
+
         taskSvc.createNextUserTask(task);
     }
 
@@ -123,7 +132,7 @@ class RPTTaskService
     @ProxyMethod
     public def findCurrentTask( objid ) {
         def task = em.findCurrentTask([objid:objid])
-        if (!task) throw new Exception('Cannot open current task.')
+        if (!task) throw new Exception('Current Task does not exist or it has already been assigned to other user.')
         return task
     }
 }

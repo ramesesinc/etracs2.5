@@ -16,6 +16,9 @@ class FaasTaskInterceptor
     @Service('RPTWorkflowService')
     def workflowSvc 
 
+    @Service(value="GroupNotificationService", connection="notification_proxy")
+    def notificationSvc
+
 
 	@Env
 	def env 
@@ -58,6 +61,8 @@ class FaasTaskInterceptor
 	}
 
 
+
+
 	@After(pattern="FAASService.(submitFor.*)", eval="result.taskaction != null") 
 	public void handleNextWorkflow( evt ) {
 		def faas = evt.result 
@@ -65,7 +70,22 @@ class FaasTaskInterceptor
 		def task = createTask(faas, wf)
 		taskSvc.createTask(task)
 		faas.taskaction = task.action
+
+		//notify group
+		def msg = [
+			objid     : faas.objid,
+			senderid  : task.createdby.objid,
+			sender 	  : task.createdby.name,
+			groupid   : wf.tostate,
+			message   : 'FAAS No. ' + faas.trackingno + '    (' + wf.tostate + ')',
+			filetype  : 'faasonline',
+		]
+		notificationSvc.addMessage(msg)
+
 	}
+
+
+
 
 
 	@After(pattern="FAASService.approveFaas") 
@@ -90,6 +110,7 @@ class FaasTaskInterceptor
 		def task = evt.result 
 		def faas = faasSvc.openFaas([objid:task.objid])
 		updateFaasSignatoryFromTask(faas, task)
+		notificationSvc.removeMessage([objid:faas.objid])
 	}
 
 	void updateFaasSignatoryFromTask(faas, task){

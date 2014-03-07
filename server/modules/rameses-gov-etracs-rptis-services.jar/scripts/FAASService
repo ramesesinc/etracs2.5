@@ -299,6 +299,31 @@ class FAASService
 	*
 	-------------------------------------------------*/
 
+
+
+	@ProxyMethod
+	public def submitForExamination( faas ) {
+		def retval = updateFaasState(faas, STATE_FOREXAMINATION)
+		if (retval == 0) 
+			throw new Exception('Unable to submit. FAAS does not exist or has already been deleted.')
+
+		wsSvc.insert(faas)
+		trackingSvc.updateMessage([objid:faas.objid, msg:'FAAS is already submitted for examination.'])
+		return faas
+	}
+
+	@ProxyMethod
+	public def disapproveForExamination( faas ) {
+		wsSvc.delete(faas)
+		def retval = updateFaasState(faas, STATE_INTERIM)
+		if (retval == 0) 
+			throw new Exception('Unable to disapprove record. FAAS does not exist or has already been deleted.')
+
+		trackingSvc.updateMessage([objid:faas.objid, msg:'FAAS has been returned to taxmapper for verification.'])
+		return faas
+	}
+
+
 	@ProxyMethod
 	public def submitForTaxmapping( faas ) {
 		def retval = updateFaasState(faas, STATE_FORTAXMAPPING)
@@ -345,31 +370,6 @@ class FAASService
 	}
 
 
-
-	@ProxyMethod
-	public def submitForExamination( faas ) {
-		def retval = updateFaasState(faas, STATE_FOREXAMINATION)
-		if (retval == 0) 
-			throw new Exception('Unable to submit. FAAS does not exist or has already been deleted.')
-
-		wsSvc.insert(faas)
-		trackingSvc.updateMessage([objid:faas.objid, msg:'FAAS is already submitted for examination.'])
-		return faas
-	}
-
-	@ProxyMethod
-	public def disapproveForExamination( faas ) {
-		wsSvc.delete(faas)
-		def retval = updateFaasState(faas, STATE_FORTAXMAPPING_APPROVAL)
-		if (retval == 0) 
-			throw new Exception('Unable to disapprove record. FAAS does not exist or has already been deleted.')
-
-		trackingSvc.updateMessage([objid:faas.objid, msg:'FAAS has been returned to taxmapper for verification.'])
-		return faas
-	}
-
-
-
 	@ProxyMethod
 	public def submitForAppraisal( faas ) {
 		def retval = updateFaasState(faas, STATE_FORAPPRAISAL)
@@ -385,7 +385,7 @@ class FAASService
 	@ProxyMethod
 	public def disapproveForAppraisal( faas ) {
 		wsSvc.delete(faas)
-		def retval = updateFaasState(faas, STATE_FOREXAMINATION)
+		def retval = updateFaasState(faas, STATE_FORTAXMAPPING_APPROVAL)
 		if (retval == 0) 
 			throw new Exception('Unable to disapprove record. FAAS does not exist or has already been deleted.')
 
@@ -482,7 +482,7 @@ class FAASService
 	public def disapproveFaas( faas ) {
 		wsSvc.delete(faas)
 
-		def retval = updateFaasState(faas, STATE_FORAPPROVAL, STATE_INTERIM)
+		def retval = updateFaasState(faas,STATE_INTERIM)
 		if (retval == 0) 
 			throw new Exception('Unable to disapprove FAAS. Only FOR APPROVAL record is allowed.')
 		trackingSvc.updateMessage([objid:faas.objid, msg:'Document is currently reviewed.'])

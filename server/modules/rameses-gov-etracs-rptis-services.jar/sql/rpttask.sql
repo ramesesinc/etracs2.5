@@ -18,6 +18,10 @@ DELETE FROM rpttask WHERE objid = $P{objid}
 [findCurrentTask]
 SELECT * FROM rpttask WHERE objid = $P{objid} AND enddate IS NULL 
 
+[findCurrentTaskByAction]
+SELECT * FROM rpttask WHERE objid = $P{objid} AND action=$P{action} AND enddate IS NULL 
+
+
 [getListById]
 SELECT 
 	t.*,

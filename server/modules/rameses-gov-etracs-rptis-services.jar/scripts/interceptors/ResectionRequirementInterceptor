@@ -46,7 +46,7 @@ class ResectionRequirementInterceptor
 	}
 
 
-	@Before(pattern="ResectionService.submitForTaxmapping") 
+	@Before(pattern="ResectionService.submitForExamination") 
 	public void validateRequirements( evt ) {
 		def entity = evt.args[0]
 		def requirements = em.getRequirements([refid:entity.objid])
