@@ -42,7 +42,7 @@ class SignatoryInfoController
             new Column(name:'type', caption:'Type'),
             new Column(name:'name', caption:'Name'),
             new Column(name:'title', caption:'Title'),
-            new Column(name:'dtsigned', caption:'Date Signed', format:'MM-dd-yyyy', type:'date'),
+            new Column(name:'dtsigned', caption:'Date Signed', type:'date'),
         ] }
     ] as BasicListModel
     

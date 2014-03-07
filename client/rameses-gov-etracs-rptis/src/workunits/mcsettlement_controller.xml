@@ -5,11 +5,11 @@
           
         <invoker folderid="/explorer/txn/rpt/online" action="init"  caption="Multiple Claim Settlement" index="26"
             txntypeid="MS" txntype="Multiple Claim Settlement" newledger="false" newrpu="true" newrealproperpty="true" 
-            role="APPRAISER" />
+            role="APPRAISER,EXAMINER,RECEIVER" />
 
          <invoker type="quick_launcher" code="RS01" action="init"  caption="Multiple Claim Settlement" index="26"
             txntypeid="RS" txntype="Multiple Claim Settlement" newledger="false" newrpu="true" newrealproperpty="true" 
-            role="APPRAISER"  />
+            role="APPRAISER,EXAMINER,RECEIVER"  />
    </invokers>
    
    <code class="com.rameses.gov.etracs.rpt.mcsettlement.MCSettlementController">
@@ -28,63 +28,94 @@
         </page>
         
         <process name="open">
-            <transition to="unassigned" cond="#{entity.taskaction &amp;&amp; entity.taskaction.matches('assign.*')}"/>
-            <transition to="default" cond="#{entity.state == 'DRAFT'}"/>
-            <transition to="taxmapping" cond="#{entity.state == 'FORTAXMAPPING'}"/>
-            <transition to="forappraisal" cond="#{entity.state == 'FORAPPRAISAL'}"/>
-            <transition to="forapproval" cond="#{entity.state == 'FORAPPROVAL'}"/>
-            <transition to="forprovsubmission" cond="#{entity.state == 'FORPROVSUBMISSION'}"/>
-            <transition to="forprovapproval" cond="#{entity.state == 'FORPROVAPPROVAL'}"/>
+            <transition to="unassigned" cond="#{entity.taskaction.matches('assign.*')}"/>
+            <transition to="receive" cond="#{entity.taskaction.matches('receive')}"/>
+            <transition to="fortaxmapping" cond="#{entity.taskaction.matches('fortaxmapping')}"/>
+            <transition to="fortaxmapping-approval" cond="#{entity.taskaction.matches('fortaxmapping-approval')}"/>
+            <transition to="forexamination" cond="#{entity.taskaction.matches('forexamination')}"/>
+            <transition to="forappraisal" cond="#{entity.taskaction.matches('forappraisal')}"/>
+            <transition to="forappraisal-approval" cond="#{entity.taskaction.matches('forappraisal-approval')}"/>
+            <transition to="forassistant-approval" cond="#{entity.taskaction.matches('forassistant-approval')}"/>
+            <transition to="forapproval" cond="#{entity.taskaction.matches('forapproval')}"/>
             <transition to="approved" cond="#{entity.state == 'APPROVED'}"/>
-            <transition to="cancelled" cond="#{entity.state == 'CANCELLED'}"/>
         </process>
         
-        <page name="unassigned" title="Multiple Claim Settlement (#{entity.state} - Unassigned)">
+        <page name="unassigned" title="Multiple Claim Settlement (#{entity.taskaction})">
             <transition caption="Close"  to="end"      mnemonic="c" icon="images/toolbars/cancel.png" />
-            <transition to="open" name="taxmapper" action="assignTaxmapper" caption="Assign To Me" role="TAXMAPPER"  visibleWhen="#{entity.taskaction == 'assign-taxmapper'}" confirm="Assign task to you?"/>
-            <transition to="open" name="appraiser" action="assignAppraiser" caption="Assign To Me" role="APPRAISER" visibleWhen="#{entity.taskaction == 'assign-appraiser'}" confirm="Assign task to you?"/>
-            <transition to="open" name="approver" action="assignApprover" caption="Assign To Me" role="APPROVER" visibleWhen="#{entity.taskaction == 'assign-approver'}" confirm="Assign task to you?"/>
+            <transition to="open" name="assign-taxmapper" action="assignTaskToMe" caption="Assign To Me" role="TAXMAPPER"  visibleWhen="#{entity.taskaction == 'assign-taxmapper'}" confirm="Assign task to you?"/>
+            <transition to="open" name="assign-taxmapper-chief" action="assignTaskToMe" caption="Assign To Me" role="TAXMAPPER_CHIEF"  visibleWhen="#{entity.taskaction == 'assign-taxmapping-approval'}" confirm="Assign task to you?"/>
+            <transition to="open" name="assign-examiner" action="assignTaskToMe" caption="Assign To Me" role="EXAMINER"  visibleWhen="#{entity.taskaction == 'assign-examiner'}" confirm="Assign task to you?"/>
+            <transition to="open" name="assign-appraiser" action="assignTaskToMe" caption="Assign To Me" role="APPRAISER" visibleWhen="#{entity.taskaction == 'assign-appraiser'}" confirm="Assign task to you?"/>
+            <transition to="open" name="assign-appraiser-chief" action="assignTaskToMe" caption="Assign To Me" role="APPRAISAL_CHIEF" visibleWhen="#{entity.taskaction == 'assign-appraisal-chief'}" confirm="Assign task to you?"/>
+            <transition to="open" name="assign-asst-approval" action="assignTaskToMe" caption="Assign To Me" role="ASSISTANT_ASSESSOR" visibleWhen="#{entity.taskaction == 'assign-assistant-approval'}" confirm="Assign task to you?"/>
+            <transition to="open" name="assign-approver" action="assignTaskToMe" caption="Assign To Me" role="ASSESSOR,APPROVER" visibleWhen="#{entity.taskaction == 'assign-approver'}" confirm="Assign task to you?"/>
         </page>
+
         
-        <page name="default" title="Multiple Claim Settlement (Draft)">
+        <page name="receive" title="Multiple Claim Settlement (Draft)">
             <transition caption="Close"  to="end"      mnemonic="c" icon="images/toolbars/cancel.png" />
-            <transition caption="Delete" to="delete"  action="delete" confirm="Delete record?"    mnemonic="d" icon="images/toolbars/trash.png"  role="APPRAISER" />
-            <transition caption="Submit to Taxmapping" to="open" action="submitForTaxmapping"  mnemonic="m"  confirm="Submit to Taxmapping?" role="APPRAISER" />
-        </page>
-        
-        <process name="back-to-default">
-            <transition to="default" />
-        </process>
+            <transition caption="Delete" to="delete"  action="delete" confirm="Delete record?"    mnemonic="d" icon="images/toolbars/trash.png"  role="APPRAISER,EXAMINER" />
+            <transition caption="Submit to Taxmapping" to="open" action="submitForTaxmapping"  mnemonic="m"  confirm="Submit for taxmapping?" role="APPRAISER,EXAMINER" />
+        </page>        
         
         <process name="delete">
             <transition to="end"/>
         </process>
         
         
-        
-        <page name="taxmapping" title="Multiple Claim Settlement (For Taxmapping)">
+        <!-- TAXMAPPING -->
+        <page name="fortaxmapping" title="Multiple Claim Settlement (For Taxmapping)">
             <transition caption="Close"  to="end"      mnemonic="c" icon="images/toolbars/cancel.png" />
-            <transition caption="Submit for Appraisal" to="open" action="submitForAppraisal"  mnemonic="m"   confirm="Submit for appraisal?" role="TAXMAPPER"/>
+            <transition name="disapprove" caption="Disapprove" to="open" action="disapproveForTaxmapping"  mnemonic="d"   confirm="Disapprove?" role="TAXMAPPER"/>
+            <transition name="submit" caption="Submit for Approval" to="open" action="submitForTaxmappingApproval"  mnemonic="m"   confirm="Submit for taxmapping approval?" role="TAXMAPPER"/>
+        </page>
+        
+        <page name="fortaxmapping-approval" title="Multiple Claim Settlement (Taxmapping Approval)">
+            <transition caption="Close"  to="end"      mnemonic="c" icon="images/toolbars/cancel.png" />
+            <transition name="disapprove" caption="Disapprove" to="open" action="disapproveForTaxmappingApproval"  mnemonic="d"   confirm="Disapprove?" role="TAXMAPPER_CHIEF"/>
+            <transition name="submit" caption="Approve and Submit to Examiner" to="open" action="submitForExamination"  mnemonic="m"   confirm="Submit for examination?" role="TAXMAPPER_CHIEF"/>
+        </page>             
+        
+        
+        <!-- EXAMINIATION -->
+        <page name="forexamination" title="Multiple Claim Settlement (For Examination)">
+            <transition caption="Close"  to="end"      mnemonic="c" icon="images/toolbars/cancel.png" />
+            <transition name="disapprove" caption="Disapprove" to="open" action="disapproveForExamination"  mnemonic="d"   confirm="Disapprove?" role="EXAMINER"/>
+            <transition name="submit" caption="Submit for Appraisal" to="open" action="submitForAppraisal"  mnemonic="m"   confirm="Submit for appraisal?" role="EXAMINER"/>
         </page>
         
         
+        <!-- APPRAISAL -->
         <page name="forappraisal" title="Multiple Claim Settlement (For Appraisal)">
             <transition caption="Close"  to="end"      mnemonic="c" icon="images/toolbars/cancel.png" />
-            <transition caption="Submit for Approval" to="open" action="submitForApproval"  mnemonic="m"   confirm="Submit for approval?" role="APPRAISER"/>
+            <transition name="disapprove" caption="Disapprove" to="open" action="disapproveForAppraisal"  mnemonic="d"   confirm="Disapprove?" role="APPRAISER"/>
+            <transition name="submit" caption="Submit for Approval" to="open" action="submitForAppraisalApproval"  mnemonic="m"   confirm="Submit for appraisal approval?" role="APPRAISER"/>
         </page>
         
-        <process name="submit">
-            <transition to="forapproval" cond="#{entity.state == 'FORAPPROVAL'}"/>
-            <transition to="forprovapproval" cond="#{entity.state == 'FORPROVAPPROVAL'}"/>
-            <transition to="forprovsubmission" cond="#{entity.state == 'FORPROVSUBMISSION'}"/>
-        </process>
+        <page name="forappraisal-approval" title="Multiple Claim Settlement (Appraisal Approval)">
+            <transition caption="Close"  to="end"      mnemonic="c" icon="images/toolbars/cancel.png" />
+            <transition name="disapprove" caption="Disapprove" to="open" action="disapproveForAppraisalApproval"  mnemonic="d"   confirm="Disapprove?" role="APPRAISAL_CHIEF"/>
+            <transition name="submit" caption="Approve and Submit to Assistant Assessor" to="open" action="submitForAssistantApproval"  mnemonic="m"   confirm="Submit for assistant assessor approval?" role="APPRAISAL_CHIEF"/>
+        </page>  
+        
+        
+        <!-- ASSISTANT APPROVER -->
+        <page name="forassistant-approval" title="Multiple Claim Settlement (Assistant Approval)">
+            <transition caption="Close"  to="end"      mnemonic="c" icon="images/toolbars/cancel.png" />
+            <transition name="disapprove" caption="Disapprove" to="open" action="disapproveForAssistantApproval"  mnemonic="d"   confirm="Disapprove?" role="ASSISTANT_ASSESSOR"/>
+            <transition name="submit" caption="Approve and Submit to Assessor" to="open" action="submitForApproval"  mnemonic="m"   confirm="Submit for approval?" role="ASSISTANT_ASSESSOR"/>
+        </page>        
+        
+        
+        
+        
         
         
         <!-- CITY-->
         <page name="forapproval" title="Multiple Claim Settlement (For Approval)">
             <transition caption="Close" to="end" mnemonic="c" icon="images/toolbars/cancel.png"  />
-            <transition caption="Disapprove" to="default" action="disapprove" mnemonic="d"  confirm="Disapprove?" role="APPROVER"/>
-            <transition caption="Approve" to="open" action="approve" mnemonic="v" icon="images/toolbars/approve.png"  confirm="Approve?" role="APPROVER"/>
+            <transition caption="Disapprove" to="default" action="disapprove" mnemonic="d"  confirm="Disapprove?" role="ASSESSOR,APPROVER"/>
+            <transition caption="Approve" to="open" action="approve" mnemonic="v" icon="images/toolbars/approve.png"  confirm="Approve?" role="ASSESSOR,APPROVER"/>
         </page>
         
         
@@ -98,41 +129,6 @@
         </process>
         
         
-        <!-- MUNICIPALIY -->
-        <page name="forprovsubmission" title="Multiple Claim Settlement (For Submission to Province)">
-            <transition caption="Close"  to="end" mnemonic="c" icon="images/toolbars/cancel.png"  />
-            <transition caption="Edit"   to="back-to-prov-submission" action="edit" name="edit" mnemonic="e" shortcut="ctrl E" icon="images/toolbars/edit.png"   role="RECOMMENDER"/>
-            <transition caption="Cancel" to="back-to-prov-submission" action="cancelEdit" name="cancel"  mnemonic="c" icon="images/toolbars/cancel.png" />
-            <transition caption="Save"   to="back-to-prov-submission" action="save" name="save" mnemonic="s" shortcut="ctrl S" icon="images/toolbars/save.png"   />
-            <transition caption="Disapprove" to="open" action="disapproveSubmitToProvice"  mnemonic="d"  confirm="Disapprove?" role="RECOMMENDER"/>
-            <transition caption="Submit to Province" to="open" action="submitToProvince" mnemonic="m"  confirm="Submit to province?" role="RECOMMENDER"/>
-        </page>
-        
-        <process name="back-to-prov-submission">
-            <transition to="forprovsubmission"/>
-        </process>
-        
-        <page name="provsubmissionapproval" title="Multiple Claim Settlement (For Province Approval)">
-            <transition caption="Close" to="end" mnemonic="c" icon="images/toolbars/cancel.png"/>
-            <transition caption="Disapprove" to="open" action="disapproveSubmittedToProvince"  mnemonic="d" confirm="Disapprove?" role="RECOMMENDER"/>
-            <transition caption="Approve" to="approved" action="approveSubmittedToProvince"  mnemonic="v" confirm="Submit for approval?" role="RECOMMENDER"/>
-        </page>
-        
-        
-        <!-- PROVINCE -->
-        <page name="forprovapproval" title="Multiple Claim Settlement (Province Approval)">
-            <transition caption="Close" to="end" mnemonic="c" icon="images/toolbars/cancel.png"  />
-            <transition caption="Edit"   to="back-to-forprovapproval" action="edit" name="edit" mnemonic="e" shortcut="ctrl E" icon="images/toolbars/edit.png"    role="APPROVER"/>
-            <transition caption="Cancel" to="back-to-forprovapproval" action="cancelEdit" name="cancel"  mnemonic="c" icon="images/toolbars/cancel.png" />
-            <transition caption="Save"   to="back-to-forprovapproval" action="save" name="save" mnemonic="s" shortcut="ctrl S" icon="images/toolbars/save.png"   />
-            <transition caption="Disapprove" to="open" action="disapproveByProvince"  mnemonic="d"   confirm="Disapprove?" role="APPROVER"/>
-            <transition caption="Approve" to="open" action="approveByProvince"  mnemonic="v"  confirm="Approve?" role="APPROVER"/>
-        </page>
-        
-        <process name="back-to-forprovapproval">
-            <transition to="forprovapproval"/>
-        </process>
-        
         <page name="approved" title="Multiple Claim Settlement (Approved)">
             <transition caption="Close" to="end" mnemonic="c" icon="images/toolbars/cancel.png"/>
         </page>
@@ -144,13 +140,14 @@
     <pages> 
         <page name="init" template="com.rameses.gov.etracs.rpt.mcsettlement.MCSettlementInitPage"/>
         <page name="unassigned" template="com.rameses.gov.etracs.rpt.common.InfoPage"/>
-        <page name="default" template="com.rameses.gov.etracs.rpt.common.InfoPage"/>
-        <page name="taxmapping" template="com.rameses.gov.etracs.rpt.common.InfoPage"/>
+        <page name="receive" template="com.rameses.gov.etracs.rpt.common.InfoPage"/>
+        <page name="fortaxmapping" template="com.rameses.gov.etracs.rpt.common.InfoPage"/>
+        <page name="fortaxmapping-approval" template="com.rameses.gov.etracs.rpt.common.InfoPage"/>
+        <page name="forexamination" template="com.rameses.gov.etracs.rpt.common.InfoPage"/>
         <page name="forappraisal" template="com.rameses.gov.etracs.rpt.common.InfoPage"/>
+        <page name="forappraisal-approval" template="com.rameses.gov.etracs.rpt.common.InfoPage"/>
+        <page name="forassistant-approval" template="com.rameses.gov.etracs.rpt.common.InfoPage"/>
         <page name="forapproval" template="com.rameses.gov.etracs.rpt.common.InfoPage"/>
-        <page name="forprovsubmission" template="com.rameses.gov.etracs.rpt.common.InfoPage"/>
-        <page name="provsubmissionapproval" template="com.rameses.gov.etracs.rpt.common.InfoPage"/>
-        <page name="forprovapproval" template="com.rameses.gov.etracs.rpt.common.InfoPage"/>
         <page name="approved" template="com.rameses.gov.etracs.rpt.common.InfoPage"/>
         <page name="wait" template="com.rameses.gov.etracs.rpt.rpu.ui.WaitInfoPage"/>
     </pages>

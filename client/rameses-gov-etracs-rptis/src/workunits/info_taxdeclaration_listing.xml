@@ -1,7 +1,7 @@
 <workunit>
     <invokers>
-        <invoker type="subdivision:info" action="init" caption="Tax Declarations" visibleWhen="#{entity.state == 'APPROVED'}" index="-1"/>
-        <invoker type="consolidation:info" action="init" caption="Tax Declarations" visibleWhen="#{entity.state == 'APPROVED'}" index="-1"/>
+        <invoker type="subdivision:info" action="init" caption="Tax Declarations" visibleWhen="#{entity.state == 'APPROVED'}" index="1900"/>
+        <invoker type="consolidation:info" action="init" caption="Tax Declarations" visibleWhen="#{entity.state == 'APPROVED'}" index="1900"/>
     </invokers>
     <code >
     <![CDATA[

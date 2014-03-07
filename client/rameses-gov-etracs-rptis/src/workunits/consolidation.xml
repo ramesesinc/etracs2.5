@@ -5,11 +5,11 @@
                    
         <invoker folderid="/explorer/txn/rpt/online" action="init"  caption="Consolidation" index="21"
             txntypeid="CS" txntype="Consolidation" newledger="true" newrpu="true" 
-            role="APPRAISER,EXAMINER" permission="consolidation.create"/>
+            role="APPRAISER,EXAMINER,RECEIVER" permission="consolidation.create"/>
 
          <invoker type="quick_launcher" code="CS01" action="init"  caption="Consolidation" index="21"
             txntypeid="CS" txntype="Consolidation" newledger="true" newrpu="true" 
-            role="APPRAISER,EXAMINER" permission="consolidation.create"/>
+            role="APPRAISER,EXAMINER,RECEIVER" permission="consolidation.create"/>
             
    </invokers>
    <code class="com.rameses.gov.etracs.rpt.consolidation.ui.ConsolidationController">
@@ -32,7 +32,11 @@
             <transition to="receive" cond="#{entity.taskaction.matches('receive')}"/>
             <transition to="fortaxmapping" cond="#{entity.taskaction.matches('fortaxmapping')}"/>
             <transition to="fortaxmapping-approval" cond="#{entity.taskaction.matches('fortaxmapping-approval')}"/>
+            
             <transition to="forexamination" cond="#{entity.taskaction.matches('forexamination')}"/>
+            <transition to="forretaxmapping" cond="#{entity.taskaction.matches('forretaxmapping')}"/>
+            <transition to="forretaxmapping-approval" cond="#{entity.taskaction.matches('forretaxmapping-approval')}"/>
+            
             <transition to="forappraisal" cond="#{entity.taskaction.matches('forappraisal')}"/>
             <transition to="forappraisal-approval" cond="#{entity.taskaction.matches('forappraisal-approval')}"/>
             <transition to="forassistant-approval" cond="#{entity.taskaction.matches('forassistant-approval')}"/>
@@ -41,11 +45,15 @@
         </process>
         
         
-        <page name="unassigned" title="Consolidation (#{entity.taskaction.toUpperCase()})">
+        <page name="unassigned" title="Consolidation (#{entity.taskaction})">
             <transition caption="Close"  to="end"      mnemonic="c" icon="images/toolbars/cancel.png" />
             <transition to="open" name="assign-taxmapper" action="assignTaskToMe" caption="Assign To Me" role="TAXMAPPER"  visibleWhen="#{entity.taskaction == 'assign-taxmapper'}" confirm="Assign task to you?"/>
             <transition to="open" name="assign-taxmapper-chief" action="assignTaskToMe" caption="Assign To Me" role="TAXMAPPER_CHIEF"  visibleWhen="#{entity.taskaction == 'assign-taxmapping-approval'}" confirm="Assign task to you?"/>
             <transition to="open" name="assign-examiner" action="assignTaskToMe" caption="Assign To Me" role="EXAMINER"  visibleWhen="#{entity.taskaction == 'assign-examiner'}" confirm="Assign task to you?"/>
+            
+            <transition to="open" name="assign-retaxmapper" action="assignTaskToMe" caption="Assign To Me" role="TAXMAPPER"  visibleWhen="#{entity.taskaction == 'assign-retaxmapper'}" confirm="Assign task to you?"/>
+            <transition to="open" name="assign-retaxmapper-chief" action="assignTaskToMe" caption="Assign To Me" role="TAXMAPPER_CHIEF"  visibleWhen="#{entity.taskaction == 'assign-retaxmapping-approval'}" confirm="Assign task to you?"/>
+            
             <transition to="open" name="assign-appraiser" action="assignTaskToMe" caption="Assign To Me" role="APPRAISER" visibleWhen="#{entity.taskaction == 'assign-appraiser'}" confirm="Assign task to you?"/>
             <transition to="open" name="assign-appraiser-chief" action="assignTaskToMe" caption="Assign To Me" role="APPRAISAL_CHIEF" visibleWhen="#{entity.taskaction == 'assign-appraisal-chief'}" confirm="Assign task to you?"/>
             <transition to="open" name="assign-asst-approval" action="assignTaskToMe" caption="Assign To Me" role="ASSISTANT_ASSESSOR" visibleWhen="#{entity.taskaction == 'assign-assistant-approval'}" confirm="Assign task to you?"/>
@@ -84,8 +92,25 @@
         <page name="forexamination" title="Consolidation (For Examination)">
             <transition caption="Close"  to="end"      mnemonic="c" icon="images/toolbars/cancel.png" />
             <transition name="disapprove" caption="Disapprove" to="open" action="disapproveForExamination"  mnemonic="d"   confirm="Disapprove?" role="EXAMINER"/>
-            <transition name="submit" caption="Submit for Appraisal" to="open" action="submitForAppraisal"  mnemonic="m"   confirm="Submit for appraisal?" role="EXAMINER"/>
+            <transition name="submit" caption="Submit for Taxmapping" to="open" action="submitForTaxmapping"  mnemonic="m"   confirm="Submit for taxmapping?" role="EXAMINER"/>
         </page>
+        
+        
+        
+        
+        <!-- RE-TAXMAPPING -->
+        <page name="forretaxmapping" title="Subdivision (For Taxmapping)">
+            <transition caption="Close"  to="end"      mnemonic="c" icon="images/toolbars/cancel.png" />
+            <transition name="disapprove" caption="Disapprove" to="open" action="disapproveForExamination"  mnemonic="d"   confirm="Disapprove?" role="TAXMAPPER"/>
+            <transition name="submit" caption="Submit for Approval" to="open" action="submitForTaxmappingApproval"  mnemonic="m"   confirm="Submit for taxmapping approval?" role="TAXMAPPER"/>
+        </page>
+        
+        <page name="forretaxmapping-approval" title="Subdivision (Taxmapping Approval)">
+            <transition caption="Close"  to="end"      mnemonic="c" icon="images/toolbars/cancel.png" />
+            <transition name="disapprove" caption="Disapprove" to="open" action="disapproveForTaxmappingApproval"  mnemonic="d"   confirm="Disapprove?" role="TAXMAPPER_CHIEF"/>
+            <transition name="submit" caption="Approve and Submit to Appraiser" to="open" action="submitForAppraisal"  mnemonic="m"   confirm="Submit for examination?" role="TAXMAPPER_CHIEF"/>
+        </page>             
+        
         
         
         <!-- APPRAISAL -->
@@ -138,6 +163,8 @@
         <page name="fortaxmapping" template="com.rameses.gov.etracs.rpt.common.InfoPage"/>
         <page name="fortaxmapping-approval" template="com.rameses.gov.etracs.rpt.common.InfoPage"/>
         <page name="forexamination" template="com.rameses.gov.etracs.rpt.common.InfoPage"/>
+        <page name="forretaxmapping" template="com.rameses.gov.etracs.rpt.common.InfoPage"/>
+        <page name="forretaxmapping-approval" template="com.rameses.gov.etracs.rpt.common.InfoPage"/>
         <page name="forappraisal" template="com.rameses.gov.etracs.rpt.common.InfoPage"/>
         <page name="forappraisal-approval" template="com.rameses.gov.etracs.rpt.common.InfoPage"/>
         <page name="forassistant-approval" template="com.rameses.gov.etracs.rpt.common.InfoPage"/>

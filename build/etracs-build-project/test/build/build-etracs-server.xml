@@ -123,6 +123,9 @@
         <antcall target="deploy-shared-to-platform">
             <param name="sourcefile" value="rameses-rules-mgmt"/>
         </antcall>
+        <antcall target="deploy-shared-to-platform">
+            <param name="sourcefile" value="rameses-client-notification"/>
+        </antcall>
     </target>
     
     
@@ -225,6 +228,7 @@
         <copy file="${devlib.projects.dir}/rameses-client-ui.jar" todir="${target.downloads.core.dir}" failonerror="false"/>
         <copy file="${devlib.projects.dir}/rameses-common2.jar" todir="${target.downloads.core.dir}" failonerror="false"/>
         <copy file="${devlib.projects.dir}/rameses-custom-impl.jar" todir="${target.downloads.core.dir}" failonerror="false"/>
+        <copy file="${devlib.projects.dir}/rameses-client-ui-bio.jar" todir="${target.downloads.core.dir}" failonerror="false"/>
     </target>
     
     <!--=====================================================

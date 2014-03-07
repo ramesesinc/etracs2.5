@@ -32,12 +32,17 @@ SELECT
 	rp.objid AS prevfaas_realpropertyid,
 	rp.cadastrallotno AS prevfaas_cadastrallotno,
 	rp.surveyno AS prevfaas_surveyno,
-	nf.tdno AS newfaas_tdno
+	nf.tdno AS newfaas_tdno,
+	t.trackingno,
+	CASE WHEN task.taskid IS NULL THEN null ELSE task.action END AS taskaction,
+	CASE WHEN task.taskid IS NULL THEN null ELSE task.findings END AS findings
 FROM mcsettlement m 
 	INNER JOIN faas f ON m.prevfaas_objid = f.objid 
 	INNER JOIN rpu rpu ON f.rpuid = rpu.objid 
 	INNER JOIN realproperty rp ON f.realpropertyid = rp.objid 
 	LEFT JOIN faas nf ON m.newfaas_objid = nf.objid 
+	LEFT JOIN rpttracking t ON m.objid = t.objid 
+	LEFT JOIN rpttask task ON m.objid = task.objid AND task.enddate IS NULL 
 WHERE m.objid = $P{objid}
 
 

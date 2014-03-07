@@ -1,9 +1,4 @@
 <folders>
-    <!-- 
-    <folder id="menu">
-        <folder id="test" />
-    </folder>
-    -->
     <folder id="explorer">
         <folder id="master">
             <folder id="rpt" caption="Assessor" index="1" />

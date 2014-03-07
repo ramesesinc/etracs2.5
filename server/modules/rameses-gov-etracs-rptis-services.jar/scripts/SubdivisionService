@@ -256,8 +256,11 @@ class SubdivisionService
 
     @ProxyMethod
     public def submitForTaxmapping(subdivision) {
-        subdivision.state = STATE_FORTAXMAPPING
-        workflowRef.insert(subdivision)
+        try{
+            subdivision.state = STATE_FORTAXMAPPING
+            workflowRef.insert(subdivision)
+        }
+        catch(e){}
         updateSubdivision(subdivision)
         return subdivision 
     }
@@ -273,8 +276,11 @@ class SubdivisionService
 
     @ProxyMethod
     public def submitForTaxmappingApproval(subdivision) {
-        subdivision.state = STATE_FORTAXMAPPING_APPROVAL
-        workflowRef.insert(subdivision)
+        try{
+            subdivision.state = STATE_FORTAXMAPPING_APPROVAL
+            workflowRef.insert(subdivision)
+        }
+        catch(e){}
         updateSubdivision(subdivision)
         return subdivision 
     }
