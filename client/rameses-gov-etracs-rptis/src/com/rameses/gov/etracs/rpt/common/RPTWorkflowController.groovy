@@ -16,6 +16,9 @@ abstract class RPTWorkflowController extends PageFlowController
     def binding;
     
     
+    @Service('RPTWorkflowService')
+    def workflowSvc;
+            
     @Service('RPTTaskService')
     def taskSvc;
             
@@ -36,8 +39,11 @@ abstract class RPTWorkflowController extends PageFlowController
     def selectedSection;
     
     def messages = [];
-        
     
+    abstract String getDocName();
+    abstract String getFileType();
+    abstract String getWorkflowCode();
+    abstract String getReferenceNo();
     
     abstract def getService();
     abstract def getSections();
@@ -93,6 +99,36 @@ abstract class RPTWorkflowController extends PageFlowController
      * WORKFLOW ACTIONS
      *
      *----------------------------------------------------*/
+    
+    def createTask(wf){
+        return [
+            objid	: entity.objid,
+            refno	: getReferenceNo(),
+            docname 	: getDocName(),
+            filetype	: getFileType(),
+            action 	: wf.tostate,
+            msg		: wf.message,
+            signatory 	: wf.signatory,
+            workflowid  : wf.workflowid,
+        ]
+    }
+    
+    void submit(){
+        def params = [
+            docname   : getDocName(),
+            appliedto : getWorkflowCode(),
+            fromstate : entity.taskaction,
+        ];
+        
+        def wf = workflowSvc.findNext(params);
+        def task = createTask(wf)
+        taskSvc.createTaskAndNotifyGroup(task)
+        entity.taskaction = task.action;
+        initOpen();
+    }
+    
+    
+    
     boolean pass = false;
     
     final void doDisapprove( handler){
@@ -104,120 +140,25 @@ abstract class RPTWorkflowController extends PageFlowController
     }   
     
     
-    void submitForTaxmapping(){
+    void disapprove(){
         checkMessages();
-        entity = service.submitForTaxmapping(entity);
-        initOpen();
-    }
-    
-    void disapproveForTaxmapping(){
         def handler = { msg ->
             entity._disapprovemsg = msg 
-            entity = service.disapproveForTaxmapping(entity);
-            pass = true;
-        };
-        doDisapprove(handler);
-    }    
-    
-    
-    void submitForTaxmappingApproval(){
-        checkMessages();
-        entity = service.submitForTaxmappingApproval(entity);
-        initOpen();
-    }
-    
-    
-    void disapproveForTaxmappingApproval(){
-        def handler = { msg ->
-            entity._disapprovemsg = msg 
-            entity = service.disapproveForTaxmappingApproval(entity);
-            pass = true;
-        };
-        doDisapprove(handler);
-    }    
-    
-    
-    void submitForExamination(){
-        checkMessages();
-        entity = service.submitForExamination(entity);
-        initOpen();
-    }
-
-    
-    void disapproveForExamination(){
-        def handler = { msg ->
-            entity._disapprovemsg = msg 
-            entity = service.disapproveForExamination(entity);
+            taskSvc.disapproveTaskByObjid(entity.objid, entity._disapprovemsg)
             pass = true;
         };
         doDisapprove(handler);
     }
     
     
-    void submitForAppraisal(){
-        checkMessages();
-        entity = service.submitForAppraisal(entity);
-        initOpen();
-    }
     
-    
-    void disapproveForAppraisal(){
-        def handler = { msg ->
-            entity._disapprovemsg = msg 
-            entity = service.disapproveForAppraisal(entity);
-            pass = true;
-        };
-        doDisapprove(handler);
-    }
-    
-
-    void submitForAppraisalApproval(){
-        checkMessages();
-        entity = service.submitForAppraisalApproval( entity );
-        initOpen();
-    }
-    
-        
-    void disapproveForAppraisalApproval(){
-        def handler = { msg ->
-            entity._disapprovemsg = msg 
-            entity = service.disapproveForAppraisalApproval(entity);
-            pass = true;
-        };
-        doDisapprove(handler);
-    }
-    
-    void submitForAssistantApproval(){
-        checkMessages();
-        entity = service.submitForAssistantApproval( entity );
-        initOpen();
-    }
-    
-    
-    void disapproveForAssistantApproval(){
-        def handler = { msg ->
-            entity._disapprovemsg = msg 
-            entity = service.disapproveForAssistantApproval(entity);
-            pass = true;
-        };
-        doDisapprove(handler);
-    }    
-    
-    
-    void submitForApproval(){
-        checkMessages();
-        entity =  service.submitForApproval(entity);
-        initOpen();
-    }
-    
-    
-    void approve(){
+    void doApproveEntity(){
         checkMessages();
         approveEntity();
         initOpen();
     }
     
-    void disapprove(){
+    void doDisapproveEntity(){
         checkMessages();
         disapproveEntity();
         initOpen();

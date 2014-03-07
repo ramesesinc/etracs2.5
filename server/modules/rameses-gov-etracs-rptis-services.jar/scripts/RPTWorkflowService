@@ -15,6 +15,33 @@ class RPTWorkflowService
 
 
     @ProxyMethod
+    public def transition( params ) {
+        util.required('docname', params.docname)
+        util.required('appliedto', params.appliedto)
+        util.required('fromstate', params.fromstate)
+        util.required('refno', params.refno)
+
+
+        def faas = evt.result 
+        def wf = findNext(params)
+        def task = createTask(faas, wf)
+        taskSvc.createTask(task)
+        faas.taskaction = task.action
+
+        //notify group
+        def msg = [
+            objid     : faas.objid,
+            senderid  : task.createdby.objid,
+            sender    : task.createdby.name,
+            groupid   : wf.tostate,
+            message   : 'FAAS No. ' + faas.trackingno + '    (' + wf.tostate + ')',
+            filetype  : 'faasonline',
+        ]
+        notificationSvc.addMessage(msg)
+    }
+
+
+    @ProxyMethod
     public def findStart( params ) {
         util.required('appliedto', params.appliedto)
 

@@ -16,6 +16,8 @@ class RPTTaskService
     @Service('RPTWorkflowService')
     def workflowSvc
 
+    @Service(value="GroupNotificationService", connection="notification_proxy")
+    def notificationSvc
 
     @Service('RPTTaskService')
     def taskSvc
@@ -37,6 +39,21 @@ class RPTTaskService
         task.createdby = getUserInfo()
         em.create(task)
         return task 
+    }
+
+    @ProxyMethod
+    public def createTaskAndNotifyGroup( task ) {
+        createTask(task)
+         //notify group
+        def msg = [
+            objid     : task.objid,
+            senderid  : task.createdby.objid,
+            sender    : task.createdby.name,
+            groupid   : task.action,
+            message   : task.docname + ' No. ' + task.refno + '    (' + task.tostate + ')',
+            filetype  : task.filetype,
+        ]
+        notificationSvc.addMessage(msg)
     }
 
 

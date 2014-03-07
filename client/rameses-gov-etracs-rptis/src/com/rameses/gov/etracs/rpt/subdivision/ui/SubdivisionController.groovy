@@ -32,6 +32,26 @@ public class SubdivisionController extends com.rameses.gov.etracs.rpt.common.RPT
         return InvokerUtil.lookupOpeners('subdivision:info', [entity:entity, svc:svc])
     }
     
+    
+    
+    public String getDocName(){ 
+        return 'Subdivision';
+    }
+    
+    public String getFileType(){
+        return 'subdivision';
+    }
+    
+    public String getWorkflowCode(){
+        return 'SD';
+    }
+    
+    public String getReferenceNo(){
+        return entity.txnno;
+    }
+    
+    
+    
     public def openEntity(){
         return svc.openSubdivision(entity.objid)
     }

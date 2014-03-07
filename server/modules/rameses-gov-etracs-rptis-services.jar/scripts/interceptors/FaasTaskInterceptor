@@ -24,6 +24,13 @@ class FaasTaskInterceptor
 	def env 
 
 
+	@Before(pattern="FAASService.deleteFaas") 
+	public void deleteFaas( evt ) {
+		def faas = evt.args[0]
+		taskSvc.delete(faas)
+	}
+
+
 	def createTask(faas, wf){
 		def refno = faas.trackingno
 		if (!refno && faas.tdno )
@@ -43,11 +50,6 @@ class FaasTaskInterceptor
 	}
 
 
-	@Before(pattern="FAASService.deleteFaas") 
-	public void deleteFaas( evt ) {
-		def faas = evt.args[0]
-		taskSvc.delete(faas)
-	}
 
 
 	@After(pattern="FAASService.(initOnlineTransaction|initNewDiscovery)") 
@@ -61,33 +63,6 @@ class FaasTaskInterceptor
 	}
 
 
-
-
-	@After(pattern="FAASService.(submitFor.*)", eval="result.taskaction != null") 
-	public void handleNextWorkflow( evt ) {
-		def faas = evt.result 
-		def wf = workflowSvc.findNext([docname:'FAAS', appliedto:faas.txntype.objid, fromstate:faas.taskaction])
-		def task = createTask(faas, wf)
-		taskSvc.createTask(task)
-		faas.taskaction = task.action
-
-		//notify group
-		def msg = [
-			objid     : faas.objid,
-			senderid  : task.createdby.objid,
-			sender 	  : task.createdby.name,
-			groupid   : wf.tostate,
-			message   : 'FAAS No. ' + faas.trackingno + '    (' + wf.tostate + ')',
-			filetype  : 'faasonline',
-		]
-		notificationSvc.addMessage(msg)
-
-	}
-
-
-
-
-
 	@After(pattern="FAASService.approveFaas") 
 	public void approveFaas( evt ) {
 		taskSvc.closeTask([objid:evt.result.objid])
@@ -99,11 +74,6 @@ class FaasTaskInterceptor
 		taskSvc.closeTask([objid:evt.result.objid])
 	}
 
-	@After(pattern="FAASService.disapproveFor.*") 
-	public void handleDisapprove( evt ) {
-		def faas = evt.result
-		taskSvc.disapproveTaskByObjid(faas.objid, faas._disapprovemsg)
-	}
 
 	@After(pattern="RPTTaskService.(createNextUserTask|assignTaskToMe)", eval="#{result.filetype == 'faasonline'}") 
 	public void updateSignatoryInfo( evt ) {

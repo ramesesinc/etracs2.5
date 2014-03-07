@@ -26,6 +26,13 @@ class MCSettlementTaskInterceptor
 	def TXN_TYPE = 'MS'
 
 
+	@Before(pattern="MCSettlementService.deleteEntity") 
+	public void deleteEntity( evt ) {
+		def entity = evt.args[0]
+		taskSvc.delete(entity)
+	}
+
+
 	def createTask(entity, wf){
 		return [
 			objid		: entity.objid,
@@ -38,14 +45,6 @@ class MCSettlementTaskInterceptor
 			workflowid  : wf.workflowid,
 		]
 	}
-
-
-	@Before(pattern="MCSettlementService.deleteEntity") 
-	public void deleteEntity( evt ) {
-		def entity = evt.args[0]
-		taskSvc.delete(entity)
-	}
-
 
 	@After(pattern="MCSettlementService.create") 
 	public void create( evt ) {
@@ -73,29 +72,6 @@ class MCSettlementTaskInterceptor
 	}
 
 
-	@After(pattern="MCSettlementService.(submitFor.*)") 
-	public void handleNextWorkflow( evt ) {
-		def entity = evt.result 
-		def wf = workflowSvc.findNext([docname:DOC_NAME, appliedto:TXN_TYPE, fromstate:entity.taskaction])
-		def task = createTask(entity, wf)
-		taskSvc.createTask(task)
-		entity.taskaction = task.action
-
-
-		//notify group
-		def msg = [
-			objid     : entity.objid,
-			senderid  : task.createdby.objid,
-			sender 	  : task.createdby.name,
-			groupid   : wf.tostate,
-			message   : 'Multiple Claim Settlement No. ' + entity.trackingno + '    (' + wf.tostate + ')',
-			filetype  : 'mcsettlement',
-		]
-		notificationSvc.addMessage(msg)
-
-	}
-
-
 	@After(pattern="MCSettlementService.approve") 
 	public void approve( evt ) {
 		taskSvc.closeTask([objid:evt.result.objid])
@@ -105,13 +81,6 @@ class MCSettlementTaskInterceptor
 	@After(pattern="MCSettlementService.disapprove") 
 	public void disapprove( evt ) {
 		taskSvc.closeTask([objid:evt.result.objid])
-	}
-
-
-	@After(pattern="MCSettlementService.disapproveFor.*") 
-	public void handleDisapprove( evt ) {
-		def entity = evt.result
-		taskSvc.disapproveTaskByObjid(entity.objid, entity._disapprovemsg)
 	}
 
 

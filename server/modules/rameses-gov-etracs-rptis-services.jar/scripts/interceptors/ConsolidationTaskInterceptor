@@ -25,6 +25,13 @@ class ConsolidationTaskInterceptor
 
 	def CS_TXN_TYPE = 'CS'
 
+	@Before(pattern="ConsolidationService.deleteConsolidation") 
+	public void deleteConsolidation( evt ) {
+		def entity = evt.args[0]
+		taskSvc.delete(entity)
+	}
+
+
 	def createTask(entity, wf){
 		return [
 			objid		: entity.objid,
@@ -39,13 +46,6 @@ class ConsolidationTaskInterceptor
 	}
 
 
-	@Before(pattern="ConsolidationService.deleteConsolidation") 
-	public void deleteConsolidation( evt ) {
-		def entity = evt.args[0]
-		taskSvc.delete(entity)
-	}
-
-
 	@After(pattern="ConsolidationService.createConsolidation") 
 	public void createConsolidation( evt ) {
 		def consolidation = evt.result
@@ -54,26 +54,6 @@ class ConsolidationTaskInterceptor
 		task = taskSvc.createTask(task)
 		taskSvc.assignTask(task)
 		updateSignatoryFromTask(consolidation, task)
-	}
-
-	@After(pattern="ConsolidationService.(submitFor.*)") 
-	public void handleNextWorkflow( evt ) {
-		def consolidation = evt.result 
-		def wf = workflowSvc.findNext([docname:'Consolidation', appliedto:CS_TXN_TYPE, fromstate:consolidation.taskaction])
-		def task = createTask(consolidation, wf)
-		taskSvc.createTask(task)
-		consolidation.taskaction = task.action
-
-		//notify group
-		def msg = [
-			objid     : consolidation.objid,
-			senderid  : task.createdby.objid,
-			sender 	  : task.createdby.name,
-			groupid   : wf.tostate,
-			message   : 'Consolidation No. ' + consolidation.txnno  + '    (' + wf.tostate + ')',
-			filetype  : 'consolidation',
-		]
-		notificationSvc.addMessage(msg)
 	}
 
 
@@ -93,11 +73,6 @@ class ConsolidationTaskInterceptor
 		taskSvc.closeTask([objid:evt.result.objid])
 	}
 
-	@After(pattern="ConsolidationService.disapproveFor.*") 
-	public void handleDisapprove( evt ) {
-		def consolidation = evt.result
-		taskSvc.disapproveTaskByObjid(consolidation.objid, consolidation._disapprovemsg)
-	}
 
 	@After(pattern="RPTTaskService.(createNextUserTask|assignTaskToMe)", eval="#{result.filetype == 'consolidation'}") 
 	public void updateSignatoryInfo( evt ) {

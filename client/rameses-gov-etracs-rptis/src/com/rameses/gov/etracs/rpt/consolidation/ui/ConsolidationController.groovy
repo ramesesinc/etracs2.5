@@ -29,6 +29,25 @@ public class ConsolidationController extends com.rameses.gov.etracs.rpt.common.R
         return InvokerUtil.lookupOpeners('consolidation:info', [entity:entity, svc:svc])
     }
     
+    
+    public String getDocName(){ 
+        return 'Consolidation';
+    }
+    
+    public String getFileType(){
+        return 'consolidation';
+    }
+    
+    public String getWorkflowCode(){
+        return 'CS';
+    }
+    
+    public String getReferenceNo(){
+        return entity.txnno;
+    }
+    
+    
+    
     public def openEntity(){
         return svc.openConsolidation(entity.objid)
     }
