@@ -1,6 +1,6 @@
 <workunit extends="wtemplates/gov/treasury/ReportController.xml" >
     <invokers>
-        <invoker folderid="/explorer/txn/treasury/reports" action="init" caption="CRAAF" target="window" index="4" role="AFO" />
+        <invoker folderid="/explorer/report/treasury" action="init" caption="CRAAF" target="window" index="4" role="AFO" />
         
         <invoker type="report:craaf" action="init" caption="CRAAF" target="window" index="4" role="AFO" />
     </invokers>
