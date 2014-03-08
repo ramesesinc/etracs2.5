@@ -20,12 +20,15 @@
          
          @Service("SREAccountService") 
          def svc
-        
          
          void sync() {
             if(! MsgBox.confirm("This will update your current records. Continue? ")) return;
          
             svc.syncFromCloud();
+            MsgBox.alert("SRE Accounts successfully updated.. ");
+            getNodeModel().reloadTree();
+            getListHandler().reload();
+
          }
             
        }

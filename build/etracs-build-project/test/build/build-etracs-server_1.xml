@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="changeme" default="build-server" basedir=".">
+    
     <target name="init">
         <property file="build-etracs-server.properties"/>
     </target>
-    
     
     <target name="cleanup" depends="init">
         <delete dir="${target.etracs.platform25.dir}/bin/osiris2"/>

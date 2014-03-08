@@ -1,7 +1,7 @@
 <workunit extends="wtemplates/gov/treasury/ReportController.xml" >
     <invokers>
         <invoker folderid="/explorer/txn/treasury/reports" action="init" caption="Statement of Receipts Sources" target="window" index="3" 
-            role="TREASURY_REPORT" />
+            role="REPORT" permission="srs.viewreport" />
     </invokers>
     <code>
 
