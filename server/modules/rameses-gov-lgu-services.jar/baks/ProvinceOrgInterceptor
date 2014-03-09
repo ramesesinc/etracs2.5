@@ -9,14 +9,14 @@ class ProvinceOrgInterceptor {
 		
 	def schemaName = 'province';
 
-	@After(pattern="OrgAdminService.open", eval="#{args[0].orgclass=='PROVINCE'}")
+	@After(pattern="OrgService.open", eval="#{args[0].orgclass=='PROVINCE'}")
 	public void onOpen( evt ) {
 		def orgdata = evt.args[0];
 		def provdata = em.read(schemaName, orgdata);
 		if (provdata) evt.result.putAll( provdata ); 
 	} 
 
-	@After(pattern="OrgAdminService.update", eval="#{args[0].orgclass=='PROVINCE'}")
+	@After(pattern="OrgService.update", eval="#{args[0].orgclass=='PROVINCE'}")
 	public void onUpdate( evt ) {
 		def data = evt.args[0];
 		data.state = 'DRAFT';		
@@ -28,13 +28,13 @@ class ProvinceOrgInterceptor {
 			em.create(schemaName, data);
 	}
 
-	@After(pattern="OrgAdminService.removeEntity", eval="#{args[0].orgclass=='PROVINCE'}")
+	@After(pattern="OrgService.removeEntity", eval="#{args[0].orgclass=='PROVINCE'}")
 	public void onRemove( evt ) {
 		def data = evt.args[0];
 		em.delete(schemaName, data); 
 	} 	
 	
-	@Before(pattern="OrgAdminService.approve", eval="#{args[0].orgclass=='PROVINCE'}")
+	@Before(pattern="OrgService.approve", eval="#{args[0].orgclass=='PROVINCE'}")
 	public void onChangeState( evt ) {
 		def params = evt.args[0];
 		params.newstate = 'APPROVED';

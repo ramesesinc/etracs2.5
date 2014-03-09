@@ -9,14 +9,14 @@ class CityOrgInterceptor {
 
 	def schemaName = 'city';
 
-	@After(pattern="OrgAdminService.create", eval="#{args[0].orgclass=='CITY'}")
+	@After(pattern="OrgService.create", eval="#{args[0].orgclass=='CITY'}")
 	public def onCreate( evt ) {
 		def data = evt.args[0];
 		data.state = 'DRAFT'; 
 		em.create(schemaName, data); 
 	}
 
-	@After(pattern="OrgAdminService.update", eval="#{args[0].orgclass=='CITY'}")
+	@After(pattern="OrgService.update", eval="#{args[0].orgclass=='CITY'}")
 	public def onUpdate( evt ) {
 		def data = evt.args[0];
 		data.state = 'DRAFT'; 
@@ -28,20 +28,20 @@ class CityOrgInterceptor {
 			em.create(schemaName, data);
 	}
 
-	@After(pattern="OrgAdminService.open", eval="#{args[0].orgclass=='CITY'}")
+	@After(pattern="OrgService.open", eval="#{args[0].orgclass=='CITY'}")
 	public def onOpen( evt ) {
 		def orgdata = evt.args[0];
 		def resdata = em.read(schemaName, orgdata);
 		if (resdata) evt.result.putAll( resdata ); 
 	} 
 
-	@After(pattern="OrgAdminService.removeEntity", eval="#{args[0].orgclass=='CITY'}")
+	@After(pattern="OrgService.removeEntity", eval="#{args[0].orgclass=='CITY'}")
 	public def onRemove( evt ) {
 		def data = evt.args[0];
 		em.delete(schemaName, data); 
 	} 
 	
-	@Before(pattern="OrgAdminService.approve", eval="#{args[0].orgclass=='CITY'}")
+	@Before(pattern="OrgService.approve", eval="#{args[0].orgclass=='CITY'}")
 	public def onChangeState( evt ) {
 		def params = evt.args[0];
 		params.newstate = 'APPROVED';

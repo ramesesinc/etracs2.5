@@ -38,6 +38,7 @@ class DistrictService extends ActiveCrudListService {
 
 	public void beforeCreate(o) {
 		o.orgclass = 'DISTRICT';
+		o.root = 0;
 		org.create(o);	
 	}	
 

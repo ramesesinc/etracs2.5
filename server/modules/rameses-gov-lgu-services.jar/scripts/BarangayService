@@ -42,6 +42,7 @@ class BarangayService extends ActiveCrudListService {
 
 	public void beforeCreate(o) {
 		o.orgclass = 'BARANGAY';
+		o.root = 0;
 		org.create(o);	
 	}	
 
