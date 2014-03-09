@@ -3,7 +3,7 @@ import com.rameses.common.*;
 import java.rmi.server.UID
 import com.rameses.services.extended.*;
 
-class CityService extends ActiveCrudService {
+class CityContextService extends ActiveCrudService {
 	
 	@ActiveDB('city')	
 	def em
@@ -13,10 +13,14 @@ class CityService extends ActiveCrudService {
 
 	
 	public void beforeOpen(o) {
-		o.orgclass = 'CITY';
-		println org.getRoot().objid;
 		o.objid = org.getRoot().objid;
 	}
+
+	public void afterOpen(o) {
+		def m = org.open(o);
+		o.putAll( m );
+	}
+
 
 	public void beforeUpdate(o) {
 		org.update(o);

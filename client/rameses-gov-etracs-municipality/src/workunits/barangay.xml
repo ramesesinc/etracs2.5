@@ -20,7 +20,6 @@
             
             Map createEntity() {
                 def m = [:];
-                m.parentclass = 'MUNICIPALITY';
                 m.captain = [:];
                 m.treasurer = [:];
                 return m;

@@ -11,6 +11,9 @@ class DistrictService extends ActiveCrudListService {
 	@ActiveDB("org")
 	def org;
 
+	@Service("OrgService")
+	def orgSvc;
+
 	@ProxyMethod 
 	public def getColumns( params ) {
 		return [
@@ -39,13 +42,18 @@ class DistrictService extends ActiveCrudListService {
 	public void beforeCreate(o) {
 		o.orgclass = 'DISTRICT';
 		o.root = 0;
+		if(!o.parent) {
+			o.parent = orgSvc.getRoot();
+			o.parentid = o.parent.objid;
+		}
+		else {
+			o.parentid = o.parent.objid;
+		}
 		org.create(o);	
 	}	
 
-
 	public void afterRemoveEntity(o) {
 		org.delete(o);	
-	}	
-	
+	}		
 
 }
