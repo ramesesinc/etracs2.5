@@ -30,13 +30,20 @@ public class DistrictPage extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc=" Generated Code ">//GEN-BEGIN:initComponents
     private void initComponents() {
         xFormPanel2 = new com.rameses.rcp.control.XFormPanel();
+        xTextField10 = new com.rameses.rcp.control.XTextField();
         xTextField4 = new com.rameses.rcp.control.XTextField();
         xTextField8 = new com.rameses.rcp.control.XTextField();
         xTextField9 = new com.rameses.rcp.control.XTextField();
-        xTextField10 = new com.rameses.rcp.control.XTextField();
 
         xFormPanel2.setCaptionWidth(120);
         xFormPanel2.setIndex(1);
+        xTextField10.setCaption("Code");
+        xTextField10.setName("entity.code");
+        xTextField10.setPreferredSize(new java.awt.Dimension(0, 19));
+        xTextField10.setRequired(true);
+        xTextField10.setSpaceChar('_');
+        xFormPanel2.add(xTextField10);
+
         xTextField4.setCaption("District Name");
         xTextField4.setIndex(-1);
         xTextField4.setName("entity.name");
@@ -57,13 +64,6 @@ public class DistrictPage extends javax.swing.JPanel {
         xTextField9.setPreferredSize(new java.awt.Dimension(0, 19));
         xTextField9.setRequired(true);
         xFormPanel2.add(xTextField9);
-
-        xTextField10.setCaption("Code");
-        xTextField10.setName("entity.code");
-        xTextField10.setPreferredSize(new java.awt.Dimension(0, 19));
-        xTextField10.setRequired(true);
-        xTextField10.setSpaceChar('_');
-        xFormPanel2.add(xTextField10);
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(this);
         this.setLayout(layout);
