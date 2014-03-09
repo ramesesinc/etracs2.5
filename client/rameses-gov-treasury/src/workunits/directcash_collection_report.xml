@@ -1,7 +1,8 @@
 <workunit extends="rpt_wtemplates/ReportController.xml" >
     <invokers>
         <invoker type="directcash:report" action="init" caption="Direct To Cash Report" target="window" />
-        <invoker folderid="/explorer/txn/treasury/reports" action="init" caption="Direct To Cash Summary" target="window" index="100" role="TREASURY_REPORT"/>
+        <invoker folderid="/explorer/report/treasury" action="init" caption="Direct To Cash Summary" target="window" index="100" 
+            role="REPORT" permission="directtocash.viewreport"/>
     </invokers>
     <code>
 

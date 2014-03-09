@@ -18,8 +18,8 @@
             String createFocusComponent = 'entity.name'; 
             String editFocusComponent = 'entity.name'; 
             
-            String serviceName = "OrgAdminService";
-            String entityName = "org";
+            String serviceName = "CityService";
+            String entityName = "city";
             String title = "City";
             
             boolean isAllowCreate() { return false; } 
@@ -27,7 +27,6 @@
             boolean isAllowApprove() { return false; } 
             
             void afterOpen(data) {
-                MsgBox.alert('manage city');
                 resolveData(data); 
             }  
             

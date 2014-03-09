@@ -10,6 +10,9 @@ class SREAccountService extends ActiveCrudNodeService {
 	@ActiveDB('sreaccount')
 	def em;
 
+	@Service(value='SREAccountService', connection='etracsorg.osiris3')
+	def sreacctSvc;
+
 	public void afterNode( def selectedNode, def list ) {
 		list.each { 
 			it.caption = it.code + " (" + it.title + ") ";
@@ -66,6 +69,21 @@ class SREAccountService extends ActiveCrudNodeService {
 	@ProxyMethod
     public def changeParent(o) {
     	return em.changeParent( o );
+    }
+
+    @ProxyMethod 
+    public void syncFromCloud() {
+    	def list = []
+    	def start = 0
+    	while(true){
+    		list = sreacctSvc.getList([searchtext: '%', _start:start, _limit: 25]);
+    		if(! list ) break;
+
+    		list.each { 
+    			em.save(it);
+    		}
+    		start += 25
+    	}
     }
 
 }

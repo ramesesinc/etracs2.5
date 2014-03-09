@@ -1,11 +1,10 @@
 <workunit>
     <invokers>
-        <invoker type="businessform:formActions" caption="Renew"  action="openFromBusiness"  role="BUSINESSINFO"
-            visibleWhen="#{entity.state.toUpperCase().matches('CAPTURED|EXPIRED')}"  target="window" />
-
         <invoker type="home.action" caption="Renew Business Application"  action="start" target="window"  role="BUSINESSINFO" index="52"/>
+        <!--
         <invoker type="extActions" caption="Continue" action="continueOpen"  visibleWhen="#{state == 'save-success'}"/>
         <invoker type="extActions" caption="Print BIN" action="printBIN"  visibleWhen="#{state == 'save-success'}"/>
+        -->
     </invokers>
     
     <code>

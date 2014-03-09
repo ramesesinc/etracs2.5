@@ -5,7 +5,8 @@
          <invoker type="bankdepositcapture:create" caption="Bank Deposits (Capture) " action="init" target="window"/>
          <invoker type="bankdepositcapture:open" caption="Bank Deposits (Capture)" action="open" target="window"/>
         --> 
-        <invoker folderid="/explorer/txn/treasury" caption="Bank Deposit (Capture)" index="32" role="BATCH_MANAGEMENT" action="init" target="window"/>
+        <invoker folderid="/explorer/txn/treasury" caption="Bank Deposit (Capture)" index="32" action="init" target="window"
+            role="DATA_CONTROLLER" />
         
         <invoker type="formActions" caption="Close" name="_close"  immediate="true" mnemonic="c" shortcut="ctrl C" icon="images/toolbars/cancel.png"/>
         <invoker type="formActions" caption="Next" name="start" visibleWhen="#{mode == 'initial'}" mnemonic="n" shortcut="ctrl N" icon="images/toolbars/arrow_right.png"/>

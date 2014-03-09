@@ -343,6 +343,7 @@ FROM (
 					INNER JOIN cashreceiptitem_rpt crip ON crip.rptreceiptid = cr.objid 
 					LEFT JOIN cashreceipt_void v ON cr.objid = v.receiptid
 				  where v.objid is null 
+				  	and crip.revtype in ('current', 'previous', 'prior')
 
 			)
 		ELSE  SUM(cri.amount) END AS amount 

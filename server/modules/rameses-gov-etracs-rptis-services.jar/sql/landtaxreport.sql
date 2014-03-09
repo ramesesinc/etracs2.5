@@ -155,17 +155,18 @@ from (
 		case when ri.revtype in ('previous', 'prior') then ri.basic else 0.0 end  as basicprev,
 		case when ri.revtype='current' then ri.basicint else 0.0 end  as basiccurrentint,
 		case when ri.revtype in ('previous', 'prior') then ri.basicint else 0.0 end  as basicprevint,
-		(ri.basic - ri.basicdisc + ri.basicint) as basicnet, 
+		case when ri.revtype in ('current', 'previous', 'prior') then (ri.basic - ri.basicdisc + ri.basicint) else 0.0 end as basicnet, 
 		case when ri.revtype='current' then ri.sef else 0.0 end  as sefcurrent,
 		case when ri.revtype='current' then ri.sefdisc else 0.0 end  as sefdisc,
 		case when ri.revtype in ('previous', 'prior') then ri.sef else 0.0 end  as sefprev,
 		case when ri.revtype='current' then ri.sefint else 0.0 end  as sefcurrentint,
 		case when ri.revtype in ('previous', 'prior') then ri.sefint else 0.0 end as sefprevint,
-		(ri.sef - ri.sefdisc + ri.sefint) as sefnet,  
-		(ri.basic - ri.basicdisc + ri.basicint + ri.sef - ri.sefdisc + ri.sefint ) as netgrandtotal, 
-		0.0 as idlecurrent, 0.0 as idleprev, 0.0 as idledisc, 0.0 as idleint, 0.0 as idlenet, 0.0 as levynet, 
-		( ri.brgyshare + ri.brgyintshare ) as brgyshare, ( ri.lgushare + ri.lguintshare ) as lgushare,
-		( ri.provshare + ri.provintshare) as provshare 
+		case when ri.revtype in ('current', 'previous', 'prior') then (ri.sef - ri.sefdisc + ri.sefint) else 0.0 end as sefnet,  
+		case when ri.revtype in ('current', 'previous', 'prior') then (ri.basic - ri.basicdisc + ri.basicint + ri.sef - ri.sefdisc + ri.sefint ) else 0.0 end as netgrandtotal, 
+		case when ri.revtype in ('current', 'previous', 'prior') then ( ri.brgyshare + ri.brgyintshare ) else 0.0 end as brgyshare,
+		case when ri.revtype in ('current', 'previous', 'prior') then ( ri.lgushare + ri.lguintshare ) else 0.0 end as lgushare,
+		case when ri.revtype in ('current', 'previous', 'prior') then ( ri.provshare + ri.provintshare) else 0.0 end as provshare, 
+		0.0 as idlecurrent, 0.0 as idleprev, 0.0 as idledisc, 0.0 as idleint, 0.0 as idlenet, 0.0 as levynet
 	FROM ( 
 		  select
 			distinct lf.liquidationid
@@ -193,17 +194,18 @@ from (
 		case when ri.revtype in ('previous', 'prior') then ri.basic else 0.0 end  as basicprev,
 		case when ri.revtype='current' then ri.basicint else 0.0 end  as basiccurrentint,
 		case when ri.revtype in ('previous', 'prior') then ri.basicint else 0.0 end  as basicprevint,
-		(ri.basic - ri.basicdisc + ri.basicint) as basicnet, 
+		case when ri.revtype in ('current', 'previous', 'prior') then (ri.basic - ri.basicdisc + ri.basicint) else 0.0 end as basicnet, 
 		case when ri.revtype='current' then ri.sef else 0.0 end  as sefcurrent,
 		case when ri.revtype='current' then ri.sefdisc else 0.0 end  as sefdisc,
 		case when ri.revtype in ('previous', 'prior') then ri.sef else 0.0 end  as sefprev,
 		case when ri.revtype='current' then ri.sefint else 0.0 end  as sefcurrentint,
 		case when ri.revtype in ('previous', 'prior') then ri.sefint else 0.0 end as sefprevint,
-		(ri.sef - ri.sefdisc + ri.sefint) as sefnet,  
-		(ri.basic - ri.basicdisc + ri.basicint + ri.sef - ri.sefdisc + ri.sefint ) as netgrandtotal, 
-		0.0 as idlecurrent, 0.0 as idleprev, 0.0 as idledisc, 0.0 as idleint, 0.0 as idlenet, 0.0 as levynet, 
-		( ri.brgyshare + ri.brgyintshare ) as brgyshare, ( ri.lgushare + ri.lguintshare ) as lgushare,
-		( ri.provshare + ri.provintshare) as provshare 
+		case when ri.revtype in ('current', 'previous', 'prior') then (ri.sef - ri.sefdisc + ri.sefint) else 0.0 end as sefnet,  
+		case when ri.revtype in ('current', 'previous', 'prior') then (ri.basic - ri.basicdisc + ri.basicint + ri.sef - ri.sefdisc + ri.sefint ) else 0.0 end as netgrandtotal, 
+		case when ri.revtype in ('current', 'previous', 'prior') then ( ri.brgyshare + ri.brgyintshare ) else 0.0 end as brgyshare,
+		case when ri.revtype in ('current', 'previous', 'prior') then ( ri.lgushare + ri.lguintshare ) else 0.0 end as lgushare,
+		case when ri.revtype in ('current', 'previous', 'prior') then ( ri.provshare + ri.provintshare) else 0.0 end as provshare, 
+		0.0 as idlecurrent, 0.0 as idleprev, 0.0 as idledisc, 0.0 as idleint, 0.0 as idlenet, 0.0 as levynet
 	FROM ( 
 		  select
 			distinct lf.liquidationid

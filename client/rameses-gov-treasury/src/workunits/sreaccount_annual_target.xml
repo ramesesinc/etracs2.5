@@ -1,7 +1,7 @@
 <workunit extends="wtemplates/ListController.xml">
         
     <invokers>
-        <invoker folderid="/explorer/master/account" caption="SRE Annual Income Targets" index="20" action="init" />
+        <invoker folderid="/explorer/master/treasury" caption="SRE Annual Income Targets" index="21" action="init" role="MASTER"/>
    </invokers>
    
    <code>

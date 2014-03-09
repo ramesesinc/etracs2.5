@@ -37,7 +37,7 @@ public class DistrictPage extends javax.swing.JPanel {
 
         xFormPanel2.setCaptionWidth(120);
         xFormPanel2.setIndex(1);
-        xTextField4.setCaption("Barangay Name");
+        xTextField4.setCaption("District Name");
         xTextField4.setIndex(-1);
         xTextField4.setName("entity.name");
         xTextField4.setPreferredSize(new java.awt.Dimension(0, 19));

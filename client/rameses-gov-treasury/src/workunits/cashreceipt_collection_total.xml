@@ -88,6 +88,6 @@ class  RPTCollectionTotalController
 
     </code>
     <pages>
-        <page template="com.rameses.gov.etracs.rpt.collection.ui.RPTCollectionSummaryPage"/>
+        <page template="com.rameses.gov.treasury.collection.CollectionSummaryPage"/>
     </pages>
 </workunit>

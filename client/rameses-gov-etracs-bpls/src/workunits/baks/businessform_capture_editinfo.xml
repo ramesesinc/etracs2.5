@@ -1,0 +1,105 @@
+<workunit>
+    
+    <invokers>
+        <invoker type="businessform:formActions" caption="Edit Info1" index="1" target="popup" role="DATA_ADMIN"/>
+        <invoker type="formActions" caption="Save" action="save" name="save"/>    
+    </invokers>
+    
+    <code>
+        <![CDATA[    
+        import com.rameses.rcp.annotations.*
+        import com.rameses.rcp.common.*
+        import com.rameses.osiris2.client.*
+        import com.rameses.osiris2.common.*
+        import java.rmi.server.*;
+        import com.rameses.gov.etracs.bpls.application.*;
+        
+        class BusinessCaptureEditInfoController {
+        
+            @Service("BusinessInfoEditService")
+            def service;
+        
+            @Binding
+            def binding;
+            
+            def orgTypes = LOV.ORG_TYPES;
+            def entity;
+            def selectedLob;
+            boolean hasLookup;
+            
+            String title = "Edit Captured Info";
+        
+            @PropertyChangeListener
+            def listener = [
+                "entity.orgtype" : { o->
+                    entity.owner = null;
+                    entity.orgtypename = orgTypes.find{ it.key == o}?.value;
+                }
+            ]
+
+            def getLookupOwners() {
+                if( !entity.orgtype ) {
+                    MsgBox.err("Please select an orgtype first.");
+                    return null;
+                }    
+                hasLookup = true;
+                String lookupName = (entity.orgtype == 'SING') ?'individualentity:lookup':'juridicalentity:lookup';
+                return InvokerUtil.lookupOpener( lookupName, [
+                    "query.orgtype": entity.orgtype,
+                    onselect: { o->
+                        entity.owner = o;
+                        binding.refresh("entity.owner.address");
+                    },
+                    onempty: {
+                        entity.owner = null;
+                        binding.refresh("entity.owner.address");
+                        hasLookup = false;
+                    }
+                ]);
+            }
+
+            def showOwner() {
+                if(!entity.orgtype)
+                    throw new Exception("Please select an org type");
+                String action = (entity.owner?.objid) ? ":open" : ":create";
+                if(action == ":create" ) {
+                    if( !MsgBox.confirm("Add new record?")) {
+                        return;
+                    }
+                }
+                String openerName = (entity.orgtype=='SING'?'individual':'juridical')+'entity';
+                if( entity.orgtype == 'SING' ) {
+                    def initial = [:];
+                    def sh = { o->
+                        entity.owner = [ objid:o.objid, name:o.name, address:o.address ];
+                        binding.refresh("entity.owner.*");
+                    }
+                    return InvokerUtil.lookupOpener( "individualentity"+action, [entity: entity.owner, initial:initial, saveHandler:sh] );
+                }
+                else {
+                    def initial = [:];
+                    initial.orgtype = entity.orgtype;
+                    def sh = { o->
+                        entity.owner = [ objid:o.objid, name:o.name, address:o.address ];
+                        binding.refresh("entity.owner.*");
+                    }
+                    return InvokerUtil.lookupOpener( "juridicalentity"+action, [entity: entity.owner, initial: initial, saveHandler:sh] );
+                }
+            }
+            
+            def save() {
+                if( MsgBox.confirm("You are about to update changes. Proceed?")) {
+                    service.update(entity);
+                    MsgBox.alert("successfully saved");
+                }
+            }
+            
+        }
+        ]]>
+    </code>
+    
+    <pages>
+        <page template="com.rameses.gov.etracs.bpls.business.EditInfoPage"/>
+    </pages>
+
+</workunit>

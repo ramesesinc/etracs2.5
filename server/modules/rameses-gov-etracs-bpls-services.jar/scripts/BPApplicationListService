@@ -22,13 +22,12 @@ public class BPApplicationListService extends ActiveCrudListService {
 		return [
 		   [name:'mytask', caption: taskTitle, leaf:true, allowSearch:true],
 		   [name:'assign-assessor', caption:'For Assessment(Unassigned)', leaf:true, folder:true, allowSearch:true],
-		   [name:'assessment', caption:'Assessment', leaf:true, folder:true, allowSearch:true],
+		   [name:'assessment', caption:'For Assessment', leaf:true, folder:true, allowSearch:true],
 		   [name:'approval', caption:'For Approval', leaf:true, folder:true, allowSearch:true],
 		   [name:'payment', caption:'For Payment', leaf:true, folder:true, allowSearch:true],
 		   [name:'release', caption:'For Release', leaf:true, folder:true, allowSearch:true],
-		   [name:'wopermit', caption:'Active w/o Permit', leaf:true, folder:true, allowSearch:true],
-		   [name:'wpermit', caption:'Active with Permit', leaf:true, folder:true, allowSearch:true],
-		   [name:'retired', caption:'Retired', leaf:true, folder:true, allowSearch:true],
+		   [name:'completed', caption:'Finished', leaf:true, folder:true, allowSearch:true],
+		   [name:'cancelled', caption:'Cancelled', leaf:true, folder:true, allowSearch:true],
 		];
 	}	
 
@@ -38,12 +37,16 @@ public class BPApplicationListService extends ActiveCrudListService {
 		cols <<	[name:'appno', caption:'App No', width:120, resizable:false];
 		cols <<	[name:'apptype', caption:'App Type', width:80, resizable:false];
 		cols <<	[name:'appdate', caption:'App Date', width:80, resizable:false, type:'date'];
-		cols <<	[name:'appstate', caption:'App Status', width:80, resizable:false];
 		cols << [name:'bin', caption:'BIN', width:120, resizable:false];
 		cols <<	[name:'businessname', caption:'Business Name'];
 		cols <<	[name:'businessaddress', caption:'Business Address'];
 		cols <<	[name:'owner.name', caption:'Owner'];
-		cols <<	[name:'assignee.name', caption:'Assigned To', width:80, resizable:false];
+
+		if( o.name!='completed') {
+			cols <<	[name:'assignee.name', caption:'Assigned To', width:80, resizable:false];
+			cols <<	[name:'appstate', caption:'State', width:80, resizable:false];
+		}
+
 		if(o.name == 'mytask') {
 			cols <<	[name:'message', caption:'Message'];
 		}
@@ -51,6 +54,7 @@ public class BPApplicationListService extends ActiveCrudListService {
 			cols <<	[name:'permitno', caption:'Permit No', resizable:false];
 			cols <<	[name:'expirydate', caption:'Expiry date', resizable:false];
 		}
+		cols <<	[name:'state', caption:'State'];
 		return cols;
 	}
 
@@ -75,23 +79,19 @@ public class BPApplicationListService extends ActiveCrudListService {
 			case 'approval':
 			case 'payment':
 			case 'release':
-			case 'info':
 				o.appstate = o.name.toUpperCase();
 				o.filter = ''' AND b.appstate = $P{appstate} ''';
 				if(o.apptype) o.filter += ''' AND b.apptype=$P{apptype} ''';
+				o.filter += ''' AND b.state = 'PROCESSING' ''';
 				break;		
 
 			//--------------- active--------------------	
-			case 'wopermit':
-				o.filter = ''' AND b.appstate IS NULL AND b.permitno IS NULL ''';
-				break;	
-			case 'wpermit':
-				o.filter = ''' AND NOT(b.permitno IS NULL) ''';
+			case 'completed':
+				o.filter = ''' AND b.state ='COMPLETED' ''';
 				break;	
 
-			case 'retired':
-				o.state = o.name.toUpperCase();
-				o.filter = ''' AND b.state=$P{state} ''';			
+			case 'cancelled':
+				o.filter = ''' AND b.state='CANCELLED' ''';
 				break;
 
 			default:

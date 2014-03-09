@@ -9,9 +9,6 @@ public class BPBillingService  {
 	@Service("BPBillingRuleService")
 	def billingSvc;
 	
-	@ActiveDB("businessaccount")
-	def ba;
-
 	@ActiveDB("business")
 	def biz;
 	

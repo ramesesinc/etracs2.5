@@ -32,10 +32,11 @@ public class SuccessPage extends javax.swing.JPanel {
         xTextField1 = new com.rameses.rcp.control.XTextField();
         xTextField1.setAlignmentX(CENTER_ALIGNMENT);
 
-        jLabel1.setText("Application successfully submitted. Please use the ff. bin");
+        jLabel1.setFont(new java.awt.Font("Tahoma", 1, 14));
+        jLabel1.setText("Application successfully submitted. Please use the ff. application no. for tracking purposes");
 
         xTextField1.setFont(new java.awt.Font("Tahoma", 0, 36));
-        xTextField1.setName("entity.bin");
+        xTextField1.setName("entity.appno");
         xTextField1.setReadonly(true);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -45,16 +46,16 @@ public class SuccessPage extends javax.swing.JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addGap(31, 31, 31)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(xTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 367, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 359, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(462, Short.MAX_VALUE))
+                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 654, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(xTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 367, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(175, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(35, 35, 35)
-                .addComponent(jLabel1)
-                .addGap(28, 28, 28)
+                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(14, 14, 14)
                 .addComponent(xTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(277, Short.MAX_VALUE))
         );

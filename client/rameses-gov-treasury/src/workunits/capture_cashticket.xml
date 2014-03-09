@@ -1,6 +1,7 @@
 <workunit>
    <invokers>
-         <invoker folderid="explorer/txn/treasury" caption="Cash Ticket (Capture)" action="init" target="window" index="299"  role="BATCH_MANAGEMENT"/>
+         <invoker folderid="explorer/txn/treasury" caption="Cash Ticket (Capture)" action="init" target="window" index="299"  
+            role="DATA_CONTROLLER"/>
          
          <invoker type="formActions" caption="Close" name="_close" immediate="true" mnemonic="c" shortcut="ctrl C" icon="images/toolbars/cancel.png"/>
          <invoker type="formActions" caption="Next" name="start" visibleWhen="#{mode == 'initial'}" mnemonic="n" shortcut="ctrl N" icon="images/toolbars/arrow_right.png"/>
