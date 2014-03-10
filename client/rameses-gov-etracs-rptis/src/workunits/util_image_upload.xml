@@ -95,7 +95,8 @@ public class UploadImageController
             binding.refresh('image|photo.image');
         },
         isAlwaysOnTop : { return true },
-        modal : { return false }
+        modal : { return false },
+        isAutoCloseOnSelect  : {return false },
     ] as CameraModel 
 }
 
