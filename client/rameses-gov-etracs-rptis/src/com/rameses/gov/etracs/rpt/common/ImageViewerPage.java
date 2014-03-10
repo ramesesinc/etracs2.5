@@ -28,20 +28,10 @@ public class ImageViewerPage extends javax.swing.JPanel {
      */
     // <editor-fold defaultstate="collapsed" desc=" Generated Code ">//GEN-BEGIN:initComponents
     private void initComponents() {
-        xImageViewer1 = new com.rameses.rcp.control.XImageViewer();
+        xImageCanvas1 = new com.rameses.rcp.control.XImageCanvas();
 
-        xImageViewer1.setDynamic(true);
-        xImageViewer1.setName("image");
-        javax.swing.GroupLayout xImageViewer1Layout = new javax.swing.GroupLayout(xImageViewer1);
-        xImageViewer1.setLayout(xImageViewer1Layout);
-        xImageViewer1Layout.setHorizontalGroup(
-            xImageViewer1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 462, Short.MAX_VALUE)
-        );
-        xImageViewer1Layout.setVerticalGroup(
-            xImageViewer1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 329, Short.MAX_VALUE)
-        );
+        xImageCanvas1.setName("image");
+        xImageCanvas1.setText("xImageCanvas1");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -49,21 +39,21 @@ public class ImageViewerPage extends javax.swing.JPanel {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(xImageViewer1, javax.swing.GroupLayout.DEFAULT_SIZE, 462, Short.MAX_VALUE)
+                .addComponent(xImageCanvas1, javax.swing.GroupLayout.DEFAULT_SIZE, 462, Short.MAX_VALUE)
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+            .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(xImageViewer1, javax.swing.GroupLayout.DEFAULT_SIZE, 329, Short.MAX_VALUE)
+                .addComponent(xImageCanvas1, javax.swing.GroupLayout.DEFAULT_SIZE, 329, Short.MAX_VALUE)
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
     
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private com.rameses.rcp.control.XImageViewer xImageViewer1;
+    private com.rameses.rcp.control.XImageCanvas xImageCanvas1;
     // End of variables declaration//GEN-END:variables
     
 }

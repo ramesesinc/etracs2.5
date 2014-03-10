@@ -14,40 +14,27 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="xImageViewer1" pref="462" max="32767" attributes="0"/>
+              <Component id="xImageCanvas1" pref="462" max="32767" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
     <DimensionLayout dim="1">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Group type="102" alignment="1" attributes="0">
+          <Group type="102" alignment="0" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="xImageViewer1" pref="329" max="32767" attributes="0"/>
+              <Component id="xImageCanvas1" pref="329" max="32767" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
   </Layout>
   <SubComponents>
-    <Container class="com.rameses.rcp.control.XImageViewer" name="xImageViewer1">
+    <Component class="com.rameses.rcp.control.XImageCanvas" name="xImageCanvas1">
       <Properties>
-        <Property name="dynamic" type="boolean" value="true"/>
         <Property name="name" type="java.lang.String" value="image"/>
+        <Property name="text" type="java.lang.String" value="xImageCanvas1"/>
       </Properties>
-
-      <Layout>
-        <DimensionLayout dim="0">
-          <Group type="103" groupAlignment="0" attributes="0">
-              <EmptySpace min="0" pref="462" max="32767" attributes="0"/>
-          </Group>
-        </DimensionLayout>
-        <DimensionLayout dim="1">
-          <Group type="103" groupAlignment="0" attributes="0">
-              <EmptySpace min="0" pref="329" max="32767" attributes="0"/>
-          </Group>
-        </DimensionLayout>
-      </Layout>
-    </Container>
+    </Component>
   </SubComponents>
 </Form>

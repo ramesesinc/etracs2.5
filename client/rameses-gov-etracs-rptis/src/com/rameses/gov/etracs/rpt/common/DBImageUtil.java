@@ -10,6 +10,7 @@
 package com.rameses.gov.etracs.rpt.common;
 
 import com.rameses.common.MethodResolver;
+import com.rameses.io.StreamUtil;
 import com.rameses.osiris2.client.OsirisContext;
 import com.rameses.service.ScriptServiceContext;
 import com.rameses.service.ServiceProxyInvocationHandler;
@@ -75,7 +76,24 @@ public class DBImageUtil {
     }
     
     
-    public File getImage(Object objid) throws Exception{
+    public byte[] getImage(Object objid) throws Exception{
+        
+        String cacheDir = System.getProperty("user.dir") + File.separatorChar + "cache";
+        clearCacheDir(cacheDir);
+        
+        String safeid = objid.toString().replaceAll(":", "-");
+        String filename = cacheDir + File.separatorChar + safeid;
+        
+        File file = new File(filename);
+        if (!file.exists()){
+            System.out.println("Saving " + filename + " ");
+            saveToFile(objid, filename);
+            file = new File(filename);
+        }
+        return StreamUtil.toByteArray(new FileInputStream(file));
+    }
+    
+    public File getImage2(Object objid) throws Exception{
         
         String cacheDir = System.getProperty("user.dir") + File.separatorChar + "cache";
         clearCacheDir(cacheDir);
@@ -204,7 +222,6 @@ public class DBImageUtil {
             deleteImage(header.get("objid"));
             saveHeader(header);
             
-            
             int startidx = fileno * BUFFER_SIZE;
             int endidx = startidx + BUFFER_SIZE;
             long filesize = 0;
@@ -225,7 +242,7 @@ public class DBImageUtil {
             }
             if (filesize < bytes.length){
                 System.arraycopy(bytes, startidx, buf, 0, (int)(bytes.length - filesize));
-                
+                fileno += 1;
                 Map data = new HashMap();
                 data.put("objid", "F" + new java.rmi.server.UID());
                 data.put("parentid", header.get("objid"));

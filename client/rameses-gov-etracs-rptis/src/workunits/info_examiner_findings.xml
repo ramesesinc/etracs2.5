@@ -65,8 +65,6 @@ class ExaminationFindingsInfoController
     boolean getShowEdit(){
         if (entity.state.matches('CURRENT|CANCELLED|APPROVED'))
             return false;
-        if (entity.state != 'FOREXAMINATION')
-            return false;
         if (mode != MODE_READ) 
             return false;
         return true;
