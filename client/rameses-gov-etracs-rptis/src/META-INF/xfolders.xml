@@ -23,11 +23,16 @@
                 <folder id="report" caption="Report" index="3"/> 
             </folder>
         </folder>
-        <folder id="setting" caption="Settings" index="3">
-            <folder id="rpt" caption="Assessor" index="1"/>
-            <folder id="landtax" caption="Land Tax" index="1"/>
+        <folder id="report" caption="Reports" index="3">
+            <folder id="rpt" caption="Assessor" index="1" />
+            <folder id="landtax" caption="Land Tax" index="2" />
         </folder>
-        <folder id="rulemgmt">
+        <folder id="setting" caption="Settings" index="4">
+            <folder id="rpt" caption="Assessor" index="1"/>
+            <folder id="landtax" caption="Land Tax" index="2"/>
+        </folder>
+        
+        <folder id="rulemgmt" index="5" >
             <folder id="assessor" caption="Assessor" index="1" />
             <folder id="landtax" caption="Land Tax" index="2" />
         </folder>

@@ -129,6 +129,18 @@ public class RPTBillingService
 		return generateBill(bill)
 	}
 
+
+	@ProxyMethod
+	public def generateBillItemsByLedger(ledgerid){
+		def bill = initBill(ledgerid)
+		bill.billdate = dtSvc.serverDate
+		bill.ledger = em.findOpenLedgerById(bill)
+        if (!bill.ledger) throw new Exception('Ledger is fully paid or is exempted.')
+		def data = executeRules(bill)
+		return data.ledgers
+	}
+
+
 	/*---------------------------------------------------------------
 	* Called by RPTBilling Task to recalculate and update the
 	* taxes and penalties of the specified ledger

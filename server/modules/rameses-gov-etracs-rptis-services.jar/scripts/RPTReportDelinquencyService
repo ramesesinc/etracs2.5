@@ -1,0 +1,79 @@
+import com.rameses.annotations.*
+import com.rameses.common.*;
+import java.util.concurrent.*
+import java.rmi.server.UID
+
+class RPTReportDelinquencyService
+{
+	@Env
+	def env 
+
+	@ActiveDB('report_rptdelinquency')
+	def em
+
+	@Service('RPTBillingService')
+	def billSvc
+
+	@Service('DateService')
+	def dtSvc 
+
+
+	@ProxyMethod
+	public def getOpenLedgersByBarangay( barangay ) {
+		def params = [barangayid:barangay.objid, cy:dtSvc.serverYear]
+		return em.getOpenLedgersByBarangay(params)
+	}
+
+
+	@ProxyMethod
+	public void cleanup( barangay  ) {
+		em.cleanup(barangay);
+	}
+
+	@ProxyMethod
+	public void buildDelinquency( rptledger, dtgenerated ) {
+		def items = billSvc.generateBillItemsByLedger(rptledger.objid)
+		if (!items) return;
+
+		def pdate = dtSvc.parseCurrentDate();
+
+		def basic = items.basic.sum() - items.basicpaid.sum()
+		def basicint = items.basicint.sum() - items.basicintpaid.sum()
+		def basicdisc = items.basicdisc.sum() - items.basicdisctaken.sum()
+
+		def sef = items.sef.sum() - items.sefpaid.sum()
+		def sefint = items.sefint.sum() - items.sefintpaid.sum()
+		def sefdisc = items.sefdisc.sum() - items.sefdisctaken.sum()
+
+		def firecode = items.firecode.sum() - items.firecodepaid.sum()
+
+		def delinquency = [
+			rptledgerid : items[0].rptledgerid,
+			barangayid : items[0].barangayid,
+			basic 		: basic,
+			basicint 	: basicint,
+			basicdisc 	: basicdisc,
+			sef 		: sef,
+			sefint		: sefint,
+			sefdisc 	: sefdisc,
+			firecode	: firecode,
+			dtgenerated : dtgenerated,
+			year  		: pdate.year,
+			month 		: pdate.month,
+			generatedby : [name:env.FULLNAME, title:env.TITLE],
+		]
+
+		em.create(delinquency)
+
+	}
+
+	@ProxyMethod
+	public def generateDelinquencyReport(barangay){
+		def list =  em.getDelinquentLedgers(barangay)
+		if (!list) throw new Exception('No records found. Try rebuilding the delinquency for this barangay.')
+		return list;
+	}
+
+
+}
+
