@@ -1,0 +1,15 @@
+"doCancel" [mode != 'building']{
+    visible:false;
+}
+
+"doCancel" [mode == 'building']{
+    visible:true;
+}
+
+"entity.*" [mode != 'building']{
+    enabled:true;
+}
+
+"entity.*" [mode == 'building']{
+    enabled:false;
+}

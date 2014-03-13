@@ -17,7 +17,6 @@ class RPTReportDelinquencyService
 	@Service('DateService')
 	def dtSvc 
 
-
 	@ProxyMethod
 	public def getOpenLedgersByBarangay( barangay ) {
 		def params = [barangayid:barangay.objid, cy:dtSvc.serverYear]

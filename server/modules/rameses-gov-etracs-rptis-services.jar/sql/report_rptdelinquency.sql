@@ -1,5 +1,5 @@
 [getOpenLedgersByBarangay]
-SELECT rl.objid, rl.barangayid 
+SELECT TOP 10   rl.objid, rl.barangayid, f.tdno
 FROM rptledger rl
 	INNER JOIN faas f ON rl.faasid = f.objid 
 WHERE barangayid = $P{barangayid}

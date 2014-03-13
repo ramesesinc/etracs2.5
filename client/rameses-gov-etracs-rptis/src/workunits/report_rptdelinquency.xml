@@ -1,26 +1,30 @@
 <workunit extends="rpt_wtemplates/ReportController.xml" >
     <invokers>
-        <invoker folderid="/explorer/report/landtax" action="init" caption="Realty Tax Delinquency Listing (Old)" target="window" index="101" 
-            role="LANDTAX_REPORT"/>
+        <invoker folderid="/explorer/report/landtax" action="init" caption="Realty Tax Delinquency Listing" target="window" index="101" 
+                 role="LANDTAX_REPORT"/>
     </invokers>
     <code>
+        
+        <![CDATA[
 
-<![CDATA[
-
+import com.rameses.gov.etracs.rpt.report.landtax.RPTDelinquencyTask;
 import com.rameses.rcp.common.*;
 import com.rameses.rcp.annotations.*;
 import com.rameses.osiris2.client.*;
 import com.rameses.osiris2.reports.*;
 
-class RPTDelinquencyListingOldController extends com.rameses.gov.etracs.rpt.report.ReportController
+class RPTDelinquencyListingController extends com.rameses.gov.etracs.rpt.report.ReportController
 {
     @Service('RPTReportDelinquencyService') 
     def svc
     
     String title = 'Realty Tax Delinquency Listing';
     
-    String reportName = 'com/rameses/gov/etracs/rpt/report/landtax/rptdelinquency.jasper'
-    def data 
+    String reportName = 'com/rameses/gov/etracs/rpt/report/landtax/rptdelinquency.jasper';
+    def data;
+    
+    def task;
+    def msg;
         
     def getReportData(){
         return svc.generateDelinquencyReport(entity.barangay);
@@ -47,10 +51,13 @@ class RPTDelinquencyListingOldController extends com.rameses.gov.etracs.rpt.repo
     def preview() {
         if (entity.rebuild ){
             rebuild();
+            //return 'default';
         }
-        buildReport()
-        mode = 'view'
-        return 'preview' 
+        else {
+            buildReport()
+            mode = 'view'
+            return 'preview' 
+        }
     }
     
         
@@ -62,31 +69,50 @@ class RPTDelinquencyListingOldController extends com.rameses.gov.etracs.rpt.repo
         ReportUtil.print( report.report, true )
     }
    
+    def oncomplete = {
+        entity.rebuild = false;
+        buildReport();
+        mode = 'view';
+        binding.fireNavigation('preview');
+    }
+    
+    def updateStatus = {rl ->
+        msg = 'Calculating ledger ' + rl.tdno + '.'
+        binding.refresh('msg');
+    }
+    
     void rebuild(){
         if ( entity.rebuild == false ) 
             return;
             
-        def dt = dtSvc.serverDate;
+        entity.currentdate = dtSvc.serverDate;    
+        task = new RPTDelinquencyTask([
+            svc         : svc,
+            entity      : entity,
+            oncomplete  : oncomplete,
+            updateStatus : updateStatus,
+        ]);
         
-        svc.cleanup(entity.barangay);
+        Thread t = new Thread(task);
+        t.start();
         
-        def list = svc.getOpenLedgersByBarangay(entity.barangay);
-        list.each{
-            try{
-                svc.buildDelinquency(it, dt);
-            }
-            catch(e){
-                println 'Error Ledger Rebuild ' + e.message;
-            }
-        }
-        
-        entity.rebuild = false;
-        binding.refresh('entity.rebuild');
+        mode = 'building';
     }
-   
 
+    
+    void doCancel(){
+        svc.cleanup(entity.barangay);
+        task.cancelled = true;
+        mode = 'init';
+        msg = null;
+    }
 }
+
+
 ]]>        
         
     </code>
+    <pages>
+        <page template="com.rameses.gov.etracs.rpt.report.landtax.RPTDelinquencyInitPage"/>
+    </pages>
 </workunit>
