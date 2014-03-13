@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <workunit>
     <invokers>
-        <invoker type="upload:image" action="init" caption="Upload Image" target="popup" modal="false" alwaysOnTop="true" />
+        <invoker type="upload:image" action="init" caption="Upload Image" target="popup" />
     </invokers>
     
     <code lang="groovy">

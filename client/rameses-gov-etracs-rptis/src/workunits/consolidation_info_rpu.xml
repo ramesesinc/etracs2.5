@@ -100,7 +100,7 @@ class ConsolidationLandRpuController
     
     boolean getShowActions(){
         if (entity.taskaction && entity.taskaction.matches('assign.*')) return false;
-        if (entity.state.matches('FORAPPROVAL|FORPROVAPPROVAL|APPROVED')) return false;
+        if (entity.state.matches('APPROVED')) return false;
         return true;
     }    
     

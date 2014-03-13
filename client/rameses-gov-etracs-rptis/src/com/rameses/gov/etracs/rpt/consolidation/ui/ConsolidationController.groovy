@@ -57,7 +57,7 @@ public class ConsolidationController extends com.rameses.gov.etracs.rpt.common.R
     }
     
     public void approveEntity(){
-        entity = svc.approveConsolidation(entity);
+        approve();
     }
     
     public void disapproveEntity(){

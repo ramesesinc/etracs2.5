@@ -61,7 +61,7 @@ public class SubdivisionController extends com.rameses.gov.etracs.rpt.common.RPT
     }
     
     public void approveEntity(){
-        entity = svc.approveSubdivision(entity);
+        approve();
     }
     
     public void disapproveEntity(){
