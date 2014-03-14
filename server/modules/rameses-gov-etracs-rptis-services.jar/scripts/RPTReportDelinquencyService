@@ -46,23 +46,26 @@ class RPTReportDelinquencyService
 
 		def firecode = items.firecode.sum() - items.firecodepaid.sum()
 
-		def delinquency = [
-			rptledgerid : items[0].rptledgerid,
-			barangayid : items[0].barangayid,
-			basic 		: basic,
-			basicint 	: basicint,
-			basicdisc 	: basicdisc,
-			sef 		: sef,
-			sefint		: sefint,
-			sefdisc 	: sefdisc,
-			firecode	: firecode,
-			dtgenerated : dtgenerated,
-			year  		: pdate.year,
-			month 		: pdate.month,
-			generatedby : [name:env.FULLNAME, title:env.TITLE],
-		]
+		def total = basic + basicint - basicdisc + sef + sefint - sefdisc 
 
-		em.create(delinquency)
+		if (total > 0.0){
+			def delinquency = [
+				rptledgerid : items[0].rptledgerid,
+				barangayid : items[0].barangayid,
+				basic 		: basic,
+				basicint 	: basicint,
+				basicdisc 	: basicdisc,
+				sef 		: sef,
+				sefint		: sefint,
+				sefdisc 	: sefdisc,
+				firecode	: firecode,
+				dtgenerated : dtgenerated,
+				year  		: pdate.year,
+				month 		: pdate.month,
+				generatedby : [name:env.FULLNAME, title:env.TITLE],
+			]
+			em.create(delinquency)
+		}
 
 	}
 
