@@ -50,7 +50,7 @@ class RPTTaskService
             senderid  : task.createdby.objid,
             sender    : task.createdby.name,
             groupid   : task.action,
-            message   : task.docname + ' No. ' + task.refno + '    (' + task.tostate + ')',
+            message   : task.docname + ' No. ' + task.refno + '    (' + task.action + ')',
             filetype  : task.filetype,
         ]
         notificationSvc.addMessage(msg)
