@@ -28,6 +28,10 @@ public class BPApplication {
     public BPApplication() {
     }
 
+    public BPApplication(int yr) {
+        this.appyear = appyear;
+    }
+     
     public String getOrgtype() {
         return orgtype;
     }

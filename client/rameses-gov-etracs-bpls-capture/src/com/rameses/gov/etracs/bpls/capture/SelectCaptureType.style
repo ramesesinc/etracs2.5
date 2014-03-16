@@ -1,0 +1,6 @@
+"query.source" [capturetype=='manual'] {
+    visible:false;
+}
+"query.source" [capturetype!='manual'] {
+    visible:true;
+}
