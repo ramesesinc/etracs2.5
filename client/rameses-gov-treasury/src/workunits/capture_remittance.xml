@@ -4,8 +4,10 @@
          <invoker  type="remittancecapture:create" caption="Remittance (Capture)" action="init" target="window" index="300" />
          <invoker  type="remittancecapture:open" caption="Remittance (Capture)" action="open" target="window" index="300" />
         -->
-         <invoker folderid="/explorer/txn/treasury" caption="Remittance (Capture)" action="init" target="window" index="30" role="BATCH_MANAGEMENT" />
-         <invoker type="quick_launcher" code="CREM" caption="Remittance (Capture)" action="init" target="window" role="BATCH_MANAGEMENT"/>
+         <invoker folderid="/explorer/txn/treasury" caption="Remittance (Capture)" action="init" target="window" index="30" 
+            role="DATA_CONTROLLER" />
+         <invoker type="quick_launcher" code="CREM" caption="Remittance (Capture)" action="init" target="window" 
+            role="DATA_CONTROLLER"/>
          
          <invoker type="formActions" caption="Close" name="_close" immediate="true" mnemonic="c" shortcut="ctrl C" icon="images/toolbars/cancel.png"/>
          <invoker type="formActions" caption="Next" name="start" visibleWhen="#{mode == 'initial'}" mnemonic="n" shortcut="ctrl N" icon="images/toolbars/arrow_right.png"/>

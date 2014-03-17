@@ -8,7 +8,9 @@
                 <folder id="reports" caption="Reports" index="500"/>
                 <folder id="tools" caption="Tools" index="700"/>
             </folder>
-                
+        </folder>
+        <folder id="report" caption="Reports">
+            <folder id="treasury" caption="Treasury" index="5"/>
         </folder>
     </folder>
      <folder id="menu">

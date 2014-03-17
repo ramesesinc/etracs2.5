@@ -1,7 +1,7 @@
 <workunit>
     
     <invokers>
-        <invoker type="businessform:formActions" caption="Edit Info" index="1" target="popup" role="DATA_ADMIN"/>
+        <invoker type="businessform:formActions" caption="Edit Info1" index="1" target="popup" role="DATA_ADMIN"/>
         <invoker type="formActions" caption="Save" action="save" name="save"/>    
     </invokers>
     

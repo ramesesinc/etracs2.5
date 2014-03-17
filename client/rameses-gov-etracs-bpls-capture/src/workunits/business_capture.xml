@@ -26,16 +26,29 @@
             def query = [:];
             def size; 
             def selectedLob;
+            def capturetype = 'manual';
             
             String msg;
             boolean lookupDone;
             def orgTypes = LOV.ORG_TYPES;
-            
+            def lobAssessmentTypes;
             def sources;
             
             def start() {
                 sources = svc.getSources();
                 return super.start();
+            }
+            
+            void createNew() {
+                entity = [objid:'BUS'+new UID()];
+                entity.lobs = [];
+                lobAssessmentTypes = LOV.LOB_ASSESSMENT_TYPES*.key;
+            }
+            
+            def copyBusinessName() {
+                entity.tradename = entity.businessname;
+                binding.refresh("entity.tradename");
+                binding.focus("entity.tradename");
             }
             
             void searchBusiness() {
@@ -86,12 +99,11 @@
                 ]);
             }
 
-            def lobListModel = [
+            def lobModel = [
                 fetchList: {o->
                     return entity.lobs;
                 },
                 onRemoveItem: { o->
-                    def pass = MsgBox.prompt( "Please enter key");
                     if( MsgBox.confirm( 'You are about to remove this item. Proceed?')) {
                         entity.lobs.remove(o);    
                         return true;
@@ -138,6 +150,40 @@
                 }
             }
             
+            def getLookupLob() {
+                return InvokerUtil.lookupOpener( "lob:lookup", [
+                    onselect: { o->
+                        if(entity.lobs.find{ it.lobid == o.objid }!=null) 
+                            throw new Exception("Item already added");
+                        def m = [:];
+                        m.objid = "BPLOB"+new UID();
+                        m.lobid = o.objid;
+                        m.name = o.name;
+                        m.classification = o.classification;
+                        m.assessmenttype = "NEW";
+                        entity.lobs << m; 
+                        lobModel.reload();
+                        binding.focus("lob");
+                    }
+                ]);
+            }
+
+            void removeLob() {
+                if(!selectedLob) return;
+                if(selectedLob.assessmenttype != "NEW" ) 
+                    throw new Exception("Only new lines of business can be removed");
+                entity.lobs.remove(selectedLob);
+                infoLoaded = false;
+            }
+                
+             void saveNew() {
+                 entity = svc.saveNew(entity); 
+                 query = [:];
+                 createNew();
+                 searchListModel.reload();
+                 lobModel.reload();
+            }
+            
             void save() {
                 if(!entity.pass)
                     throw new Exception("Verification failed. Please settle due obligations");
@@ -156,6 +202,7 @@
                 return InvokerUtil.lookupOpener( "business:printbin", [entity: entity ] );
             }
             
+            
         }
         ]]>
         
@@ -163,27 +210,44 @@
     
     <pageflow>
         <start>
-            <transition to="search"/>
+            <transition to="selecttype"/>
         </start>
+
+        <page name="selecttype" title="Select type of capture">
+            <transition to="end" caption="Close" />
+            <transition to="choosetype" caption="Next" />
+        </page>
         
-        <page name="search" title="Search Business (TRACS)">
+        <process name="choosetype" >
+            <transition to="newinfo" cond="#{capturetype=='manual'}" action="createNew"/>
+            <transition to="search" cond="#{capturetype=='datasource'}"/>
+        </process>
+        
+        <page name="newinfo" title="Add New Record">
+            <transition to="end" caption="Close" />
+            <transition to="success" caption="Save" name="save" action="saveNew" confirm="You are about to save this account. Continue?" />
+        </page>
+
+        <page name="search" title="Search Business #{query.source}">
             <transition to="end" caption="Close" />
             <transition to="info" caption="Next" name="next" action="openEntry"/>
         </page>
         
         <page name="info" title="Edit Business Info">
             <transition to="search" caption="Back" name="back" action="reinit"/>
-            <transition to="success" caption="Save" name="save" action="save" confirm="You are about to activate this account to ETRACS. Continue?" />
+            <transition to="success" caption="Save" name="save" action="save" confirm="You are about to save this account to ETRACS. Continue?" />
         </page>
         
         <page name="success" title="Business Registered">
-            <transition to="search" caption="Add Another"/>
+            <transition to="choosetype" caption="Add Another"/>
         </page>
 
         <end/>
     </pageflow>
     
     <pages>
+        <page name="selecttype" template="com.rameses.gov.etracs.bpls.capture.SelectCaptureType"/>
+        <page name="newinfo" template="com.rameses.gov.etracs.bpls.capture.NewBusinessInfo"/>
         <page name="search" template="com.rameses.gov.etracs.bpls.capture.SearchBusiness"/>
         <page name="info" template="com.rameses.gov.etracs.bpls.capture.BusinessInfo"/>
         <page name="success" template="com.rameses.gov.etracs.bpls.capture.RegisterSuccess"/>

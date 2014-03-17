@@ -11,6 +11,9 @@ class BarangayService extends ActiveCrudListService {
 	@ActiveDB("org")
 	def org;
 
+	@Service("OrgService")
+	def orgSvc;
+
 	String pagingKeys = "b.objid";
 
 	@ProxyMethod 
@@ -31,9 +34,10 @@ class BarangayService extends ActiveCrudListService {
 
 	public void afterOpen(o) {
 		def z = org.read( [objid: o.objid] );
-		println z;
 		o.putAll( z );
 		o.parent = org.read( [objid: z.parent.objid] );
+		
+
 	}
 
 	public void beforeUpdate(o) {
@@ -42,6 +46,14 @@ class BarangayService extends ActiveCrudListService {
 
 	public void beforeCreate(o) {
 		o.orgclass = 'BARANGAY';
+		o.root = 0;
+		if(!o.parent) {
+			o.parent = orgSvc.getRoot();
+			o.parentid = o.parent.objid;
+		}
+		else {
+			o.parentid = o.parent.objid;
+		}
 		org.create(o);	
 	}	
 

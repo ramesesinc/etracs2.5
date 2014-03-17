@@ -297,6 +297,8 @@ public class AssertTaxFee implements RuleActionHandler {
 		def facts = request.facts;
 		def taxfees = request.taxfees;
 		def taxfeefacts = request.taxfeefacts;
+		def testlist = [];
+
 		for(it in taxfeefacts) {
 			def bt = new TaxFeeAccount();
 			bt.objid = it.objid;
@@ -310,9 +312,16 @@ public class AssertTaxFee implements RuleActionHandler {
 			bt.type = it.taxfeetype;
 			bt.assessedvalue = it.assessedvalue;
 			bt.data = it;
+			bt.highest = false;
+			bt.lowest = false;
+			testlist << bt;
 			facts << bt;
 		}
-		
+		//locate highest or lowest based on amount
+		if( testlist.size() > 1 ) {
+			testlist.max{ it.amount }.highest = true;
+			testlist.min{ it.amount }.lowest = true;
+		}
 	}
 }
 

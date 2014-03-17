@@ -40,10 +40,11 @@
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="xFormPanel4" alignment="0" min="-2" pref="431" max="-2" attributes="0"/>
-                      <Component id="xFormPanel3" alignment="1" pref="431" max="32767" attributes="1"/>
-                      <Component id="xFormPanel2" alignment="1" pref="431" max="32767" attributes="0"/>
-                      <Component id="xFormPanel1" alignment="0" pref="431" max="32767" attributes="0"/>
+                      <Component id="xFormPanel3" alignment="1" pref="460" max="32767" attributes="1"/>
+                      <Component id="xFormPanel2" alignment="1" pref="460" max="32767" attributes="0"/>
+                      <Component id="xFormPanel1" alignment="0" pref="460" max="32767" attributes="0"/>
+                      <Component id="xFormPanel4" alignment="0" pref="460" max="32767" attributes="0"/>
+                      <Component id="xFormPanel5" alignment="0" pref="460" max="32767" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
@@ -51,7 +52,9 @@
         </DimensionLayout>
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Group type="102" alignment="0" attributes="0">
+              <Group type="102" alignment="1" attributes="0">
+                  <Component id="xFormPanel5" max="32767" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
                   <Component id="xFormPanel4" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="xFormPanel1" min="-2" pref="68" max="-2" attributes="0"/>
@@ -59,7 +62,7 @@
                   <Component id="xFormPanel2" min="-2" pref="69" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="xFormPanel3" min="-2" pref="71" max="-2" attributes="0"/>
-                  <EmptySpace pref="29" max="32767" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -216,6 +219,58 @@
                   <Dimension value="[0, 19]"/>
                 </Property>
                 <Property name="required" type="boolean" value="true"/>
+              </Properties>
+            </Component>
+          </SubComponents>
+        </Container>
+        <Container class="com.rameses.rcp.control.XFormPanel" name="xFormPanel5">
+          <Properties>
+            <Property name="captionWidth" type="int" value="120"/>
+            <Property name="index" type="int" value="1"/>
+          </Properties>
+          <SubComponents>
+            <Component class="com.rameses.rcp.control.XTextField" name="xTextField15">
+              <Properties>
+                <Property name="caption" type="java.lang.String" value="City code"/>
+                <Property name="enabled" type="boolean" value="false"/>
+                <Property name="index" type="int" value="10"/>
+                <Property name="name" type="java.lang.String" value="entity.name"/>
+                <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                  <Dimension value="[0, 19]"/>
+                </Property>
+              </Properties>
+            </Component>
+            <Component class="com.rameses.rcp.control.XTextField" name="xTextField12">
+              <Properties>
+                <Property name="caption" type="java.lang.String" value="City name"/>
+                <Property name="enabled" type="boolean" value="false"/>
+                <Property name="index" type="int" value="10"/>
+                <Property name="name" type="java.lang.String" value="entity.name"/>
+                <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                  <Dimension value="[0, 19]"/>
+                </Property>
+              </Properties>
+            </Component>
+            <Component class="com.rameses.rcp.control.XTextField" name="xTextField13">
+              <Properties>
+                <Property name="caption" type="java.lang.String" value="Index No"/>
+                <Property name="enabled" type="boolean" value="false"/>
+                <Property name="index" type="int" value="11"/>
+                <Property name="name" type="java.lang.String" value="entity.indexno"/>
+                <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                  <Dimension value="[0, 19]"/>
+                </Property>
+              </Properties>
+            </Component>
+            <Component class="com.rameses.rcp.control.XTextField" name="xTextField14">
+              <Properties>
+                <Property name="caption" type="java.lang.String" value="PIN"/>
+                <Property name="enabled" type="boolean" value="false"/>
+                <Property name="index" type="int" value="12"/>
+                <Property name="name" type="java.lang.String" value="entity.pin"/>
+                <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                  <Dimension value="[0, 19]"/>
+                </Property>
               </Properties>
             </Component>
           </SubComponents>
