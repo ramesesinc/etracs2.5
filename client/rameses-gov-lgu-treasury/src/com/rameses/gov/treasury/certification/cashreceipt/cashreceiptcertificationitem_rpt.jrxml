@@ -2,7 +2,7 @@
 <!-- Created with iReport - A designer for JasperReports -->
 <!DOCTYPE jasperReport PUBLIC "//JasperReports//DTD Report Design//EN" "http://jasperreports.sourceforge.net/dtds/jasperreport.dtd">
 <jasperReport
-		 name="cashreceiptcertificationitem"
+		 name="cashreceiptcertificationitem_rpt"
 		 columnCount="1"
 		 printOrder="Vertical"
 		 orientation="Portrait"
@@ -47,6 +47,7 @@
 	<field name="item.title" class="java.lang.String"/>
 	<field name="amount" class="java.math.BigDecimal"/>
 	<field name="remarks" class="java.lang.String"/>
+	<field name="tdno" class="java.lang.String"/>
 
 		<background>
 			<band height="0"  isSplitAllowed="true" >
@@ -64,9 +65,9 @@
 			<band height="10"  isSplitAllowed="true" >
 				<line direction="TopDown">
 					<reportElement
-						x="15"
+						x="0"
 						y="5"
-						width="387"
+						width="402"
 						height="0"
 						key="line-1"/>
 					<graphicElement stretchType="NoStretch"/>
@@ -77,9 +78,9 @@
 			<band height="15"  isSplitAllowed="true" >
 				<textField isStretchWithOverflow="true" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="15"
+						x="5"
 						y="0"
-						width="187"
+						width="119"
 						height="15"
 						key="textField-1"
 						stretchType="RelativeToBandHeight"/>
@@ -91,9 +92,9 @@
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="202"
+						x="124"
 						y="0"
-						width="84"
+						width="82"
 						height="15"
 						key="textField-2"
 						stretchType="RelativeToBandHeight"/>
@@ -117,15 +118,29 @@
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[$F{remarks}]]></textFieldExpression>
 				</textField>
+				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="210"
+						y="0"
+						width="80"
+						height="15"
+						key="textField-4"
+						stretchType="RelativeToBandHeight"/>
+					<box></box>
+					<textElement textAlignment="Center" verticalAlignment="Top">
+						<font fontName="Tahoma" size="9"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{tdno}]]></textFieldExpression>
+				</textField>
 			</band>
 		</detail>
 		<columnFooter>
 			<band height="10"  isSplitAllowed="true" >
 				<line direction="TopDown">
 					<reportElement
-						x="15"
+						x="0"
 						y="6"
-						width="387"
+						width="402"
 						height="0"
 						key="line-2"/>
 					<graphicElement stretchType="NoStretch"/>

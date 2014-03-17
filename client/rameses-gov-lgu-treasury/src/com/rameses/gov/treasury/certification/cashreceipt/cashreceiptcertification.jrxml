@@ -172,7 +172,7 @@
 					<textElement textAlignment="Justified" verticalAlignment="Top" rotation="None" isStyledText="true" lineSpacing="1_1_2">
 						<font fontName="Tahoma" pdfFontName="Helvetica" size="9" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA["             This certification is issued upon the request of <style isBold=\"true\">  " + $F{requestedby}.replaceAll("&","&amp;") + "  </style> " + $F{purpose} ]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA["             This certification is issued upon the request of <style isBold=\"true\">  " + $F{requestedby}.replaceAll("&","&amp;") + "  </style> " + $F{purpose}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
