@@ -244,14 +244,16 @@ VALUES(
 
 [updateCashTicketInventory]
 UPDATE cashticket_inventory SET 
-      ,qtyin = qtyin + $P{qtyin}
-      ,currentlineno = CASE WHEN currentlineno > $P{currentlineno} THEN currentlineno ELSE $P{currentlineno} END 
+      ,qtyin = $P{qtyin}
+      ,currentlineno = CASE WHEN currentlineno > $P{currentlineno} THEN currentlineno ELSE $P{currentlineno} END,
+      ,qtybalance = $P{qtybalance}
  WHERE objid = $P{objid}
 
 
 [updateCashTicketControl]
 UPDATE cashticket_control SET 
-      qtyin = qtyin + $P{qtyin}
+      qtyin = $P{qtyin},
+      qtybalance = $P{qtybalance} 
 WHERE objid = $P{objid}
 
 
