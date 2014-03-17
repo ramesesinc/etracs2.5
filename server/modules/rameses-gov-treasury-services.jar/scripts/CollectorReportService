@@ -4,9 +4,9 @@ import com.rameses.services.extended.*
 import com.rameses.util.*
 
 
-class RAAFReportService  
+class CollectorReportService  
 { 
-	@ActiveDB('raaf_report')
+	@ActiveDB('collectionreport')
 	def adb 
 
 	@Env
@@ -17,6 +17,7 @@ class RAAFReportService
 
 	@Service('ReportParameterService')
 	def reportSvc
+
 
 	@ProxyMethod
 	public def generateRaafData( params ) {
@@ -34,6 +35,37 @@ class RAAFReportService
 			PERIOD			: 'FOR THE MONTH OF ' + params.month.caption + ', ' + params.year,
 		]
 		return data
+	}
+
+	@ProxyMethod 
+	public def generateDailyCollectionReport( params ) {
+		buildDateFilter(params)
+		params.collectorid  = env.USERID
+
+		def funds = adb.getCollectorFundList(params)
+		if( ! funds) throw new Exception("No record(s) found.    ")
+		
+		def subqry = []
+		def sqlqry = []
+		def header = [:]
+		def colindex = 0
+		funds.each {
+			subqry << "( select SUM(amount) from remittance_fund where objid = rf.objid and fund_objid='${it.fundid}' ) as col${colindex}"
+			sqlqry << " sum( col${colindex} ) as col${colindex} "
+			header['COL'+colindex] = it.title 
+			colindex++ 
+		}
+		params.subqry = subqry.join(",")
+		params.sqlqry = sqlqry.join(",")
+
+		def items = adb.getCollectorDailyCollectionByFund( params )
+		if( ! items) throw new Exception("No record(s) found.    ")
+		
+		header.REPORTTITLE = 'DAILY COLLECTION SUMMARY BY FUND'
+		header.PERIOD = 'FOR THE MONTH OF ' + params.month.caption + ', ' + params.year 
+		header.COLLECTORNAME = env.NAME 
+		header.COLLECTORTITLE = env.JOBTITLE
+		return [ header: header,  items: items ]; 
 	}
 
 	def getSerialCraafData(params) {
@@ -120,5 +152,11 @@ class RAAFReportService
             qtyending  			: qty,
         ]
 
+	}
+
+	void buildDateFilter(params) {
+		params.fromdate = dtSvc.parse('yyyy-MM-dd', params.year + '-' + params.month.index + '-01')
+		params.todate   = dtSvc.add( dtSvc.getMonthEndDate( params.fromdate ), '23h')
+		
 	}
 }
