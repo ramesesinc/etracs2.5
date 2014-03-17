@@ -21,8 +21,11 @@ WHERE objid = $P{objid}
 [getItems]
 SELECT
 	ori.id, ori.curamount AS amount, tfa.stracctcode AS item_code, 
-	tfa.strdescription AS item_title, strRemarks as remarks  
+	tfa.strdescription AS item_title, strRemarks as remarks, tr.strTDNo as tdno, 
+	case when tr.objid is not null then 1 else 0 end as landtax  
 FROM tbloritem ori
-INNER JOIN tbltaxfeeaccount tfa on tfa.objid = ori.stracctid
-WHERE ori.parentid = $P{objid}
-
+	INNER JOIN tbltaxfeeaccount tfa on tfa.objid = ori.stracctid
+	left JOIN tblrptledger tr on tr.objid = ori.strledgerid 
+WHERE ori.parentid = $P{objid} 
+order by  tdno, item_title 
+ 
