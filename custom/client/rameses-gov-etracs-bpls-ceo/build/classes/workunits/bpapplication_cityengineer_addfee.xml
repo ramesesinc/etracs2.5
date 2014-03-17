@@ -1,0 +1,54 @@
+<workunit>
+    <invokers>
+        <invoker type="bpapplication_cityengineer:addfee" caption="Add Fee" action="init" target="popup"/>
+        <invoker type="bpapplication_cityengineer:editfee" caption="Edit Fee" target="popup"/>
+    </invokers>
+    
+    <code>
+        <![CDATA[    
+        import com.rameses.rcp.annotations.*
+        import com.rameses.rcp.common.*
+        import com.rameses.osiris2.client.*
+        import com.rameses.osiris2.common.*
+        import java.rmi.server.*;
+        import com.rameses.gov.etracs.bpls.application.*;
+        
+        class BPApplicationAddFeeController  {
+        
+            def handler;
+            def entity;
+        
+            void init() {
+                entity = [objid:"CEOTF"+new UID(), recurring:1, state:'pending'];
+            }
+            
+            def getLookupAccount() {
+                return InvokerUtil.lookupOpener("lookup:cityengineeraccount", [
+                    onselect: { o->   
+                        entity.account = o;
+                        entity.taxfeetype = o.taxfeetype;
+                    }
+                ]);
+            }
+            
+            def doOk() {
+                if(entity.amount<=0)
+                    throw new Exception("Amount must be greater than 0");
+                handler(entity);
+                return "_close";
+            }
+            
+            def doCancel() {
+                return "_close";
+            }
+            
+        }
+        ]]>
+        
+    </code>
+   
+    <pages>
+        <page template="com.rameses.gov.etracs.bpls.ceo.AddFeePage"/>
+    </pages>
+    
+</workunit>

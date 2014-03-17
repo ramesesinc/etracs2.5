@@ -1,0 +1,41 @@
+<workunit>
+    <invokers>
+        <invoker type="home.action" caption="Market Application" action="init"/>
+    </invokers>
+    
+    <code>
+        <![CDATA[    
+        import com.rameses.rcp.annotations.*
+        import com.rameses.rcp.common.*
+        import com.rameses.osiris2.client.*
+        import com.rameses.osiris2.common.*
+        import com.rameses.common.*;
+        import java.rmi.server.*
+        import com.rameses.util.*;
+        import com.rameses.gov.etracs.bpls.business.*;
+        
+        class  MarketApplicationController {
+        
+            @Binding
+            def binding;
+        
+            def lookupOwner;
+            def entity;
+            
+            void init() {
+                entity = [:];
+                def h = { o->
+                    entity.owner = o;
+                }
+                def t = "individual";
+                lookupOwner = InvokerUtil.lookupOpener( "entity:lookupfield", [type:t, handler:h] );
+            }
+        }
+        ]]>
+    </code>
+    
+    <pages>
+        <page template="com.rameses.gov.etracs.market.MarketApplicationPage"/>
+    </pages>
+    
+</workunit>
