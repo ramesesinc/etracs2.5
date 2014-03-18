@@ -1,0 +1,125 @@
+<workunit>
+    
+    <invokers>
+        <invoker type="business:info" caption="City Engineer" action="open" index="100" />
+        
+        <invoker type="formActions" caption="Activate" action="activate" index="100" visibleWhen="#{info.state!='active'}" role="ASSESSOR"/>
+        <invoker type="formActions" caption="Deactivate" action="deactivate" index="100" visibleWhen="#{info.state=='active'}" role="ASSESSOR"/>
+        <invoker type="formActions" caption="Add Fee" action="addFee" index="100" role="ASSESSOR" visibleWhen="#{info.state!='active'}"/>
+        <invoker type="formActions" caption="Remove Fee" action="removeFee" index="100" role="ASSESSOR" visibleWhen="#{info.state!='active'}"/>
+        <invoker type="formActions" caption="Edit Fee" action="editFee" index="100" role="ASSESSOR" visibleWhen="#{info.state!='active'}"/>
+    </invokers>
+    
+       <code>
+        <![CDATA[    
+        import com.rameses.rcp.annotations.*
+        import com.rameses.rcp.common.*
+        import com.rameses.osiris2.client.*
+        import com.rameses.osiris2.common.*
+        import java.rmi.server.*
+        import com.rameses.gov.etracs.bpls.business.*;
+        
+        class  BusinessCityEngineerController  {
+        
+            @Service("CityEngineerBusinessService")
+            def service;
+        
+            @Binding
+            def binding;
+            
+            @Caller
+            def caller;
+            
+            String title = "City Engineer";
+            def deptList = LOV.BUSINESS_EXT_DEPT;
+            def orgTypes = LOV.ORG_TYPES;
+            
+            def entity;
+            def department;
+            def total = 0;
+            def submitted = false;
+            def selectedFee;
+            def info;
+            
+            void open() {
+                info = service.getInfo(entity);
+                total = info.fees.sum{ it.amount };
+            }
+          
+            //show only fees related to department
+            def taxfeeModel = [
+                fetchList: { o-> return info.fees;  },
+            ] as BasicListModel;
+         
+            def removeFee() {
+                if(!selectedFee)
+                    throw new Exception("Please select a fee item");
+                if(MsgBox.confirm("Remove this entry?")) {
+                    service.removeFee(selectedFee);
+                    info.fees.remove(selectedFee);
+                    total = info.fees.sum{ it.amount };
+                    binding.refresh("total");
+                    taxfeeModel.reload();
+                }
+            }
+            
+            def addFee() {
+                return InvokerUtil.lookupOpener("bpapplication_cityengineer:addfee", [
+                    department: department,
+                    handler: { o->
+                        if( info.fees.find{it.account.objid==o.account.objid} )
+                            throw new Exception("Account already added");
+                        o.businessid = entity.objid;
+                        service.addFee( o );
+                        info.fees << o;
+                        total = info.fees.sum{ it.amount };
+                        taxfeeModel.reload();
+                        binding.refresh("total");
+                    }
+                ]);
+            }
+            
+            def editFee() {
+                if(!selectedFee)
+                    throw new Exception("Fee must be selected");
+                return InvokerUtil.lookupOpener("bpapplication_cityengineer:editfee", [
+                    entity: selectedFee,
+                    handler: { o->
+                        service.updateFee( o );
+                        total = info.fees.sum{ it.amount };
+                        taxfeeModel.reload();
+                        binding.refresh("total");
+                    }
+                ]);
+            }
+            
+            def activate() {
+                if(!info.fees)
+                    throw new Exception("Please add at least one fee");
+                if(MsgBox.confirm( "You are about to activate these fees. Please ensure all fees are correct" )) {
+                    entity = service.activate(entity);
+                    MsgBox.alert("Fees Activated");
+                    open();
+                    taxfeeModel.reload();
+                }
+            }
+            
+            def deactivate() {
+                if(MsgBox.confirm( "You are about to deactivate these fees." )) {
+                    entity = service.deactivate(entity);
+                    MsgBox.alert("Fees Deactivated");
+                    open();
+                    taxfeeModel.reload();
+                }
+            }
+            
+        }
+        ]]>
+    </code>
+
+    
+    <pages>
+        <page template="com.rameses.gov.etracs.bpls.ceo.CityEngineerBusinessInfo"/>
+    </pages>
+    
+</workunit>
