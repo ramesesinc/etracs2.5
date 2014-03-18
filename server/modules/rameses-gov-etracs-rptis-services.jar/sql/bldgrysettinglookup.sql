@@ -49,9 +49,11 @@ WHERE bt.objid = $P{objid}
 SELECT 
 	bucc.*,
 	bk.code AS bldgkind_code,
-	bk.name AS bldgkind_name
+	bk.name AS bldgkind_name,
+	bt.basevaluetype AS btbasevaluetype
 FROM bldgkindbucc bucc 
 	INNER JOIN bldgkind bk ON bucc.bldgkind_objid = bk.objid 
+	INNER JOIN bldgtype bt ON bucc.bldgtypeid = bt.objid 
 WHERE bucc.bldgtypeid = $P{bldgtypeid}
   AND (bk.code LIKE $P{searchtext} OR bk.name LIKE $P{searchtext})	
 ORDER BY bk.code 

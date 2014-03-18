@@ -41,6 +41,7 @@ class RealPropertyService
 			ry 			: var.current_ry,
 			autonumber	: false,
 			isnew   	: true,
+			pintype 	: var.pin_type,
 		]	
 	}
 

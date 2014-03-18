@@ -91,6 +91,7 @@ public class BldgRPUPage extends javax.swing.JPanel {
 
         xLookupField2.setCaption("Kind of Building");
         xLookupField2.setCaptionWidth(125);
+        xLookupField2.setDepends(new String[] {"bldgtype"});
         xLookupField2.setExpression("#{rpu.bldgkindbucc.bldgkind.code}");
         xLookupField2.setHandler("lookupBldgKindBucc");
         xLookupField2.setIndex(-9);
@@ -133,6 +134,7 @@ public class BldgRPUPage extends javax.swing.JPanel {
         xDateField5.setIndex(-6);
         xDateField5.setName("dtcompleted");
         xDateField5.setPreferredSize(new java.awt.Dimension(150, 19));
+        xDateField5.setRequired(true);
         formPanel12.add(xDateField5);
 
         xDateField1.setCaption("Date Occupied");
@@ -140,6 +142,7 @@ public class BldgRPUPage extends javax.swing.JPanel {
         xDateField1.setIndex(-5);
         xDateField1.setName("dtoccupied");
         xDateField1.setPreferredSize(new java.awt.Dimension(150, 19));
+        xDateField1.setRequired(true);
         formPanel12.add(xDateField1);
 
         xIntegerField1.setCaption("Building Age");

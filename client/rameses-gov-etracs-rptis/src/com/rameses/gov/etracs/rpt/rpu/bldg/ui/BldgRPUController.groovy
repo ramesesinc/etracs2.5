@@ -118,6 +118,7 @@ public class BldgRPUController extends com.rameses.gov.etracs.rpt.rpu.ui.Abstrac
     void setBldgtype(bldgtype){
         this.bldgtype = bldgtype;
         rpu.bldgtype = bldgtype;
+        setBldgkindbucc(null);
         loadSetting()
         calculateAssessment()
     }
@@ -125,10 +126,8 @@ public class BldgRPUController extends com.rameses.gov.etracs.rpt.rpu.ui.Abstrac
     void setBldgkindbucc(bldgkindbucc){
         this.bldgkindbucc = bldgkindbucc;
         rpu.bldgkindbucc = bldgkindbucc;
-        rpu.basevalue = (bldgkindbucc ? bldgkindbucc.basevalue : 0.0);
-        basevalue = rpu.basevalue
+        basevalue = bldgkindbucc ? bldgkindbucc.basevalue : 0.0;
         calculateAssessment()
-        binding.focus('percentcompleted')
     }
     
     void setBasevalue(basevalue){
@@ -143,13 +142,17 @@ public class BldgRPUController extends com.rameses.gov.etracs.rpt.rpu.ui.Abstrac
     }
     
     void validateBaseValue(basevalue){
-        if (rpu.bldgkindbucc?.basevaluetype == 'range') {
+        if (rpu.bldgkindbucc?.btbasevaluetype == 'range') {
             def minvalue = rpu.bldgkindbucc.minbasevalue;
             def maxvalue = rpu.bldgkindbucc.maxbasevalue;
             if (basevalue < minvalue || basevalue > maxvalue) {
-                throw new Exception("Base Value must be between $minvalue and $maxvalue.")
+                def msg = "Base Value must be between $minvalue and $maxvalue."
+                MsgBox.err(msg);
+                binding.refresh('basevalue');
+                throw new Exception(msg);
             }
         }
+        basevalue = rpu.basevalue;
     }
     
     
