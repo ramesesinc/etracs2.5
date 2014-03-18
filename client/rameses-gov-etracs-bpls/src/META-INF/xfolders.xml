@@ -4,12 +4,12 @@
             <folder id="bpls" caption="BPLS" index="5"/>
         </folder>
         <folder id="txn">
-            <folder id="bpls" caption="BPLS" index="5">
-                <folder id="app" caption="Applications"/>
-                <folder id="business" caption="Business Listing"/>
-            </folder>    
+            <folder id="bpls" caption="BPLS" index="5"/>
         </folder>
-        <folder id="rulemgmt">
+        <folder id="rulemgmt" caption="Rule Management">
+            <folder id="bpls" caption="BPLS" index="5"/>
+        </folder>
+        <folder id="report">
             <folder id="bpls" caption="BPLS" index="5"/>
         </folder>
     </folder>

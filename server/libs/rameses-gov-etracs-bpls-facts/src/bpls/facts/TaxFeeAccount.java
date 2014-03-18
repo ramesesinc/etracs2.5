@@ -24,6 +24,8 @@ public class TaxFeeAccount {
     private double  amtdue;
     private double assessedvalue;
     private Object data;
+    private boolean highest;
+    private boolean lowest;
     
     /** Creates a new instance of TaxFeeAccount */
     public TaxFeeAccount() {
@@ -99,6 +101,22 @@ public class TaxFeeAccount {
     
     public void setData(Object data) {
         this.data = data;
+    }
+
+    public boolean isHighest() {
+        return highest;
+    }
+
+    public void setHighest(boolean highest) {
+        this.highest = highest;
+    }
+
+    public boolean isLowest() {
+        return lowest;
+    }
+
+    public void setLowest(boolean lowest) {
+        this.lowest = lowest;
     }
 
 }

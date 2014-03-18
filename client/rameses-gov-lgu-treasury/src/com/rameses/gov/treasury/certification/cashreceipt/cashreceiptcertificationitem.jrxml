@@ -79,40 +79,40 @@
 					<reportElement
 						x="15"
 						y="0"
-						width="196"
+						width="187"
 						height="15"
 						key="textField-1"
 						stretchType="RelativeToBandHeight"/>
 					<box></box>
-					<textElement verticalAlignment="Middle">
+					<textElement verticalAlignment="Top">
 						<font fontName="Tahoma" size="9"/>
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[$F{item.title}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="211"
+						x="202"
 						y="0"
-						width="91"
+						width="84"
 						height="15"
 						key="textField-2"
 						stretchType="RelativeToBandHeight"/>
 					<box></box>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
+					<textElement textAlignment="Right" verticalAlignment="Top">
 						<font fontName="Tahoma" size="9"/>
 					</textElement>
 				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{amount}]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+				<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="302"
+						x="293"
 						y="0"
-						width="100"
+						width="109"
 						height="15"
 						key="textField-3"
 						stretchType="RelativeToBandHeight"/>
 					<box></box>
-					<textElement textAlignment="Center" verticalAlignment="Middle">
+					<textElement textAlignment="Center" verticalAlignment="Top">
 						<font fontName="Tahoma" size="9"/>
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[$F{remarks}]]></textFieldExpression>

@@ -11,13 +11,13 @@ public class ETRACS22MigrationService {
 	@PersistenceContext("etracs22")
 	def em;
 
-	@After(pattern="BusinessCaptureService.getSources")
+	@After(pattern="BusinessCaptureService1.getSources")
 	public void doGetSource(def evt) { 
 		def result = evt.result;
 		result.add( [name:'etracs22', title: 'ETRACS 2.2'] );
 	}
 
-	@After(pattern="BusinessCaptureService.search", eval="#{args[0].source?.name=='etracs22'}")
+	@After(pattern="BusinessCaptureService1.search", eval="#{args[0].source?.name=='etracs22'}")
 	public void doSearch(def evt) { 
 		println "enter 2.2"
 		def param = evt.args[0];
@@ -32,7 +32,7 @@ public class ETRACS22MigrationService {
 		result.addAll( em.sqlContext.createQuery(s).setMaxResults(50).resultList );
 	}
 
-	@After(pattern="BusinessCaptureService.getInfo", eval="#{args[0].version=='etracs22'}")
+	@After(pattern="BusinessCaptureService1.getInfo", eval="#{args[0].version=='etracs22'}")
 	public void doGetInfo(def evt) { 
 		def param = evt.args[0];
 		def result = evt.result;

@@ -25,10 +25,13 @@ public class NewEmptyJUnitTest extends TestCase {
     
     // TODO add test methods here. The name must begin with 'test'. For example:
     public void testHello() throws Exception {
-        QtrDeadline d = new QtrDeadline();
-        d.setYear(2013);
-        d.setMonth(10);
-        System.out.println(d.getBeginQtrDate());
+        //QtrDeadline d = new QtrDeadline();
+        //d.setYear(2013);
+        //d.setMonth(10);
+        //System.out.println(d.getBeginQtrDate());
     }
 
+   
+    
+    
 }

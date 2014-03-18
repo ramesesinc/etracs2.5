@@ -5,9 +5,9 @@
             index="100" target="popup"/>
         
         <invoker type="business:open" caption="Business Info" action="open" visibleWhen="#{entity!=null}" index="100" />
-        <!--
-        <invoker type="global:barcode:51005" caption="Business" action="startOpenByBIN" target="window" />
-        -->
+        
+        <invoker type="global:barcode:51005" caption="Business" action="openByBIN" target="window" />
+        
     </invokers>
     
     
@@ -52,6 +52,12 @@
             
             def openFromApp() {
                 entity = service.open( [objid: entity.businessid] );
+                title = entity.businessname + '(' + entity.bin + ')';
+                loadSections();
+            }
+            
+            def openByBIN() {
+                entity = service.findByBIN( [bin: barcodeid] );
                 title = entity.businessname + '(' + entity.bin + ')';
                 loadSections();
             }

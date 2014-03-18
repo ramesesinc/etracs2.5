@@ -55,6 +55,15 @@ class  ETRACSCashReceiptCertificationController extends CertificationController
         entity.receiptno = receipt.receiptno;
         entity.receiptdate = new java.text.SimpleDateFormat('MMMMM dd, yyyy').format(receipt.receiptdate);
         entity.items = receipt.items;
+        if(receipt.formno == '56') {
+            entity.items = [];
+            receipt._items.each {
+                entity.items << [ item:[title:'BASIC'],  amount: it.basicnet, remarks: it.period, tdno: it.tdno  ]
+                entity.items << [ item:[title:'SEF'],  amount: it.sefnet, remarks: it.period, tdno: it.tdno  ]
+                if( it.firecode) 
+                    entity.items << [ item:[title:'Fire Code'],  amount: it.firecode, remarks: it.period, tdno: it.tdno  ]
+            }
+        }
     }
     
     
@@ -64,8 +73,11 @@ class  ETRACSCashReceiptCertificationController extends CertificationController
     String reportName  = reportPath + 'cashreceiptcertification.jasper'
     
     SubReport[] getSubReports() {
+        def jas  = 'cashreceiptcertificationitem.jasper'
+        if(receipt.formno == '56')  jas  = 'cashreceiptcertificationitem_rpt.jasper'
+    
         return [
-            new SubReport('item', reportPath + 'cashreceiptcertificationitem.jasper'),
+            new SubReport('item', reportPath + jas ),
         ] as SubReport[]
     }
 

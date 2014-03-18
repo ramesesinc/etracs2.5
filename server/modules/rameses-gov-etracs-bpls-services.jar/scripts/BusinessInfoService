@@ -45,6 +45,7 @@ public class BusinessInfoService extends ActiveCrudService {
 			def lgucode = sysvar.lgu_objid;
 			if(!lgucode)
 				throw new Exception("LGU code is null. Please check lgu_objid in sysvar");
+			lgucode = lgucode.replace("-", "");	
 			def yr = dateSvc.serverYear;
 			def mnth = dateSvc.serverMonth;
 			def smon = ( mnth < 10 ) ? "0"+mnth : mnth+"";

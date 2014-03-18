@@ -3,8 +3,9 @@
         
         <invoker type="bpapplication:open" caption="Business Info" action="open" target="window" />
         <invoker type="business:barcode:51005" caption="Business" action="startOpenByBIN" target="window" />
+        <!--
         <invoker type="global:barcode:51005" caption="Business" action="startOpenByBIN" target="window" />
-        
+        -->
         <invoker type="extActions" caption="Save"  action="save"  visibleWhen="#{dirty==true}" index="0"/>
 
         <!-- for business info role -->

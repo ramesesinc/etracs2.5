@@ -28,6 +28,21 @@ public class BusinessCaptureService {
 	}	
 
 	@ProxyMethod
+	public def saveNew(o) {
+		o.state = 'CAPTURED';
+		o.apptype = 'CAPTURE';
+		def biz = infoSvc.create(o);
+		biz.lobs = o.lobs;
+		biz.lobs.each {
+			it.objid = "BUSLOB"+new UID();	
+			it.businessid = biz.objid;	
+			it.iyear = biz.activeyear;
+		};
+		infoSvc.activate( biz );
+		return biz;
+	}	
+
+	@ProxyMethod
 	public def register(o) {
 		o.state = 'CAPTURED';
 		o.apptype = 'CAPTURE';

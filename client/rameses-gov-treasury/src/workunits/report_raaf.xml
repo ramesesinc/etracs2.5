@@ -14,7 +14,7 @@ import com.rameses.osiris2.reports.*;
 
 class CraafController extends com.rameses.gov.treasury.report.ReportController
 {
-    @Service('RAAFReportService') 
+    @Service('CollectorReportService') 
     def svc
     
     
