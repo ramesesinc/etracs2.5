@@ -1,6 +1,6 @@
 <workunit >
     <invokers>
-        <invoker folderid="/explorer/txn/rpt/report" action="init" caption="FAAS Batch Printing" target="window" index="600" 
+        <invoker folderid="/explorer/report/rpt" action="init" caption="FAAS Batch Printing" target="window" index="600" 
             role="ASSESSOR_REPORT" />
         
         <invoker type="formActions" action="_close" caption="Close" mnemonic="c" icon="images/toolbars/cancel.png" immediate="true" visibleWhen="#{mode == 'init'}"/>

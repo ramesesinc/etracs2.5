@@ -23,3 +23,8 @@ platform/*/*/build
 platform/*/*/dist
 platform/*/*/build.xml
 platform/*/*/nbproject/private
+plugins/*/*/build
+plugins/*/*/dist
+custom/*/*/build
+custom/*/*/dist
+custom/*/*/*/*/private
