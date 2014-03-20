@@ -32,11 +32,13 @@ public class DisapprovePage extends javax.swing.JPanel {
         xTextArea1 = new com.rameses.rcp.control.XTextArea();
         xButton1 = new com.rameses.rcp.control.XButton();
         xButton2 = new com.rameses.rcp.control.XButton();
+        xFormPanel1 = new com.rameses.rcp.control.XFormPanel();
+        xComboBox1 = new com.rameses.rcp.control.XComboBox();
 
         xTextArea1.setLineWrap(true);
         xTextArea1.setWrapStyleWord(true);
         xTextArea1.setFont(new java.awt.Font("Tahoma", 0, 14));
-        xTextArea1.setName("msg");
+        xTextArea1.setName("info.msg");
         jScrollPane1.setViewportView(xTextArea1);
 
         xButton1.setMnemonic('c');
@@ -48,15 +50,27 @@ public class DisapprovePage extends javax.swing.JPanel {
         xButton2.setName("doOk");
         xButton2.setText("OK");
 
+        xFormPanel1.setPadding(new java.awt.Insets(10, 10, 10, 10));
+        xComboBox1.setCaption("Return to");
+        xComboBox1.setExpression("#{item.name} (#{item.action})");
+        xComboBox1.setItems("senders");
+        xComboBox1.setName("info.sender");
+        xComboBox1.setPreferredSize(new java.awt.Dimension(0, 20));
+        xComboBox1.setRequired(true);
+        xFormPanel1.add(xComboBox1);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 380, Short.MAX_VALUE)
+                    .addComponent(xFormPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 390, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 380, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
+                        .addContainerGap(272, Short.MAX_VALUE)
                         .addComponent(xButton2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(xButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
@@ -65,8 +79,9 @@ public class DisapprovePage extends javax.swing.JPanel {
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 249, Short.MAX_VALUE)
+                .addComponent(xFormPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 182, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(xButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -80,6 +95,8 @@ public class DisapprovePage extends javax.swing.JPanel {
     private javax.swing.JScrollPane jScrollPane1;
     private com.rameses.rcp.control.XButton xButton1;
     private com.rameses.rcp.control.XButton xButton2;
+    private com.rameses.rcp.control.XComboBox xComboBox1;
+    private com.rameses.rcp.control.XFormPanel xFormPanel1;
     private com.rameses.rcp.control.XTextArea xTextArea1;
     // End of variables declaration//GEN-END:variables
     

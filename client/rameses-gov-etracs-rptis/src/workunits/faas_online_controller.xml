@@ -2,6 +2,7 @@
 <workunit>
     <invokers>
         <invoker type="faasonline:open" action="open" caption="FAAS" target="window"  />
+        <invoker type="faasonlineresent:open" action="openResent" caption="FAAS" target="window"  />
    </invokers>
    
    <code>

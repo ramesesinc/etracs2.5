@@ -65,6 +65,11 @@ abstract class RPTWorkflowController extends PageFlowController
     
     void afterOpen(){}
     
+    final def openResent(){
+        taskSvc.closeUserNotification(entity.objid);
+        return open();
+    }
+    
     final def open(){
         initOpen();
         return super.signal('open');
@@ -134,7 +139,7 @@ abstract class RPTWorkflowController extends PageFlowController
     final void doDisapprove( handler){
         pass = false;
         checkMessages();
-        Modal.show('rpttask:disapprove', [handler:handler, title:'Disapproval Information']);
+        Modal.show('rpttask:disapprove', [entity:entity, handler:handler, taskSvc:taskSvc, title:'Disapproval Information']);
         if (!pass) throw new BreakException();
         initOpen();
     }   
@@ -142,9 +147,10 @@ abstract class RPTWorkflowController extends PageFlowController
     
     void disapprove(){
         checkMessages();
-        def handler = { msg ->
-            entity._disapprovemsg = msg 
-            taskSvc.disapproveTaskByObjid(entity.objid, entity._disapprovemsg)
+        def handler = { info ->
+            //entity._disapprovemsg = info.msg;
+            entity._disapproveinfo = info;
+            taskSvc.disapproveTaskByObjid(entity.objid, info)
             pass = true;
         };
         doDisapprove(handler);

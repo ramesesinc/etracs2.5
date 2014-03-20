@@ -15,20 +15,26 @@
         
         class  DisapproveTaskController  
         {
-        
+            def taskSvc;
+            
+            def entity;
             def handler;
-            def msg;
+            def info = [:];
             
             public def doOk() {
-                if (!msg || msg.trim().length() == 0)
+                if (!info.msg || info.msg.trim().length() == 0)
                     throw new Exception('Reason for disapproval is required.');
                     
-                if (handler) handler(msg);
+                if (handler) handler(info);
                 return "_close";
             }
             
             public def doCancel() {
                 return "_close";
+            }
+            
+            def getSenders(){
+                return taskSvc.getSenders(entity.objid);
             }
         }
         ]]>

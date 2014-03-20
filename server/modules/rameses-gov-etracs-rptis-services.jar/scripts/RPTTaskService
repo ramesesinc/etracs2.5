@@ -19,6 +19,9 @@ class RPTTaskService
     @Service(value="GroupNotificationService", connection="notification_proxy")
     def notificationSvc
 
+    @Service(value="UserNotificationService", connection="notification_proxy")
+    def userNotificationSvc
+
     @Service('RPTTaskService')
     def taskSvc
 
@@ -27,6 +30,12 @@ class RPTTaskService
 
     @Env
     def env 
+
+    @ProxyMethod
+    public def getSenders(objid) {
+        def currtask = findCurrentTask(objid)
+        return em.getSenders([objid:objid, currentaction:currtask.action]).unique()
+    }
 
 
     @ProxyMethod
@@ -84,10 +93,9 @@ class RPTTaskService
 
 
     @ProxyMethod
-    public void disapproveTaskByObjid( objid, disapprovemsg) {
-        def sendertask = em.findSenderTask([objid:objid])
-
+    public void disapproveTaskByObjid( objid, disapproveinfo) {
         def currtask = findCurrentTask(objid)
+        def sendertask = em.findSenderTask([objid:objid])
         closeTask(currtask)
 
         //recreate task for creator 
@@ -99,17 +107,36 @@ class RPTTaskService
             filetype    : currtask.filetype,
             startdate   : dtSvc.serverDate ,
             createdby   : getUserInfo(),
-            assignedto  : sendertask.assignedto,
+            assignedto  : disapproveinfo.sender,
             enddate     : null,
             workflowid  : currtask.workflowid,
             msg         : 'Document has been returned to ' + currtask.signatory + '.',
-            action      : sendertask.action,
+            action      : disapproveinfo.sender.action,
             signatory   : sendertask.signatory,
-            findings    : disapprovemsg,
+            findings    : disapproveinfo.msg,
         ]
         em.create(task)
+
+        notifySender(task);
     }
 
+    void notifySender(task){
+        def msg = [
+            objid     : task.objid,
+            senderid  : task.assignedto.objid,
+            sender    : task.assignedto.name,
+            recipientid : task.assignedto.objid,
+            message   : task.docname + ' No. ' + task.refno + ' was sent back to you by ' + task.createdby.name + '.',
+            filetype  : task.filetype+'resent',
+        ]
+        userNotificationSvc.addMessage(msg)
+    }
+
+
+    @ProxyMethod
+    public void closeUserNotification( objid ) {
+        userNotificationSvc.removeMessage([objid:objid])
+    }
 
     @ProxyMethod
     public def createNextUserTask( task ) {

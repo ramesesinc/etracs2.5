@@ -38,3 +38,13 @@ WHERE objid = $P{objid}
   AND enddate IS NOT NULL
   AND action NOT LIKE 'assign%'
 ORDER BY startdate DESC   
+
+
+[getSenders]
+SELECT 
+	createdby_objid AS objid, createdby_name AS name, createdby_title AS title, action
+FROM rpttask 
+WHERE objid = $P{objid}
+  AND action NOT LIKE 'assign%'
+  AND action <> $P{currentaction}
+ORDER BY startdate  DESC 

@@ -25,6 +25,7 @@ platform/*/*/build.xml
 platform/*/*/nbproject/private
 plugins/*/*/build
 plugins/*/*/dist
+plugins/*/*/*/private
 custom/*/*/build
 custom/*/*/dist
-custom/*/*/*/*/private
+custom/*/nbproject/private
