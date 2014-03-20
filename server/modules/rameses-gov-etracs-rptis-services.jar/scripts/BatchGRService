@@ -65,10 +65,10 @@ class BatchGRService
 
 		def retval = [success:0, error:0]
 		try {
-			def faas = faasSvc.openFaas( params.objid )
+			def faas = faasSvc.openFaas( params )
 			def newrysetting = getRySetting( faas.rpu.rputype, params.newry ) 
 			faas.autonumber = false
-			faas = grSvc.initGeneralRevision([faas:faas, newrysetting:newrysetting, autonumber:faas.autonumber])
+			faas = grSvc.initOnlineGeneralRevision([faas:faas, newrysetting:newrysetting, autonumber:faas.autonumber])
 			faas.memoranda = params.memoranda 
 			if ( util.toBoolean( var.gr_td_autonumber, false ) == true){
 				faas.tdno = faasSvc.generateNextTdNo(faas)
