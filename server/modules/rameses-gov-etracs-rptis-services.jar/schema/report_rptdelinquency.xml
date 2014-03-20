@@ -1,6 +1,9 @@
 <schema>
 	<element name="report_rptdelinquency" tablename="report_rptdelinquency">
-		<field name="rptledgerid" primary="true" />
+		<field name="objid" primary="true" />
+		<field name="rptledgerid" required="true" />
+		<field name="year" type="integer"/>
+		<field name="qtr" type="integer"/>
 		<field name="barangayid" required="true" />
 		<field name="basic" type="decimal" required="true" />
 		<field name="basicint" type="decimal" required="true" />
@@ -12,7 +15,5 @@
 		<field name="dtgenerated" required="true" />
 		<field name="generatedby_name"  />
 		<field name="generatedby_title" />
-		<field name="year" type="integer"/>
-		<field name="month" type="integer"/>
 	</element>
 </schema>

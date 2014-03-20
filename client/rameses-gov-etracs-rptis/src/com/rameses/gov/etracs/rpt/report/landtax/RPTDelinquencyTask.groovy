@@ -9,7 +9,7 @@ import com.rameses.osiris2.client.*;
 class RPTDelinquencyTask implements Runnable
 {
     def svc;
-    def entity;
+    def currentdate;
     def oncomplete;
     def updateStatus;
     def cancelled;
@@ -17,22 +17,26 @@ class RPTDelinquencyTask implements Runnable
     public void run(){
         cancelled = false; 
         
-        svc.cleanup(entity.barangay);
+        svc.cleanup();
         
-        def list = svc.getOpenLedgersByBarangay(entity.barangay);
-        for (int i = 0; i < list.size(); i++){
-            if (cancelled ) 
-                break;
-            
-            try{
-                def ledger = list[i];
-                updateStatus(ledger);
-                svc.buildDelinquency(ledger, entity.currentdate);
-            }
-            catch(e){
-                println 'Error Ledger Rebuild ' + e.message;
-            }
-        }    
+        def barangays = svc.getBarangayList();
+        
+        barangays.each{ barangay ->
+            def list = svc.getOpenLedgersByBarangay(barangay);
+            for (int i = 0; i < list.size(); i++){
+                if (cancelled ) 
+                    break;
+
+                try{
+                    def ledger = list[i];
+                    updateStatus(ledger);
+                    svc.buildDelinquency(ledger, currentdate);
+                }
+                catch(e){
+                    println 'Error Ledger Rebuild ' + e.message;
+                }
+            }    
+        }
         
         if (!cancelled)
             oncomplete();

@@ -1,0 +1,19 @@
+"doBuild" [mode == 'init']{
+    enabled:true;
+}
+
+"doCancel" [mode == 'init']{
+    enabled:false;
+}
+
+"doBuild" [mode == 'building']{
+    enabled:false;
+}
+
+"doCancel" [mode == 'building']{
+    enabled:true;
+}
+
+"doBuild|doCancel" [mode == 'done']{
+    enabled:false;
+}

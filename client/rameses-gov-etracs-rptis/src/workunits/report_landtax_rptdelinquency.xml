@@ -7,7 +7,6 @@
         
         <![CDATA[
 
-import com.rameses.gov.etracs.rpt.report.landtax.RPTDelinquencyTask;
 import com.rameses.rcp.common.*;
 import com.rameses.rcp.annotations.*;
 import com.rameses.osiris2.client.*;
@@ -42,69 +41,21 @@ class RPTDelinquencyListingController extends com.rameses.gov.etracs.rpt.report.
         getFormControls: {
             return [
                 new FormControl( "combo", [caption:'Barangay', name:'entity.barangay', items:'barangays', required:true, expression:'#{item.name}', preferredSize:'0,21']),
-                new FormControl( "checkbox", [caption:'Rebuild Data', name:'entity.rebuild', preferredSize:'0,21']),
             ]    
         },
    ] as FormPanelModel;
    
        
     def preview() {
-        if (entity.rebuild ){
-            rebuild();
-            //return 'default';
-        }
-        else {
-            buildReport()
-            mode = 'view'
-            return 'preview' 
-        }
+        buildReport()
+        mode = 'view'
+        return 'preview' 
     }
     
         
     void print(){
-        if (entity.rebuild ){
-            rebuild();
-        }
         buildReport()
         ReportUtil.print( report.report, true )
-    }
-   
-    def oncomplete = {
-        entity.rebuild = false;
-        buildReport();
-        mode = 'view';
-        binding.fireNavigation('preview');
-    }
-    
-    def updateStatus = {rl ->
-        msg = 'Calculating ledger ' + rl.tdno + '.'
-        binding.refresh('msg');
-    }
-    
-    void rebuild(){
-        if ( entity.rebuild == false ) 
-            return;
-            
-        entity.currentdate = dtSvc.serverDate;    
-        task = new RPTDelinquencyTask([
-            svc         : svc,
-            entity      : entity,
-            oncomplete  : oncomplete,
-            updateStatus : updateStatus,
-        ]);
-        
-        Thread t = new Thread(task);
-        t.start();
-        
-        mode = 'building';
-    }
-
-    
-    void doCancel(){
-        svc.cleanup(entity.barangay);
-        task.cancelled = true;
-        mode = 'init';
-        msg = null;
     }
 }
 
@@ -112,7 +63,4 @@ class RPTDelinquencyListingController extends com.rameses.gov.etracs.rpt.report.
 ]]>        
         
     </code>
-    <pages>
-        <page template="com.rameses.gov.etracs.rpt.report.landtax.RPTDelinquencyInitPage"/>
-    </pages>
 </workunit>

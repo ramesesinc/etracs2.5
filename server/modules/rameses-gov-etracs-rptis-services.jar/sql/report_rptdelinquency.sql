@@ -1,5 +1,10 @@
+[getBarangayList]
+SELECT objid, name FROM barangay ORDER BY pin 
+
+
 [getOpenLedgersByBarangay]
-SELECT rl.objid, rl.barangayid, f.tdno
+SELECT 
+	rl.objid, rl.barangayid, f.tdno
 FROM rptledger rl
 	INNER JOIN faas f ON rl.faasid = f.objid 
 WHERE barangayid = $P{barangayid}
@@ -9,13 +14,13 @@ WHERE barangayid = $P{barangayid}
   
 
 [cleanup]
-DELETE FROM report_rptdelinquency WHERE barangayid = $P{objid} 
+DELETE FROM report_rptdelinquency
 
 
 
 [getDelinquentLedgers]
 SELECT
-	f.taxpayer_name AS taxpayername,
+	CONVERT(VARCHAR(3000),f.taxpayer_name) AS taxpayername,
 	f.taxpayer_address AS taxpayeraddress,
 	r.fullpin AS pin,
 	f.tdno,
@@ -25,16 +30,24 @@ SELECT
 	rl.lastyearpaid,
 	rl.lastqtrpaid,
 	b.objid,
-	(rr.basic - rr.basicdisc + rr.basicint) AS basicnet,
-	(rr.sef - rr.sefdisc + rr.sefint) AS sefnet,
-	(rr.basic - rr.basicdisc + rr.basicint  + rr.sef - rr.sefdisc + rr.sefint ) AS total,
-	rr.dtgenerated
-FROM report_rptdelinquency rr
+	rr.*
+FROM (
+		SELECT 
+			rptledgerid,
+			dtgenerated,
+			SUM(basic - basicdisc + basicint) AS basicnet,
+			SUM(sef - sefdisc + sefint) AS sefnet,
+			SUM(basic - basicdisc + basicint  + sef - sefdisc + sefint ) AS total
+		FROM report_rptdelinquency rr
+		WHERE barangayid = $P{objid}
+		GROUP BY rptledgerid, dtgenerated 
+	)rr
 	INNER JOIN rptledger rl ON rr.rptledgerid = rl.objid 
 	INNER JOIN faas f ON rl.faasid = f.objid 
 	INNER JOIN rpu r ON f.rpuid = r.objid 
 	INNER JOIN propertyclassification pc ON r.classification_objid = pc.objid
-	INNER JOIN barangay b ON rl.barangayid = b.objid 
-WHERE rr.barangayid = $P{objid}
+	INNER JOIN barangay b ON rl.barangayid = b.objid
 ORDER BY r.fullpin 
+
+
 

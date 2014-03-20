@@ -17,6 +17,12 @@ class RPTReportDelinquencyService
 	@Service('DateService')
 	def dtSvc 
 
+
+	@ProxyMethod
+	public def getBarangayList(  ) {
+		return em.getBarangayList()
+	}
+
 	@ProxyMethod
 	public def getOpenLedgersByBarangay( barangay ) {
 		def params = [barangayid:barangay.objid, cy:dtSvc.serverYear]
@@ -25,8 +31,8 @@ class RPTReportDelinquencyService
 
 
 	@ProxyMethod
-	public void cleanup( barangay  ) {
-		em.cleanup(barangay);
+	public void cleanup() {
+		em.cleanup();
 	}
 
 	@ProxyMethod
@@ -36,38 +42,38 @@ class RPTReportDelinquencyService
 
 		def pdate = dtSvc.parseCurrentDate();
 
-		def basic = items.basic.sum() - items.basicpaid.sum()
-		def basicint = items.basicint.sum() - items.basicintpaid.sum()
-		def basicdisc = items.basicdisc.sum() - items.basicdisctaken.sum()
+		items.each{ item ->
+			def basic = item.basic - item.basicpaid
+			def basicint = item.basicint - item.basicintpaid
+			def basicdisc = item.basicdisc - item.basicdisctaken
+			def sef = item.sef - item.sefpaid
+			def sefint = item.sefint - item.sefintpaid
+			def sefdisc = item.sefdisc - item.sefdisctaken
+			def firecode = item.firecode - item.firecodepaid
+			def total = basic + basicint - basicdisc + sef + sefint - sefdisc 
 
-		def sef = items.sef.sum() - items.sefpaid.sum()
-		def sefint = items.sefint.sum() - items.sefintpaid.sum()
-		def sefdisc = items.sefdisc.sum() - items.sefdisctaken.sum()
-
-		def firecode = items.firecode.sum() - items.firecodepaid.sum()
-
-		def total = basic + basicint - basicdisc + sef + sefint - sefdisc 
-
-		if (total > 0.0){
-			def delinquency = [
-				rptledgerid : items[0].rptledgerid,
-				barangayid : items[0].barangayid,
-				basic 		: basic,
-				basicint 	: basicint,
-				basicdisc 	: basicdisc,
-				sef 		: sef,
-				sefint		: sefint,
-				sefdisc 	: sefdisc,
-				firecode	: firecode,
-				dtgenerated : dtgenerated,
-				year  		: pdate.year,
-				month 		: pdate.month,
-				generatedby : [name:env.FULLNAME, title:env.TITLE],
-			]
-			em.create(delinquency)
+			if (total > 0.0){
+				def delinquency = [
+					objid       : 'I' + new java.rmi.server.UID(),
+					rptledgerid : item.rptledgerid,
+					year  		: item.year,
+					qtr 		: item.qtr,
+					barangayid  : item.barangayid,
+					basic 		: basic,
+					basicint 	: basicint,
+					basicdisc 	: basicdisc,
+					sef 		: sef,
+					sefint		: sefint,
+					sefdisc 	: sefdisc,
+					firecode	: firecode,
+					dtgenerated : dtgenerated,
+					generatedby : [name:env.FULLNAME, title:env.TITLE],
+				]
+				em.create(delinquency)
+			}
 		}
-
 	}
+
 
 	@ProxyMethod
 	public def generateDelinquencyReport(barangay){
