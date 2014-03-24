@@ -54,6 +54,7 @@ public class ApproveSubdivisionTask implements Runnable{
             oncomplete()
         }
         catch(e){
+            e.printStackTrace();
             onerror('\n\n' + e.message )
         }
     }
