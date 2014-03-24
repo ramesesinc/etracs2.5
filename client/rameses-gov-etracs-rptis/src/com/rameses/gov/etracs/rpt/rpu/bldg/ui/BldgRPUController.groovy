@@ -127,6 +127,7 @@ public class BldgRPUController extends com.rameses.gov.etracs.rpt.rpu.ui.Abstrac
         this.bldgkindbucc = bldgkindbucc;
         rpu.bldgkindbucc = bldgkindbucc;
         basevalue = bldgkindbucc ? bldgkindbucc.basevalue : 0.0;
+        rpu.basevalue = basevalue;
         calculateAssessment()
     }
     
