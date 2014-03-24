@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <workunit>
     <invokers>
-        <invoker type="subdivision:info" action="init" caption="Land PINs" index="1"/>
+        <invoker type="subdivision:info" action="init" caption="Subdivided Land PINs" index="1"/>
         
         <invoker type="formActions" action="init" caption="Refresh" mnemonic="r" />
         <invoker type="formActions" action="add" caption="Add" mnemonic="a" visibleWhen="#{showActions == true}" depends="selectedItem" role="TAXMAPPER"/>

@@ -2,6 +2,7 @@
 <workunit>
     <invokers>
         <invoker type="subdivision:open" action="open" caption="Subdivision" target="window"  />
+        <invoker type="subdivisionresent:open" action="openResent" caption="Subdivision" target="window"  />
            
         <invoker folderid="/explorer/txn/rpt/online" action="init"  caption="Subdivision" index="20"
             txntypeid="SD" txntype="Subdivision" newledger="true" newrpu="true"

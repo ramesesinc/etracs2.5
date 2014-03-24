@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <workunit>
     <invokers>
-        <invoker type="subdivision:info" action="init" caption="Affected RPUs" index="10"/>
+        <invoker type="subdivision:info" action="init" caption="Affected RPUs" index="2"/>
         <invoker type="formActions" action="refresh" caption="Refresh" mnemonic="r" />
         <invoker type="formActions" action="edit" caption="Edit" mnemonic="e" visibleWhen="#{showActions == true}" role="TAXMAPPER"/>
         <invoker type="formActions" action="save" caption="Save" mnemonic="s" visibleWhen="#{mode != 'read'}" />

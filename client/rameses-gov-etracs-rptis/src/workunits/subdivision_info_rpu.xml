@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <workunit>
     <invokers>
-        <invoker type="subdivision:info" action="init" caption="RPU Assessments" index="5"/>
+        <invoker type="subdivision:info" action="init" caption="Subdivided Land Assessments" index="5"/>
         
         <invoker type="formActions" action="refresh" caption="Refresh" mnemonic="r" />
         <invoker type="formActions" action="assess" caption="Assess" mnemonic="a" visibleWhen="#{showActions == true}" role="APPRAISER" />

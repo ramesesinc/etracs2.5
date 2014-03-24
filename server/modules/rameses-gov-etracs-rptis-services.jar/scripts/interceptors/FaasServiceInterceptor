@@ -23,6 +23,12 @@ class FaasServiceInterceptor
 	@Service('LogService')
 	def logSvc 
 
+	@Service('RPTRequirementService')
+	def reqSvc
+
+	@Service('ExaminationService')
+	def examinationSvc 
+
 
 	@After(pattern="FAASService.createFaas.*") 
 	public void createFaas( evt ) {
@@ -47,7 +53,6 @@ class FaasServiceInterceptor
 		def faas = evt.result 
 
 		util.required('Memoranda', faas.memoranda)
-
 		logSvc.log( 'approveFaas', 'FAAS', faas.objid)
 	}
 
@@ -57,39 +62,58 @@ class FaasServiceInterceptor
 		logSvc.log( 'disapproveFaas', 'FAAS', faas.objid)
 	}
 
-	@After(pattern="FAASService.submitFaasToProvince") 
-	public void submitFaasToProvince( evt ) {
-		def faas = evt.result 
-		logSvc.log( 'submitFaasToProvince', 'FAAS', faas.objid)
+
+	@Before(pattern="FAASService.validateSubmit", eval="#{args[0].taskaction?.equalsIgnoreCase('receive')}", index=10) 
+	public void validateReceiveInfo( evt ) {
+		def faas = evt.args[0]
+		reqSvc.checkCompliance(faas.objid)
 	}
 
-	@After(pattern="FAASService.approveFaasSubmissionToProvince") 
-	public void approveFaasSubmissionToProvince( evt ) {
-		def faas = evt.result 
-		logSvc.log( 'approveFaasSubmissionToProvince', 'FAAS', faas.objid)
-	}
-
-	@After(pattern="FAASService.disapproveFaasSubmissionToProvince") 
-	public void disapproveFaasSubmissionToProvince( evt ) {
-		def faas = evt.result 
-		logSvc.log( 'disapproveFaasSubmissionToProvince', 'FAAS', faas.objid)
-	}
-
-	@After(pattern="FAASService.approveFaasByProvince") 
-	public void approveFaasByProvince( evt ) {
-		def faas = evt.result 
-		logSvc.log( 'approveFaasByProvince', 'FAAS', faas.objid)
-	}
-
-	@After(pattern="FAASService.disapproveFaasByProvince") 
-	public void disapproveFaasByProvince( evt ) {
-		def faas = evt.result 
-		logSvc.log( 'disapproveFaasByProvince', 'FAAS', faas.objid)
+	@Before(pattern="FAASService.validateSubmit", eval="#{args[0].taskaction?.equalsIgnoreCase('forexamination')}", index=10) 
+	public void validateExaminationInfo( evt ) {
+		def faas = evt.args[0]
+		def finding = examinationSvc.findFindingById(faas.objid)
+		if (!finding)
+			throw new Exception('Examination Finding is required.')
 	}
 
 
-	@Before(pattern="FAASService.submitFaasForApproval", eval="#{args[0].txntype.objid.matches('CT')}", index=10) 
-	public void validateChangeTaxabilityForApproval( evt ) {
+	@Before(pattern="FAASService.validateSubmit", eval="#{args[0].taskaction?.equalsIgnoreCase('fortaxmapping')}", index=10) 
+	public void validateTaxmappingInfo( evt ) {
+		def faas = evt.args[0]
+	}
+
+	@Before(pattern="FAASService.validateSubmit", eval="#{args[0].taskaction?.equalsIgnoreCase('fortaxmapping') && args[0].txntype.objid.matches('ND')}", index=11) 
+	public void validateNewDiscoveryTaxmappingInfo( evt ) {
+		def faas = evt.args[0]
+		def rp = rpSvc.open(faas.rp)
+		if (!rp) throw new Exception('Real Property does not exist or has already been deleted.')
+
+		util.required('Section No.', rp.section)
+		util.required('Parcel No.', rp.parcel)
+	}
+
+
+	@Before(pattern="FAASService.validateSubmit", eval="#{args[0].taskaction?.equalsIgnoreCase('forappraisal')}", index=15) 
+	public void validateAppraisalInfo( evt ) {
+		def faas = evt.args[0]
+		util.required('Memoranda', faas.memoranda)
+	}
+
+
+	@Before(pattern="FAASService.validateSubmit", eval="#{args[0].taskaction?.equalsIgnoreCase('forappraisal') && args[0].txntype.objid.matches('TR|TRC|TRE')}", index=10) 
+	public void validateTransferAppraisalInfo( evt ) {
+		def faas = evt.args[0]
+		util.required('Owner', faas.taxpayer.objid)
+		util.required('Declared Owner', faas.owner.name)
+		if(faas.owner.name.equalsIgnoreCase(faas.prevowner)){
+			throw new Exception('Current Owner must not be equal to previous owner.')
+		}
+	}
+
+
+	@Before(pattern="FAASService.validateSubmit", eval="#{args[0].taskaction?.equalsIgnoreCase('forappraisal') && args[0].txntype.objid.matches('CT')}", index=10) 
+	public void validateChangeTaxabilityInfo( evt ) {
 		def faas = evt.args[0]
 		def rpu = rpuSvc.findRpuInfoById(faas.rpu.objid)
 		def prevrpu = rpuSvc.findRpuInfoById(rpu.previd)
@@ -110,26 +134,11 @@ class FaasServiceInterceptor
 	}
 
 
-	@Before(pattern="FAASService.submitForAppraisal", eval="#{args[0].txntype.objid.matches('ND')}", index=10) 
-	public void validateNewDiscoverySubmit( evt ) {
+	@Before(pattern="FAASService.validateSubmit", eval="#{args[0].taskaction?.equalsIgnoreCase('forappraisal') && args[0].txntype.objid.matches('ND')}", index=10) 
+	public void validateNewDiscoveryInfo( evt ) {
 		def faas = evt.args[0]
-		def rp = rpSvc.open(faas.rp)
-		if (!rp) throw new Exception('Real Property does not exist or has already been deleted.')
-
-		util.required('Section No.', rp.section)
-		util.required('Parcel No.', rp.parcel)
 	}
 
-	@Before(pattern="FAASService.submitFaasForApproval", eval="#{args[0].txntype.objid.matches('TR|TRC|TRE')}", index=10) 
-	public void validateTransferSubmit( evt ) {
-		def faas = evt.args[0]
-		util.required('Owner', faas.taxpayer.objid)
-		util.required('Declared Owner', faas.owner.name)
-		if(faas.owner.name.equalsIgnoreCase(faas.prevowner)){
-			throw new Exception('Current Owner must not be equal to previous owner.')
-		}
-		util.required('Memoranda', faas.memoranda)
-	}
 
 
 

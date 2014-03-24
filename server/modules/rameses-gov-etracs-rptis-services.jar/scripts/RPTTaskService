@@ -53,16 +53,7 @@ class RPTTaskService
     @ProxyMethod
     public def createTaskAndNotifyGroup( task ) {
         createTask(task)
-         //notify group
-        def msg = [
-            objid     : task.objid,
-            senderid  : task.createdby.objid,
-            sender    : task.createdby.name,
-            groupid   : task.action,
-            message   : task.docname + ' No. ' + task.refno + '    (' + task.action + ')',
-            filetype  : task.filetype,
-        ]
-        notificationSvc.addMessage(msg)
+        notifyGroup(task)
     }
 
 
@@ -119,6 +110,26 @@ class RPTTaskService
 
         notifySender(task);
     }
+
+    void notifyGroup(task){
+        try{
+            //notify group
+            def msg = [
+                objid     : task.objid,
+                senderid  : task.createdby.objid,
+                sender    : task.createdby.name,
+                groupid   : task.action,
+                message   : task.docname + ' No. ' + task.refno + '    (' + task.action + ')',
+                filetype  : task.filetype,
+            ]
+            notificationSvc.addMessage(msg)
+        }
+        catch(e){
+            println '='*50 
+            e.printStackTrace()
+        }
+    }
+
 
     void notifySender(task){
         def msg = [

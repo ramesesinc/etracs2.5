@@ -246,6 +246,10 @@ class SubdivisionService
  	* WORKFLOW SUPPORT
  	*
  	------------------------------------------------------------------------*/
+    @ProxyMethod
+    public def validateSubmit( subdivision ) {
+        return subdivision
+    }
 
     @ProxyMethod
     public def disapproveSubdivision(subdivision) {

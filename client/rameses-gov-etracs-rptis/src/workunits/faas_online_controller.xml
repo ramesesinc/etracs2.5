@@ -139,7 +139,15 @@ public class AbstractOnlineFaasController extends com.rameses.gov.etracs.rpt.com
     }
      
     void notifyClient(){
-        smsSvc.notifyClient(entity.trackingno);
+        if (smsSvc)
+            smsSvc.notifyClient(entity.trackingno);
+        else
+            throw new Exception('SMS Service is not available at this time. Try again later.');
+    }
+    
+    
+    void beforeSubmit(){
+        svc.validateSubmit(entity);
     }
         
 }

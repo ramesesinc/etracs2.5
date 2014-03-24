@@ -2,6 +2,7 @@
 <workunit>
     <invokers>
         <invoker type="consolidation:open" action="open" caption="Consolidation" target="window"  />
+        <invoker type="consolidationresent:open" action="openResent" caption="Consolidation" target="window"  />
                    
         <invoker folderid="/explorer/txn/rpt/online" action="init"  caption="Consolidation" index="21"
             txntypeid="CS" txntype="Consolidation" newledger="true" newrpu="true" 

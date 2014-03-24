@@ -85,6 +85,12 @@ public class ConsolidationController extends com.rameses.gov.etracs.rpt.common.R
     }
     
     
+        
+    void beforeSubmit(){
+        svc.validateSubmit(entity);
+    }
+        
+    
     
     def approveTask = null;
     def info;

@@ -86,6 +86,15 @@ FROM consolidationaffectedrpu car
 	INNER JOIN rpu r ON f.rpuid = r.objid
 WHERE car.consolidationid = $P{consolidationid}	
 
+[getAffectedRpusWithNoPin]
+SELECT 
+	car.*,
+	f.tdno AS prevtdno
+FROM consolidationaffectedrpu car
+	INNER JOIN faas f ON car.prevfaasid = f.objid 
+WHERE car.consolidationid = $P{objid}	
+  AND car.newrpid IS NULL 
+
 
 [getAffectedRpusByConsolidatedLandId]
 SELECT 

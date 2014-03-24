@@ -81,6 +81,13 @@ public class SubdivisionController extends com.rameses.gov.etracs.rpt.common.RPT
     }
     
     
+    void beforeSubmit(){
+        svc.validateSubmit(entity);
+    }
+        
+        
+    
+    
     def approveTask = null;
     def info;
     def processing = false;

@@ -246,6 +246,11 @@ class ConsolidationService
    	* WORKFLOW SUPPORT
    	*
    	-----------------------------------------------------------------*/
+    @ProxyMethod
+    public def validateSubmit( consolidation ) {
+        return consolidation
+    }
+
 
    	@ProxyMethod
    	public def approveConsolidation( consolidation ) {

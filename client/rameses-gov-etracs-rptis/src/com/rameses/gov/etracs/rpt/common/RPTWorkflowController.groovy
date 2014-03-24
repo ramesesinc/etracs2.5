@@ -118,7 +118,14 @@ abstract class RPTWorkflowController extends PageFlowController
         ]
     }
     
+    
+    void beforeSubmit(){
+    }
+    
     void submit(){
+        
+        beforeSubmit();
+        
         def params = [
             docname   : getDocName(),
             appliedto : getWorkflowCode(),
