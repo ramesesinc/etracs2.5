@@ -129,7 +129,13 @@ class RPTTaskService
             message   : task.docname + ' No. ' + task.refno + ' was sent back to you by ' + task.createdby.name + '.',
             filetype  : task.filetype+'resent',
         ]
-        userNotificationSvc.addMessage(msg)
+        try{
+            userNotificationSvc.addMessage(msg)
+        }
+        catch(e){
+            println 'NotifySender' + (' ='*50)
+            println e.printStackTrace()
+        }
     }
 
 
