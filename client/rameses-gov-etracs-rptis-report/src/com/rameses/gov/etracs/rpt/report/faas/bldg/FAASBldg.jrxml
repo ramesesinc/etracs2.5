@@ -38,8 +38,8 @@
 	<field name="administrator.name" class="java.lang.String"/>
 	<field name="administratoraddress" class="java.lang.String"/>
 	<field name="administratorno" class="java.lang.String"/>
-	<field name="rpu.rp.street" class="java.lang.String"/>
-	<field name="rpu.rp.barangay.name" class="java.lang.String"/>
+	<field name="rp.street" class="java.lang.String"/>
+	<field name="rp.barangay.name" class="java.lang.String"/>
 	<field name="munidistrict" class="java.lang.String"/>
 	<field name="provcity" class="java.lang.String"/>
 	<field name="bldgstructures" class="java.lang.Object"/>
@@ -368,7 +368,7 @@
 					<textElement verticalAlignment="Top">
 						<font fontName="Tahoma" pdfFontName="Helvetica-Bold" size="8" isBold="true"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{rpu.rp.street}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{rp.street}]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement
@@ -429,7 +429,7 @@
 					<textElement verticalAlignment="Top">
 						<font fontName="Tahoma" pdfFontName="Helvetica-Bold" size="8" isBold="true"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{rpu.rp.barangay.name}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{rp.barangay.name}]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement

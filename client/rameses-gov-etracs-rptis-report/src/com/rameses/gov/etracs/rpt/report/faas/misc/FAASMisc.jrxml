@@ -33,23 +33,23 @@
 	<field name="tdno" class="java.lang.String"/>
 	<field name="rpu.fullpin" class="java.lang.String"/>
 	<field name="titleno" class="java.lang.String"/>
-	<field name="rpu.rp.surveyno" class="java.lang.String"/>
-	<field name="rpu.rp.cadastrallotno" class="java.lang.String"/>
-	<field name="rpu.rp.blockno" class="java.lang.String"/>
+	<field name="rp.surveyno" class="java.lang.String"/>
+	<field name="rp.cadastrallotno" class="java.lang.String"/>
+	<field name="rp.blockno" class="java.lang.String"/>
 	<field name="owner.name" class="java.lang.String"/>
 	<field name="owner.address" class="java.lang.String"/>
 	<field name="taxpayerno" class="java.lang.String"/>
 	<field name="administrator.name" class="java.lang.String"/>
 	<field name="administratoraddress" class="java.lang.String"/>
 	<field name="administratorno" class="java.lang.String"/>
-	<field name="rpu.rp.street" class="java.lang.String"/>
-	<field name="rpu.rp.barangay.name" class="java.lang.String"/>
+	<field name="rp.street" class="java.lang.String"/>
+	<field name="rp.barangay.name" class="java.lang.String"/>
 	<field name="munidistrict" class="java.lang.String"/>
 	<field name="provcity" class="java.lang.String"/>
-	<field name="rpu.rp.north" class="java.lang.String"/>
-	<field name="rpu.rp.south" class="java.lang.String"/>
-	<field name="rpu.rp.east" class="java.lang.String"/>
-	<field name="rpu.rp.west" class="java.lang.String"/>
+	<field name="rp.north" class="java.lang.String"/>
+	<field name="rp.south" class="java.lang.String"/>
+	<field name="rp.east" class="java.lang.String"/>
+	<field name="rp.west" class="java.lang.String"/>
 	<field name="miscpropertyappraisals" class="java.lang.Object"/>
 	<field name="txntype" class="java.lang.String"/>
 	<field name="prevowner" class="java.lang.String"/>
@@ -214,7 +214,7 @@
 					<textElement verticalAlignment="Middle">
 						<font fontName="Tahoma" pdfFontName="Helvetica-Bold" size="8" isBold="true"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{rpu.rp.surveyno}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{rp.surveyno}]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement
@@ -244,7 +244,7 @@
 					<textElement verticalAlignment="Middle">
 						<font fontName="Tahoma" pdfFontName="Helvetica-Bold" size="8" isBold="true"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{rpu.rp.cadastrallotno}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{rp.cadastrallotno}]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement
@@ -275,7 +275,7 @@
 					<textElement verticalAlignment="Middle">
 						<font fontName="Tahoma" pdfFontName="Helvetica-Bold" size="8" isBold="true"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{rpu.rp.blockno}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{rp.blockno}]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement
@@ -475,7 +475,7 @@
 					<textElement verticalAlignment="Middle">
 						<font fontName="Tahoma" pdfFontName="Helvetica-Bold" size="8" isBold="true"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{rpu.rp.street}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{rp.street}]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement
@@ -536,7 +536,7 @@
 					<textElement verticalAlignment="Middle">
 						<font fontName="Tahoma" pdfFontName="Helvetica-Bold" size="8" isBold="true"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{rpu.rp.barangay.name}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{rp.barangay.name}]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement
@@ -627,7 +627,7 @@
 					<textElement verticalAlignment="Middle">
 						<font fontName="Tahoma" pdfFontName="Helvetica-Bold" size="8" isBold="true"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{rpu.rp.north}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{rp.north}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -642,7 +642,7 @@
 					<textElement verticalAlignment="Middle">
 						<font fontName="Tahoma" pdfFontName="Helvetica-Bold" size="8" isBold="true"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{rpu.rp.east}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{rp.east}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -657,7 +657,7 @@
 					<textElement verticalAlignment="Middle">
 						<font fontName="Tahoma" pdfFontName="Helvetica-Bold" size="8" isBold="true"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{rpu.rp.south}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{rp.south}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -673,7 +673,7 @@
 					<textElement verticalAlignment="Middle">
 						<font fontName="Tahoma" pdfFontName="Helvetica-Bold" size="8" isBold="true"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{rpu.rp.west}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{rp.west}]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement
