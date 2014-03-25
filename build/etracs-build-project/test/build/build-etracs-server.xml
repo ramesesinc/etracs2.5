@@ -182,6 +182,9 @@
             <param name="sourcefile" value="rameses-gov-etracs-rptis"/>
         </antcall>
         <antcall target="deploy-etracs-jars-to-platform">
+            <param name="sourcefile" value="rameses-gov-etracs-rptis-report"/>
+        </antcall>
+        <antcall target="deploy-etracs-jars-to-platform">
             <param name="sourcefile" value="rameses-gov-etracs-bpls"/>
         </antcall>
         <antcall target="deploy-etracs-jars-to-platform">

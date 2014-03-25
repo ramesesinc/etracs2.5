@@ -1,3 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workunit extends="rpt_wtemplates/CertificationController.xml">
+    <invokers>
+        <invoker folderid="/explorer/txn/rpt/cert" action="init" caption="Land with No Improvement" 
+            opener="landwithnoimprov" index="2" role="CERTIFICATION_ISSUER" />
+            
+        <invoker folderid="/menu/txn/rpt/cert" action="init" caption="Land with No Improvement" 
+            opener="landwithnoimprov" index="2" role="CERTIFICATION_ISSUER" />
+            
+        <invoker type="quick_launcher" action="init" code="RC22" caption="Land with No Improvement" 
+            opener="landwithnoimprov" index="2" role="CERTIFICATION_ISSUER" />
+            
+        <invoker type="landwithnoimprov:open" action="open" caption="Land with No Improvement" /> 
+    </invokers>
+    
+    <code>
+<![CDATA[
+
 package com.rameses.gov.etracs.rpt.report.certification;
 
 
@@ -6,7 +24,7 @@ import com.rameses.rcp.common.*
 import com.rameses.osiris2.client.*
 import com.rameses.osiris2.reports.*;
 
-public class LandWithImprovementController extends com.rameses.gov.etracs.rpt.report.certification.AbstractCertificationController
+public class LandWithNoImprovementController extends com.rameses.gov.etracs.rpt.report.certification.AbstractCertificationController
 {
     @Service('RPTCertificationLandService')
     def svc;
@@ -17,23 +35,23 @@ public class LandWithImprovementController extends com.rameses.gov.etracs.rpt.re
     def getService(){
         return svc;
     }
-       
+    
     
     def save(){
-        return svc.createLandWithImprovement( entity )
+        return svc.createLandWithNoImprovement( entity )
     }
        
     def reportPath = 'com/rameses/gov/etracs/rpt/report/certification/'
-    String reportName = reportPath + 'LandWithImprovement.jasper'
+    String reportName = reportPath + 'LandWithNoImprovement.jasper'
 
     SubReport[] getSubReports() {
         return [
-            new SubReport('LandItem', reportPath + 'LandWithImprovementItem.jasper'),
+            new SubReport('LandItem', reportPath + 'LandWithNoImprovementItem.jasper'),
         ] as SubReport[]
     }
-    
+
     Map getParameters(){
-        return [REPORTTITLE:'Land with Improvement']
+        return [REPORTTITLE:'Land with No Improvement']
     }
     
     
@@ -47,7 +65,7 @@ public class LandWithImprovementController extends com.rameses.gov.etracs.rpt.re
                 if (it.rputype != 'land')
                     throw new Exception('Selected FAAS is not Land. Only land property is allowed.')
                  
-                svc.validateLandWithImprovement(it.objid)
+                svc.validateLandWithNoImprovement(it.objid)
                 
                 entity.faasid = it.objid;
                 entity.tdno= it.tdno;
@@ -65,3 +83,8 @@ public class LandWithImprovementController extends com.rameses.gov.etracs.rpt.re
         ])
     }
 }
+
+
+]]>
+    </code>
+</workunit>

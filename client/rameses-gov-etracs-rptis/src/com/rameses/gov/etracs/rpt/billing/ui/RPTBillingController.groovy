@@ -40,7 +40,8 @@ public class RPTBillingController
     }
     
     def back() {
-        mode = 'init'
+        init();
+        clearLoadedProperties();
         return 'default' 
     }
     

@@ -41,7 +41,7 @@ class BuildRPTDelinquencyController
         mode = 'done';
         task = null;
         msg = 'Delinquency listing has been successfully generated.';
-        binding.refresh('msg');
+        binding.refresh('msg|doBuild|doCancel');
     }
     
     def updateStatus = {rl ->

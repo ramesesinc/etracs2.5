@@ -1,3 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workunit extends="rpt_wtemplates/CertificationController.xml">
+    <invokers>
+        <invoker folderid="/explorer/txn/rpt/cert" action="init" caption="Land Holding" opener="landholding" index="1" 
+            role="CERTIFICATION_ISSUER" permission="certification.landholding"/>
+            
+        <invoker folderid="/menu/txn/rpt/cert" action="init" caption="Land Holding" opener="landholding" index="1" 
+            role="CERTIFICATION_ISSUER" permission="certification.landholding"/>
+            
+        <invoker type="quick_launcher" action="init" code="RC01" caption="Land Holding" opener="landholding" index="1" 
+            role="CERTIFICATION_ISSUER" permission="certification.landholding" />
+            
+        <invoker type="landholding:open" action="open" caption="Land Holding" /> 
+    </invokers>
+    
+    <code>
+        
+<![CDATA[        
+
+
 package com.rameses.gov.etracs.rpt.report.certification;
 
 
@@ -30,3 +50,9 @@ public class RPTCertificationsLandHoldingController extends com.rameses.gov.etra
         return [REPORTTITLE:'Land Holdings']
     }
 }
+
+
+]]>
+
+    </code>
+</workunit>
