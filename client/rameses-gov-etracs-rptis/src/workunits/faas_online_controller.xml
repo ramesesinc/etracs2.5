@@ -261,7 +261,7 @@ public class AbstractOnlineFaasController extends com.rameses.gov.etracs.rpt.com
         <!-- CITY-->
         <page name="forapproval" title="FAAS #{entity.txntype.name} (For Approval)">
             <transition caption="Close" to="end" mnemonic="c" icon="images/toolbars/cancel.png"  />
-            <transition name="disapprove" caption="Disapprove" to="open" action="doDisapproveEntity" mnemonic="d"  confirm="Disapprove FAAS?" role="APPROVER"/>
+            <transition name="disapprove" caption="Disapprove" to="open" action="disapprove" mnemonic="d"  confirm="Disapprove FAAS?" role="APPROVER"/>
             <transition name="approve" caption="Approve" to="open" action="doApproveEntity" mnemonic="v" icon="images/toolbars/approve.png" confirm="Approve FAAS?" role="APPROVER,ASSESSOR" />
         </page>
         

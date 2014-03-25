@@ -117,7 +117,7 @@
         <!-- CITY-->
         <page name="forapproval" title="Subdivision (For Approval)">
             <transition caption="Close" to="end" mnemonic="c" icon="images/toolbars/cancel.png"  />
-            <transition caption="Disapprove" to="open" action="doDisapproveEntity" mnemonic="d"  confirm="Disapprove Subdivision?" role="ASSESSOR,APPROVER"/>
+            <transition caption="Disapprove" to="open" action="disapprove" mnemonic="d"  confirm="Disapprove Subdivision?" role="ASSESSOR,APPROVER"/>
             <transition caption="Approve" to="wait" action="doApproveEntity" mnemonic="v" icon="images/toolbars/approve.png"  confirm="Approve Subdivision?" role="ASSESSOR,APPROVER"/>
         </page>
         
