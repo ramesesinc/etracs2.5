@@ -76,6 +76,7 @@ class RPTTaskListService extends ActiveListService
             [name:"enddate", caption:"End Date", width:150],
             [name:"createdby.name", caption:"Created By", width:200],
             [name:"assignedto.name", caption:"Assigned To", width:200],
+            [name:"msg", caption:"Message", width:200],
             [name:"duration", caption:"Duration (min)", width:200],
         ]
     }

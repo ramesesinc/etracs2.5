@@ -40,7 +40,7 @@ class MCSettlementTaskInterceptor
 			docname		: DOC_NAME,
 			filetype	: 'mcsettlement',
 			action 		: wf.tostate,
-			msg			: wf.message,
+			status		: wf.message,
 			signatory 	: wf.signatory,
 			workflowid  : wf.workflowid,
 		]

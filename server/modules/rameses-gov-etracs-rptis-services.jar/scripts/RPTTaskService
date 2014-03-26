@@ -101,10 +101,10 @@ class RPTTaskService
             assignedto  : disapproveinfo.sender,
             enddate     : null,
             workflowid  : currtask.workflowid,
-            msg         : 'Document has been returned to ' + currtask.signatory + '.',
+            msg         : disapproveinfo.msg,
+            status      : 'Document has been returned to ' + currtask.signatory + '.',
             action      : disapproveinfo.sender.action,
             signatory   : sendertask.signatory,
-            findings    : disapproveinfo.msg,
         ]
         em.create(task)
 
@@ -167,7 +167,8 @@ class RPTTaskService
         task.assignedto = getUserInfo()
         task.enddate = null
         task.workflowid = nextwf.workflowid
-        task.msg = nextwf.message 
+        task.status = nextwf.message 
+        task.msg = (task.action?.startsWith('assign') ? task.msg : '')
         task.action = nextwf.tostate 
         task.signatory = nextwf.signatory
         em.create(task)

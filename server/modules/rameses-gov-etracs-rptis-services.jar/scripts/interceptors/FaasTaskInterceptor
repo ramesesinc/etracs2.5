@@ -43,7 +43,7 @@ class FaasTaskInterceptor
 			docname 	: 'FAAS',
 			filetype	: 'faasonline',
 			action 		: wf.tostate,
-			msg			: wf.message,
+			status		: wf.message,
 			signatory 	: wf.signatory,
 			workflowid  : wf.workflowid,
 		]

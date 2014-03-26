@@ -1,6 +1,6 @@
 <workunit>
     <invokers>
-        <invoker type="rpttask:disapprove" caption="Disapprove Information" target="popup"/>
+        <invoker type="rpttask:submit" caption="Submit Information" target="popup"/>
     </invokers>
     
     <code>
@@ -13,7 +13,7 @@
         import java.rmi.server.*
         import com.rameses.util.*;
         
-        class  DisapproveTaskController  
+        class  SubmitTaskController  
         {
             def taskSvc;
             
@@ -22,9 +22,6 @@
             def info = [:];
             
             public def doOk() {
-                if (!info.msg || info.msg.trim().length() == 0)
-                    throw new Exception('Reason for disapproval is required.');
-                    
                 if (handler) handler(info);
                 return "_close";
             }
@@ -33,16 +30,13 @@
                 return "_close";
             }
             
-            def getSenders(){
-                return taskSvc.getSenders(entity.objid);
-            }
         }
         ]]>
     </code>
     
     
     <pages>
-        <page  template="com.rameses.gov.etracs.rpt.common.TaskDisapprovePage"/>
+        <page  template="com.rameses.gov.etracs.rpt.common.TaskSubmitPage"/>
     </pages>
     
 </workunit>

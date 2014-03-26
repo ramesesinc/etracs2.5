@@ -14,10 +14,10 @@ import com.rameses.rcp.ui.annotations.Template;
  * @author  Rameses
  */
 @Template(FormPage.class)
-public class DisapprovePage extends javax.swing.JPanel {
+public class TaskDisapprovePage extends javax.swing.JPanel {
     
     /** Creates new form DisapprovePage */
-    public DisapprovePage() {
+    public TaskDisapprovePage() {
         initComponents();
     }
     

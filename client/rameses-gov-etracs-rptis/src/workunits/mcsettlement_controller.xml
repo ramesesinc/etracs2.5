@@ -55,7 +55,7 @@
         <page name="receive" title="Multiple Claim Settlement (Draft)">
             <transition caption="Close"  to="end"      mnemonic="c" icon="images/toolbars/cancel.png" />
             <transition caption="Delete" to="delete"  action="delete" confirm="Delete record?"    mnemonic="d" icon="images/toolbars/trash.png"  role="APPRAISER,EXAMINER" />
-            <transition caption="Submit to Taxmapping" to="open" action="submit"  mnemonic="m"  confirm="Submit for taxmapping?" role="APPRAISER,EXAMINER" />
+            <transition caption="Submit to Taxmapping" to="open" action="submit"  mnemonic="m"   role="APPRAISER,EXAMINER" />
         </page>        
         
         <process name="delete">
@@ -67,13 +67,13 @@
         <page name="fortaxmapping" title="Multiple Claim Settlement (For Taxmapping)">
             <transition caption="Close"  to="end"      mnemonic="c" icon="images/toolbars/cancel.png" />
             <transition name="disapprove" caption="Disapprove" to="open" action="disapprove"  mnemonic="d"   confirm="Disapprove?" role="TAXMAPPER"/>
-            <transition name="submit" caption="Submit for Approval" to="open" action="submit"  mnemonic="m"   confirm="Submit for taxmapping approval?" role="TAXMAPPER"/>
+            <transition name="submit" caption="Submit for Approval" to="open" action="submit"  mnemonic="m"    role="TAXMAPPER"/>
         </page>
         
         <page name="fortaxmapping-approval" title="Multiple Claim Settlement (Taxmapping Approval)">
             <transition caption="Close"  to="end"      mnemonic="c" icon="images/toolbars/cancel.png" />
             <transition name="disapprove" caption="Disapprove" to="open" action="disapprove"  mnemonic="d"   confirm="Disapprove?" role="TAXMAPPER_CHIEF"/>
-            <transition name="submit" caption="Approve and Submit to Examiner" to="open" action="submit"  mnemonic="m"   confirm="Submit for examination?" role="TAXMAPPER_CHIEF"/>
+            <transition name="submit" caption="Approve and Submit to Examiner" to="open" action="submit"  mnemonic="m"    role="TAXMAPPER_CHIEF"/>
         </page>             
         
         
@@ -81,7 +81,7 @@
         <page name="forexamination" title="Multiple Claim Settlement (For Examination)">
             <transition caption="Close"  to="end"      mnemonic="c" icon="images/toolbars/cancel.png" />
             <transition name="disapprove" caption="Disapprove" to="open" action="disapprove"  mnemonic="d"   confirm="Disapprove?" role="EXAMINER"/>
-            <transition name="submit" caption="Submit for Appraisal" to="open" action="submit"  mnemonic="m"   confirm="Submit for appraisal?" role="EXAMINER"/>
+            <transition name="submit" caption="Submit for Appraisal" to="open" action="submit"  mnemonic="m"    role="EXAMINER"/>
         </page>
         
         
@@ -89,13 +89,13 @@
         <page name="forappraisal" title="Multiple Claim Settlement (For Appraisal)">
             <transition caption="Close"  to="end"      mnemonic="c" icon="images/toolbars/cancel.png" />
             <transition name="disapprove" caption="Disapprove" to="open" action="disapprove"  mnemonic="d"   confirm="Disapprove?" role="APPRAISER"/>
-            <transition name="submit" caption="Submit for Approval" to="open" action="submit"  mnemonic="m"   confirm="Submit for appraisal approval?" role="APPRAISER"/>
+            <transition name="submit" caption="Submit for Approval" to="open" action="submit"  mnemonic="m"    role="APPRAISER"/>
         </page>
         
         <page name="forappraisal-approval" title="Multiple Claim Settlement (Appraisal Approval)">
             <transition caption="Close"  to="end"      mnemonic="c" icon="images/toolbars/cancel.png" />
             <transition name="disapprove" caption="Disapprove" to="open" action="disapprove"  mnemonic="d"   confirm="Disapprove?" role="APPRAISAL_CHIEF"/>
-            <transition name="submit" caption="Approve and Submit to Assistant Assessor" to="open" action="submit"  mnemonic="m"   confirm="Submit for assistant assessor approval?" role="APPRAISAL_CHIEF"/>
+            <transition name="submit" caption="Approve and Submit to Assistant Assessor" to="open" action="submit"  mnemonic="m"    role="APPRAISAL_CHIEF"/>
         </page>  
         
         
@@ -103,7 +103,7 @@
         <page name="forassistant-approval" title="Multiple Claim Settlement (Assistant Approval)">
             <transition caption="Close"  to="end"      mnemonic="c" icon="images/toolbars/cancel.png" />
             <transition name="disapprove" caption="Disapprove" to="open" action="disapprove"  mnemonic="d"   confirm="Disapprove?" role="ASSISTANT_ASSESSOR"/>
-            <transition name="submit" caption="Approve and Submit to Assessor" to="open" action="submit"  mnemonic="m"   confirm="Submit for approval?" role="ASSISTANT_ASSESSOR"/>
+            <transition name="submit" caption="Approve and Submit to Assessor" to="open" action="submit"  mnemonic="m"    role="ASSISTANT_ASSESSOR"/>
         </page>        
         
         

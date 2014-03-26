@@ -196,7 +196,7 @@ public class AbstractOnlineFaasController extends com.rameses.gov.etracs.rpt.com
         <page name="receive" title="FAAS #{entity.txntype.name} (Interim)">
             <transition caption="Close"  to="end"      mnemonic="c" icon="images/toolbars/cancel.png" />
             <transition caption="Delete" to="delete"  action="delete" confirm="Delete record?"    mnemonic="d" icon="images/toolbars/trash.png"  role="RECEIVER,EXAMINER" />
-            <transition caption="Submit for Examination" to="open" action="submit"  mnemonic="m"  confirm="Submit for examination?" role="RECEIVER,EXAMINER" />
+            <transition caption="Submit for Examination" to="open" action="submit"  mnemonic="m"  role="RECEIVER,EXAMINER" />
         </page>
         
         <process name="back-to-default">
@@ -213,7 +213,7 @@ public class AbstractOnlineFaasController extends com.rameses.gov.etracs.rpt.com
         <page name="forexamination" title="FAAS #{entity.txntype.name} (For Examination)">
             <transition caption="Close"  to="end"      mnemonic="c" icon="images/toolbars/cancel.png" />
             <transition name="disapprove" caption="Disapprove" to="open" action="disapprove"  mnemonic="d"   confirm="Disapprove?" role="EXAMINER"/>
-            <transition name="submit" caption="Submit for Taxmapping" to="open" action="submit"  mnemonic="m"   confirm="Submit for taxmapping?" role="EXAMINER"/>
+            <transition name="submit" caption="Submit for Taxmapping" to="open" action="submit"  mnemonic="m"   role="EXAMINER"/>
         </page>
                 
         
@@ -221,14 +221,14 @@ public class AbstractOnlineFaasController extends com.rameses.gov.etracs.rpt.com
         <page name="fortaxmapping" title="FAAS #{entity.txntype.name} (For Taxmapping)">
             <transition caption="Close"  to="end"      mnemonic="c" icon="images/toolbars/cancel.png" />
             <transition name="disapprove" caption="Disapprove" to="open" action="disapprove"  mnemonic="d"   confirm="Disapprove?" role="TAXMAPPER"/>
-            <transition name="submit" caption="Submit for Taxmapping Approval" to="open" action="submit"  mnemonic="m"   confirm="Submit FAAS for taxmapping approval?" role="TAXMAPPER"/>
+            <transition name="submit" caption="Submit for Taxmapping Approval" to="open" action="submit"  mnemonic="m"   role="TAXMAPPER"/>
         </page>
         
         
         <page name="fortaxmapping-approval" title="FAAS #{entity.txntype.name} (Taxmapping Approval)">
             <transition caption="Close"  to="end"      mnemonic="c" icon="images/toolbars/cancel.png" />
             <transition name="disapprove" caption="Disapprove" to="open" action="disapprove"  mnemonic="d"   confirm="Disapprove?" role="TAXMAPPER_CHIEF"/>
-            <transition name="submit" caption="Approve and Submit for Appraisal" to="open" action="submit"  mnemonic="m"   confirm="Submit FAAS for appraisal?" role="TAXMAPPER_CHIEF"/>
+            <transition name="submit" caption="Approve and Submit for Appraisal" to="open" action="submit"  mnemonic="m"   role="TAXMAPPER_CHIEF"/>
         </page>        
         
 
@@ -238,14 +238,14 @@ public class AbstractOnlineFaasController extends com.rameses.gov.etracs.rpt.com
         <page name="forappraisal" title="FAAS #{entity.txntype.name} (For Appraisal)">
             <transition caption="Close"  to="end"      mnemonic="c" icon="images/toolbars/cancel.png" />
             <transition name="disapprove" caption="Disapprove" to="open" action="disapprove"  mnemonic="d"   confirm="Disapprove?" role="APPRAISER"/>
-            <transition name="submit" caption="Submit for Approval" to="open" action="submit"  mnemonic="m"   confirm="Submit FAAS for appraisal approval?" role="APPRAISER"/>
+            <transition name="submit" caption="Submit for Approval" to="open" action="submit"  mnemonic="m"   role="APPRAISER"/>
         </page>
         
         
         <page name="forappraisal-approval" title="FAAS #{entity.txntype.name} (Appraisal Approval)">
             <transition caption="Close"  to="end"      mnemonic="c" icon="images/toolbars/cancel.png" />
             <transition name="disapprove" caption="Disapprove" to="open" action="disapprove"  mnemonic="d"   confirm="Disapprove?" role="APPRAISAL_CHIEF"/>
-            <transition name="submit" caption="Approve and Submit to Assistant Assessor" to="open" action="submit"  mnemonic="m"   confirm="Submit FAAS for assistant assessor approval?" role="APPRAISAL_CHIEF"/>
+            <transition name="submit" caption="Approve and Submit to Assistant Assessor" to="open" action="submit"  mnemonic="m"   role="APPRAISAL_CHIEF"/>
         </page>  
         
         
@@ -254,7 +254,7 @@ public class AbstractOnlineFaasController extends com.rameses.gov.etracs.rpt.com
         <page name="forassistant-approval" title="FAAS #{entity.txntype.name} (Assistant Approval)">
             <transition caption="Close"  to="end"      mnemonic="c" icon="images/toolbars/cancel.png" />
             <transition name="disapprove" caption="Disapprove" to="open" action="disapprove"  mnemonic="d"   confirm="Disapprove?" role="ASSISTANT_ASSESSOR"/>
-            <transition name="submit" caption="Approve and Submit to Assessor" to="open" action="submit"  mnemonic="m"   confirm="Submit FAAS for approval?" role="ASSISTANT_ASSESSOR"/>
+            <transition name="submit" caption="Approve and Submit to Assessor" to="open" action="submit"  mnemonic="m"   role="ASSISTANT_ASSESSOR"/>
         </page>
         
         

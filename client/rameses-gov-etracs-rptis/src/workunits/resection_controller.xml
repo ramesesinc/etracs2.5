@@ -49,7 +49,7 @@
         <page name="default" title="Resection (Draft)">
             <transition caption="Close"  to="end"      mnemonic="c" icon="images/toolbars/cancel.png" />
             <transition caption="Delete" to="delete"  action="delete" confirm="Delete record?"    mnemonic="d" icon="images/toolbars/trash.png"  role="APPRAISER" permission="resection.delete" />
-            <transition caption="Submit to Taxmapping" to="open" action="submitForTaxmapping"  mnemonic="m"  confirm="Submit to Taxmapping?" role="APPRAISER" permission="resection.submit" />
+            <transition caption="Submit to Taxmapping" to="open" action="submitForTaxmapping"  mnemonic="m"   role="APPRAISER" permission="resection.submit" />
         </page>
         
         <process name="back-to-default">
@@ -64,13 +64,13 @@
         
         <page name="taxmapping" title="Resection (For Taxmapping)">
             <transition caption="Close"  to="end"      mnemonic="c" icon="images/toolbars/cancel.png" />
-            <transition caption="Submit for Appraisal" to="open" action="submitForAppraisal"  mnemonic="m"   confirm="Submit for appraisal?" role="TAXMAPPER"/>
+            <transition caption="Submit for Appraisal" to="open" action="submitForAppraisal"  mnemonic="m"    role="TAXMAPPER"/>
         </page>
         
         
         <page name="forappraisal" title="Resection (For Appraisal)">
             <transition caption="Close"  to="end"      mnemonic="c" icon="images/toolbars/cancel.png" />
-            <transition caption="Submit for Approval" to="open" action="submitForApproval"  mnemonic="m"   confirm="Submit for approval?" role="APPRAISER"/>
+            <transition caption="Submit for Approval" to="open" action="submitForApproval"  mnemonic="m"    role="APPRAISER"/>
         </page>
         
         <process name="submit">
@@ -105,7 +105,7 @@
             <transition caption="Cancel" to="back-to-prov-submission" action="cancelEdit" name="cancel"  mnemonic="c" icon="images/toolbars/cancel.png" />
             <transition caption="Save"   to="back-to-prov-submission" action="save" name="save" mnemonic="s" shortcut="ctrl S" icon="images/toolbars/save.png"   />
             <transition caption="Disapprove" to="open" action="disapproveSubmitToProvice"  mnemonic="d"  confirm="Disapprove Resection?" role="RECOMMENDER"/>
-            <transition caption="Submit to Province" to="open" action="submitToProvince" mnemonic="m"  confirm="Submit Resection to province?" role="RECOMMENDER"/>
+            <transition caption="Submit to Province" to="open" action="submitToProvince" mnemonic="m"   role="RECOMMENDER"/>
         </page>
         
         <process name="back-to-prov-submission">
@@ -115,7 +115,7 @@
         <page name="provsubmissionapproval" title="Resection (For Province Approval)">
             <transition caption="Close" to="end" mnemonic="c" icon="images/toolbars/cancel.png"/>
             <transition caption="Disapprove" to="open" action="disapproveSubmittedToProvince"  mnemonic="d" confirm="Disapprove Resection?" role="RECOMMENDER"/>
-            <transition caption="Approve" to="approved" action="approveSubmittedToProvince"  mnemonic="v" confirm="Submit Resection for approval?" role="RECOMMENDER"/>
+            <transition caption="Approve" to="approved" action="approveSubmittedToProvince"  mnemonic="v"  role="RECOMMENDER"/>
         </page>
         
         

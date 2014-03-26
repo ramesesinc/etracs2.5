@@ -39,7 +39,7 @@ class ConsolidationTaskInterceptor
 			docname 	: 'Consolidation',
 			filetype	: 'consolidation',
 			action 		: wf.tostate,
-			msg			: wf.message,
+			status		: wf.message,
 			signatory 	: wf.signatory,
 			workflowid  : wf.workflowid,
 		]

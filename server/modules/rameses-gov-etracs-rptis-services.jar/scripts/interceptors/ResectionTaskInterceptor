@@ -22,7 +22,7 @@ class ResectionTaskInterceptor
 			objid		: entity.objid,
 			refno		: entity.txnno,
 			filetype	: 'resection',
-			msg			: msg,
+			status		: msg,
 		]
 	}
 

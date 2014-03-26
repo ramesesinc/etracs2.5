@@ -38,7 +38,7 @@ class SubdivisionTaskInterceptor
 			docname 	: 'Subdivision',
 			filetype	: 'subdivision',
 			action 		: wf.tostate,
-			msg			: wf.message,
+			status		: wf.message,
 			signatory 	: wf.signatory,
 			workflowid  : wf.workflowid,
 		]

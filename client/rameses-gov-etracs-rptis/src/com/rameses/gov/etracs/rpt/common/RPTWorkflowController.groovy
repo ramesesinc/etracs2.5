@@ -105,14 +105,15 @@ abstract class RPTWorkflowController extends PageFlowController
      *
      *----------------------------------------------------*/
     
-    def createTask(wf){
+    def createTask(wf, msg){
         return [
             objid	: entity.objid,
             refno	: getReferenceNo(),
             docname 	: getDocName(),
             filetype	: getFileType(),
             action 	: wf.tostate,
-            msg		: wf.message,
+            msg         : msg,
+            status	: wf.message,
             signatory 	: wf.signatory,
             workflowid  : wf.workflowid,
         ]
@@ -123,8 +124,17 @@ abstract class RPTWorkflowController extends PageFlowController
     }
     
     void submit(){
-        
+        checkMessages();
         beforeSubmit();
+        
+        def msg = null;
+        def handler = { info ->
+            msg = info.msg;
+            pass = true;
+        };
+        
+        Modal.show('rpttask:submit', [entity:entity, handler:handler, taskSvc:taskSvc, title:'Submission Information']);
+        if (!pass) throw new BreakException();
         
         def params = [
             docname   : getDocName(),
@@ -133,7 +143,7 @@ abstract class RPTWorkflowController extends PageFlowController
         ];
         
         def wf = workflowSvc.findNext(params);
-        def task = createTask(wf)
+        def task = createTask(wf, msg)
         taskSvc.createTaskAndNotifyGroup(task)
         entity.taskaction = task.action;
         initOpen();

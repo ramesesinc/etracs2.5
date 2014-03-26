@@ -127,7 +127,7 @@ public class RPTSmsService extends ActiveCrudListService
 		String msg = ''
 		msg += 'Tracking No.  : ' + tracking.trackingno
 		msg += '  Document Type : ' + tracking.filetype.toUpperCase()
-		msg += '  Status        : ' + tracking.msg
+		msg += '  Status        : ' + tracking.status
 		return msg
 	}
 

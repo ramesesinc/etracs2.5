@@ -51,11 +51,34 @@ class RPTTaskLogInfoController
         def totalduration = 0;
         if (list)
             totalduration = list.duration.sum();
+        
         def hours = (int) (totalduration / 60);
-        def mins = totalduration - (60 * hours);
-        if (hours == 0 )
-            return mins + ' minutes';
-        return hours + ' ' + (hours == 1 ? 'hour' : 'hours') + ' ' + mins + ' ' + ( mins == 1 ? 'minute' : 'minutes')
+        def mins = totalduration - (hours * 60);
+        
+        def days = 0;
+        if (hours >= 24 ){
+            days = (int) (hours / 24)
+            hours = hours - (days * 24)
+        }
+        
+        def s = '';
+        
+        if (days > 0)
+            s += (days + ' day(s)');
+            
+        if (hours > 0){
+            if ( s.length() > 0 )
+                s += ' ';
+            s += (hours + ' hour(s)');
+        }
+        
+        if ( mins > 0){
+            if (s.length()>0)
+                s += ' and ';
+             s += (mins + ' minute(s).');
+        }
+        
+        return s;
     }
 }
        
