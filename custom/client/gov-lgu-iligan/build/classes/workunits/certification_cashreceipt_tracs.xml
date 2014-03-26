@@ -64,8 +64,11 @@ class  TRACSCashReceiptCertificationController extends CertificationController
     String reportName  = reportPath + 'cashreceiptcertification.jasper'
     
     SubReport[] getSubReports() {
+        def jas  = 'cashreceiptcertificationitem.jasper'
+        if(receipt.LANDTAX == 1)  jas  = 'cashreceiptcertificationitem_rpt.jasper'
+    
         return [
-            new SubReport('item', reportPath + 'cashreceiptcertificationitem.jasper'),
+            new SubReport('item', reportPath + jas ),
         ] as SubReport[]
     }
 
