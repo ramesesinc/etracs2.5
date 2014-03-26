@@ -15,8 +15,6 @@
         
         class  SubmitTaskController  
         {
-            def taskSvc;
-            
             def entity;
             def handler;
             def info = [:];

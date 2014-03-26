@@ -133,7 +133,8 @@ abstract class RPTWorkflowController extends PageFlowController
             pass = true;
         };
         
-        Modal.show('rpttask:submit', [entity:entity, handler:handler, taskSvc:taskSvc, title:'Submission Information']);
+        pass = false;
+        Modal.show('rpttask:submit', [entity:entity, handler:handler, title:'Submission Information']);
         if (!pass) throw new BreakException();
         
         def params = [
