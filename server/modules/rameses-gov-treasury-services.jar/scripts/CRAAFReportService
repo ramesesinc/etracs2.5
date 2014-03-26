@@ -60,11 +60,6 @@ class CRAAFReportService
 			}
 		}
 
-		data.sort{ a,b -> 
-		    def sa = a.afid + a.beginstartseries
-		    def sb = b.afid + b.beginstartseries    
-		    return sa <=> sb
-		}
 
 		data += list.findAll{it.type == 'AFO'}.each{ 
 			if (it.qtyreceived == 0){
@@ -72,6 +67,11 @@ class CRAAFReportService
 			}
 		}
 
+		data.sort{ a,b -> 
+		    def sa =  a.idx + a.afid + a.beginstartseries
+		    def sb =  b.idx + b.afid + b.beginstartseries    
+		    return sa <=> sb
+		}
 
 		return data;
 	}	

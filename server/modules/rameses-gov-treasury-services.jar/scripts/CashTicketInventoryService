@@ -53,6 +53,7 @@ class CashTicketInventoryService {
 			head.startstub = 0;
 			head.endstub = 0;
 			head.currentstub = 0;
+			head.cost = o.cost 
 			if(o.startstub) {
 				head.startstub = o.startstub;
 				head.endstub = o.endstub;
@@ -76,6 +77,7 @@ class CashTicketInventoryService {
 		detail.qtyending = head.qtybalance;
 		detail.qtycancelled = 0;
 		detail.remarks = o.remarks;
+		if( o.cost) detail.cost = (o.iqty * o.cost)
 		cashTicketInventory.create( detail, "detail" );
 		return head;
 	}
@@ -103,6 +105,7 @@ class CashTicketInventoryService {
 		detail.qtyending = head.qtybalance;
 		detail.qtycancelled = 0;
 		detail.remarks = o.remarks;
+		if(o.cost ) detail.cost = ( o.cost * (o.qty / o.unitqty) )
 		cashTicketInventory.create( detail, "detail" );
 	}
 

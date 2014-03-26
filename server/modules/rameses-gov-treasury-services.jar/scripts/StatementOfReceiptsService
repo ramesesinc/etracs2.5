@@ -37,7 +37,6 @@ class StatementOfReceiptsService
 		util.required('Qtr', params.qtr)
 		
 		buildDateFilter(params)
-		println params;
 		def items = getSummarizedRevenueItems(params)
 		if(! items ) throw new Exception("No record(s) found.               ");
 
@@ -82,57 +81,57 @@ class StatementOfReceiptsService
 	}
 
 
-	void calculateDetailedGroupTotals(data){
-		def maxlevel = data.level.max() 
-		for(int i = maxlevel; i > 0; i--){
-			['subaccount','detail','group'].each{ type -> 
-				def groupaccts = data.findAll{it.level == i && it.type == type && it.leaf == null}
-				groupaccts.each{ grpacct ->
-					def colls = data.findAll{it.parentid == grpacct.objid}
-					def amt = colls.amount.sum()
-					if (amt > 0.0 && grpacct.amount == 0){
-						grpacct.amount = amt
-					}
-				}
-			}
-		}
-
-		//update rootgroups
-		data.findAll{it.level == 0 }.each{ rgrp ->
-			def amt = data.findAll{it.parentid == rgrp.objid}.amount.sum();
-			if (amt > 0.0){
-				rgrp.amount = amt 
-			}
-		}
-	}
-
 	void calculateGroupTotals(data){
 		def maxlevel = data.level.max() 
 		for(int i = maxlevel - 1; i > 0; i--){
 			['detail','group'].each{ type -> 
-				def groupaccts = data.findAll{it.level == i && it.type == type }
+				def groupaccts = data.findAll{it.level == i && it.type == type } 
 				groupaccts.each{ grpacct ->
 					def colls = data.findAll{it.parentid == grpacct.objid}
 					def amt = colls.amount.sum()
+					def target = 0.0 
+					colls.unique{ it.objid }.each { 	
+						target += it.target ? it.target:0.0 
+					}
 					if (amt > 0.0 && grpacct.amount == 0){
 						grpacct.amount = amt
+						if( target){
+							grpacct.amount = amt
+							grpacct.target = target
+							grpacct.percentage = "0.00 %"
+							if( target  > 0.0 ) {  
+								grpacct.percentage = numSvc.format( '#,##0.00', ( grpacct.amount / target ) * 100 ) + " %"
+							}
+						}
 					}
 					else if (amt > 0.0 && grpacct.amount != 0){
 						def idx = data.indexOf(grpacct) + colls.size() + 1
 						def otheracct = [objid:'O'+ grpacct.objid, parentid:grpacct.objid, title:(' '*PADDING_SIZE) + grpacct.title + ' (OTHERS)', amount:grpacct.amount, leaf:1, type:'subaccount', level:grpacct.level+1]
 						data.add(idx, otheracct)
 						grpacct.amount += amt
+						grpacct.target = 0.0
+						grpacct.percentage = "0.00 %"
 						grpacct.leaf = null
 					}
+
 				}
+				
 			}
 		}
 
 		//update rootgroups
 		data.findAll{it.level == 0 }.each{ rgrp ->
-			def amt = data.findAll{it.parentid == rgrp.objid}.amount.sum();
+			def colls = data.findAll{it.parentid == rgrp.objid};
+			def amt = colls.amount.sum();
+			def target = 0.0 
+			colls.unique{ it.objid }.each {  target += it.target ? it.target:0.0 }
 			if (amt > 0.0){
-				rgrp.amount = amt 
+				rgrp.amount = amt  
+				rgrp.target = target 
+				rgrp.percentage = "0.00 %"
+				if( target  > 0.0 ) {  
+					rgrp.percentage = numSvc.format( '#,##0.00', ( rgrp.amount / target ) * 100 ) + " %"
+				}
 			}
 		}
 

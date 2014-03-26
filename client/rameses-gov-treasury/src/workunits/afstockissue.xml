@@ -23,22 +23,12 @@
         class AFIssuance extends StockIssueController {
         
             String title = "Accountable Form Issuance";
-            def issuanceType;
-            def issuanceTypes = ["ISSUANCE", "SALE"];
             def entityName = "afstockissue";    
             
-            @PropertyChangeListener
-            def listener = [
-                "issuanceType" : { o->
-                    entity.issuanceType = o
-                    request = null;
-                    binding.refresh();
-                }
-            ]
             
             def getLookupRequest() {
                 return InvokerUtil.lookupOpener( "afrequest:lookup", [
-                    "query.reqtype": issuanceType,
+                    "query.reqtype": "ISSUANCE",
                     onselect: { o->
                         request = o;
                         binding.refresh('request');

@@ -50,7 +50,7 @@ FROM (
         GROUP BY ai.objid, ai.respcenter_name, ai.afid   
       ) t
       LEFT JOIN afserial_inventory_detail xd ON t.objid = xd.controlid 
-   WHERE t.maxlineno - 1 = xd.[lineno]
+   WHERE t.maxlineno = xd.[lineno] 
 
 
    UNION ALL 
@@ -106,7 +106,7 @@ FROM (
          GROUP BY ai.objid, ai.respcenter_name, ai.afid   
       ) t
       LEFT JOIN afserial_inventory_detail xd ON t.objid = xd.controlid 
-   WHERE t.minlineno - 1 = xd.[lineno]
+   WHERE t.minlineno -1  = xd.[lineno]
 ) x
 ORDER BY x.idx, x.afid, x.name, x.receivedstartseries, x.beginstartseries
           
@@ -144,7 +144,7 @@ FROM (
       GROUP BY ci.objid, ci.respcenter_name , ci.afid
    ) t
    LEFT JOIN cashticket_inventory_detail xd ON t.objid = xd.controlid 
-   WHERE t.minlineno - 1 = xd.[lineno]
+   WHERE t.minlineno  = xd.[lineno]
      
 
    UNION

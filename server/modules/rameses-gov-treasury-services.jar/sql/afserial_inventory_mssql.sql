@@ -19,7 +19,8 @@ SELECT
    ac.prefix,
    ac.suffix,
    ac.unit,
-   ac.qtybalance
+   ac.qtybalance, 
+   ac.cost
 FROM afserial_inventory ac
    inner join afserial_inventory_detail ad on ad.controlid = ac.objid and ad."lineno"=1
 WHERE ac.afid=$P{afid} 

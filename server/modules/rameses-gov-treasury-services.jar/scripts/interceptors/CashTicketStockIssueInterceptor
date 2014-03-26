@@ -50,6 +50,7 @@ class CashTicketStockIssueInterceptor {
 				m.unitqty = it.unitqty;
 				m.txntype = "ISSUE";
 				m.remarks = "ISSUED TO " + o.issueto.name + " stub " + m.startstub +"-"+m.endstub;
+				m.cost = it.cost 
 				cashTicketSvc.postIssue(m);
 
 				qty+=it.qtyissued;
