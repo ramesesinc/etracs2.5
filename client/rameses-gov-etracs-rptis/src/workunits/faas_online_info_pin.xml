@@ -68,7 +68,7 @@ class FaasInfoPinController
             onedit      : oneditRealProperty,
             allowCreate : false,
             showClose   : false,
-            viewOnly    : faas.taskaction.matches('assign.*')
+            viewOnly    : (faas.taskaction ? faas.taskaction.matches('assign.*') : true )
         ])
     }
     
@@ -81,7 +81,7 @@ class FaasInfoPinController
             onedit      : oneditRealProperty,
             allowCreate : false,
             showClose   : false,
-            viewOnly    : faas.taskaction.matches('assign.*')
+            viewOnly    : (faas.taskaction ? faas.taskaction.matches('assign.*') : true )
         ])
     }
 }

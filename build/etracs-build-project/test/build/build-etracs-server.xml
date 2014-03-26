@@ -52,15 +52,21 @@
         <antcall target="do-copy-incubation-jars-to-devlibs">
             <param name="sourcefile" value="rameses-services-extended"/>
         </antcall>
+        <antcall target="do-copy-incubation-jars-to-devlibs">
+            <param name="sourcefile" value="rameses-client-ui-bio"/>
+        </antcall>
+        <antcall target="do-copy-incubation-jars-to-devlibs">
+            <param name="sourcefile" value="rameses-client-ui"/>
+        </antcall>
         <!--
+        <antcall target="do-copy-incubation-jars-to-devlibs">
+            <param name="sourcefile" value="rameses-client-ui-support"/>
+        </antcall>
         <antcall target="do-copy-incubation-jars-to-devlibs">
             <param name="sourcefile" value="osiris2-framework"/>
         </antcall>
         <antcall target="do-copy-incubation-jars-to-devlibs">
             <param name="sourcefile" value="osiris2-report"/>
-        </antcall>
-        <antcall target="do-copy-incubation-jars-to-devlibs">
-            <param name="sourcefile" value="rameses-client-ui"/>
         </antcall>
         <antcall target="do-copy-incubation-jars-to-devlibs">
             <param name="sourcefile" value="rameses-common2"/>
@@ -119,6 +125,9 @@
         </antcall>
         <antcall target="deploy-shared-to-platform">
             <param name="sourcefile" value="rameses-rules-mgmt"/>
+        </antcall>
+        <antcall target="deploy-shared-to-platform">
+            <param name="sourcefile" value="rameses-client-notification"/>
         </antcall>
     </target>
     
@@ -194,9 +203,6 @@
             <param name="sourcefile" value="rameses-gov-etracs-tools"/>
         </antcall>
         <antcall target="deploy-etracs-jars-to-platform">
-            <param name="sourcefile" value="rameses-gov-etracs-ctc"/>
-        </antcall>
-        <antcall target="deploy-etracs-jars-to-platform">
             <param name="sourcefile" value="rameses-gov-etracs-city"/>
         </antcall>
     </target>
@@ -208,6 +214,21 @@
         <copy file="${sourcejar}" todir="${target.web.resources.dir}/downloads/modules" failonerror="false"/>
     </target>
     
+    <!--=====================================================
+    = DEPLOY PLUGINS JAR 
+    =======================================================-->
+    <target name="deploy-etracs-plugins-jars">
+        <antcall target="deploy-plugins-jars-to-platform">
+            <param name="sourcefile" value="rameses-gov-etracs-ctc"/>
+        </antcall>
+    </target>
+    
+    <target name="deploy-plugins-jars-to-platform">
+        <property name="sourcejar" value="${etracs.project.dir}/plugins/client/${sourcefile}/dist/${sourcefile}.jar"/>
+
+        <echo message="====> Copying ${sourcefile}" />
+        <copy file="${sourcejar}" todir="${target.web.resources.dir}/downloads/modules" failonerror="false"/>
+    </target>
     
     
     <!--=====================================================
@@ -222,6 +243,7 @@
         <copy file="${devlib.projects.dir}/rameses-client-ui.jar" todir="${target.downloads.core.dir}" failonerror="false"/>
         <copy file="${devlib.projects.dir}/rameses-common2.jar" todir="${target.downloads.core.dir}" failonerror="false"/>
         <copy file="${devlib.projects.dir}/rameses-custom-impl.jar" todir="${target.downloads.core.dir}" failonerror="false"/>
+        <copy file="${devlib.projects.dir}/rameses-client-ui-bio.jar" todir="${target.downloads.core.dir}" failonerror="false"/>
     </target>
     
     <!--=====================================================
@@ -234,7 +256,7 @@
         </copy>
     </target>
 
-    <target name="build-server" depends="init, cleanup, copy-osiris3-server, copy-etracs-platform, deploy-etracs-server, deploy-project-shared, deploy-etracs-client-jars, copy-incubation-jars-to-devlibs, deploy-devlibs, update-osiris-server-libs">
+    <target name="build-server" depends="init, cleanup, copy-osiris3-server, copy-etracs-platform, deploy-etracs-server, deploy-project-shared, deploy-etracs-client-jars, deploy-etracs-plugins-jars, copy-incubation-jars-to-devlibs, deploy-devlibs, update-osiris-server-libs">
     </target>
 
     <target name="xxbuild-server" depends="init,cleanup,copy-osiris3-server,copy-etracs-platform,deploy-etracs-server,deploy-project-shared, deploy-etracs-client-jars, copy-incubation-jars-to-devlibs, deploy-devlibs">

@@ -158,6 +158,9 @@ class FaasMainInfoController
         return '';
     }
     
+    List getTitleTypes(){ 
+         return LOV.RPT_TITLE_TYPES*.key
+     }
     
     
 }

@@ -29,7 +29,9 @@ class BldgRPUGRService
 	public def reviseBldgRpu(rpu){
 		rpu.dtappraised = dtSvc.serverDate 
 		rpu.bldgtype = lookupSvc.lookupBldgTypeByPrevId(rpu.bldgtype.objid)
-
+		if (rpu.floorcount == null || rpu.floorcount == 0){
+			rpu.floorcount = 1
+		}
 		rpu.basevalue = 0;
 		rpu.bldgkindbucc = lookupSvc.lookupBldgKindBuccByPrevId(rpu.bldgkindbucc.objid)
 		if (rpu.bldgkindbucc ){

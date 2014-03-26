@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <workunit extends="rpt_wtemplates/FaasTxnOnlineInitController.xml">
     <invokers>       
-        <invoker type="quick_launcher" code="MC11" action="init" caption="Multiple Claim" 
-            txntype="MC" role="APPRAISER,EXAMINER" permission="faas.createTransfer" index="12"  />
+        <invoker type="quick_launcher" code="MC01" action="init" caption="Multiple Claim" 
+            txntype="MC" role="APPRAISER,EXAMINER,RECEIVER" permission="faas.createTransfer" index="12"  />
             
         <invoker folderid="/explorer/txn/rpt/online" action="init" caption="Multiple Claim" 
-            txntype="MC" role="APPRAISER,EXAMINER" permission="faas.createMultipleClaim" index="12"  />
+            txntype="MC" role="APPRAISER,EXAMINER,RECEIVER" permission="faas.createMultipleClaim" index="12"  />
             
     </invokers>
     <code>

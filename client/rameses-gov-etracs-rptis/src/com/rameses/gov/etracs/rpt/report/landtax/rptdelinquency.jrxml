@@ -49,6 +49,7 @@
 	<field name="total" class="java.math.BigDecimal"/>
 	<field name="lastyearpaid" class="java.lang.Integer"/>
 	<field name="lastqtrpaid" class="java.lang.Integer"/>
+	<field name="dtgenerated" class="java.util.Date"/>
 
 	<variable name="TBASICNET" class="java.math.BigDecimal" resetType="Report" calculation="Sum">
 		<variableExpression><![CDATA[$F{basicnet}]]></variableExpression>
@@ -206,7 +207,7 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
 						<font fontName="Tahoma" pdfFontName="Helvetica-Bold" size="9" isBold="true" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA["As of " + new SimpleDateFormat("MMMMM dd, yyyy").format($P{PRINTDATE})]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA["As of " + new SimpleDateFormat("MMMMM dd, yyyy").format($F{dtgenerated})]]></textFieldExpression>
 				</textField>
 			</band>
 		</title>

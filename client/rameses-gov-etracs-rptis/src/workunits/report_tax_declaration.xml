@@ -3,6 +3,8 @@
         <invoker type="faas:formActions" action="initPreview" caption="Tax Declaration Report" target="window" visibleWhen="#{mode=='read'}"/>
         <invoker type="faasmain:formActions" action="initPreview" caption="Tax Declaration Report" visibleWhen="#{mode=='read'}"/>
         <invoker type="formActions" action="_close" caption="Close" mnemonic="c" immediate="true" icon="images/toolbars/cancel.png"/>
+        <invoker type="td:report" action="initPreview" caption="Tax Declaration Report" target="window" />
+        <invoker type="td:report:print" caption="Tax Declaration Report" target="process" />
     </invokers>
     <code class="com.rameses.gov.etracs.rpt.report.td.TDReportController">
     </code>

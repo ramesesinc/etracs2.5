@@ -107,8 +107,12 @@ public class RPTSmsService extends ActiveCrudListService
 		def tracking = em.findTrackingInfo(info)		
 		if (!tracking)
 			throw new Exception('Tracking No. ' + info.refno + ' is invalid.')
-		
-		em.enroll([phoneno:info.phoneno, refid:tracking.objid])
+		try{
+			em.enroll([phoneno:info.phoneno, refid:tracking.objid])
+		}
+		catch(e){
+			//
+		}
 		return 'Tracking No. ' + info.refno + ' has been successfully enrolled. Text RPTSTATUS <trackingno> to receive status information. '
 	}
 

@@ -28,6 +28,10 @@
                 handler = getHandlers().find{it.properties.name == data.handler }
             }
             
+            void afterCreate(data){
+                handler = null;
+            }
+            
             def getHandlers(){
                 if (!handlers)
                     handlers = InvokerUtil.lookupOpeners('rptrequirementtype:handler', [:]);

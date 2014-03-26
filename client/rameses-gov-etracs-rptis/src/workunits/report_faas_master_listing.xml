@@ -1,6 +1,6 @@
 <workunit extends="rpt_wtemplates/ReportController.xml" >
     <invokers>
-        <invoker folderid="/explorer/txn/rpt/report" action="init" caption="FAAS MasterList" target="window" index="1" 
+        <invoker folderid="/explorer/report/rpt" action="init" caption="FAAS MasterList" target="window" index="1" 
             role="ASSESSOR_REPORT" />
     </invokers>
     <code>

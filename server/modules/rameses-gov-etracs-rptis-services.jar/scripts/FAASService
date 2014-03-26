@@ -48,21 +48,17 @@ class FAASService
     @Service('FAASService')
     def faasSvc
 
-    def signatories = ['appraiser', 'recommender', 'taxmapper', 'approver']
+    def signatories = ['receiver','taxmapper', 'taxmapping_chief', 'examiner', 'appraiser', 'appraisal_chief', 'recommender', 'assistant_assessor', 'approver']
 
 	
 
 	def SCHEMA_PREVIOUSFAAS		= 'previousfaas'
 	def SCHEMA_BACKTAX			= 'backtax'
 	
-	def STATE_INTERIM 			= 'INTERIM'
-	def STATE_FORTAXMAPPING 	= 'FORTAXMAPPING'
-	def STATE_FORAPPRAISAL 		= 'FORAPPRAISAL'
-	def STATE_FORAPPROVAL 		= 'FORAPPROVAL'
-	def STATE_FORPROVSUBMISSION = 'FORPROVSUBMISSION'
-	def STATE_FORPROVAPPROVAL 	= 'FORPROVAPPROVAL'
-	def STATE_CURRENT 			= 'CURRENT'
-	def STATE_CANCELLED  		= 'CANCELLED'
+	def STATE_INTERIM 				= 'INTERIM'
+	def STATE_FORAPPROVAL 				= 'FORAPPROVAL'
+	def STATE_CURRENT 				= 'CURRENT'
+	def STATE_CANCELLED  			= 'CANCELLED'
 
 	def UTDNO_KEY 				= 'UNIQUE_TDNO'
 
@@ -250,7 +246,6 @@ class FAASService
 	@ProxyMethod
 	public def deleteFaas( faas ) {
 		def currentstate = getState(faas.objid)
-		if (currentstate == STATE_FORPROVAPPROVAL)  throw new Exception('FAAS has already been submitted to province.')
 		if (currentstate == STATE_CURRENT)  throw new Exception('FAAS is already current.')
 		if (currentstate == STATE_CANCELLED)  throw new Exception('FAAS has already been cancelled.')
 
@@ -292,44 +287,21 @@ class FAASService
 		return em.getHistory([faasid:faasid])
 	}
 
-	/*------------------------------------------------
-	*
-	* WORKFLOW ACTIONS
-	*
-	-------------------------------------------------*/
 
 	@ProxyMethod
-	public def submitForTaxmapping( faas ) {
-		def retval = updateFaasState(faas, STATE_INTERIM, STATE_FORTAXMAPPING)
-		if (retval == 0) 
-			throw new Exception('Unable to submit FAAS. Only INTERIM record is allowed.')
-
-		wsSvc.insert(faas)
-		trackingSvc.updateMessage([objid:faas.objid, msg:'Document is now in taxmapping.'])
+	public def validateSubmit( faas ) {
 		return faas
 	}
 
-
 	@ProxyMethod
-	public def submitForAppraisal( faas ) {
-		def retval = updateFaasState(faas, STATE_FORTAXMAPPING, STATE_FORAPPRAISAL)
-		if (retval == 0) 
-			throw new Exception('Unable to submit FAAS. Only FOR TAXMAPPING record is allowed.')
-
-		wsSvc.insert(faas)
-		trackingSvc.updateMessage([objid:faas.objid, msg:'Document is now in appraisal.'])
-		return faas
-	}
-
-
-	@ProxyMethod
-	public def submitFaasForApproval( faas ) {
+	public def submitForApproval( faas ) {
+		faas.state = STATE_FORAPPROVAL
 		def retval = em.submitForApproval(faas)
 		if (retval == 0) 
-			throw new Exception('Unable to submit FAAS for approval. Only INTERIM record is allowed.')
+			throw new Exception('Unable to submit. FAAS does not exist or has already been deleted.')
 
 		wsSvc.insert(faas)
-		trackingSvc.updateMessage([objid:faas.objid, msg:'Document is now for approval.'])
+		trackingSvc.updateMessage([objid:faas.objid, msg:'FAAS is now for approval.'])
 		return faas
 	}
 
@@ -339,11 +311,11 @@ class FAASService
 		validateSignatories(faas)
 		faas.dtapproved = faas.approver.dtsigned
 		faas.state = STATE_CURRENT
-		faas.prevstate = STATE_FORAPPROVAL
+		faas.prevstate = STATE_INTERIM
 		updateTDNo(faas)
 		def retval = em.approveFaas(faas)
 		if (retval == 0) 
-			throw new Exception('Unable to approve FAAS. Only FOR APPROVAL record is allowed.')
+			throw new Exception('Unable to approve FAAS. Only FOR APPROVAL or INTERIM record can be approved.')
 
 		if (faas.txntype.newrealproperty){
 			rpSvc.approve(faas.rp)
@@ -352,7 +324,7 @@ class FAASService
 		wsSvc.insert(faas)
 		cancelPreviousFaases(faas)
 		txnRef.delete(faas.objid)
-		trackingSvc.updateMessage([objid:faas.objid, msg:'Document has already been approved.'])
+		trackingSvc.updateMessage([objid:faas.objid, msg:'FAAS has already been approved.'])
 		return faas 
 	}
 
@@ -361,87 +333,12 @@ class FAASService
 	public def disapproveFaas( faas ) {
 		wsSvc.delete(faas)
 
-		def retval = updateFaasState(faas, STATE_FORAPPROVAL, STATE_INTERIM)
+		def retval = updateFaasState(faas,STATE_INTERIM)
 		if (retval == 0) 
 			throw new Exception('Unable to disapprove FAAS. Only FOR APPROVAL record is allowed.')
 		trackingSvc.updateMessage([objid:faas.objid, msg:'Document is currently reviewed.'])
 		return faas 
 	}
-
-
-	@ProxyMethod
-	public def submitFaasToProvince( faas ) {
-		def retval = updateFaasState(faas, STATE_FORPROVSUBMISSION, STATE_FORPROVAPPROVAL)
-		if (retval == 0) 
-			throw new Exception('Unable to submit FAAS. Only INTERIM record is allowed.')
-
-		wsSvc.insert(faas)
-		trackingSvc.updateMessage([objid:faas.objid, msg:'Document is ready for submission to province.'])
-		return faas;
-	}
-
-
-	@ProxyMethod
-	public def approveFaasSubmissionToProvince( faas ) {
-		def retval = updateFaasState(faas, STATE_FORPROVSUBMISSION, STATE_FORPROVAPPROVAL)
-		if (retval == 0) 
-			throw new Exception('Unable to submit FAAS for province approval. Only FOR PROVINCE SUBMISSION record is allowed.')
-
-		wsSvc.insert(faas)
-		cancelPreviousFaases(faas)
-		txnRef.delete(faas.objid)
-		updateTDNo(faas)
-		trackingSvc.updateMessage([objid:faas.objid, msg:'Document has already been submitted to the province for approval.'])
-		return faas
-	}
-
-
-	@ProxyMethod
-	public def disapproveFaasSubmissionToProvince( faas ) {
-		wsSvc.delete(faas)
-		
-		def retval = updateFaasState(faas, STATE_FORPROVAPPROVAL, STATE_FORPROVSUBMISSION)
-		if (retval == 0) 
-			throw new Exception('Unable to disapprove FAAS. Only FOR PROVINCE APPROVAL record is allowed.')
-
-		trackingSvc.updateMessage([objid:faas.objid, msg:'Document is ready for submission to province.'])
-		
-		return faas
-	}
-
-
-	@ProxyMethod
-	public def approveFaasByProvince( faas ) {
-		def retval = updateFaasState(faas, STATE_FORPROVAPPROVAL, STATE_CURRENT)
-		if (retval == 0) 
-			throw new Exception('Unable to approve FAAS. Only FOR PROVINCE APPROVAL record is allowed.')
-
-		rpSvc.approve(faas.rp)
-		rpuSvc.approveRpu(faas.rpu)
-		wsSvc.insert(faas)
-		cancelPreviousFaases(faas)
-		txnRef.delete(faas.objid)
-		updateTDNo(faas)
-		trackingSvc.updateMessage([objid:faas.objid, msg:'Document has already been approved by the province.'])
-		return faas
-	}
-
-
-	@ProxyMethod
-	public def disapproveFaasByProvince( faas ) {
-		wsSvc.delete(faas)
-
-		def retval = updateFaasState(faas, STATE_FORPROVAPPROVAL, STATE_INTERIM)
-		if (retval == 0) 
-			throw new Exception('Unable to disapprove FAAS. Only FOR PROVINCE APPROVAL record is allowed.')
-
-		rpSvc.disapprove(faas.rp)
-		rpuSvc.disapproveRpu(faas.rpu)
-		trackingSvc.updateMessage([objid:faas.objid, msg:'Document is currently reviewed.'])
-		return faas
-	}
-
-
 
 
 	@ProxyMethod
@@ -637,9 +534,9 @@ class FAASService
 	}
 	
 
-    def updateFaasState( faas, fromstate, tostate){
+    def updateFaasState( faas, tostate){
 		faas.state = tostate
-		return em.updateFaasState([objid:faas.objid, state:tostate, prevstate:fromstate])
+		return em.updateFaasState([objid:faas.objid, state:tostate])
 	}
 
 

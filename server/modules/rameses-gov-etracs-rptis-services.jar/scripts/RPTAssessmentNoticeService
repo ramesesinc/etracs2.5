@@ -19,6 +19,9 @@ class RPTAssessmentNoticeService
 	@Service('Var')
 	def var 
 
+	@Service('ReportParameterService')
+	def reportSvc
+
 	@Env
 	def env
 	
@@ -59,8 +62,8 @@ class RPTAssessmentNoticeService
 		notice.createdbyname =  (env.FULLNAME ? env.FULLNAME : 'SYSTEM')
 		notice.createdbytitle =  (env.JOBTITLE ? env.JOBTITLE : 'SYSTEM')
 
-		notice.approvedbyname = var.assessor_name
-		notice.approvedbytitle = var.assessor_title
+		notice.approvedbyname = ( var.assessor_name ? var.assessor_name : reportSvc.standardParameter.ASSESSORNAME)
+		notice.approvedbytitle = ( var.assessor_title ? var.assessor_title : reportSvc.standardParameter.ASSESSORTITLE)
 
 		em.validate(SCHEMA_NAME, notice )
 		em.create(SCHEMA_NAME,  notice) 

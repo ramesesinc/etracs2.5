@@ -60,7 +60,8 @@ SELECT
 	b.objid AS rp_barangay_objid,
 	b.parentid AS rp_barangay_parentid,
 	t.trackingno,
-	CASE WHEN task.taskid IS NULL THEN '' ELSE task.action END AS taskaction
+	CASE WHEN task.taskid IS NULL THEN null ELSE task.action END AS taskaction,
+	CASE WHEN task.taskid IS NULL THEN null ELSE task.findings END AS findings
 FROM faas f
 	LEFT JOIN rpu rpu ON f.rpuid = rpu.objid
 	LEFT JOIN propertyclassification pc ON rpu.classification_objid = pc.objid 
@@ -202,16 +203,16 @@ where b.objid = $P{barangayid}
 
 
 [updateFaasState]
-UPDATE faas SET state = $P{state} WHERE objid = $P{objid} AND state = $P{prevstate}
+UPDATE faas SET state = $P{state} WHERE objid = $P{objid} 
 
 [submitForApproval]
-UPDATE faas SET state = $P{state} WHERE objid = $P{objid} AND state IN ('INTERIM', 'FORAPPRAISAL')
+UPDATE faas SET state = $P{state} WHERE objid = $P{objid}
 
 [approveFaas]
 UPDATE faas SET 
 	state = $P{state}, utdno = $P{utdno}, tdno = $P{tdno}, dtapproved = $P{dtapproved} 
 WHERE objid = $P{objid}  
-  AND state IN ('FORAPPROVAL', 'FORPROVAPPROVAL', 'PENDING')
+  AND state IN ('FORAPPROVAL', 'PENDING', 'INTERIM')
 
 
 [updateRpuMasterInfo]

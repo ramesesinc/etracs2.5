@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <workunit>
     <invokers>
-        <invoker type="subdivision:info" action="init" caption="Affected RPUs" index="10"/>
+        <invoker type="subdivision:info" action="init" caption="Affected RPUs" index="2"/>
         <invoker type="formActions" action="refresh" caption="Refresh" mnemonic="r" />
         <invoker type="formActions" action="edit" caption="Edit" mnemonic="e" visibleWhen="#{showActions == true}" role="TAXMAPPER"/>
         <invoker type="formActions" action="save" caption="Save" mnemonic="s" visibleWhen="#{mode != 'read'}" />
@@ -102,14 +102,14 @@ class SubdivisionAffectedRpuController
         
     boolean getShowActions(){
         if (entity.taskaction && entity.taskaction.matches('assign.*')) return false;
-        if (entity.state.matches('FORAPPROVAL|FORPROVAPPROVAL|APPROVED')) return false;
+        if (entity.state.matches('APPROVED')) return false;
         if (mode != MODE_READ) return false;
         return true;
     }
     
     boolean getAllowEdit(){
-        if (entity.state.matches('FORAPPROVAL|FORPROVAPPROVAL|APPROVED')) return false;
-        if ( ! entity.state.matches('FORTAXMAPPING') ) return false;
+        if (entity.taskaction && entity.taskaction.matches('assign.*')) return false;
+        if (entity.state.matches('APPROVED')) return false;
         if (mode == MODE_READ) return false;
         return true;
     }

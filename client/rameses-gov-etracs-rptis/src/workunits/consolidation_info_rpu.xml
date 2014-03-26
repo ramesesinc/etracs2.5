@@ -81,6 +81,12 @@ class ConsolidationLandRpuController
     
     def open(){
         rpu = [objid:entity.newrpuid];
+        
+        def viewonly = true;
+        if ( entity.taskaction == null || ! entity.taskaction.matches('assign.*')){
+            viewonly = false;
+        }
+        
         return InvokerUtil.lookupOpener('landrpu:open', [
             rpu         : rpu,
             lguid       : entity.lguid,
@@ -88,13 +94,13 @@ class ConsolidationLandRpuController
             onedit      : oneditRpu,
             allowCreate : false,
             showClose   : false,
-            viewOnly    : entity.taskaction.matches('assign.*'),
+            viewOnly    : viewonly,
         ])
     }
     
     boolean getShowActions(){
         if (entity.taskaction && entity.taskaction.matches('assign.*')) return false;
-        if (entity.state.matches('FORAPPROVAL|FORPROVAPPROVAL|APPROVED')) return false;
+        if (entity.state.matches('APPROVED')) return false;
         return true;
     }    
     

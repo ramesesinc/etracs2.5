@@ -13,24 +13,15 @@ class FaasTaskInterceptor
 	@Service('RPTTrackingService')
     def trackingSvc
 
+    @Service('RPTWorkflowService')
+    def workflowSvc 
+
+    @Service(value="GroupNotificationService", connection="notification_proxy")
+    def notificationSvc
+
 
 	@Env
 	def env 
-
-
-	def createTask(faas, msg){
-		def refno = faas.trackingno
-		if (!refno && faas.tdno )
-			refno = faas.tdno 
-		else 
-			refno = faas.utdno 
-		return [
-			objid		: faas.objid,
-			refno		: refno,
-			filetype	: 'faasonline',
-			msg			: msg,
-		]
-	}
 
 
 	@Before(pattern="FAASService.deleteFaas") 
@@ -40,40 +31,36 @@ class FaasTaskInterceptor
 	}
 
 
+	def createTask(faas, wf){
+		def refno = faas.trackingno
+		if (!refno && faas.tdno )
+			refno = faas.tdno 
+		else 
+			refno = faas.utdno 
+		return [
+			objid		: faas.objid,
+			refno		: refno,
+			docname 	: 'FAAS',
+			filetype	: 'faasonline',
+			action 		: wf.tostate,
+			msg			: wf.message,
+			signatory 	: wf.signatory,
+			workflowid  : wf.workflowid,
+		]
+	}
+
+
+
+
 	@After(pattern="FAASService.(initOnlineTransaction|initNewDiscovery)") 
-	public void initTransaction( evt ) {
-		def task = createTask(evt.result, 'Receive FAAS for processing.')
-		task.action = 'receive'
+	public void handleStartWorkflow( evt ) {
+		def faas = evt.result
+		def startwf = workflowSvc.findStart([docname:'FAAS', appliedto:faas.txntype.objid, fromstate:null])
+		def task = createTask(faas, startwf)
 		task = taskSvc.createTask(task)
 		taskSvc.assignTask(task)
+		updateFaasSignatoryFromTask(faas, task)
 	}
-
-
-	@After(pattern="FAASService.submitForTaxmapping") 
-	public void submitForTaxmapping( evt ) {
-		def task = createTask(evt.result, 'FAAS is already submitted to taxmapping.')
-		task.action = 'assign-taxmapper'
-		taskSvc.createTask(task)
-		evt.result.taskaction = task.action
-	}
-
-
-	@After(pattern="FAASService.submitForAppraisal") 
-	public void submitForAppraisal( evt ) {
-		def task = createTask(evt.result, 'FAAS is already submitted for appraisal.')
-		task.action = 'assign-appraiser'
-		taskSvc.createTask(task)
-		evt.result.taskaction = task.action
-	}
-
-	@After(pattern="FAASService.submitFaasForApproval") 
-	public void submitFaasForApproval( evt ) {
-		def task = createTask(evt.result, 'FAAS is already submitted for approval.')
-		task.action = 'assign-approver'
-		taskSvc.createTask(task)
-		evt.result.taskaction = task.action
-	}
-
 
 
 	@After(pattern="FAASService.approveFaas") 
@@ -88,70 +75,23 @@ class FaasTaskInterceptor
 	}
 
 
-	@After(pattern="FAASService.submitFaasToProvince") 
-	public void submitFaasToProvince( evt ) {
-	}
-
-	@After(pattern="FAASService.approveFaasSubmissionToProvince") 
-	public void approveFaasSubmissionToProvince( evt ) {
-	}
-
-	@After(pattern="FAASService.disapproveFaasSubmissionToProvince") 
-	public void disapproveFaasSubmissionToProvince( evt ) {
-	}
-
-	@After(pattern="FAASService.approveFaasByProvince") 
-	public void approveFaasByProvince( evt ) {
-	}
-
-	@After(pattern="FAASService.disapproveFaasByProvince") 
-	public void disapproveFaasByProvince( evt ) {
-	}
-
-
-
-
-
-
-	@After(pattern="RPTTaskService.createNextUserTask", eval="#{result.action.equalsIgnoreCase('fortaxmapping') && result.filetype == 'faasonline'}") 
-	public void updateTaxmapperInfo( evt ) {
+	@After(pattern="RPTTaskService.(createNextUserTask|assignTaskToMe)", eval="#{result.filetype == 'faasonline'}") 
+	public void updateSignatoryInfo( evt ) {
 		def task = evt.result 
 		def faas = faasSvc.openFaas([objid:task.objid])
-		faas.taxmapper.dtsigned = task.startdate 
-		faas.taxmapper.name = task.assignedto.name 
-		faas.taxmapper.title = task.assignedto.title
-		faasSvc.updateFaas(faas) 
+		updateFaasSignatoryFromTask(faas, task)
+		notificationSvc.removeMessage([objid:faas.objid])
 	}
 
-	@After(pattern="RPTTaskService.createNextUserTask", eval="#{result.action.equalsIgnoreCase('forappraisal') && result.filetype == 'faasonline'}") 
-	public void updateAppraiserInfo( evt ) {
-		def task = evt.result 
-		def faas = faasSvc.openFaas([objid:task.objid])
-		faas.appraiser.dtsigned = task.startdate 
-		faas.appraiser.name = task.assignedto.name 
-		faas.appraiser.title = task.assignedto.title
-		faasSvc.updateFaas(faas) 
-	}
+	void updateFaasSignatoryFromTask(faas, task){
+		if (! faas[task.signatory]) 
+			faas[task.signatory] = [:]
 
-	@After(pattern="RPTTaskService.createNextUserTask", eval="#{result.action.equalsIgnoreCase('forapproval') && result.filetype == 'faasonline'}") 
-	public void updateApproverInfo( evt ) {
-		def task = evt.result 
-		def faas = faasSvc.openFaas([objid:task.objid])
-		faas.approver.dtsigned = task.startdate 
-		faas.approver.name = task.assignedto.name 
-		faas.approver.title = task.assignedto.title
-		faasSvc.updateFaas(faas) 
-	}
-
-
-		@After(pattern="RPTTaskService.createNextUserTask", eval="#{result.action.equalsIgnoreCase('forprovsubmission') && result.filetype == 'faasonline'}") 
-	public void updateRecommenderInfo( evt ) {
-		def task = evt.result 
-		def faas = faasSvc.openFaas([objid:task.objid])
-		faas.recommender.dtsigned = task.startdate 
-		faas.recommender.name = task.assignedto.name 
-		faas.recommender.title = task.assignedto.title
+		faas[task.signatory].dtsigned = task.startdate 
+		faas[task.signatory].name = task.assignedto.name 
+		faas[task.signatory].title = task.assignedto.title
 		faasSvc.updateFaas(faas) 
 	}
 }
+
 

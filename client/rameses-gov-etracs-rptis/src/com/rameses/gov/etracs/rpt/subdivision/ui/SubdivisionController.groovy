@@ -4,89 +4,88 @@ import com.rameses.rcp.annotations.*
 import com.rameses.rcp.common.* 
 import com.rameses.osiris2.client.*
 import com.rameses.osiris2.common.*
+import com.rameses.util.*;
+import com.rameses.common.*;
 import com.rameses.gov.etracs.rpt.common.RPTUtil;
 import com.rameses.util.MapBeanUtils;
 
-public class SubdivisionController extends PageFlowController
+public class SubdivisionController extends com.rameses.gov.etracs.rpt.common.RPTWorkflowController
 {
 
-    @Binding
-    def binding;
-    
     @Service('SubdivisionService')
     def svc;
+    
+    String formTitlePrefix = 'SD';
             
         
-    @Service('RPTTaskService')
-    def taskSvc;
+    void createSubdivision(){
+        entity = svc.createSubdivision(entity);
+        initOpen();
+    }
+    
+    
+    public def getService(){ 
+        return svc; 
+    }
+    
+    public def getSections(){
+        return InvokerUtil.lookupOpeners('subdivision:info', [entity:entity, svc:svc])
+    }
+    
+    
+    
+    public String getDocName(){ 
+        return 'Subdivision';
+    }
+    
+    public String getFileType(){
+        return 'subdivision';
+    }
+    
+    public String getWorkflowCode(){
+        return 'SD';
+    }
+    
+    public String getReferenceNo(){
+        return entity.txnno;
+    }
+    
+    
+    
+    public def openEntity(){
+        return svc.openSubdivision(entity.objid)
+    }
+    
+    public void deleteEntity(){
+        svc.deleteSubdivision(entity);
+    }
+    
+    public void approveEntity(){
+        approve();
+    }
+    
+    public void disapproveEntity(){
+        entity = svc.disapproveSubdivision(entity);
+    }
+    
             
-            
-    @Invoker
-    def invoker 
-    
-    
-    @FormId
-    def formId;
-    
-    @FormTitle
-    def formTitle;
-           
-    def entity;
-    
-    def sections;
-    def selectedSection;
-    
-    def messages = [];
-        
-    def init(){
+    void afterInit(){
         formTitle = 'Subdivision (New)'
-        entity =  [objid:RPTUtil.generateId('SD')]
-        return super.signal('init')
+        entity.objid = RPTUtil.generateId('SD')
     }
     
     
-    def open(){
-        initOpen()
-        return super.signal('open');
-    }
-    
-    void initOpen(){
-        entity = svc.openSubdivision(entity.objid);
-        loadSections();
+    void afterOpen(){
         formId = entity.txnno;
         formTitle = 'SD: ' + entity.txnno;
     }
     
     
-    void loadSections(){
-        sections = InvokerUtil.lookupOpeners('subdivision:info', [entity:entity, svc:svc])
-        if (sections){
-            selectedSection = sections[0];
-        }
+    void beforeSubmit(){
+        svc.validateSubmit(entity);
     }
-    
-    
-    void delete(){
-        svc.deleteSubdivision(entity);
-    }
-    
-    /*-----------------------------------------------------
-     * 
-     * WORKFLOW ACTIONS
-     *
-     *----------------------------------------------------*/
-    void createSubdivision(){
-        entity =   svc.createSubdivision(entity)
-        initOpen();
-    }
-    
-    
-    void submitForApproval(){
-        entity =  svc.submitForApproval(entity);
-    }
-    
-    
-    
+        
+        
     
     
     def approveTask = null;
@@ -114,7 +113,7 @@ public class SubdivisionController extends PageFlowController
         binding.refresh('info');
     }
     
-    void approveSubdivision() {
+    void approve() {
         checkMessages();
         info = '';
         processing = true;
@@ -143,70 +142,7 @@ public class SubdivisionController extends PageFlowController
         initOpen();
     }
 
-    
-    
-    void disapproveSubdivision() {
-        checkMessages();
-        entity =  svc.disapproveSubdivision(entity);
-        loadSections();
-    }
-
-    
-    void submitForTaxmapping(){
-        checkMessages();
-        entity = svc.submitForTaxmapping(entity);
-        loadSections();
-    }
-    
-    void submitForAppraisal(){
-        checkMessages();
-        entity = svc.submitForAppraisal(entity);
-        loadSections();
-    }
-
-    void submitToProvince() {
-        checkMessages();
-        entity =  svc.submitToProvince(entity);
-        loadSections();
-    }
-
-   
-    void disapproveSubmitToProvice() {
-        checkMessages();
-        entity =  svc.disapproveSubmitToProvice(entity);
-        loadSections();
-    }
-
-
-    void approveSubmittedToProvince(){
-        checkMessages();
-        entity =  svc.approveSubmittedToProvince(entity)
-        loadSections();
-    }
-    
-    
-    void disapproveSubmittedToProvince(){
-        checkMessages();
-        entity =  svc.disapproveSubmittedToProvince(entity)
-        loadSections();
-    }
-    
-    
-    void approveByProvince() {
-        checkMessages();
-        entity =  svc.approveByProvince(entity);
-        loadSections();
-    }
-
-
-    void disapproveByProvince() {
-        checkMessages();
-        entity =  svc.disapproveByProvince(entity);
-        loadSections();
-    }
-    
-    
-    
+        
     
     /*===============================================
      * Lookup Support
@@ -214,109 +150,7 @@ public class SubdivisionController extends PageFlowController
     def getLookupFaas() {
         return InvokerUtil.lookupOpener('faas:lookup', [:])
     }
-    
-    
         
-    
-    
-    void addMessage(msg){
-        messages << msg;
-    }
-    
-    
-    void clearMessages(type){
-        messages.removeAll( messages.findAll{it.type == type} )
-    }
-    
-
-    void checkMessages(){
-        if (messages)
-            throw new Exception(messages[0].msg);
-    }   
-    
-    
-    
-    
-    
-    void assignTaxmapper(){
-        doAssignTask('fortaxmapping')
-    }
-    
-    void assignAppraiser(){
-        doAssignTask('forappraisal')
-    }
-    
-    void assignApprover(){
-        doAssignTask('forapproval')
-    }
-    
-    void doAssignTask(newaction){
-        def task = taskSvc.findCurrentTask(entity.objid);
-        task.action = newaction;
-        task.msg = '';
-        taskSvc.createNextUserTask(task);
-        initOpen();
-    }    
-    
-    
 }
 
 
-
-public class ApproveSubdivisionTask implements Runnable{
-    def svc;
-    def entity;
-    def oncomplete;
-    def onerror;
-    def showinfo;
-
-    public void run(){
-        try{
-            showinfo('Initializing');
-            svc.initApproveSubdivisionAsync(entity);
-            showinfo(' .... Done\n');
-        
-            showinfo('Assigning new TD No. to Subdivided Lands and Affected RPUs');
-            svc.assignNewTdNos(entity);
-            showinfo(' .... Done\n');
-            
-            
-            showinfo('Processing Subdivided Lands\n');
-            svc.getSubdividedLands(entity.objid).each{ land ->
-                if ( ! land.newfaasid) {
-                    showinfo('Creating new Land FAAS for TD No. ' + land.newtdno );
-                    svc.createSubdividedLandFaasRecord(entity, land);
-                    showinfo(' .... Done\n');
-                }
-            }
-            
-            showinfo('Processing Affected RPUs\n');
-            svc.getAffectedRpus(entity.objid).each{ arpu ->
-                if ( ! arpu.newfaasid) {
-                    showinfo('Creating new Affected RPU FAAS for TD No. ' + arpu.newtdno );
-                    svc.createAffectedRpuFaasRecord(entity, arpu);
-                    showinfo(' .... Done\n');
-                }
-            }
-            
-            showinfo('Subdivision Approval')
-            svc.approveSubdivisionAsync(entity);
-            entity.state = 'APPROVED';
-            showinfo(' .... Done\n');
-            
-            oncomplete()
-        }
-        catch(e){
-            onerror('\n\n' + e.message )
-        }
-    }
-    
-    void doSleep(){
-        try{
-            Thread.sleep(2000);
-        }
-        catch(e){
-            ;
-        }
-    }
-}

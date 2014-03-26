@@ -57,7 +57,8 @@ SELECT s.*,
 	pc.code AS classfication_code,
 	pc.name AS classification_name,
 	t.trackingno,
-	CASE WHEN task.taskid IS NULL THEN '' ELSE task.action END AS taskaction
+	CASE WHEN task.taskid IS NULL THEN null ELSE task.action END AS taskaction,
+	CASE WHEN task.taskid IS NULL THEN null ELSE task.findings END AS findings
 FROM subdivision s
 	INNER JOIN faas f ON s.motherfaasid = f.objid 
 	INNER JOIN rpu r ON f.rpuid = r.objid 
@@ -246,3 +247,29 @@ FROM subdivisionaffectedrpu sr
 
 [clearAffectedRpuNewRealPropertyInfo]
 UPDATE subdivisionaffectedrpu SET subdividedlandid = null, newrpid = null, newpin = null WHERE subdividedlandid = $P{objid}
+
+
+
+[getFaasListing]
+SELECT 
+	f.objid, 
+	f.tdno, 
+	r.rputype,
+	r.fullpin 
+FROM faas f 
+	INNER JOIN rpu r ON f.rpuid = r.objid 
+WHERE f.objid in (	
+	SELECT sl.newfaasid
+	FROM subdivision s
+		INNER JOIN subdividedland sl ON s.objid = sl.subdivisionid
+	WHERE s.objid = $P{objid}
+
+	UNION ALL
+
+
+	SELECT arpu.newfaasid
+	FROM subdivision s
+		INNER JOIN subdivisionaffectedrpu arpu ON s.objid = arpu.subdivisionid
+	WHERE s.objid = $P{objid}
+)
+ORDER BY f.tdno 

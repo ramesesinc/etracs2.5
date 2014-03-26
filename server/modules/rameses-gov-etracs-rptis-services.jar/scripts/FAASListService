@@ -126,8 +126,6 @@ class FAASListService
         if ('city'.equalsIgnoreCase(var.lgu_type)){
             return [
                 STATE_INTERIM, 
-                STATE_FORTAXMAPPING, 
-                STATE_FORAPPRAISAL, 
                 STATE_FORAPPROVAL,
                 STATE_CURRENT,
                 STATE_CANCELLED,
@@ -136,9 +134,6 @@ class FAASListService
         else{
             return [
                 STATE_INTERIM, 
-                STATE_FORTAXMAPPING, 
-                STATE_FORAPPRAISAL, 
-                STATE_FORPROVSUBMISSION,
                 STATE_FORPROVAPPROVAL,
                 STATE_CURRENT,
                 STATE_CANCELLED,

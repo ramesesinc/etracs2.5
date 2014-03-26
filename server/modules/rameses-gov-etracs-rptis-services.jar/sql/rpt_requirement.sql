@@ -20,3 +20,9 @@ FROM rpt_requirement rq
 WHERE rq.refid = $P{refid}
 ORDER BY rqt.sortorder 
 
+
+[getUncompliedRequirements]
+SELECT rq.*
+FROM rpt_requirement rq
+WHERE rq.refid = $P{refid} 
+  AND complied = 0

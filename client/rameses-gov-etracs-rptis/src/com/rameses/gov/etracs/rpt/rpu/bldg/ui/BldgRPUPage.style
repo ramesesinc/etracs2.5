@@ -3,11 +3,11 @@
 }
 
 
-"basevalue" [rpu.bldgkindbucc?.basevaluetype == 'fix'] {
+"basevalue" [true == true] {
     enabled:false;
 }
 
-"basevalue" [rpu.bldgkindbucc?.basevaluetype != 'fix'] {
+"basevalue" [bldgkindbucc?.btbasevaluetype != 'fix'] {
     enabled:true;
 }
 

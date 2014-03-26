@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <workunit>
     <invokers>
-        <invoker folderid="/explorer/txn/rpt/report" action="init" caption="Notice of Assessment" role="APPRAISER" permission="noticeofassessment.create" index="500"/>
+        <invoker folderid="/explorer/report/rpt" action="init" caption="Notice of Assessment" role="APPRAISER" permission="noticeofassessment.create" index="500"/>
         <invoker type="quick_launcher" code="NOA" action="init" caption="Notice of Assessment" role="APPRAISER" permission="noticeofassessment.create" index="500"/>
         
         <invoker type="assessmentnotice:create" action="init" caption="Notice of Assessment" role="APPRAISER" permission="noticeofassessment.create" />

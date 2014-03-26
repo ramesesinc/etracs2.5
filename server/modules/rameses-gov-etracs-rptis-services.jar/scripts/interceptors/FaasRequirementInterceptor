@@ -46,7 +46,7 @@ class FaasRequirementInterceptor
 	}
 
 
-	@Before(pattern="FAASService.submitForTaxmapping") 
+	@Before(pattern="FAASService.submitForExamination") 
 	public void validateRequirements( evt ) {
 		def faas = evt.args[0]
 		def requirements = em.getRequirements([refid:faas.objid])

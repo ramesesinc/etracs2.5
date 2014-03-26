@@ -66,17 +66,12 @@ class SubdivisionService
 	def SCHEMA_AFFECTED_RPU 	= 'affectedrpu'
 
     def STATE_DRAFT             = 'DRAFT'
-    def STATE_FORTAXMAPPING     = 'FORTAXMAPPING'
-	def STATE_FORAPPRAISAL     	= 'FORAPPRAISAL'
-	def STATE_FORAPPROVAL 		= 'FORAPPROVAL'
-	def STATE_FORPROVSUBMISSION = 'FORPROVSUBMISSION'
-	def STATE_FORPROVAPPROVAL 	= 'FORPROVAPPROVAL'
     def STATE_APPROVED          = 'APPROVED'
 	def STATE_PENDING 			= 'PENDING'
 
     def TXNTYPE_SD = 'SD'
 
-    def signatories = ['appraiser', 'recommender', 'taxmapper', 'approver']
+    def signatories = ['receiver','taxmapper', 'taxmapping_chief', 'examiner', 'appraiser', 'appraisal_chief', 'recommender', 'assistant_assessor', 'approver']
 
     @ProxyMethod
     public def createSubdivision(info) {
@@ -91,7 +86,7 @@ class SubdivisionService
         subdivision.ry = util.toInteger(var.current_ry)
         subdivision.lguid = var.lgu_objid
         subdivision.autonumber = util.toBoolean(var.td_autonumber, false)
-        subdivision.effectivityyear = pdate.year
+        subdivision.effectivityyear = pdate.year + 1
         subdivision.effectivityqtr  = 1
         subdivision.motherfaasid    = info.motherfaas.objid
         signatorySvc.init(subdivision, signatories)
@@ -251,29 +246,9 @@ class SubdivisionService
  	* WORKFLOW SUPPORT
  	*
  	------------------------------------------------------------------------*/
-
     @ProxyMethod
-    public def submitForTaxmapping(subdivision) {
-        subdivision.state = STATE_FORTAXMAPPING
-        workflowRef.insert(subdivision)
-        updateSubdivision(subdivision)
-        return subdivision 
-    }
-
-    @ProxyMethod
-    public def submitForAppraisal(subdivision) {
-        subdivision.state = STATE_FORAPPRAISAL
-        workflowRef.insert(subdivision)
-        updateSubdivision(subdivision)
-        return subdivision 
-    }
-
- 	@ProxyMethod
-    public def submitForApproval(subdivision) {
-        validate(subdivision)
-        workflowRef.insert(subdivision)
-    	updateSubdivision(subdivision)
-    	return subdivision 
+    public def validateSubmit( subdivision ) {
+        return subdivision
     }
 
     @ProxyMethod
@@ -296,68 +271,6 @@ class SubdivisionService
     	doApproveSubdivision(subdivision)
     	return subdivision 
     }
-
-
-
-    @ProxyMethod
-    public def submitToProvince(subdivision) {
-    	subdivision.state = STATE_FORPROVAPPROVAL
-    	workflowRef.insert(subdivision)
-        validate(subdivision)
-    	updateSubdivision(subdivision)
-        createFaasRecords(subdivision)
-    	return subdivision 
-    }
-
-
-    @ProxyMethod
-    public def disapproveSubmitToProvice(subdivision) {
-        workflowRef.delete(subdivision)
-    	subdivision.state = STATE_DRAFT
-    	updateSubdivision(subdivision)
-    	return subdivision
-    }
-
-
-    @ProxyMethod
-    public def approveSubmittedToProvince(subdivision) {
-    	subdivision.state = STATE_APPROVED
-    	workflowRef.insert(subdivision)
-    	updateSubdivision(subdivision)
-        doApproveSubdivision(subdivision)
-    	return subdivision 
-    }
-
-
-    @ProxyMethod
-    public def disapproveSubmittedToProvince(subdivision) {
-        workflowRef.delete(subdivision)
-        subdivision.state = STATE_FORPROVSUBMISSION
-        updateSubdivision(subdivision)
-        deleteFaasRecords(subdivision)
-        return subdivision
-    }
-
-
-    @ProxyMethod
-    public def disapproveByProvince(subdivision) {
-        workflowRef.delete(subdivision)
-    	subdivision.state = STATE_FORPROVSUBMISSION
-    	updateSubdivision(subdivision)
-    	deleteFaasRecords(subdivision)
-    	return subdivision
-    }
-
-    
-    @ProxyMethod
-    public def approveByProvince(subdivision) {
-    	subdivision.state = STATE_APPROVED
-    	workflowRef.insert(subdivision)
-    	updateSubdivision(subdivision)
-    	doApproveSubdivision(subdivision)
-    	return subdivision 
-    }
-
 
 
     /*------------------------------------------------------------------------
@@ -676,6 +589,12 @@ class SubdivisionService
         em.cancelRealProperty([objid:subdivision.motherfaas.realpropertyid])
         em.cancelMotherLandLedger([faasid:subdivision.motherfaasid])
         return subdivision
+    }
+
+
+    @ProxyMethod
+    public def getFaasListing( objid ) {
+        return em.getFaasListing([objid:objid])
     }
 
 }

@@ -1,4 +1,4 @@
-<workunit extends="wtemplates/ExplorerViewController.xml" serviceName="RPTTaskListService" autoSelect="true">
+<workunit extends="wtemplates/ExplorerViewController.xml" serviceName="RPTTaskListService" autoSelect="true" >
     <invokers>
         <invoker type="home.action" caption="Tasks"  target="window" index="101" role="ASSESSOR_SHARED" />
     </invokers>

@@ -63,7 +63,7 @@ class FaasInfoRpuController
             onupdate    : onupdateRpu,
             onedit      : oneditRpu,
             showClose   : false,
-            viewOnly    : entity.taskaction.matches('assign.*'),
+            viewOnly    : (entity.taskaction ? entity.taskaction.matches('assign.*') : true )
         ])
     }
     
@@ -73,12 +73,13 @@ class FaasInfoRpuController
             suffix          : 0, 
             fullpin         : entity.rp.pin,
             realpropertyid  : entity.rp.objid,
+            dtappraised     : entity.appraiser?.dtsigned,
         ])
     }
     
     
     def open(){
-        rpu = [objid:entity.rpuid];
+        rpu = [objid:entity.rpuid, dtappraised:entity.appraiser?.dtsigned];
         return InvokerUtil.lookupOpener(entity.rpu.rputype + 'rpu:open', [
             rpu         : rpu,
             lguid       : entity.lguid,
@@ -86,7 +87,7 @@ class FaasInfoRpuController
             onedit      : oneditRpu,
             allowCreate : false,
             showClose   : false,
-            viewOnly    : entity.taskaction.matches('assign.*'),
+            viewOnly    : (entity.taskaction ? entity.taskaction.matches('assign.*') : true )
         ])
     }
 }

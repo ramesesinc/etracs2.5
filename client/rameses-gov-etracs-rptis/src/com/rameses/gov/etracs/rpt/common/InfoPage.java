@@ -28,6 +28,7 @@ public class InfoPage extends javax.swing.JPanel {
         jScrollPane1 = new javax.swing.JScrollPane();
         xList1 = new com.rameses.rcp.control.XList();
         xSubFormPanel1 = new com.rameses.rcp.control.XSubFormPanel();
+        xLabel1 = new com.rameses.rcp.control.XLabel();
 
         setLayout(new java.awt.BorderLayout());
 
@@ -53,11 +54,19 @@ public class InfoPage extends javax.swing.JPanel {
         );
         xSubFormPanel1Layout.setVerticalGroup(
             xSubFormPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 296, Short.MAX_VALUE)
+            .addGap(0, 273, Short.MAX_VALUE)
         );
         jSplitPane1.setRightComponent(xSubFormPanel1);
 
         add(jSplitPane1, java.awt.BorderLayout.CENTER);
+
+        xLabel1.setBackground(new java.awt.Color(255, 255, 153));
+        xLabel1.setExpression("#{entity.findings}");
+        xLabel1.setFont(new java.awt.Font("Tahoma", 1, 12));
+        xLabel1.setForeground(new java.awt.Color(204, 0, 0));
+        xLabel1.setOpaque(true);
+        xLabel1.setPreferredSize(new java.awt.Dimension(91, 23));
+        add(xLabel1, java.awt.BorderLayout.NORTH);
 
     }// </editor-fold>//GEN-END:initComponents
     
@@ -65,6 +74,7 @@ public class InfoPage extends javax.swing.JPanel {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSplitPane jSplitPane1;
+    private com.rameses.rcp.control.XLabel xLabel1;
     private com.rameses.rcp.control.XList xList1;
     private com.rameses.rcp.control.XSubFormPanel xSubFormPanel1;
     // End of variables declaration//GEN-END:variables

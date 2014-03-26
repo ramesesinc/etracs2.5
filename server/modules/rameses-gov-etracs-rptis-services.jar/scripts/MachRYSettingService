@@ -31,6 +31,7 @@ public class MachRYSettingService
     def STATE_APPROVED  = 'APPROVED'
 
     def SETTING_TYPE    = 'mach' 
+    def RESIDUAL_RATE   = 20.0
     
     
     @ProxyMethod
@@ -42,6 +43,7 @@ public class MachRYSettingService
     @ProxyMethod
     public def create( entity ) {
         entity.state = STATE_DRAFT
+        entity.residualrate = RESIDUAL_RATE
         buildAppliedToInfo(entity)
         validate( entity )
         em.create( SCHEMA_RYSETTING, entity )

@@ -46,7 +46,7 @@ class MCSettlementRequirementInterceptor
 	}
 
 
-	@Before(pattern="MCSettlementService.submitForTaxmapping") 
+	@Before(pattern="MCSettlementService.submitForExamination") 
 	public void validateRequirements( evt ) {
 		def entity = evt.args[0]
 		def requirements = em.getRequirements([refid:entity.objid])

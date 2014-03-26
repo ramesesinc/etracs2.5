@@ -13,8 +13,29 @@ class RPTTaskService
     @Service('RPTTrackingService')
     def trackingSvc
 
+    @Service('RPTWorkflowService')
+    def workflowSvc
+
+    @Service(value="GroupNotificationService", connection="notification_proxy")
+    def notificationSvc
+
+    @Service(value="UserNotificationService", connection="notification_proxy")
+    def userNotificationSvc
+
+    @Service('RPTTaskService')
+    def taskSvc
+
+    @Service('RPTUtil')
+    def util
+
     @Env
     def env 
+
+    @ProxyMethod
+    public def getSenders(objid) {
+        def currtask = findCurrentTask(objid)
+        return em.getSenders([objid:objid, currentaction:currtask.action]).unique()
+    }
 
 
     @ProxyMethod
@@ -29,12 +50,30 @@ class RPTTaskService
         return task 
     }
 
+    @ProxyMethod
+    public def createTaskAndNotifyGroup( task ) {
+        createTask(task)
+        notifyGroup(task)
+    }
+
 
     @ProxyMethod
     public def assignTask( task ) {
         task.assignedto = getUserInfo();
         em.update(task)
         return task
+    }
+
+    @ProxyMethod
+    public def assignTaskToMe( params ) {
+        util.required('objid', params.objid)
+        util.required('action', params.action)
+
+        def task = em.findCurrentTaskByAction(params);
+        if (!task) 
+            throw new Exception('Current Task does not exist or it has already been assigned to other user.')
+
+        taskSvc.createNextUserTask(task);
     }
 
     @ProxyMethod
@@ -45,14 +84,92 @@ class RPTTaskService
 
 
     @ProxyMethod
+    public void disapproveTaskByObjid( objid, disapproveinfo) {
+        def currtask = findCurrentTask(objid)
+        def sendertask = em.findSenderTask([objid:objid])
+        closeTask(currtask)
+
+        //recreate task for creator 
+        def task = [
+            taskid      : 'T' + new java.rmi.server.UID(),
+            objid       : currtask.objid,
+            docname     : currtask.docname,
+            refno       : currtask.refno,
+            filetype    : currtask.filetype,
+            startdate   : dtSvc.serverDate ,
+            createdby   : getUserInfo(),
+            assignedto  : disapproveinfo.sender,
+            enddate     : null,
+            workflowid  : currtask.workflowid,
+            msg         : 'Document has been returned to ' + currtask.signatory + '.',
+            action      : disapproveinfo.sender.action,
+            signatory   : sendertask.signatory,
+            findings    : disapproveinfo.msg,
+        ]
+        em.create(task)
+
+        notifySender(task);
+    }
+
+    void notifyGroup(task){
+        try{
+            //notify group
+            def msg = [
+                objid     : task.objid,
+                senderid  : task.createdby.objid,
+                sender    : task.createdby.name,
+                groupid   : task.action,
+                message   : task.docname + ' No. ' + task.refno + '    (' + task.action + ')',
+                filetype  : task.filetype,
+            ]
+            notificationSvc.addMessage(msg)
+        }
+        catch(e){
+            println '='*50 
+            e.printStackTrace()
+        }
+    }
+
+
+    void notifySender(task){
+        def msg = [
+            objid     : task.objid,
+            senderid  : task.assignedto.objid,
+            sender    : task.assignedto.name,
+            recipientid : task.assignedto.objid,
+            message   : task.docname + ' No. ' + task.refno + ' was sent back to you by ' + task.createdby.name + '.',
+            filetype  : task.filetype+'resent',
+        ]
+        try{
+            userNotificationSvc.addMessage(msg)
+        }
+        catch(e){
+            println 'NotifySender' + (' ='*50)
+            println e.printStackTrace()
+        }
+    }
+
+
+    @ProxyMethod
+    public void closeUserNotification( objid ) {
+        userNotificationSvc.removeMessage([objid:objid])
+    }
+
+    @ProxyMethod
     public def createNextUserTask( task ) {
         closeTask(task)
+
+        def nextwf = workflowSvc.findNextByWorkflowId([docname:task.docname, workflowid:task.workflowid, fromstate:task.action])
+
         task.taskid = 'T' + new java.rmi.server.UID()
         task.startdate = dtSvc.serverDate 
         task.createdby = getUserInfo()
         task.assignedto = getUserInfo()
         task.enddate = null
-        task.msg = 'Document is currently processed by ' + task.assignedto.name + '.'
+        task.workflowid = nextwf.workflowid
+        task.msg = nextwf.message 
+        task.action = nextwf.tostate 
+        task.signatory = nextwf.signatory
         em.create(task)
         trackingSvc.updateMessage(task)
         return task
@@ -76,7 +193,7 @@ class RPTTaskService
     @ProxyMethod
     public def findCurrentTask( objid ) {
         def task = em.findCurrentTask([objid:objid])
-        if (!task) throw new Exception('Cannot open current task.')
+        if (!task) throw new Exception('Current Task does not exist or it has already been assigned to other user.')
         return task
     }
 }

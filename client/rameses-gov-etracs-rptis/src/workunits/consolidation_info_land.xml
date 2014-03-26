@@ -5,7 +5,7 @@
         
         <invoker type="formActions" action="refresh" caption="Refresh" mnemonic="r" />
         <invoker type="formActions" action="createPin" caption="Create Consolidation PIN" mnemonic="c" visibleWhen="#{showActions == true &amp;&amp; entity.newrpid == null}" role="TAXMAPPER" />
-        <invoker type="formActions" action="openPin" caption="Open PIN" mnemonic="o" visibleWhen="#{showActions == true &amp;&amp; entity.newrpid != null}" role="TAXMAPPER" />
+        <invoker type="formActions" action="openPin" caption="Open PIN" mnemonic="o" visibleWhen="#{entity.newrpid != null}" />
    </invokers>
    <code>
 
@@ -73,11 +73,16 @@ class ConsolidatedLandController
         if (!entity.newrpid) 
             return 
         
+        def viewonly = true;
+        if ( entity.taskaction == null || ! entity.taskaction.matches('assign.*')){
+            viewonly = false;
+        }
+        
         return InvokerUtil.lookupOpener('realproperty:open', [
             entity : rp,
             autoClose : true,
             allowCreate : false,
-            viewOnly    : entity.taskaction.matches('assign.*'),
+            viewOnly    : viewonly,
             
             onupdate : {
                 rp.putAll(it);
@@ -165,7 +170,7 @@ class ConsolidatedLandController
     
     boolean getShowActions(){
         if (entity.taskaction && entity.taskaction.matches('assign.*')) return false;
-        if (entity.state.matches('FORAPPROVAL|FORPROVAPPROVAL|APPROVED')) return false;
+        if (entity.state.matches('APPROVED')) return false;
         return true;
     }    
     

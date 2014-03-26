@@ -1,7 +1,7 @@
 <workunit >
     <invokers>
         <!--
-        <invoker folderid="/explorer/txn/rpt/report" action="init" caption="Notice of Assessment Batch Printing" target="window" index="103" 
+        <invoker folderid="/explorer/report/rpt" action="init" caption="Notice of Assessment Batch Printing" target="window" index="103" 
             role="ASSESSOR_REPORT" />
         -->
             

@@ -38,6 +38,9 @@ class MCSettlementService
 	@Service('Var')
 	def var 
 
+	@Service('RPTTrackingService')
+    def trackingSvc    
+
 	@Env
 	def env
 
@@ -46,18 +49,13 @@ class MCSettlementService
 	def SCHEMA_OTHERCLAIM	= 'otherclaim'
 	def SCHEMA_AFFECTEDRPU  = 'affectedrpu'
 	
-	def STATE_DRAFT 			= 'DRAFT'
-	def STATE_FORTAXMAPPING 	= 'FORTAXMAPPING'
-	def STATE_FORAPPRAISAL 		= 'FORAPPRAISAL'
-	def STATE_FORAPPROVAL 		= 'FORAPPROVAL'
-	def STATE_FORPROVSUBMISSION = 'FORPROVSUBMISSION'
-	def STATE_FORPROVAPPROVAL 	= 'FORPROVAPPROVAL'
+	def STATE_DRAFT             = 'DRAFT'
     def STATE_APPROVED          = 'APPROVED'
 	def STATE_PENDING 			= 'PENDING'
 	
 	def TXNTYPE_MS				= 'MS'
 
-	def signatories = ['appraiser', 'recommender', 'taxmapper', 'approver']
+	def signatories = ['receiver','taxmapper', 'taxmapping_chief', 'examiner', 'appraiser', 'appraisal_chief', 'recommender', 'assistant_assessor', 'approver']
 
 
 	@ProxyMethod
@@ -78,6 +76,7 @@ class MCSettlementService
     	em.create(entity)
     	workflowSvc.insert(entity)
     	txnRef.insert([objid:prevfaas.objid, refid:entity.objid, msg:'FAAS is currently referenced by Multiple Claim Settlement No. ' + entity.txnno + '.'])
+		trackingSvc.assignTrackingNo(entity, 'mcsettlement', 'Document is currently reviewed.')
 
     	def otherclaims = em.getOpenOtherClaims(prevfaas)
     	if (!otherclaims)
@@ -165,59 +164,19 @@ class MCSettlementService
  	*
  	------------------------------------------------------------------------*/
 
-    def updateState( entity, fromstate, tostate){
-		entity.state = tostate
-		return em.updateState([objid:entity.objid, state:tostate, prevstate:fromstate])
-	}
-
-    @ProxyMethod
-    public def submitForTaxmapping(entity) {
-    	def retval = updateState(entity, STATE_DRAFT, STATE_FORTAXMAPPING)
-		if (retval == 0) 
-			throw new Exception('Unable to submit for taxmapping. Only DRAFT record is allowed.')
-		workflowSvc.insert(entity)
-    	return entity 
-    }
-
-
-    @ProxyMethod
-    public def submitForAppraisal(entity) {
-    	def retval = updateState(entity, STATE_FORTAXMAPPING, STATE_FORAPPRAISAL)
-		if (retval == 0) 
-			throw new Exception('Unable to submit for appraisal. Only FOR TAXMAPPING record is allowed.')
-		workflowSvc.insert(entity)
-    	return entity 
-    }
-
-
- 	@ProxyMethod
-    public def submitForApproval(entity) {
-    	def retval = updateState(entity, STATE_FORAPPRAISAL, entity.state)
-		if (retval == 0) 
-			throw new Exception('Unable to submit for approval. Only DRAFT record is allowed.')
-		workflowSvc.insert(entity)
-    	return entity 
-    }
-
-
-
     @ProxyMethod
     public def disapprove(entity) {
         workflowSvc.delete(entity)
-    	def retval = updateState(entity, STATE_FORAPPROVAL, STATE_DRAFT)
-		if (retval == 0) 
-			throw new Exception('Unable to submit for approval. Only FOR APPROVAL record is allowed.')
-
+        entity.state = STATE_DRAFT
     	deleteFaasRecords(entity)
+    	update(entity)
     	return entity
     }
 
 
     @ProxyMethod
     public def approve(entity) {
-    	def retval = updateState(entity, STATE_FORAPPROVAL, STATE_APPROVED)
-		if (retval == 0) 
-			throw new Exception('Unable to approve. Only FOR APPROVAL record is allowed.')
+    	entity.state = STATE_APPROVED
     	workflowSvc.insert(entity)
     	txnRef.delete(entity.objid)
     	createFaasRecords(entity)
@@ -225,80 +184,6 @@ class MCSettlementService
     	return entity 
     }
 
-
-
-    @ProxyMethod
-    public def submitToProvince(entity) {
-    	def retval = updateState(entity, STATE_FORPROVSUBMISSION, STATE_FORPROVAPPROVAL)
-		if (retval == 0) 
-			throw new Exception('Unable to submit. Only FOR PROVINCE SUBMISSION record is allowed.')
-    	workflowSvc.insert(entity)
-        createFaasRecords(entity)
-    	return entity 
-    }
-
-
-    @ProxyMethod
-    public def disapproveSubmitToProvice(entity) {
-        workflowSvc.delete(entity)
-
-    	def retval = updateState(entity, STATE_FORPROVAPPROVAL, STATE_DRAFT)
-		if (retval == 0) 
-			throw new Exception('Unable to disapprove. Only FOR PROVINCE SUBMISSION record is allowed.')
-			
-    	deleteFaasRecords(entity)
-    	return entity
-    }
-
-
-    @ProxyMethod
-    public def approveSubmittedToProvince(entity) {
-    	def retval = updateState(entity, STATE_FORPROVAPPROVAL, STATE_APPROVED)
-		if (retval == 0) 
-			throw new Exception('Unable to approve. Only FOR PROVINCE APPROVAL record is allowed.')
-
-    	workflowSvc.insert(entity)
-        doApprove(entity)
-    	return entity 
-    }
-
-
-    @ProxyMethod
-    public def disapproveSubmittedToProvince(entity) {
-        workflowSvc.delete(entity)
-
-    	def retval = updateState(entity, STATE_FORPROVSUBMISSION, STATE_FORPROVAPPROVAL)
-		if (retval == 0) 
-			throw new Exception('Unable to disapprove. Only FOR PROVINCE SUBMISSION record is allowed.')
-
-        deleteFaasRecords(entity)
-        return entity
-    }
-
-
-    @ProxyMethod
-    public def disapproveByProvince(entity) {
-        workflowSvc.delete(entity)
-
-        def retval = updateState(entity, STATE_FORPROVAPPROVAL, STATE_FORPROVSUBMISSION)
-		if (retval == 0) 
-			throw new Exception('Unable to disapprove. Only FOR PROVINCE APPROVAL record is allowed.')
-
-    	deleteFaasRecords(entity)
-    	return entity
-    }
-
-    
-    @ProxyMethod
-    public def approveByProvince(entity) {
-    	def retval = updateState(entity, STATE_FORPROVAPPROVAL, STATE_APPROVED)
-		if (retval == 0) 
-			throw new Exception('Unable to approve. Only FOR PROVINCE APPROVAL record is allowed.')
-
-    	workflowSvc.insert(entity)
-    	doApprove(entity)
-    	return entity 
-    }
 
 
 	void updateFaasInfo(faas, entity, item) {

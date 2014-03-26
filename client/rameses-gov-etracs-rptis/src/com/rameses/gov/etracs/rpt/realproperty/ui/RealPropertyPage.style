@@ -8,7 +8,7 @@
 }
 
 
-"entity.pintype|entity.barangay|entity.isection|entity.iparcel|entity.claimno" [entity.datacapture == true || allowEditPinInfo == false]{
+"entity.barangay|entity.isection|entity.iparcel|entity.claimno" [entity.datacapture == true || allowEditPinInfo == false]{
     enabled:false;
 }
 

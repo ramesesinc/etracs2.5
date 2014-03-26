@@ -30,4 +30,11 @@ class RPTRequirementService extends ActiveCrudListService
 		return em.getRequirements([refid:refid])
 	}
 
+
+	@ProxyMethod
+	public def checkCompliance(refid){
+		def list = em.getUncompliedRequirements([refid:refid])
+		if (list)
+			throw new Exception('There are still uncomplied requirements.')
+	}
 }

@@ -298,7 +298,7 @@ public class MiscRYSettingService
     }
 
     void loadInitialMiscItems(entity){
-        miscItemSvc.getList(null).each{
+        miscItemSvc.getList([:]).each{
             saveMiscItemValue([
                 objid           : util.generateId('MIV'),
                 miscrysettingid : entity.objid,

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workunit>
+    <invokers>
+        <invoker type="faasonline:info" action="init" caption="Examination Findings" index="-5" />
+        <invoker type="subdivision:info" action="init" caption="Examination Findings" index="-5" />
+        <invoker type="consolidation:info" action="init" caption="Examination Findings" index="-5" />
+        <invoker type="resection:info" action="init" caption="Examination Findings" index="-5" />
+        <invoker type="mcsettlement:info" action="init" caption="Examination Findings" index="-5" />
+        
+        <invoker type="formActions" action="refresh" caption="Refresh" mnemonic="r" />
+        <invoker type="formActions" action="edit" caption="Edit" mnemonic="e" visibleWhen="#{showEdit == true}" role="EXAMINER" />
+        <invoker type="formActions" action="save" caption="Save" mnemonic="s" visibleWhen="#{mode == 'edit'}" role="EXAMINER" />
+        
+   </invokers>
+   <code>
+
+        
+import com.rameses.rcp.annotations.* 
+import com.rameses.rcp.common.* 
+import com.rameses.osiris2.client.*
+import com.rameses.osiris2.common.*
+
+class ExaminationFindingsInfoController
+{
+    @Binding
+    def binding;
+    
+    @Service('ExaminationService')
+    def examinationSvc;
+    
+    def svc;
+    
+    
+    def entity;
+    def finding;
+    def mode; 
+    
+    def MODE_READ = 'read';
+    def MODE_EDIT = 'edit';
+    
+    String title = 'Examination Findings'
+    
+    void init(){
+        finding = examinationSvc.findFindingById(entity.objid)
+        if (!finding){
+            finding = [objid:entity.objid, isnew:true];
+        }
+        mode = MODE_READ;
+    }
+    
+    
+    void edit(){
+        mode = MODE_EDIT;
+    }
+    
+    void save(){
+        examinationSvc.save(finding);
+        mode = MODE_READ;
+    }
+    
+    void refresh(){
+        init();
+    }
+    
+    boolean getShowEdit(){
+        if (entity.state.matches('CURRENT|CANCELLED|APPROVED'))
+            return false;
+        if (mode != MODE_READ) 
+            return false;
+        return true;
+    }
+    
+}
+       
+   </code>
+    
+    <pages> 
+        <page template="com.rameses.gov.etracs.rpt.common.FindingsPage"/>
+    </pages>
+</workunit>
+
+

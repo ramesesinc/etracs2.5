@@ -1,0 +1,87 @@
+import com.rameses.annotations.*
+import com.rameses.common.*;
+import java.util.concurrent.*
+import java.rmi.server.UID
+
+class RPTReportDelinquencyService
+{
+	@Env
+	def env 
+
+	@ActiveDB('report_rptdelinquency')
+	def em
+
+	@Service('RPTBillingService')
+	def billSvc
+
+	@Service('DateService')
+	def dtSvc 
+
+
+	@ProxyMethod
+	public def getBarangayList(  ) {
+		return em.getBarangayList()
+	}
+
+	@ProxyMethod
+	public def getOpenLedgersByBarangay( barangay ) {
+		def params = [barangayid:barangay.objid, cy:dtSvc.serverYear]
+		return em.getOpenLedgersByBarangay(params)
+	}
+
+
+	@ProxyMethod
+	public void cleanup() {
+		em.cleanup();
+	}
+
+	@ProxyMethod
+	public void buildDelinquency( rptledger, dtgenerated ) {
+		def items = billSvc.generateBillItemsByLedger(rptledger.objid)
+		if (!items) return;
+
+		def pdate = dtSvc.parseCurrentDate();
+
+		items.each{ item ->
+			def basic = item.basic - item.basicpaid
+			def basicint = item.basicint - item.basicintpaid
+			def basicdisc = item.basicdisc - item.basicdisctaken
+			def sef = item.sef - item.sefpaid
+			def sefint = item.sefint - item.sefintpaid
+			def sefdisc = item.sefdisc - item.sefdisctaken
+			def firecode = item.firecode - item.firecodepaid
+			def total = basic + basicint - basicdisc + sef + sefint - sefdisc 
+
+			if (total > 0.0){
+				def delinquency = [
+					objid       : 'I' + new java.rmi.server.UID(),
+					rptledgerid : item.rptledgerid,
+					year  		: item.year,
+					qtr 		: item.qtr,
+					barangayid  : item.barangayid,
+					basic 		: basic,
+					basicint 	: basicint,
+					basicdisc 	: basicdisc,
+					sef 		: sef,
+					sefint		: sefint,
+					sefdisc 	: sefdisc,
+					firecode	: firecode,
+					dtgenerated : dtgenerated,
+					generatedby : [name:env.FULLNAME, title:env.TITLE],
+				]
+				em.create(delinquency)
+			}
+		}
+	}
+
+
+	@ProxyMethod
+	public def generateDelinquencyReport(barangay){
+		def list =  em.getDelinquentLedgers(barangay)
+		if (!list) throw new Exception('No records found. Try rebuilding the delinquency for this barangay.')
+		return list;
+	}
+
+
+}
+
