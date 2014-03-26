@@ -318,53 +318,29 @@ SELECT t.*,
 	(SELECT TOP 1 target FROM sreaccount_incometarget WHERE objid=t.objid AND year=$P{year}) AS target
 FROM (
 	SELECT 
-		CASE WHEN acct.objid IS NULL THEN 'unmapped' ELSE acct.objid END AS objid,
-		CASE WHEN acct.parentid IS NULL THEN 'unmapped' ELSE acct.parentid END AS parentid,
-		CASE WHEN acct.objid IS NULL THEN 'unmapped' ELSE acct.objid END AS accountid,
-		CASE WHEN acct.code IS NULL THEN 'unmapped' ELSE acct.code END AS code,
-		CASE WHEN acct.title IS NULL THEN 'unmapped' ELSE acct.title END AS title,
-		CASE WHEN acct.type IS NULL THEN 'unmapped' ELSE acct.type END AS type,
-		CASE WHEN acct.title like 'REAL%PROPERTY%(BASIC)%' 
-			then (
-				select SUM(crip.lgushare + crip.lguintshare) 
-				from 
-				(
-					SELECT DISTINCT lcf.liquidationid
-					FROM bankdeposit bd 
-						INNER JOIN bankdeposit_liquidation bl ON bd.objid = bl.bankdepositid
-						INNER JOIN liquidation_cashier_fund lcf ON bl.objid = lcf.objid 
-					WHERE bd.dtposted BETWEEN $P{fromdate} AND $P{todate} 
-					) ll
-					INNER JOIN liquidation l ON ll.liquidationid = l.objid 
-					INNER JOIN liquidation_remittance lr ON l.objid = lr.liquidationid
-					INNER JOIN remittance r ON lr.objid = r.objid 
-					INNER JOIN remittance_cashreceipt rc ON r.objid = rc.remittanceid
-					INNER JOIN cashreceipt cr ON rc.objid = cr.objid 
-					INNER JOIN cashreceiptitem_rpt crip ON crip.rptreceiptid = cr.objid 
-					LEFT JOIN cashreceipt_void v ON cr.objid = v.receiptid
-				  where v.objid is null 
-				  	and crip.revtype in ('current', 'previous', 'prior')
-
-			)
-		ELSE  SUM(cri.amount) END AS amount 
+	CASE WHEN acct.objid IS NULL THEN 'unmapped' ELSE acct.objid END AS objid,
+	CASE WHEN acct.parentid IS NULL THEN 'unmapped' ELSE acct.parentid END AS parentid,
+	CASE WHEN acct.objid IS NULL THEN 'unmapped' ELSE acct.objid END AS accountid,
+	CASE WHEN acct.code IS NULL THEN 'unmapped' ELSE acct.code END AS code,
+	CASE WHEN acct.title IS NULL THEN 'unmapped' ELSE acct.title END AS title,
+	CASE WHEN acct.type IS NULL THEN 'unmapped' ELSE acct.type END AS type,
+	SUM(cri.amount) AS amount 
 	FROM (
-		SELECT DISTINCT lcf.liquidationid
-		FROM bankdeposit bd 
-			INNER JOIN bankdeposit_liquidation bl ON bd.objid = bl.bankdepositid
-			INNER JOIN liquidation_cashier_fund lcf ON bl.objid = lcf.objid 
-		WHERE bd.dtposted BETWEEN $P{fromdate} AND $P{todate}
-		) ll
-		INNER JOIN liquidation l ON ll.liquidationid = l.objid 
-		INNER JOIN liquidation_remittance lr ON l.objid = lr.liquidationid
-		INNER JOIN remittance r ON lr.objid = r.objid 
-		INNER JOIN remittance_cashreceipt rc ON r.objid = rc.remittanceid
-		INNER JOIN cashreceipt cr ON rc.objid = cr.objid 
-		INNER JOIN cashreceiptitem cri ON cr.objid = cri.receiptid 
+			select distinct cr.objid
+			from cashreceipt cr 
+				INNER JOIN remittance_cashreceipt rc on cr.objid = rc.objid 
+				INNER JOIN liquidation_remittance lc on lc.objid = rc.remittanceid 
+				INNER JOIN liquidation_cashier_fund lcf ON lcf.liquidationid = lc.liquidationid 
+				INNER JOIN bankdeposit_liquidation bl ON lcf.objid = bl.objid
+				inner join bankdeposit bd on bd.objid = bl.bankdepositid 
+				LEFT JOIN cashreceipt_void vr ON cr.objid = vr.receiptid  
+			where cr.receiptdate BETWEEN $P{fromdate} AND $P{todate} 
+				and vr.objid is null 
+		) cc 
+		INNER JOIN cashreceiptitem cri ON cc.objid = cri.receiptid 
 		INNER JOIN revenueitem ri ON cri.item_objid = ri.objid 
 		LEFT JOIN revenueitem_attribute attr ON ri.objid = attr.revitemid  and attr.attribute_objid='srestandard'
 		LEFT JOIN sreaccount acct on acct.objid = attr.account_objid 
-		LEFT JOIN cashreceipt_void vr ON cr.objid = vr.receiptid  
-	WHERE vr.objid IS NULL 
 	GROUP BY 
 		acct.objid,
 		acct.parentid,
@@ -405,7 +381,7 @@ FROM (
 		CASE WHEN acct.title IS NULL THEN 'unmapped' ELSE acct.title END AS title,
 		CASE WHEN acct.type IS NULL THEN 'unmapped' ELSE acct.type END AS type,
 		CASE WHEN MIN(ri.title) like 'RPT%BASIC%' then sum( tci.lgushare)
-			ELSE  SUM(tci.amount) END AS amount 
+		ELSE  SUM(tci.amount) END AS amount 
 	FROM tracs_remittance tr
 		INNER JOIN tracs_cashreceipt tc ON tc.remittanceid = tr.objid
 		INNER JOIN tracs_cashreceiptitem tci ON tci.receiptid = tc.objid 
@@ -459,131 +435,25 @@ FROM (
 			WHEN acct.type IS NOT NULL THEN acct.type
 			ELSE 'unmapped' 
 		END AS type,
-		CASE WHEN acct.title like 'REAL%PROPERTY%(BASIC)%' or acct.title like 'RPT%BASIC%'
-			then (
-				case when subacct.code like '588-001' then (
-						select 	
-							sum(lgushare)
-						from 
-							(
-								SELECT DISTINCT lcf.liquidationid
-								FROM bankdeposit bd 
-									INNER JOIN bankdeposit_liquidation bl ON bd.objid = bl.bankdepositid
-									INNER JOIN liquidation_cashier_fund lcf ON bl.objid = lcf.objid 
-								WHERE bd.dtposted BETWEEN $P{fromdate} AND $P{todate}
-							) ll
-							INNER JOIN liquidation l ON ll.liquidationid = l.objid 
-							INNER JOIN liquidation_remittance lr ON l.objid = lr.liquidationid
-							INNER JOIN remittance r ON lr.objid = r.objid 
-							INNER JOIN remittance_cashreceipt rc ON r.objid = rc.remittanceid
-							INNER JOIN cashreceipt cr ON rc.objid = cr.objid 
-							INNER JOIN cashreceiptitem_rpt crip ON crip.rptreceiptid = cr.objid 
-							LEFT JOIN cashreceipt_void v ON cr.objid = v.receiptid
-						  where v.objid is null AND crip.revtype = 'current'
-					)			
-				 	when subacct.code like '588-003' then (
-				 		select 	
-							sum(lgushare)
-						from 
-							(
-								SELECT DISTINCT lcf.liquidationid
-								FROM bankdeposit bd 
-									INNER JOIN bankdeposit_liquidation bl ON bd.objid = bl.bankdepositid
-									INNER JOIN liquidation_cashier_fund lcf ON bl.objid = lcf.objid 
-								WHERE bd.dtposted BETWEEN $P{fromdate} AND $P{todate}
-							) ll
-							INNER JOIN liquidation l ON ll.liquidationid = l.objid 
-							INNER JOIN liquidation_remittance lr ON l.objid = lr.liquidationid
-							INNER JOIN remittance r ON lr.objid = r.objid 
-							INNER JOIN remittance_cashreceipt rc ON r.objid = rc.remittanceid
-							INNER JOIN cashreceipt cr ON rc.objid = cr.objid 
-							INNER JOIN cashreceiptitem_rpt crip ON crip.rptreceiptid = cr.objid 
-							LEFT JOIN cashreceipt_void v ON cr.objid = v.receiptid
-						  where v.objid is null AND crip.revtype IN ('prior', 'previous') 				 		
-				 	)
-				 	when subacct.code like '588-004' then (
-				 		select 	
-							sum(lguintshare)
-						from 
-							(
-								SELECT DISTINCT lcf.liquidationid
-								FROM bankdeposit bd 
-									INNER JOIN bankdeposit_liquidation bl ON bd.objid = bl.bankdepositid
-									INNER JOIN liquidation_cashier_fund lcf ON bl.objid = lcf.objid 
-								WHERE bd.dtposted BETWEEN $P{fromdate} AND $P{todate}
-							) ll
-							INNER JOIN liquidation l ON ll.liquidationid = l.objid 
-							INNER JOIN liquidation_remittance lr ON l.objid = lr.liquidationid
-							INNER JOIN remittance r ON lr.objid = r.objid 
-							INNER JOIN remittance_cashreceipt rc ON r.objid = rc.remittanceid
-							INNER JOIN cashreceipt cr ON rc.objid = cr.objid 
-							INNER JOIN cashreceiptitem_rpt crip ON crip.rptreceiptid = cr.objid 
-							LEFT JOIN cashreceipt_void v ON cr.objid = v.receiptid
-						  where v.objid is null AND crip.revtype = 'current'		 		
-				 	)
-				 	when subacct.code like '588-005' then (
-				 		select 	
-							sum(lguintshare)
-						from 
-							(
-								SELECT DISTINCT lcf.liquidationid
-								FROM bankdeposit bd 
-									INNER JOIN bankdeposit_liquidation bl ON bd.objid = bl.bankdepositid
-									INNER JOIN liquidation_cashier_fund lcf ON bl.objid = lcf.objid 
-								WHERE bd.dtposted BETWEEN $P{fromdate} AND $P{todate}
-							) ll
-							INNER JOIN liquidation l ON ll.liquidationid = l.objid 
-							INNER JOIN liquidation_remittance lr ON l.objid = lr.liquidationid
-							INNER JOIN remittance r ON lr.objid = r.objid 
-							INNER JOIN remittance_cashreceipt rc ON r.objid = rc.remittanceid
-							INNER JOIN cashreceipt cr ON rc.objid = cr.objid 
-							INNER JOIN cashreceiptitem_rpt crip ON crip.rptreceiptid = cr.objid 
-							LEFT JOIN cashreceipt_void v ON cr.objid = v.receiptid
-						  where v.objid is null AND crip.revtype IN ('prior', 'previous') 				 		
-				 	) 
-				else (
-					select 	
-						sum(lguintshare + lgushare)
-					from 
-						(
-							SELECT DISTINCT lcf.liquidationid
-							FROM bankdeposit bd 
-								INNER JOIN bankdeposit_liquidation bl ON bd.objid = bl.bankdepositid
-								INNER JOIN liquidation_cashier_fund lcf ON bl.objid = lcf.objid 
-							WHERE bd.dtposted BETWEEN $P{fromdate} AND $P{todate}
-						) ll
-						INNER JOIN liquidation l ON ll.liquidationid = l.objid 
-						INNER JOIN liquidation_remittance lr ON l.objid = lr.liquidationid
-						INNER JOIN remittance r ON lr.objid = r.objid 
-						INNER JOIN remittance_cashreceipt rc ON r.objid = rc.remittanceid
-						INNER JOIN cashreceipt cr ON rc.objid = cr.objid 
-						INNER JOIN cashreceiptitem_rpt crip ON crip.rptreceiptid = cr.objid 
-						LEFT JOIN cashreceipt_void v ON cr.objid = v.receiptid
-					  where v.objid is null AND crip.revtype IN ('advance') 	
-					 )
-				END  
-			)
-		ELSE  SUM(cri.amount) END AS amount 
+		SUM(cri.amount) AS amount 
 	FROM (
-		SELECT DISTINCT lcf.liquidationid
-		FROM bankdeposit bd 
-			INNER JOIN bankdeposit_liquidation bl ON bd.objid = bl.bankdepositid
-			INNER JOIN liquidation_cashier_fund lcf ON bl.objid = lcf.objid 
-		WHERE bd.dtposted BETWEEN $P{fromdate} AND $P{todate}
-		) ll
-		INNER JOIN liquidation l ON ll.liquidationid = l.objid 
-		INNER JOIN liquidation_remittance lr ON l.objid = lr.liquidationid
-		INNER JOIN remittance r ON lr.objid = r.objid 
-		INNER JOIN remittance_cashreceipt rc ON r.objid = rc.remittanceid
-		INNER JOIN cashreceipt cr ON rc.objid = cr.objid 
-		INNER JOIN cashreceiptitem cri ON cr.objid = cri.receiptid 
+			select distinct cr.objid
+			from cashreceipt cr 
+				INNER JOIN remittance_cashreceipt rc on cr.objid = rc.objid 
+				INNER JOIN liquidation_remittance lc on lc.objid = rc.remittanceid 
+				INNER JOIN liquidation_cashier_fund lcf ON lcf.liquidationid = lc.liquidationid 
+				INNER JOIN bankdeposit_liquidation bl ON lcf.objid = bl.objid
+				inner join bankdeposit bd on bd.objid = bl.bankdepositid 
+				LEFT JOIN cashreceipt_void vr ON cr.objid = vr.receiptid  
+			where cr.receiptdate BETWEEN $P{fromdate} AND $P{todate}  
+				and vr.objid is null 
+		) cc
+		INNER JOIN cashreceiptitem cri ON cc.objid = cri.receiptid 
 		INNER JOIN revenueitem ri ON cri.item_objid = ri.objid 
 		LEFT JOIN revenueitem_attribute attr ON ri.objid = attr.revitemid and attr.attribute_objid = 'srestandard'
 		LEFT JOIN sreaccount acct ON attr.account_objid = acct.objid 
 		LEFT JOIN revenueitem_attribute subattr ON ri.objid = subattr.revitemid and subattr.attribute_objid='sresubaccount'
-		LEFT JOIN sreaccount subacct ON subattr.account_objid = subacct.objid 
-		LEFT JOIN cashreceipt_void vr ON cr.objid = vr.receiptid  
-	WHERE vr.objid IS NULL  
+		LEFT JOIN sreaccount subacct ON subattr.account_objid = subacct.objid   
 	GROUP BY 
 		acct.objid,
 		acct.parentid,
@@ -738,29 +608,25 @@ FROM (
 		ri.code,
 		ri.title,
 		'revenueitem' AS type,
-		CASE WHEN acct.title like 'REAL%PROPERTY%(BASIC)%' or acct.title like 'RPT%BASIC%'
-			then SUM(cri.amount) * 0.70 
-		ELSE  SUM(cri.amount) END AS amount 
+		SUM(cri.amount) AS amount 
 	FROM (
-		SELECT DISTINCT lcf.liquidationid
-		FROM bankdeposit bd 
-			INNER JOIN bankdeposit_liquidation bl ON bd.objid = bl.bankdepositid
-			INNER JOIN liquidation_cashier_fund lcf ON bl.objid = lcf.objid 
-		WHERE bd.dtposted BETWEEN $P{fromdate} AND $P{todate}
-		) ll
-		INNER JOIN liquidation l ON ll.liquidationid = l.objid 
-		INNER JOIN liquidation_remittance lr ON l.objid = lr.liquidationid
-		INNER JOIN remittance r ON lr.objid = r.objid 
-		INNER JOIN remittance_cashreceipt rc ON r.objid = rc.remittanceid
-		INNER JOIN cashreceipt cr ON rc.objid = cr.objid 
-		INNER JOIN cashreceiptitem cri ON cr.objid = cri.receiptid 
+			select distinct cr.objid
+			from cashreceipt cr 
+				INNER JOIN remittance_cashreceipt rc on cr.objid = rc.objid 
+				INNER JOIN liquidation_remittance lc on lc.objid = rc.remittanceid 
+				INNER JOIN liquidation_cashier_fund lcf ON lcf.liquidationid = lc.liquidationid 
+				INNER JOIN bankdeposit_liquidation bl ON lcf.objid = bl.objid
+				inner join bankdeposit bd on bd.objid = bl.bankdepositid 
+				LEFT JOIN cashreceipt_void vr ON cr.objid = vr.receiptid  
+			where cr.receiptdate BETWEEN $P{fromdate} AND $P{todate}  
+				and vr.objid is null 
+		) cc
+		INNER JOIN cashreceiptitem cri ON cc.objid = cri.receiptid 
 		INNER JOIN revenueitem ri ON cri.item_objid = ri.objid 
 		LEFT JOIN revenueitem_attribute attr ON ri.objid = attr.revitemid and attr.attribute_objid = 'srestandard'
 		LEFT JOIN sreaccount acct ON attr.account_objid = acct.objid 
 		LEFT JOIN revenueitem_attribute subattr ON ri.objid = subattr.revitemid and subattr.attribute_objid='sresubaccount'
 		LEFT JOIN sreaccount subacct ON subattr.account_objid = subacct.objid 
-		LEFT JOIN cashreceipt_void vr ON cr.objid = vr.receiptid  
-	WHERE vr.objid IS NULL 
 	GROUP BY 
 		acct.objid,
 		acct.parentid,

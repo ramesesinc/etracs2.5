@@ -54,7 +54,7 @@
 		<variableExpression><![CDATA[$F{amount}]]></variableExpression>
 	</variable>
 	<variable name="TOTALTARGET" class="java.math.BigDecimal" resetType="Report" calculation="Sum">
-		<variableExpression><![CDATA[$F{target}]]></variableExpression>
+		<variableExpression><![CDATA[$F{leaf}.intValue() == 1 ? $F{target} : new BigDecimal(0.0)]]></variableExpression>
 	</variable>
 		<background>
 			<band height="0"  isSplitAllowed="true" >
@@ -376,6 +376,51 @@ Approved Target]]></text>
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[$F{title}]]></textFieldExpression>
 				</textField>
+				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="308"
+						y="0"
+						width="86"
+						height="15"
+						key="textField-39">
+							<printWhenExpression><![CDATA[new Boolean($F{leaf} == null)]]></printWhenExpression>
+						</reportElement>
+					<box></box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font pdfFontName="Helvetica-Bold" size="9" isBold="true"/>
+					</textElement>
+				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{target}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="394"
+						y="0"
+						width="86"
+						height="15"
+						key="textField-40">
+							<printWhenExpression><![CDATA[new Boolean($F{leaf} == null)]]></printWhenExpression>
+						</reportElement>
+					<box></box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font pdfFontName="Helvetica-Bold" size="9" isBold="true"/>
+					</textElement>
+				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{amount}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="480"
+						y="0"
+						width="60"
+						height="15"
+						key="textField-41">
+							<printWhenExpression><![CDATA[new Boolean($F{leaf} == null)]]></printWhenExpression>
+						</reportElement>
+					<box leftPadding="3" rightPadding="3"></box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font pdfFontName="Helvetica-Bold" size="9" isBold="true"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{percentage}]]></textFieldExpression>
+				</textField>
 			</band>
 		</detail>
 		<columnFooter>
@@ -639,6 +684,19 @@ Approved Target]]></text>
 						<font pdfFontName="Helvetica-Bold" size="10" isBold="true"/>
 					</textElement>
 				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$V{TOTALTARGET}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="#,##0.00 %" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="480"
+						y="11"
+						width="60"
+						height="18"
+						key="textField-42"/>
+					<box></box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font pdfFontName="Helvetica-Bold" size="10" isBold="true"/>
+					</textElement>
+				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$V{TOTAL}.divide( $V{TOTALTARGET} )]]></textFieldExpression>
 				</textField>
 			</band>
 		</summary>
