@@ -50,6 +50,11 @@ class FaasTaskInterceptor
 	}
 
 
+	@After(pattern="GeneralRevisionService.initOnlineGeneralRevision") 
+	public void handleGRStartWorkflow( evt ) {
+		handleStartWorkflow(evt)
+	}
+
 
 
 	@After(pattern="FAASService.(initOnlineTransaction|initNewDiscovery)") 
