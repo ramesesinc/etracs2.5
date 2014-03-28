@@ -118,7 +118,7 @@
                 <StringItem index="0" value="faas"/>
               </StringArray>
             </Property>
-            <Property name="expression" type="java.lang.String" value="#{faas.rpu.rp.cadastrallotno}"/>
+            <Property name="expression" type="java.lang.String" value="#{faas.cadastrallotno}"/>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
               <Font name="Arial" size="11" style="1"/>
             </Property>
@@ -144,7 +144,7 @@
                 <StringItem index="0" value="faas"/>
               </StringArray>
             </Property>
-            <Property name="expression" type="java.lang.String" value="#{faas.rpu.fullpin}"/>
+            <Property name="expression" type="java.lang.String" value="#{faas.fullpin}"/>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
               <Font name="Arial" size="11" style="1"/>
             </Property>

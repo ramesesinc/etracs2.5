@@ -68,7 +68,7 @@ public class ModifyPinPage extends javax.swing.JPanel {
         xLabel2.setCaption("Cadastral Lot No.");
         xLabel2.setCaptionWidth(120);
         xLabel2.setDepends(new String[] {"faas"});
-        xLabel2.setExpression("#{faas.rpu.rp.cadastrallotno}");
+        xLabel2.setExpression("#{faas.cadastrallotno}");
         xLabel2.setFont(new java.awt.Font("Arial", 1, 11));
         xLabel2.setName("faas.cadastrallotno");
         xLabel2.setPreferredSize(new java.awt.Dimension(0, 19));
@@ -78,7 +78,7 @@ public class ModifyPinPage extends javax.swing.JPanel {
         xLabel3.setCaption("PIN");
         xLabel3.setCaptionWidth(120);
         xLabel3.setDepends(new String[] {"faas"});
-        xLabel3.setExpression("#{faas.rpu.fullpin}");
+        xLabel3.setExpression("#{faas.fullpin}");
         xLabel3.setFont(new java.awt.Font("Arial", 1, 11));
         xLabel3.setName("faas.fullpin");
         xLabel3.setPreferredSize(new java.awt.Dimension(0, 19));
