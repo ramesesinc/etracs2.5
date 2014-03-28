@@ -89,7 +89,13 @@ class MCSettlementTaskInterceptor
 		def task = evt.result 
 		def entity = svc.open(task.objid)
 		updateSignatoryFromTask(entity, task)
-		notificationSvc.removeMessage([objid:entity.objid])
+		try{
+			notificationSvc?.removeMessage([objid:entity.objid])
+		}
+		catch(e){
+			println 'Notification Error ==================================================='
+			println e.message
+		}
 	}
 
 	void updateSignatoryFromTask(entity, task){
