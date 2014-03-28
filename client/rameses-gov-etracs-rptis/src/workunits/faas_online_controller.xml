@@ -19,7 +19,7 @@ import com.rameses.gov.etracs.rpt.common.RPTUtil;
 import com.rameses.util.MapBeanUtils;
 
 
-public class AbstractOnlineFaasController extends com.rameses.gov.etracs.rpt.common.RPTWorkflowController
+public class AbstractOnlineFaasController extends com.rameses.gov.etracs.rpt.task.RPTWorkflowController
 {
 
     @Service('FAASService')

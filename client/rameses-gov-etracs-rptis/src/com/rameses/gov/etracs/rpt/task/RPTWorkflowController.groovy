@@ -1,4 +1,4 @@
-package com.rameses.gov.etracs.rpt.common;
+package com.rameses.gov.etracs.rpt.task;
 
 import com.rameses.rcp.annotations.* 
 import com.rameses.rcp.common.* 
@@ -76,6 +76,7 @@ abstract class RPTWorkflowController extends PageFlowController
     }
     
     final void initOpen(){
+        println 'init Open...'
         entity = openEntity();
         loadSections();
         formId = entity.txnno;
@@ -123,19 +124,10 @@ abstract class RPTWorkflowController extends PageFlowController
     void beforeSubmit(){
     }
     
+
     void submit(){
         checkMessages();
         beforeSubmit();
-        
-        def msg = null;
-        def handler = { info ->
-            msg = info.msg;
-            pass = true;
-        };
-        
-        pass = false;
-        Modal.show('rpttask:submit', [entity:entity, handler:handler, title:'Submission Information']);
-        if (!pass) throw new BreakException();
         
         def params = [
             docname   : getDocName(),
@@ -143,16 +135,26 @@ abstract class RPTWorkflowController extends PageFlowController
             fromstate : entity.taskaction,
         ];
         
-        def wf = workflowSvc.findNext(params);
-        def task = createTask(wf, msg)
-        taskSvc.createTaskAndNotifyGroup(task)
-        entity.taskaction = task.action;
+        def handler = { info ->
+            msg = info.msg;
+        
+            def wf = workflowSvc.findNext(params);
+            def task = createTask(wf, msg)
+            taskSvc.createTaskAndNotifyGroup(task)
+            entity.taskaction = task.action;
+            pass = true;
+        };
+        
+        pass = false;
+        Modal.show('rpttask:submit', [entity:entity, handler:handler, title:'Submission Information']);
+        if (!pass) throw new BreakException();
         initOpen();
     }
     
     
     
-    boolean pass = false;
+    def pass = false;
+    def msg = null;
     
     final void doDisapprove( handler){
         pass = false;

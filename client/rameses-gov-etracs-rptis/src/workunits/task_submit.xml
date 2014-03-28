@@ -1,6 +1,6 @@
 <workunit>
     <invokers>
-        <invoker type="rpttask:submit" caption="Submit Information" target="popup"/>
+        <invoker type="rpttask:submit" caption="Submit Information" target="popup" modal="true"/>
     </invokers>
     
     <code>
@@ -20,7 +20,7 @@
             def info = [:];
             
             public def doOk() {
-                if (handler) handler(info);
+                handler(info);
                 return "_close";
             }
             
@@ -34,7 +34,7 @@
     
     
     <pages>
-        <page  template="com.rameses.gov.etracs.rpt.common.TaskSubmitPage"/>
+        <page  template="com.rameses.gov.etracs.rpt.task.TaskSubmitPage"/>
     </pages>
     
 </workunit>

@@ -122,10 +122,10 @@ class RPTTaskService
                 message   : task.docname + ' No. ' + task.refno + '    (' + task.action + ')',
                 filetype  : task.filetype,
             ]
-            notificationSvc.addMessage(msg)
+            notificationSvc?.addMessage(msg)
         }
         catch(e){
-            println '='*50 
+            println 'notifyGroup Error ===================================================='
             e.printStackTrace()
         }
     }
@@ -141,10 +141,10 @@ class RPTTaskService
             filetype  : task.filetype+'resent',
         ]
         try{
-            userNotificationSvc.addMessage(msg)
+            userNotificationSvc?.addMessage(msg)
         }
         catch(e){
-            println 'NotifySender' + (' ='*50)
+            println 'notifySender Error ===================================================='
             println e.printStackTrace()
         }
     }
@@ -152,7 +152,13 @@ class RPTTaskService
 
     @ProxyMethod
     public void closeUserNotification( objid ) {
-        userNotificationSvc.removeMessage([objid:objid])
+        try{
+            userNotificationSvc?.removeMessage([objid:objid])
+        }
+        catch(e){
+            println 'closeUserNotification Error ==============================================='
+            println e.printStackTrace
+        }
     }
 
     @ProxyMethod
