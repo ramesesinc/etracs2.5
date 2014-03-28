@@ -83,7 +83,7 @@
         <!-- CITY-->
         <page name="forapproval" title="Resection (For Approval)">
             <transition caption="Close" to="end" mnemonic="c" icon="images/toolbars/cancel.png"  />
-            <transition caption="Disapprove" to="default" action="disapproveResection" mnemonic="d"  confirm="Disapprove Resection?" role="APPROVER"/>
+            <transition caption="Disapprove" to="default" action="disapproveResection" mnemonic="d"   role="APPROVER"/>
             <transition caption="Approve" to="wait" action="approveResection" mnemonic="v" icon="images/toolbars/approve.png"  confirm="Approve Resection?" role="APPROVER"/>
         </page>
         
@@ -104,7 +104,7 @@
             <transition caption="Edit"   to="back-to-prov-submission" action="edit" name="edit" mnemonic="e" shortcut="ctrl E" icon="images/toolbars/edit.png"   role="RECOMMENDER"/>
             <transition caption="Cancel" to="back-to-prov-submission" action="cancelEdit" name="cancel"  mnemonic="c" icon="images/toolbars/cancel.png" />
             <transition caption="Save"   to="back-to-prov-submission" action="save" name="save" mnemonic="s" shortcut="ctrl S" icon="images/toolbars/save.png"   />
-            <transition caption="Disapprove" to="open" action="disapproveSubmitToProvice"  mnemonic="d"  confirm="Disapprove Resection?" role="RECOMMENDER"/>
+            <transition caption="Disapprove" to="open" action="disapproveSubmitToProvice"  mnemonic="d"   role="RECOMMENDER"/>
             <transition caption="Submit to Province" to="open" action="submitToProvince" mnemonic="m"   role="RECOMMENDER"/>
         </page>
         
@@ -114,7 +114,7 @@
         
         <page name="provsubmissionapproval" title="Resection (For Province Approval)">
             <transition caption="Close" to="end" mnemonic="c" icon="images/toolbars/cancel.png"/>
-            <transition caption="Disapprove" to="open" action="disapproveSubmittedToProvince"  mnemonic="d" confirm="Disapprove Resection?" role="RECOMMENDER"/>
+            <transition caption="Disapprove" to="open" action="disapproveSubmittedToProvince"  mnemonic="d"  role="RECOMMENDER"/>
             <transition caption="Approve" to="approved" action="approveSubmittedToProvince"  mnemonic="v"  role="RECOMMENDER"/>
         </page>
         
@@ -125,7 +125,7 @@
             <transition caption="Edit"   to="back-to-forprovapproval" action="edit" name="edit" mnemonic="e" shortcut="ctrl E" icon="images/toolbars/edit.png"    role="APPROVER"/>
             <transition caption="Cancel" to="back-to-forprovapproval" action="cancelEdit" name="cancel"  mnemonic="c" icon="images/toolbars/cancel.png" />
             <transition caption="Save"   to="back-to-forprovapproval" action="save" name="save" mnemonic="s" shortcut="ctrl S" icon="images/toolbars/save.png"   />
-            <transition caption="Disapprove" to="open" action="disapproveByProvince"  mnemonic="d"   confirm="Disapprove Resection?" role="APPROVER"/>
+            <transition caption="Disapprove" to="open" action="disapproveByProvince"  mnemonic="d"    role="APPROVER"/>
             <transition caption="Approve" to="open" action="approveByProvince"  mnemonic="v"  confirm="Approve Resection?" role="APPROVER"/>
         </page>
         

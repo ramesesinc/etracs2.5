@@ -106,14 +106,15 @@ abstract class RPTWorkflowController extends PageFlowController
      *
      *----------------------------------------------------*/
     
-    def createTask(wf, msg){
+    def createTask(wf, info){
         return [
             objid	: entity.objid,
             refno	: getReferenceNo(),
             docname 	: getDocName(),
             filetype	: getFileType(),
-            action 	: wf.tostate,
-            msg         : msg,
+            action 	: (info.assignee ? info.assignee.action : wf.tostate ),
+            msg         : info.msg,
+            assignedto  : info.assignee,
             status	: wf.message,
             signatory 	: wf.signatory,
             workflowid  : wf.workflowid,
@@ -136,17 +137,18 @@ abstract class RPTWorkflowController extends PageFlowController
         ];
         
         def handler = { info ->
-            msg = info.msg;
-        
             def wf = workflowSvc.findNext(params);
-            def task = createTask(wf, msg)
-            taskSvc.createTaskAndNotifyGroup(task)
+            def task = createTask(wf, info)
+            if (info.assignee)
+                taskSvc.createTaskAndNotifyAssignee(task)
+            else 
+                taskSvc.createTaskAndNotifyGroup(task)
             entity.taskaction = task.action;
             pass = true;
         };
         
         pass = false;
-        Modal.show('rpttask:submit', [entity:entity, handler:handler, title:'Submission Information']);
+        Modal.show('rpttask:submit', [entity:entity, handler:handler, taskSvc:taskSvc, title:'Submission Information']);
         if (!pass) throw new BreakException();
         initOpen();
     }
@@ -154,7 +156,6 @@ abstract class RPTWorkflowController extends PageFlowController
     
     
     def pass = false;
-    def msg = null;
     
     final void doDisapprove( handler){
         pass = false;

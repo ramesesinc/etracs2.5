@@ -56,6 +56,11 @@ class RPTTaskService
         notifyGroup(task)
     }
 
+    @ProxyMethod
+    public def createTaskAndNotifyAssignee( task ) {
+        createTask(task)
+        notifySender(task)
+    }
 
     @ProxyMethod
     public def assignTask( task ) {

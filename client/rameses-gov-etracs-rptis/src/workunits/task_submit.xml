@@ -15,6 +15,7 @@
         
         class  SubmitTaskController  
         {
+            def taskSvc;
             def entity;
             def handler;
             def info = [:];
@@ -27,6 +28,10 @@
             public def doCancel() {
                 return "_close";
             }
+            
+            def getSenders(){
+                return taskSvc.getSenders(entity.objid);
+            }            
             
         }
         ]]>

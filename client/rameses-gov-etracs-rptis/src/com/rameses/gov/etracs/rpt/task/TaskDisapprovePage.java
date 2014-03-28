@@ -38,6 +38,7 @@ public class TaskDisapprovePage extends javax.swing.JPanel {
         xTextArea1.setLineWrap(true);
         xTextArea1.setWrapStyleWord(true);
         xTextArea1.setFont(new java.awt.Font("Tahoma", 0, 14));
+        xTextArea1.setHint("Disapprove Message");
         xTextArea1.setName("info.msg");
         jScrollPane1.setViewportView(xTextArea1);
 
