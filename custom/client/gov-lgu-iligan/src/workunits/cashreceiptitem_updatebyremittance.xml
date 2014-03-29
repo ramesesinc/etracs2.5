@@ -1,6 +1,6 @@
 <workunit>
     <invokers>
-        <invoker folderid="/explorer/txn/treasury/tools" caption="Remittance Revenueitem Update" role="TOOL_MGMT" index="5"/>
+        <invoker folderid="/explorer/txn/treasury/tools" caption="Remittance Revenueitem Update" role="DATA_CONTROLLER" index="5"/>
     </invokers>
     
     <code>
