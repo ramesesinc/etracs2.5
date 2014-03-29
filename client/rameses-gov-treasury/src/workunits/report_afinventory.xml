@@ -1,8 +1,6 @@
 <workunit extends="wtemplates/gov/treasury/ReportController.xml" >
     <invokers>
-        <!-- 
         <invoker folderid="/explorer/report/treasury" action="init" caption="AF Inventory Report" target="window" index="10" role="AFO" />
-        -->  
     </invokers>
     <code>
 
@@ -16,7 +14,7 @@ import com.rameses.osiris2.reports.*;
 
 class AFInventoryReportController extends com.rameses.gov.treasury.report.ReportController
 {
-    @Service('CRAAFReportService') 
+    @Service('AFInventoryReportService') 
     def svc
     
     String title = 'AF Inventory Report'
@@ -31,7 +29,7 @@ class AFInventoryReportController extends com.rameses.gov.treasury.report.Report
     
     def data
     def getReportData(){
-        data = svc.generateCraafData(entity);
+        data = svc.generateReport(entity);
         return data.items
     }
     
