@@ -696,7 +696,7 @@ Approved Target]]></text>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font pdfFontName="Helvetica-Bold" size="10" isBold="true"/>
 					</textElement>
-				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$V{TOTAL}.divide( $V{TOTALTARGET} )]]></textFieldExpression>
+				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$V{TOTAL}.divide( $V{TOTALTARGET}, 2, 4 )]]></textFieldExpression>
 				</textField>
 			</band>
 		</summary>
