@@ -38,25 +38,24 @@
 	<parameter name="TREASURERTITLE" isForPrompting="false" class="java.lang.String"/>
 
 	<field name="afid" class="java.lang.String"/>
-	<field name="forwardedqty" class="java.lang.Integer"/>
-	<field name="cost" class="java.math.BigDecimal"/>
-	<field name="forwardedtotalcost" class="java.math.BigDecimal"/>
-	<field name="forwardedseries" class="java.lang.String"/>
-	<field name="receivedqty" class="java.lang.Integer"/>
+	<field name="costperstub" class="java.math.BigDecimal"/>
+	<field name="qtyreceived" class="java.math.BigDecimal"/>
 	<field name="receivedseries" class="java.lang.String"/>
-	<field name="issuedqty" class="java.lang.Integer"/>
+	<field name="qtyissued" class="java.math.BigDecimal"/>
 	<field name="issuedseries" class="java.lang.String"/>
-	<field name="issuedcost" class="java.math.BigDecimal"/>
-	<field name="balanceqty" class="java.lang.Integer"/>
-	<field name="balanceseries" class="java.lang.String"/>
-	<field name="balancecost" class="java.math.BigDecimal"/>
-	<field name="issuedgaincost" class="java.math.BigDecimal"/>
+	<field name="qtyissuedcost" class="java.math.BigDecimal"/>
+	<field name="qtyending" class="java.math.BigDecimal"/>
+	<field name="endingseries" class="java.lang.String"/>
+	<field name="qtyendingcost" class="java.math.BigDecimal"/>
+	<field name="gaincost" class="java.math.BigDecimal"/>
+	<field name="qtyreceivedcost" class="java.math.BigDecimal"/>
+	<field name="minlineno" class="java.math.BigDecimal"/>
 
 	<variable name="TOTALISSUEDCOST" class="java.math.BigDecimal" resetType="Report" calculation="Sum">
-		<variableExpression><![CDATA[$F{issuedcost}]]></variableExpression>
+		<variableExpression><![CDATA[$F{qtyissuedcost}]]></variableExpression>
 	</variable>
 	<variable name="TOTALISSUEDGAINCOST" class="java.math.BigDecimal" resetType="Report" calculation="Sum">
-		<variableExpression><![CDATA[$F{issuedgaincost}]]></variableExpression>
+		<variableExpression><![CDATA[$F{gaincost}]]></variableExpression>
 	</variable>
 		<background>
 			<band height="0"  isSplitAllowed="true" >
@@ -210,9 +209,9 @@
 				</staticText>
 				<staticText>
 					<reportElement
-						x="41"
+						x="91"
 						y="29"
-						width="264"
+						width="214"
 						height="19"
 						key="staticText-8"/>
 					<box>					<pen lineWidth="0.5" lineStyle="Solid"/>
@@ -246,7 +245,7 @@
 				</staticText>
 				<staticText>
 					<reportElement
-						x="41"
+						x="91"
 						y="48"
 						width="38"
 						height="19"
@@ -264,10 +263,10 @@
 				</staticText>
 				<staticText>
 					<reportElement
-						x="79"
-						y="48"
+						x="41"
+						y="29"
 						width="50"
-						height="19"
+						height="38"
 						key="staticText-11"/>
 					<box>					<pen lineWidth="0.5" lineStyle="Solid"/>
 					<topPen lineWidth="0.5" lineStyle="Solid"/>
@@ -380,6 +379,7 @@
 					<box>					<pen lineWidth="0.0" lineStyle="Solid"/>
 					<topPen lineWidth="0.0" lineStyle="Solid"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid"/>
 </box>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
@@ -410,6 +410,7 @@
 					<box>					<pen lineWidth="0.0" lineStyle="Solid"/>
 					<topPen lineWidth="0.0" lineStyle="Solid"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid"/>
 </box>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
@@ -440,6 +441,7 @@
 					<box>					<pen lineWidth="0.0" lineStyle="Solid"/>
 					<topPen lineWidth="0.0" lineStyle="Solid"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid"/>
 </box>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
@@ -593,7 +595,7 @@
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="41"
+						x="91"
 						y="0"
 						width="38"
 						height="16"
@@ -608,11 +610,11 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font fontName="SansSerif" size="8"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.Integer"><![CDATA[$F{forwardedqty}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{minlineno}.intValue() == 1 ? "" : $F{qtyreceived}.toString()]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="79"
+						x="41"
 						y="0"
 						width="50"
 						height="16"
@@ -627,7 +629,7 @@
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font fontName="SansSerif" size="8"/>
 					</textElement>
-				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{cost}]]></textFieldExpression>
+				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{costperstub}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -646,7 +648,7 @@
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font fontName="SansSerif" size="8"/>
 					</textElement>
-				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{forwardedtotalcost}]]></textFieldExpression>
+				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{minlineno}.intValue() == 1 ? null : $F{qtyreceivedcost}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -665,7 +667,7 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font fontName="SansSerif" size="8"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.Integer"><![CDATA[$F{receivedqty}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{qtyreceived}.intValue() == 0 ? "" : $F{qtyreceived}.toString()]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -684,7 +686,7 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font fontName="SansSerif" size="8"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{forwardedseries}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{minlineno}.intValue() == 1 ? null : $F{receivedseries}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -722,7 +724,7 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font fontName="SansSerif" size="8"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.Integer"><![CDATA[$F{issuedqty}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{qtyissued}.intValue() == 0 ? "" : $F{qtyissued}.toString()]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -760,7 +762,7 @@
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font fontName="SansSerif" size="8"/>
 					</textElement>
-				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{issuedcost}]]></textFieldExpression>
+				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{qtyissued}.intValue() == 0 ? null : $F{qtyissuedcost}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -779,7 +781,7 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font fontName="SansSerif" size="8"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.Integer"><![CDATA[$F{balanceqty}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{qtyending}.intValue() ==  0 ? "" : $F{qtyending}.toString()]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -798,7 +800,7 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font fontName="SansSerif" size="8"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{balanceseries}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{endingseries}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -817,7 +819,7 @@
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font fontName="SansSerif" size="8"/>
 					</textElement>
-				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{balancecost}]]></textFieldExpression>
+				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{qtyendingcost}]]></textFieldExpression>
 				</textField>
 			</band>
 		</detail>
