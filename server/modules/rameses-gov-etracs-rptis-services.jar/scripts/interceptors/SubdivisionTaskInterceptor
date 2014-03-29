@@ -38,7 +38,7 @@ class SubdivisionTaskInterceptor
 			docname 	: 'Subdivision',
 			filetype	: 'subdivision',
 			action 		: wf.tostate,
-			msg			: wf.message,
+			status		: wf.message,
 			signatory 	: wf.signatory,
 			workflowid  : wf.workflowid,
 		]
@@ -78,7 +78,13 @@ class SubdivisionTaskInterceptor
 		def task = evt.result 
 		def subdivision = svc.openSubdivision(task.objid)
 		updateSignatoryFromTask(subdivision, task)
-		notificationSvc.removeMessage([objid:subdivision.objid])
+		try{
+			notificationSvc?.removeMessage([objid:subdivision.objid])
+		}
+		catch(e){
+			println 'Notification Error ==================================================='
+			println e.message
+		}
 	}
 
 	void updateSignatoryFromTask(subdivision, task){

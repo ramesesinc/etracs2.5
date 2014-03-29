@@ -97,14 +97,10 @@ class RPUService
 
     @ProxyMethod
     public def createRpu(rpu) {
-        println '='*50
         createRpuMaster(rpu)
-        println 1
         checkDuplicateFullPin(rpu)
-        println 2
         rpu.state = STATE_INTERIM
         em.create(rpu)
-        println 3
         return rpu 
     }
 

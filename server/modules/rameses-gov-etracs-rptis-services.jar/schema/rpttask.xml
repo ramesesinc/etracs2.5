@@ -7,6 +7,7 @@
 		<field name="refno" required="true" />
 		<field name="filetype" required="true" />
 		<field name="msg"  />
+		<field name="status" required="true" />
 		<field name="startdate" required="true" />
 		<field name="enddate" />
 		<field name="createdby_objid" required="true" />
@@ -17,7 +18,6 @@
 		<field name="assignedto_title" />
 		<field name="workflowid" />
 		<field name="signatory" />
-		<field name="findings" />
 	</element>
 </schema>
 

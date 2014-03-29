@@ -38,7 +38,7 @@ SELECT c.*,
 	rp.claimno AS rp_claimno,
 	t.trackingno,
 	CASE WHEN task.taskid IS NULL THEN null ELSE task.action END AS taskaction,
-	CASE WHEN task.taskid IS NULL THEN null ELSE task.findings END AS findings
+	CASE WHEN task.taskid IS NULL THEN null ELSE task.msg END AS taskmsg
 FROM consolidation c
 	LEFT JOIN faas f ON c.newfaasid = f.objid 
 	LEFT JOIN realproperty rp ON c.newrpid = rp.objid 

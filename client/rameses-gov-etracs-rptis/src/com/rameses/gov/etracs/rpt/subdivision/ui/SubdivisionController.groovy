@@ -9,7 +9,7 @@ import com.rameses.common.*;
 import com.rameses.gov.etracs.rpt.common.RPTUtil;
 import com.rameses.util.MapBeanUtils;
 
-public class SubdivisionController extends com.rameses.gov.etracs.rpt.common.RPTWorkflowController
+public class SubdivisionController extends com.rameses.gov.etracs.rpt.task.RPTWorkflowController
 {
 
     @Service('SubdivisionService')

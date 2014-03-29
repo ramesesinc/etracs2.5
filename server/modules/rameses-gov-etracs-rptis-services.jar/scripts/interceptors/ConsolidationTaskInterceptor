@@ -39,7 +39,7 @@ class ConsolidationTaskInterceptor
 			docname 	: 'Consolidation',
 			filetype	: 'consolidation',
 			action 		: wf.tostate,
-			msg			: wf.message,
+			status		: wf.message,
 			signatory 	: wf.signatory,
 			workflowid  : wf.workflowid,
 		]
@@ -79,7 +79,13 @@ class ConsolidationTaskInterceptor
 		def task = evt.result 
 		def consolidation = svc.openConsolidation(task.objid)
 		updateSignatoryFromTask(consolidation, task)
-		notificationSvc.removeMessage([objid:consolidation.objid])
+		try{
+			notificationSvc?.removeMessage([objid:consolidation.objid])
+		}
+		catch(e){
+			println 'Notification Error ==================================================='
+			println e.message
+		}
 	}
 
 	void updateSignatoryFromTask(consolidation, task){

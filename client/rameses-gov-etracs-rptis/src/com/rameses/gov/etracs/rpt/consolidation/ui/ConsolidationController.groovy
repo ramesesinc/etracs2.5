@@ -9,7 +9,7 @@ import com.rameses.common.*;
 import com.rameses.gov.etracs.rpt.common.*;
 import com.rameses.util.MapBeanUtils;
 
-public class ConsolidationController extends com.rameses.gov.etracs.rpt.common.RPTWorkflowController
+public class ConsolidationController extends com.rameses.gov.etracs.rpt.task.RPTWorkflowController
 {
 
     

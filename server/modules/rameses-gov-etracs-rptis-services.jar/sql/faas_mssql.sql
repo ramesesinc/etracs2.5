@@ -61,7 +61,7 @@ SELECT
 	b.parentid AS rp_barangay_parentid,
 	t.trackingno,
 	CASE WHEN task.taskid IS NULL THEN null ELSE task.action END AS taskaction,
-	CASE WHEN task.taskid IS NULL THEN null ELSE task.findings END AS findings
+	CASE WHEN task.taskid IS NULL THEN null ELSE task.msg END AS taskmsg
 FROM faas f
 	LEFT JOIN rpu rpu ON f.rpuid = rpu.objid
 	LEFT JOIN propertyclassification pc ON rpu.classification_objid = pc.objid 
@@ -169,7 +169,7 @@ SELECT
 	t.trackingno
 FROM faas f
 	INNER JOIN rpu r ON f.rpuid = r.objid 
-	INNER JOIN realproperty rp ON r.realpropertyid = rp.objid 
+	INNER JOIN realproperty rp ON f.realpropertyid = rp.objid 
 	INNER JOIN propertyclassification pc ON r.classification_objid = pc.objid 
 	INNER JOIN barangay b ON rp.barangayid = b.objid 
 	LEFT JOIN rpttracking t ON f.objid = t.objid 

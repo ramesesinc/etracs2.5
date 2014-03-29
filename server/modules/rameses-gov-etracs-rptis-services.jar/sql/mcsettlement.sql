@@ -35,7 +35,7 @@ SELECT
 	nf.tdno AS newfaas_tdno,
 	t.trackingno,
 	CASE WHEN task.taskid IS NULL THEN null ELSE task.action END AS taskaction,
-	CASE WHEN task.taskid IS NULL THEN null ELSE task.findings END AS findings
+	CASE WHEN task.taskid IS NULL THEN null ELSE task.msg END AS taskmsg
 FROM mcsettlement m 
 	INNER JOIN faas f ON m.prevfaas_objid = f.objid 
 	INNER JOIN rpu rpu ON f.rpuid = rpu.objid 

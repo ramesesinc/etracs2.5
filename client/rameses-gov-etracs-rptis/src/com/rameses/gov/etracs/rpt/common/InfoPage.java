@@ -7,9 +7,11 @@
 package com.rameses.gov.etracs.rpt.common;
 
 import com.rameses.osiris2.themes.FormPage;
+import com.rameses.rcp.ui.annotations.StyleSheet;
 import com.rameses.rcp.ui.annotations.Template;
 
 @Template(FormPage.class)
+@StyleSheet
 public class InfoPage extends javax.swing.JPanel {
     
     /** Creates new form BusinessInfoPage */
@@ -61,9 +63,10 @@ public class InfoPage extends javax.swing.JPanel {
         add(jSplitPane1, java.awt.BorderLayout.CENTER);
 
         xLabel1.setBackground(new java.awt.Color(255, 255, 153));
-        xLabel1.setExpression("#{entity.findings}");
+        xLabel1.setExpression("#{entity.taskmsg}");
         xLabel1.setFont(new java.awt.Font("Tahoma", 1, 12));
         xLabel1.setForeground(new java.awt.Color(204, 0, 0));
+        xLabel1.setName("entity.taskmsg");
         xLabel1.setOpaque(true);
         xLabel1.setPreferredSize(new java.awt.Dimension(91, 23));
         add(xLabel1, java.awt.BorderLayout.NORTH);

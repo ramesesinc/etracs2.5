@@ -56,6 +56,11 @@ class RPTTaskService
         notifyGroup(task)
     }
 
+    @ProxyMethod
+    public def createTaskAndNotifyAssignee( task ) {
+        createTask(task)
+        notifySender(task)
+    }
 
     @ProxyMethod
     public def assignTask( task ) {
@@ -101,10 +106,10 @@ class RPTTaskService
             assignedto  : disapproveinfo.sender,
             enddate     : null,
             workflowid  : currtask.workflowid,
-            msg         : 'Document has been returned to ' + currtask.signatory + '.',
+            msg         : disapproveinfo.msg,
+            status      : 'Document has been returned to ' + currtask.signatory + '.',
             action      : disapproveinfo.sender.action,
             signatory   : sendertask.signatory,
-            findings    : disapproveinfo.msg,
         ]
         em.create(task)
 
@@ -122,10 +127,10 @@ class RPTTaskService
                 message   : task.docname + ' No. ' + task.refno + '    (' + task.action + ')',
                 filetype  : task.filetype,
             ]
-            notificationSvc.addMessage(msg)
+            notificationSvc?.addMessage(msg)
         }
         catch(e){
-            println '='*50 
+            println 'notifyGroup Error ===================================================='
             e.printStackTrace()
         }
     }
@@ -141,10 +146,10 @@ class RPTTaskService
             filetype  : task.filetype+'resent',
         ]
         try{
-            userNotificationSvc.addMessage(msg)
+            userNotificationSvc?.addMessage(msg)
         }
         catch(e){
-            println 'NotifySender' + (' ='*50)
+            println 'notifySender Error ===================================================='
             println e.printStackTrace()
         }
     }
@@ -152,7 +157,13 @@ class RPTTaskService
 
     @ProxyMethod
     public void closeUserNotification( objid ) {
-        userNotificationSvc.removeMessage([objid:objid])
+        try{
+            userNotificationSvc?.removeMessage([objid:objid])
+        }
+        catch(e){
+            println 'closeUserNotification Error ==============================================='
+            println e.printStackTrace
+        }
     }
 
     @ProxyMethod
@@ -167,7 +178,8 @@ class RPTTaskService
         task.assignedto = getUserInfo()
         task.enddate = null
         task.workflowid = nextwf.workflowid
-        task.msg = nextwf.message 
+        task.status = nextwf.message 
+        task.msg = (task.action?.startsWith('assign') ? task.msg : '')
         task.action = nextwf.tostate 
         task.signatory = nextwf.signatory
         em.create(task)

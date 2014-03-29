@@ -3,7 +3,7 @@ import com.rameses.services.extended.*
 
 class RPTUtilityService
 {
-	@PersistenceContext('main')
+	@ActiveDB('rptutility')
 	def em
 
 	@ActiveDB('rpu')
@@ -17,6 +17,8 @@ class RPTUtilityService
 	
 	@Service('RealPropertyService')
 	def rpSvc 
+
+
 	
 	 //info: faasid, oldpin, tdno, pintype, municipality, barangay, 
 	//section, parcel, suffix, newpin, ssection, sparcel 
@@ -35,9 +37,9 @@ class RPTUtilityService
 				rp.barangayid = info.barangay.objid 
 				rp.parcel = info.sparcel 
 				rpSvc.update( rp )
-
 				pindb.updateBarangayid(rp)
 
+				info.realpropertyid = rp.objid 
 				rpudb.modifyPin(info)
 
 				//update improvements pin 
@@ -53,7 +55,14 @@ class RPTUtilityService
 			return rp
 			
 		} else {
-			rpudb.modifyPin(info)
+			def landpin = info.barangay.pin + '-' + info.ssection + '-' + info.sparcel
+			def landrp = em.findByPinRy([pin:landpin, ry:info.ry])
+			if (!landrp)
+				throw new Exception('Land Real Property with PIN ' + landpin  + ' does not exist.')
+
+			info.realpropertyid = landrp.objid 
+			em.modifyPin(info)
+			em.updateFaasRealPropertyId(info)
 			return null
 		}
 		// logSvc.log('MODIFY_PIN', 'FAAS', info.faasid  )

@@ -31,3 +31,20 @@ VALUES($P{pin}, '-', $P{docstate})
 [deletePin]
 DELETE FROM pin 
 WHERE pin = $P{pin} AND claimno = '-'
+
+
+[findByPinRy]
+SELECT * FROM realproperty WHERE pin = $P{pin} AND ry = $P{ry}
+
+[modifyPin]
+update rpu set 
+  fullpin=$P{newpin}, suffix=$P{suffix}, 
+  realpropertyid = $P{realpropertyid}
+where objid=$P{rpuid}
+
+
+[updateFaasRealPropertyId]
+UPDATE f SET 
+	f.realpropertyid = $P{realpropertyid}
+FROM faas f 
+WHERE f.objid = $P{faasid}

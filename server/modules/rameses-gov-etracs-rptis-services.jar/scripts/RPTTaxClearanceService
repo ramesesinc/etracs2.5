@@ -22,6 +22,9 @@ class RPTTaxClearanceService
     @Service('Var')
     def var 
 
+    @Service('ReportParameterService')
+    def paramSvc 
+
     
 
     @ProxyMethod
@@ -103,7 +106,7 @@ class RPTTaxClearanceService
         cert.issueday      = util.formalizeNumber(pdate.day)
         cert.issuemonth    = util.getMonthName(pdate.month)
         cert.issueyear     = pdate.year +''
-        cert.issueplace    = var.lgu_formal_name 
+        cert.issueplace    = ( var.lgu_formal_name  ? var.lgu_formal_name : paramSvc.standardParameter.LGUFORMALNAME)
     }
 
     void loadPaymentInfo(cert){

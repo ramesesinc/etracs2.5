@@ -42,7 +42,7 @@
     
     
     <pages>
-        <page  template="com.rameses.gov.etracs.rpt.common.DisapprovePage"/>
+        <page  template="com.rameses.gov.etracs.rpt.task.TaskDisapprovePage"/>
     </pages>
     
 </workunit>
