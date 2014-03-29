@@ -55,6 +55,7 @@ class CashTicketInventoryInterceptor {
 				}
 				m.startstub = i.startstub;
 				m.endstub = m.startstub + counter - 1;
+				m.cost = i.cost 
 				buffer << m;
 				if(qty==0)break;
 			}

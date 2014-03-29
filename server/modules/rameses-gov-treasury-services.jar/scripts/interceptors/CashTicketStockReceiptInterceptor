@@ -28,6 +28,7 @@ class CashTicketStockReceiptInterceptor {
 				m.refno = o.receiptno;
 				m.refdate = o.dtfiled;
 				m.afid = z.item.objid;
+				m.iqty = it.qty 
 				m.qty= it.qty*unitQty;
 				m.itemclass = z.item.itemclass;
 				m.itemtype = z.item.type;
@@ -36,6 +37,7 @@ class CashTicketStockReceiptInterceptor {
 				m.respcenter = [objid:'AFO', name:'AFO', type:'AFO'];
 				m.txntype = "RECEIPT";
 				m.remarks = "PURCHASE RECEIPT"
+				m.cost = it.cost  
 				cashTicketSvc.postReceipt(m);
 			}	
 		}

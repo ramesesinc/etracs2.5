@@ -15,6 +15,7 @@
 		<field name="qtycancelled" required="true" />
 		<field name="qtybalance" required="true" />
 		<field name="currentlineno" required="true"/>
+		<field name="cost"/>
 	</element>
 	
 	<element name="detail" tablename="cashticket_inventory_detail">
@@ -33,6 +34,7 @@
 		<field name="qtyending" required="true" />
 		<field name="qtycancelled" required="true" />
 		<field name="remarks" />
+		<field name="cost"/>
 	</element>
 		
 

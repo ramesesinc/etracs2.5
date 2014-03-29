@@ -21,7 +21,8 @@ SELECT
    ac.qtybalance,
    ac.currentstub as startstub,
    ac.endstub as endstub,
-   ac.currentlineno as "lineno"
+   ac.currentlineno as "lineno", 
+   ac.cost 
 FROM cashticket_inventory ac
 WHERE ac.afid=$P{afid} 
 AND ac.respcenter_objid='AFO'

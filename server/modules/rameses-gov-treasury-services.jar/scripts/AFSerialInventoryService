@@ -10,7 +10,7 @@ class AFSerialInventoryService {
 
 	@Service("DateService")
 	def dateSvc;
-
+ 
 	@Env
 	def env;
 
@@ -52,6 +52,7 @@ class AFSerialInventoryService {
 		m.qtybalance = o.qty;
 		m.currentlineno = 1;
 		m.respcenter = o.respcenter;
+		m.cost  = o.cost 
 		afcontrol.create( m );
 		
 		def detail = initDetail(o);
@@ -65,6 +66,7 @@ class AFSerialInventoryService {
 		detail.qtyreceived = o.qty;
 		detail.qtyending = o.qty;
 		detail.remarks = o.remarks;
+		detail.cost = ( o.cost * (o.qty / 50 ) )
 		afcontrol.create( detail, "detail" );
 		return m;
 	}
@@ -86,7 +88,6 @@ class AFSerialInventoryService {
 			head.currentstub = o.endstub + 1;
 		}
 		head.currentlineno+=1;
-
 		afcontrol.update( head );
 
 		def detail = initDetail(o);
@@ -101,6 +102,7 @@ class AFSerialInventoryService {
 		detail.qtyending = head.qtybalance;
 		detail.qtycancelled = cqty;
 		detail.remarks = o.remarks;
+		detail.cost =  o.cost 
 		afcontrol.create( detail, "detail" );
 
 		if( o.cancelSeriesList) {
@@ -139,6 +141,7 @@ class AFSerialInventoryService {
 		m.qtybalance = 0;
 		m.currentlineno = 1; 
 		m.respcenter = o.respcenter;
+		m.cost  = o.cost 
 		afcontrol.create( m );
 		
 		def detail = initDetail(o);
@@ -147,11 +150,12 @@ class AFSerialInventoryService {
 		detail.txntype = o.txntype;
 		detail.receivedstartseries= o.startseries;
 		detail.receivedendseries = o.endseries;
-		detail.endingstartseries = o.endseries;
-		detail.endingendseries = o.endseries;
+		detail.issuedstartseries = o.startseries;
+		detail.issuedendseries = o.endseries;
 		detail.qtyreceived = o.qty;
-		detail.qtyending = o.qty;
-		detail.remarks = o.remarks;
+		m.qtyissued= o.qty;
+		detail.remarks = o.remarks; 
+		detail.cost  = o.cost 
 		afcontrol.create( detail, "detail" );
 		return m;
 	}

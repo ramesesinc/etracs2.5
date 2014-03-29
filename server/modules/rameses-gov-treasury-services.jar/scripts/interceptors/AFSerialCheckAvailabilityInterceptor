@@ -6,8 +6,6 @@ import com.rameses.services.extended.*
 
 class AFSerialInventoryInterceptor {
 
-	
-
 	@ActiveDB("afserial_inventory")
 	def afInventorySvc;
 
@@ -23,7 +21,7 @@ class AFSerialInventoryInterceptor {
 			def unit = it.unit;
 			def qtyPerUnit = stockitem.findUnitQty( [itemid: afid, unit: unit] )?.qty;
 			if(qtyPerUnit==null)
-				throw new Exception("Qty per unit not found for "+it.item.objid);\
+				throw new Exception("Qty per unit not found for "+it.item.objid); 
 
 			def qty = it.qtyissued;
 			def availableList = afInventorySvc.findAllAvailable( [afid: afid ] );
@@ -56,7 +54,8 @@ class AFSerialInventoryInterceptor {
 				if(i.startseries) m.startseries = i.startseries;
 				if(i.endseries ) m.endseries = m.startseries + m.qtyissued - 1;
 				m.startstub = i.startstub;
-				m.endstub = m.startstub + counter - 1;
+				m.endstub = m.startstub + counter - 1; 
+				m.cost =  ( counter * i.cost )
 				buffer << m;
 				if(qty==0)break;
 			}
@@ -65,6 +64,5 @@ class AFSerialInventoryInterceptor {
 		}
 	}
 
-	
 
 }

@@ -4,7 +4,7 @@ import java.rmi.server.*;
 import com.rameses.common.*
 import com.rameses.services.extended.*
 
-class AFSerialStockIssueInterceptor {
+class AFSerialStockSaleInterceptor {
 
 	@Service("AFSerialInventoryService")
 	def afSerialSvc;
@@ -18,7 +18,8 @@ class AFSerialStockIssueInterceptor {
 	@ActiveDB("afserial_control")
 	def afControl;
 
-	@After(pattern="StockIssueService.create", eval="#{args[0].itemclass == 'AF'}")
+	
+	@After(pattern="StockSaleService.create", eval="#{args[0].itemclass == 'AF'}")
 	public void postReceipt( def evt ) { 
 		def o = evt.result;
 		def list = o.items.findAll{ it.qtyissued > 0 && it.item.type=='AFSERIAL' && it.items!=null };
@@ -27,7 +28,7 @@ class AFSerialStockIssueInterceptor {
 				def m = [:];		
 				m.controlid = it.controlid;
 				m.refid = o.objid;
-				m.reftype = "stockissue";	
+				m.reftype = "stocksale";	
 				m.refno = o.issueno;
 				m.refdate = o.dtfiled;
 				m.afid = z.item.objid;
@@ -43,7 +44,7 @@ class AFSerialStockIssueInterceptor {
 				m.itemclass = z.item.itemclass;
 				m.itemtype = z.item.type;
 				m.txntype = o.reqtype;
-				m.remarks = "ISSUED TO " + o.issueto.name
+				m.remarks = "SOLD TO " + o.soldto.name
 				m.cost = it.cost 
 				afSerialSvc.postIssue(m);
 
@@ -54,7 +55,7 @@ class AFSerialStockIssueInterceptor {
 				for(int i=m.startseries+unitqty; i<m.endseries+unitqty; i+=unitqty) {
 					def head = [:];
 					head.refid = m.refid;
-					head.reftype = "stockissue";	
+					head.reftype = "stocksale";	
 					head.refno = o.issueno;
 					head.refdate = o.dtfiled;
 				    head.startstub = stub;
@@ -63,23 +64,21 @@ class AFSerialStockIssueInterceptor {
 				    head.currentstub = stub;
 					head.startseries = j;
 					head.endseries = (i-1);
-					head.currentseries = j;
+					head.currentseries = i;
 					head.prefix = m.prefix;
 					head.suffix = m.suffix;
 					head.qty = unitqty;
-					head.unit = m.unit;
-					head.remarks = "RECEIVED FROM ISSUE";
-					head.respcenter = o.issueto;
+					head.unit = m.unit; 
+					head.remarks = "RECEIVED FROM SALE";
+					head.respcenter = o.soldto;
 					if(!head.respcenter.type) head.respcenter.type = 'COLLECTOR';
 					head.txntype = o.reqtype + "-RECEIPT";
-					def q = afSerialSvc.postReceipt(head);
-					afControl.createControl( [objid: q.objid] );
+					afSerialSvc.postSale(head);
 					j = i;
 					stub+=1;
 				}
 			}
 		}
-	}
-
+	}	
 
 }

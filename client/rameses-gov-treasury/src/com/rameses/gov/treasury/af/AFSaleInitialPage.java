@@ -16,10 +16,10 @@ import com.rameses.rcp.ui.annotations.Template;
  * @author  Elmo
  */
 @Template(FormPage.class)
-public class AFIssuanceInitialPage extends javax.swing.JPanel {
+public class AFSaleInitialPage extends javax.swing.JPanel {
     
     /** Creates new form AFInitialPage */
-    public AFIssuanceInitialPage() {
+    public AFSaleInitialPage() {
         initComponents();
     }
     
@@ -36,7 +36,7 @@ public class AFIssuanceInitialPage extends javax.swing.JPanel {
         xLabel1 = new com.rameses.rcp.control.XLabel();
 
         com.rameses.rcp.control.border.XTitledBorder xTitledBorder1 = new com.rameses.rcp.control.border.XTitledBorder();
-        xTitledBorder1.setTitle("AF issuance Initial ");
+        xTitledBorder1.setTitle("AF Sale Initial ");
         jPanel1.setBorder(xTitledBorder1);
 
         xFormPanel1.setCaptionWidth(120);

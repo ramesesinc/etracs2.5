@@ -38,8 +38,8 @@ public class StockReceiptItemAFSerialPage extends javax.swing.JPanel {
                 new Object[]{"name", "qty"}
                 , new Object[]{"caption", "Qty "}
                 , new Object[]{"width", 100}
-                , new Object[]{"minWidth", 100}
-                , new Object[]{"maxWidth", 100}
+                , new Object[]{"minWidth", 60}
+                , new Object[]{"maxWidth", 60}
                 , new Object[]{"required", true}
                 , new Object[]{"resizable", true}
                 , new Object[]{"nullWhenEmpty", true}
@@ -81,8 +81,8 @@ public class StockReceiptItemAFSerialPage extends javax.swing.JPanel {
                 new Object[]{"name", "startstub"}
                 , new Object[]{"caption", "Start Stub"}
                 , new Object[]{"width", 100}
-                , new Object[]{"minWidth", 100}
-                , new Object[]{"maxWidth", 100}
+                , new Object[]{"minWidth", 70}
+                , new Object[]{"maxWidth", 70}
                 , new Object[]{"required", true}
                 , new Object[]{"resizable", true}
                 , new Object[]{"nullWhenEmpty", true}
@@ -96,8 +96,8 @@ public class StockReceiptItemAFSerialPage extends javax.swing.JPanel {
                 new Object[]{"name", "endstub"}
                 , new Object[]{"caption", "To Stub"}
                 , new Object[]{"width", 100}
-                , new Object[]{"minWidth", 100}
-                , new Object[]{"maxWidth", 100}
+                , new Object[]{"minWidth", 70}
+                , new Object[]{"maxWidth", 70}
                 , new Object[]{"required", false}
                 , new Object[]{"resizable", true}
                 , new Object[]{"nullWhenEmpty", true}
@@ -135,6 +135,20 @@ public class StockReceiptItemAFSerialPage extends javax.swing.JPanel {
                 , new Object[]{"alignment", "CENTER"}
                 , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
                 , new Object[]{"typeHandler", new com.rameses.rcp.common.TextColumnHandler()}
+            }),
+            new com.rameses.rcp.common.Column(new Object[]{
+                new Object[]{"name", "cost"}
+                , new Object[]{"caption", "Cost per Stub"}
+                , new Object[]{"width", 100}
+                , new Object[]{"minWidth", 100}
+                , new Object[]{"maxWidth", 100}
+                , new Object[]{"required", true}
+                , new Object[]{"resizable", true}
+                , new Object[]{"nullWhenEmpty", true}
+                , new Object[]{"editable", true}
+                , new Object[]{"editableWhen", null}
+                , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
+                , new Object[]{"typeHandler", new com.rameses.rcp.common.DecimalColumnHandler("#,##0.00", -1.0, -1.0, false, 2)}
             })
         });
         xDataTable1.setHandler("itemModel");
@@ -149,7 +163,7 @@ public class StockReceiptItemAFSerialPage extends javax.swing.JPanel {
             .add(layout.createSequentialGroup()
                 .addContainerGap()
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(xDataTable1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 563, Short.MAX_VALUE)
+                    .add(xDataTable1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 668, Short.MAX_VALUE)
                     .add(xLabel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 549, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );

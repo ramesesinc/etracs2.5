@@ -43,6 +43,7 @@ class AFSerialStockReceiptInterceptor {
 				m.txntype = "RECEIPT";
 				m.respcenter = [objid:'AFO', name:'AFO', type:'AFO'];
 				m.remarks = "RECEIPT OF PURCHASE";
+				m.cost = it.cost
 				afSerialSvc.postReceipt(m);
 
 			}	

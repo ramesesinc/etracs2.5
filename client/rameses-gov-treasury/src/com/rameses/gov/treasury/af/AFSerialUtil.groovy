@@ -26,6 +26,11 @@ class  AFSerialUtil  {
             throw new Exception("Total qty must be less than or equal to qty requested");
     }
 
+    public static void validateCost( def entry ) {
+       if( entry.cost <= 0.0 ) 
+            throw new Exception("Sale Amount must not less than or equal to zero.  ");
+    }
+
     public static int getEndStub(def entry ) {
         if( !entry?.qty ) return 0;
         if( !entry?.startstub ) return 0;
