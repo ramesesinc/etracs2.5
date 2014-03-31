@@ -2,6 +2,7 @@
     <folder id="explorer">
         <folder id="master">
             <folder id="rpt" caption="Assessor" index="1" />
+            <folder id="landtax" caption="Land Tax" index="2" />
         </folder>
         <folder id="txn" caption="Transactions" index="2">
             <folder id="rpt" caption="Assessor" index="1">

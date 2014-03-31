@@ -1,0 +1,8 @@
+alter table rptexpiry add reason varchar(100)
+GO
+
+insert into sys_usergroup
+	(objid, title, domain, userclass, orgclass, role)
+values
+	('RPT.MASTER', 'MASTER', 'RPT', 'usergroup', null, 'MASTER')
+GO
