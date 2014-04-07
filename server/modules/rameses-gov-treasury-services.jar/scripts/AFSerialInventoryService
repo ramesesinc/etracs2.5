@@ -66,7 +66,7 @@ class AFSerialInventoryService {
 		detail.qtyreceived = o.qty;
 		detail.qtyending = o.qty;
 		detail.remarks = o.remarks;
-		detail.cost = ( o.cost * (o.qty / 50 ) )
+		detail.cost = 0.0 
 		afcontrol.create( detail, "detail" );
 		return m;
 	}

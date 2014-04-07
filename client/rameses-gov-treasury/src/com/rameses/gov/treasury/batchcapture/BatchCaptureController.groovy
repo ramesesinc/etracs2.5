@@ -167,6 +167,7 @@ public class BatchCaptureController  {
                 item.items[0].amount = item[colname]; 
                 item.totalcash = item.amount
                 item.totalnoncash = 0.0
+                
             }
             if( colname == 'voided') {
                 calculate()
@@ -174,13 +175,20 @@ public class BatchCaptureController  {
             }
         },
         onCommitItem: { o-> 
-            calculate();
+            if( o.newitem && o.voided != 1 ) {
+                entity.totalcash += o.totalcash
+                entity.totalnoncash += o.totalnoncash
+                entity.totalamount += o.amount 
+            } else{ calculate() }
+
             svc.addUpdateItem(entity, o)
             if( o.newitem ) {
                  o.newitem = false 
                  entity.batchitems << o 
                  moveNext()
             }
+
+            binding.refresh("entity.totalcash|entity.totalnoncash|entity.totalamount")
         },
         
         onRemoveItem: { o ->

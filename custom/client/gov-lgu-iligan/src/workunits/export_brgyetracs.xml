@@ -1,6 +1,6 @@
 <workunit>
     <invokers>
-        <invoker folderid="/explorer/txn/treasury/tools" caption="Export Etracs Brgy" role="TOOL_MGMT" index="10"/>
+        <invoker folderid="/explorer/txn/treasury/tools" caption="Export Etracs Brgy" role="DATA_CONTROLLER" index="10"/>
     </invokers>
     
     <code>
