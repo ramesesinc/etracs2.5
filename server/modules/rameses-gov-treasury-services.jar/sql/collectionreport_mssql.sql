@@ -37,7 +37,7 @@
           MIN(aid.qtyending) AS qtyending,
           MAX(aid.endingstartseries) AS endingstartseries,
           MAX(aid.endingendseries) AS endingendseries,
-          CASE WHEN MIN(lineno) = 1 THEN 2 ELSE MIN(aid.lineno) END AS minlineno
+          CASE WHEN MIN([lineno]) = 1 THEN 2 ELSE MIN(aid.[lineno]) END AS minlineno
        FROM afserial_inventory ai
           inner join afserial_inventory_detail aid ON ai.objid = aid.controlid 
        WHERE ai.respcenter_objid = $P{collectorid}        
@@ -46,7 +46,7 @@
        GROUP BY ai.objid, ai.respcenter_name, ai.afid   
     ) t
     LEFT JOIN afserial_inventory_detail xd ON t.objid = xd.controlid 
-WHERE t.minlineno - 1 = xd.lineno
+WHERE t.minlineno - 1 = xd.[lineno]
 ORDER BY t.afid, t.receivedstartseries, t.beginstartseries
           
           
@@ -64,8 +64,8 @@ ORDER BY t.afid, t.receivedstartseries, t.beginstartseries
  FROM (
     SELECT 
        t.*,
-       (SELECT qtyending FROM cashticket_inventory_detail WHERE controlid = t.objid AND lineno = t.maxlineno) AS qtyending,
-       (SELECT qtyending + qtyissued + qtybegin FROM cashticket_inventory_detail WHERE controlid = t.objid AND lineno = t.minlineno AND txntype <> 'ISSUE-RECEIPT') AS qtybegin
+       (SELECT qtyending FROM cashticket_inventory_detail WHERE controlid = t.objid AND [lineno] = t.maxlineno) AS qtyending,
+       (SELECT qtyending + qtyissued + qtybegin FROM cashticket_inventory_detail WHERE controlid = t.objid AND [lineno] = t.minlineno AND txntype <> 'ISSUE-RECEIPT') AS qtybegin
     FROM (
        SELECT 
          ci.respcenter_name AS name,
@@ -73,8 +73,8 @@ ORDER BY t.afid, t.receivedstartseries, t.beginstartseries
          ci.objid, 
          SUM(cid.qtyreceived) AS qtyreceived, 
          SUM(cid.qtyissued) AS qtyissued,
-         MIN(cid.lineno) AS minlineno,
-         MAX(cid.lineno) AS maxlineno
+         MIN(cid.[lineno]) AS minlineno,
+         MAX(cid.[lineno]) AS maxlineno
        FROM cashticket_inventory ci 
          INNER JOIN cashticket_inventory_detail cid ON ci.objid = cid.controlid
        WHERE ci.respcenter_type = $P{collectorid} 

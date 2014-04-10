@@ -26,7 +26,12 @@ class RemittanceReportService  {
 		def remittance = rem.clone()
 		remittance.collectiontype = em.sqlContext.createNamedQuery('remittancereport:getRCDCollectionType').setParameter('remittanceid', remittance.objid ).resultList
 		remittance.collectionsummaries = em.sqlContext.createNamedQuery('remittancereport:getRCDCollectionSummaries').setParameter('remittanceid', remittance.objid ).resultList
-		remittance.remittedforms = getRemittedSerials(rem)
+		remittance.remittedforms = getRemittedSerials(rem).each{
+			it.qtybegin=it.qtybegin?(Integer)it.qtybegin:0
+			it.qtyreceived=it.qtyreceived?(Integer)it.qtyreceived:0
+			it.qtyending=(Integer)it.qtyending
+			it.qtyissued=(Integer)it.qtyissued
+		} 
 		remittance.cancelseries = []
 		remittance.hascancelseries = false 
 		remittance.remittedforms.each{
