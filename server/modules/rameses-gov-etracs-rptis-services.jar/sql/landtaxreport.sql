@@ -168,22 +168,22 @@ from (
 		case when ri.revtype in ('current', 'previous', 'prior') then ( ri.provshare + ri.provintshare) else 0.0 end as provshare, 
 		0.0 as idlecurrent, 0.0 as idleprev, 0.0 as idledisc, 0.0 as idleint, 0.0 as idlenet, 0.0 as levynet
 	FROM ( 
-		  select
-			distinct lf.liquidationid
-		  from bankdeposit b 
-			inner join bankdeposit_liquidation bl on b.objid = bl.bankdepositid
-			inner join liquidation_cashier_fund lf on lf.objid = bl.objid 
-		    where b.dtposted between $P{fromdate} and $P{todate} 
-	  ) a 
-		INNER JOIN liquidation_remittance lr on lr.liquidationid = a.liquidationid 
-		INNER JOIN remittance_cashreceipt xr on xr.remittanceid = lr.objid 
-		INNER JOIN cashreceiptitem_rpt ri ON xr.objid = ri.rptreceiptid 
+			 select distinct cr.objid
+				from cashreceipt cr 
+					INNER JOIN remittance_cashreceipt rc on cr.objid = rc.objid 
+					INNER JOIN liquidation_remittance lc on lc.objid = rc.remittanceid 
+					INNER JOIN liquidation_cashier_fund lcf ON lcf.liquidationid = lc.liquidationid 
+					INNER JOIN bankdeposit_liquidation bl ON lcf.objid = bl.objid
+					inner join bankdeposit bd on bd.objid = bl.bankdepositid 
+					LEFT JOIN cashreceipt_void vr ON cr.objid = vr.receiptid  
+				where cr.receiptdate BETWEEN $P{fromdate} AND $P{todate} 
+					and vr.objid is null  
+		  ) a 
+		INNER JOIN cashreceiptitem_rpt ri ON a.objid = ri.rptreceiptid 
 		INNER JOIN rptledger rl ON ri.rptledgerid = rl.objid 
 		INNER JOIN faas f ON rl.faasid = f.objid 
 		INNER JOIN rpu r ON f.rpuid = r.objid
 		INNER JOIN propertyclassification pc ON r.classification_objid = pc.objid 
-		LEFT JOIN cashreceipt_void v ON xr.objid = v.receiptid
-	where v.objid is null 	
 		
 	union all 
 
@@ -207,20 +207,20 @@ from (
 		case when ri.revtype in ('current', 'previous', 'prior') then ( ri.provshare + ri.provintshare) else 0.0 end as provshare, 
 		0.0 as idlecurrent, 0.0 as idleprev, 0.0 as idledisc, 0.0 as idleint, 0.0 as idlenet, 0.0 as levynet
 	FROM ( 
-		  select
-			distinct lf.liquidationid
-		  from bankdeposit b 
-			inner join bankdeposit_liquidation bl on b.objid = bl.bankdepositid
-			inner join liquidation_cashier_fund lf on lf.objid = bl.objid 
-		    where b.dtposted between  $P{fromdate} and $P{todate} 
-	  ) a 
-		INNER JOIN liquidation_remittance lr on lr.liquidationid = a.liquidationid 
-		INNER JOIN remittance_cashreceipt xr on xr.remittanceid = lr.objid 
-		INNER JOIN cashreceiptitem_rpt ri ON xr.objid = ri.rptreceiptid 
+			  select distinct cr.objid
+				from cashreceipt cr 
+					INNER JOIN remittance_cashreceipt rc on cr.objid = rc.objid 
+					INNER JOIN liquidation_remittance lc on lc.objid = rc.remittanceid 
+					INNER JOIN liquidation_cashier_fund lcf ON lcf.liquidationid = lc.liquidationid 
+					INNER JOIN bankdeposit_liquidation bl ON lcf.objid = bl.objid
+					inner join bankdeposit bd on bd.objid = bl.bankdepositid 
+					LEFT JOIN cashreceipt_void vr ON cr.objid = vr.receiptid  
+				where cr.receiptdate BETWEEN $P{fromdate} AND $P{todate} 
+					and vr.objid is null  
+		  ) a 
+		INNER JOIN cashreceiptitem_rpt ri ON a.objid = ri.rptreceiptid 
 		INNER JOIN cashreceiptitem_rpt_noledger ril on ril.objid = ri.objid 
 		INNER JOIN propertyclassification pc ON ril.classification_objid = pc.objid 
-		LEFT JOIN cashreceipt_void v ON xr.objid = v.receiptid
-	where v.objid is null 	
  ) t 	
 group by t.classname
 ORDER BY min(t.orderno)  
