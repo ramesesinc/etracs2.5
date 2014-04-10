@@ -48,11 +48,11 @@
             def getLookupAccount() {
                 return InvokerUtil.lookupOpener("revenueitem:lookup", [ 
                     onselect: { o->
-                        if( entity.revenueitems.find{ it.code == o.code } ) throw new Exception("Account already added.    ")
+                        if( entity.revenueitems.find{ it.objid == o.objid } ) throw new Exception("Account already added.    ")
                     
-                        selectedItem.revenueitemid = o.objid
-                        selectedItem.code = o.code 
-                        selectedItem.title = o.title 
+                        selectedItem.revenueitemid = o.objid 
+                        selectedItem.code = o.code  
+                        selectedItem.title = o.title   
                     }
               ]);
             }
