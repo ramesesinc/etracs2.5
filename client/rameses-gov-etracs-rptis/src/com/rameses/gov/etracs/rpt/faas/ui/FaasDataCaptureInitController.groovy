@@ -69,7 +69,7 @@ class FaasDataCaptureInitController
     def getLookupBarangay(){
         return InvokerUtil.lookupOpener('barangay:lookup', [
             onselect: { 
-                entity.barangay = it;
+                entity.barangay = brgySvc.getById(it.objid)
                 entity.rp = null;
                 buildPin();
             },

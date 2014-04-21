@@ -79,8 +79,11 @@ class RPTUtil
             entity.barangay.oldindexno = entity.barangay.indexno ;
         }
         
-        if( entity.barangay) {
+        if( entity.barangay && entity.pintype == 'new') {
             newpin += entity.barangay?.indexno + '-';
+        }
+        else if( entity.barangay && entity.pintype == 'old') {
+            newpin += entity.barangay?.oldindexno + '-';
         }
         else {
             newpin += ( entity.pintype == 'new' ? '0000' : '000') + '-';
