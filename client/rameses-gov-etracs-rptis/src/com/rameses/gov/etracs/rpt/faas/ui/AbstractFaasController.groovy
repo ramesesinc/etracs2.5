@@ -336,6 +336,7 @@ public abstract class AbstractFaasController extends PageFlowController
      
      
      def viewAssessment(){
+         if (rp.isnew) throw new Exception('PIN requires verification.')
          def allowEdit = getAllowEdit();
          rpu.dtappraised = entity.appraiser?.dtsigned;
          rpu.realpropertyid = rp?.objid;
