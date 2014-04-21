@@ -42,16 +42,16 @@ class SalesDataInfoController
             isnew = false;
         }
         catch( e ){
-            createNewSeller();
+            createNewBuyer();
         }
         mode = MODE_READ;
     }
     
-    void createNewSeller(){
+    void createNewBuyer(){
         sale = [
             objid    : entity.objid, 
-            seller   : entity.taxpayer,
-            buyer    : [:],
+            seller   : [:],
+            buyer    : entity.taxpayer,
         ];
         isnew = true;
     }
