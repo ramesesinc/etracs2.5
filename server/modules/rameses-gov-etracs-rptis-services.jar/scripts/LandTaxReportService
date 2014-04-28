@@ -112,21 +112,24 @@ class LandTaxReportService
 
 
 		if("YEARLY".equals(params.period)) {
-			params.fromdate = params.year + "-01-01"
-			params.todate   = params.year + "-12-31"
+			params.fromdate = params.year + "-01-01 00:00:00"
+			params.todate   = params.year + "-12-31 23:59:59"
 		} else if("QUARTERLY".equals(params.period)) {
-			params.fromdate = dateSvc.getBeginningQtrDate( params.qtr, params.year, 1 )
+			def fromdate = dateSvc.getBeginningQtrDate( params.qtr, params.year, 1 )
+			def todate = ""
 			if ( params.month != null) {
 				def dt = params.year + '-' + params.month.index + '-01'
-				params.todate   = dateSvc.add( dateSvc.getMonthEndDate(dateSvc.parse('yyyy-MM-dd', dt)), '1d')
+				todate   = dateSvc.getMonthEndDate(dateSvc.parse('yyyy-MM-dd', dt)) 
 			} else { 
-				params.todate   = dateSvc.add( dateSvc.getQtrEndDate( params.qtr, params.year ), '1d')
+				todate  =  dateSvc.getQtrEndDate( params.qtr, params.year )
 			}
+			params.fromdate = dateSvc.format('yyyy-MM-dd', fromdate )  + " 00:00:00"
+			params.todate =  dateSvc.format('yyyy-MM-dd', todate )  + " 23:59:59"
 		} else {
-			params.fromdate = params.year + '-' + params.month.index + '-01'
-			params.todate = dateSvc.format( 'yyyy-MM-dd', dateSvc.getMonthEndDate( dateSvc.parse('yyyy-MM-dd', params.fromdate)) )  
+			params.fromdate = params.year + '-' + params.month.index + '-01 00:00:00'
+			params.todate = dateSvc.format( 'yyyy-MM-dd', dateSvc.getMonthEndDate( dateSvc.parse('yyyy-MM-dd', params.fromdate)) )  + " 23:59:59"
 		}	
-
+		
 		def data = [:]
 		data.items  =  em.sqlContext.createNamedQuery('landtaxreport:generateRPTCollectionReport')
 				.setParameters( params )
@@ -173,6 +176,7 @@ class LandTaxReportService
 		data.period = util.buildPeriod(params )		
 
 		return data;
+
 
 	} 
 

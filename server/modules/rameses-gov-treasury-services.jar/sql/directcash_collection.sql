@@ -22,7 +22,7 @@ SELECT
 FROM directcash_collection dc
 	INNER JOIN directcash_collection_item dci ON dc.objid = dci.parentid
 	INNER JOIN revenueitem ri ON dci.item_objid = ri.objid
-WHERE ${filters}
+WHERE dc.refdate between $P{fromdate} and $P{todate}
   AND dc.state = 'APPROVED' 
   AND ri.objid LIKE $P{acctid}
 ORDER BY dc.refdate , ri.code 

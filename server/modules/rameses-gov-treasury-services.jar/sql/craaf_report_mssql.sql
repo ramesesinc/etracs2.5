@@ -41,7 +41,7 @@ FROM (
           MIN(aid.qtyending) AS qtyending,
           MAX(aid.endingstartseries) AS endingstartseries,
           MAX(aid.endingendseries) AS endingendseries,
-          MAX(lineno) AS maxlineno
+          MAX([lineno]) AS maxlineno
         FROM afserial_inventory ai
           inner join afserial_inventory_detail aid ON ai.objid = aid.controlid 
         WHERE ai.respcenter_type = 'AFO' 
@@ -50,7 +50,7 @@ FROM (
         GROUP BY ai.objid, ai.respcenter_name, ai.afid   
       ) t
       LEFT JOIN afserial_inventory_detail xd ON t.objid = xd.controlid 
-   WHERE t.maxlineno = xd.lineno 
+   WHERE t.maxlineno = xd.[lineno] 
 
 
    UNION ALL 
@@ -97,7 +97,7 @@ FROM (
             MIN(aid.qtyending) AS qtyending,
             MAX(aid.endingstartseries) AS endingstartseries,
             MAX(aid.endingendseries) AS endingendseries,
-            CASE WHEN MIN(lineno) = 1 THEN 2 ELSE MIN(aid.lineno) END AS minlineno
+            CASE WHEN MIN([lineno]) = 1 THEN 2 ELSE MIN(aid.[lineno]) END AS minlineno
          FROM afserial_inventory ai
             inner join afserial_inventory_detail aid ON ai.objid = aid.controlid 
          WHERE ai.respcenter_type <> 'AFO'        
@@ -106,7 +106,7 @@ FROM (
          GROUP BY ai.objid, ai.respcenter_name, ai.afid   
       ) t
       LEFT JOIN afserial_inventory_detail xd ON t.objid = xd.controlid 
-   WHERE t.minlineno -1  = xd.lineno
+   WHERE t.minlineno -1  = xd.[lineno]
 ) x
 ORDER BY x.idx, x.afid, x.name, x.receivedstartseries, x.beginstartseries
           
@@ -135,7 +135,7 @@ FROM (
          SUM(cid.qtyreceived) AS qtyreceived, 
          SUM(cid.qtyissued) AS qtyissued,
          MIN(cid.qtyending) AS qtyending,
-         CASE WHEN MIN(cid.lineno) = 1 THEN 2 ELSE MIN(cid.lineno) END AS minlineno
+         CASE WHEN MIN(cid.[lineno]) = 1 THEN 2 ELSE MIN(cid.[lineno]) END AS minlineno
       FROM cashticket_inventory ci 
          INNER JOIN cashticket_inventory_detail cid ON ci.objid = cid.controlid
       WHERE ci.respcenter_type = 'AFO'
@@ -144,7 +144,7 @@ FROM (
       GROUP BY ci.objid, ci.respcenter_name , ci.afid
    ) t
    LEFT JOIN cashticket_inventory_detail xd ON t.objid = xd.controlid 
-   WHERE t.minlineno  = xd.lineno
+   WHERE t.minlineno  = xd.[lineno]
      
 
    UNION
@@ -164,8 +164,8 @@ FROM (
    FROM (
       SELECT 
          t.*,
-         (SELECT qtyending FROM cashticket_inventory_detail WHERE controlid = t.objid AND lineno = t.maxlineno) AS qtyending,
-         (SELECT qtyending + qtyissued + qtybegin FROM cashticket_inventory_detail WHERE controlid = t.objid AND lineno = t.minlineno AND txntype <> 'ISSUE-RECEIPT') AS qtybegin
+         (SELECT qtyending FROM cashticket_inventory_detail WHERE controlid = t.objid AND [lineno] = t.maxlineno) AS qtyending,
+         (SELECT qtyending + qtyissued + qtybegin FROM cashticket_inventory_detail WHERE controlid = t.objid AND [lineno] = t.minlineno AND txntype <> 'ISSUE-RECEIPT') AS qtybegin
       FROM (
          SELECT 
            'B' AS idx,
@@ -175,8 +175,8 @@ FROM (
            ci.objid, 
            SUM(cid.qtyreceived) AS qtyreceived, 
            SUM(cid.qtyissued) AS qtyissued,
-           MIN(cid.lineno) AS minlineno,
-           MAX(cid.lineno) AS maxlineno
+           MIN(cid.[lineno]) AS minlineno,
+           MAX(cid.[lineno]) AS maxlineno
          FROM cashticket_inventory ci 
            INNER JOIN cashticket_inventory_detail cid ON ci.objid = cid.controlid
          WHERE ci.respcenter_type <> 'AFO'

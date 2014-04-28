@@ -56,7 +56,7 @@ class AFControlExportImportService
 
 	@ProxyMethod
 	public void postImportCashTicket(control){
-		def param = [controlid:control.objid]
+		def param = [controlid:control.controlid]
 		def ct = adb.findCashTicketControl(param)
 		if (ct) {
 			adb.updateCashTicketInventory(EntityUtil.mapToField(control.inventory))

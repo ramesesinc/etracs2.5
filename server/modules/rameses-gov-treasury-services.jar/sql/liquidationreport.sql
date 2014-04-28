@@ -1,6 +1,6 @@
 [getLiquidationInfo]
 select 
-  l.txnno, l.dtposted, l.liquidatingofficer_name, l.liquidatingofficer_title, l.denomination, 
+  l.txnno, l.dtposted, l.liquidatingofficer_name, l.liquidatingofficer_title, 
   lc.fund_title, lc.cashier_name, su.jobtitle as cashier_title, lc.amount, l.cashbreakdown
 from liquidation l  
    inner join liquidation_cashier_fund lc on lc.liquidationid = l.objid 
@@ -25,24 +25,15 @@ from liquidation_remittance lr
 inner join remittance r on r.objid = lr.objid
 inner join remittance_fund rf ON rf.remittanceid=r.objid 
 where lr.liquidationid = $P{liquidationid} 
-group by lr.objid 
 order by txnno 
 
 
 [getRCDCollectionSummary]
 select  
-  ( 'AF#' + a.objid +  ': ' + ct.title + ' - ' + ri.fund_title )  as particulars,  
-  sum( case when crv.objid is null then cri.amount else 0.0 end ) as amount 
-from liquidation_remittance  lr 
-   inner join remittance_cashreceipt rc  on rc.remittanceid = lr.objid 
-   inner join cashreceipt cr on rc.objid = cr.objid 
-   left join cashreceipt_void crv on crv.receiptid = cr.objid 
-   inner join collectionform a on a.objid = cr.formno 
-   inner join collectiontype ct on ct.objid = cr.collectiontype_objid 
-   inner join cashreceiptitem cri on cri.receiptid = cr.objid
-   inner join revenueitem ri on ri.objid = cri.item_objid 
-where lr.liquidationid=$P{liquidationid} and ri.fund_objid  like $P{fundname}
-group by  a.objid, ri.fund_objid, ct.objid
+   lcf.fund_title   as particulars, lcf.amount as amount 
+from liquidation_cashier_fund  lcf 
+where lcf.liquidationid=$P{liquidationid} 
+and lcf.fund_objid  like $P{fundname} 
 
 
 [getRCDSerialRemittedForms]
@@ -97,7 +88,7 @@ GROUP BY ai.afid) a
 
 
 [getRCDOtherPayments]
-select  "CHECK" as paytype, pc.particulars, sum( cri.amount ) as amount 
+select  "CHECK" as paytype, pc.particulars,  cri.amount  as amount 
 from liquidation_remittance  lr 
    inner join remittance_cashreceipt rc  on rc.remittanceid = lr.objid 
    inner join cashreceipt cr on rc.objid = cr.objid 
@@ -107,6 +98,7 @@ from liquidation_remittance  lr
    inner join revenueitem ri on ri.objid = cri.item_objid   
 where lr.liquidationid=$P{liquidationid} and ri.fund_objid  like $P{fundname} 
   and crv.objid is null 
+
 
 
 [getLiquidationFundlist]

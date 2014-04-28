@@ -28,6 +28,21 @@ class CRAAFReportService
 
 		if(! data.items) throw new Exception("No record(s) found.        ");
 
+		data.items.each {
+			it.qtybegin = (Integer) it.qtybegin
+			it.beginstartseries = (Integer) it.beginstartseries
+			it.beginendseries = (Integer) it.beginendseries
+			it.qtyreceived = (Integer) it.qtyreceived
+			it.receivedstartseries = (Integer) it.receivedstartseries
+			it.receivedendseries = (Integer) it.receivedendseries
+			it.qtyissued = (Integer) it.qtyissued
+			it.issuedstartseries = (Integer) it.issuedstartseries
+			it.issuedendseries = (Integer) it.issuedendseries
+			it.qtyending = (Integer) it.qtyending
+			it.endingstartseries = (Integer) it.endingstartseries
+			it.endingendseries = (Integer) it.endingendseries
+		}
+
 		data.info = [
 			PREPAREDBY 		: env.FULLNAME,
 			PREPAREDBYTITLE : env.JOBTITLE,

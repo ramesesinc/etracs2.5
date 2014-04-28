@@ -1,8 +1,8 @@
 <workunit>
     
    <invokers>
-      <invoker folderid="/explorer/txn/treasury/certs" action="init" caption="Treasury Certification"  role="TREASURY_REPORT"/>
-      <invoker type="quick_launcher" code="TCCERT" action="init" caption="Treasury Certification"  role="TREASURY_REPORT"/>
+      <invoker folderid="/explorer/txn/treasury/certs" action="init" caption="Treasury Certification"  role="REPORT"/>
+      <invoker type="quick_launcher" code="TCCERT" action="init" caption="Treasury Certification"  role="REPORT"/>
       
      <!-- self toolbars -->
      <invoker type="formActions" caption="Close" action="_close" mnemonic="c" icon="images/toolbars/cancel.png"/>
