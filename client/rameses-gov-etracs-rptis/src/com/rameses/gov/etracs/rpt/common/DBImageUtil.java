@@ -23,6 +23,8 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.lang.reflect.Proxy;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,11 +40,43 @@ public class DBImageUtil {
     private MethodResolver resolver;
     private Object proxy;
     private GroovyClassLoader classLoader = new GroovyClassLoader(getClass().getClassLoader());
+    private Date lastErrorConnectionTime;
     
     private DBImageUtil(String serviceName){
-        proxy = lookupServiceProxy(serviceName);
-        resolver = MethodResolver.getInstance();
+        try{
+            proxy = lookupServiceProxy(serviceName);
+            resolver = MethodResolver.getInstance();
+        }
+        catch(Exception ex){
+            System.out.println("===========================================");
+            System.out.println("Error DBImageUtil Initialization...");
+            System.out.println(ex.getMessage());
+            lastErrorConnectionTime = new Date();
+        }
     }
+    
+    private void reconnect(){
+        if (lastErrorConnectionTime == null ) 
+            return;
+        
+        Date currTime = new Date();
+        long diff = currTime.getTime() - lastErrorConnectionTime.getTime();
+        long diffMinutes = diff / (60 * 1000) % 60;
+        
+        // try reconnect after 5 minutes
+        if (diffMinutes >= 5.0){
+            System.out.println("Reconnecting to Image Server : " + currTime );
+            try{
+                proxy = lookupServiceProxy(serviceName);
+                resolver = MethodResolver.getInstance();
+            }
+            catch(Exception ex){
+                System.out.println("Unable to reconnect to Image Server...");
+                lastErrorConnectionTime = currTime;
+            }
+        }
+    }
+    
     
     private Object lookupServiceProxy(String name) {
         try {
@@ -259,36 +293,59 @@ public class DBImageUtil {
     }
     
     public void deleteImage(Object objid){
+        if (isConnectionActive() == false)
+            throw new RuntimeException("Image Server is not available at this time. Try again later.");
         Map data = new HashMap();
         data.put("objid", objid);
         invoke("deleteImage", data);
     }
     
     public void deleteAllImages(Object refid){
+        if (isConnectionActive() == false)
+            throw new RuntimeException("Image Server is not available at this time. Try again later.");
         Map data = new HashMap();
         data.put("refid", refid);
         invoke("deleteAllImages", data);
     }
     
-        
     public List<Map> getImages(Object objid){
-        Map data = new HashMap();
-        data.put("refid", objid);
-        return (List<Map>)invoke("getImages", data);
+        List<Map> list = new ArrayList<Map>();
+        if (isConnectionActive()){
+            Map data = new HashMap();
+            data.put("refid", objid);
+            list = (List<Map>)invoke("getImages", data);
+        }
+        else {
+            reconnect();
+        }
+        return list;
     }
     
+    private boolean isConnectionActive(){
+        if (proxy == null)
+            return false;
+        return true;
+    }
     
     private List<Map> getImageItems(Object objid){
-        Map data = new HashMap();
-        data.put("objid", objid);
-        return (List<Map>)invoke("getImageItems", data);
+        List<Map> list = new ArrayList<Map>();
+        if (isConnectionActive()){
+            Map data = new HashMap();
+            data.put("objid", objid);
+            list = (List<Map>)invoke("getImageItems", data);
+        }
+        return list;
     }
     
     private Object saveItem(Map data){
+        if (isConnectionActive() == false)
+            throw new RuntimeException("Image Server is not available at this time. Try again later.");
         return invoke("saveItem", data);
     }
     
     private Object saveHeader(Map data){
+        if (isConnectionActive() == false)
+            throw new RuntimeException("Image Server is not available at this time. Try again later.");
         return invoke("saveHeader", data);
     }
     
