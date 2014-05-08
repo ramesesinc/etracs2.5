@@ -32,6 +32,8 @@ public class FAASOnlineNDInitPage extends javax.swing.JPanel {
         xComboBox3 = new com.rameses.rcp.control.XComboBox();
         xLookupField1 = new com.rameses.rcp.control.XLookupField();
         xLookupField2 = new com.rameses.rcp.control.XLookupField();
+        xNumberField3 = new com.rameses.rcp.control.XNumberField();
+        xNumberField4 = new com.rameses.rcp.control.XNumberField();
         xLabel1 = new com.rameses.rcp.control.XLabel();
 
         com.rameses.rcp.control.border.XTitledBorder xTitledBorder1 = new com.rameses.rcp.control.border.XTitledBorder();
@@ -84,6 +86,24 @@ public class FAASOnlineNDInitPage extends javax.swing.JPanel {
         xLookupField2.setRequired(true);
         formPanel1.add(xLookupField2);
 
+        xNumberField3.setCaption("Section");
+        xNumberField3.setCaptionWidth(100);
+        xNumberField3.setDepends(new String[] {"entity.rputype"});
+        xNumberField3.setFieldType(Integer.class);
+        xNumberField3.setName("entity.isection");
+        xNumberField3.setPreferredSize(new java.awt.Dimension(100, 19));
+        xNumberField3.setRequired(true);
+        formPanel1.add(xNumberField3);
+
+        xNumberField4.setCaption("Parcel");
+        xNumberField4.setCaptionWidth(100);
+        xNumberField4.setDepends(new String[] {"entity.rputype"});
+        xNumberField4.setFieldType(Integer.class);
+        xNumberField4.setName("entity.iparcel");
+        xNumberField4.setPreferredSize(new java.awt.Dimension(100, 19));
+        xNumberField4.setRequired(true);
+        formPanel1.add(xNumberField4);
+
         xLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         com.rameses.rcp.control.border.XLineBorder xLineBorder1 = new com.rameses.rcp.control.border.XLineBorder();
         xLineBorder1.setLineColor(new java.awt.Color(153, 153, 153));
@@ -125,6 +145,8 @@ public class FAASOnlineNDInitPage extends javax.swing.JPanel {
     private com.rameses.rcp.control.XLabel xLabel1;
     private com.rameses.rcp.control.XLookupField xLookupField1;
     private com.rameses.rcp.control.XLookupField xLookupField2;
+    private com.rameses.rcp.control.XNumberField xNumberField3;
+    private com.rameses.rcp.control.XNumberField xNumberField4;
     // End of variables declaration//GEN-END:variables
     
 }

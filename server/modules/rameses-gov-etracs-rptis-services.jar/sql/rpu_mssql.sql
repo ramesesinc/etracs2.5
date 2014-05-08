@@ -82,7 +82,6 @@ SELECT
   MAX(suffix +1) AS nextsuffix 
 FROM rpu 
 WHERE realpropertyid = $P{realpropertyid}
-AND state <> 'CANCELLED'
 AND rputype <> 'land'
 GROUP BY rputype 
 
