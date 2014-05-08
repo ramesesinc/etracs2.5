@@ -203,7 +203,7 @@ public abstract class AbstractFaasController extends PageFlowController
         
     }
     
-    void clearSignatoryInfo(signatory){
+    void clearSignatory(signatory){
         signatory.personnelid = null;
         signatory.name = null;
         signatory.title = null;
